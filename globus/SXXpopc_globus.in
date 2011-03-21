@@ -1,0 +1,96 @@
+# Startup script for PAROC service, standalone version
+
+
+#POPC_LOCATION=PAROCPREFIX
+#POPC_DOMAIN=UNKNOWN
+
+#POPC_JOBMGR_PROXY= (proxy to access this jobmgr service)
+
+#This variable is used in popcobjrun on starting the parallel object
+#POPC_PROXY
+
+#The following variables are used if this host runs proxy service
+#PROXY_PORT
+#POPC_PROXY_NETMASK
+#POPC_PROXY_PORTS
+#POPC_PROXY_PARENT
+
+POPC_TEMP=/tmp
+export POPC_TEMP
+
+if [ ! -d $POPC_TEMP ]; then
+mkdir $POPC_TEMP
+fi
+
+#. ${POPC_LOCATION}/etc/popc-runtime-env.sh
+
+PATH=${POPC_LOCATION}/bin:${POPC_LOCATION}/services:${PATH}
+export PATH
+
+LD_LIBRARY_PATH=${POPC_LOCATION}:${POPC_LOCATION}/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
+
+. $GLOBUS_LOCATION/etc/globus-user-env.sh
+
+prog="$POPC_LOCATION/services/jobmgr_globus_launcher"
+ 
+serviceproxy=""
+
+if [ "X${POPC_JOBMGR_PROXY}" != "X" ]; then
+    serviceproxy="-proxy=${POPC_JOBMGR_PROXY}"
+fi
+
+userid=`whoami`
+
+TMPKEY=${POPC_TEMP}/jobmgr_${userid}.key
+servicemap="$POPC_LOCATION/etc/service.map"
+
+mapentry=`grep "GlobusJobMgr " $servicemap`
+if [ -z "${mapentry}" ]; then
+$POPC_LOCATION/services/jobmgr_globus -listlong | grep "GlobusJobMgr " >> $servicemap
+fi
+
+start() {
+    echo "Starting PAROC/GLOBUS service: "
+    $POPC_LOCATION/bin/popcrun $servicemap $prog start -genchallenge=$TMPKEY
+    RETVAL=$?
+    return $RETVAL
+}
+
+stop() {
+    if [ -n "${PROXY_PORT}" ]; then
+	echo "Stopping delegate service..."
+	$POPC_LOCATION/bin/popcrun -noproxy $servicemap $POPC_LOCATION/services/launchproxy -proxyport=${PROXY_PORT} stop
+    fi
+    echo "Stopping PAROC/GLOBUS service "
+    $POPC_LOCATION/bin/popcrun $servicemap $prog stop -challenge=`cat $TMPKEY`
+    RETVAL=$?
+    if [ -f ${POPC_TEMP}/jobmgr.pid ]; then
+	pid=`cat ${POPC_TEMP}/jobmgr.pid`
+	rm ${POPC_TEMP}/jobmgr_stdout_$pid ${POPC_TEMP}/jobmgr_stderr_$pid ${POPC_TEMP}/jobmgr.pid $TMPKEY
+    fi
+    return $RETVAL
+}
+
+case "$1" in
+        start)
+            start
+            ;;
+ 
+        stop)
+            stop
+            ;;
+ 
+        status)
+            ;;
+        restart)
+            stop
+            start
+            ;;
+        *)
+            echo "Usage: $0 {start|stop|restart}"
+            exit 1
+                                                                                
+esac
+                                                                                
+exit 0

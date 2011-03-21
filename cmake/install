@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sudo cp CMakeDeterminePOPCPPCompiler.cmake /usr/share/cmake-2.8/Modules/
+sudo cp CMakePOPCPPCompiler.cmake /usr/share/cmake-2.8/Modules/
+sudo cp CMakePOPCPPCompiler.cmake.in /usr/share/cmake-2.8/Modules/
+sudo cp CMakePOPCPPInformation.cmake /usr/share/cmake-2.8/Modules/
+

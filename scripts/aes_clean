@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -f ../scripts/aes.h
+rm -f ../lib/aes.h

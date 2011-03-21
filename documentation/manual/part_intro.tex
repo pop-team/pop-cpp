@@ -1,0 +1,116 @@
+\chapter{Introduction and Background}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Programming large heterogenous distributed environments such as GRID or P2P
+infrastructures is a challenging task. This statement remains true even if
+we consider researches that have focused on enabling these types of
+infrastructures for scientific computing such as resource management and
+discovery \cite{Foster97, Grimshaw99, Czajkowski98}, service architecture
+\cite{Foster02}, security \cite{Welch03} and data management
+\cite{Allcock02, Stockinger01}.
+Efforts to port traditional programming tools such as MPI
+\cite{Foster98:2, Roy00, Karonis03} or BSP \cite{Tong03, Williams00},
+also had some success. These tools allow programmers to run their existing
+parallel applications on large heterogenous distributed environments. However,
+efficient exploitation of performance regarding the heterogeneity still
+needs to be manually controlled and tuned by programmers.
+
+POP-C++ is an implementation, as an extension of the C++ programming
+language \cite{Nguyen07}, of the POP (\emphasis{P}arallel \emphasis{O}bject
+\emphasis{P}rograming) model first introduced by Dr. Tuan Anh Nguyen in
+his PhD thesis \cite{Nguyen04}. The POP model is based on the very simple
+idea that objects are suitable structures to distribute data and executable
+codes over heterogeneous distributed hardware and to make them interact
+between each other.
+
+Inspired by CORBA \cite{corba26} and C++, the POP-C++ programming
+language extends C++ by adding a new type of \emphasis{parallel object},
+allowing to run C++ objects in distributed environments. With POP-C++,
+programming efficents distributed applications is as simple as writing
+a C++ programs. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The POP Model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The POP model extends the traditional object oriented programming model
+by adding the minimum necessary functionality to allow for an easy development
+of coarse grain distributed high performance applications.
+When the object oriented paradigm has unified the concept of module and type to
+create the new concept of \emphasis{class}, the POP model unifies the concept
+of class with the concept of \emphasis{task} (or \emphasis{process}). This
+is realized by adding to traditional sequential classes a new type of class:
+\emphasis{the parallel class}. By instantiating parallel classes we are able
+to create a new category of objects we will call \emphasis{parallel objects}
+in the rest of this document.
+
+Parallel objects are objects that can be remotely executed. They coexist and
+cooperate with traditional sequential objects during the application execution.
+Parallel objects keep advantages of object-orientation such as data
+encapsulation, inheritance and polymorphism and adds new properties to
+objects such as:
+
+\begin{petitem}
+
+	\item Distributed shareable objects
+
+	\item Dynamic and transparent object allocation
+
+	\item Various method invocation semantics
+
+\end{petitem}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{System Overview}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Although the POP-C++ programming system focuses on an object-oriented
+programming model, it also includes a runtime system which provides the necessary services to run POP-C++ applications over distributed environements. 
+An overview of the POP-C++ system architecture is illustrated in figure \ref{fig_structure}.
+
+\figureps{fig_structure}{100mm}
+{POP-C++ system architecture}
+
+The POP-C++ runtime system consists of three layers: the service layer,
+the POP-C++ service abstractions layer, and the programming layer. The
+service layer is built to interface with lower level toolkits (e.g.
+Globus) and the operating system. The essential service abstraction layer
+provides an abstract interface for the programming layer. On top of the
+architecture is the programming layer, which provides necessary support
+for developing distributed object-oriented applications. More details of
+the POP-C++ runtime layers are given in a separate document \cite{Nguyen04}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Structure of this Manual}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This manual has five chapters, including this introduction.
+The second chapter explains the POP-C+'s programming model. The third chapter
+describes the POP-C++ programming syntax. The fourth chapter explains how
+to compile and run POP-C++ applications. The fifth chapter shows
+how to compile and install the POP-C++ tool. Programmers interested in using
+POP-C++ should read first chapters 2, 3 and 4. System managers should read
+first chapter 5, and eventually chapters 2 and 4.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Additional information}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+More information can be found on the POP-C++ wiki web site which contains :
+
+\begin{petitem}
+\item A quick tutorial to get started with POP-C++
+\item Solutions to commonly found problems
+\item Programming examples
+\item Latest sources
+\end{petitem}
+
+\texttt{http://gridgroup.hefr.ch/popc}
+

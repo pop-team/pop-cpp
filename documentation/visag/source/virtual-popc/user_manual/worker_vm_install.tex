@@ -1,0 +1,77 @@
+\pagebreak
+\subsection{Set up the original Worker VM}
+\label{lb:workervm}
+As POP-C++ VS will clone workers as needed, we just need to set up the first "original" Worker VM. To set this particular worker VM, the following steps must be done : 
+
+\textbf{\textit{WARNING:}} Read carfully the restriction imposed to the name, username and password. These restrictions are strict and cannot be worked around. 
+\begin{itemize}
+\item Create VM in vSphere (see Appendix \ref{app:createvm}). The VM name \textbf{must} have the suffix \textbf{\_worker1} (other suffixes are not supported for the moment).
+\item Install an OS on the create VM.
+\item Install necessary packages for POP-C++ (see Section \ref{lb:workerpackages})
+\item Install VMware tools on the worker VM (see Appendix \ref{app:vmwaretools})
+\item Configure SSH for the worker VM (see Section \ref{lb:workerssh})
+\item Configure, Compile and Install POP-C++ Standard (see Section \ref{lb:workerpopc})
+\item Create a snapshot of the worker VM (see Appendix \ref{app:snap})
+\end{itemize}
+
+
+\subsubsection{Necessary packages}
+\label{lb:workerpackages}
+To be able to run application using POP-C++ VS on the worker VM, we need to install some packages. Here are the list of the needed packages : 
+
+\begin{itemize}
+\item A C++ compiler
+\item An SSH server
+\item Zlib compression library
+\end{itemize}
+
+On a Debian/Ubuntu based OS, we can use the following command to install those packages.\s
+
+\begin{lstlisting}
+sudo apt-get install build-essential openssh-server zlib1g-dev
+\end{lstlisting}
+
+\subsubsection{Configure SSH server on the worker VM}
+\label{lb:workerssh}
+As POP-C++ VS uses the secure mode of POP-C++ to communicate between the nodes, we need to set up the SSH parameters. First, we need to generate the SSH public/private keys pair. Use the following command and keep the default values.\s
+
+\begin{lstlisting}
+ssh-keygen
+\end{lstlisting}\s
+
+We also need to let the SSH server accept host key without a strict check. For this, we need to modify the file \textbf{/etc/ssh/ssh\_config} and have the following line : \s
+
+\begin{lstlisting}
+StrictHostKeyChecking no
+\end{lstlisting}
+
+\subsubsection{Configure, Compile and Install POP-C++}
+\label{lb:workerpopc}
+On the Worker VM, we just need a standard version of POP-C++. Here are the commands to execute to configure and compile POP-C++ in its standard version.\s
+\begin{lstlisting}
+./configure
+make
+\end{lstlisting}
+
+Once POP-C++ is compiled, we can install it. Use the following command : \s
+
+\begin{lstlisting}
+make install 
+...
+DO YOU WANT TO CONFIGURE  POP-C++ SERVICES? (y/n)
+y
+DO YOU WANT TO MAKE A SIMPLE INSTALLATION? (y/n) 
+y
+...
+===============================
+CONFIGURATION DONE!
+===============================
+
+IMPORTANT : Do not forget to add these lines to your .bashrc file or 
+equivalent:
+
+POPC_LOCATION=/home/visag/popc
+PATH=$PATH:$POPC_LOCATION/bin:$POPC_LOCATION/sbin
+\end{lstlisting}
+
+\textit{NOTE:} Don't forget to add the lines in your .bashrc or equivalent file if you changed the default installation location otherwise the node will not run normally.

@@ -1,0 +1,16 @@
+\section{Compatibility issues}
+\label{lb:compatibility}
+As POP-C++ can be compiled in 4 different versions, there are some compatibility issues between those versions. The table below indicates which version can be used together.
+
+\begin{center}
+\begin{tabular}{|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{Version/Version} & \textbf{Standard}	& \textbf{Secure} & \textbf{Virtual} & \textbf{Virtual-Secure}\\ \hline
+\textbf{Standard} & \textcolor{green}{OK} & \textcolor{red}{NO OK} & \textcolor{green}{OK} & \textcolor{red}{NO OK} \\ \hline
+\textbf{Secure} & \textcolor{red}{NO OK} & \textcolor{green}{OK} & \textcolor{red}{NO OK} & \textcolor{green}{OK} \\ \hline
+\textbf{Virtual} & \textcolor{green}{OK} & \textcolor{red}{NO OK} & \textcolor{green}{OK} & \textcolor{red}{NO OK} \\ \hline
+\textbf{Virtual-Secure} & \textcolor{red}{NO OK} & \textcolor{green}{OK} & \textcolor{red}{NO OK} & \textcolor{green}{OK} \\ \hline
+\end{tabular}
+\end{center}\s
+
+\textit{NOTE:} Be aware that an application compiled with POP-C++ Secure or Virtual-Secure will not run with POP-C++ Standard or Virtual. You need to recompile the application before running it.
