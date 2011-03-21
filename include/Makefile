@@ -91,12 +91,12 @@ HEADERS = $(include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/visag/versioning/popcpp/missing --run aclocal-1.11
-AMTAR = ${SHELL} /home/visag/versioning/popcpp/missing --run tar
+ACLOCAL = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run aclocal-1.11
+AMTAR = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /home/visag/versioning/popcpp/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/visag/versioning/popcpp/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/visag/versioning/popcpp/missing --run automake-1.11
+AUTOCONF = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run automake-1.11
 AWK = mawk
 CC = gcc
 CFLAGS = -g -O2
@@ -129,12 +129,12 @@ LEX_OUTPUT_ROOT =
 LIBOBJS = 
 LIBS = -ldl -lnsl -lpthread 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
-LIBVIRT_CFLAGS = -I/usr/local/include  
-LIBVIRT_LIBS = -L/usr/local/lib -lvirt -ldl  
+LIBVIRT_CFLAGS = 
+LIBVIRT_LIBS = 
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/visag/versioning/popcpp/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
 NMEDIT = 
@@ -159,16 +159,16 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = strip
 VERSION = 1.3.1 beta ViSaG
-VIX_CFLAGS = -lvixAllProducts -ldl
-VIX_LIBS = -I/usr/include/vmware-vix
+VIX_CFLAGS = 
+VIX_LIBS = 
 YACC = yacc
 YFLAGS = 
 ZLIB_CFLAGS = -I/usr/local/include  
 ZLIB_LIBS = -L/usr/local/lib -lvirt -ldl  
-abs_builddir = /home/visag/versioning/popcpp/include
-abs_srcdir = /home/visag/versioning/popcpp/include
-abs_top_builddir = /home/visag/versioning/popcpp
-abs_top_srcdir = /home/visag/versioning/popcpp
+abs_builddir = /home/visag/versioning/popcpp_forge/include
+abs_srcdir = /home/visag/versioning/popcpp_forge/include
+abs_top_builddir = /home/visag/versioning/popcpp_forge
+abs_top_srcdir = /home/visag/versioning/popcpp_forge
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
@@ -198,7 +198,7 @@ host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/visag/versioning/popcpp/install-sh
+install_sh = ${SHELL} /home/visag/versioning/popcpp_forge/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -220,7 +220,7 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-virtsecure = true
+virtsecure = false
 virtual = false
 AUTOMAKE_OPTIONS = no-dependencies
 IDLC = ../popccpp
@@ -234,17 +234,6 @@ IDLC = ../popccpp
 #	paroc_exception.h sysinfodef.h\
 #	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h popwayback.h nodethread.h
 
-#include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
-#	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
-#	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
-#	paroc_combox.h paroc_combox_socket.h paroc_combox_factory.h \
-#	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
-#	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
-#	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
-#	paroc_exception.h sysinfodef.h\
-#	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-#	popwayback.h nodethread.h
-
 include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
 	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
@@ -254,7 +243,18 @@ include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od
 	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 	paroc_exception.h sysinfodef.h\
 	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h
+	popwayback.h nodethread.h
+
+#include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
+#	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
+#	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
+#	paroc_combox.h paroc_combox_socket.h paroc_combox_factory.h \
+#	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
+#	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
+#	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
+#	paroc_exception.h sysinfodef.h\
+#	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
+#	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h
 
 
 #Updated by Wyssen : Added VPopCWrapper.h, WrapperFactory.h and ESXWrapper.h

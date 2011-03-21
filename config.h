@@ -75,7 +75,7 @@
 /* #undef POPC_SECURE */
 
 /* Secure Virtual Version */
-#define POPC_SECURE_VIRTUAL 1
+/* #undef POPC_SECURE_VIRTUAL */
 
 /* Virtual version */
 /* #undef POPC_VIRTUAL */

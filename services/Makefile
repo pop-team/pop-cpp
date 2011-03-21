@@ -45,26 +45,26 @@ host_triplet = i686-pc-linux-gnu
 ##	localservice_launcher$(EXEEXT) \
 ##	jobmgr_launcher$(EXEEXT) \
 ##	popcloner$(EXEEXT)
+##execservices_PROGRAMS = popc_search_node$(EXEEXT) \
+##	virtual_popc_search_node$(EXEEXT) \
+##	jobmgr$(EXEEXT) \
+##	virtual_jobmgr$(EXEEXT) \
+##	virtual_jobmgr$(EXEEXT) \
+##	appservice$(EXEEXT) \
+##	localservice_launcher$(EXEEXT) \
+##	jobmgr_launcher$(EXEEXT) \
+##	popcloner$(EXEEXT) \
+##	virtual_secure_popc_search_node$(EXEEXT) \
+##	popc_security_manager$(EXEEXT) \
+##	secure_jobmgr$(EXEEXT) \
+##	secure_popc_search_node$(EXEEXT) \
+##	virtual_secure_jobmgr$(EXEEXT) \
+##	virtual_popc_security_manager$(EXEEXT)
 execservices_PROGRAMS = popc_search_node$(EXEEXT) \
-	virtual_popc_search_node$(EXEEXT) \
 	jobmgr$(EXEEXT) \
-	virtual_jobmgr$(EXEEXT) \
-	virtual_jobmgr$(EXEEXT) \
 	appservice$(EXEEXT) \
 	localservice_launcher$(EXEEXT) \
-	jobmgr_launcher$(EXEEXT) \
-	popcloner$(EXEEXT) \
-	virtual_secure_popc_search_node$(EXEEXT) \
-	popc_security_manager$(EXEEXT) \
-	secure_jobmgr$(EXEEXT) \
-	secure_popc_search_node$(EXEEXT) \
-	virtual_secure_jobmgr$(EXEEXT) \
-	virtual_popc_security_manager$(EXEEXT)
-#execservices_PROGRAMS = popc_search_node$(EXEEXT) \
-#	jobmgr$(EXEEXT) \
-#	appservice$(EXEEXT) \
-#	localservice_launcher$(EXEEXT) \
-#	jobmgr_launcher$(EXEEXT)
+	jobmgr_launcher$(EXEEXT)
 #execservices_PROGRAMS = popc_search_node$(EXEEXT) \
 #	jobmgr$(EXEEXT) secure_jobmgr$(EXEEXT) \
 #	appservice$(EXEEXT) \
@@ -141,7 +141,7 @@ popc_search_node_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(popc_search_node_LDFLAGS) $(LDFLAGS) -o $@
 am__popc_security_manager_SOURCES_DIST = popc_security_manager_obj.cc
-am_popc_security_manager_OBJECTS = popc_security_manager_obj.$(OBJEXT)
+#am_popc_security_manager_OBJECTS = popc_security_manager_obj.$(OBJEXT)
 #am_popc_security_manager_OBJECTS =  \
 #	popc_security_manager_obj.$(OBJEXT)
 popc_security_manager_OBJECTS = $(am_popc_security_manager_OBJECTS)
@@ -150,16 +150,16 @@ popc_security_manager_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(popc_security_manager_LDFLAGS) $(LDFLAGS) -o $@
 am__popcloner_SOURCES_DIST = popcloner_obj.cc
-##am_popcloner_OBJECTS = popcloner_obj.$(OBJEXT)
-am_popcloner_OBJECTS =  \
-	popcloner_obj.$(OBJEXT)
+#am_popcloner_OBJECTS = popcloner_obj.$(OBJEXT)
+#am_popcloner_OBJECTS =  \
+#	popcloner_obj.$(OBJEXT)
 popcloner_OBJECTS = $(am_popcloner_OBJECTS)
 popcloner_DEPENDENCIES =
 popcloner_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(popcloner_LDFLAGS) $(LDFLAGS) -o $@
 am__secure_jobmgr_SOURCES_DIST = secure_jobmgr_obj.cc
-am_secure_jobmgr_OBJECTS = secure_jobmgr_obj.$(OBJEXT)
+#am_secure_jobmgr_OBJECTS = secure_jobmgr_obj.$(OBJEXT)
 #am_secure_jobmgr_OBJECTS =  \
 #	secure_jobmgr_obj.$(OBJEXT)
 secure_jobmgr_OBJECTS = $(am_secure_jobmgr_OBJECTS)
@@ -169,7 +169,7 @@ secure_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(CXXFLAGS) $(secure_jobmgr_LDFLAGS) $(LDFLAGS) -o $@
 am__secure_popc_search_node_SOURCES_DIST =  \
 	secure_popc_search_node_obj.cc
-am_secure_popc_search_node_OBJECTS = secure_popc_search_node_obj.$(OBJEXT)
+#am_secure_popc_search_node_OBJECTS = secure_popc_search_node_obj.$(OBJEXT)
 #am_secure_popc_search_node_OBJECTS =  \
 #	secure_popc_search_node_obj.$(OBJEXT)
 secure_popc_search_node_OBJECTS =  \
@@ -180,9 +180,9 @@ secure_popc_search_node_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(CXXFLAGS) $(secure_popc_search_node_LDFLAGS) $(LDFLAGS) -o \
 	$@
 am__virtual_jobmgr_SOURCES_DIST = virtual_jobmgr_obj.cc
-##am_virtual_jobmgr_OBJECTS = virtual_jobmgr_obj.$(OBJEXT)
-am_virtual_jobmgr_OBJECTS =  \
-	virtual_jobmgr_obj.$(OBJEXT)
+#am_virtual_jobmgr_OBJECTS = virtual_jobmgr_obj.$(OBJEXT)
+#am_virtual_jobmgr_OBJECTS =  \
+#	virtual_jobmgr_obj.$(OBJEXT)
 virtual_jobmgr_OBJECTS = $(am_virtual_jobmgr_OBJECTS)
 virtual_jobmgr_DEPENDENCIES =
 virtual_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -190,8 +190,8 @@ virtual_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(CXXFLAGS) $(virtual_jobmgr_LDFLAGS) $(LDFLAGS) -o $@
 am__virtual_popc_search_node_SOURCES_DIST =  \
 	virtual_popc_search_node_obj.cc
-##am_virtual_popc_search_node_OBJECTS = virtual_popc_search_node_obj.$(OBJEXT)
-am_virtual_popc_search_node_OBJECTS = virtual_popc_search_node_obj.$(OBJEXT)
+#am_virtual_popc_search_node_OBJECTS = virtual_popc_search_node_obj.$(OBJEXT)
+#am_virtual_popc_search_node_OBJECTS = virtual_popc_search_node_obj.$(OBJEXT)
 virtual_popc_search_node_OBJECTS =  \
 	$(am_virtual_popc_search_node_OBJECTS)
 virtual_popc_search_node_DEPENDENCIES =
@@ -201,7 +201,7 @@ virtual_popc_search_node_LINK = $(LIBTOOL) --tag=CXX \
 	$(LDFLAGS) -o $@
 am__virtual_popc_security_manager_SOURCES_DIST =  \
 	virtual_popc_security_manager_obj.cc
-am_virtual_popc_security_manager_OBJECTS = virtual_popc_security_manager_obj.$(OBJEXT)
+#am_virtual_popc_security_manager_OBJECTS = virtual_popc_security_manager_obj.$(OBJEXT)
 virtual_popc_security_manager_OBJECTS =  \
 	$(am_virtual_popc_security_manager_OBJECTS)
 virtual_popc_security_manager_DEPENDENCIES =
@@ -210,8 +210,8 @@ virtual_popc_security_manager_LINK = $(LIBTOOL) --tag=CXX \
 	$(AM_CXXFLAGS) $(CXXFLAGS) \
 	$(virtual_popc_security_manager_LDFLAGS) $(LDFLAGS) -o $@
 am__virtual_secure_jobmgr_SOURCES_DIST = virtual_secure_jobmgr_obj.cc
-am_virtual_secure_jobmgr_OBJECTS =  \
-	virtual_secure_jobmgr_obj.$(OBJEXT)
+#am_virtual_secure_jobmgr_OBJECTS =  \
+#	virtual_secure_jobmgr_obj.$(OBJEXT)
 virtual_secure_jobmgr_OBJECTS = $(am_virtual_secure_jobmgr_OBJECTS)
 virtual_secure_jobmgr_DEPENDENCIES =
 virtual_secure_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -219,7 +219,7 @@ virtual_secure_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(CXXFLAGS) $(virtual_secure_jobmgr_LDFLAGS) $(LDFLAGS) -o $@
 am__virtual_secure_popc_search_node_SOURCES_DIST =  \
 	virtual_secure_popc_search_node_obj.cc
-am_virtual_secure_popc_search_node_OBJECTS = virtual_secure_popc_search_node_obj.$(OBJEXT)
+#am_virtual_secure_popc_search_node_OBJECTS = virtual_secure_popc_search_node_obj.$(OBJEXT)
 virtual_secure_popc_search_node_OBJECTS =  \
 	$(am_virtual_secure_popc_search_node_OBJECTS)
 virtual_secure_popc_search_node_DEPENDENCIES =
@@ -290,12 +290,12 @@ DATA = $(conf_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/visag/versioning/popcpp/missing --run aclocal-1.11
-AMTAR = ${SHELL} /home/visag/versioning/popcpp/missing --run tar
+ACLOCAL = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run aclocal-1.11
+AMTAR = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /home/visag/versioning/popcpp/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/visag/versioning/popcpp/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/visag/versioning/popcpp/missing --run automake-1.11
+AUTOCONF = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run automake-1.11
 AWK = mawk
 CC = gcc
 CFLAGS = -g -O2
@@ -328,12 +328,12 @@ LEX_OUTPUT_ROOT =
 LIBOBJS = 
 LIBS = -ldl -lnsl -lpthread 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
-LIBVIRT_CFLAGS = -I/usr/local/include  
-LIBVIRT_LIBS = -L/usr/local/lib -lvirt -ldl  
+LIBVIRT_CFLAGS = 
+LIBVIRT_LIBS = 
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/visag/versioning/popcpp/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
 NMEDIT = 
@@ -358,16 +358,16 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = strip
 VERSION = 1.3.1 beta ViSaG
-VIX_CFLAGS = -lvixAllProducts -ldl
-VIX_LIBS = -I/usr/include/vmware-vix
+VIX_CFLAGS = 
+VIX_LIBS = 
 YACC = yacc
 YFLAGS = 
 ZLIB_CFLAGS = -I/usr/local/include  
 ZLIB_LIBS = -L/usr/local/lib -lvirt -ldl  
-abs_builddir = /home/visag/versioning/popcpp/services
-abs_srcdir = /home/visag/versioning/popcpp/services
-abs_top_builddir = /home/visag/versioning/popcpp
-abs_top_srcdir = /home/visag/versioning/popcpp
+abs_builddir = /home/visag/versioning/popcpp_forge/services
+abs_srcdir = /home/visag/versioning/popcpp_forge/services
+abs_top_builddir = /home/visag/versioning/popcpp_forge
+abs_top_srcdir = /home/visag/versioning/popcpp_forge
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
@@ -397,7 +397,7 @@ host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/visag/versioning/popcpp/install-sh
+install_sh = ${SHELL} /home/visag/versioning/popcpp_forge/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -419,7 +419,7 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-virtsecure = true
+virtsecure = false
 virtual = false
 
 #Code added by clementval begins with #Added by clementval, ends with #End of add
@@ -446,55 +446,55 @@ jobmgr_LDFLAGS = -object
 #
 
 #VIRTUAL SECURE VERSION
-virtual_popc_search_node_SOURCES = virtual_popc_search_node_obj.cc
+#virtual_popc_search_node_SOURCES = virtual_popc_search_node_obj.cc
 
 #VIRTUAL VERSION
 #virtual_popc_search_node_SOURCES = virtual_popc_search_node_obj.cc
-virtual_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
 #virtual_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
-virtual_popc_search_node_LDFLAGS = -object
+#virtual_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
 #virtual_popc_search_node_LDFLAGS = -object
-virtual_secure_popc_search_node_SOURCES = virtual_secure_popc_search_node_obj.cc
-virtual_secure_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
-virtual_secure_popc_search_node_LDFLAGS = -object
-virtual_jobmgr_SOURCES = virtual_jobmgr_obj.cc
+#virtual_popc_search_node_LDFLAGS = -object
+#virtual_secure_popc_search_node_SOURCES = virtual_secure_popc_search_node_obj.cc
+#virtual_secure_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
+#virtual_secure_popc_search_node_LDFLAGS = -object
 #virtual_jobmgr_SOURCES = virtual_jobmgr_obj.cc
-virtual_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
+#virtual_jobmgr_SOURCES = virtual_jobmgr_obj.cc
 #virtual_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
-virtual_jobmgr_LDFLAGS = -object
+#virtual_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
 #virtual_jobmgr_LDFLAGS = -object
-virtual_secure_jobmgr_SOURCES = virtual_secure_jobmgr_obj.cc
-virtual_secure_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
-virtual_secure_jobmgr_LDFLAGS = -object
-popcloner_SOURCES = popcloner_obj.cc
+#virtual_jobmgr_LDFLAGS = -object
+#virtual_secure_jobmgr_SOURCES = virtual_secure_jobmgr_obj.cc
+#virtual_secure_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
+#virtual_secure_jobmgr_LDFLAGS = -object
 #popcloner_SOURCES = popcloner_obj.cc
-popcloner_LDADD = -L../lib/.libs -lparoc_service_common
+#popcloner_SOURCES = popcloner_obj.cc
 #popcloner_LDADD = -L../lib/.libs -lparoc_service_common
-popcloner_LDFLAGS = -object
+#popcloner_LDADD = -L../lib/.libs -lparoc_service_common
+#popcloner_LDFLAGS = -object
 #popcloner_LDFLAGS = -object
 
 #SECURE VERSION
 #popc_security_manager_SOURCES = popc_security_manager_obj.cc
-popc_security_manager_SOURCES = popc_security_manager_obj.cc
+#popc_security_manager_SOURCES = popc_security_manager_obj.cc
 #popc_security_manager_LDADD = -L../lib/.libs -lparoc_service_common
-popc_security_manager_LDADD = -L../lib/.libs -lparoc_service_common
+#popc_security_manager_LDADD = -L../lib/.libs -lparoc_service_common
 #popc_security_manager_LDFLAGS = -object
-popc_security_manager_LDFLAGS = -object
-virtual_popc_security_manager_SOURCES = virtual_popc_security_manager_obj.cc
-virtual_popc_security_manager_LDADD = -L../lib/.libs -lparoc_service_common
-virtual_popc_security_manager_LDFLAGS = -object
+#popc_security_manager_LDFLAGS = -object
+#virtual_popc_security_manager_SOURCES = virtual_popc_security_manager_obj.cc
+#virtual_popc_security_manager_LDADD = -L../lib/.libs -lparoc_service_common
+#virtual_popc_security_manager_LDFLAGS = -object
 #secure_jobmgr_SOURCES = secure_jobmgr_obj.cc
-secure_jobmgr_SOURCES = secure_jobmgr_obj.cc
+#secure_jobmgr_SOURCES = secure_jobmgr_obj.cc
 #secure_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
-secure_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
+#secure_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
 #secure_jobmgr_LDFLAGS = -object
-secure_jobmgr_LDFLAGS = -object
+#secure_jobmgr_LDFLAGS = -object
 #secure_popc_search_node_SOURCES = secure_popc_search_node_obj.cc
-secure_popc_search_node_SOURCES = secure_popc_search_node_obj.cc
+#secure_popc_search_node_SOURCES = secure_popc_search_node_obj.cc
 #secure_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
-secure_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
+#secure_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
 #secure_popc_search_node_LDFLAGS = -object
-secure_popc_search_node_LDFLAGS = -object
+#secure_popc_search_node_LDFLAGS = -object
 appservice_SOURCES = appservice_obj.cc
 appservice_LDADD = 
 appservice_LDFLAGS = -object -L../lib/.libs -lparoc_service_common

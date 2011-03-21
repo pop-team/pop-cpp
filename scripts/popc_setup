@@ -2,7 +2,7 @@
 
 
 POPC_VIRTUAL=false
-POPC_SECURE_VIRTUAL=true
+POPC_SECURE_VIRTUAL=false
 POPC_LOCATION=/home/visag/popc
 export POPC_LOCATION
 
