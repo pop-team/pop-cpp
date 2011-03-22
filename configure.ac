@@ -132,9 +132,6 @@ AC_CHECK_LIB(dl, dlopen)
 
 PKG_CONFIG=$(which pkg-config)
 
-#Check for zlib
-PKG_CHECK_MODULES([ZLIB], [libvirt])
-
 # ViSaG : clementval
 # if virtual enabled, check for libvirt, vix and define POPC_VIRTUAL to 1
 if test x$virtual = xtrue
