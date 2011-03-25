@@ -1,0 +1,20 @@
+\section{Security assumptions}
+\label{sec:security}
+This chapter aims to explain what we think are strengths and weaknesses on a security point of view in this project. The first section will focus on the strength as the second one will focus on the weaknesses. \s
+
+\subsection{Security strengths}
+
+\subsubsection{Application isolation}
+An application is isolated from other application as a Worker Vm is started for each different application on a node. This means that an application can only disturb itself but not other running application.
+
+\subsubsection{Admin VM isolation}
+The Admin VM is totally isolated from the execution of the POP-C++ application. This VM do not accept other public key than the ones exchanged for the confidence link. An application should never be launched from an Admin VM. 
+
+\subsubsection{Worker VM clean state}
+A Worker VM is always reverted to its clean state before executing an application. Of course, this clean state depends on the person who created it during the installation of the node. 
+
+
+\subsection{Security weaknesses}
+\subsubsection{Node running the main}
+Every POP-C++ application has a start point which is the main. The main must run on a node we will called the Main Node. The Main Node could be vulnerable has it will accept several public key from the worker used for this application. For the moment, we did not develop a perfect solution for this problem but some ideas are drawn in Section \ref{sec:future}.
+

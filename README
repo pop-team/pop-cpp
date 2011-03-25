@@ -1,0 +1,223 @@
+This transcript helps you to set up POP-C++ on our system. 
+NOTE: PAROC++ is the former name of POP-C++ so in this transcript, 
+at certain places, PAROC++ is stilled used instead of POP-C++.
+
+0. BEFORE STARTING
+
+Here is information about the environment:
+- User account: tanguyen
+- Local machine: sb02.eif.ch
+- Shell: tcsh
+- GLOBUS toolkit is installed and the GLOBUS_LOCATION variable is set
+
+In order to install properly POP-C++, you will need following software:
+ - C++ compiler;
+ - GNU tar;
+ - GNU make;
+ - Flex / Bison.
+
+
+1. COMPILE THE PAROC SOURCE CODE
+
+[110]sb02-tanguyen>echo $GLOBUS_LOCATION
+/usr/local/globus-4.0.0
+
+
+[111]sb02-tanguyen>tar xfvz popc-1.0.tar.gz
+
+
+[112]sb02-tanguyen>cd popc-1.0
+
+
+[113]sb02-tanguyen>pwd
+/home/tanguyen/src/popc-1.0
+
+
+[114]sb02-tanguyen>./configure --prefix=/home/tanguyen/tools/popc --enable-globus=gcc32dbgpthr 
+
+checking for a BSD-compatible install... ./install-sh -c
+checking whether build environment is sane... yes
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking build system type... sparc-sun-solaris2.9
+...
+
+*NOTE: If you do not have Globus installed, remove the "--enable-globus=
+gcc32dbgpthr" from the above configure command. 
+
+[115]sb02-tanguyen>make
+Please check if there is any compilation error before proceeding the next step.
+
+
+2. INSTALL POP-C++
+
+[116]sb02-tanguyen>make install
+
+After the installation, the setup script is automatically executed which requests the user to enter several information
+
+GENERATING SERVICE MAPS...
+CONFIGURING PAROC SERVICES ON YOUR LOCAL MACHINE...
+Enter the full qualified master host name (PAROC gateway):
+sb02.eif.ch
+Enter the full qualified master host name (PAROC gateway):[Enter]
+
+*NOTE: You can specify several "master" nodes that when the local node wants to
+join the Grid, it will self-register to these master nodes. In other word, the 
+local node is "managed" by these master nodes. 
+
+Enter the child node:[Enter]
+
+*NOTE: Child nodes are the list of hosts to which the local node will manage. 
+
+
+
+Enter number of processors available (default:1):[Enter]
+
+Enter the maximum number of POP-C++ jobs that can run concurrently (default: 1):[Enter]
+
+Which local user you want to use for running PAROC jobs?[Enter]
+
+*NOTE: It is possible to specify a specific user account where the standalone 
+POP-C++ runtime service will submit the job. This information is not used in 
+the Globus-based services.  
+
+
+SETTING UP RUNTIME ENVIRONMENT VARIABLES
+Enter variable name:
+LD_LIBRARY_PATH
+Enter variable value:
+/softel/SunOS/sparc_5.9/usr.local/lib::/sybase/client/lib/:/lib:/usr/dt/lib:/opt/SUNWits/Graphics-sw/xgl-3.0/lib:/usr/openwin/lib:/usr/lib:/opt/SUNWspro/lib
+Enter variable name:
+
+DO YOU WANT TO CONFIGURE PAROC SERVICES FOR GLOBUS? (y/n)
+y
+Enter the local globus gatekeeper contact:
+/O=EIF/OU=GridGroup/CN=host/eif.ch
+Enter the GLOBUS grid-mapfile([/etc/grid-security/grid-mapfile]):
+
+=====================================================
+CONFIGURATION PAROC++ SERVICES COMPLETED!
+=====================================================
+Do you want to generate the PAROC++ startup scripts? (y/n)
+y
+=====================================================
+CONFIGURING STARTUP SCRIPT FOR YOUR LOCAL MACHINE...
+Enter the service port[2711]:[Enter]
+
+Enter the domain name:
+eif.ch
+Enter the temporary directory for intermediate results:
+/tmp/popc
+Enter the command to execute parallel object codes:[Enter]
+
+
+DO YOU WANT TO GENERATE THE GLOBUS-BASED PAROC SCRIPT? (y/n)
+y
+Enter the globus installed directory (/usr/local/globus-4.0.0):
+
+CONFIGURATION DONE!
+
+
+4. START POP-C++ RUNTIME SERVICES
+
+[117]sb02-tanguyen>source /home/tanguyen/tools/popc/bin/popc-user-env.csh
+
+*NOTE1: the above command is to source all POP-C++ environment variable which
+will be later used to start POP-C++ applications.This script is located in
+<POP-C++ installed directory>/bin
+
+*NOTE2: if you have SH/BASH shell, you will need to source "popc-user-env.sh"
+instead of "popc-user-env.csh"
+
+[118]sb02-tanguyen>echo $POPC_LOCATION/
+/home/tanguyen/tools/popc/
+
+*NOTE: POPC_LOCATION is set to the POP-C++ installed directory when sourcing 
+popc-user-env.[sh|csh]
+
+[119]sb02-tanguyen>$POPC_LOCATION/sbin/SXXpopc.globus start
+Starting PAROC/GLOBUS service:
+Starting Parallel Object JobMgr service
+[jobmgr.cc:1101]Updating my contact to parrent nodes...
+[jobmgr.cc:504]Total resource power=95.2854, max per job=95.2854
+[objectmonitor.cc:76]Check parallel objects....0 object alive
+[paroc_system.cc:289]Application scope services are terminated
+socket://160.98.20.187:2711[codemgr.cc:13]Now destroy CodeMgr
+
+*NOTE1: for the Globus based services of POP-C++ to receive job,
+you also need to start the PreWS Globus GRAM on that host. Refer 
+to the Globus installation manual on how to start this service.
+
+*NOTE2: if you don't have Globus GRAM running, you can start the 
+POP-C++ standalone. Just use the "SXXpopc" script instead of 
+"SXXpopc.globus".
+
+Now, your machine is ready to receive POP-C++'s job requests.
+
+We suppose POP-C++ is installed on NFS. To start POP-C++ services on another machine:
+
+[120]sb02-tanguyen>rlogin sb03.eif.ch
+
+[101]sb03-tanguyen>source /home/tanguyen/tools/popc/bin/popc-user-env.csh
+
+[102]sb03-tanguyen>$POPC_LOCATION/sbin/SXXpopc.globus start
+Starting PAROC/GLOBUS service:
+Starting Parallel Object JobMgr service
+[jobmgr.cc:1101]Updating my contact to parrent nodes...
+[jobmgr.cc:1109]Registering socket://160.98.20.188:2711 to socket://sb02.eif.ch:2711
+[jobmgr.cc:504]Total resource power=95.7606, max per job=95.7606
+[objectmonitor.cc:76]Check parallel objects....0 object alive
+[paroc_system.cc:289]Application scope services are terminated
+socket://160.98.20.188:2711[codemgr.cc:13]Now destroy CodeMgr
+
+*NOTE: if you don't have Globus support or Globus is not installed on your 
+machine, you need to start the POP-C++ standalone service: 
+       $POPC_LOCATION/sbin/SXXpopc start
+
+5. RUNNING TEST
+
+[126]sb02-tanguyen>jobmgrquery sb02.eif.ch:2711
+Enter item to query:
+host
+host= sb02.eif.ch
+power
+power= 95.2854
+gramcontact
+gramcontact= /O=EIF/OU=GridGroup/CN=host/eif.ch
+[Ctrl+D]
+
+[130]sb02-tanguyen>grid-proxy-init
+Your identity: /O=EIF/OU=GridGroup/CN=Tuan Anh Nguyen
+Enter GRID pass phrase for this identity:
+Creating proxy .................................... Done
+Your proxy is valid until: Tue Jul  5 03:32:57 2005
+
+*NOTE: grid-proxy-init is a Globus util. If Globus is not installed on 
+your machine, just ignore the above command.
+
+
+[131]sb02-tanguyen>cd $POPC_LOCATION/test/integer/
+
+[132]sb02-tanguyen>./integer.obj -listlong > obj.map
+
+[133]sb02-tanguyen>popcrun.globus obj.map ./integer.main
+...
+Object Integer on 160.98.20.188
+O1=1; O2=2; O3=3
+O1=O1+O2; O1=3
+O1=O2+O3, O1=5
+Sum x=12497500
+Now waiting...
+...
+
+*NOTE: popcrun.globus is only used to run POP-C++ applications with Globus 
+support. If you use the standalone version of POP-C++ service, "popcrun" 
+should be used instead of "popcrun.globus"
+
+6. FINAL STEP
+
+GOOD LUCK ! :-)
+
+For more information, please contact tuan.nguyen@eif.ch
+
+

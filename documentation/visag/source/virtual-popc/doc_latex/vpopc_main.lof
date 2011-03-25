@@ -1,0 +1,15 @@
+\select@language {english}
+\contentsline {figure}{\numberline {1}{\ignorespaces vSphere Client - inventory (display name)\relax }}{10}
+\contentsline {figure}{\numberline {2}{\ignorespaces POP-C++ Global Services\relax }}{13}
+\contentsline {figure}{\numberline {3}{\ignorespaces Symmetric and Asymmetric encryption algorithm\relax }}{14}
+\contentsline {figure}{\numberline {4}{\ignorespaces POP-C++ Virtual Configuration - Cipher - Step 1\relax }}{15}
+\contentsline {figure}{\numberline {5}{\ignorespaces POP-C++ Virtual Configuration - Cipher - Step 2\relax }}{16}
+\contentsline {figure}{\numberline {6}{\ignorespaces Virtual Wrapper - Class Diagram\relax }}{19}
+\contentsline {figure}{\numberline {7}{\ignorespaces Reservation process\relax }}{23}
+\contentsline {figure}{\numberline {8}{\ignorespaces VM Preparation\relax }}{24}
+\contentsline {figure}{\numberline {9}{\ignorespaces EIA-FR DMZ\relax }}{30}
+\contentsline {figure}{\numberline {10}{\ignorespaces DHCP server on "Admin"\relax }}{31}
+\contentsline {figure}{\numberline {11}{\ignorespaces DHCP server on an external VM\relax }}{31}
+\contentsline {figure}{\numberline {12}{\ignorespaces Logical View of the infrastructure\relax }}{32}
+\contentsline {figure}{\numberline {13}{\ignorespaces Speedup for POP-C++ Standard execution\relax }}{34}
+\contentsline {figure}{\numberline {14}{\ignorespaces Schematic view of the an ESXi Node with "Pseudo Main Node VM"\relax }}{35}

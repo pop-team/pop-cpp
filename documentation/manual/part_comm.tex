@@ -1,0 +1,35 @@
+\chapter{Command Line Syntax}
+
+\section{POP-C++ Compiler command}
+
+\begin{verbatim} 
+popcc [POP-C++ options] [other C++ options] sources...
+POP-C++ options:
+   -cxxmain:            Use standard C++ main (ignore POP-C++ 
+                        initialization).
+   -paroc-static:       Link with standard POP-C++ libraries 
+                        statically.
+   -paroc-nolib:        Avoid standard POP-C++ libraries from 
+                        linking.
+   -parclass-nointerface: Do not generate POP-C++ interface codes 
+                          for parallel objects.
+   -parclass-nobroker:    Do not generate POP-C++ broker codes 
+                          for parallel objects.
+
+   -object[=type]:      Generate parallel object executable 
+                        (linking only)(type: std (default) or mpi)
+   -popcpp:             POP-C++ parser
+   -cpp=<preprocessor>: C++ preprocessor command
+   -cxx=<compiler>:     C++ compiler
+   -parocld=<linker>:   C++ linker (default: same as C++ compiler)
+   -parocdir:           POP-C++ installed directory
+   -noclean:            Do not clean temporary files
+   -verbose:            Print out additional information
+
+Environment variables change the default values used by POP-C++:
+   POPC_LOCATION:  Directory where POP-C++ has been installed
+   POPC_CXX:       The C++ compiler used to generate object code
+   POPC_CPP:       The C++ preprocessor
+   POPC_LD:        The C++ linker used to generate binary code
+   POPC_PP:        The POP-C++  parser
+\end{verbatim}

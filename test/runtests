@@ -1,0 +1,18 @@
+#!/bin/bash 
+
+echo Starting test suite...
+
+for test in `ls -d */`
+
+do
+	echo "---------------------------------------------------------------------------"
+	echo "*** $test test ***"
+	echo "---------------------------------------------------------------------------"
+	cd $test
+	make clean
+	make 
+	make run
+	cd ..
+done
+
+echo End test suite...

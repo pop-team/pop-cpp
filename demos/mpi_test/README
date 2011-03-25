@@ -1,0 +1,16 @@
+===============================================================================
+* mpi_test
+===============================================================================
+* Date : Oct 2009
+********************************************************************************
+
+This program tests the object creation with MPI
+
+usage :
+
+popcrun obj.map ./main
+
+installation of MPI : sudo apt-get install libmpich-mpd1.0-dev mpich-bin
+
+internal doc on this page : http://gridgroup.hefr.ch/popc/doku.php/develext:mpi
+

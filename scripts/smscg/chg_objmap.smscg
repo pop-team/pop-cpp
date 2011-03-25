@@ -1,0 +1,58 @@
+#!/bin/bash
+OIFS="$IFS"
+IFS=$'\n'
+set -f    # disable file name generation (globbing)
+lines=( $(< "$1" ) )
+set +f
+#IFS="$OIFS"
+#printf "%s\n" "${lines[@]}" | nl
+
+if [ -e "$1" ]
+then
+rm "$1"
+fi
+
+
+
+for oneLine in "${lines[@]}"
+do
+if [[ $oneLine =~ '$' ]]
+then
+
+IFS=' '	# field separator for splitting the line in object name, object architecture ant object path
+
+read  ObjName ObjArch  ObjPath <<< "${oneLine}"   # splitting the line
+
+# we use now only the object path field so we change the separator
+# we assume that the variable is at the begin of the separator
+
+IFS='/'
+
+read varField restPath <<< "${ObjPath}"
+
+# for searching if a variable with the name "$varField" we need to remove the $
+
+IFS="$"
+read dummyCar varName <<< "${varField}"
+
+# searching of a variable name "$varName
+
+variable=`set |grep ^"${varName}"`
+
+IFS='='
+read DummyCar PathPrefix <<< "${variable}"
+
+# now we can construct the entire line
+
+newLine=`echo $ObjName  $ObjArch  $PathPrefix/$restPath`
+
+else
+  newLine=$oneLine
+fi
+
+echo $newLine >> $1
+
+
+done
+
+IFS="$OIFS"
