@@ -1,6 +1,6 @@
 /**
  * File : ESXWrapper.cc
- * Author : Adrian Wyssen
+ * Author : Adrian Wyssen, Clement Valentin
  * Description : Implementation of the VPopCWrapper for an ESX driver
  * Creation date : 04/08/2010
  * 
@@ -29,12 +29,17 @@ extern "C"{
 using namespace std;
 
 //########## START Class methods ##########------------------------------
-
+/**
+ * ESXWrapper constructor
+ * @clonerRef Reference to the POPCloner parallel object
+ */
 ESXWrapper::ESXWrapper(paroc_accesspoint clonerRef) : POPWrapper(clonerRef) {
 
 }
 
-
+/**
+ * ESXWrapper destructor
+ */
 ESXWrapper::~ESXWrapper(){
 
 }
@@ -43,6 +48,13 @@ ESXWrapper::~ESXWrapper(){
 
 //########## START libvirt calls ##########------------------------------
 
+/**
+ * Connection to the hypervisor using libvirt
+ * @param uri        URI to the ESXi hypervisor account
+ * @param user       User of the ESXi hypervisor account
+ * @param password   Password of the ESXi hypervisor account
+ * @return 0 if succeed
+ */
 int ESXWrapper::_popc_connectOpenAuth(string uri, string user, string password){
 
    //Call super method to authenticate 

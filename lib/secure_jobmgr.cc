@@ -61,8 +61,8 @@ SecureJobMgr::~SecureJobMgr(){
  * @param jobcontacts 
  * @param reserveIDs
  * @param requestInfo
- * @param
- * @r
+ * @param iptrace
+ * @param tracesize
  */
 bool SecureJobMgr::AllocResource(const paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize)
 {

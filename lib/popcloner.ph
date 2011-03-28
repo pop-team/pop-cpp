@@ -47,12 +47,7 @@ private:
 
    void startNStopVMESXi(string vm_path); //Function to start and stop a VM on a ESXi hypervisor
 
-   bool cloningEnable;
-
-   //Use this code if the cloning method is concurrent
-   //POPSynchronizer locker;
-   //int locker_counter;
-
+   bool cloningEnable;           //tell if the cloning process is enable or not
 };
 
 int popc_clone_log(const char *format,...);  //log function for error

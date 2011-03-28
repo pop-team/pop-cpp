@@ -64,13 +64,19 @@ static int authCallback(virConnectCredentialPtr cred, unsigned int ncred, void *
 
 //########## START Class methods ##########------------------------------
 
+/**
+ * POPWrapper constructor
+ * @param clonerRef Reference object to the POPCloner parallel object
+ */
 POPWrapper::POPWrapper(paroc_accesspoint clonerRef){
    _connPtr = NULL;
    _domPtr = NULL;
    _popcloner = clonerRef;
 }
 
-
+/**
+ * Destructor of the POPWrapper
+ */
 POPWrapper::~POPWrapper(){
    if(_connPtr != NULL)
       _popc_connectClose();
@@ -81,6 +87,13 @@ POPWrapper::~POPWrapper(){
 
 //########## START libvirt calls ##########------------------------------
 
+/**
+ * Connection to the hypervisor using libvirt
+ * @param uri        URI to the ESXi hypervisor account
+ * @param user       User of the ESXi hypervisor account
+ * @param password   Password of the ESXi hypervisor account
+ * @return 0 if succeed
+ */
 int POPWrapper::_popc_connectOpenAuth(string uri, string user, string password){
    AuthData authData;
    popc_wrapper_log("CONNECTION %s, %s, %s", uri.c_str(), user.c_str(), password.c_str());
@@ -129,7 +142,11 @@ int POPWrapper::_popc_connectClose(){
    return 0;
 }
 
-
+/**
+ * Look for a Virtual Machine by its name
+ * @param domName Name of the VM
+ * @return libvirt pointer to the VM
+ */
 virDomainPtr POPWrapper::_popc_domainLookupByName(string domName){
    virDomainPtr _crtDomPtr;
    //Check if connection to ESX host exists
@@ -143,7 +160,12 @@ virDomainPtr POPWrapper::_popc_domainLookupByName(string domName){
    return _crtDomPtr;
 }
 
-
+/**
+ * Get domain state
+ * @param vm POPvm object pointing the the right domain
+ * @param state Reference to the string that will containing the state
+ * @return 0 if succeed
+ */
 int POPWrapper::_popc_domainState(POPvm &vm, string* state){
    virDomainInfo _domInfo;
    virDomainPtr dom = vm.getDomainPtr();
@@ -169,7 +191,10 @@ int POPWrapper::_popc_domainState(POPvm &vm, string* state){
    return 0;
 }
 
-
+/**
+ * Get free memory of the ESXi node
+ * @return Available free memory on success or -1, -2 on failure
+ */
 long long POPWrapper::_popc_nodeGetFreeMemory(){
    unsigned long long freeMemOnHost = -1;
    if(_connPtr == NULL)
@@ -182,7 +207,11 @@ long long POPWrapper::_popc_nodeGetFreeMemory(){
    return (freeMemOnHost/1024);
 }
 
-
+/**
+ * Get ESXi node information
+ * @param reference to a node info object
+ * @return 0 on success
+ */
 int POPWrapper::_popc_nodeGetInfo(nodeInfo* info){
    virNodeInfo libInfo;
    
@@ -206,7 +235,11 @@ int POPWrapper::_popc_nodeGetInfo(nodeInfo* info){
    return 0;
 }
 
-
+/**
+ * Get number of snapshot for a domain
+ * @param vm POPvm object pointing the the right domain
+ * @return Number of snapshot for this domain or -2 if domain pointer is NULL
+ */
 int POPWrapper::_popc_domainSnapshotNum(POPvm &vm){
    virDomainPtr dom = vm.getDomainPtr();
    if(dom == NULL)
@@ -216,7 +249,13 @@ int POPWrapper::_popc_domainSnapshotNum(POPvm &vm){
    return virDomainSnapshotNum(dom, 0);
 }
 
-
+/**
+ * Get list of snapshots for a domain
+ * @param vm      POPvm object pointing the the right domain
+ * @param names   Reference to a string list that will contains the snapshots 
+ * @param len     
+ * @return Number of snapshots in the list or -2 if doamin point is NULL or -1 if failure
+ */
 int POPWrapper::_popc_domainSnapshotListNames(POPvm &vm, string names[], unsigned short len){
    int nbrOfSnaps, i;
    char* snapNames[len];
@@ -235,7 +274,12 @@ int POPWrapper::_popc_domainSnapshotListNames(POPvm &vm, string names[], unsigne
    return nbrOfSnaps;
 }
 
-
+/**
+ * Revert the domain to a specific snapshot
+ * @param vm            POPvm object pointing the the right domain
+ * @param snapshotName  Name of the snapshot to be reverted
+ * @return 0 on success
+ */
 int POPWrapper::_popc_domainRevertToSnapshot(POPvm &vm, string snapshotName){
    virDomainSnapshotPtr snapPtr;
    virDomainPtr dom = vm.getDomainPtr();
@@ -254,7 +298,11 @@ int POPWrapper::_popc_domainRevertToSnapshot(POPvm &vm, string snapshotName){
    return 0;
 }
 
-
+/**
+ * Revert a domain to the oldest snapshot
+ * @param vm   POPvm object pointing the the right domain
+ * @return 0 on success
+ */
 int POPWrapper::_popc_domainRevertToOldestSnapshot(POPvm &vm){
    string snapName;
    
@@ -264,7 +312,13 @@ int POPWrapper::_popc_domainRevertToOldestSnapshot(POPvm &vm){
    return _popc_domainRevertToSnapshot(vm, snapName);
 }
 
-
+/**
+ * Create a snapshot for a domain
+ * @param vm            POPvm object pointing the the right domain
+ * @param name          Name of the new snapshot
+ * @param description   Description of the snapshot
+ * @return 0 on succeed
+ */
 int POPWrapper::_popc_domainSnapshotCreate(POPvm &vm, string name, string description){
    ostringstream xmlDesc;
    virDomainPtr dom = vm.getDomainPtr();
@@ -287,7 +341,13 @@ int POPWrapper::_popc_domainSnapshotCreate(POPvm &vm, string name, string descri
    return 0;
 }
 
-
+/**
+ * Remove a snapshot for a domain
+ * @param vm               POPvm object pointing the the right domain
+ * @param snapshotName     Name of the snapshot to delete
+ * @param removeChildren   True if you want to remove children
+ * @return 0 on succeed
+ */
 int POPWrapper::_popc_domainSnapshotDelete(POPvm &vm, string snapshotName, bool removeChildren){
    virDomainSnapshotPtr snapPtr;
    unsigned int flag;
@@ -312,7 +372,12 @@ int POPWrapper::_popc_domainSnapshotDelete(POPvm &vm, string snapshotName, bool 
    return 0;       
 }
 
-
+/**
+ * Set the available memory for a domain
+ * @param vm         POPvm object pointing the the right domain
+ * @param memoryInKb Avaiblable memory to set in Kb
+ * @return 0 on succeed
+ */
 int POPWrapper::_popc_domainSetMemory(POPvm &vm, unsigned long memoryInKb){
    virDomainPtr dom = vm.getDomainPtr();   
 
@@ -322,7 +387,12 @@ int POPWrapper::_popc_domainSetMemory(POPvm &vm, unsigned long memoryInKb){
    return(virDomainSetMemory(dom, memoryInKb));
 }
 
-
+/**
+ * Set the maximum memory of a domain
+ * @param vm         POPvm object pointing the the right domain
+ * @param memoryInKb Maximum memory for this domain in Kb
+ * @return 0 on succeed
+ */
 int POPWrapper::_popc_domainSetMaxMemory(POPvm &vm, unsigned long memoryInKb){
    virDomainPtr dom = vm.getDomainPtr();   
    if(dom == NULL)
@@ -331,7 +401,11 @@ int POPWrapper::_popc_domainSetMaxMemory(POPvm &vm, unsigned long memoryInKb){
    return (virDomainSetMaxMemory(dom, memoryInKb));
 }
 
-
+/**
+ * Get maximum memory of this domain
+ * @param vm   POPvm object pointing the the right domain
+ * @return Maxmimum memroy set if succeed, -2 or -1 on failure
+ */
 long POPWrapper::_popc_domainGetMaxMemory(POPvm &vm){
    virDomainPtr dom = vm.getDomainPtr();   
    long res;
@@ -345,7 +419,11 @@ long POPWrapper::_popc_domainGetMaxMemory(POPvm &vm){
    return res;
 }
 
-
+/**
+ * Shutdown a domain
+ * @param vm   POPvm object pointing the the right domain
+ * @return 0 on succeed
+ */
 int POPWrapper::_popc_domainShutdown(POPvm &vm){
    virDomainPtr dom = vm.getDomainPtr();
    if(dom == NULL)
@@ -359,7 +437,11 @@ int POPWrapper::_popc_domainShutdown(POPvm &vm){
    return 0;
 }
 
-
+/**
+ * Suspend a domain
+ * @param vm   POPvm object pointing the the right domain
+ * @return 0 on succeed
+ */
 int POPWrapper::_popc_domainSuspend(POPvm &vm){
    virDomainPtr dom = vm.getDomainPtr();
    if(dom == NULL)
@@ -368,7 +450,11 @@ int POPWrapper::_popc_domainSuspend(POPvm &vm){
    return (virDomainSuspend(dom));
 }
 
-
+/**
+ * Resume a domain
+ * @param vm   POPvm object pointing the the right domain
+ * @return 0 on succeed
+ */
 int POPWrapper::_popc_domainResume(POPvm &vm){
    virDomainPtr dom = vm.getDomainPtr();
    if(dom == NULL)
@@ -377,7 +463,11 @@ int POPWrapper::_popc_domainResume(POPvm &vm){
    return (virDomainResume(dom));
 }
 
-
+/**
+ * Get the MAC address of a domain
+ * @param vm   POPvm object pointing the the right domain
+ * @return string containing the MAC address
+ */
 const string POPWrapper::_popc_domainGetMAC(POPvm &vm){
    char* xmlDescPtr;
    string xmlDesc;
@@ -406,7 +496,10 @@ const string POPWrapper::_popc_domainGetMAC(POPvm &vm){
    return xmlDesc;
 }
 
-
+/**
+ * Get libvirt error
+ * @return string value containing the error message
+ */
 const string POPWrapper::_popc_getError(){
    int ret;
    virErrorPtr err;
@@ -441,6 +534,11 @@ const string POPWrapper::_popc_getError(){
    return errMsg;
 }
 
+/**
+ * Check if domain is connected
+ * @param domName Name of the domain to check
+ * @return 0 if succeed
+ */
 int POPWrapper::_popc_domainIsConnected(string domName){
    //The standard value of this method is "". So if the user does not pass anything, it will be
    //emtpy and he wants to know if he is connected to any domain.
@@ -512,7 +610,10 @@ static int authCallback(virConnectCredentialPtr cred, unsigned int ncred, void *
 
 
 
-
+/**
+ * Function used to write log message
+ * @param format Formatted string and params
+ */
 int popc_wrapper_log(const char *format,...)
 {
 	char *tmp=getenv("POPC_TEMP");

@@ -23,10 +23,11 @@
 using namespace std;
 
 
-/*
+/**
  * ViSaG : clementval
  * Security Manager constructor
- *
+ * @param challenge  Challenge string to stop the service
+ * @param deamon     Tell if the parallel object behaves as a deamon
  */
 POPCSecurityManager::POPCSecurityManager(const POPString &challenge, bool deamon) : paroc_service_base(challenge) {
 	popc_security_log("Security Manager created");

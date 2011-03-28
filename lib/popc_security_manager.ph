@@ -91,7 +91,7 @@ protected:
 
    paroc_accesspoint _localJobMgr;  //reference to the local JobMgr
    paroc_accesspoint _localPSN;     //reference to the local POPCSearchNode
-   POPString _localPublicKey;    //contains the local SSH public key
+   POPString _localPublicKey;       //contains the local SSH public key
 
 
    //Mapping between the POPAppId and the Access Point of the initiator of the resource discovery
