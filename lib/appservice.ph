@@ -49,6 +49,16 @@ public:
 	AppCoreService(const paroc_string &challenge, bool daemon, const paroc_string & codelocation) @{ od.url(paroc_system::GetHost()); od.executable(codelocation); od.runLocal(true);};
 	~AppCoreService();
 
+
+
+   /**
+    * ViSaG : clementval
+    * Getter for the POP Application ID
+    */
+   sync conc paroc_string GetPOPCAppID();
+   /* ViSaG */
+
+
 	/*!@brief Query a user supplied service
 	 * @param name name of the service (string)
 	 * @param service the instance of the service of the given name is returned
@@ -77,12 +87,6 @@ public:
 	seq sync bool UnregisterService(const paroc_string &name);
 	classuid(20);
 
-   /**
-    * ViSaG : clementval
-    * Getter for the POP Application ID
-    */
-   sync conc paroc_string GetPOPCAppID();
-   /* ViSaG */
 
 private:
 	paroc_list_service servicelist;

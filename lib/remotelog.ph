@@ -27,13 +27,15 @@ public:
 	/** @brief Constructor
 	 * @param challenge challenge string which will be required on stopping the service
 	*/
-	RemoteLog([in] const paroc_string &challenge) @{ od.runLocal(true);};
+	RemoteLog([in] const POPString &challenge) @{ od.runLocal(true);};
 	~RemoteLog();
 
 	/** @brief Write a message to the user's console
 	 * @param info the user message (null terminated string)
 	*/
-	async seq void Log([in] const paroc_string &info);
+	async seq void Log([in] const POPString &info);
+
+   async seq void LogPJ([in]const POPString &appID, [in] const POPString &info);
 
 	classuid(3);
 };
