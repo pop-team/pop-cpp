@@ -30,3 +30,6 @@ obj.map:
 	./method.obj -listlong > obj.map
 run: obj.map
 	popcrun obj.map ./method.main 
+
+clean-local:
+	rm -rf obj.map

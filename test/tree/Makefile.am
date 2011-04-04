@@ -30,3 +30,6 @@ obj.map:
 	./tree.obj -listlong > obj.map
 run: obj.map
 	popcrun obj.map ./tree.main 2 3
+
+clean-local:
+	rm -rf obj.map
