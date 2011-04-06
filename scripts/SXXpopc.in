@@ -148,8 +148,36 @@ kill() {
 }
 
 vmstate(){
-   echo "Getting information about VM on $SERVER"
-   echo $ARGS
+   TMP=$(echo ${ARGS% *})
+   TMP2=$(echo ${ARGS#* })
+   USER=$(echo ${TMP2% *})
+   PASS=$(echo ${TMP2#* })
+   IP=$(echo ${TMP% *})
+
+   if [ "x$USER" == "x" ] || [ "x$PASS" == "x" ] || [ "x$IP" == "x" ]
+   then 
+      echo "SXXpopc vmstate ip_address username password"
+      exit
+   fi
+
+   echo "Getting information about VM on $IP"
+
+   
+   LIST=$(vmware-cmd --server $IP --username $USER --password $PASS -l)
+
+   for VM in $LIST
+   do
+      VMNAME=$(echo ${VM%/*})
+      TRASH=$(echo ${VMNAME%/*})
+      START=$(echo ${#TRASH})
+      let "START=$START+1"
+      VMNAME=$(echo ${VMNAME:$START})
+
+      STATE=$(vmware-cmd --server $IP --username $USER --password $PASS $VM getstate)
+      STATE_ONLY=$(echo ${STATE#* })
+      echo "VM $VMNAME $STATE_ONLY"
+   done
+   
 }
 
 case "$ARG1" in
