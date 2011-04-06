@@ -15,7 +15,7 @@ then
 	exit 1
 fi
 
-echo '#!/bin/sh' > $tmpheader
+echo '#!/bin/bash' > $tmpheader
 echo "POPC_LOCATION=${POPC_LOCATION}" >> $tmpheader
 echo "export POPC_LOCATION" >> $tmpheader
 
