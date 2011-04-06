@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#mkdir bak 2> /dev/null
+#cp * bak 2> /dev/null
+
+for i in $*
+do
+	echo doing $i...
+	
+	latex $i
+	bibtex $i
+	latex $i
+	while [  `grep "Rerun to get cross" ${i}.log|wc -l` -gt 0 ]; do
+		latex $i
+	done
+	
+	dvips -sPAPERSIZE=a4 $i -o
+	ps2pdf -sPAPERSIZE=a4 $i.ps
+
+	psbook $i.ps $i-mini.ps
+	psnup -pA4 -PA4 -2 $i-mini.ps $i-pli.ps
+	ps2pdf -sPAPERSIZE=a4 $i-pli.ps
+	ps2pdf -sPAPERSIZE=a4 $i-mini.ps
+done
+

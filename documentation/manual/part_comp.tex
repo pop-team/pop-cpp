@@ -1,0 +1,298 @@
+\chapter{Compiling and Running}
+
+%\todo{Here should be an explanation about the chapter.
+% It should also say that an example is given.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Compilation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%The POP-C++ language is an extension of C++. It incorporates its own compiler which translates the POP-C++ code to ANSI C++ code before compiling it. 
+The POP-C++ compiler generates a main executable and several object executables. 
+The main executable provides a starting point to the application and object executables are loaded and started by the POP-C++ runtime system whenever a parallel object is created. The compilation process is illustrated in figure \ref{fig_compiler}.
+
+%the POP-C++ service libraries that
+%provide APIs for accessing various runtime services such as
+%communication, resource discovery and object allocation, etc.; and an
+%ANSI C++ compiler to generate binary executables from the C++ code and
+%the service libraries. 
+
+\figureps{fig_compiler}{140mm}
+{POP-C++ compilation process}
+
+The POP-C++ compiler contains a parser which translates the
+code to ANSI C++ code. Service libraries provide APIs that manages communication,
+resource discovery and object allocation, etc. An ANSI C++ compiler finally
+generates binary executables.
+
+
+\section{Example Program}
+
+We will see in this section how to write a simple POP-C++ program. 
+
+\subsection{Programming}
+\subsubsection{integer.ph}
+
+Figure \ref{fig_integer_ph} shows the declaration of a parallel class in a
+POP-C++ header. From the language aspect, this part contains the major
+differences between POP-C++ and C++. However, as the example shows,
+a POP-C++ class declaration is similar to a C++ class declaration with the addition of some new keywords. A parallel class consists of
+constructors (lines 3 and 4), destructor (optional), interfacing methods
+(\texttt{public}, lines 5-7), and a data attribute (\texttt{private},
+line 9).
+
+\begin{figura}{fig_integer_ph}{File \texttt{integer.ph}}%
+\vspace{-4mm}%
+\begin{verbatim}
+ 1: parclass Integer {
+ 2: public :
+ 3:     Integer(int wanted, int minp) @{ od.power(wanted, minp); };
+ 4:     Integer(POPString machine) @{ od.url(machine);};
+ 5:     seq async void Set(int val);
+ 6:     conc int Get();
+ 7:     mutex void Add(Integer &other);
+ 8: private :
+ 9:     int data;
+10: };
+\end{verbatim}
+\end{figura}
+
+In the figure \ref{fig_integer_ph}, the programmer defines a parallel
+class called \texttt{Integer} starting with the keyword
+\texttt{parclass} (line 1). Two constructors (lines 3 and 4) of
+\texttt{Integer} are both associated with two object descriptors which
+reside right after the argument declaration, between \texttt{@\{...\}}.
+The first object descriptor (line 3) specifies the parameterized high
+level requirement of resource (i.e. computing power). The second object
+descriptor (line 4) is the low-level description of the location of
+resource on which the object will be allocated.
+
+
+The invocation semantics are defined in the class declaration by putting
+corresponding keywords (\texttt{sync}, \texttt{async}, \texttt{mutex},
+\texttt{seq}, \texttt{conc}) in front of the method declaration. In the
+example of figure \ref{fig_integer_ph}, the \texttt{Set()} method (line
+5) is sequential asynchronous, the \texttt{Get()} method (line 6) is
+concurrent and the \texttt{Add()} method (line 7) is mutual exclusive
+execution. Although it is not shown in the example the user can also
+use standard C++ features such as \texttt{virtual}, \texttt{const}, or
+inheritance with the parallel class.
+
+
+\subsubsection{integer.cc}
+\begin{figura}{fig_integer_cc}{File \texttt{integer.cc}}%
+\vspace{-4mm}%
+\begin{verbatim}
+ 1: #include "integer.ph"
+ 2: 
+ 3: Integer::Integer(int wanted, int minp) {}
+ 4: Integer::Integer(POPString machine) {}
+ 5: 
+ 6: void Integer::Set(int val) {
+ 7:     data = val;
+ 8: }
+ 9: 
+10: int Integer::Get() {
+11:     return data;
+12: }
+13: 
+14: void Integer::Add(Integer &other) {
+15:     data = other.Get();
+16: }
+17: 
+18: @pack(Integer);
+\end{verbatim}
+\end{figura}
+
+The implementation of the parallel class \texttt{Integer} is shown in
+figure \ref{fig_integer_cc}. This implementation does not contain any
+invocation semantics and looks similar to a C++ code, except at line 18
+where we provide a directive \texttt{@pack} to tell the POP-C++ compiler
+the place to generate the parallel object executable for
+\texttt{Integer} (see section \ref{sec:pack} for the \texttt{pack} directive).
+
+
+\subsubsection{main.cc}
+\begin{figura}{fig_main_cc}{File \texttt{main.cc}}%
+\vspace{-4mm}%
+\begin{verbatim}
+ 1: #include "integer.ph"
+ 2:
+ 3: int main(int argc, char **argv)
+ 4: {
+ 5:     try {
+ 6:         Integer o1(100, 80), o2("localhost");
+ 7:         o1.Set(1);
+ 8:         o2.Set(2);
+ 9:         o1.Add(o2);
+10:         printf("Value=%d\n", o1.Get());
+11:     }
+12:     catch (POPException *e) {
+13:         printf("Object creation failure\n");
+14:         e->Print();
+15:         return -1;
+16:     }
+17:     return 0;
+18: }
+\end{verbatim}
+\end{figura}
+
+
+The main POP-C++ program in figure \ref{fig_main_cc} looks exactly like a
+C++ program. Two parallel objects of type \texttt{Integer}, \texttt{o1}
+and \texttt{o2}, are created (line 6). The object \texttt{o1} requires a
+resource with the desired performance of 100MFlops although the minimum
+acceptable performance is 80MFlops. The object \texttt{o2} will
+explicitly specify the resource location (localhost). 
+
+After the object
+creations, the invocations to methods \texttt{Set()} and \texttt{Add()}
+are performed (line 7-9). The invocation of \texttt{Add()} method shows
+an interesting property of the parallel object: the object \texttt{o2}
+can be passed from the \texttt{main} program to the remote method
+\texttt{Add()} of parallel object \texttt{o1}. 
+
+Lines 12-15 illustrate
+how to handle exceptions in POP-C++ using the keyword pair \texttt{try}
+and \texttt{catch}. Although \texttt{o1} and \texttt{o2} are distributed
+objects but the way to handle the remote exceptions is the same as in
+C++.
+
+\subsection{Compiling}
+
+We generate two executables: the main program (\texttt{main}) and the
+object code (\texttt{integer.obj}). POP-C++ provides the command
+\texttt{popcc} to compile POP-C++ source code. To compile the main
+program we use the following command:
+
+\vspace{3mm}
+\begin{verbatim}
+    popcc -o main integer.ph integer.cc main.cc
+\end{verbatim}
+
+\subsection{Compile the object code}
+
+Use \texttt{popcc} with option \texttt{-object} to generate the object
+code:
+
+\vspace{4mm}
+\begin{verbatim}
+    popcc -object -o integer.obj integer.ph integer.cc
+\end{verbatim}
+\vspace{4mm}
+
+You can note that we have compiled the declaration of the parallel class
+\texttt{integer.ph} explicitly. The user can also generate intermediate
+code \texttt{.o} that can be linked using a C++ compiler by using the \texttt{--c} option (compile only) with \texttt{popcc}.
+
+\subsubsection{Compilation for several parclasses with dependencies}
+
+The compilation is a little bit more difficult for more complex applications 
+using several different parallel classes. This is the case, for example,
+when the main program calls methods from objects of different parallel classes
+or when there is a chain of dependencies between the main program and several
+parallel classes as illustrated on figure \ref{multi_class}.
+
+\figureps{multi_class}{120mm}
+{Parclasses with dependencies}
+
+\begin{figura}{fig_dependency_cc}{How to compile applications with dependencies}%
+\vspace{-4mm}%
+\begin{verbatim}
+	popcc -object -o myobj4.obj myobj4.ph myobj4.cc
+	popcc -c -parclass-nobroker myobj4.ph
+
+	popcc -object -o myobj3.obj myobj3.ph myobj3.cc myobj4.stub.o
+	popcc -c -parclass-nobroker myobj3.ph
+	
+	popcc -object -o myobj2.obj myobj2.ph myobj2.cc myobj3.stub.o
+	popcc -c -parclass-nobroker myobj2.ph 
+
+	popcc -object -o myobj1.obj myobj1.ph myobj1.cc myobj2.stub.o
+
+	popcc -o main main.cc myobj1.ph myobj1.cc myobj2.stub.o
+\end{verbatim}
+\end{figura}
+
+Since each class contains some internal POP-C++ classes such as the
+\texttt{interface} or the \texttt{broker} classes, the compilation must avoid
+to create multiple definitions of these classes. An easy way to avoid this is to
+begin the compilation with the last class of the chain (the class \texttt{myobj4}
+on figure \ref{multi_class}) and then to compile each parallel class in reverse
+order. To compile any class in the chain we needs the parallel classe which is
+directly after the one we are compiling in the chain of dependency.
+When compiling a parallel classe without generating the executable code
+(option \texttt{-c}), the POP-C++ compiler generates a relocatable object file
+called className\texttt{.stub.o}. In addition the POP-C++ compiler has an option
+called \texttt{-parclass-nobroker} which allows to generate relocatable code
+without internal POP-C++ classes.
+The way to compile a POP-C++ application with dependencies as illustrated on figure \ref{multi_class} is shown on figure \ref{fig_dependency_cc}.
+
+The source code of this example can be found in the \texttt{examples} directory
+of the POP-C++ distribution and on the POP-C++ web site 
+(\texttt{http://gridgroup.hefr.ch/popc}).
+
+
+
+\subsection{Running}
+
+To execute a POP-C++ application we need to generate the object map file which contains
+the list of all parallel classes used by the application. For each parallel
+class we need to indicate for which architecture the compilation has been done
+and the location of the file (object file).
+
+With POP-C++ it is possible to get this information by executiong the object file
+with the option \texttt{-listlong}.
+
+Example for the \texttt{Interger} parallel class:
+\vspace{4mm}
+\begin{verbatim}
+    ./integer.obj -listlong
+\end{verbatim}
+\vspace{4mm} 
+
+To generate the object map file we simply redirect the output to the object map file:
+\vspace{4mm}
+\begin{verbatim}
+    ./integer.obj -listlong > obj.map
+\end{verbatim}
+\vspace{4mm}
+
+The object map file contains all mappings between object name,
+platform and the executable location. In our example we have compiled on Linux machines and the object map file looks like this:
+
+\vspace{4mm}
+\begin{verbatim}
+    Integer i686-pc-Linux /home/myuser/popc/test/integer/integer.obj
+\end{verbatim}
+\vspace{4mm}
+
+If you also compile the object code for another platform (e.g. Solaris), simply
+add a similar line to \texttt{obj.map}. The executable location can also be an
+absolute path or an URL (HTTP or FTP). 
+
+We can now run the program using the command \texttt{popcrun}:
+
+\vspace{3mm}
+\begin{verbatim}
+    popcrun obj.map ./main
+\end{verbatim}
+\vspace{4mm}
+
+Figure \ref{fig_integer_run} shows the execution of \texttt{Integer::Add()}
+method on line 4 in figure \ref{fig_integer_cc} of the example. The system
+consists of three running processes: the \texttt{main}, object
+\texttt{o1} and object \texttt{o2}. The \texttt{main} is started by the
+user. Objects \texttt{o1} and \texttt{o2} are created by \texttt{main}.
+Object \texttt{o2} and the \texttt{main} program run on the same machine
+although they are in two separate memory address spaces; object \texttt{o1} runs
+on a remote machine. The \texttt{main} invokes the \texttt{o1.Add()}
+with the interface \texttt{o2} as an argument. Object \texttt{o1} will
+then connect to \texttt{o2} automatically and invoke the method
+\texttt{o2.Get()} to get the value and to add this value to its local
+attribute \texttt{data}. POP-C++ system manages all object interactions
+in a transparent manner to the user.
+
+\figureps{fig_integer_run}{100mm}
+{An execution example}
