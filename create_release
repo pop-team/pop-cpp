@@ -39,6 +39,9 @@ then
    exit
 fi
 
+make clean 
+
+
 VERSION=$1
 DDATE=$(date +%Y%m%d)
 RELDIR="popcpp_"$VERSION"_build_"$DDATE
@@ -63,7 +66,10 @@ do
       fi
    else
       #echo "cp $FILE $RELDIR$NEWPATH"
-      cp $FILE $RELDIR$NEWPATH+
+      if [ "$FILE" != "./create_release" ]
+      then
+         cp $FILE $RELDIR$NEWPATH
+      fi
    fi
 done
 
