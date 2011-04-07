@@ -9,6 +9,8 @@
  * L.Winkler   2008-2009   for version 1.3
  * P.Kuonen    02/2010     (GetHost, getIp, add POPC_Host_Name, ...) for version 1.3m (see comments 1.3m)
  * P.Kuonen    02/2011      define default IP for version 1.3.1m (see comments 1.3.1m)
+ * P.Kuonen    25/3/2011    Cosmetic changes
+
  */
 
 #include <stdio.h>
@@ -38,23 +40,23 @@ paroc_string paroc_system::POPC_HostName;
 
 const char *paroc_system::paroc_errstr[17]=
 {
-  "Out of resource",
-  "Fail to bind to the remote object broker",
-  "Mismatch remote method id",
-  "Can not access code service",
-  "Object allocation failed",
-  "No parallel object executable",
-  "Bad paroc package format",
-  "Local application service failed",
-  "Job manager service failed",
-  "Execution of object code failed",
-  "Bad binding reply",
-  "No support protocol",
-  "No support data encoding",
-  "Standard exception",
-  "Acknowledgement not received",
-  "Network configuration error",
-  "Unknown exception"
+  "Out of resource",                           // 0 
+  "Fail to bind to the remote object broker",  // 1
+  "Mismatch remote method id",                 // 2
+  "Can not access code service",               // 3
+  "Object allocation failed",                  // 4
+  "No parallel object executable",             // 5
+  "Bad paroc package format",                  // 6
+  "Local application service failed",          // 7
+  "Job Manager service failed",                // 8
+  "Execution of object code failed",           // 9
+  "Bad binding reply",                         // 10
+  "No support protocol",                       // 11
+  "No support data encoding",                  // 12
+  "Standard exception",                        // 13
+  "Acknowledgement not received",              // 14
+  "Network configuration error",               // 15
+  "Unknown exception"                          // 16
 };
 
 
@@ -184,6 +186,7 @@ paroc_string paroc_system::GetIP()
       iface=tmp;    // Try to determine IP from network interface name
       if (!(GetIPFromInterface(iface,ip)))  
       {             // Not found
+        setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
         printf("POP-C++ Warning: Cannot find an IP for interface %s, using '%s' as IP address.\n",(const char*)iface, LOCALHOST);
       }
     }
@@ -463,11 +466,11 @@ void paroc_system::processor_set(int cpu)
 #ifndef ARCH_MAC
   //debug(1, "cpu=%d", cpu);
   if (cpu < 0) {
-    printf("POP-C++ Warning : Cannot set processor to %d<0", cpu);
+    printf("POP-C++ Warning: Cannot set processor to %d<0", cpu);
     exit(EXIT_FAILURE);
   }
   if (cpu >= CPU_SETSIZE) {
-    printf("POP-C++ Warning : Cannot set processor to %d while CPU_SETSIZE=%d", cpu, CPU_SETSIZE);
+    printf("POP-C++ Warning: Cannot set processor to %d while CPU_SETSIZE=%d", cpu, CPU_SETSIZE);
     exit(EXIT_FAILURE);
   }
 
@@ -475,19 +478,19 @@ void paroc_system::processor_set(int cpu)
   CPU_ZERO(&cpu_set);
   CPU_SET(cpu, &cpu_set);
   if (sched_setaffinity(0, sizeof(cpu_set), &cpu_set) == -1) {
-    printf("POP-C++ Warning : Cannot set processor to %d (cpu_set %p)", cpu,(void *)&cpu_set);
+    printf("POP-C++ Warning: Cannot set processor to %d (cpu_set %p)", cpu,(void *)&cpu_set);
     exit(EXIT_FAILURE);
   }
 
   cpu_set_t cpu_get;
   CPU_ZERO(&cpu_get);
   if (sched_getaffinity(0, sizeof(cpu_get), &cpu_get) == -1) {
-    printf("POP-C++ Warning : Unable to sched_getaffinity to (cpu_get) %p", (void *)&cpu_get);
+    printf("POP-C++ Warning: Unable to sched_getaffinity to (cpu_get) %p", (void *)&cpu_get);
     exit(EXIT_FAILURE);
   }
 
   if (memcmp(&cpu_get, &cpu_set, sizeof(cpu_set_t))) {
-    printf("POP-C++ Warning : Unable to run on cpu %d", cpu);
+    printf("POP-C++ Warning: Unable to run on cpu %d", cpu);
     exit(EXIT_FAILURE);
   }
 #endif
