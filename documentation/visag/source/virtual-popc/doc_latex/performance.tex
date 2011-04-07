@@ -209,5 +209,5 @@ As shown in Figure \ref{fig:ssd_vs_hdd}, using a SSD instead of a HDD, the time 
 \end{figure}
 
 \subsection{Conclusion}
-As we can see, we do not loose performance during the computation. In fact, all the losses are due to the preparation of the Worker VM. This means that the creation of an object is much slower when a Worker VM has to be prepared. A creation could take about 20 times more if no Worker VM is ready for the object and a whole preparation must be done. This time could be almost reduced by 2 if using a solid storage drive. 
+As we can see, we do not loose much performance during the computation. In fact, all the losses are due to the preparation of the Worker VM. This means that the creation of an object is much slower when a Worker VM has to be prepared. A creation could take about 20 times more if no Worker VM is ready for the object and a whole preparation must be done. This time could be almost reduced by 2 if the node is using a solid storage drive. 
 

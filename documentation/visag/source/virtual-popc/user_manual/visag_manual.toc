@@ -20,9 +20,10 @@
 \contentsline {subsubsection}{\numberline {6.2.1}Object reference passing test}{12}
 \contentsline {subsubsection}{\numberline {6.2.2}Decentralized object creation test}{13}
 \contentsline {subsection}{\numberline {6.3}Test conclusion}{14}
-\contentsline {section}{\numberline {7}Glossary}{15}
-\contentsline {section}{\numberline {8}Table of figures}{16}
-\contentsline {section}{\numberline {9}References}{16}
+\contentsline {section}{\numberline {7}New options}{14}
+\contentsline {section}{\numberline {8}Glossary}{15}
+\contentsline {section}{\numberline {9}Table of figures}{16}
+\contentsline {section}{\numberline {10}References}{16}
 \contentsline {section}{\numberline {A}libvirt 0.8.7 installation}{17}
 \contentsline {section}{\numberline {B}VMware Tools 8.3.2 installation}{18}
 \contentsline {section}{\numberline {C}VMware CLI 4.1 installation}{18}

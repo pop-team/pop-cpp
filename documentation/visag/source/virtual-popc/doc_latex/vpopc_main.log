@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  5 APR 2011 11:26
+This is pdfTeX, Version 3.1415926-1.40.11 (TeX Live 2010) (format=pdflatex 2010.7.21)  7 APR 2011 13:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -820,7 +820,7 @@ type1/public/lm/lmss12.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/publ
 ic/lm/lmssbx10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/lm/lm
 sso10.pfb></usr/local/texlive/2010/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
 
-Output written on vpopc_main.pdf (42 pages, 852548 bytes).
+Output written on vpopc_main.pdf (42 pages, 852846 bytes).
 PDF statistics:
  233 PDF objects out of 1000 (max. 8388607)
  146 compressed objects within 2 object streams

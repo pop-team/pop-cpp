@@ -142,7 +142,26 @@ The following of this chapter explains how to set up these two VM on a ESXi virt
 
 \input{test}
 
+\section{New options}
+The SXXpopc has two new options. The first one is "kill" to kill all the POP-C++ Global Services. The second one is "vmstate" to give the state of the VM on a specific node. \s
 
+\textbf{kill}\\
+The option "kill" does not take any parameters:
+\begin{lstlisting}
+SXXpopc kill
+\end{lstlisting}\s
+
+\textbf{vmstate}\\
+The option "vmstate" takes three parameters: 
+\begin{itemize}
+\item IP address: The IP address of the ESXi hypervisor
+\item Username: The username used to connect to the hypervisor
+\item Password: The password use to connect to the hypervisor
+\end{itemize}
+
+\begin{lstlisting}
+SXXpopc vmstate 160.98.20.142 root myPassword
+\end{lstlisting}
 
 
 
