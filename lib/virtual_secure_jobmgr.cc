@@ -296,14 +296,7 @@ bool VirtSecureJobMgr::PrepareVM(char** argv, int* n, POPString popAppId, POPStr
    string workerState;
    string workerIp;
    bool hasBeenReverted=false;
-   //Test: to be removed
-//	Timer timer;
 
-  /* double reservingTime=0.0, gettingState=0.0, revert=0.0, reversePing=0.0;
-   double sendMainNodeAndMain=0.0, sendInitiatorKey=0.0, keyExchange=0.0, getPKI=0.0, getIP=0.0;
-   double t1=0.0, t2=0.0;*/
-   
-//   timer.Start();
    //Retrieve the VM reserved for this job
    POPvm *reservedVM;
    std::list<POPvm>::iterator it;
@@ -315,23 +308,14 @@ bool VirtSecureJobMgr::PrepareVM(char** argv, int* n, POPString popAppId, POPStr
       }   
    }
 
- //  reservingTime = timer.Elapsed();
-   
-
- //  t1 = timer.Elapsed();
    //If machine is not running, revert to the clean snapshot.
    if(vWrapper->_popc_domainState((*reservedVM), &workerState) < 0){
       popc_node_log("[VSJM] VIRTUAL: Failed to get state of VM.");
       return false;
    }
-//   t2 = timer.Elapsed();
 
-//   gettingState = t2-t1;
-
- //  t1 = timer.Elapsed();
    if(workerState.compare("running") != 0){
       string snapshotName((*reservedVM).getSnapshotName().GetString());
-      //popc_node_log("[VSJM] VIRTUAL: Machine does not run. Revert to snapshot [%s]", snapshotName.c_str());
       if(vWrapper->_popc_domainRevertToSnapshot((*reservedVM), snapshotName) < 0){
          popc_node_log("[VSJM] VIRTUAL: Could not revert to the snapshot.");
          return false;
@@ -341,15 +325,10 @@ bool VirtSecureJobMgr::PrepareVM(char** argv, int* n, POPString popAppId, POPStr
       popc_node_log("[VSJM] VIRTUAL: Machine runs already.");
       hasBeenReverted=false;
    }
- //  t2 = timer.Elapsed();
- //  revert = t2-t1;
-
- //  t1 = timer.Elapsed();   
+   
    //Get the IP address of the worker guest
    if(vWrapper->_popc_domainGetIpAddress((*reservedVM)) < 0)
       return false;
- //  t2 = timer.Elapsed();
- //  getIP = t2-t1;
 
    if(reservedVM->getIPAddress().Length() <= 0){
       popc_node_log("[VSJM] VIRTUAL: IP address could not be retrived");
@@ -358,7 +337,6 @@ bool VirtSecureJobMgr::PrepareVM(char** argv, int* n, POPString popAppId, POPStr
 
    workerIp.append(reservedVM->getIPAddress().GetString());
 
- //  t1 = timer.Elapsed();   
    //Get local public key 
    if(!(reservedVM->hasPKI())){
       if(vWrapper->_popc_getLocalPublicKey((*reservedVM)) < 0){
@@ -367,10 +345,7 @@ bool VirtSecureJobMgr::PrepareVM(char** argv, int* n, POPString popAppId, POPStr
       }
    }
    popc_node_log("[VSJM] VIRTUAL: VM PKI is %s", (*reservedVM).getPKI().GetString());
- //  t2 = timer.Elapsed();
-//   getPKI = t2-t1;
 
- //  t1 = timer.Elapsed();
    //Send VM PKI to the main Node
    VirtualPOPCSecurityManager vpsm(_localPSM);
    //Write the PKI on the local PSM
@@ -378,20 +353,15 @@ bool VirtSecureJobMgr::PrepareVM(char** argv, int* n, POPString popAppId, POPStr
    vpsm.writePKI(emptyPOPAppID, (*reservedVM).getPKI());
    //Write the PKI on the Main Node
    vpsm.reroutePKIToMain(popAppId, (*reservedVM).getPKI());
-//   t2 = timer.Elapsed();
-//   keyExchange = t2-t1;
 
-//   t1 = timer.Elapsed();
    //Send the initiator PKI everytime because it could be a different one each time
    POPString initiatorPKI = vpsm.getKeyFromReqMap(popAppId, reqID);
    if(vWrapper->_popc_sendPublicKey((*reservedVM), initiatorPKI) < 0){
       popc_node_log("[VSJM] VIRTUAL: Cannot send public key to worker guest (2).");
       return false;
    }
-//   t2 = timer.Elapsed();
-//   sendInitiatorKey = t2-t1;
 
-//   t1=timer.Elapsed();
+
    //Send the Main node PKI if the VM just been reverted   
    if(hasBeenReverted){
       //Retrieve the main node PKI and send it 
@@ -409,11 +379,6 @@ bool VirtSecureJobMgr::PrepareVM(char** argv, int* n, POPString popAppId, POPStr
          return false;
       }
    }
- //  t2=timer.Elapsed();
-//   sendMainNodeAndMain = t2-t1;
-//   timer.Stop();
-
- //  popc_node_log("TIMING:%g;%g;%g;%g;%g;%g;%g;%g;%g;",reservingTime, gettingState, revert, reversePing, getIP, getPKI, keyExchange, sendInitiatorKey, sendMainNodeAndMain);
 
    //Prepare ssh command
    char *tmp=getenv("POPC_RSH");

@@ -540,10 +540,8 @@ bool VirtualJobMgr::checkVM(Request req){
    popc_node_log("[VJM] Check VM for req %s", req.getUniqueId().GetString());
 
    //Check failed if the job count is too high
-   //popc_node_log("MAXJOBS:%d,%d", jobs.GetCount(), maxjobs);
    if (jobs.GetCount()>=maxjobs) return false;
 
-   //popc_node_log("CHECK_FOR_SUITABLE_VM");
    //Check if there is a VM reserved for this POPAppId
    std::list<POPvm>::iterator it;
    for(it=vm_list.begin(); it != vm_list.end(); it++){
@@ -576,8 +574,6 @@ bool VirtualJobMgr::checkVM(Request req){
  * @return The reservation ID
  */
 int VirtualJobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId, POPString reqID){
-   //popc_node_log("ENTER RESERVE");
-	//popc_node_log("TRY_TO_RESERVE_A_VIRTUAL_MACHINE:REQID:%s", reqID.GetString());
 	float flops=0;
 	float walltime=0;
 	float mem=0;
@@ -595,10 +591,9 @@ int VirtualJobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString po
       //Check if a VM is reserved for this POPAppID
       for(it=vm_list.begin(); it != vm_list.end(); it++){ //for
          if(!(*it).isFree() && (strcmp((*it).getReservedPOPAppId().GetString(), popAppId.GetString()) == 0)){ //if not free
-           // popc_node_log("RESERVATION_ON_ASSOCIATED_VM:%s", (*it).getName().GetString());
             float fitness=1;
             if (!od.IsEmpty()){ 
-	            //Do the check with od
+	            //eventually, do the check with od again
             }
             inoutfitness=fitness;
   		      Resources &t=jobs.AddTailNew();
@@ -622,11 +617,10 @@ int VirtualJobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString po
       } 
 
       for(it=vm_list.begin(); it != vm_list.end(); it++){ //for
-         //popc_node_log("TRY_TO_RESERVE_VM:%s", (*it).getName().GetString());
          if((*it).isFree()){  //if free
             float fitness=1;
             if (!od.IsEmpty()){ //if od not empty
-               //Do the check with od
+	            //eventually, do the check with od again
             }
             inoutfitness=fitness;
   		      Resources &t=jobs.AddTailNew();
@@ -644,6 +638,24 @@ int VirtualJobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString po
             psn.addJob(t.flops, t.mem, t.bandwidth);
             //Reserve the VM for the first time
             (*it).vm_reserve(popAppId);
+            
+            //Check remaining free VM
+            if(vm_list.size() < maxvm){
+               int nbFreeVM;
+               std::list<POPvm>::iterator it2;
+               for(it2=vm_list.begin(); it2 != vm_list.end(); it2++){
+                  if((*it).isFree())
+                     nbFreeVM++;
+               }
+               if(nbFreeVM < ADVANCE_VM){
+                  std::list<POPvm>::iterator it2;
+                  for(it2=vm_list.begin(); it2 != vm_list.end(); it2++){
+                     if((*it).isFree()){
+                        vWrapper->_popc_domainClone((*it), 1, vm_prefix, ++vm_last_number, vm_clonerRef);
+                     }
+                  }
+               }
+            }  
          	popc_node_log("GIVE_RESID;%d;ON_VM;%s;FOR:%s", t.Id, (*it).getName().GetString(), popAppId.GetString());
          	return t.Id;    
          } 
