@@ -6,6 +6,7 @@
  * 
  * Modifications :
  * Authors		Date			Comment
+ * P.Kuonen   25.3.2011 Messages cosmetic changes
  */
 
 #include <stdio.h>
@@ -41,7 +42,7 @@ void ObjectMonitor::KillAll()
 {
 	mutex
 	{
-		printf("Kill all parallel objects are requested\n");
+		printf("POP-C++: End of all parallel objects is being processed\n");
 		POSITION pos=objects.GetHeadPosition();
 		while (pos!=NULL)
 		{

@@ -5,8 +5,9 @@
  * Creation date : -
  * 
  * Modifications :
- * Authors		Date			Comment
- * clementval  ViSaG pro.  Add support for POP-C++ Virtual-Secure version
+ * Authors		Date			  Comment
+ * clementval ViSaG pro.  Add support for POP-C++ Virtual-Secure version
+ * P.Kuonen   25.3.2011   Cosmetic on printed error messages
  */
 
 #include <stdio.h>
@@ -438,7 +439,7 @@ void paroc_interface::Allocate()
 		catch (paroc_exception * e)
 		{
 			paroc_system::perror(e);
-			paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"paroc_interface : Cannot create object via POP-C++ Job Manager");
+			paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"POP-C++ error: Cannot create object via POP-C++ Job Manager because ");
 		}
 	}
    //Add for SSH Tunneling
