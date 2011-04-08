@@ -1,5 +1,5 @@
 #=============================================================================
-# GRID & Cloud computing 
+# GRID & Cloud Computing Group (EIA-FR, Switzerland)
 #
 # Distributed under the OSI-approved BSD License (the "License");
 # see accompanying file Copyright.txt for details.
