@@ -14,7 +14,7 @@
 #endif
 
 #ifndef POPC_BUILD_ARCH
-char arch[256]= "i686-pc-Linux";
+char arch[256]= "x86_64-unknown-Linux";
 #else
 char arch[256]= POPC_BUILD_ARCH;
 #endif
@@ -349,7 +349,7 @@ int main(int argc, char *argv[])
   char opt_compile[]="-c";
   char opt_output[]="-o";
   
-  char parocdir[1024]="/home/visag/popc";
+  char parocdir[1024]="/usr/local/popc";
   char includedir[1024];
 
   char libdir[1024];

@@ -20,6 +20,9 @@
   char *GetToken(int yyval);
 
   void errormsg(const  char *s);
+  void setReturnParam(int pointer, int ref, int const_virtual); // Methode to group code that set C++ specific C++ Param attributes
+  void setPOPCMethodeModifier(int settings); // mehtode to group code that set/controlle Methode attributes (sync, conc, ...)
+  
 extern "C"
 {
   int yywrap();
@@ -108,6 +111,8 @@ struct TemplateArgument
 %left ':' '?' 
 %left UMINUS /*supplies precedence for unary minus */
 %nonassoc '('
+
+%error-verbose  /* right now vor parser depuging pourpose, gives more detailes at syntax error */
 
 %%
 
@@ -983,11 +988,21 @@ template_arg: ID pointer_specifier array_declarator ref_specifier
 pointer_specifier:/*empty*/
 {
   $$=0;
-  
 }
-| '*' pointer_specifier
+| '*' const_specifier pointer_specifier
 {
-  $$=$2+1;
+  $$=$3+1; /* modivied by David (added const)*/
+}
+;
+
+/* controll if "const" word is present - Added by david */
+const_specifier:/*empty*/
+{
+  $$=0;
+}
+| CONST_KEYWORD
+{
+  $$=1;
 }
 ;
 
@@ -1075,117 +1090,118 @@ destructor_name: ID
 }
 ;
 
-method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' 
+/* -----------------------------------------------------------------------------------
+ * --- Annotation: When you make an adaption: nearly seame code in each rule !!!! ----
+ * -----------------------------------------------------------------------------------
+ * Reason:  To avoid shift/reduce conflicts here the rules are splittet an the suprules have no empty !
+ */
+method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
-  //Old data:  argument_type function_name 
-  strcpy(method->returnparam.name,"_RemoteRet");
-
-  DataType *type=returntype;
-  if ($2>0)
-    {
-      type=new TypePtr(NULL, $2 , type);
-      thisCodeFile->AddDataType(type);
-    }
-
-  if ($3)
-    {
-      method->returnparam.isRef=true;
-    }
-  method->returnparam.SetType(type);
-
+	setReturnParam($2,$3, 0);
 }
-|  fct_specifier decl_specifier  pointer_specifier ref_specifier function_name '(' argument_declaration ')'
+| decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
-  strcpy(method->returnparam.name,"_RemoteRet");
-
-  DataType *type=returntype;
-  if ($3>0)
-    {
-      type=new TypePtr(NULL, $3 , type);
-      thisCodeFile->AddDataType(type);
-    }
-  
-  if ($4)
-    {
-      method->returnparam.isRef=true;
-    }
-
-  method->returnparam.SetType(type);
-
-  method->isVirtual=(($1 & 1)!=0);
-  if (($1 & 8)!=0) method->isConcurrent=true;
-  else if (($1 & 32)!=0) method->isConcurrent=false;
-
-  method->isHidden=(($1 & 64)!=0);
-  method->isMutex=(($1 & 16)!=0);
-
-  if (($1 & 6)==2) method->invoketype=invokesync;
-  else if (($1 & 6)==4) method->invoketype=invokeasync;
-  /*	else method->invoketype=autoselect; */
+	setReturnParam($3,$4, $2);
 }
-| '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')'
+| const_virutal_specifier decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
-  DataType *type=returntype;
-  if ($5>0)
-    {
-      type=new TypePtr(NULL, $5 , type);
-      thisCodeFile->AddDataType(type);
-    }
-  
-  if ($6)
-    {
-      method->returnparam.isRef=true;
-    }
-  method->returnparam.SetType(type);
-  
-  strcpy(method->returnparam.name,"_RemoteRet");
+	setReturnParam($3,$4,$1);
 }
-| fct_specifier  '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')'
+| const_virutal_specifier decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
-  strcpy(method->returnparam.name,"_RemoteRet");
-
-  DataType *type=returntype;
-  if ($6>0)
-    {
-      type=new TypePtr(NULL, $6 , type);
-      thisCodeFile->AddDataType(type);
-    }
-  
-  if ($7)
-    {
-      method->returnparam.isRef=true;
-    }
-  method->returnparam.SetType(type);
-
-  method->isVirtual=(($1 & 1)!=0);
-
-  if (($1 & 8)!=0) method->isConcurrent=true;
-  else if (($1 & 32)!=0) method->isConcurrent=false;
-  
-  method->isMutex=(($1 & 16)!=0);
-  method->isHidden=(($1 & 64)!=0);
-  
-  if (($1 & 6)==2) method->invoketype=invokesync;
-  else if (($1 & 6)==4) method->invoketype=invokeasync;
-  /* else method->invoketype=autoselect; */
+	setReturnParam($4,$5, ($1|$3));
+}
+|  fct_specifier const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
+{
+	setReturnParam($5,$6,($2 | $4));
+	setPOPCMethodeModifier($1);
+}
+| '[' marshal_opt_list ']' const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
+{
+	setReturnParam($7,$8,($4|$6));
+}
+| fct_specifier '[' marshal_opt_list ']' decl_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
+{
+	setReturnParam($8,$9, ($5|$6));
+	setPOPCMethodeModifier($1);
 }
 ;
 
-fct_specifier:  fct_spec
+
+/*//fct_specifier  '[' marshal_opt_list ']' const_specifier decl_specifier const_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
+method_definition: fct_specifier marshal_decl const_virutal_specifier decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
-  $$=$1;
+	
+	/* ---- normal C++ function return attributes ----- 
+	
+	//Old data:  argument_type function_name 
+	strcpy(method->returnparam.name,"_RemoteRet");
+
+	DataType *type=returntype;
+	if ($6>0)
+	{
+		type=new TypePtr(NULL, $6 , type);
+		thisCodeFile->AddDataType(type);
+	}
+
+	if ($7)
+	{
+		method->returnparam.isRef=true;
+	}
+	
+	method->returnparam.SetType(type);
+	method->isVirtual=(($3 & 1)!=0 || ($5 & 1)!=0);
+	
+	/* ---- POPC function attributes ---- 
+	
+	// TEST Mutex, prallel, seq or CONC (hinden ??)
+	if (($1 & 56)==8) 
+		method->isConcurrent=true;
+	else if (($1 & 56)==32) 
+		method->isConcurrent=false;
+	/*else if (($1 & 120)==64)
+		method->isHidden=true;
+	else if (($1 & 56)==16)
+		method->isMutex= true;
+	else if (($1 & 56)!=0)
+	{
+		errormsg("Methode can only have one conc, mutex or seq attribute !");
+		exit(1);
+	}
+	
+	if (($1 & 64)!=0)
+		method->isHidden=true;
+	
+	// TEST SYNC or ASYNC
+	if (($1 & 6)==6) 
+	{
+		errormsg("Methode can not by sync and async at same time!");
+		exit(1);
+	}
+	else if (($1 & 6)==4) method->invoketype=invokeasync;
+	else if (($1 & 6)==2) method->invoketype=invokesync;
 }
-|  fct_specifier fct_spec
+;*/
+
+/* controll popc specific methode specifier (sync, conc, e.c.t. ...) */
+fct_specifier: fct_spec
 {
-  $$=$1 | $2;
+	$$=$1;
+}
+| fct_specifier fct_spec 
+{
+	/* error if multimple time same reserved word */
+	if (($2 & $1) != 0)
+	{
+		errormsg("Multiple occurance of same POP-C++ Mehtode modivier!");
+		exit(1);
+	}
+	
+	$$=$2 | $1;
 }
 ;
 
-fct_spec: VIRTUAL_KEYWORD
-{
-	$$=1;
-} 
-| SYNC_INVOKE
+fct_spec: SYNC_INVOKE
 {
 	$$=2;
 }
@@ -1208,6 +1224,47 @@ fct_spec: VIRTUAL_KEYWORD
 | HIDDEN
 {
   $$=64;
+}
+;
+
+/* added by david, for dedection of const or/and vitural methode modivier */
+const_virutal_specifier: VIRTUAL_KEYWORD
+{
+	$$=1;
+} 
+| CONST_KEYWORD
+{
+	$$=2;
+}
+| CONST_KEYWORD VIRTUAL_KEYWORD
+{
+	$$=3;
+}
+| VIRTUAL_KEYWORD CONST_KEYWORD
+{
+	$$=3;
+}
+;
+
+const_virutal_empty_specifier: /* empty */
+{
+	$$=0;
+}
+|VIRTUAL_KEYWORD
+{
+	$$=1;
+} 
+| CONST_KEYWORD
+{
+	$$=2;
+}
+| CONST_KEYWORD VIRTUAL_KEYWORD
+{
+	$$=3;
+}
+| VIRTUAL_KEYWORD CONST_KEYWORD
+{
+	$$=3;
 }
 ;
 
@@ -1396,35 +1453,35 @@ argument_list:  arg_declaration
 | arg_declaration ',' argument_list 
 ;
 
-arg_declaration: marshal_decl cv_qualifier decl_specifier pointer_specifier ref_specifier argument_name array_declarator arg_default_value
+arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_specifier ref_specifier argument_name array_declarator arg_default_value
 {
   Param *t=method->AddNewParam();
   UpdateMarshalParam($1,t);
 
   DataType *type=currenttype;
-  if ($4>0)
+  if ($5>0)
     {
-      type=new TypePtr(NULL, $4 , type);
+      type=new TypePtr(NULL, $5 , type);
       thisCodeFile->AddDataType(type);
     }
 
-  if ($5)
+  if ($6)
     {
       t->isRef=true;
     }
 
-  if ($7!=-1)
+  if ($8!=-1)
     {
-      type=new TypeArray(NULL, GetToken($7) , type);
+      type=new TypeArray(NULL, GetToken($8) , type);
       thisCodeFile->AddDataType(type);
     }
 
   t->SetType(type);
-  if ($6!=-1) strcpy(t->name,GetToken($6));
+  if ($7!=-1) strcpy(t->name,GetToken($7));
   else   sprintf(t->name,"V_%d",++counter);
 
-  t->isConst=($2==1);
-  if ($8>=0) t->defaultVal=strdup(GetToken($8));
+  t->isConst=($2==1 || $4==1);
+  if ($9>=0) t->defaultVal=strdup(GetToken($9));
   
 
 } 
@@ -1782,7 +1839,7 @@ void yyerror(const  char *s)
 
 void errormsg(const  char *s)
 {
-  fprintf(stderr,"%s:%d: ERROR :%s\n",filename,linenumber-1,s);
+  fprintf(stderr,"%s:%d: ERROR in Parser: %s \n",filename,linenumber-1,s);
   errorcode=1;
 }
 
@@ -1844,6 +1901,60 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker)
   delete thisCodeFile;
   thisCodeFile=NULL;
   return ret;
+}
+
+
+	/* ---- SET normal C++ function return attributes ----- */
+void setReturnParam(int pointer, int ref, int const_virtual)
+{
+	//Old data:  argument_type function_name 
+	strcpy(method->returnparam.name,"_RemoteRet");
+
+	DataType *type=returntype;
+	if (pointer>0)
+	{
+		type=new TypePtr(NULL, pointer, type);
+		thisCodeFile->AddDataType(type);
+	}
+
+	if (ref)
+	{
+		method->returnparam.isRef=true;
+	}
+	
+	method->isVirtual=((const_virtual & 1)!=0);
+	method->returnparam.SetType(type);
+}
+
+/* ---- POPC methode attributes ---- */
+void setPOPCMethodeModifier(int settings)
+{
+	
+	// TEST Mutex, prallel, seq or CONC (hinden ??)
+	if ((settings & 56)==8) 
+		method->isConcurrent=true;
+	else if ((settings & 56)==32) 
+		method->isConcurrent=false;
+	else if ((settings & 56)==16)
+		method->isMutex= true;
+	else if ((settings & 56)!=0)
+	{
+		errormsg("Methode can only have one conc, mutex or seq attribute !");
+		exit(1);
+	}
+	
+	if ((settings & 64)!=0)
+		method->isHidden=true;
+	
+	// TEST SYNC or ASYNC
+	if ((settings & 6)==6) 
+	{
+		errormsg("Methode can not by sync and async at same time!");
+		exit(1);
+	}
+	else if ((settings & 6)==4) method->invoketype=invokeasync;
+	else if ((settings & 6)==2) method->invoketype=invokesync;
+  /*	else method->invoketype=autoselect; */
 }
 
 

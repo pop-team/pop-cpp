@@ -2,20 +2,20 @@
 /* A Bison parser, made by GNU Bison 2.4.1.  */
 
 /* Skeleton interface for Bison's Yacc-like parsers in C
-
+   
       Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
    Free Software Foundation, Inc.
-
+   
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-
+   
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
+   
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
@@ -28,7 +28,7 @@
    special exception, which will cause the skeleton and the resulting
    Bison output files to be licensed under the GNU General Public
    License without this special exception.
-
+   
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
@@ -36,52 +36,52 @@
 /* Tokens.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-/* Put the tokens into the symbol table, so that GDB and other debuggers
-   know about them.  */
-enum yytokentype {
-	PARCLASS_KEYWORD = 258,
-	CLASS_KEYWORD = 259,
-	CLASSID = 260,
-	ID = 261,
-	ID1 = 262,
-	INTEGER = 263,
-	REAL = 264,
-	STRING = 265,
-	PUBLIC_KEYWORD = 266,
-	PROTECTED_KEYWORD = 267,
-	PRIVATE_KEYWORD = 268,
-	VIRTUAL_KEYWORD = 269,
-	CONST_KEYWORD = 270,
-	STRUCT_KEYWORD = 271,
-	TYPEDEF_KEYWORD = 272,
-	SYNC_INVOKE = 273,
-	ASYNC_INVOKE = 274,
-	INPUT = 275,
-	OUTPUT = 276,
-	CONCURRENT = 277,
-	SEQUENTIAL = 278,
-	MUTEX = 279,
-	HIDDEN = 280,
-	PROC = 281,
-	SIZE = 282,
-	INCLUDE = 283,
-	DIRECTIVE = 284,
-	OD = 285,
-	AUTO_KEYWORD = 286,
-	REGISTER_KEYWORD = 287,
-	VOLATILE_KEYWORD = 288,
-	PACK_KEYWORD = 289,
-	AND_OP = 290,
-	OR_OP = 291,
-	EQUAL_OP = 292,
-	NOTEQUAL_OP = 293,
-	GREATEREQUAL_OP = 294,
-	LESSEQUAL_OP = 295,
-	NONSTRICT_OD_OP = 296,
-	EOFCODE = 297,
-	SCOPE = 298,
-	UMINUS = 299
-};
+   /* Put the tokens into the symbol table, so that GDB and other debuggers
+      know about them.  */
+   enum yytokentype {
+     PARCLASS_KEYWORD = 258,
+     CLASS_KEYWORD = 259,
+     CLASSID = 260,
+     ID = 261,
+     ID1 = 262,
+     INTEGER = 263,
+     REAL = 264,
+     STRING = 265,
+     PUBLIC_KEYWORD = 266,
+     PROTECTED_KEYWORD = 267,
+     PRIVATE_KEYWORD = 268,
+     VIRTUAL_KEYWORD = 269,
+     CONST_KEYWORD = 270,
+     STRUCT_KEYWORD = 271,
+     TYPEDEF_KEYWORD = 272,
+     SYNC_INVOKE = 273,
+     ASYNC_INVOKE = 274,
+     INPUT = 275,
+     OUTPUT = 276,
+     CONCURRENT = 277,
+     SEQUENTIAL = 278,
+     MUTEX = 279,
+     HIDDEN = 280,
+     PROC = 281,
+     SIZE = 282,
+     INCLUDE = 283,
+     DIRECTIVE = 284,
+     OD = 285,
+     AUTO_KEYWORD = 286,
+     REGISTER_KEYWORD = 287,
+     VOLATILE_KEYWORD = 288,
+     PACK_KEYWORD = 289,
+     AND_OP = 290,
+     OR_OP = 291,
+     EQUAL_OP = 292,
+     NOTEQUAL_OP = 293,
+     GREATEREQUAL_OP = 294,
+     LESSEQUAL_OP = 295,
+     NONSTRICT_OD_OP = 296,
+     EOFCODE = 297,
+     SCOPE = 298,
+     UMINUS = 299
+   };
 #endif
 /* Tokens.  */
 #define PARCLASS_KEYWORD 258
