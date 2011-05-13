@@ -21,7 +21,8 @@ public:
 	sync conc void TestParam_IntConstPtr(int const * ); // ptr to const 
 	sync conc void TestParam_ConstIntPtr(const int * ); // ptr to const 
 	sync conc void TestParam_IntPtrConst(int * const ); // const Ptr 
-	sync conc void TestParam_IntPtrConst(int * const * const ); // const Ptr const Ptr  
+	sync conc void TestParam_IntPtrConstPtrConst(int * const * const ); // const Ptr const Ptr  
+	sync conc void TestParam_IntPtrConstPtrConstPtrPtrPtrConst(int * const * const * * * const); // to test * const generationg order
 	sync conc void TestParam_IntConstPtrConst(int const * const); //constPtrToConst 
 
 	// Methodes with const as return value	--> Attantion, more possible wit & compination
@@ -44,7 +45,7 @@ public:
 	
 	// Methode which contains different const Variables
 	sync conc void TestConstVars(); // compiles and runs
-
+	
 private:
 
 	// TODO del

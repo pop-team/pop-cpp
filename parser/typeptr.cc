@@ -2,15 +2,18 @@
 #include "stdio.h"
 #include "type.h"
 
+#include <vector>
+
 //Pointer of a type....
 
-TypePtr::TypePtr(char *name, int level, DataType *base): DataType(name)
+TypePtr::TypePtr(char *name, int level, DataType *base, std::vector<bool> constPositions): DataType(name)
 {
 	typebase=base;
 	assert(base!=NULL);
 	nptr=(level<=0)? 1: level;
 	size=NULL;
-}
+	
+	constPos.assign(constPositions.rbegin(), constPositions.rend()); // Copy, without using copy constructor in reverse order !
 
 TypePtr::~TypePtr()
 {
@@ -101,7 +104,11 @@ bool TypePtr::GetDeclaration(const char *varname, char *output)
 
 	if (!typebase->GetDeclaration(NULL,output)) return false;
 	strcat(output," ");
-	for (int i=0;i<nptr;i++) strcat(output,"*");
+	for (int i=0;i<nptr;i++) 
+	{
+		strcat(output,"*");
+		if(constPos[i]) strcat(output,"const ");
+	}
 	if (varname!=NULL) strcat(output,varname);
 	return true;
 }

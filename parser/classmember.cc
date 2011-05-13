@@ -454,6 +454,7 @@ Method::Method(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), retur
 	isHidden=false;
 	isVirtual=false;
 	isPureVirtual=false;
+	isGlobalConst=false;
 }
 
 Method::~Method()
@@ -500,16 +501,27 @@ void Method::GenerateReturn(CArrayChar &output, bool header)
 		fprintf(stderr,"%s:%d: ERROR in %s::%s : methods of parallel objects cannot technically return a reference.\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name);
 		exit(1);
 	}
+	
+	if (returnparam.IsConst()){
+		const char* tmp_const= "const ";
+		output.InsertAt(-1,tmp_const, strlen(tmp_const));
+	}
 
 	char tmp[1024];
 	type->GetDeclaration(NULL,tmp);
-	if (returnparam.IsConst())sprintf(tmp, "const %s", tmp);
+	//if (returnparam.IsConst())sprintf(tmp, "const %s", tmp);
 	output.InsertAt(-1,tmp, strlen(tmp));
 	output.InsertAt(-1," ");
 }
 
 void Method::GeneratePostfix(CArrayChar &output, bool header)
 {
+	if(isGlobalConst)
+	{
+		const char* tmp = " const ";
+		output.InsertAt(-1,tmp, strlen(tmp));
+	}
+	
 	if (header) output.InsertAt(-1,";",1);
 }
 

@@ -69,9 +69,14 @@ void TestConst::TestParam_IntPtrConst(int * const constPtr)
 	 printf("--> Test Param Int * Const: %d\n", *constPtr);
 }
 
-void TestConst::TestParam_IntPtrConst(int * const * const constPtrConstPtr)
+void TestConst::TestParam_IntPtrConstPtrConst(int * const * const constPtrConstPtr)
 {
 	 printf("--> Test Param Int * Const * Const: %d\n", **constPtrConstPtr);
+}
+
+void TestConst::TestParam_IntPtrConstPtrConstPtrPtrPtrConst(int *const *const * * *const var)
+{
+	 printf("--> Test Param Int * Const * Const * * * Const: %d\n", *****var);
 }
 
 // Parser error
@@ -108,6 +113,7 @@ const int & TestConst::TestReturn_ConstIntRef()
 	 return aVar;
 }
 */
+
 // Parser error
 int const * TestConst::TestReturn_IntConstPtr()
 {
@@ -144,7 +150,6 @@ const int TestConst::TestReturn_ConstIntMarshal()
 {
 	 return 4;
 }
-
 
 // =====================================================================
 // Methode with content is not modivied
@@ -207,19 +212,19 @@ void MethodCall()
 	t.TestParam_IntConstPtr(&tmp_int_const);
 	t.TestParam_ConstIntPtr(&tmp_const_int);
 	t.TestParam_IntPtrConst(tmp_int_ptr_const);
-	t.TestParam_IntPtrConst(tmp_int_ptr_const_ptr_const);
+	t.TestParam_IntPtrConstPtrConst(tmp_int_ptr_const_ptr_const);
 	t.TestParam_IntConstPtrConst(&tmp_int_const);
 	
 	
 	// ==== Methode return ====
-	//printf("--> Test Return Int Const: %d\n", t.TestReturn_IntConst());
-	//printf("--> Test Return Const Int: %d\n", t.TestReturn_ConstInt());
+	printf("--> Test Return Int Const: %d\n", t.TestReturn_IntConst());
+	printf("--> Test Return Const Int: %d\n", t.TestReturn_ConstInt());
 	//printf("--> Test Return Int Const &: %d\n", t.TestReturn_IntConstRef());
 	//printf("--> Test Return Const Int &: %d\n", t.TestReturn_ConstIntRef());
-	//printf("--> Test Return Int Const *: %d\n", *t.TestReturn_IntConstPtr());
-	//printf("--> Test Return Const Int *: %d\n", *t.TestReturn_ConstIntPtr());
-	//printf("--> Test Return Int * Const: %d\n", *t.TestReturn_IntPtrConst());
-	//printf("--> Test Return Int Const * Const: %d\n", *t.TestReturn_IntConstPtrConst());
+	printf("--> Test Return Int Const *: %d\n", *t.TestReturn_IntConstPtr());
+	printf("--> Test Return Const Int *: %d\n", *t.TestReturn_ConstIntPtr());
+	printf("--> Test Return Int * Const: %d\n", *t.TestReturn_IntPtrConst());
+	printf("--> Test Return Int Const * Const: %d\n", *t.TestReturn_IntConstPtrConst());
 	
 	// ==== Global const ====
 	//t.TestGlobalConst();

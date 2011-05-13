@@ -32,8 +32,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = i686-pc-linux-gnu
-host_triplet = i686-pc-linux-gnu
+build_triplet = x86_64-unknown-linux-gnu
+host_triplet = x86_64-unknown-linux-gnu
 bin_PROGRAMS = popcpp$(EXEEXT) popcc$(EXEEXT)
 subdir = parser
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
@@ -96,13 +96,13 @@ DIST_SOURCES = $(popcpp_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run aclocal-1.11
-AMTAR = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run tar
+ACLOCAL = ${SHELL} /home/isegrim/Dropbox/pa/code/POPC/missing --run aclocal-1.11
+AMTAR = ${SHELL} /home/isegrim/Dropbox/pa/code/POPC/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run automake-1.11
-AWK = mawk
+AUTOCONF = ${SHELL} /home/isegrim/Dropbox/pa/code/POPC/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/isegrim/Dropbox/pa/code/POPC/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/isegrim/Dropbox/pa/code/POPC/missing --run automake-1.11
+AWK = gawk
 CC = gcc
 CFLAGS = -g -O2
 CPP = gcc -E
@@ -126,11 +126,11 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LD = /usr/bin/ld
+LD = /usr/bin/ld -m elf_x86_64
 LDFLAGS = 
-LEX = :
+LEX = flex
 LEXLIB = 
-LEX_OUTPUT_ROOT = 
+LEX_OUTPUT_ROOT = lex.yy
 LIBOBJS = 
 LIBS = -ldl -lnsl -lpthread 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
@@ -139,7 +139,7 @@ LIBVIRT_LIBS =
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/isegrim/Dropbox/pa/code/POPC/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
 NMEDIT = 
@@ -166,12 +166,12 @@ STRIP = strip
 VERSION = 1.3.1 beta ViSaG
 VIX_CFLAGS = 
 VIX_LIBS = 
-YACC = yacc
+YACC = bison -y
 YFLAGS = 
-abs_builddir = /home/visag/versioning/popcpp_forge/parser
-abs_srcdir = /home/visag/versioning/popcpp_forge/parser
-abs_top_builddir = /home/visag/versioning/popcpp_forge
-abs_top_srcdir = /home/visag/versioning/popcpp_forge
+abs_builddir = /home/isegrim/Dropbox/pa/code/POPC/parser
+abs_srcdir = /home/isegrim/Dropbox/pa/code/POPC/parser
+abs_top_builddir = /home/isegrim/Dropbox/pa/code/POPC
+abs_top_srcdir = /home/isegrim/Dropbox/pa/code/POPC
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
@@ -179,11 +179,11 @@ am__leading_dot = .
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = i686-pc-linux-gnu
+build = x86_64-unknown-linux-gnu
 build_alias = 
-build_cpu = i686
+build_cpu = x86_64
 build_os = linux-gnu
-build_vendor = pc
+build_vendor = unknown
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
@@ -192,16 +192,16 @@ dvidir = ${docdir}
 exec_prefix = ${prefix}
 globusdir = 
 globusflavor = 
-host = i686-pc-linux-gnu
+host = x86_64-unknown-linux-gnu
 host_alias = 
-host_cpu = i686
+host_cpu = x86_64
 host_kernel = Linux
 host_os = linux-gnu
-host_vendor = pc
+host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/visag/versioning/popcpp_forge/install-sh
+install_sh = ${SHELL} /home/isegrim/Dropbox/pa/code/POPC/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -211,7 +211,7 @@ mandir = ${datarootdir}/man
 mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /home/visag/popc
+prefix = /usr/local/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -674,6 +674,12 @@ gen: parser.y  parser.lex
 	$(YACC) -b parser -d parser.y
 	mv  parser.tab.c parser.tab.cc
 	$(LEX) -oparser.yy.cc parser.lex
+	
+gen_debug: parser.y  parser.lex 
+	$(YACC) -v -t -d -b parser -d parser.y
+	mv  parser.tab.c parser.tab.cc
+	$(LEX) -oparser.yy.cc parser.lex
+
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -358,6 +358,7 @@ public:
 
 	bool isVirtual;
 	bool isPureVirtual;
+	bool isGlobalConst;
 
 	bool isConcurrent;
 	bool isMutex;

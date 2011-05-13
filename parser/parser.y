@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <vector>
 
 #include "parser.h"
 #include "paroc_utils.h"
@@ -22,6 +23,7 @@
   void errormsg(const  char *s);
   void setReturnParam(int pointer, int ref, int const_virtual); // Methode to group code that set C++ specific C++ Param attributes
   void setPOPCMethodeModifier(int settings); // mehtode to group code that set/controlle Methode attributes (sync, conc, ...)
+  
   
 extern "C"
 {
@@ -49,6 +51,7 @@ CArrayCharPtr searchpath;
  Class *currentClass;
  DataType *currenttype;
  DataType *returntype;
+ std::vector<bool> constPointerPositions; // counter variables who contains order of conts possition in pointers
 
  TypeClassStruct *seqclass;
 
@@ -92,7 +95,6 @@ struct TemplateArgument
   DataType *type;
   bool isRef;
 };
-
 
 
 #define YYMAXDEPTH 100000
@@ -301,7 +303,7 @@ struct_elname_list: pointer_specifier ID array_declarator struct_elname_other
   DataType *type1=currenttype;
   if ($1>0)
     {
-      type1=new TypePtr(NULL,$1, type1);
+      type1=new TypePtr(NULL,$1, type1, constPointerPositions);
       thisCodeFile->AddDataType(type1);
     }
   if ($3!=-1)
@@ -337,7 +339,7 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
     }
   if ($3>0)
     {
-      type=new TypePtr(NULL,$3, type);
+      type=new TypePtr(NULL,$3, type, constPointerPositions);
       thisCodeFile->AddDataType(type);
     }
   if ($5!=-1)
@@ -359,7 +361,7 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
     }
   if ($4>0)
     {
-      type=new TypePtr(NULL,$4, type);
+      type=new TypePtr(NULL,$4, type, constPointerPositions);
       thisCodeFile->AddDataType(type);
     }
   if ($6!=-1)
@@ -381,7 +383,7 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
     }
   if ($4>0)
     {
-      type=new TypePtr(NULL,$4, type);
+      type=new TypePtr(NULL,$4, type, constPointerPositions);
       thisCodeFile->AddDataType(type);
     }
   if ($6!=-1)
@@ -399,7 +401,7 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
 
   if ($3>0)
     {
-      type=new TypePtr(NULL,$3, type);
+      type=new TypePtr(NULL,$3, type, constPointerPositions);
       thisCodeFile->AddDataType(type);
     }
   if ($5!=-1)
@@ -789,7 +791,7 @@ attribute_name: pointer_specifier ref_specifier ID array_declarator
     }
   else 
     {
-      type=new TypePtr(NULL, $1 , currenttype);
+      type=new TypePtr(NULL, $1 , currenttype, constPointerPositions);
       thisCodeFile->AddDataType(type);
     }
 
@@ -933,7 +935,7 @@ template_arg: type_specifier pointer_specifier array_declarator ref_specifier
   t->type=(DataType *)$1;
   if ($2>0)
   {
-	t->type=new TypePtr(NULL,$2,t->type);
+	t->type=new TypePtr(NULL,$2,t->type, constPointerPositions);
   }
   if ($3!=-1) 
   {
@@ -987,11 +989,17 @@ template_arg: ID pointer_specifier array_declarator ref_specifier
 
 pointer_specifier:/*empty*/
 {
-  $$=0;
+	$$=0;
+	constPointerPositions.clear();
+	
+	//printf("--> P.vector init()\n");
 }
 | '*' const_specifier pointer_specifier
 {
-  $$=$3+1; /* modivied by David (added const)*/
+	$$=$3+1; /* modivied by David (added const)*/
+	constPointerPositions.push_back(($2 == 1 ? true : false));
+	
+	//printf("--> P.vector add and incerase\n");
 }
 ;
 
@@ -1098,32 +1106,46 @@ destructor_name: ID
 method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
 	setReturnParam($2,$3, 0);
+	
+	method->isGlobalConst = ($8 == 1 ? true : false);
 }
 | decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
 	setReturnParam($3,$4, $2);
+	
+	method->isGlobalConst = ($9 == 1 ? true : false);
 }
 | const_virutal_specifier decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
 	setReturnParam($3,$4,$1);
+	
+	method->isGlobalConst = ($9 == 1 ? true : false);
 }
 | const_virutal_specifier decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
 	setReturnParam($4,$5, ($1|$3));
+	
+	method->isGlobalConst = ($10 == 1 ? true : false);
 }
-|  fct_specifier const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
+| fct_specifier const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
 	setReturnParam($5,$6,($2 | $4));
 	setPOPCMethodeModifier($1);
+	
+	method->isGlobalConst = ($11 == 1 ? true : false);
 }
 | '[' marshal_opt_list ']' const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
 {
 	setReturnParam($7,$8,($4|$6));
+	
+	method->isGlobalConst = ($13 == 1 ? true : false);
 }
-| fct_specifier '[' marshal_opt_list ']' decl_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
+| fct_specifier '[' marshal_opt_list ']' const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
 {
 	setReturnParam($8,$9, ($5|$6));
 	setPOPCMethodeModifier($1);
+	
+	method->isGlobalConst = ($14 == 1 ? true : false);
 }
 ;
 
@@ -1461,8 +1483,9 @@ arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_s
   DataType *type=currenttype;
   if ($5>0)
     {
-      type=new TypePtr(NULL, $5 , type);
+      type=new TypePtr(NULL, $5 , type, constPointerPositions);
       thisCodeFile->AddDataType(type);
+      constPointerPositions.clear(); // empty used struct
     }
 
   if ($6)
@@ -1482,8 +1505,6 @@ arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_s
 
   t->isConst=($2==1 || $4==1);
   if ($9>=0) t->defaultVal=strdup(GetToken($9));
-  
-
 } 
 ;
 
@@ -1913,8 +1934,10 @@ void setReturnParam(int pointer, int ref, int const_virtual)
 	DataType *type=returntype;
 	if (pointer>0)
 	{
-		type=new TypePtr(NULL, pointer, type);
+		type=new TypePtr(NULL, pointer, type, constPointerPositions);
 		thisCodeFile->AddDataType(type);
+		
+		constPointerPositions.clear(); // empty used struct
 	}
 
 	if (ref)
@@ -1923,7 +1946,10 @@ void setReturnParam(int pointer, int ref, int const_virtual)
 	}
 	
 	method->isVirtual=((const_virtual & 1)!=0);
+	method->returnparam.isConst = ((const_virtual & 2)!=0);
+	
 	method->returnparam.SetType(type);
+	
 }
 
 /* ---- POPC methode attributes ---- */
