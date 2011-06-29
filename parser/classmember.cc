@@ -1,3 +1,14 @@
+/**
+ * File : classmember.cc
+ * Author : Tuan Anh Nguyen
+ * Description : Generate source code for the broker of parallel objects
+ * Creation date : -
+ * 
+ * Modifications :
+ * Authors		Date			Comment
+ * P.Kuonen   June 2011 Modify to print all exceptions raised in methods
+ */
+
 #include "parser.h"
 #include "paroc_utils.h"
 #include "debug.h"
@@ -756,11 +767,11 @@ void Method::GenerateBroker(CArrayChar &output)
 	if (type==METHOD_CONSTRUCTOR)
 	{
 		//Constructor...create object now...
-		sprintf(methodcall,"\nobj=new %s%s(",clname,OBJ_POSTFIX);
+		sprintf(methodcall,"\ntry {\nobj=new %s%s(",clname,OBJ_POSTFIX);
 	}
 	else if (type!=METHOD_NORMAL || returnparam.GetType()->Same((char*)"void"))
 	{
-		sprintf(methodcall,"\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\n_paroc_obj->%s(",clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, name);
+		sprintf(methodcall,"\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n_paroc_obj->%s(",clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, name); 
 	}
 	else
 	{
@@ -772,11 +783,11 @@ void Method::GenerateBroker(CArrayChar &output)
 		returnparam.GetType()->GetDeclaration(tmpvar,retdecl);
 
 		if (returnparam.isRef)
-			sprintf(methodcall,"\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj); \n%s=_paroc_obj->%s(",clname,OBJ_POSTFIX,clname,OBJ_POSTFIX,retdecl, name);
+			sprintf(methodcall,"\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj); \ntry {\n%s=_paroc_obj->%s(",clname,OBJ_POSTFIX,clname,OBJ_POSTFIX,retdecl, name);
 		else if (returnparam.GetType()->IsParClass())
-			sprintf(methodcall,"\n%s(paroc_interface::_paroc_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\n%s=_paroc_obj->%s(",retdecl,clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, tmpvar,name);
+			sprintf(methodcall,"\n%s(paroc_interface::_paroc_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl,clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, tmpvar,name);
 		else
-			sprintf(methodcall,"\n%s;\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\n%s=_paroc_obj->%s(",retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
+			sprintf(methodcall,"\n%s;\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
 
 		haveReturn=true;
 	}
@@ -822,6 +833,12 @@ void Method::GenerateBroker(CArrayChar &output)
 	}
 
 	strcat(methodcall,");");
+
+  // Add 'catch' to catch and print all std exceptions raised in the method
+  char tempcatch[256];
+  sprintf(tempcatch,"\n}\ncatch(std::exception& e) {rprintf(\"Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
+  strcat(methodcall,tempcatch); 
+
 
 	//now....generate the call...
 	output.InsertAt(-1,methodcall,strlen(methodcall));
