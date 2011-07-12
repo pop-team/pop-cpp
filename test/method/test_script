@@ -1,0 +1,19 @@
+#!/bin/sh
+
+
+echo "PLEASE START PAROC++ JOBMGR BEFORE RUNNING THIS TEST"
+testname=./method
+arg=$*
+
+objmap=/tmp/${testname}_`whoami`
+
+echo "GENERATING OBJECT MAP FILE...."
+echo "${testname}.obj -listlong \> $objmap"
+
+${testname}.obj -listlong > $objmap
+echo "STARTING $testname...." 
+echo "parocrun $objmap ${testname}.main ${arg}"
+
+parocrun $objmap ${testname}.main ${arg}
+
+ 

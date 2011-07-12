@@ -1,0 +1,100 @@
+# Startup script for PAROC service, standalone version
+
+
+#PAROC_LOCATION=PAROCPREFIX
+#PAROC_DOMAIN=UNKNOWN
+
+#PAROC_JOBMGR_PROXY= (proxy to access this jobmgr service)
+
+#This variable is used in webrun on starting the parallel object
+#PAROC_PROXY
+
+#The following variables are used if this host runs proxy service
+#PROXY_PORT
+#PAROC_PROXY_NETMASK
+#PAROC_PROXY_PORTS
+#PAROC_PROXY_PARENT
+
+PAROC_TEMP=/tmp
+export PAROC_TEMP
+
+if [ ! -d $PAROC_TEMP ]; then
+mkdir $PAROC_TEMP
+fi
+
+. ${PAROC_LOCATION}/etc/paroc-runtime-env.sh
+
+PATH=${PAROC_LOCATION}/bin:${PAROC_LOCATION}/services:${PATH}
+export PATH
+
+LD_LIBRARY_PATH=${PAROC_LOCATION}:${PAROC_LOCATION}/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
+
+. $GLOBUS_LOCATION/etc/globus-user-env.sh
+
+prog="$PAROC_LOCATION/services/jobmgr_launcher.globus"
+ 
+serviceproxy=""
+
+if [ "X${PAROC_JOBMGR_PROXY}" != "X" ]; then
+    serviceproxy="-proxy=${PAROC_JOBMGR_PROXY}"
+fi
+
+userid=`whoami`
+
+TMPKEY=${PAROC_TEMP}/jobmgr_${userid}.key
+servicemap="$PAROC_LOCATION/etc/service.map"
+
+mapentry=`grep "GlobusJobMgr " $servicemap`
+if [ -z "${mapentry}" ]; then
+$PAROC_LOCATION/services/jobmgr.globus -listlong | grep "GlobusJobMgr " >> $servicemap
+fi
+
+start() {
+    if [ -n "${PROXY_PORT}" ]; then
+	echo "Starting delegate service..."
+	$PAROC_LOCATION/bin/parocrun -noproxy $servicemap $PAROC_LOCATION/services/launchproxy -proxyport=${PROXY_PORT} start
+    fi
+    echo "Starting PAROC/GLOBUS service: "
+    $PAROC_LOCATION/bin/parocrun $servicemap $prog start $serviceproxy  -genchallenge=$TMPKEY
+    RETVAL=$?
+    return $RETVAL
+}
+
+stop() {
+    if [ -n "${PROXY_PORT}" ]; then
+	echo "Stopping delegate service..."
+	$PAROC_LOCATION/bin/parocrun -noproxy $servicemap $PAROC_LOCATION/services/launchproxy -proxyport=${PROXY_PORT} stop
+    fi
+    echo "Stopping PAROC/GLOBUS service "
+    $PAROC_LOCATION/bin/parocrun $servicemap $prog stop -challenge=`cat $TMPKEY`
+    RETVAL=$?
+    if [ -f ${PAROC_TEMP}/jobmgr.pid ]; then
+	pid=`cat ${PAROC_TEMP}/jobmgr.pid`
+	rm ${PAROC_TEMP}/jobmgr_stdout_$pid ${PAROC_TEMP}/jobmgr_stderr_$pid ${PAROC_TEMP}/jobmgr.pid $TMPKEY
+    fi
+    return $RETVAL
+}
+
+case "$1" in
+        start)
+            start
+            ;;
+ 
+        stop)
+            stop
+            ;;
+ 
+        status)
+            ;;
+        restart)
+            stop
+            start
+            ;;
+        *)
+            echo "Usage: $0 {start|stop|restart}"
+            exit 1
+                                                                                
+esac
+                                                                                
+exit 0
