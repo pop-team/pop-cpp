@@ -1,0 +1,40 @@
+\chapter{Runtime environment variables}
+
+The following environment variables affect or change the default behaviors of the POP-C++ runtime. To ensure that the environment of all running objects these variables should all be set during the installation \texttt{make install} or in the environment setup script \texttt{popc-runtime-env}.
+
+\begin{verbatim} 
+POPC_LOCATION:         Location of installed POP-C++ directory.
+
+POPC_PLUGIN_LOCATION:  Location where additional communication
+                        and data encoding plugins can be found. 
+
+POPC_JOBSERVICE:       The access point of the POP-C++ job manager 
+                        service. If the POP-C++ job manager does not
+                        run on the local machine where the user start 
+                        the application, the user must explicitly 
+                        specify this information. 
+                        Default value: socket://localhost:2711. 
+
+POPC_HOST:             Full qualified host name of local node. 
+                       This host name will be interpreted
+
+POPC_IP:               IP of local node. Only used if POPC_HOST is
+                        not defined
+
+POPC_IFACE:            If POPC_HOST and POPC_IP are not set, use
+                        this interface to determine node IP. If not
+                        set, the default gateway interface is used.
+
+POPC_PLATFORM:         The platform name of the local host. 
+                        By default, the following format is used:
+                        <cpu id>-<os vendor>-<os name>.
+
+POPC_MPIRUN:           The mpirun command to start POP-C++ MPI 
+                        objects.
+
+POPC_JOB_EXEC:         Script used by the job manager to submit 
+                        a job to local system. 
+
+POPC_DEBUG:            Print all debug information. 
+
+\end{verbatim} 

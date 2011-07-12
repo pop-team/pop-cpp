@@ -1,0 +1,418 @@
+\chapter{Installation Instructions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Before installing}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+To find out about the latest sources releases or installation instructions please visite our wiki :
+
+\texttt{http://gridgroup.hefr.ch/popc}
+
+POP-C++ is built on top of several widely known software packages. The following packages 
+of are required before compiling.
+
+\begin{petitem}
+
+\item a C++ compiler (g++)
+
+\item zlib-devel
+
+\item the Gnu Bison (optional)
+
+\item the Globus Toolkit (optional)
+\end{petitem}
+
+Before installation we should make the following configuration choices. 
+In case of doubt the default values can be used.
+
+\begin{petitem}
+
+\item The compilation directory that should hold roughly 50MB. This
+directory will contain the distribution tree and the source files of
+POP-C++. It may be erased after installation.
+
+\item The installation directory that will hold less than 40MB. It will
+contain the compiled files for POP-C++, include and configuration files.
+This directory is necessary in every computer executing POP-C++
+programs. (by default \texttt{/usr/local/popc})
+
+\item A temporary directory will be asked in the installation process.
+This directory will be used by POP-C++ to hold files during the
+applications execution. (by default \texttt{/tmp})
+
+\item Resource topology. The administrator must choose what computers form our grid.
+\end{petitem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Standard Installation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This section explains how to install POP-C++ using all default options. This is usually sufficient 
+if you want to test POP-C++ on your desktop computer. An advanced installation is explained in the two sections below.
+
+POP-C++ distribution uses standard GNU tools to compile. The following
+commands will generate all necessary files:
+
+\texttt{~\\
+~~~~cd }\textit{compilation-directory}\texttt{\\
+~~~~tar xzf popc-}\textit{version}\texttt{.tar.gz\\
+~~~~cd popc-}\textit{version}\texttt{\\
+~~~~./configure\\
+~~~~make} \\
+~
+
+The \texttt{make} command takes a while to finish. After it, all files
+will be compiled and POP-C++ is ready for installation. To install
+POP-C++ type:
+
+\texttt{~\\
+~~~~make install} \\
+~
+
+After copying the necessary files to the chosen installation directory,
+a setup script is run. It asks different questions, and the information
+gathered before the installation should be sufficient to answer it.
+
+For a standard installation of POP-C++ it is sufficient to pick the simple installation when asked.
+
+In case it is necessary to restart the setup script, it can be done
+with the following command:
+
+\textit{~\\
+~~~~~installation-directory}\texttt{/sbin/popc\_setup}\\
+~
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Custom Installation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The configuration utility can be started with command line arguments
+for a custom installation. These arguments control whether some extra or
+different features should be enabled. A list of optional features can be
+found in the figure \ref{fig:features}. The full list of options
+accepted by the configuration utility can be obtained with the
+\texttt{---help} argument.
+
+\begin{figura}{fig:features}{Optional configuration features}
+\begin{tabular}{| l | l |}
+\hline
+%\tt --disable-FEATURE    		& do not include FEATURE \\
+%\tt 					& (same as --enable-FEATURE=no)\\ \hline
+%{\tt --enable-FEATURE}$[${\tt =}$ARG]$  & include FEATURE ($ARG$=yes)\\ \hline
+\tt -\--enable-mpi  	& Enable MPI-support in POP-C++\\ \hline
+\tt -\--enable-globus=flavor  	& Enable Globus-support in POP-C++\\ \hline
+\tt -\--enable-xml  			& Enable XML encoding in POP-C++\\ \hline
+%\tt --enable-myrinet  		& Enable GM/Myrinet communication\\ \hline
+%\tt 					& protocol in POP-C++\\ \hline
+\tt -\--enable-http  			& Enable HTTP communication protocol in POP-C++\\ \hline
+%{\tt --enable-shared}$[${\tt =}$PKGS]$ 	& build shared libraries (default=yes)\\ \hline
+%{\tt --enable-static}$[${\tt =}$PKGS]$	& build static libraries (default=yes)\\ \hline
+%{\tt --enable-fast-install}$[${\tt =}$PKGS]$ & optimize for fast installation (default=yes)\\ \hline
+%\tt --disable-libtool-lock  		& avoid locking (might break parallel builds)\\ \hline
+\end{tabular}
+\end{figura}
+
+
+The current distribution of POP-C++ 1.3 supports the following features:
+\begin{petitem}
+
+\item Globus-enabled services. POP-C++ allows to build the runtime
+services for Globus. We only use the Pre WS GRAM of Globus Toolkit
+(GT3.2 or GT4).  To enable this feature, you will need to provide the
+Globus's built flavor (refer Globus documentation for more information).
+Before configuring POP-C++  with Globus, you need to set the environment
+variable GLOBUS\_LOCATION to the Globus installed directory. Bellow is
+an example of configuring POP-C++ for Globus with the flavor of
+\texttt{gcc32dbgpthr}:
+
+./configure -\--enable-globus=gcc32dbgpthr
+
+\item Enable SOAP/XML encoding. POP-C++ supports multiple data encoding
+methods as the local plugins to the applications. POP-C++ requires the
+Xerces-C library to enable SOAP/XML encoding (configure --enable-xml).
+
+\item Enable HTTP protocol in parallel object method invocations. This
+protocol allows objects to communicate cross sites over the firewall
+(experimental feature).    
+
+\item Enable MPI support. This feature allows POP-C++ applications to implement
+parallel objects as MPI processes (refer section \ref{sec:mpi}). 
+
+\end{petitem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Configuring POP-C++ services}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The POP-C++ runtime service is a fully distributed model where resource connectivity is represented as a
+dynamic graph. A resource (POP-C++ service node) can join the
+environment  by registering itself to a node (or a master) inside this
+environment (dynamic) or by being listed statically in the ``known
+nodes'' of other resources inside the environment. 
+
+When configuring POP-C++ services on each node, the user will be prompted to give information
+about the master nodes (to which the configuring POP-C++ service will
+register itself to) and about the child nodes that the configuring
+POP-C++ service will manage. 
+
+\begin{petitem}
+\item The number of processors available on the resource (node).
+If the POP-C++ service represents a
+front end of a cluster, the number of processors is the number of nodes
+of that cluster. In this case, you will need to specify the script to
+submit a job to the cluster.  
+
+\item The local username to be used in the child nodes, in the case
+POP-C++ is started by the \texttt{root} user (this item is optional).
+
+\item The TCP/IP port to be used by POP-C++ (this item is optional, by
+default the port 2711 is used).
+
+\item The domain name of the local resource (optional). If no domain is
+provided, the IP address will be used. 
+
+
+Please note that more option can be set in appendix B : Runtime environment
+variables.
+
+
+\end{petitem}
+
+
+When you run ``make install'' for the first time, it will automatically execute the following script:
+
+ \textit{~\\
+installation-directory}\texttt{/sbin/popc\_setup}\\
+~
+
+This script will ask you several question about the local resource and the execution environment. 
+
+
+We assume to configure POP-C++ on 25 workstations sb01.eif.ch-sb025.eif.ch. We choose the machine sb02.eif.ch as the master node and the rest will register to this machine upon starting the POP-C++ services. We configured POP-C++ with Globus Toolkit 4.0. The POP-C++installation is shared on NFS among all machines.  Following is a transcript:
+
+
+
+\begin{enumerate}
+
+    \item Configure POP-C++ service on your local machine:
+
+POP-C++ runtime environment assumes the resource topology is a graph.
+Each node can join the environment by register itself to other nodes
+(master hosts). If you want to deploy POP-C++ services at your site, you
+can select one or several machines to be master nodes and when configure
+other nodes, you will need to enter these master nodes as requested.
+Another possibility to create your resource graph is to explicitly
+specify list of child nodes to which job requests can be forwarded to.
+Here is an example:
+
+\begin{verbatim}
+------------------
+Enter the full qualified master host name (POPC gateway):
+sb02.eif.ch
+
+Enter the full qualified master host name (POPC gateway):
+[Enter]
+
+Enter the child node:
+[Enter]
+------------------
+\end{verbatim}
+
+   \item Information of the local execution environment:
+
+   \begin{petitem}
+
+	\item Number of processors of the local machine. If you intend to
+	run POP-C++ service on a front end of a cluster, this can be the number
+	of nodes inside that cluster.
+
+	\item Maximum number of jobs that can be submitted to your local
+	machine.
+
+	\item The local user account you would like to run jobs. This is
+	only applied to the standalone POP-C++ services. In the case you use
+	Globus to submit jobs, authentication and authorization are provided
+	by Globus, hence, this information will be ignored.
+
+	\item Environment variables: you can set up your environment
+	variables for your jobs. Normally, you need to set the
+	\textbf{LD\_LIBRARY\_PATH} to all locations where dynamic libraries are
+	found. 
+
+   \end{petitem}
+
+	\item If you enable Globus while configuring POP-C++, information
+	about Globus environment will be prompted:
+
+    \begin{petitem}
+
+	\item The Globus gatekeeper contact: this is the host
+	certificate of the local machine. If you intend to share the
+	same Globus host certificate among all machines of your site,
+	you should  provide this certificate here instead of the
+	Globus's gatekeeper contact.
+
+	\item Globus grid-mapfile: POP-C++ will need information from
+	the Globus's grid-mapfile to verify if the user is eligible for running
+	jobs during resource discovery.
+
+    \end{petitem}
+
+Here is an example of what you will be asked:
+\begin{small}
+\begin{verbatim}
+----------------
+Enter number of processors available (default:1):
+[Enter]
+
+Enter the maximum number of POP-C++ jobs that can run
+concurrently(default: 1):
+[Enter]
+
+Which local user you want to use for running POPC jobs?
+[Enter]
+
+CONFIGURING THE RUNTIME ENVIRONMENT
+
+Enter the script to submit jobs to the local system:
+[Enter]
+
+\end{verbatim}
+
+%NOTE: this information is required if you use a batch job management system. 
+%                An example of PBS script is provided  in services/popcjob.pbs of the installation tree.
+
+
+\begin{verbatim}
+Communication pattern:
+\end{verbatim}
+
+NOTE: Communication pattern is a text string defining the protocol priority on binding the interface to the object server. It can contain ``*'' (matching non or all) and ``?'' (matching any) wildcards. 
+
+For example: given communication pattern ``\texttt{socket://160.98.* http://*}'':
+\begin{petitem}
+\item If the remote object access point is
+
+ ``\texttt{socket://128.178.87.180:32427 http://128.178.87.180:8080/MyObj}'', 
+
+the protocol to be used will be ``http''.
+
+\item If the remote object access point is 
+
+``\texttt{socket://160.98.20.54:33478 http://160.98.20.54:8080/MyObj}'', 
+
+the protocol to be used will be ``socket''.
+
+\end{petitem}
+ 
+\begin{verbatim}
+SETTING UP RUNTIME ENVIRONMENT VARIABLES
+
+Enter variable name:
+LD_LIBRARY_PATH
+
+Enter variable value:
+/usr/openwin/lib:/usr/lib:/opt/SUNWspro/lib
+
+Enter variable name:
+[Enter]
+
+DO YOU WANT TO CONFIGURE POPC SERVICES FOR GLOBUS? (y/n)
+y
+
+Enter the local globus gatekeeper contact:
+/O=EIF/OU=GridGroup/CN=host/eif.ch
+
+Enter the GLOBUS grid-mapfile([/etc/grid-security/grid-mapfile]):
+[Enter]
+
+=====================================================
+CONFIGURATION POP-C++ SERVICES COMPLETED!
+=====================================================
+---------------
+\end{verbatim}
+\end{small}
+
+    \item Generate startup script: you will be asked to generate startup scripts for POP-C++ services. These scripts (SXXpopc*) will be stored in the sbin subdirectory of the POP-C++ installed directory.
+
+\begin{petitem}
+
+	\item The local port where POP-C++ service is running. It is
+	recommended to keep the default port (2711).
+
+	\item The domain name of the local host. If your machine is not
+	listed in the DNS, just leave this field empty.
+
+	\item Temporary directory to store log information. If you leave
+	this field empty, /tmp will be used.
+
+	\item If you configure POP-C++ with Globus, the Globus installed
+	directory will also been prompted.
+
+\end{petitem}
+
+Bellow is the example:
+
+\begin{verbatim}
+---------------
+Do you want to generate the POPC++ startup scripts? (y/n)
+y
+=====================================================
+CONFIGURING STARTUP SCRIPT FOR YOUR LOCAL MACHINE...
+Enter the service port[2711]:
+[Enter]
+
+Enter the domain name:
+eif.ch
+
+Enter the temporary directory for intermediate results:
+/tmp/popc
+
+DO YOU WANT TO GENERATE THE GLOBUS-BASED POPC SCRIPT? (y/n)
+y
+
+Enter the globus installed directory (/usr/local/globus-4.0.0):
+[Enter]
+
+CONFIGURATION DONE!
+---------------
+\end{verbatim}
+
+\end{enumerate}
+
+If you want to change the POP-C++ configuration, you can manually run
+the configure script \textbf{popc\_setup} located in the
+\emph{$<$installed directory$>$/sbin}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{System Setup and Startup}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The installation tree provides a shell setup script. It sets
+paths to the POP-C++ binaries and library directories. The most
+straightforward solution is to include a reference to setup script in
+the users login shell setup file (like \texttt{.profile}, \texttt{.bashrc} or
+\texttt{.cshrc}). The setup scripts (respectively for C-shells and
+Bourne shells) are:
+
+\textit{~\\
+installation-directory}\texttt{/etc/popc-user-env.csh } and\\
+\textit{installation-directory}\texttt{/etc/popc-user-env.sh}\\
+~
+
+Before executing any POP-C++ application, the runtime system (job manager) must be
+started. There is a script provided for that purpose, so every node
+must run the following command:
+
+\textit{~\\
+installation-directory}\texttt{/sbin/SXXpopc start}\\
+~
+
+\texttt{SXXpopc} is a standard Unix daemon control script, with the
+traditional \texttt{start}, \texttt{stop} and \texttt{restart} options.
+There is a different version to be used with Globus, called
+\texttt{SXXpopc.globus}.

@@ -1,0 +1,318 @@
+#!@SHELL@
+
+POPC_LOCATION=@prefix@
+export POPC_LOCATION
+
+if [ "X$1" = "X-ask" ]
+then
+   answer="nothing"
+else
+   answer="y"
+fi
+
+if [ -f @prefix@/sbin/paroc_setup ]
+then 
+	echo "Error : You are installing on top of an older version, please clean your directory with 'rm -rf @prefix@/*' and run 'make install' again."
+	exit -1
+fi
+
+while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+do
+		echo ""
+		echo "DO YOU WANT TO CONFIGURE POP-C++ SERVICES? (y/n)"
+		read answer
+done
+
+if [ "X${answer}" = "Xn" ]
+then
+	echo "--------------------------------------------------"
+	echo "You chose not to configure the POP-C++ services now."
+	echo "You can configure the POP-C++ services at any time"
+	echo "by executing '$POPC_LOCATION/sbin/popc_setup' or"
+	echo "'make install'"
+	echo "--------------------------------------------------"
+	echo ""
+	echo "Press <Return> to continue "
+	read answer
+	exit 0
+fi
+
+echo ""
+echo "**************************************************************************"
+echo ""
+echo "They are 2 different ways to to configure the POP-C++ Services :"
+echo ""
+echo "- if you are new to POP-C++ and simply want to try it on your machine, "
+echo "  select a simple installation (y)"
+echo ""
+echo "- if you want to use POP-C++ on a grid using the jobmanager, or any other advanced "
+echo "  option, select a standard installation (n). More questions will be asked."
+echo ""
+echo "For more information about which installation suits you best"
+echo " please read the documentation."
+echo ""
+echo "If needed, you can change the configuration at any time by"
+echo "executing '$POPC_LOCATION/sbin/popc_setup' or 'make install'"
+echo ""
+echo "**************************************************************************"
+echo ""
+
+answer="nothing"
+while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+do
+	echo "DO YOU WANT TO MAKE A SIMPLE INSTALLATION ? (y/n) : "
+	read answer
+done
+if [ X${answer} = "Xy" ]
+then
+	insttype="simple"
+else
+	insttype="standard"
+fi
+export insttype
+
+
+if [ ! -d "${POPC_LOCATION}" ]
+then
+    echo "ERROR: POPC_LOCATION (${POPC_LOCATION}) does not exist!"
+    exit 1
+fi
+
+LD_LIBRARY_PATH=${POPC_LOCATION}/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
+
+echo '====================================================='
+echo GENERATING SERVICE MAPS...
+
+servicemap=${POPC_LOCATION}/etc/service.map
+echo "#object platform location" >  $servicemap 
+
+if [ -f ${POPC_LOCATION}/services/jobmgr.globus ]
+then
+	${POPC_LOCATION}/services/jobmgr.globus -listlong | grep Globus >> $servicemap 
+fi 
+
+if [ -f ${POPC_LOCATION}/services/jobmgr ]
+then
+	${POPC_LOCATION}/services/jobmgr -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/pqueue ]
+then
+	${POPC_LOCATION}/services/pqueue -listlong | grep PQueue >> $servicemap 
+fi
+
+#${POPC_LOCATION}/services/proxy -listlong >> $servicemap 
+
+
+echo "CONFIGURING POP-C++ SERVICES ON YOUR LOCAL MACHINE..."
+
+conf=${POPC_LOCATION}/etc/jobmgr.conf
+runtime_env=${POPC_LOCATION}/etc/popc-runtime-env.sh
+confglobus=${POPC_LOCATION}/etc/jobmgr.globus.conf
+
+cp ${POPC_LOCATION}/etc/jobmgr.conf.in $conf
+echo " " >> $conf
+
+if [ X$insttype = "Xstandard" ]
+then
+	while [ 1 ]
+	do
+		echo "Enter the full qualified master host name (POPC gateway):"
+		read host
+		if [ "x$host" != "x" ]
+		then
+			myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711"  }'`
+			echo "parent ${myurl}" >>  $conf
+			echo "node ${myurl}" >>  $conf
+		else
+			break
+		fi
+	done
+
+	while [ 1 ]
+	do
+		echo "Enter the child node:"
+		read host
+		
+	if [ "x$host" != "x" ]
+		then
+			myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711" }'`
+			echo "node ${myurl}" >>  $conf
+		else
+			break
+		fi
+	done
+
+	while [ 1 ]
+	do
+		echo "Enter number of processors available (default:1):"
+		read nprocs
+
+		if [ "x$nprocs" = "x" ]
+		then
+			nprocs=1 
+		fi
+	
+		if [ $nprocs -ge 1 ]
+		then
+			echo "np $nprocs" >>  $conf
+			break
+		else
+			echo "Bad input!"
+		fi
+	done
+
+	while [ 1 ]
+	do
+		echo "Enter the maximum number of POP-C++ jobs that can run concurrently (default: 100):"
+		read maxjobs
+		if [ "x$maxjobs" = "x" ]
+		then
+			maxjobs=100 
+		fi
+	
+		if [ $maxjobs -ge 0 ]
+		then
+			echo "maxjobs $maxjobs" >>  $conf
+			break
+		else
+			echo "Bad input!"
+		fi
+	done
+
+	while [ 1 ]
+	do
+		echo "Enter the available RAM for job execution in MB (default 1024) :"
+		read ram
+		if [ "x$ram" = "x" ]
+		then
+			ram=1024 
+		fi
+	
+		if [ $ram -gt 0 ]
+		then
+			echo "ram $ram" >>  $conf
+			break
+		else
+			echo "Bad input!"
+		fi
+	done
+
+	echo "Which local user you want to use for running POP-C++ jobs?"
+	read parocuser
+
+	if [ "x$parocuser" != "x" ]
+	then
+		echo "localuser $parocuser" >>  $conf
+	fi
+
+else
+#
+# here are the default values put in the jobmgr.conf for a simple installation
+#
+	echo "np 1" >>  $conf
+	echo "maxjobs 100" >>  $conf
+	echo "ram 1024" >>  $conf
+fi
+
+
+echo "CONFIGURING THE RUNTIME ENVIRONMENT"
+
+#backup popc-runtime-env.sh
+cp $runtime_env $POPC_LOCATION/etc/popc-runtime-env.sh.old
+cp $POPC_LOCATION/etc/popc-runtime-env.in $runtime_env
+
+
+if [ X$insttype = "Xstandard" ]
+then
+	echo "Enter the script to submit jobs to the local system:"
+	job_exec=""
+	read job_exec
+fi
+
+echo "jobmgr ${job_exec} $POPC_LOCATION/services/popcobjrun" >> $conf 
+
+if [ "@pqueue@" = "true" ]
+then
+
+	echo "PQUEUE service access point:"
+	pqueue=""
+	read pqueue
+	if [ -n "$pqueue" ]
+	then
+		echo "POPC_PQUEUE=\"$pqueue\"" >> $runtime_env
+		echo "export POPC_PQUEUE" >> $runtime_env
+	fi
+
+fi 
+
+if [ X$insttype = "Xstandard" ]
+then
+	echo "Communication pattern:"
+	comm=""
+	read comm
+fi
+
+if [ -n "$comm" ]
+then
+	echo "POPC_COMM_PATTERN=\"$comm\"" >> $runtime_env
+	echo "export POPC_COMM_PATTERN" >> $runtime_env
+fi
+
+echo "SETTING UP RUNTIME ENVIRONMENT VARIABLES"
+
+env_var="nothing"
+env_val="nothing"
+
+hasld=0
+
+if [ X$insttype = "Xstandard" ]
+then
+	while [ "X${env_var}" != "X" ] && [ "Y${env_val}" != "Y" ]
+	do
+		echo "Enter variable name:"
+		read env_var
+		if [ "X${env_var}" != "X" ]
+		then
+			echo "Enter variable value:"
+			read env_val
+			if [ "X${env_val}" != "X" ]
+			then
+				echo "$env_var=\"$env_val\"" >> $runtime_env
+				echo "export $env_var" >> $runtime_env
+			fi
+		fi
+	done
+
+	echo '====================================================='
+	echo "CONFIGURATION POP-C++ SERVICES COMPLETED!"
+	echo '====================================================='
+
+	answer=""
+	while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+	do
+		echo "Do you want to generate the POP-C++ startup scripts? (y/n)"
+		read answer
+	done
+
+	if [ "X${answer}" = "Xy" ]
+	then
+		$POPC_LOCATION/sbin/popc_script_setup
+	fi
+else
+	$POPC_LOCATION/sbin/popc_script_setup
+fi
+
+echo '====================================================='
+echo "CONFIGURATION DONE!"
+echo '====================================================='
+echo ""
+echo "IMPORTANT : Do not forget to add these lines to your .bashrc file or equivalent :"
+echo "---------"
+echo "    POPC_LOCATION=$POPC_LOCATION"
+echo "    PATH=\$PATH:\$POPC_LOCATION/bin:\$POPC_LOCATION/sbin"
+echo ""
+echo "Press <Return> to continue"
+read answer
+exit 0

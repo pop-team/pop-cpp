@@ -1,0 +1,41 @@
+\documentclass[12pt, twoside, english, dvips, A4]{book}
+\usepackage{manual}
+
+\makeindex
+\begin{document}
+
+%front page
+\raggedbottom
+\pagestyle{empty}
+\input{part_front}
+
+\pagestyle{fancy}
+\pagenumbering{roman}
+\setcounter{page}{1}
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+%chapters
+\input{part_intro}
+\input{part_model}
+\input{part_user}
+\input{part_comp}
+\input{part_instal}
+
+% appendices
+\setcounter{chapter}{0}%
+\renewcommand{\thechapter}{\Alph{chapter}}%
+\renewcommand{\chaptername}{Appendix}
+%\input{manual.ind}
+\input{part_comm}
+\input{part_env}
+
+%references
+%\bibliographystyle{alpha}
+\pagebreak
+\bibliographystyle{plain}
+\addcontentsline{toc}{chapter}{References}
+\bibliography{manual}
+
+\end{document}

@@ -1,0 +1,25 @@
+===============================================================================
+* mandelbrot
+===============================================================================
+* Adapted by Laurent Winkler for the DUO project
+* Date : July 2008
+********************************************************************************
+
+This is a generator of Mandelbrot fractal. The drawing board is split in tiles that are computed parallely on different stations. 
+
+The nbWorkers argument specifies the number of stations use to share the calculations. The contact address of the stations must be specified in machines.ip. 
+
+
+Compiling:
+You need QT3 development headers 
+On Debian/Ubuntu these files are provided by the package libqt3-mt-dev
+
+
+Argument:
+num-careaux real-min real-max imag-min imag-max nbWorkers
+
+example:
+2 -0.743650449 -0.743635821 0.131818649 0.131833277 1
+
+Executing
+../../bin/parocrun obj.map ./fractal.master 2 -1.743650449 1.043635821 -1.131818649 1.131833277 1

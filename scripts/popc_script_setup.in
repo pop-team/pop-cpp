@@ -1,0 +1,154 @@
+#!@SHELL@
+echo '====================================================='
+echo CONFIGURING STARTUP SCRIPT FOR YOUR LOCAL MACHINE...
+
+script=SXXpopc
+scriptglobus=SXXpopc.globus
+
+tmpheader=/tmp/SXXpopc_header_${USER}
+
+POPC_LOCATION=@prefix@
+
+if [ ! -d "${POPC_LOCATION}" ]
+then
+	echo "ERROR: POPC_LOCATION (${POPC_LOCATION}) does not exist!"
+	exit 1
+fi
+
+echo '#!/bin/sh' > $tmpheader
+echo "POPC_LOCATION=${POPC_LOCATION}" >> $tmpheader
+echo "export POPC_LOCATION" >> $tmpheader
+
+#echo "Enter dynamic library locations (default: [${LD_LIBRARY_PATH}]):"
+#read libdir
+#if [ "x$libdir" != "x" ]; then
+#	echo "LD_LIBRARY_PATH=$libdir; export LD_LIBRARY_PATH" >>  $tmpheader
+#fi
+
+if [ X$insttype = "Xstandard" ]
+then
+	echo "Enter the service port[2711]:"
+	read port
+	if [ -n "${port}" ]
+	then
+		echo "POPC_PORT=${port}" >> $tmpheader
+	fi
+
+	echo "Enter the domain name:"
+	read domainname
+
+	if [ -n "${domainname}" ]
+	then
+		echo "POPC_DOMAIN=${domainname}" >> $tmpheader
+		echo "export POPC_DOMAIN" >> $tmpheader
+	fi
+
+	echo "Enter the temporary directory for intermediate results:"
+	read tempdir
+
+	if [ -n "${tempdir}" ]
+	then
+		echo "POPC_TEMP=${tempdir}" >> $tmpheader
+		echo "export POPC_TEMP" >> $tmpheader
+	fi
+
+#echo "Enter the command to execute parallel object codes:"
+#read job_exec
+#if [ -n "${job_exec}" ]; then
+#    echo "POPC_JOB_EXEC=${job_exec}" >> $tmpheader
+#    echo "export POPC_JOB_EXEC" >> $tmpheader
+#fi
+
+#EXPERIMENTAL: IGNORE THE FOLLOWING IF BLOCK
+
+	if [ "X" != "X" ]
+	then
+		echo "SETUP POP-C++ DELEGATE SERVICE..."
+		echo "=================================================================="
+		echo "Delegate service is a POP-C++ service that allow to access to the"
+		echo "internal resources from exterior. This service should run on the"
+		echo "gateway machines that are accessible from both outside and inside"
+		echo "of the institute."
+		echo "=================================================================="
+		echo "Enter the delegate service for POP-C++ services (service proxy):"
+		read proxyname
+		
+		if [ -n "${proxyname}" ]
+		then
+			echo "POPC_JOBMGR_PROXY=${proxyname}" >> $tmpheader
+			echo "export POPC_JOBMGR_PROXY" >> $tmpheader
+		fi
+
+		echo "Enter the delegate service to access parallel objects (application proxy) [${proxyname}]:"
+		read appproxyname
+		if [ -z "${appproxyname}" ]
+		then
+			appproxyname=${proxyname}
+		fi
+
+		if [ -n "${appproxyname}" ]
+		then
+			echo "POPC_PROXY=${appproxyname}" >> $tmpheader
+			echo "export POPC_PROXY" >> $tmpheader
+		fi
+
+		while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+		do
+			echo "Do you want to run the POP-C++ delegate service on this host? (y/n)[n]"
+			read answer
+			
+			if [ -z "${answer}" ]
+			then
+				answer="n"
+			fi
+		done
+
+		if [ "X${answer}" = "Xy" ]
+		then
+			echo "Enter delegate service port [2811]:"
+			read proxyport
+
+			if [ "X${proxyport}" = "X" ]
+			then
+				proxyport="2811"
+			fi
+			
+			echo "PROXY_PORT=${proxyport}" >> $tmpheader
+
+			echo "Enter netmask of the local network (only hosts that do not have the same subnet will be connected through the delegate service):"
+			read netmask
+			
+			if [ ! "X${netmask}" = "X" ]
+			then
+				echo "POPC_PROXY_NETMASK=${netmask}" >> $tmpheader
+				echo "export POPC_PROXY_NETMASK" >> $tmpheader
+			fi
+
+			echo "Enter port range (xxx:yyy) for parallel objects:"
+			read portrange
+			
+			if [ ! "X${portrange}" = "X" ]
+			then
+				echo "POPC_PROXY_PORTS=${portrange}" >> $tmpheader
+				echo "export POPC_PROXY_PORTS" >> $tmpheader
+			fi
+
+			echo "Delegate service can be cascaded. If this is the case, what is the parent delegate service?"
+			read parent
+	
+			if [ ! "X${parent}" = "X" ]
+			then
+				echo "POPC_PROXY_PARENT=${parent}" >> $tmpheader
+				echo "export POPC_PROXY_PARENT" >> $tmpheader
+			fi
+		fi
+
+	fi
+#END IF
+
+fi
+
+cat $tmpheader ${POPC_LOCATION}/sbin/SXXpopc.in > ${POPC_LOCATION}/sbin/SXXpopc
+chmod +x ${POPC_LOCATION}/sbin/SXXpopc
+
+rm $tmpheader

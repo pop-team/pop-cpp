@@ -1,0 +1,53 @@
+#! /bin/bash
+
+# This script submits a full job to the PBS batch system
+#  Normally One node shold be reserved per object. But since we allocate objects on nodes with a (round-robin) loop, 
+# objects can be more numerous. 
+# Note : objects with od.url("localhost"); are created on the local node and are not counted as new nodes.
+#   see also popcobjrun.pbs
+
+time="1:00:00"
+nodes="1"
+prog=""
+if [ "X${POPC_LOCATION}" = "X" ]; then
+  popcrun=`which popcrun`
+else
+  popcrun="$POPC_LOCATION/bin/popcrun"
+fi
+
+# Read arguments and search for pbs arguments
+for arg in $* ; do
+    if [ `echo "$arg"|grep "^\-batch-time="` ]; then
+	export time=`echo $arg|sed s/-batch-time=//`
+    elif [ `echo "$arg"|grep "^\-batch-nodes="` ]; then
+	export nodes=`echo $arg|sed s/-batch-nodes=//`
+    elif [ -z "$prog" ]; then
+	prog=$arg
+    else
+	args="$args $arg"
+    fi
+done
+
+MY_WALLTIME=${POPC_JOB_WALLTIME:-"$time"}
+
+#Create a job script
+script=`mktemp -q /tmp/job.XXXXXX`
+output1="${script}.out"
+output2="${script}.err"
+
+echo "#PBS -l nodes=$nodes" > ${script}
+echo "#PBS -l walltime=${MY_WALLTIME}" >> ${script}
+#echo "#PBS -o $output1" >> ${script}
+#echo "#PBS -e $output2" >> ${script}
+
+echo "cd `pwd`" >> ${script}
+echo "$popcrun $prog -batch=pbs $args > $output1 2> $output2" >> ${script}
+
+# Submit the created script
+jobid=`qsub ${script}`
+
+echo "Job submitted, output to $output1 and $output2"
+rm ${script}
+
+
+
