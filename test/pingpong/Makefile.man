@@ -1,0 +1,24 @@
+PAROCC=parocc
+CXXFLAGS=-g -O2
+LDFLAGS=
+
+%.stub.o : %.ph
+	$(PAROCC) $(CXXFLAGS) -c $< -o $@
+%.o : %.cc
+	$(PAROCC) $(CXXFLAGS) -c $< -o $@
+
+all: pingpong.obj pingpong.main objmap
+
+pingpong.obj: pingpong.stub.o pingpong.o
+	$(PAROCC) -object pingpong.stub.o pingpong.o -o $@ $(LDFLAGS)
+pingpong.main: pingpong.stub.o pingpong.o
+	$(PAROCC) pingpong.stub.o pingpong.o -o $@ $(LDFLAGS)
+
+objmap: pingpong.obj
+	./pingpong.obj -listlong > objmap
+
+run: all
+	parocrun objmap ./pingpong.main
+
+clean: 
+	rm pingpong.obj pingpong.main objmap *.o

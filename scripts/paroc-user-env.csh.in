@@ -1,0 +1,17 @@
+#!/bin/csh
+setenv PAROC_LOCATION @prefix@
+
+setenv PAROC_PLUGIN_LOCATION @prefix@/lib/plugins
+
+if ( ! $?PATH ) then
+    setenv PATH ''
+endif
+
+setenv PATH ${PAROC_LOCATION}/bin:${PATH}
+
+if ( ! $?LD_LIBRARY_PATH ) then
+    setenv LD_LIBRARY_PATH ''
+endif
+
+setenv LD_LIBRARY_PATH ${PAROC_LOCATION}/lib:${PAROC_PLUGIN_LOCATION}:${LD_LIBRARY_PATH}
+

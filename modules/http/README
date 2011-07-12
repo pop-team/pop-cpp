@@ -1,0 +1,48 @@
+
+README
+------
+
+
+As you know, with POP-C++, you can use the HTTP protocol. 
+This is espacialy usefull to run objects behind web firewalls.
+
+We have developed a JAVA servlet to make the gateway between 2
+objects running both side of the firewalls.We try in this file 
+to explain how to deploy this servlet in a web-server. 
+
+0. REQUIREMENTS
+---------------
+
+For using our servlet, you will need a web-server supporting 
+J2EE web-applications. We don't specify here how to setup a 
+web-server like that.
+
+
+1. DEPLOYMENT
+-------------
+
+The deployment of this servlet is pretty easy...The first thing
+to do is to copy the 'servlet/WEB-INF' directory and all his 
+contents into a public_html place in the web-server. Depends on
+the web-server, you will need to restart it to take in count the
+new web-application. The deployment is done now and the servlet
+should work.
+
+
+2. USING THE SERVLET
+--------------------
+
+In order to use this servlet you will need to setup an environnment
+variables in the machines behind the firewall (inside the institute):
+
+  export PAROC_HTTP_GATEWAY=http://url_of_the_webserver[:port]/servlet/PopCServlet?url=
+  (For exemple: 'export PAROC_HTTP_GATEWAY=http://labweb01.eif.ch:6577/servlet/PopCServlet?url=')
+
+
+3. DEVELOPING THE SERVLET
+-------------------------
+
+I used the Eclipse Platform to develop the servlet, with that you can use the remote debugging
+which is very convenient.
+
+ 

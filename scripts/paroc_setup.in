@@ -1,0 +1,242 @@
+#!@SHELL@
+
+PAROC_LOCATION=@prefix@
+export PAROC_LOCATION
+
+if [ "X$1" = "X-ask" ]; then
+   answer="nothing"
+else
+   answer="y"
+fi
+
+while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ] ; do
+echo "DO YOU WANT TO CONFIGURE PAROC SERVICES? (y/n)"
+read answer
+done
+if [ "X${answer}" = "Xn" ]; then
+	echo "--------------------------------------------------"
+	echo "You choose not to configure the PAROC services now."
+	echo "You can configure the PAROC services any time"
+	echo "by executing $PAROC_LOCATION/sbin/paroc_setup"
+	echo "--------------------------------------------------"
+	exit 0
+fi
+
+if [ ! -d "${PAROC_LOCATION}" ]; then
+    echo "ERROR: PAROC_LOCATION (${PAROC_LOCATION}) does not exist!"
+    exit 1
+fi
+
+LD_LIBRARY_PATH=${PAROC_LOCATION}/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
+
+echo '====================================================='
+echo GENERATING SERVICE MAPS...
+servicemap=${PAROC_LOCATION}/etc/service.map
+echo "#object platform location" >  $servicemap 
+if [ -f ${PAROC_LOCATION}/services/jobmgr.globus ]; then
+	${PAROC_LOCATION}/services/jobmgr.globus -listlong | grep Globus >> $servicemap 
+fi 
+if [ -f ${PAROC_LOCATION}/services/jobmgr ]; then
+	${PAROC_LOCATION}/services/jobmgr -listlong >> $servicemap 
+fi
+
+if [ -f ${PAROC_LOCATION}/services/pqueue ]; then
+	${PAROC_LOCATION}/services/pqueue -listlong | grep PQueue >> $servicemap 
+fi
+
+#${PAROC_LOCATION}/services/proxy -listlong >> $servicemap 
+
+
+echo "CONFIGURING PAROC SERVICES ON YOUR LOCAL MACHINE..."
+
+conf=${PAROC_LOCATION}/etc/jobmgr.conf
+runtime_env=${PAROC_LOCATION}/etc/paroc-runtime-env.sh
+confglobus=${PAROC_LOCATION}/etc/jobmgr.globus.conf
+
+cp ${PAROC_LOCATION}/etc/jobmgr.conf.in $conf
+echo " " >> $conf
+while [ 1 ]; do
+echo "Enter the full qualified master host name (PAROC gateway):"
+
+read host
+if [ "x$host" != "x" ]; then
+	myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711"  }'`
+	echo "parent ${myurl}" >>  $conf
+	echo "node ${myurl}" >>  $conf
+else
+	break
+fi
+done
+
+
+while [ 1 ]; do
+echo "Enter the child node:"
+
+read host
+if [ "x$host" != "x" ]; then
+	myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711" }'`
+	echo "node ${myurl}" >>  $conf
+else
+	break
+fi
+done
+
+while [ 1 ]; do
+echo "Enter number of processors available (default:1):"
+read nprocs
+if [ "x$nprocs" = "x" ]; then
+	nprocs=1 
+fi
+if [ $nprocs -ge 1 ]; then
+	echo "np $nprocs" >>  $conf
+	break
+else
+	echo "Bad input!"
+fi
+done
+
+while [ 1 ]; do
+echo "Enter the maximum number of ParoC++ jobs that can run concurrently (default: $nprocs):"
+read maxjobs
+if [ "x$maxjobs" = "x" ]; then
+	maxjobs=$nprocs 
+fi
+if [ $maxjobs -ge 0 ]; then
+	echo "maxjobs $maxjobs" >>  $conf
+	break
+else
+	echo "Bad input!"
+fi
+done
+
+echo "Which local user you want to use for running PAROC jobs?"
+read parocuser
+if [ "x$parocuser" != "x" ]; then
+	echo "localuser $parocuser" >>  $conf
+fi
+
+echo "CONFIGURING THE RUNTIME ENVIRONMENT"
+
+#backup paroc-runtime-env.sh
+cp $runtime_env $PAROC_LOCATION/etc/paroc-runtime-env.sh.old
+cp $PAROC_LOCATION/etc/paroc-runtime-env.in $runtime_env
+
+echo "Enter the script to submit jobs to the local system:"
+job_exec=""
+read job_exec
+if [ -n "${job_exec}" ]; then
+    
+    echo "PAROC_JOB_EXEC=\"${job_exec}\"" >> $runtime_env
+    echo "export PAROC_JOB_EXEC" >> $runtime_env
+fi
+
+if [ "@pqueue@" = "true" ]; then
+
+echo "PQUEUE service access point:"
+pqueue=""
+read pqueue
+if [ -n "$pqueue" ]; then
+      echo "PAROC_PQUEUE=\"$pqueue\"" >> $runtime_env
+      echo "export PAROC_PQUEUE" >> $runtime_env
+fi
+
+fi 
+
+echo "Communication pattern:"
+comm=""
+read comm
+if [ -n "$comm" ]; then
+      echo "PAROC_COMM_PATTERN=\"$comm\"" >> $runtime_env
+      echo "export PAROC_COMM_PATTERN" >> $runtime_env
+fi
+
+echo "SETTING UP RUNTIME ENVIRONMENT VARIABLES"
+
+env_var="nothing"
+env_val="nothing"
+
+hasld=0
+
+while [ "X${env_var}" != "X" ] && [ "Y${env_val}" != "Y" ]; do
+echo "Enter variable name:"
+read env_var
+if [ "X${env_var}" != "X" ]; then
+
+echo "Enter variable value:"
+read env_val
+if  "X${env_val}" != "X" ]; then
+	echo "$env_var=\"$env_val\"" >> $runtime_env
+	echo "export $env_var" >> $runtime_env
+
+fi
+
+fi
+done
+
+answer=""
+if [ ! -f ${PAROC_LOCATION}/services/jobmgr.globus ]; then
+answer="n"
+fi
+
+while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ] ; do
+echo "DO YOU WANT TO CONFIGURE PAROC SERVICES FOR GLOBUS? (y/n)"
+read answer
+done
+
+if [ "x$answer" = "xy" ]; then
+	cp $conf $confglobus
+	hostcert=""
+        if [ -f /etc/grid-security/hostcert.pem ]; then
+		hostcert="/etc/grid-security/hostcert.pem"
+	elif [ -f ${GLOBUS_LOCATION}/etc/grid-security/hostcert.pem ]; then
+	        hostcert="${GLOBUS_LOCATION}/etc/grid-security/hostcert.pem"
+	fi
+
+	certdefault=""
+	if [ "X$hostcert" != "X" ]; then
+		certdefault=`grid-cert-info -subject -file $hostcert`
+	fi
+	echo "Enter the Globus Gatekeeper certificate [${certdefault}]:"
+	read gramcontact
+	if [ "x$gramcontact" = "x" ]; then
+		gramcontact="$certdefault"
+	fi
+	if [ "x$gramcontact" = "x" ]; then
+		gramcontact=`hostname`
+	fi
+	echo "gramcontact $gramcontact" >> $confglobus
+
+	defaultgridmap=""
+	if [ -r "/etc/grid-security/grid-mapfile" ]; then
+	    defaultgridmap="/etc/grid-security/grid-mapfile"
+	elif [ -r "${GLOBUS_LOCATION}/etc/grid-security/grid-mapfile" ]; then
+	    defaultgridmap="${GLOBUS_LOCATION}/etc/grid-security/grid-mapfile"
+	fi
+
+	echo "Enter the GLOBUS grid-mapfile([${defaultgridmap}]):"
+	read gridmap
+	if [ "x$gridmap" = "x" ]; then
+		gridmap=$defaultgridmap
+	fi
+	if [ -r $gridmap ]; then
+		echo "grid-mapfile $gridmap" >> $confglobus
+	else
+		echo "ERROR: unable to read $gridmap"
+		exit 1
+	fi
+fi 
+echo '====================================================='
+echo "CONFIGURATION PAROC++ SERVICES COMPLETED!"
+echo '====================================================='
+
+answer=""
+while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ] ; do
+echo "Do you want to generate the PAROC++ startup scripts? (y/n)"
+read answer
+done
+
+if [ "X${answer}" = "Xy" ]; then
+    $PAROC_LOCATION/sbin/paroc_script_setup
+fi
+

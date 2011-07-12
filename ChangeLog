@@ -1,0 +1,11 @@
+CHANGE FROM 1.0
+
+- New intermediate C++ code: the compiler generate separate code for each constructor: allocate a resource and then call a method __paroc_Construct to invoke the corresponding server constructor. This will allow to customize the object creation (MPI support).
+- New option of compiler to specify the start file for object. Option: "-object=<type>".
+- New paroc_interface::LocalExec method: allow to create multiple objects.
+
+- Fix potential bug when a connection is closed on the receiving thread but it is possibly still used in the serving thread: Add "Clone" method to the paroc_combox to clone the combox before passing it to the serving thread.
+
+- MPI support (require: --enable-mpi during configuring step)
+- New combox interface (no Accept, no Listen). Buffer interface changed accordingly
+

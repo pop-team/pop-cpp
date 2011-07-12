@@ -1,0 +1,53 @@
+#!/bin/sh
+# This script provides an ability to run a program stored on an HTTP server
+
+if [ "X${PAROC_LOCATION}" != "X" ]; then
+. $PAROC_LOCATION/etc/paroc-runtime-env.sh
+fi
+
+if [ $# -eq 0 ]; then
+echo "Usage: webrun <url> arguments...."
+exit 1
+fi
+
+MY_PAROC_PROXY=""
+
+if [ -n "${PAROC_PROXY}" ]; then
+MY_PAROC_PROXY="-proxy=${PAROC_PROXY}"
+fi
+
+prog=$1
+shift
+
+if [ -x $prog ]; then
+#    echo "${PAROC_JOB_EXEC} $prog $args ${MY_PAROC_PROXY}"
+    ${PAROC_JOB_EXEC} $prog "$@"
+    RETVAL=$?
+    exit $RETVAL
+else
+    TMPDIR=${PAROC_TEMP:=/tmp}
+    wget=`which wget`
+    pid=$$
+
+    prog1="$TMPDIR/parobject_${USER}_${pid}"
+
+    echo "Downloading the executable file..."
+    $wget -q $prog -O $prog1
+    RETVAL=$?
+    if [ $RETVAL -ne 0 ]; then
+        echo "Can not get the file. WGET failed"
+        exit $RETVAL
+    fi
+    
+    if [ ! -f $prog1 ]; then
+        echo "${prog1} not found"
+        exit 1
+    else
+        chmod +x $prog1
+#        echo "Now EXEC: ${PAROC_JOB_EXEC} ${TMPDIR}/$prog1 $* ${MY_PAROC_PROXY}"
+	${PAROC_JOB_EXEC} $prog1 "$@"
+        RETVAL=$?
+	rm -f $prog1
+        exit $RETVAL
+    fi
+fi

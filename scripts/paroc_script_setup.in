@@ -1,0 +1,166 @@
+#!@SHELL@
+echo '====================================================='
+echo CONFIGURING STARTUP SCRIPT FOR YOUR LOCAL MACHINE...
+
+script=SXXparoc
+scriptglobus=SXXparoc.globus
+
+tmpheader=/tmp/SXXparoc_header_${USER}
+
+PAROC_LOCATION=@prefix@
+
+if [ ! -d "${PAROC_LOCATION}" ]; then
+    echo "ERROR: PAROC_LOCATION (${PAROC_LOCATION}) does not exist!"
+    exit 1
+fi
+
+echo '#!/bin/sh' > $tmpheader
+echo "PAROC_LOCATION=${PAROC_LOCATION}" >> $tmpheader
+echo "export PAROC_LOCATION" >> $tmpheader
+
+#echo "Enter dynamic library locations (default: [${LD_LIBRARY_PATH}]):"
+#read libdir
+#if [ "x$libdir" != "x" ]; then
+#	echo "LD_LIBRARY_PATH=$libdir; export LD_LIBRARY_PATH" >>  $tmpheader
+#fi
+
+echo "Enter the service port[2711]:"
+read port
+if [ -n "${port}" ]; then
+    echo "PAROC_PORT=${port}" >> $tmpheader
+fi
+
+echo "Enter the domain name:"
+read domainname
+if [ -n "${domainname}" ]; then
+    echo "PAROC_DOMAIN=${domainname}" >> $tmpheader
+    echo "export PAROC_DOMAIN" >> $tmpheader
+fi
+
+echo "Enter the temporary directory for intermediate results:"
+read tempdir
+if [ -n "${tempdir}" ]; then
+    echo "PAROC_TEMP=${tempdir}" >> $tmpheader
+    echo "export PAROC_TEMP" >> $tmpheader
+fi
+
+#echo "Enter the command to execute parallel object codes:"
+#read job_exec
+#if [ -n "${job_exec}" ]; then
+#    echo "PAROC_JOB_EXEC=${job_exec}" >> $tmpheader
+#    echo "export PAROC_JOB_EXEC" >> $tmpheader
+#fi
+
+#EXPERIMENTAL: IGNORE THE FOLLOWING IF BLOCK
+if [ "X" != "X" ]; then
+
+echo "SETUP PAROC++ DELEGATE SERVICE..."
+echo "=================================================================="
+echo "Delegate service is a ParoC++ service that allow to access to the"
+echo "internal resources from exterior. This service should run on the"
+echo "gateway machines that are accessible from both outside and inside"
+echo "of the institute."
+echo "=================================================================="
+
+
+echo "Enter the delegate service for ParoC++ services (service proxy):"
+read proxyname
+if [ -n "${proxyname}" ]; then
+    echo "PAROC_JOBMGR_PROXY=${proxyname}" >> $tmpheader
+    echo "export PAROC_JOBMGR_PROXY" >> $tmpheader
+fi
+
+echo "Enter the delegate service to access parallel objects (application proxy) [${proxyname}]:"
+read appproxyname
+if [ -z "${appproxyname}" ]; then
+    appproxyname=${proxyname}
+fi
+
+if [ -n "${appproxyname}" ]; then
+    echo "PAROC_PROXY=${appproxyname}" >> $tmpheader
+    echo "export PAROC_PROXY" >> $tmpheader
+fi
+
+while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ] ; do
+echo "Do you want to run the ParoC++ delegate service on this host? (y/n)[n]"
+read answer
+if [ -z "${answer}" ]; then
+answer="n"
+fi
+done
+
+if [ "X${answer}" = "Xy" ]; then
+
+    echo "Enter delegate service port [2811]:"
+    read proxyport
+    if [ "X${proxyport}" = "X" ]; then
+	proxyport="2811"
+    fi
+    echo "PROXY_PORT=${proxyport}" >> $tmpheader
+
+    echo "Enter netmask of the local network (only hosts that do not have the same subnet will be connected through the delegate service):"
+    read netmask
+    if [ ! "X${netmask}" = "X" ]; then
+	echo "PAROC_PROXY_NETMASK=${netmask}" >> $tmpheader
+	echo "export PAROC_PROXY_NETMASK" >> $tmpheader
+    fi
+
+    echo "Enter port range (xxx:yyy) for parallel objects:"
+    read portrange
+    if [ ! "X${portrange}" = "X" ]; then
+	echo "PAROC_PROXY_PORTS=${portrange}" >> $tmpheader
+	echo "export PAROC_PROXY_PORTS" >> $tmpheader
+    fi
+
+    echo "Delegate service can be cascaded. If this is the case, what is the parent delegate service?"
+    read parent
+    if [ ! "X${parent}" = "X" ]; then
+	echo "PAROC_PROXY_PARENT=${parent}" >> $tmpheader
+	echo "export PAROC_PROXY_PARENT" >> $tmpheader
+    fi
+fi
+
+fi
+#END IF
+
+cat $tmpheader ${PAROC_LOCATION}/sbin/SXXparoc.in > ${PAROC_LOCATION}/sbin/SXXparoc
+chmod +x ${PAROC_LOCATION}/sbin/SXXparoc
+
+answer=""
+if [ ! -f ${PAROC_LOCATION}/services/jobmgr.globus ]; then
+answer="n"
+fi
+
+while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ] ; do
+echo "DO YOU WANT TO GENERATE THE GLOBUS-BASED PAROC SCRIPT? (y/n)"
+read answer
+done
+
+if [ "x$answer" = "xy" ]; then
+	echo "Enter the globus installed directory (${GLOBUS_LOCATION}):"
+	read globusdir
+	if [ "x$globusdir" = "x" ]; then
+		globusdir=${GLOBUS_LOCATION}
+	fi
+	if [ "x$globusdir" = "x" ]; then
+                echo "ERROR: Globus installed directory is not specified"
+		exit 1
+        fi
+	if [ ! -d $globusdir ]; then
+		echo "ERROR: Globus installed directory does not exist"
+		exit 1
+	fi
+	echo "GLOBUS_LOCATION=${globusdir}" >> $tmpheader
+	echo "export GLOBUS_LOCATION" >> $tmpheader
+
+	cat $tmpheader ${PAROC_LOCATION}/sbin/SXXparoc.globus.in > ${PAROC_LOCATION}/sbin/SXXparoc.globus
+	chmod +x ${PAROC_LOCATION}/sbin/SXXparoc.globus
+fi 
+
+rm $tmpheader
+
+echo "CONFIGURATION DONE!"
+echo '====================================================='
+
+
+

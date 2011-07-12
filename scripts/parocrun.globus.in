@@ -1,0 +1,174 @@
+#!/bin/sh
+
+if [ -z "$*" ]; then
+echo "Usage: parocrun objects.config [-drun] prog.main args..."
+exit	
+fi
+
+if [ -z "${PAROC_LOCATION}" ]; then
+PAROC_LOCATION=@prefix@
+export PAROC_LOCATION
+fi
+
+MYJOBSERVICE=${PAROC_JOBSERVICE:-"`hostname`:2711"}
+
+#if [ -z "${PAROC_JOBSERVICE}" ]; then
+#PAROC_JOBSERVICE="`hostname`:2711"
+#fi
+
+
+
+MYAPPSERVICE=${PAROC_APPSERVICE:-${PAROC_LOCATION}/services/appservice}
+
+drun=0
+globus=0
+noproxy=0
+
+args=""
+
+CODECONF=""
+PROG=""
+for arg in $* ; do
+    
+    if [ "$arg" = "-drun" ]; then
+	drun=1
+    elif [ "$arg" = "-noproxy" ]; then
+	noproxy=1
+    elif [ -z "${CODECONF}" ]; then
+	CODECONF=$arg
+    elif [ -z "${PROG}" ]; then
+	PROG=$arg
+    else
+	args="$args $arg"
+    fi
+done
+
+if [ -z "${GLOBUS_LOCATION}" ]; then
+    echo "ERROR: GLOBUS_LOCATION environment variable is not set"
+    exit 1
+fi
+
+grid-proxy-info -e
+ret=$?
+if [ $ret -eq 1 ]; then
+grid-proxy-init
+ret=$?
+test $ret -eq 0 || exit $ret
+fi
+
+#Check and dowload object map file....
+if [ -z "${CODECONF}" ]; then
+echo "Code config file missing"
+exit 1
+fi
+
+httpfile=`echo "${CODECONF}" | grep http://`
+ftpfile=`echo "${CODECONF}" | grep ftp://`
+TMPDIR=${PAROC_TMP:=/tmp}
+
+if [ -n "${httpfile}${ftpfile}" ]; then
+    wget=`which wget`
+    if [ -z "${wget}" ]; then
+	echo "ERROR: wget command not found"
+	exit 1
+    fi
+    echo Downloading $CODECONF
+    LOCALCODECONF=${TMPDIR}/`whoami`_`echo ${CODECONF} | tr "://~" "____"`
+    $wget -q $CODECONF -O ${LOCALCODECONF}
+    RETVAL=$?
+    if [ $RETVAL -ne 0 ]; then
+	echo "Can not get the code configuration file. WGET failed"
+	exit $RETVAL
+    fi
+    CODECONF=${LOCALCODECONF}
+fi
+
+if [ ! -f "${CODECONF}" ]; then
+echo "Code config file not found"
+exit 1
+fi
+
+FILECONF=`basename $CODECONF`
+OLDPATH=`pwd`
+cd `dirname $CODECONF`
+PATHCONF=`pwd`
+cd $OLDPATH
+
+if [ -z "${FILECONF}" ]; then
+echo "Code config file not found"
+exit 1
+fi
+
+
+if [ -z "${PROG}" ]; then
+echo "Program file missing"
+exit 1
+fi
+
+#Download the program if it is on the web server
+httpfile=`echo "${PROG}" | grep http://`
+ftpfile=`echo "${PROG}" | grep ftp://`
+
+if [ -n "${httpfile}${ftpfile}" ]; then
+    wget=`which wget`
+    if [ -z "${wget}" ]; then
+	echo "ERROR: wget is required"
+	exit 1
+    fi
+    echo "Downloading ${PROG}..."
+    LOCALPROG=${TMPDIR}/`whoami`_`echo ${PROG} | tr "://~" "____"`
+    $wget -q $PROG -O ${LOCALPROG}
+    RETVAL=$?
+    if [ $RETVAL -ne 0 ]; then
+	echo "Can not get the main program file. WGET failed"
+	exit $RETVAL
+    fi
+    PROG=${LOCALPROG}
+    chmod +x $PROG
+fi
+
+
+
+APPCONTACT=""
+
+MY_PROXY=""
+
+TMPCHALLENGE="`whoami`@`hostname` on `date`"
+TMPNAME=""
+
+if [ -n "${PAROC_PROXY}" ] && [ $noproxy -eq 0 ] ; then
+MY_PROXY=" -proxy=${PAROC_PROXY}"
+fi
+
+if [ ! -x ${PAROC_LOCATION}/services/localservice_launcher.globus ]; then
+	echo "${PAROC_LOCATION}/services/localservice_launcher.globus not found"
+	exit 1
+fi
+TMPNAME="/tmp/`whoami`_paroc_temp"
+if [ -f $TMPNAME ]; then
+    rm $TMPNAME
+fi
+
+${PAROC_LOCATION}/services/localservice_launcher.globus start ${MY_PROXY} -challenge="${TMPCHALLENGE}" -out=${TMPNAME}
+ret=$?
+
+if [ $ret -ne 0 ]; then
+    echo "Error on launching ParoC++ local service"
+    exit 1
+fi
+APPCONTACT=`cat ${TMPNAME}`
+rm $TMPNAME
+
+cmd="$PROG $args -initparoc -appservicecontact=${APPCONTACT} -codeconf=${PATHCONF}/${FILECONF} -jobservice=${MYJOBSERVICE}"
+
+retval=0
+
+if [ $drun -eq 1 ]; then
+    echo Exec: $cmd
+else
+    $cmd
+    retval=$?
+fi
+
+$PAROC_LOCATION/services/localservice_launcher.globus stop -servicepoint=${APPCONTACT} -challenge="${TMPCHALLENGE}"
+exit $retval
