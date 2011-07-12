@@ -1,0 +1,35 @@
+#!/bin/sh
+MY_WALLTIME=${PAROC_JOB_WALLTIME:-"8:00:00"}
+
+#echo start a job using QSUB
+script=`mktemp -q /tmp/script.XXXXXX`
+echo "#PBS -l nodes=1" > ${script}
+echo "#PBS -l walltime=${MY_WALLTIME}" >> ${script}
+echo "#PBS -o `pwd`/.parojob.out" >> ${script}
+echo "#PBS -e `pwd`/.parojob.err" >> ${script}
+
+prog=$1
+args=""
+shift
+t=$1
+while [ "X$t" != "X" ]; do
+ args="$args \"$t\""
+ shift
+ t=$1
+done 
+
+echo "$prog $args" >> ${script}
+jobid=`qsub ${script}`
+echo Jobid=$jobid
+current=$jobid
+while [ "X$current" != "X" ]; do
+	#echo Sleep for 10 sec
+	sleep 10
+	current=`qstat $jobid`
+#	echo current = $current
+done 
+wait
+rm ${script}
+
+
+
