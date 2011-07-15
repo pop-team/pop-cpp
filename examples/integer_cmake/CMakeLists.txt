@@ -18,15 +18,16 @@ SET(CMAKE_VERBOSE_MAKEFILE on)
 #SET(OBJECT_OUTPUT integer.obj)
 #SET(OBJECT_MAP_FILE obj.map)
 
+# Using standard CMake macro
 #ADD_EXECUTABLE(integer integer_h.ph integer_c.cc)
 
 SET(POPCPP_FLAGS -object -o)
+
+# Using special Macro
 ADD_PARALLEL_OBJECT(integer.obj integer_h.ph integer_c.cc)
 ADD_POPCPP_MAIN(main main.cc integer_h.ph integer_c.cc)
 OBJECT_MAP(integer.obj obj.map)
-#EXECUTE_PROCESS(COMMAND ${CMAKE_POPCPP_COMPILER} ${OBJECT_COMPILATION_FLAGS} ${OBJECT_OUTPUT} integer.ph integer.cc)
-#EXECUTE_PROCESS(COMMAND ${CMAKE_POPCPP_COMPILER} ${MAIN_COMPILATION_FLAGS} main integer.ph integer.cc main.cc)
-#EXECUTE_PROCESS(COMMAND ${OBJECT_OUTPUT} ${OBJECT_MAP_FLAGS} > ${OBJECT_MAP_FILE})
+
 
 
 
