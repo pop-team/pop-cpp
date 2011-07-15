@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "integer.ph"
+#include "integer_h.ph"
 #include <unistd.h>
 
 Integer::Integer()

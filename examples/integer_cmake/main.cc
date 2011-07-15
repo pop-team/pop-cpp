@@ -1,7 +1,7 @@
 
 
 
-#include "integer.ph"
+#include "integer_h.ph"
 #include <iostream>
 
 using namespace std;
