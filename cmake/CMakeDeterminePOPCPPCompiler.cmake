@@ -10,12 +10,19 @@
 #=============================================================================
 # (To distributed this file outside of CMake, substitute the full
 #  License text for the above reference.)
+#
+# Creation Date:
+# Author: Clement Valentin (clementval)
 
 # determine the compiler to use for POP-C++ programs
 # NOTE, a generator or a user may set CMAKE_POPCPP_COMPILER before
 # loading this file to force a compiler 
 
 
+
+# If POP-C++ compiler is not yet defined, we look into the user defined env. variable.
+# In the case this variable is not defined, we set the default location of the POP-C++
+# compiler.
 
 IF(NOT CMAKE_POPCPP_COMPILER)
 
