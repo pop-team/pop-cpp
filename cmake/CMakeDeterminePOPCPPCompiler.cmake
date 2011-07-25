@@ -24,6 +24,7 @@
 # In the case this variable is not defined, we set the default location of the POP-C++
 # compiler.
 
+
 IF(NOT CMAKE_POPCPP_COMPILER)
 
    # prefer the environement variable POPC_LOCATION
@@ -51,10 +52,7 @@ IF(NOT CMAKE_POPCPP_COMPILER)
       SET(CMAKE_POPCPP_RUNTIME ${POPCPP_BIN_PATH}/popcrun)
    ENDIF(CMAKE_POPCPP_RUNTIME_INIT)
 
-   MESSAGE("Compiler is ${CMAKE_POPCPP_COMPILER}")    
-   MESSAGE("Runtime is ${CMAKE_POPCPP_RUNTIME}")
-
-
+   SET(CMAKE_POPCPP_COMPILER_ENV_VAR "")
 ENDIF(NOT CMAKE_POPCPP_COMPILER)
 
 

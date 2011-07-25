@@ -22,7 +22,7 @@ IF(NOT CMAKE_POPCPP_OBJECT_FLAGS)
 ENDIF(NOT CMAKE_POPCPP_OBJECT_FLAGS)
 
 IF(NOT CMAKE_POPCPP_MAIN_FLAGS)
-   SET(CMAKE_POPCPP_MAIN_FLAGS "-o")
+   SET(CMAKE_POPCPP_MAIN_FLAGS -o)
 ENDIF(NOT CMAKE_POPCPP_MAIN_FLAGS)
 
 
@@ -71,15 +71,15 @@ ENDMACRO(CDR)
 
 # POP-C++ special macro
 # This macro is used to compile a parallel object
-MACRO(ADD_PARALLEL_OBJECT)
+MACRO(ADD_POPC_OBJECT)
 #   MESSAGE("CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}")
 #   MESSAGE("CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}")
 #   MESSAGE("CMAKE_FILES_DIRECTORY ${CMAKE_FILES_DIRECTORY}")
 
    # Be sure that the SOURCE varibale is empty
    SET(SOURCES)
-   SET(COPIED_SOURCES)   
    SET(TARGET_NAME)
+   SET(OBJECT_DIR)
    # Parse the arguments for this macro
    PARSE_ARGUMENTS(PAROBJ
       "FLAGS"
@@ -113,10 +113,7 @@ MACRO(ADD_PARALLEL_OBJECT)
 
    # Create white-spaced list for the source files
    FOREACH(source ${OBJECT_SOURCES})
-      EXEC_PROGRAM(cp 
-                   ARGS "${source} ${OBJECT_DIR}/${source}")
-      set(COPIED_SOURCES ${SOURCES} ${OBJECT_DIR}/${source})
-      set(SOURCES ${SOURCES} ${source})
+      set(SOURCES ${SOURCES} ../../${source})
    ENDFOREACH(source ${OBJECT_SOURCES})
 
    
@@ -136,7 +133,7 @@ MACRO(ADD_PARALLEL_OBJECT)
 
    SET(TARGET_NAME "${OBJECT_NAME}")
    SET(COMPILE_COMMAND ${CMAKE_POPCPP_COMPILER} ${FLAGS_POPCPP} ${OBJECT_NAME} ${SOURCES})
-
+   MESSAGE("${COMPILE_COMMAND}")
    ADD_CUSTOM_TARGET(${TARGET_NAME} ALL 
                      COMMAND ${COMPILE_COMMAND}
                      COMMAND cp ${OBJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${OBJECT_NAME}
@@ -154,7 +151,7 @@ MACRO(ADD_PARALLEL_OBJECT)
 
    SET(PAROBJ_FLAGS)    
    SET(FLAGS_POPCPP)
-ENDMACRO(ADD_PARALLEL_OBJECT)
+ENDMACRO(ADD_POPC_OBJECT)
 
 
 #####################################################################################
@@ -162,8 +159,12 @@ ENDMACRO(ADD_PARALLEL_OBJECT)
 #   POP-C++ Main compilation
 #
 #####################################################################################
-MACRO(ADD_POPCPP_MAIN)
-   SET(SOURCES)
+MACRO(ADD_POPC_MAIN)
+   # Clear var before using them
+   SET(LIST_MAIN_SOURCES) 
+   SET(TARGET_NAME)
+   SET(OBJECT_DIR)
+
    PARSE_ARGUMENTS(POPCPPMAIN
       "FLAGS"
       ""
@@ -172,35 +173,47 @@ MACRO(ADD_POPCPP_MAIN)
    CAR(MAIN_NAME ${POPCPPMAIN_DEFAULT_ARGS})
    CDR(MAIN_SOURCES ${POPCPPMAIN_DEFAULT_ARGS})
 
+   SET(OBJECT_DIR .${CMAKE_FILES_DIRECTORY}/${MAIN_NAME}.dir)
+   EXEC_PROGRAM(mkdir
+                ARGS "-p ${OBJECT_DIR}")
+
    IF(NOT POPCPPMAIN_FLAGS)
       set(FLAGS_MAIN ${CMAKE_POPCPP_MAIN_FLAGS})
    ENDIF(NOT POPCPPMAIN_FLAGS)
 
    FOREACH(flag ${POPCPPMAIN_FLAGS})
-      set(FLAGS_MAIN "${FLAGS_MAIN} ${flag}")
+      set(FLAGS_MAIN ${FLAGS_MAIN} ${flag})
    ENDFOREACH(flag ${POPCPPMAIN_FLAGS})
 
    FOREACH(source ${MAIN_SOURCES})
-      set(LIST_MAIN_SOURCES "${LIST_MAIN_SOURCES} ${source}")
+   #   EXEC_PROGRAM(cp 
+    #              ARGS "${source} ${OBJECT_DIR}/${source}")
+      set(LIST_MAIN_SOURCES ${LIST_MAIN_SOURCES} ../../${source})
    ENDFOREACH(source ${MAIN_SOURCES})
 
-   #MESSAGE("SOURCES ${LIST_MAIN_SOURCES}")
+   SET(TARGET_NAME ${MAIN_NAME})
+   SET(COMPILE_COMMAND ${CMAKE_POPCPP_COMPILER} ${FLAGS_MAIN} ${MAIN_NAME} ${LIST_MAIN_SOURCES})
 
-  # EXEC_PROGRAM(${CMAKE_POPCPP_COMPILER} 
-   #   ARGS "${FLAGS_MAIN} ${MAIN_NAME} ${LIST_MAIN_SOURCES}"
-   #)
+   ADD_CUSTOM_TARGET(${TARGET_NAME} ALL 
+                     COMMAND ${COMPILE_COMMAND}
+                     COMMAND cp ${MAIN_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${MAIN_NAME}
+                     WORKING_DIRECTORY ${OBJECT_DIR}
+                     VERBATIM
+                    )
 
    set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${MAIN_NAME})
    
    
-ENDMACRO(ADD_POPCPP_MAIN)
+ENDMACRO(ADD_POPC_MAIN)
 
 #####################################################################################
 #
 #   Object map creation macro
 #
 #####################################################################################
-MACRO(OBJECT_MAP)
+MACRO(ADD_POPC_OBJMAP)
+   SET(TARGET_NAME)
+   SET(OBJMAP_COMMAND)  
    # Parse arguments in the command line
    PARSE_ARGUMENTS(POPCPPOBJMAP
       "OBJECTMAP"
@@ -221,12 +234,26 @@ MACRO(OBJECT_MAP)
          ARGS "-f ${CMAKE_CURRENT_SOURCE_DIR}/${POPCPPOBJMAP_OBJECTMAP}")
    ENDIF(POPCPPOBJMAP_NOT_APPEND)
 
+
    # Execute each object to add there mapping in the file
    FOREACH(par ${PAROBJ})
-#      MESSAGE("${CMAKE_CURRENT_SOURCE_DIR}/${par} -listlong >> ${POPCPPOBJMAP_NAME}")
-      EXEC_PROGRAM(${CMAKE_CURRENT_SOURCE_DIR}/${par}
-         ARGS "-listlong >> ${POPCPPOBJMAP_OBJECTMAP}")
+      SET(TARGET_NAME ${PAROBJ}.map)
+      SET(OBJMAP_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/${par} -listlong >> ${POPCPPOBJMAP_OBJECTMAP})
+      ADD_CUSTOM_TARGET(${TARGET_NAME} ALL
+                        COMMAND ${OBJMAP_COMMAND}
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        VERBATIM)
    ENDFOREACH(par ${PAROBJ})
    
 
-ENDMACRO(OBJECT_MAP)
+ENDMACRO(ADD_POPC_OBJMAP)
+
+
+MACRO(ADD_POPC_RUN)
+   MESSAGE("popcrun ${ARGV0} ${ARGV1}")
+   SET(RUN_COMMAND popcrun ${ARGV0} ./${ARGV1})
+   ADD_CUSTOM_TARGET(run
+                     COMMAND ${RUN_COMMAND}
+                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                     VERBATIM)
+ENDMACRO(ADD_POPC_RUN)
