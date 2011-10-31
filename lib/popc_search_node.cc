@@ -1,4 +1,4 @@
-/**
+F__/**
  * File : popc_search_node.cc
  * Author : Valentin Clement
  * Description : Implementation of the POP-C++ Search Node. This parallel object is responsible of the resource discovery.
@@ -213,7 +213,7 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
    // wait until timeout
 	if(timeout == 0){
 #ifdef __APPLE__
-		popc_node_log("Running semaphor on APPLE ARCHITECTURE");
+		popc_node_log("Running semaphor on DARWIN architecture");
 		if(pt_locker == NULL)
            pt_locker = sem_open("popc_sem_resdisc", O_CREAT, 0, 0);
       	if(pt_locker == SEM_FAILED)
