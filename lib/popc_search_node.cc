@@ -1,4 +1,4 @@
-F__/**
+/**
  * File : popc_search_node.cc
  * Author : Valentin Clement
  * Description : Implementation of the POP-C++ Search Node. This parallel object is responsible of the resource discovery.
