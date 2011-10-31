@@ -13,6 +13,7 @@
  * clementval 	2010/05/05	Remove useless constructor.
  * clementval	2010/05/15	Add a funcionnality of null waiting (timer + semaphor)
  * clementval	2010/05/19	Rename the Node parclass in POPSearchNode
+ * clementval	2011/10/31	Fix bug with null timeout on Darwin Arch
  */
 
 #include "popc_search_node.ph"
@@ -212,10 +213,11 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
    // wait until timeout
 	if(timeout == 0){
 #ifdef __APPLE__
+		popc_node_log("Running semaphor on APPLE ARCHITECTURE");
 		if(pt_locker == NULL)
-         pt_locker = sem_open("popc_sem_resdisc", O_CREAT, 0, 0);
-      if(pt_locker == SEM_FAILED)
-         popc_node_log("[PSN]ERROR: SEMFAILED TO OPEN");
+           pt_locker = sem_open("popc_sem_resdisc", O_CREAT, 0, 0);
+      	if(pt_locker == SEM_FAILED)
+           popc_node_log("[PSN]ERROR: SEMFAILED TO OPEN");
 #else
 		sem_init(pt_locker, 0, 0);
 #endif
@@ -423,8 +425,9 @@ void POPCSearchNode::callbackResult(Response resp){
       }
    }
    actualReqSyn.unlock();
-   if(pt_locker != NULL)
-   	sem_post(pt_locker);
+   if(pt_locker != NULL){
+      sem_post(pt_locker);
+   }
 }
 
 // internal comparison between request and local resources
