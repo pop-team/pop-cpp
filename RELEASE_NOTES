@@ -1,0 +1,41 @@
+POP-C++
+
+
+These REALEASE_NOTES include the changes made from the actual (29-July-2011) version 1.3
+to version 2.0 of POP-C++. No RELEASE_NOTES were made before.
+
+
+
+changes internal POP-C++ :
+
+	to compile pop-c++ application (popcc) :
+
+	- corrections for CONST problem
+	- corrections for "this" problem
+	
+	- option "-no-pipe" replaced by "-nopipe" to be in adequation with the other flags
+	- option "-paroc-static" replaced by "-popc-static" 
+	- option "-paroc-nolib" replaced by "-popc-nolib"
+	- option "-parocld=<linker>" replaced by "popcld=<linker>"
+	- option "-parocdir" replaced by "popcdir"
+
+	to run pop-c++ application (popcrun) :
+
+	- flag "-debug" added to display debugging informations 
+	- flag "-log=<file>" added to log messages displayed on stdout and stderr during compilation
+	- if no network is available the system tries to launch the objects on localhost
+		instead the application crashes
+
+new features :
+
+	- implementation of a new algorithm to find resources
+	- interoperability with POP-Java
+	- secure communications in ssh tunnel
+
+documentation :
+
+	- manual was improved
+	- additional documents were added for the new features
+	- extended test applications
+	- more samples
+
