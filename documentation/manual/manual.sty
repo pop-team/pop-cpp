@@ -1,0 +1,319 @@
+% nice stuff, colored boxes
+% index every chapter
+% by Marcelo Pasin some time between 2002 and 2005
+
+\usepackage[english]{babel}
+\usepackage[usenames]{color}
+\usepackage{enumerate}
+\usepackage{epsf}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{multicol}
+\usepackage{changebar}
+\usepackage{moreverb}
+%\usepackage{psboxit}
+\usepackage{xspace}
+%\usepackage{subfigure}
+\usepackage{times, a4}
+%\usepackage{alltt}
+%\usepackage{amsmath, amssymb, pifont}
+%\usepackage{array}
+%\usepackage{graphics}
+%\usepackage[final]{graphicx}
+%\usepackage{latexsym}
+%\usepackage{multirow}
+%\usepackage{url}
+%\usepackage{xspace}
+
+%\usepackage[portuges, light, first, bottomafter]{draftcopy}
+%\def\draftcopy@Name{RASCUNHO}\def\draftcopy@Scale{120 }
+
+\selectlanguage{english}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{\parsep}
+\addtolength{\evensidemargin}{-15mm}
+\addtolength{\oddsidemargin}{-5mm}
+\addtolength{\textwidth}{2cm}
+\addtolength{\topmargin}{-10mm}
+\addtolength{\textheight}{3cm}
+\renewcommand{\textfraction}{0}
+\renewcommand{\floatpagefraction}{1}
+\pagestyle{fancyplain}
+%\renewcommand{\chaptermark}[1] {\markboth{Cap tulo \thechapter. #1}{}}
+\renewcommand{\chaptermark}[1] {\markboth{#1}{}}
+\renewcommand{\sectionmark}[1] {\markright{\thesection. #1}}
+\lhead[\fancyplain{}{\sffamily\color{basic:color}\thepage}]{\fancyplain{}{\sffamily\rightmark}}
+\rhead[\fancyplain{}{\sffamily\leftmark}] {\fancyplain{}{\sffamily\color{basic:color}\thepage}}
+\cfoot{}
+%\addtolength{\headwidth}{\marginparsep}
+%\addtolength{\headwidth}{\marginparwidth}
+
+% red
+%\definecolor{basic:color}{rgb}{0.7,0.3,0.3}
+%\newcommand{\psboxbasic}[1]{\psboxit{box .7 .3 .3 setrgbcolor fill}{#1}}
+%\newcommand{\psboxdim}[1]{\psboxit{box 1 .9 .9 setrgbcolor fill}{#1}}
+
+% blue
+\definecolor{basic:color}{rgb}{0.012,0.396,0.580}
+%\newcommand{\psboxbasic}[1]{\psboxit{box 0.012 .396 .580 setrgbcolor fill}{#1}}
+\definecolor{blue1}{rgb}{0.012,.396,.580}
+\newcommand{\psboxbasic}[1]{\colorbox{blue1}{#1}}
+%\newcommand{\psboxdim}[1]{\psboxit{box .290 .643 .776 setrgbcolor fill}{#1}}
+\definecolor{blue2}{rgb}{.290,.643,.776}
+\newcommand{\psboxdim}[1]{\colorbox{blue2}{#1}}
+
+\definecolor{todo:color}{rgb}{1.0,0.3,0.3}
+\newcommand{\todo}[1]{{\color{todo:color}TODO: #1}}
+
+
+
+\let\o@startsection=\@startsection
+\let\osection=\section
+\let\osubsection=\subsection
+\def\@startsection#1#2#3#4#5#6{%
+	\o@startsection{#1}{#2}{#3}{#4}{#5}%
+	{#6\sffamily\raggedright\color{basic:color}}%
+}
+\renewcommand\chapter{%
+	\cleardoublepage%
+	\thispagestyle{plain}%
+	\global\@topnum\z@
+	\@afterindentfalse
+	\secdef\@chapter\@schapter%
+}
+\renewcommand\section[1]{%
+	\osection{#1}%
+	\addtocontents{\thechapter.toc}{\par\thesection{} #1}%
+}
+%\renewcommand\subsection[1]{%
+%	\osubsection*{#1}%
+%	\addcontentsline{toc}{subsection}{#1}%
+%	\addtocontents{\thechapter.toc}{\\~~~~~~~~#1}%
+%}
+\renewcommand\subsection[1]{%
+	\osubsection{#1}%
+	\addtocontents{\thechapter.toc}{\par\thesubsection{} #1}%
+}
+\def\@makechapterhead#1{%
+	\vspace*{-18mm}
+	\parbox{25mm}{%
+		\centerline{\large\sffamily\color{basic:color}\bfseries%
+			\MakeUppercase\@chapapp}%
+	}\\[4mm]
+	\parbox[b][2cm][t]{25mm}{%
+		~\hfill{\large\color{basic:color}\fontsize{72}{72}\sffamily%
+			\thechapter}\hfill~%
+	}\parbox[b][2cm][t]{10mm}{%
+		\color{basic:color}\rule{1pt}{4cm}\hfill%
+	}\parbox[b][2cm][t]{125mm}{%
+		\raggedright\fontsize{32}{32}\sffamily #1%
+	}\\[2mm]
+	\parbox[b][][t]{15mm}{~%
+	}\parbox[b][2cm][t]{20mm}{%
+		\epsfysize=2cm\epsfbox{logo_pop.eps}%
+	}\parbox[b][][t]{125mm}{~%
+	}\\[-4mm]
+	\parbox[t][][t]{25mm}{~%
+	}\parbox[t][][t]{10mm}{%
+		\color{basic:color}\rule{1pt}{3cm}\hfill%
+	}\parbox[t][][t]{125mm}{%
+		\raggedright\sffamily%
+		\setlength{\parskip}{3mm}
+		\begin{multicols}{2}%
+		\@starttoc{\thechapter.toc}%
+		\end{multicols}%
+	}
+	\vspace*{10mm}
+}
+
+\def\@makeschapterhead#1{%
+  { \raggedright\color{basic:color}\fontsize{32}{32}\sffamily #1\par\nobreak
+    \vskip 40\p@
+  }
+}
+
+\newcommand{\foreign}[1]{\textit{#1}}
+\newcommand{\NTI}[1]{\footnote{N.~T.: do ingl s \textit{#1}}}
+\newcommand{\NT}[1]{\footnote{N.~T.: #1}}
+\newenvironment{petitem}{%
+	\begin{itemize}%
+	\setlength{\itemsep}{-\parsep}%
+	\setlength{\partopsep}{-\topsep}%
+}{%
+	\end{itemize}%
+}
+\newenvironment{petenum}[1]{%
+	\begin{enumerate}[#1]%
+	\setlength{\itemsep}{-\parsep}%
+	\setlength{\partopsep}{-\topsep}%
+}{%
+	\end{enumerate}%
+}
+\newcommand{\figexerc}[1]{%
+	\parbox[t][][b]{\textwidth}{%
+	\centerline{\epsfbox{#1}}}}
+\newcommand{\boxremark}[2]{%
+	\begin{figure}[t]%
+	\begin{minipage}[t]{\textwidth}%
+	\psboxbasic{%
+	\makebox[\textwidth]{%
+		\rule[-2mm]{0pt}{8mm}
+		\centerline{\textbf{\textsf{\large \color{white}%
+			UM POUCO DE HIST RIA}}}%
+	}}%
+	\end{minipage}%
+	~\\[-2mm]%
+	\psboxdim{%
+	\makebox[\textwidth]{%
+	\begin{minipage}[t]{15cm}%
+	\vspace*{4mm}%
+	\textbf{#1}%
+	\begin{multicols}{2}%
+	{#2}%
+	\end{multicols}%
+	\vspace*{4mm}%
+	\end{minipage}%
+	}}%
+	\end{figure}%
+}
+\newcommand{\dimbox}[1]{
+	\psboxdim{%
+		\makebox[\textwidth]{%
+			\begin{minipage}[t]{15cm}%
+				\vspace*{4mm}%
+				#1%
+				\vspace*{4mm}%
+			\end{minipage}%
+		}%
+	}%
+	\vspace*{4mm}%
+}
+\newcommand{\titlebox}[1]{%
+	\mbox{%
+		\psboxbasic{%
+			\rule[-1mm]{0pt}{8mm}%
+			\raisebox{3.5pt}{%
+				\large\color{white}\sffamily\bfseries ~#1~%
+			}%
+		}%
+	}%
+}
+\renewcommand{\@makecaption}[2]{%
+	\titlebox{Figure \thefigure}%
+	\raisebox{3.5pt}{~~#2}%
+	\vspace*{4mm}%
+}
+\newenvironment{figura}[2]{%
+	\begin{figure}[hbt]%
+	\caption{#2}%
+	\label{#1}%
+	\begin{center}
+}{%
+	\end{center}
+	\end{figure}%
+}
+\newcommand{\figureps}[3]{%
+	\begin{figura}{#1}{#3}%
+	\vspace{-4mm}%
+	\centerline{\epsfxsize=#2\epsfbox{#1.eps}}%
+	\vspace{-8mm}%
+	\end{figura}%
+}
+\newcommand{\parag}[1]{\textbf{\color{basic:color}#1 ~~~}}
+\newcounter{exerc}[chapter]
+\renewcommand{\theexerc}{\arabic{chapter}.\arabic{exerc}}
+\newenvironment{exercicio}{%
+	\refstepcounter{exerc}%
+	\osection*{\hspace{-1.7mm}%
+		\titlebox{Exerc cios \theexerc}%
+		\color{basic:color}\hrule%
+	}%
+	\begin{petenum}{\color{basic:color}1.}%
+}{%
+	\end{petenum}
+}	
+\newenvironment{exerciciofinal}{%
+	\osubsection*{Exerc cios}%
+	\begin{petenum}{\color{basic:color}1.}%
+}{%
+	\end{petenum}
+}
+\newenvironment{itemexercicio}{%
+	\begin{petenum}{\color{basic:color}a.}%
+}{%
+	\end{petenum}
+}
+\newcounter{progra}[chapter]
+\renewcommand{\theprogra}{\arabic{chapter}.\arabic{progra}}
+% \newenvironment{programa}[1]{%
+% 	\begin{figure}[h]%
+% 	\refstepcounter{progra}%
+% 	\label{#1}%
+% 	\begin{tabular}{c|p{136mm}|}
+% 	\epsfxsize=2cm\epsfysize=2cm\epsfbox{icon_logo.eps} & %
+% 	\vspace*{-20mm}\parbox{136mm}{\titlebox{Programa
+% 		\arabic{chapter}.\arabic{progra}}}%
+% }{%
+% 	\vspace*{-8mm}%
+% 	\end{tabular}%
+% 	\end{figure}%
+% }
+% \newcommand{\programa}[1]{%
+% 	\refstepcounter{progra}%
+% 	\label{#1}%
+% 	\epsfxsize=2cm\epsfysize=2cm\epsfbox{icon_logo.eps}%
+% 	\titlebox{Programa \theprogra}%
+% 	\tablefirsthead{inicio}
+% 	\tabletail{continua}
+% 	\tablehead{continua  o}
+% 	\tablelasttail{fim}
+% 	\begin{supertabular*}{\textwidth}{|c|}
+% 	\verbatimtabinput[4]{#1.c}
+% 	\end{supertabular}
+% }	
+\setlength{\changebarsep}{1mm}
+\newcommand{\program}[3]{%
+	\begin{figura}{#2}{File {\tt #1}, #3}%
+	\vspace{-4mm}%
+	\verbatimtabinput[4]{#1}%
+	\vspace{-8mm}%
+	\end{figura}%
+}
+
+
+\newcommand{\programmm}[1]{%
+	\refstepcounter{progra}%
+	\label{#1}%
+%	\cbstart%
+	\osection*{%
+		\parbox[b][2cm][t]{10cm}{%
+			\titlebox{Program \theprogra}%
+		}\vspace*{-8mm}%
+	}%
+	\verbatimtabinput[4]{#1}%
+%	\cbend%
+	~\par
+}
+\newcommand{\programinput}[1]{%
+	\verbatimtabinput[4]{prog/#1.c}
+}
+\newcommand{\emphasis}[1]{\textbf{#1}}
+\newcommand{\money}[1]{\${#1}}
+\newsavebox{\fminibox}
+\newlength{\fminilength}
+\newenvironment{fminipage}[1][\linewidth]{%
+	\setlength{\fminilength}{#1}%
+	\begin{lrbox}{\fminibox}%
+	\begin{minipage}{\fminilength}%
+}{%
+	\end{minipage}%
+	\end{lrbox}%
+	\noindent%
+	\fbox{\usebox{\fminibox}}%
+}
+
+\newcommand{\sobrevia}[1]{$^{\underline{\mbox{\scriptsize #1}}}$\xspace}
+\newcommand{\sobrescr}[1]{$^{\mbox{\scriptsize #1}}$\xspace}
+\newcommand{\ozinho}{\sobrevia{o}}

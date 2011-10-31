@@ -1,0 +1,967 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Title: integer-run.fig
+%%Creator: fig2dev Version 3.2 Patchlevel 4
+%%CreationDate: Mon Aug 29 20:45:15 2005
+%%For: pasin@pingo ()
+%%BoundingBox: 0 0 489 215
+%%Magnification: 1.0000
+%%EndComments
+/MyAppDict 100 dict dup begin def
+/$F2psDict 200 dict def
+$F2psDict begin
+$F2psDict /mtrx matrix put
+/col-1 {0 setgray} bind def
+/col0 {0.000 0.000 0.000 srgb} bind def
+/col1 {0.000 0.000 1.000 srgb} bind def
+/col2 {0.000 1.000 0.000 srgb} bind def
+/col3 {0.000 1.000 1.000 srgb} bind def
+/col4 {1.000 0.000 0.000 srgb} bind def
+/col5 {1.000 0.000 1.000 srgb} bind def
+/col6 {1.000 1.000 0.000 srgb} bind def
+/col7 {1.000 1.000 1.000 srgb} bind def
+/col8 {0.000 0.000 0.560 srgb} bind def
+/col9 {0.000 0.000 0.690 srgb} bind def
+/col10 {0.000 0.000 0.820 srgb} bind def
+/col11 {0.530 0.810 1.000 srgb} bind def
+/col12 {0.000 0.560 0.000 srgb} bind def
+/col13 {0.000 0.690 0.000 srgb} bind def
+/col14 {0.000 0.820 0.000 srgb} bind def
+/col15 {0.000 0.560 0.560 srgb} bind def
+/col16 {0.000 0.690 0.690 srgb} bind def
+/col17 {0.000 0.820 0.820 srgb} bind def
+/col18 {0.560 0.000 0.000 srgb} bind def
+/col19 {0.690 0.000 0.000 srgb} bind def
+/col20 {0.820 0.000 0.000 srgb} bind def
+/col21 {0.560 0.000 0.560 srgb} bind def
+/col22 {0.690 0.000 0.690 srgb} bind def
+/col23 {0.820 0.000 0.820 srgb} bind def
+/col24 {0.500 0.190 0.000 srgb} bind def
+/col25 {0.630 0.250 0.000 srgb} bind def
+/col26 {0.750 0.380 0.000 srgb} bind def
+/col27 {1.000 0.500 0.500 srgb} bind def
+/col28 {1.000 0.630 0.630 srgb} bind def
+/col29 {1.000 0.750 0.750 srgb} bind def
+/col30 {1.000 0.880 0.880 srgb} bind def
+/col31 {1.000 0.840 0.000 srgb} bind def
+/col32 {0.199 0.199 0.199 srgb} bind def
+/col33 {0.617 0.582 0.531 srgb} bind def
+/col34 {0.012 0.395 0.578 srgb} bind def
+/col35 {0.617 0.582 0.531 srgb} bind def
+
+end
+save
+newpath 0 215 moveto 0 0 lineto 489 0 lineto 489 215 lineto closepath clip newpath
+-273.0 351.5 translate
+1 -1 scale
+
+% This junk string is used by the show operators
+/PATsstr 1 string def
+/PATawidthshow { 	% cx cy cchar rx ry string
+  % Loop over each character in the string
+  {  % cx cy cchar rx ry char
+    % Show the character
+    dup				% cx cy cchar rx ry char char
+    PATsstr dup 0 4 -1 roll put	% cx cy cchar rx ry char (char)
+    false charpath		% cx cy cchar rx ry char
+    /clip load PATdraw
+    % Move past the character (charpath modified the
+    % current point)
+    currentpoint			% cx cy cchar rx ry char x y
+    newpath
+    moveto			% cx cy cchar rx ry char
+    % Reposition by cx,cy if the character in the string is cchar
+    3 index eq {			% cx cy cchar rx ry
+      4 index 4 index rmoveto
+    } if
+    % Reposition all characters by rx ry
+    2 copy rmoveto		% cx cy cchar rx ry
+  } forall
+  pop pop pop pop pop		% -
+  currentpoint
+  newpath
+  moveto
+} bind def
+/PATcg {
+  7 dict dup begin
+    /lw currentlinewidth def
+    /lc currentlinecap def
+    /lj currentlinejoin def
+    /ml currentmiterlimit def
+    /ds [ currentdash ] def
+    /cc [ currentrgbcolor ] def
+    /cm matrix currentmatrix def
+  end
+} bind def
+% PATdraw - calculates the boundaries of the object and
+% fills it with the current pattern
+/PATdraw {			% proc
+  save exch
+    PATpcalc			% proc nw nh px py
+    5 -1 roll exec		% nw nh px py
+    newpath
+    PATfill			% -
+  restore
+} bind def
+% PATfill - performs the tiling for the shape
+/PATfill { % nw nh px py PATfill -
+  PATDict /CurrentPattern get dup begin
+    setfont
+    % Set the coordinate system to Pattern Space
+    PatternGState PATsg
+    % Set the color for uncolored pattezns
+    PaintType 2 eq { PATDict /PColor get PATsc } if
+    % Create the string for showing
+    3 index string		% nw nh px py str
+    % Loop for each of the pattern sources
+    0 1 Multi 1 sub {		% nw nh px py str source
+	% Move to the starting location
+	3 index 3 index		% nw nh px py str source px py
+	moveto			% nw nh px py str source
+	% For multiple sources, set the appropriate color
+	Multi 1 ne { dup PC exch get PATsc } if
+	% Set the appropriate string for the source
+	0 1 7 index 1 sub { 2 index exch 2 index put } for pop
+	% Loop over the number of vertical cells
+	3 index 		% nw nh px py str nh
+	{			% nw nh px py str
+	  currentpoint		% nw nh px py str cx cy
+	  2 index oldshow	% nw nh px py str cx cy
+	  YStep add moveto	% nw nh px py str
+	} repeat		% nw nh px py str
+    } for
+    5 { pop } repeat
+  end
+} bind def
+
+% PATkshow - kshow with the current pattezn
+/PATkshow {			% proc string
+  exch bind			% string proc
+  1 index 0 get			% string proc char
+  % Loop over all but the last character in the string
+  0 1 4 index length 2 sub {
+				% string proc char idx
+    % Find the n+1th character in the string
+    3 index exch 1 add get	% string proc char char+1
+    exch 2 copy			% strinq proc char+1 char char+1 char
+    % Now show the nth character
+    PATsstr dup 0 4 -1 roll put	% string proc chr+1 chr chr+1 (chr)
+    false charpath		% string proc char+1 char char+1
+    /clip load PATdraw
+    % Move past the character (charpath modified the current point)
+    currentpoint newpath moveto
+    % Execute the user proc (should consume char and char+1)
+    mark 3 1 roll		% string proc char+1 mark char char+1
+    4 index exec		% string proc char+1 mark...
+    cleartomark			% string proc char+1
+  } for
+  % Now display the last character
+  PATsstr dup 0 4 -1 roll put	% string proc (char+1)
+  false charpath		% string proc
+  /clip load PATdraw
+  neewath
+  pop pop			% -
+} bind def
+% PATmp - the makepattern equivalent
+/PATmp {			% patdict patmtx PATmp patinstance
+  exch dup length 7 add		% We will add 6 new entries plus 1 FID
+  dict copy			% Create a new dictionary
+  begin
+    % Matrix to install when painting the pattern
+    TilingType PATtcalc
+    /PatternGState PATcg def
+    PatternGState /cm 3 -1 roll put
+    % Check for multi pattern sources (Level 1 fast color patterns)
+    currentdict /Multi known not { /Multi 1 def } if
+    % Font dictionary definitions
+    /FontType 3 def
+    % Create a dummy encoding vector
+    /Encoding 256 array def
+    3 string 0 1 255 {
+      Encoding exch dup 3 index cvs cvn put } for pop
+    /FontMatrix matrix def
+    /FontBBox BBox def
+    /BuildChar {
+	mark 3 1 roll		% mark dict char
+	exch begin
+	Multi 1 ne {PaintData exch get}{pop} ifelse  % mark [paintdata]
+	  PaintType 2 eq Multi 1 ne or
+	  { XStep 0 FontBBox aload pop setcachedevice }
+	  { XStep 0 setcharwidth } ifelse
+	  currentdict		% mark [paintdata] dict
+	  /PaintProc load	% mark [paintdata] dict paintproc
+	end
+	gsave
+	  false PATredef exec true PATredef
+	grestore
+	cleartomark		% -
+    } bind def
+    currentdict
+  end				% newdict
+  /foo exch			% /foo newlict
+  definefont			% newfont
+} bind def
+% PATpcalc - calculates the starting point and width/height
+% of the tile fill for the shape
+/PATpcalc {	% - PATpcalc nw nh px py
+  PATDict /CurrentPattern get begin
+    gsave
+	% Set up the coordinate system to Pattern Space
+	% and lock down pattern
+	PatternGState /cm get setmatrix
+	BBox aload pop pop pop translate
+	% Determine the bounding box of the shape
+	pathbbox			% llx lly urx ury
+    grestore
+    % Determine (nw, nh) the # of cells to paint width and height
+    PatHeight div ceiling		% llx lly urx qh
+    4 1 roll				% qh llx lly urx
+    PatWidth div ceiling		% qh llx lly qw
+    4 1 roll				% qw qh llx lly
+    PatHeight div floor			% qw qh llx ph
+    4 1 roll				% ph qw qh llx
+    PatWidth div floor			% ph qw qh pw
+    4 1 roll				% pw ph qw qh
+    2 index sub cvi abs			% pw ph qs qh-ph
+    exch 3 index sub cvi abs exch	% pw ph nw=qw-pw nh=qh-ph
+    % Determine the starting point of the pattern fill
+    %(px, py)
+    4 2 roll				% nw nh pw ph
+    PatHeight mul			% nw nh pw py
+    exch				% nw nh py pw
+    PatWidth mul exch			% nw nh px py
+  end
+} bind def
+
+% Save the original routines so that we can use them later on
+/oldfill	/fill load def
+/oldeofill	/eofill load def
+/oldstroke	/stroke load def
+/oldshow	/show load def
+/oldashow	/ashow load def
+/oldwidthshow	/widthshow load def
+/oldawidthshow	/awidthshow load def
+/oldkshow	/kshow load def
+
+% These defs are necessary so that subsequent procs don't bind in
+% the originals
+/fill	   { oldfill } bind def
+/eofill	   { oldeofill } bind def
+/stroke	   { oldstroke } bind def
+/show	   { oldshow } bind def
+/ashow	   { oldashow } bind def
+/widthshow { oldwidthshow } bind def
+/awidthshow { oldawidthshow } bind def
+/kshow 	   { oldkshow } bind def
+/PATredef {
+  MyAppDict begin
+    {
+    /fill { /clip load PATdraw newpath } bind def
+    /eofill { /eoclip load PATdraw newpath } bind def
+    /stroke { PATstroke } bind def
+    /show { 0 0 null 0 0 6 -1 roll PATawidthshow } bind def
+    /ashow { 0 0 null 6 3 roll PATawidthshow }
+    bind def
+    /widthshow { 0 0 3 -1 roll PATawidthshow }
+    bind def
+    /awidthshow { PATawidthshow } bind def
+    /kshow { PATkshow } bind def
+  } {
+    /fill   { oldfill } bind def
+    /eofill { oldeofill } bind def
+    /stroke { oldstroke } bind def
+    /show   { oldshow } bind def
+    /ashow  { oldashow } bind def
+    /widthshow { oldwidthshow } bind def
+    /awidthshow { oldawidthshow } bind def
+    /kshow  { oldkshow } bind def
+    } ifelse
+  end
+} bind def
+false PATredef
+% Conditionally define setcmykcolor if not available
+/setcmykcolor where { pop } {
+  /setcmykcolor {
+    1 sub 4 1 roll
+    3 {
+	3 index add neg dup 0 lt { pop 0 } if 3 1 roll
+    } repeat
+    setrgbcolor - pop
+  } bind def
+} ifelse
+/PATsc {		% colorarray
+  aload length		% c1 ... cn length
+    dup 1 eq { pop setgray } { 3 eq { setrgbcolor } { setcmykcolor
+  } ifelse } ifelse
+} bind def
+/PATsg {		% dict
+  begin
+    lw setlinewidth
+    lc setlinecap
+    lj setlinejoin
+    ml setmiterlimit
+    ds aload pop setdash
+    cc aload pop setrgbcolor
+    cm setmatrix
+  end
+} bind def
+
+/PATDict 3 dict def
+/PATsp {
+  true PATredef
+  PATDict begin
+    /CurrentPattern exch def
+    % If it's an uncolored pattern, save the color
+    CurrentPattern /PaintType get 2 eq {
+      /PColor exch def
+    } if
+    /CColor [ currentrgbcolor ] def
+  end
+} bind def
+% PATstroke - stroke with the current pattern
+/PATstroke {
+  countdictstack
+  save
+  mark
+  {
+    currentpoint strokepath moveto
+    PATpcalc				% proc nw nh px py
+    clip newpath PATfill
+    } stopped {
+	(*** PATstroke Warning: Path is too complex, stroking
+	  with gray) =
+    cleartomark
+    restore
+    countdictstack exch sub dup 0 gt
+	{ { end } repeat } { pop } ifelse
+    gsave 0.5 setgray oldstroke grestore
+  } { pop restore pop } ifelse
+  newpath
+} bind def
+/PATtcalc {		% modmtx tilingtype PATtcalc tilematrix
+  % Note: tiling types 2 and 3 are not supported
+  gsave
+    exch concat					% tilingtype
+    matrix currentmatrix exch			% cmtx tilingtype
+    % Tiling type 1 and 3: constant spacing
+    2 ne {
+	% Distort the pattern so that it occupies
+	% an integral number of device pixels
+	dup 4 get exch dup 5 get exch		% tx ty cmtx
+	XStep 0 dtransform
+	round exch round exch			% tx ty cmtx dx.x dx.y
+	XStep div exch XStep div exch		% tx ty cmtx a b
+	0 YStep dtransform
+	round exch round exch			% tx ty cmtx a b dy.x dy.y
+	YStep div exch YStep div exch		% tx ty cmtx a b c d
+	7 -3 roll astore			% { a b c d tx ty }
+    } if
+  grestore
+} bind def
+/PATusp {
+  false PATredef
+  PATDict begin
+    CColor PATsc
+  end
+} bind def
+
+% crosshatch30
+11 dict begin
+/PaintType 1 def
+/PatternType 1 def
+/TilingType 1 def
+/BBox [0 0 1 1] def
+/XStep 1 def
+/YStep 1 def
+/PatWidth 1 def
+/PatHeight 1 def
+/Multi 2 def
+/PaintData [
+  { clippath } bind
+  { 32 16 true [ 32 0 0 -16 0 16 ]
+	{<033003300c0c0c0c30033003c000c000300330030c0c0c0c
+	0330033000c000c0033003300c0c0c0c30033003c000c000
+	300330030c0c0c0c0330033000c000c0>}
+     imagemask } bind
+] def
+/PaintProc {
+	pop
+	exec fill
+} def
+currentdict
+end
+/P3 exch def
+
+/cp {closepath} bind def
+/ef {eofill} bind def
+/gr {grestore} bind def
+/gs {gsave} bind def
+/sa {save} bind def
+/rs {restore} bind def
+/l {lineto} bind def
+/m {moveto} bind def
+/rm {rmoveto} bind def
+/n {newpath} bind def
+/s {stroke} bind def
+/sh {show} bind def
+/slc {setlinecap} bind def
+/slj {setlinejoin} bind def
+/slw {setlinewidth} bind def
+/srgb {setrgbcolor} bind def
+/rot {rotate} bind def
+/sc {scale} bind def
+/sd {setdash} bind def
+/ff {findfont} bind def
+/sf {setfont} bind def
+/scf {scalefont} bind def
+/sw {stringwidth} bind def
+/tr {translate} bind def
+/tnt {dup dup currentrgbcolor
+  4 -2 roll dup 1 exch sub 3 -1 roll mul add
+  4 -2 roll dup 1 exch sub 3 -1 roll mul add
+  4 -2 roll dup 1 exch sub 3 -1 roll mul add srgb}
+  bind def
+/shd {dup dup currentrgbcolor 4 -2 roll mul 4 -2 roll mul
+  4 -2 roll mul srgb} bind def
+ /DrawEllipse {
+	/endangle exch def
+	/startangle exch def
+	/yrad exch def
+	/xrad exch def
+	/y exch def
+	/x exch def
+	/savematrix mtrx currentmatrix def
+	x y tr xrad yrad sc 0 0 1 startangle endangle arc
+	closepath
+	savematrix setmatrix
+	} def
+
+/$F2psBegin {$F2psDict begin /$F2psEnteredState save def} def
+/$F2psEnd {$F2psEnteredState restore end} def
+
+$F2psBegin
+10 setmiterlimit
+0 slj 0 slc
+ 0.06299 0.06299 sc
+%
+% Fig objects follow
+%
+% 
+% here starts figure with depth 19
+% Polyline
+2 slj
+7.500 slw
+n 9553 3284 m 9553 4720 l 8953 4620 l 8953 3258 l
+ cp gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 9551 3290 m 9551 4713 l 10408 4279 l 10408 3081 l
+ cp gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 8956 3261 m 9554 3289 l 10414 3078 l 9918 3057 l
+ cp gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 4346 3875 m 4346 4380 l 5706 4574 l 5714 4023 l
+ cp gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 4347 3869 m 5108 3701 l 6333 3815 l 5708 4026 l
+ cp gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 5705 4030 m 5705 4574 l 6333 4275 l 6333 3813 l
+ cp gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+0.000 slw
+n 8974 4017 m 8974 4603 l 9522 4695 l 9522 4074 l
+ cp gs /PC [[0.01 0.40 0.58] [0.00 0.00 0.00]] def
+15.00 15.00 sc P3 [16 0 0 -8 598.27 267.80] PATmp PATsp ef gr PATusp 
+% Polyline
+0 slj
+n 9005 3304 m 9005 3464 l 9508 3498 l 9508 3332 l
+ cp gs col35 1.00 shd ef gr 
+% Polyline
+n 9090 3498 m 9090 3620 l 9411 3643 l 9411 3521 l
+ cp gs col35 1.00 shd ef gr 
+% Polyline
+n 9090 3641 m 9090 3758 l 9411 3786 l 9411 3664 l
+ cp gs col35 1.00 shd ef gr 
+% Polyline
+2 slj
+7.500 slw
+n 8955 3776 m 8955 3989 l 9550 4053 l 9550 3829 l
+ cp gs col33 1.00 shd ef gr gs col0 s gr 
+% Polyline
+0 slj
+1 slc
+0.000 slw
+n 4432 4088 m 4428 4144 l 4566 4154 l 4566 4101 l
+ cp gs /PC [[0.20 0.20 0.20] [0.01 0.40 0.58]] def
+15.00 15.00 sc P3 [16 0 0 -8 295.20 272.53] PATmp PATsp ef gr PATusp 
+% Polyline
+2 slj
+0 slc
+n 5229 4015 m 5229 4148 l 5664 4205 l 5664 4065 l
+ cp gs col35 1.00 shd ef gr 
+% Polyline
+7.500 slw
+n 4785 3936 m 4785 4442 l 5197 4499 l 5197 3983 l
+ cp gs col33 1.00 shd ef gr gs col32 s gr 
+% Polyline
+n 9120 3549 m
+ 9212 3558 l gs col7 s gr 
+% Polyline
+0 slj
+n 9118 3549 m 9118 3522 l
+ 9379 3540 l gs col32 s gr 
+% Polyline
+n 9375 3549 m 9375 3567 l 9283 3561 l 9283 3587 l
+ 9204 3581 l gs col7 s gr 
+% Polyline
+n 9030 3392 m 9475 3422 l
+ 9475 3353 l gs col7 s gr 
+% Polyline
+n 9038 3390 m 9038 3331 l
+ 9478 3356 l gs col32 s gr 
+% Polyline
+n 9374 3467 m 9433 3471 l
+ 9433 3454 l gs col32 s gr 
+% Polyline
+n 9369 3473 m 9369 3447 l
+ 9435 3451 l gs col7 s gr 
+% Polyline
+2 slj
+0.000 slw
+n 8983 3831 m 9135 3844 l 9056 3929 l
+ cp gs col32 1.00 shd ef gr 
+% Polyline
+n 9225 3980 m 9067 3964 l 9151 3885 l
+ cp gs col32 1.00 shd ef gr 
+% Polyline
+n 9163 3846 m 9319 3861 l 9240 3943 l
+ cp gs col32 1.00 shd ef gr 
+% Polyline
+n 9414 3998 m 9255 3982 l 9339 3903 l
+ cp gs col32 1.00 shd ef gr 
+% Polyline
+n 9360 3865 m 9522 3881 l 9441 3965 l
+ cp gs col32 1.00 shd ef gr 
+% Polyline
+7.500 slw
+n 5260 4092 m 5628 4138 l
+ 5628 4107 l gs col7 s gr 
+% Polyline
+n 5536 4177 m 5601 4186 l
+ 5600 4168 l gs col32 s gr 
+% Polyline
+n 4773 3942 m 4773 4448 l 5185 4505 l 5185 3989 l
+ cp gs col33 1.00 shd ef gr gs col32 s gr 
+% Polyline
+n 5257 4090 m 5257 4052 l
+ 5631 4095 l gs col32 s gr 
+% Polyline
+0.000 slw
+n 5323 4215 m 5323 4254 l 5587 4283 l 5588 4239 l
+ cp gs col33 1.00 shd ef gr 
+% Polyline
+n 5007 3997 m 5096 4106 l 5170 4014 l
+ cp gs col32 1.00 shd ef gr 
+% Polyline
+n 4893 4311 m 5073 4331 l 4982 4423 l
+ cp gs col32 1.00 shd ef gr 
+% Polyline
+n 5087 4363 m 5013 4449 l 5167 4471 l
+ cp gs col32 1.00 shd ef gr 
+% Polyline
+n 4879 4346 m 4796 4426 l 4959 4446 l
+ cp gs col32 1.00 shd ef gr 
+% Polyline
+n 4810 3971 m 4876 4060 l 4953 3989 l
+ cp gs col32 1.00 shd ef gr 
+% here ends figure;
+% 
+% here starts figure with depth 10
+% Polyline
+2 slj
+7.500 slw
+n 10432 4313 m 11299 4407 l 11715 4151 l 11737 4251 l 11311 4525 l 10406 4428 l
+
+ cp gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 10422 4318 m 11299 4407 l 11718 4151 l 10876 4053 l
+ cp gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 11294 4413 m
+ 11303 4523 l gs col34 1.00 shd ef gr gs col32 s gr 
+% Polyline
+0 slj
+n 9699 4700 m 10116 4489 l 11545 4609 l 11585 4634 l 11580 4650 l 11339 4896 l
+ 9695 4721 l 9695 4698 l
+ cp gs col34 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+0.000 slw
+n 9699 4724 m 9699 4795 l 11346 4995 l 11592 4740 l 11585 4634 l 11335 4896 l
+ 9693 4718 l
+ cp gs col33 1.00 shd ef gr 
+% Polyline
+2 slj
+7.500 slw
+n 11846 4435 m 11670 4587 l 11649 4676 l 11649 4743 l 11909 4780 l 11905 4685 l
+ 11921 4595 l 12052 4443 l
+ cp gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+0 slj
+15.000 slw
+n 9689 4765 m 11353 4935 l
+ 11584 4707 l gs col32 s gr 
+% Polyline
+2 slj
+7.500 slw
+n 11796 4488 m
+ 11999 4507 l gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 11937 4499 m
+ 11984 4444 l gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 11874 4488 m
+ 11907 4444 l gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 11923 4596 m 11909 4684 l 11909 4773 l 12074 4584 l 12074 4511 l 12054 4449 l
+
+ cp gs col33 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 11674 2992 m 11657 4367 l 11724 4340 l 11729 3015 l
+ cp gs col33 1.00 shd ef gr gs col0 s gr 
+% Polyline
+0 slj
+n 11203 4763 m 11201 4699 l 11239 4686 l 11298 4688 l 11295 4741 l 11265 4766 l
+ 11212 4766 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10990 4672 m 10990 4642 l 11021 4620 l 11085 4626 l 11085 4634 l 11065 4648 l
+ 11063 4675 l 10985 4672 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 11063 4674 m 11063 4644 l 11094 4622 l 11157 4627 l 11157 4634 l 11139 4649 l
+ 11135 4677 l 11058 4674 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 11132 4686 m 11132 4655 l 11163 4633 l 11228 4638 l 11228 4647 l 11207 4660 l
+ 11204 4688 l 11127 4686 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 11275 4697 m 11275 4666 l 11305 4644 l 11368 4649 l 11368 4658 l 11356 4700 l
+ 11324 4718 l 11268 4697 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10158 4580 m 10158 4549 l 10189 4528 l 10253 4532 l 10253 4541 l 10235 4555 l
+ 10231 4584 l 10153 4580 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10222 4589 m 10222 4558 l 10253 4536 l 10316 4543 l 10316 4550 l 10297 4565 l
+ 10295 4592 l 10216 4589 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10299 4592 m 10299 4562 l 10330 4540 l 10395 4546 l 10395 4553 l 10376 4568 l
+ 10373 4595 l 10295 4592 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10362 4601 m 10362 4570 l 10391 4548 l 10456 4553 l 10456 4562 l 10437 4575 l
+ 10434 4604 l 10355 4601 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10434 4604 m 10434 4572 l 10464 4550 l 10529 4557 l 10529 4565 l 10508 4579 l
+ 10505 4607 l 10428 4604 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10505 4609 m 10505 4579 l 10537 4557 l 10600 4562 l 10600 4570 l 10580 4584 l
+ 10578 4611 l 10500 4609 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10576 4609 m 10576 4579 l 10606 4557 l 10670 4562 l 10670 4570 l 10651 4584 l
+ 10648 4611 l 10570 4609 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10639 4614 m 10639 4584 l 10670 4562 l 10734 4568 l 10734 4575 l 10716 4589 l
+ 10712 4617 l 10634 4614 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10718 4614 m 10718 4584 l 10748 4562 l 10812 4568 l 10812 4575 l 10793 4589 l
+ 10790 4617 l 10712 4614 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10431 4653 m 10431 4623 l 10461 4601 l 10526 4607 l 10526 4614 l 10505 4629 l
+ 10503 4656 l 10425 4653 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10073 4692 m 10071 4629 l 10109 4614 l 10168 4617 l 10165 4671 l 10134 4696 l
+ 10081 4696 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10216 4709 m 10213 4646 l 10253 4631 l 10311 4634 l 10308 4686 l 10277 4711 l
+ 10223 4711 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10009 4685 m 10006 4620 l 10045 4607 l 10104 4609 l 10101 4661 l 10071 4686 l
+ 10018 4686 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 9935 4729 m 9932 4664 l 9970 4650 l 10030 4653 l 10027 4707 l 9995 4732 l
+ 9943 4732 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 9996 4729 m 9996 4698 l 10027 4675 l 10091 4682 l 10091 4689 l 10071 4704 l
+ 10069 4732 l 9991 4729 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10069 4736 m 10612 4804 l 10617 4746 l 10085 4692 l 10066 4718 l 10066 4729 l
+
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10615 4800 m 10615 4770 l 10644 4748 l 10708 4751 l 10708 4761 l 10690 4774 l
+ 10686 4802 l 10609 4800 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 11204 4688 m 11204 4658 l 11236 4634 l 11299 4641 l 11299 4649 l 11279 4663 l
+ 11278 4690 l 11199 4688 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 11100 4761 m 11098 4697 l 11137 4683 l 11195 4686 l 11192 4737 l 11161 4763 l
+ 11109 4763 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 11008 4754 m 11005 4690 l 11044 4677 l 11102 4680 l 11100 4733 l 11069 4758 l
+ 11017 4758 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10916 4749 m 10912 4685 l 10951 4671 l 11010 4672 l 11007 4726 l 10976 4750 l
+ 10923 4750 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10718 4668 m 10718 4637 l 10749 4615 l 10814 4621 l 10814 4629 l 10795 4643 l
+ 10792 4671 l 10713 4668 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10646 4665 m 10646 4634 l 10677 4612 l 10740 4618 l 10740 4627 l 10720 4640 l
+ 10718 4668 l 10641 4665 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10574 4660 m 10574 4629 l 10605 4608 l 10668 4612 l 10668 4621 l 10649 4634 l
+ 10646 4662 l 10568 4660 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10500 4660 m 10500 4629 l 10530 4607 l 10595 4611 l 10595 4620 l 10576 4634 l
+ 10573 4661 l 10495 4660 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10362 4650 m 10362 4620 l 10391 4597 l 10456 4604 l 10456 4611 l 10437 4626 l
+ 10434 4653 l 10355 4650 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10291 4646 m 10291 4614 l 10322 4592 l 10387 4597 l 10387 4607 l 10366 4620 l
+ 10363 4648 l 10286 4646 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10152 4634 m 10152 4604 l 10183 4582 l 10247 4587 l 10247 4595 l 10227 4609 l
+ 10223 4636 l 10147 4634 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10080 4620 m 10080 4589 l 10110 4568 l 10174 4572 l 10174 4582 l 10155 4595 l
+ 10152 4623 l 10075 4620 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 11160 4831 m 11157 4768 l 11196 4754 l 11254 4757 l 11253 4810 l 11221 4835 l
+ 11168 4835 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 11072 4813 m 11068 4749 l 11107 4735 l 11165 4736 l 11163 4790 l 11132 4814 l
+ 11079 4814 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10886 4807 m 10885 4743 l 10923 4729 l 10982 4732 l 10978 4785 l 10948 4810 l
+ 10897 4810 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10978 4807 m 10976 4743 l 11015 4729 l 11075 4732 l 11072 4785 l 11039 4810 l
+ 10987 4810 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10678 4746 m 10676 4682 l 10716 4668 l 10773 4671 l 10770 4724 l 10740 4749 l
+ 10686 4749 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10609 4740 m 10606 4675 l 10644 4661 l 10704 4664 l 10700 4718 l 10670 4743 l
+ 10617 4743 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10526 4736 m 10522 4672 l 10562 4660 l 10619 4661 l 10617 4714 l 10587 4740 l
+ 10533 4740 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10441 4732 m 10439 4668 l 10477 4653 l 10537 4656 l 10533 4709 l 10503 4735 l
+ 10451 4735 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10362 4722 m 10358 4659 l 10397 4645 l 10456 4648 l 10453 4699 l 10422 4725 l
+ 10369 4725 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10144 4698 m 10141 4634 l 10180 4620 l 10238 4623 l 10236 4675 l 10205 4700 l
+ 10152 4700 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10296 4718 m 10293 4653 l 10332 4639 l 10390 4642 l 10388 4696 l 10357 4721 l
+ 10304 4721 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+n 10223 4639 m 10223 4609 l 10256 4587 l 10319 4592 l 10319 4601 l 10299 4614 l
+ 10297 4642 l 10219 4639 l
+ cp gs col7 1.00 shd ef gr gs col-1 s gr 
+% Polyline
+2 slj
+n 11686 4592 m
+ 11909 4614 l gs col8 1.00 shd ef gr gs col33 s gr 
+% Polyline
+n 11663 4676 m
+ 11898 4696 l gs col8 1.00 shd ef gr gs col33 s gr 
+% Polyline
+n 11920 4680 m
+ 12072 4507 l gs col32 s gr 
+% Polyline
+n 10186 3009 m 10160 4231 l 11657 4367 l 11677 2998 l
+ cp gs col34 1.00 shd ef gr gs col0 s gr 
+% Polyline
+15.000 slw
+n 10271 3918 m 10270 3951 l 10270 3980 l 10270 4006 l 10270 4029 l 10270 4048 l
+ 10271 4065 l 10272 4078 l 10273 4089 l 10274 4097 l 10276 4104 l
+ 10278 4108 l 10280 4112 l 10283 4115 l 10286 4117 l 10290 4120 l
+ 10297 4122 l 10305 4124 l 10315 4126 l 10329 4128 l 10346 4130 l
+ 10365 4132 l 10388 4135 l 10414 4137 l 10443 4139 l 10476 4142 l
+ 10513 4145 l 10535 4147 l 10558 4148 l 10583 4150 l 10609 4152 l
+ 10637 4154 l 10666 4157 l 10696 4159 l 10728 4161 l 10761 4164 l
+ 10795 4166 l 10829 4169 l 10864 4172 l 10899 4174 l 10935 4177 l
+ 10970 4180 l 11004 4182 l 11038 4185 l 11071 4187 l 11103 4190 l
+ 11133 4192 l 11162 4194 l 11190 4196 l 11216 4198 l 11241 4200 l
+ 11264 4202 l 11286 4204 l 11322 4206 l 11355 4209 l 11385 4211 l
+ 11411 4213 l 11434 4214 l 11453 4215 l 11470 4216 l 11483 4216 l
+ 11494 4215 l 11503 4215 l 11509 4213 l 11514 4212 l 11517 4210 l
+ 11520 4208 l 11523 4205 l 11525 4201 l 11527 4197 l 11529 4191 l
+ 11531 4183 l 11533 4173 l 11535 4160 l 11536 4145 l 11538 4128 l
+ 11539 4108 l 11540 4085 l 11541 4060 l 11542 4033 l 11543 4002 l
+ 11543 3982 l 11543 3961 l 11544 3938 l 11544 3914 l 11545 3889 l
+ 11545 3863 l 11546 3835 l 11546 3806 l 11547 3776 l 11547 3745 l
+ 11548 3714 l 11548 3682 l 11549 3651 l 11549 3620 l 11549 3589 l
+ 11550 3559 l 11550 3530 l 11551 3502 l 11551 3475 l 11551 3450 l
+ 11551 3426 l 11552 3403 l 11552 3382 l 11552 3363 l 11552 3331 l
+ 11553 3303 l 11553 3278 l 11553 3255 l 11553 3235 l 11552 3217 l
+ 11551 3202 l 11550 3189 l 11548 3179 l 11546 3171 l 11544 3164 l
+ 11541 3159 l 11538 3155 l 11535 3152 l 11531 3150 l 11527 3148 l
+ 11522 3146 l 11515 3144 l 11507 3143 l 11497 3142 l 11485 3141 l
+ 11471 3140 l 11455 3139 l 11437 3139 l 11416 3138 l 11393 3138 l
+ 11368 3138 l 11340 3137 l 11310 3137 l 11277 3137 l 11256 3137 l
+ 11232 3137 l 11208 3137 l 11182 3137 l 11155 3136 l 11126 3136 l
+ 11096 3136 l 11065 3136 l 11033 3136 l 11000 3136 l 10966 3135 l
+ 10932 3135 l 10898 3135 l 10863 3135 l 10829 3135 l 10796 3134 l
+ 10763 3134 l 10731 3134 l 10701 3134 l 10671 3134 l 10643 3133 l
+ 10616 3133 l 10591 3133 l 10567 3133 l 10545 3133 l 10524 3133 l
+ 10488 3132 l 10456 3132 l 10428 3132 l 10402 3132 l 10380 3132 l
+ 10361 3132 l 10345 3132 l 10332 3133 l 10321 3134 l 10313 3135 l
+ 10307 3137 l 10302 3138 l 10299 3140 l 10296 3143 l 10294 3146 l
+ 10291 3150 l 10289 3156 l 10287 3164 l 10286 3175 l 10284 3188 l
+ 10283 3205 l 10282 3224 l 10281 3247 l 10280 3273 l 10280 3302 l
+ 10279 3335 l 10279 3353 l 10278 3372 l 10278 3393 l 10278 3415 l
+ 10277 3438 l 10277 3462 l 10277 3488 l 10276 3514 l 10276 3541 l
+ 10275 3569 l 10275 3598 l 10275 3627 l 10274 3655 l 10274 3684 l
+ 10273 3712 l 10273 3739 l 10273 3765 l 10272 3791 l 10272 3815 l
+ 10272 3838 l 10272 3860 l 10271 3881 l 10271 3900 l
+ cp gs col7 1.00 shd ef gr gs col32 s gr 
+% Polyline
+0.000 slw
+n 5414 4255 m 5420 4287 l 5491 4295 l 5491 4261 l
+ cp gs col33 1.00 shd ef gr 
+% Polyline
+7.500 slw
+n 5538 4179 m 5538 4149 l
+ 5603 4158 l gs col7 s gr 
+% Polyline
+n 5326 4254 m
+ 5413 4263 l gs col7 s gr 
+% Polyline
+n 5421 4286 m 5490 4293 l 5490 4271 l 5587 4283 l
+ 5587 4243 l gs col7 s gr 
+% Polyline
+0.000 slw
+n 4982 4011 m 4896 4097 l 5062 4120 l
+ cp gs col32 1.00 shd ef gr 
+% here ends figure;
+% 
+% here starts figure with depth 2
+% Ellipse
+7.500 slw
+n 5175 3645 675 675 0 360 DrawEllipse gs col7 1.00 shd ef gr gs col0 s gr
+
+% Ellipse
+n 9225 3600 675 675 0 360 DrawEllipse gs col7 1.00 shd ef gr gs col0 s gr
+
+% Ellipse
+n 10215 2880 675 675 0 360 DrawEllipse gs col7 1.00 shd ef gr gs col0 s gr
+
+/Courier ff 300.00 scf sf
+5175 3690 m
+gs 1 -1 sc (o1) dup sw pop 2 div neg 0 rm  col0 sh gr
+% Polyline
+75.000 slw
+gs  clippath
+5835 3555 m 5835 3735 l 6119 3735 l 5939 3645 l 6119 3555 l cp
+eoclip
+n 5850 3645 m
+ 8550 3645 l gs col33 s gr gr
+
+% arrowhead
+n 6119 3555 m 5939 3645 l 6119 3735 l  col33 s
+% Polyline
+2 slj
+gs  clippath
+9610 2609 m 9677 2442 l 9413 2336 l 9547 2487 l 9346 2503 l cp
+eoclip
+n 9630 2520 m 9620 2516 l 9613 2513 l 9604 2509 l 9593 2505 l 9578 2499 l
+ 9561 2492 l 9541 2484 l 9519 2476 l 9493 2466 l 9465 2456 l
+ 9434 2445 l 9401 2433 l 9365 2421 l 9327 2409 l 9287 2396 l
+ 9246 2384 l 9202 2371 l 9157 2359 l 9111 2346 l 9063 2335 l
+ 9013 2323 l 8961 2313 l 8908 2303 l 8853 2293 l 8795 2285 l
+ 8736 2277 l 8674 2271 l 8609 2265 l 8542 2261 l 8471 2258 l
+ 8397 2256 l 8320 2256 l 8239 2258 l 8154 2261 l 8066 2266 l
+ 7975 2274 l 7881 2283 l 7785 2295 l 7700 2307 l 7616 2321 l
+ 7533 2336 l 7450 2352 l 7370 2368 l 7291 2386 l 7215 2405 l
+ 7140 2424 l 7067 2444 l 6997 2464 l 6928 2484 l 6861 2505 l
+ 6796 2527 l 6733 2548 l 6671 2570 l 6610 2592 l 6550 2615 l
+ 6492 2638 l 6435 2661 l 6378 2684 l 6323 2707 l 6269 2730 l
+ 6217 2753 l 6165 2776 l 6115 2799 l 6066 2821 l 6018 2843 l
+ 5973 2865 l 5929 2886 l 5888 2906 l 5848 2925 l 5811 2943 l
+ 5777 2960 l 5745 2976 l 5716 2990 l 5690 3003 l 5667 3015 l
+ 5647 3025 l 5630 3034 l 5616 3041 l 5605 3047 l 5596 3052 l
+ 5590 3055 l 5585 3057 l 5582 3059 l 5581 3060 l
+ 5580 3060 l gs col33 s gr gr
+
+% arrowhead
+0 slj
+n 9346 2503 m 9547 2487 l 9413 2336 l  col33 s
+/Helvetica ff 300.00 scf sf
+10170 5310 m
+gs 1 -1 sc (user) dup sw pop 2 div neg 0 rm  col0 sh gr
+/Courier ff 300.00 scf sf
+9225 3645 m
+gs 1 -1 sc (main) dup sw pop 2 div neg 0 rm  col0 sh gr
+/Helvetica ff 300.00 scf sf
+10170 5580 m
+gs 1 -1 sc (workstation) dup sw pop 2 div neg 0 rm  col0 sh gr
+/Courier ff 300.00 scf sf
+10260 2970 m
+gs 1 -1 sc (o2) dup sw pop 2 div neg 0 rm  col0 sh gr
+/Helvetica ff 300.00 scf sf
+6255 2565 m
+gs 1 -1 sc  22.0 rot (o2.get\(\)) dup sw pop 2 div neg 0 rm  col33 sh gr
+/Helvetica ff 300.00 scf sf
+8415 3465 m
+gs 1 -1 sc (o1.add\(o2\)) dup sw pop neg 0 rm  col33 sh gr
+% here ends figure;
+$F2psEnd
+rs
+end
+showpage

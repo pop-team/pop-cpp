@@ -1,0 +1,20 @@
+#!/bin/bash
+
+cmake . 
+make 
+
+
+for i in barrier classparam constparam heritageparam2  param serialize_vect templateparam vectorint1 vectorx callback exception heritageparam1 jobManager method passparam structparam vectorint2
+do
+cd $i
+popcrun obj.map ./main-$i
+cd ..
+done
+
+cd matrixNB
+popcrun obj.map ./MatMul 600 10 5 log
+cd ..
+
+cd tree
+popcrun obj.map ./main-tree 10 5
+cd ..

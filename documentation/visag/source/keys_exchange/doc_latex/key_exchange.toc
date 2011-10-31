@@ -1,0 +1,56 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Introduction}{3}
+\contentsline {section}{\numberline {2}Motivations}{3}
+\contentsline {section}{\numberline {3}Alternatives}{4}
+\contentsline {subsection}{\numberline {3.1}TLS(SSL) Combox}{4}
+\contentsline {subsection}{\numberline {3.2}SSH with username/password authentication}{4}
+\contentsline {section}{\numberline {4}SSH Tunnelling}{5}
+\contentsline {subsection}{\numberline {4.1}What is SSH tunnelling}{5}
+\contentsline {subsection}{\numberline {4.2}Current and desired situation in POP-C++}{5}
+\contentsline {subsection}{\numberline {4.3}Requirements to use the SSH tunneling}{6}
+\contentsline {subsection}{\numberline {4.4}SSH files}{6}
+\contentsline {subsection}{\numberline {4.5}Confidence link in POP-C++}{6}
+\contentsline {section}{\numberline {5}Situation in POP-C++}{7}
+\contentsline {section}{\numberline {6}Key exchange process}{9}
+\contentsline {subsection}{\numberline {6.1}Theoretical assumptions}{9}
+\contentsline {subsection}{\numberline {6.2}Practical point of view}{9}
+\contentsline {subsection}{\numberline {6.3}Scenario}{10}
+\contentsline {subsubsection}{\numberline {6.3.1}Scenario 1}{10}
+\contentsline {subsubsection}{\numberline {6.3.2}Scenario 2}{12}
+\contentsline {section}{\numberline {7}Implementation in POP-C++}{14}
+\contentsline {subsection}{\numberline {7.1}POP Application Unique Identifier}{14}
+\contentsline {subsection}{\numberline {7.2}POP-C++ Security Manager (PSM)}{14}
+\contentsline {subsubsection}{\numberline {7.2.1}New POP-C++ Global Services vision}{15}
+\contentsline {subsubsection}{\numberline {7.2.2}Global Services startup}{16}
+\contentsline {subsubsection}{\numberline {7.2.3}POP-C++ Security Manager start-up}{16}
+\contentsline {subsubsection}{\numberline {7.2.4}Mapping}{16}
+\contentsline {subsection}{\numberline {7.3}Creation and destruction of SSH tunnels}{17}
+\contentsline {subsection}{\numberline {7.4}Key exchanges}{18}
+\contentsline {subsubsection}{\numberline {7.4.1}Let the Interface connect to its parallel objects}{18}
+\contentsline {subsection}{\numberline {7.5}All PKI to the "Main Node" and the "Main Node" PKI to everyone}{18}
+\contentsline {subsection}{\numberline {7.6}Reference passing}{20}
+\contentsline {subsubsection}{\numberline {7.6.1}Reference passing in POP-C++}{20}
+\contentsline {subsubsection}{\numberline {7.6.2}Reference passing and key exchange}{20}
+\contentsline {subsubsection}{\numberline {7.6.3}Reference passing of Global Services : od.service}{21}
+\contentsline {subsection}{\numberline {7.7}Request and Response by the confidence link}{23}
+\contentsline {subsubsection}{\numberline {7.7.1}POPWayback}{23}
+\contentsline {section}{\numberline {8}Future improvements}{24}
+\contentsline {subsection}{\numberline {8.1}Compilation Secure/Non-secure}{24}
+\contentsline {subsection}{\numberline {8.2}Keep authorized\_keys file in memory}{24}
+\contentsline {subsection}{\numberline {8.3}Register SSH tunnel}{24}
+\contentsline {subsection}{\numberline {8.4}Pseudo-main}{24}
+\contentsline {section}{\numberline {9}Major changes for the user}{24}
+\contentsline {subsection}{\numberline {9.1}Overhead}{24}
+\contentsline {subsection}{\numberline {9.2}Compatibility}{24}
+\contentsline {section}{\numberline {10}Test}{25}
+\contentsline {subsection}{\numberline {10.1}Scenario 1 : Key exchange in parallel objects creation}{25}
+\contentsline {subsection}{\numberline {10.2}Scenario 2 : Key exchange in reference passing}{27}
+\contentsline {subsection}{\numberline {10.3}Code improvements}{28}
+\contentsline {subsubsection}{\numberline {10.3.1}Warnings check}{28}
+\contentsline {subsubsection}{\numberline {10.3.2}Memory allocation check}{28}
+\contentsline {section}{\numberline {11}Known issues}{29}
+\contentsline {subsection}{\numberline {11.1}Latency on SSH authentication}{29}
+\contentsline {subsection}{\numberline {11.2}Remaining warnings}{29}
+\contentsline {section}{\numberline {12}Conclusion}{29}
+\contentsline {section}{\numberline {13}Table of figures}{30}
+\contentsline {section}{\numberline {14}References}{30}

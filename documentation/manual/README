@@ -1,0 +1,8 @@
+
+- Which package do I need to install to compile this Latex documentation ?
+
+On a Ubuntu linux you will need the packages texlive-base and texlive-extra.  
+
+- How do I compile ?
+
+Use either "make" or "./doit manual"

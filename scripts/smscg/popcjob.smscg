@@ -1,0 +1,228 @@
+#!/bin/bash
+#
+# popcjob.smscg
+#
+# version : 0.5
+# author : J-F. Roche
+# date : 17-jul-2009
+#
+# purpose :
+#
+# This script is part of the SMSCG project ( Work Package 7 b )
+#
+# popcjob will generate a simple configuration file to run a POP-C++ application over ARC. The
+# script will ask some requested information about the POP-C++ application and will automatically generate the 
+# config file ( <file>.xrsl ). Of course, it's possible to give more information for ARC in the config file but
+# the generated config file will allow a basic running of the application.
+#
+# Note : 
+#	- the version 0.5 of GenApplixrsl is forseen to run only with the version 0.1 of "popcrun" !!!
+#	- this version works currently with the cluster "ocikbpra"
+#
+#
+clear
+declare -a ObjectList
+declare -a InFileList
+declare -a ArgList
+declare -a OutFileList
+#
+# 
+echo ""
+echo "popcjob.smscg : generating simple config file to run a POP-C++ appliction over ARC"
+echo ""
+echo -n "Enter the name of the POP-C++ job : "
+read jobname
+echo ""
+#
+# because the name of the configuration file will be derivated from the job name we first check
+# if the <jobname>.xrsl exist. If yes, we stop here the script and give an error message to the user
+#
+if [ -f ${jobname}.xrsl ]
+then
+	echo ""
+	echo "The file " ${jobname}.xrsl " exist. Give another name to the job or delete first the file !"
+	exit
+fi
+#
+#
+if [ ! -f common_files/popc.tgz ]
+then
+	echo ""
+	echo "The file common_files/popc.tgz doesn't exist. Please create it before continuing with the following commands : "
+	echo "cd common_files"
+	echo "tar -zcf popc.tgz popc chg_objmap.smscg"
+	exit
+fi
+#
+if [ ! -f common_files/popcrun.smscg ]
+then
+	echo ""
+	echo "The file common_files/popcrun.smscg doesn't exist. Please get it before continuing ! "
+	exit
+fi
+#
+config_filename=${jobname}.xrsl
+#
+# asking for the application dependant informations
+#
+# first the main file name
+#
+echo -n "Enter the name of the tgz file of the POP-C++ application (without extension) : "
+read mainname
+echo ""
+#
+echo -n "Enter the name of the main of the application : "
+read maincode
+echo ""
+#
+echo -n "Enter the name of the object map file : "
+read mapfile
+echo ""
+# and the name of the other input files if any
+#
+infile=false
+echo -n "Do we have some input files [y/N] : "
+read answer
+if [ "$answer" == "y" ] ||  [ "$answer" == "Y" ]
+then
+	infile=true
+	infilenumber=1
+	infilename="."
+	while  [ x$infilename != "x" ]
+	do
+		echo -n "Enter the name of the file number " $infilenumber " (return if no more) : "
+		read infilename
+		InFileList[$infilenumber]=$infilename
+		let infilenumber=$infilenumber+1
+	done
+	let infilenumber=$infilenumber-1	# to have the correct number of files
+fi
+echo ""
+#
+# asking of the arguments required by the main
+#
+argum=false
+echo -n "Does the application require some arguments [y/N] : "
+read answer
+if [ "$answer" == "y" ] ||  [ "$answer" == "Y" ]
+then
+	argum=true
+	argnumber=1
+	argname="."
+	while  [ x$argname != "x" ]
+	do
+		echo -n "Enter the name of the argument number " $argnumber " (return if no more) : "
+		read argname
+		ArgList[$argnumber]=$argname
+		let argnumber=$argnumber+1
+	done
+	let argnumber=$argnumber-1	# to have the correct number of files
+fi
+echo ""
+#
+# asking for the name of output files if any
+#
+outfile=false
+echo -n "Do we have some output files [y/N] : "
+read answer
+if [ "$answer" == "y" ] || [ "$answer" == "Y" ]
+then
+	outfile=true
+	outfilenumber=1
+	outfilename="."
+	while  [ x$outfilename != "x" ]
+	do
+		echo -n "Enter the name of the output file number " $outfilenumber " (return if no more) : "
+		read outfilename
+		OutFileList[$outfilenumber]=$outfilename
+		let outfilenumber=$outfilenumber+1
+	done
+	let outfilenumber=$outfilenumber-1	# to have the correct number of files
+	echo ""
+fi
+echo ""
+#
+echo -n "Enter the maximal cpu time estimated to execute the job : "
+read cputime
+# if [ $cputime -eq "" ]   ########## ici il faut encore faire des modif pour verifier que l'on a une valeur correct !!!
+# then
+#   cputime = 10
+# fi
+echo ""
+#
+# asking for a email address of the user if he want to be informed about the end of the job
+#
+echo -n "Enter the e-mail address who should be informed about the end of the job ( return if not ) : "
+read emailaddress
+echo ""
+
+#
+# here we construct the ARC configuration file ( xrsl )
+#
+# first the standard part
+#
+echo '&' > ${config_filename}
+echo '(executable="popcrun")' >> ${config_filename}
+echo '(inputFiles=' >> ${config_filename}
+echo '	("popcrun" "file://common_files/popcrun.smscg")' >> ${config_filename}
+echo '	("popc.tgz" "file://common_files/popc.tgz")' >> ${config_filename}
+#
+# and here the job dependant part
+#
+echo '	("applic.tgz" "file://'$mainname'.tgz")' >> ${config_filename}
+#
+if [ $infile == true ]
+then
+  numero=1
+  while [ $numero -lt $infilenumber ]
+  do
+    echo '  ("'${InFileList[$numero]}'" "file://'${InFileList[$numero]}'")' >> ${config_filename}
+    let numero=$numero+1
+  done
+fi
+#
+echo '	)' >> ${config_filename}   # this closes the "inputFiles" block
+#
+#
+arguments=""
+if [ $argum == true ]
+then
+	numero=1
+	while [ $numero -lt $argnumber ]
+	do
+		arguments=$arguments" "${ArgList[$numero]}
+		let numero=$numero+1
+	done
+fi
+#
+echo '(environment=("APPLIC" "'$mainname'"))' >> ${config_filename}
+echo '(arguments="'$mapfile $maincode $arguments '")' >> ${config_filename}
+echo '(stdout="'$mainname'.txt")' >> ${config_filename}
+echo '(stderr="'$mainname'.err")' >> ${config_filename}
+#
+if [ $outfile == true ]
+then
+	numero=1
+	echo '(outputFiles=' >> ${config_filename}
+	while [ $numero -lt $outfilenumber ]
+	do
+		echo '	("'${OutFileList[$numero]}'" "")' >> ${config_filename}
+		let numero=$numero+1
+	done
+	echo '	)' >> ${config_filename}
+fi
+echo '(jobname="POPC '$jobname'")' >> ${config_filename}
+echo '(cputime='$cputime')' >> ${config_filename}
+#
+echo '(executables="popcrun.smscg")' >> ${config_filename}
+#
+if [ "$emailaddress" != "" ]
+then
+	echo '(notify="e '$emailaddress'")' >> ${config_filename}
+fi
+echo ""
+#
+echo "The configuration file is now ready. You can submit the job by entering the command : ngsub " $config_filename
+echo ""
+#
+exit

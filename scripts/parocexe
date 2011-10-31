@@ -1,0 +1,251 @@
+#!/bin/sh
+
+filelist=""
+destdir=""
+collect_file() {
+	cat $filelist
+	ret=0
+	if [ -z "${filelist}" ]; then
+		return 1
+	fi	
+
+	if [ -z "${destdir}" ]; then
+		return 1
+	fi	
+
+	if [ ! -f $filelist ]; then
+		echo "$filelist not found!"
+		return 1
+	fi
+	if [ ! -d $destdir ]; then
+		echo "Destination directory $destdir does not exist!"
+		return 1
+	fi
+
+	while read afile 
+	do
+	    ret=1
+	    if [ -f $afile ]; then
+		cp $afile $destdir
+		ret=$?
+	    elif [ -d $afile ]; then
+		cp -r $afile $destdir
+		ret=$?
+            fi 
+	    if [ $ret -ne 0 ]; then
+		echo "Can not collect $afile"
+	    fi		
+	done < $filelist
+	return $ret
+}
+
+clean_temp() {
+    rm -rf ${tmpdir} ${tmptar} ${tmplist}
+}
+
+filelist=""
+filename=""
+find_dependencies() {
+	files=`ldd $filename | awk '{ print $3;}' | grep -v "^/lib/"`
+	for afile in $files ;do
+		if [ ! -f $afile ]; then
+			continue
+		fi
+		if [ ! -f $filelist ]; then
+		    echo $afile > $filelist
+		    
+		else
+		    grep -q "^${afile}$" $filelist
+		    ret=$?
+		    if [ $ret -ne 0 ]; then
+			echo $afile >> $filelist
+		    fi
+		fi
+	done
+	return 0
+}
+
+if [ -z "$*" ]; then
+  echo "Usage: parocpack [-c] [-file filelist] [-o output] main_file supporting_files..."
+  echo "       Options:"
+  echo "          -c                 :  enable compression"
+  echo "          -[no]dep           :  Find dependencies"
+  echo "          -file filelist     :  list of files is in <filelist>"
+  echo "          -o output          :  specify the output executable."
+  exit 1
+fi
+
+
+mydir=`pwd`
+myprog=""
+compress=0
+dep=1
+
+collectfile=""
+output="packed.sh"
+nextarg=0
+
+mktemp=/bin/mktemp
+if [ ! -x $mktemp ]; then
+  pid=$$
+  tmpdir="/tmp/pack_${USER}_$pid"
+  tmptar="/tmp/pack_${USER}_$pid.tar"
+  tmplist="/tmp/filelist_${USER}_$pid"
+  mkdir $tmpdir
+else
+  tmpdir=`$mktemp -d /tmp/pack.XXXXXX`
+  tmptar=`$mktemp -q /tmp/pack.XXXXXX`
+  tmplist=`$mktemp -q /tmp/pack.XXXXXX`
+fi
+
+echo "Collecting files..."
+
+for arg in $* ; do
+    if [ "$arg" = "-o" ]; then
+	nextarg=1
+	continue
+    elif [ "$arg" = "-c" ]; then
+	compress=1
+	continue
+    elif [ "$arg" = "-nodep" ]; then
+	dep=0
+	continue
+    elif [ "$arg" = "-dep" ]; then
+	dep=1
+	continue
+    elif [ "$arg" = "-file" ]; then
+	nextarg=2
+	continue
+    fi
+
+    if [ $nextarg -eq 1 ]; then
+	nextarg=0
+	output=$arg
+    elif [ $nextarg -eq 2 ]; then
+	nextarg=0
+	cat $arg >> $tmplist
+	ret=$?
+	if [ $ret -ne 0 ]; then
+	    clean_temp
+	    echo "Can not collect files from the filelist $arg"
+	    exit 1
+	fi
+  
+    elif [ ! -f $arg ]; then
+	echo "Error: file $arg not found"
+	clean_temp
+	exit 1
+    else
+	echo $arg  >> $tmplist   
+	if [ -z "$myprog" ]; then
+	    myprog=`basename $arg`
+	fi
+	filelist="$tmplist"
+	filename=$arg
+	
+	if [ $dep -eq 1 ]; then
+	    find_dependencies
+	    ret=$?
+	    if [ $ret -ne 0 ]; then
+		echo "Can not find dependencies for $arg"
+		clean_temp
+		exit 1
+	    fi
+	fi
+    fi
+done
+
+if [ -z "$myprog" ]; then
+    echo "Error: main executable is missing"
+    clean_temp
+    exit 1
+fi
+
+filelist="$tmplist"
+destdir="$tmpdir"
+collect_file
+ret=$?
+
+if [ $ret -ne 0 ]; then
+    echo "Can not collect files"
+    clean_temp
+    exit 1
+fi
+
+echo "Packing executables into $output..."
+
+cd $tmpdir
+
+tar cf $tmptar *
+ret=$?
+if [ $ret -ne 0 ]; then
+    echo "Cannot pack the executable"
+    clean_temp
+    exit 1
+fi
+
+if [ $compress -ne 0 ]; then
+  gzip $tmptar
+  ret=$?
+  if [ $ret -ne 0 ]; then
+    echo "Cannot compress the executable"
+    clean_temp
+    exit 1
+  fi
+  tmptar="${tmptar}.gz"
+fi
+
+cd $mydir
+
+echo '#!/bin/sh' > $output
+echo "prog=$myprog" >> $output
+echo 'mydir=`pwd`' >> $output
+echo 'mktemp=/bin/mktemp' >> $output
+echo 'if [ ! -x $mktemp ]; then' >> $output
+echo 'tmpdir="/tmp/${prog}_unpack_${USER}_$$"' >> $output
+echo 'mkdir $tmpdir' >> $output
+echo 'else' >> $output
+echo 'tmpdir=`$mktemp -d /tmp/${prog}_unpack.XXXXXX`' >> $output
+echo 'fi' >> $output
+echo 'exedir=`echo $0 | grep "^/"`'  >> $output
+echo 'if [ "${exedir}X" = "X" ]; then exedir=$mydir; fi'  >> $output
+if [ "X${exedir}" != "X" ]; then
+    echo 'POPC_EXE=${exedir}/$0' >> $output
+else
+    echo 'POPC_EXE=$0' >> $output
+fi
+echo 'export POPC_EXE' >> $output
+echo 'LD_LIBRARY_PATH=${tmpdir}:${LD_LIBRARY_PATH}' >> $output
+echo 'export LD_LIBRARY_PATH' >> $output
+if [ $compress -ne 0 ]; then
+  echo 'tail -n +25 $0 > $tmpdir/tmp.unpack.tar.gz' >> $output
+else
+  echo 'tail -n +25 $0 > $tmpdir/tmp.unpack.tar' >> $output
+fi
+
+echo 'cd $tmpdir' >> $output
+
+if [ $compress -ne 0 ]; then
+  echo 'gzip -cd tmp.unpack.tar.gz | tar xf -' >> $output
+
+else
+  echo 'tar xf tmp.unpack.tar' >> $output
+fi
+echo './$prog "$@"' >> $output
+
+echo 'RETVAL=$?' >> $output
+echo 'cd $mydir' >> $output
+echo 'rm -rf $tmpdir' >> $output
+echo 'exit $RETVAL' >> $output
+cat $tmptar >> $output
+chmod +x $output
+
+clean_temp
+exit 0
+
+
+
+
+
+
+

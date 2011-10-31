@@ -1,0 +1,16 @@
+\select@language {english}
+\contentsline {figure}{\numberline {1}{\ignorespaces Non-secure and secure connections between the interface and the broker\relax }}{5}
+\contentsline {figure}{\numberline {2}{\ignorespaces Current situation in POP-C++\relax }}{7}
+\contentsline {figure}{\numberline {3}{\ignorespaces Final situation in POP-C++\relax }}{8}
+\contentsline {figure}{\numberline {4}{\ignorespaces Scenario 1 : Key exchange during objects creation\relax }}{10}
+\contentsline {figure}{\numberline {5}{\ignorespaces Scenario 1 : Key exchange during reference passing\relax }}{11}
+\contentsline {figure}{\numberline {6}{\ignorespaces Scenario 2 : Key exchange during objects creation\relax }}{12}
+\contentsline {figure}{\numberline {7}{\ignorespaces Scenario 2 : Key exchange during reference passing\relax }}{13}
+\contentsline {figure}{\numberline {8}{\ignorespaces New Global Services Vision\relax }}{15}
+\contentsline {figure}{\numberline {9}{\ignorespaces Sequence Diagram : Global Services start-up\relax }}{16}
+\contentsline {figure}{\numberline {10}{\ignorespaces Public keys : Node M\relax }}{18}
+\contentsline {figure}{\numberline {11}{\ignorespaces POPAppID-AP and POPAppID-PKI Mapping\relax }}{19}
+\contentsline {figure}{\numberline {12}{\ignorespaces Reference Passing\relax }}{21}
+\contentsline {figure}{\numberline {13}{\ignorespaces Request - Response in Secure POP-C++\relax }}{23}
+\contentsline {figure}{\numberline {14}{\ignorespaces Scenario 1 : Key exchange in parallel objects creation\relax }}{26}
+\contentsline {figure}{\numberline {15}{\ignorespaces Scenario 2 : Key exchange in reference passing\relax }}{27}

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+echo "PLEASE START POPC++ JOBMGR BEFORE RUNNING THIS TEST"
+testname=./pingpong
+arg=
+
+objmap=/tmp/${testname}_`whoami`
+
+echo "GENERATING OBJECT MAP FILE...."
+echo "${testname}.obj -listlong \> $objmap"
+
+${testname}.obj -listlong > $objmap
+echo "STARTING $testname...." 
+echo "popcrun $objmap ${testname}.main ${arg}"
+
+popcrun $objmap ${testname}.main ${arg}
+
+ 
