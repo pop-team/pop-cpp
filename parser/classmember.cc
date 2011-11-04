@@ -465,6 +465,7 @@ Method::Method(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), retur
 	isHidden=false;
 	isVirtual=false;
 	isPureVirtual=false;
+	isGlobalConst=false; // add by david
 }
 
 Method::~Method()
@@ -497,30 +498,63 @@ int Method::CheckMarshal()
 
 void Method::GenerateReturn(CArrayChar &output, bool header)
 {
+	GenerateReturn(output,header, false);
+}
+
+void Method::GenerateReturn(CArrayChar &output, bool header, bool interface)
+{
 	DataType *type=returnparam.GetType();
 	if (type==NULL) return;
 	if (header && isVirtual) output.InsertAt(-1,"virtual ",8);
 	else if (!header) output.InsertAt(-1,"\n",1);
 
-	if (returnparam.GetType()->IsParClass())
+	if (returnparam.GetType()->IsParClass() && !returnparam.IsRef())
 	{
-		fprintf(stderr,"%s:%d: WARNING in %s::%s : the return argument '%s' is treated as a reference to a parallel object.\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name, returnparam.GetType()->GetName());
+		/* changed by David : no more warning, error ! */
+		//fprintf(stderr,"%s:%d: WARNING in %s::%s : the return argument '%s' is treated as a reference to a parallel object.\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name, returnparam.GetType()->GetName());
+		
+		fprintf(stderr,"%s:%d: ERROR in %s::%s : the return argument '%s' should by a reference to a parallel object !\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name, returnparam.GetType()->GetName());
+		exit(1);
 	}
-	if (returnparam.IsRef()/*&&!returnparam.GetType()->IsParClass()*/)
+	if (returnparam.IsRef() && !returnparam.GetType()->IsParClass())
 	{
-		fprintf(stderr,"%s:%d: ERROR in %s::%s : methods of parallel objects cannot technically return a reference.\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name);
+		fprintf(stderr,"%s:%d: ERROR in %s::%s : methods of parallel objects can not technically return a reference.\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name);
 		exit(1);
 	}
 
+	// add by david
+	if (returnparam.IsConst()){
+		const char* tmp_const= "const ";
+		output.InsertAt(-1,tmp_const, strlen(tmp_const));
+	}
+
 	char tmp[1024];
+	
 	type->GetDeclaration(NULL,tmp);
-	if (returnparam.IsConst())sprintf(tmp, "const %s", tmp);
+	//if (returnparam.IsConst())sprintf(tmp, "const %s", tmp);
 	output.InsertAt(-1,tmp, strlen(tmp));
+	
+	// add by david
+	if (returnparam.IsRef() && !interface){
+//		if(!returnparam.GetType()->IsParClass())
+//		{
+			const char* tmp_const= "& ";
+			output.InsertAt(-1,tmp_const, strlen(tmp_const));
+//		}
+	}
+	
 	output.InsertAt(-1," ");
 }
 
 void Method::GeneratePostfix(CArrayChar &output, bool header)
 {
+	// add const add the end of methode - david
+	if(isGlobalConst)
+	{
+		const char* tmp = " const ";
+		output.InsertAt(-1,tmp, strlen(tmp));
+	}
+	
 	if (header) output.InsertAt(-1,";",1);
 }
 
@@ -564,7 +598,7 @@ void Method::GenerateClient(CArrayChar &output)
 
 	//Check if we can generate marshalling stubs....
 	int t=CheckMarshal();
-	if (t!=0)
+	/*if (t!=0)
 	{
 		Class *cl=GetClass();
 		if (t==-1)
@@ -572,8 +606,29 @@ void Method::GenerateClient(CArrayChar &output)
 		else
 			fprintf(stderr,"%s:%d: ERROR in %s::%s: unable to marshal argument %d.\n",  cl->GetFileInfo(), line, cl->GetName(), name,t);
 		exit(1);
+	}*/
+	
+	// more detailled error msg - added by david
+	if (t!=0)
+	{
+		Class *cl=GetClass();
+		if (t==-1)
+		{
+			if(returnparam.IsPointer())
+				fprintf(stderr,"%s:%d: ERROR in %s::%s: The return argument is a Illegal Pointer.\n", cl->GetFileInfo(),line, cl->GetName(), name);
+			else
+				fprintf(stderr,"%s:%d: ERROR in %s::%s: unable to marshal the return argument.\n", cl->GetFileInfo(),line, cl->GetName(), name);
+		}
+		else
+		{
+			if(params[t-1]->IsPointer())
+				fprintf(stderr,"%s:%d: ERROR in %s::%s: Illegal Pointer Parameter at argument %d.\n",  cl->GetFileInfo(), line, cl->GetName(), name,t);
+			else
+				fprintf(stderr,"%s:%d: ERROR in %s::%s: unable to marshal argument %d.\n",  cl->GetFileInfo(), line, cl->GetName(), name,t);
+		}
+		exit(1);
 	}
-
+	
 	//  Method &met=*memberList[i]->GetMethod();
 	char tmpcode[10240];
 
@@ -581,7 +636,8 @@ void Method::GenerateClient(CArrayChar &output)
 	int j,nb=params.GetSize();
 	//      Param &ret=met.returnparam;
 
-	GenerateReturn(output,false);
+	//changed by david
+	GenerateReturn(output,false, true);
 	GenerateName(output, false);
 	GenerateArguments(output,false);
 	GeneratePostfix(output,false);
@@ -706,7 +762,9 @@ void Method::GenerateHeader(CArrayChar &output, bool interface)
 		}
 	}
 	ClassMember::GenerateHeader(output, interface);
-	GenerateReturn(output, true);
+	
+	if(type==METHOD_NORMAL) GenerateReturn(output, true, interface);
+	else GenerateReturn(output, true);
 
 	if (!interface && type!=METHOD_NORMAL)
 	{
@@ -778,13 +836,19 @@ void Method::GenerateBroker(CArrayChar &output)
 		//CHECK HERE....
 		char retdecl[1024];
 		char tmpvar[1024];
-		if (returnparam.isRef) sprintf(tmpvar,"&%s",returnparam.GetName());
-		else strcpy(tmpvar,returnparam.GetName());
+		
+		//printf("%s is %d\n", returnparam.name, returnparam.isRef);
+		
+		/*
+		 * Modified by david. If you add const (added here) it can resolve the problem, but I don't know the POP-C runtime impact 
+		if (returnparam.isRef) sprintf(tmpvar,"const &%s",returnparam.GetName());
+		else*/ strcpy(tmpvar,returnparam.GetName());
 		returnparam.GetType()->GetDeclaration(tmpvar,retdecl);
 
+		/* removed for the same reson as above
 		if (returnparam.isRef)
 			sprintf(methodcall,"\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj); \ntry {\n%s=_paroc_obj->%s(",clname,OBJ_POSTFIX,clname,OBJ_POSTFIX,retdecl, name);
-		else if (returnparam.GetType()->IsParClass())
+		else*/ if (returnparam.GetType()->IsParClass())
 			sprintf(methodcall,"\n%s(paroc_interface::_paroc_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl,clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, tmpvar,name);
 		else
 			sprintf(methodcall,"\n%s;\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
@@ -836,7 +900,7 @@ void Method::GenerateBroker(CArrayChar &output)
 
   // Add 'catch' to catch and print all std exceptions raised in the method
   char tempcatch[256];
-  sprintf(tempcatch,"\n}\ncatch(std::exception& e) {rprintf(\"Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
+  sprintf(tempcatch,"\n}\ncatch(std::exception& e) {rprintf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
   strcat(methodcall,tempcatch); 
 
 
@@ -1009,7 +1073,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		if (j<nb-1) strcat(tmpcode,", ");
 	}
 
-	strcat(tmpcode,");\n}");
+	strcat(tmpcode,");}\n");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
 	sprintf(tmpcode,"\nvoid %s::_paroc_Construct",GetClass()->GetName());

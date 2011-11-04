@@ -6,6 +6,7 @@
  * 
  * Modifications :
  * Authors		Date			Comment
+ * clementval  2011/9/13   Add the method GetNoAddRef() and the variable _noaddref to be able to handle the THIS keyword correctly
  */
 
 #include <stdio.h>
@@ -20,6 +21,7 @@ paroc_accesspoint::paroc_accesspoint()
 	endpoint=NULL;  
    _security=NONSECURE;
    _service=false;
+   _noaddref=false;
 }
 // paroc_accesspoint::paroc_accesspoint(const char *hostport)
 // {
@@ -38,6 +40,7 @@ paroc_accesspoint::paroc_accesspoint(const paroc_accesspoint &p)
       _security = NONSECURE;
    if(p.IsService())
       SetAsService();
+   _noaddref=GetNoAddRef();
 }
 
 paroc_accesspoint::~paroc_accesspoint()
@@ -86,7 +89,7 @@ paroc_accesspoint & paroc_accesspoint::operator =(const paroc_accesspoint &p)
  * @return The public key of the node running the parallel object pointed by this access point
  */
 /*
-const paroc_string paroc_accesspoint::GetPKI() const {
+const POPString paroc_accesspoint::GetPKI() const {
    return endpoint_pki;
 }
 */
@@ -97,7 +100,7 @@ const paroc_string paroc_accesspoint::GetPKI() const {
  * @param pki The public key of the node
  */
 /*
-void paroc_accesspoint::SetPKI(paroc_string pki){
+void paroc_accesspoint::SetPKI(POPString pki){
    endpoint_pki = pki;
 }
 */
@@ -130,6 +133,14 @@ const bool paroc_accesspoint::IsService() const{
    return _service;
 }
 
+
+/**
+ * Get the boolean value that says if the creation of an interface with this access point must increment the internal counter
+ */
+const bool paroc_accesspoint::GetNoAddRef() const{
+   return _noaddref;
+}
+
 /**
  * ViSaG : clementval
  * Set the variable _service to TRUE
@@ -138,19 +149,25 @@ void paroc_accesspoint::SetAsService(){
    _service = true;
 }
 
+void paroc_accesspoint::SetNoAddRef() {
+   _noaddref = true;
+}
+
+
+
 
 
 void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack)
 {
 	if (pack)
 	{
-		paroc_string s(endpoint);
-		buf.Push("url","paroc_string",1);
+		POPString s(endpoint);
+		buf.Push("url","POPString",1);
 		buf.Pack(&s,1);
 		buf.Pop();      
       
-   /*   paroc_string pk(endpoint_pki);
-      buf.Push("pki", "paroc_string", 1);
+   /*   POPString pk(endpoint_pki);
+      buf.Push("pki", "POPString", 1);
       buf.Pack(&pk, 1);
       buf.Pop();*/
 
@@ -163,17 +180,22 @@ void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack)
       buf.Push("_service", "bool", 1);
       buf.Pack(&serv,1);
       buf.Pop();
+
+      bool noadd = _noaddref;
+      buf.Push("_noaddref", "bool", 1);
+      buf.Pack(&noadd,1);
+      buf.Pop();
 	}
 	else
 	{
-		paroc_string s;
-		buf.Push("url","paroc_string",1);
+		POPString s;
+		buf.Push("url","POPString",1);
 		buf.UnPack(&s,1);
 		buf.Pop();
 		SetAccessString(s);    
 
-  /*    paroc_string pk;
-      buf.Push("pki", "paroc_string", 1);
+  /*    POPString pk;
+      buf.Push("pki", "POPString", 1);
       buf.UnPack(&pk, 1);
       buf.Pop();
       SetPKI(pk);*/
@@ -191,6 +213,13 @@ void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack)
       buf.Pop();
       if(serv)
          SetAsService();
+
+      bool noadd;
+      buf.Push("_noaddref", "bool", 1);
+      buf.UnPack(&noadd,1);
+      buf.Pop();
+      if(noadd)
+         SetNoAddRef();
      
 	}
 }

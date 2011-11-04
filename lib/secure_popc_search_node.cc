@@ -21,7 +21,7 @@ using namespace std;
  * @param challenge  Challenge string used to stop the services
  * @param deamon     If TRUE, the parallel object will run in deamon mode
  */
-SecurePOPCSearchNode::SecurePOPCSearchNode(const paroc_string &challenge, 
+SecurePOPCSearchNode::SecurePOPCSearchNode(const POPString &challenge, 
    bool deamon) : POPCSearchNode(challenge, deamon) {
 	popc_node_log("SecurePOPCSearchNode Created ...");
 }
@@ -89,7 +89,7 @@ POPCSearchNodeInfos SecurePOPCSearchNode::launchDiscovery(Request req, int timeo
 
    //Add the main PKI in the request
    POPCSecurityManager psm(_localPSM);
-   paroc_string mainPKI = psm.getMainPKIFromMapping(req.getPOPAppId());
+   POPString mainPKI = psm.getMainPKIFromMapping(req.getPOPAppId());
    if(strcmp(mainPKI, "") == 0){
       popc_node_log("SET_SAME_KEY");
       req.setMainPKI(req.getPKI());
@@ -138,11 +138,11 @@ POPCSearchNodeInfos SecurePOPCSearchNode::launchDiscovery(Request req, int timeo
     actualReqSyn.lock();
     
     POPCSearchNodeInfos results;
-    map<paroc_string, POPCSearchNodeInfos>::iterator i;
+    map<POPString, POPCSearchNodeInfos>::iterator i;
     
-    // ! for-statement because of problem with map comparison and paroc_string !
+    // ! for-statement because of problem with map comparison and POPString !
     for(i=actualReq.begin(); i != actualReq.end(); i++){
-        paroc_string id = (*i).first;
+        POPString id = (*i).first;
         if(strcmp(id.GetString(), req.getUniqueId().GetString()) == 0){
             results = i->second;
             break;
@@ -172,7 +172,7 @@ void SecurePOPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint 
          // received exploration list
          for(i = neighborsList.begin(); i != neighborsList.end(); i++){
             if(!oldEL.isIn((*i)->getPOPCSearchNodeId())){
-				   paroc_string nid;
+				   POPString nid;
 				   nid = (*i)->getPOPCSearchNodeId();
 				   sprintf(log, "FORWARD;DEST;%s", nid.GetString());
 				   popc_node_log(log);
@@ -196,7 +196,7 @@ void SecurePOPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint 
       psm.addMainAPMapping(req.getPOPAppId(), _psm);
 
       // check if the request has already been asked
-      list<paroc_string>::iterator k;
+      list<POPString>::iterator k;
       for(k = knownRequests.begin(); k != knownRequests.end(); k++){
          if(strcmp(k->GetString(),req.getUniqueId().GetString()) == 0){
 			   sprintf(log, "ALREADY_ASKED_REQUEST;%s", req.getUniqueId().GetString());
@@ -234,22 +234,22 @@ void SecurePOPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint 
 	      /* If it's the local node or it's the last node, send directly the answer. Otherwise, send to the next node to reroute 
          the message */
          if(!req.getWayBack().isLastNode()){
-            paroc_string listwb = req.getWayBack().getAsString();
+            POPString listwb = req.getWayBack().getAsString();
             sprintf(log, "NEED_REROUTE;WAYBACK;%s", listwb.GetString());
       	   popc_node_log(log);
             rerouteResponse(*resp, req.getWayBack());
          } else {
-            POPCSearchNode asker(node_ap);
             sprintf(log, "SEND_REP;DEST;%s", node_ap.GetAccessString());
             popc_node_log(log);
+            POPCSearchNode asker(node_ap);
             asker.callbackResult(*resp);  
          }
 
          //Add main PKI
          popc_node_log("ADD_KEYS_FROM_REQUEST");
          POPCSecurityManager psm(_localPSM);
-         paroc_string mainPki(req.getMainPKI());
-         paroc_string initPki(req.getPKI());
+         POPString mainPki(req.getMainPKI());
+         POPString initPki(req.getPKI());
          psm.writePKI(req.getPOPAppId(), mainPki);
          if(!(sender == GetAccessPoint())){
             psm.writePKI(req.getPOPAppId(), initPki);
@@ -262,9 +262,10 @@ void SecurePOPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint 
             list<POPCSearchNode *>::iterator i;
             // check if the local neighbors are already asked with the originally 
             // received exploration list
+            req.addNodeToWb(getPOPCSearchNodeId());
             for(i = neighborsList.begin(); i != neighborsList.end(); i++){
                if(!oldEL.isIn((*i)->getPOPCSearchNodeId())){
-	   			   paroc_string nid;
+	   			   POPString nid;
 	   			   nid = (*i)->getPOPCSearchNodeId();
 	   			   sprintf(log, "FORWARD;DEST;%s", nid.GetString());
 	   			   popc_node_log(log);
@@ -292,11 +293,11 @@ void SecurePOPCSearchNode::callbackResult(Response resp){
 	popc_node_log(log);
 	//End for test
    actualReqSyn.lock();
-   map<paroc_string, POPCSearchNodeInfos>::iterator i;
+   map<POPString, POPCSearchNodeInfos>::iterator i;
 
    // visit the currently running list
    for(i=actualReq.begin(); i != actualReq.end(); i++){
-      paroc_string id = (*i).first;
+      POPString id = (*i).first;
       // if the request's uniqueId is present, add the response to the list
       // and break the for-statement.
       if(strcmp(id.GetString(), resp.getReqUniqueId().GetString()) == 0){

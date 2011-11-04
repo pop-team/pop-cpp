@@ -36,8 +36,8 @@ public:
    classuid(9999);
 
    //VirtualJobMgr constrcutor
-	VirtualJobMgr(bool daemon, [in] const paroc_string &virtconf, [in] const paroc_string &conf, 
-      [in] const paroc_string &challenge, const paroc_string &url, 
+	VirtualJobMgr(bool daemon, [in] const POPString &virtconf, [in] const POPString &conf, 
+      [in] const POPString &challenge, const POPString &url, 
       const paroc_accesspoint &nodeAccess, const paroc_accesspoint &clonerRef, 
       const paroc_accesspoint &psmRef) @{ od.url(url); od.runLocal(true); od.service(true);};
    

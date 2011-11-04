@@ -46,7 +46,7 @@ public:
 	 * @param daemon start in daemon mode
 	 * @param codelocation location of the AppCoreService executable
 	*/
-	AppCoreService(const paroc_string &challenge, bool daemon, const paroc_string & codelocation) @{ od.url(paroc_system::GetHost()); od.executable(codelocation); od.runLocal(true);};
+	AppCoreService(const POPString &challenge, bool daemon, const POPString & codelocation) @{ od.url(paroc_system::GetHost()); od.executable(codelocation); od.runLocal(true);};
 	~AppCoreService();
 
 
@@ -55,7 +55,7 @@ public:
     * ViSaG : clementval
     * Getter for the POP Application ID
     */
-   sync conc paroc_string GetPOPCAppID();
+   sync conc POPString GetPOPCAppID();
    /* ViSaG */
 
 
@@ -64,27 +64,27 @@ public:
 	 * @param service the instance of the service of the given name is returned
 	 * @return true if the service of given name exists. Othewise, false is return
 	*/
-	seq sync bool QueryService(const paroc_string &name, [out] paroc_service_base &service);
+	seq sync bool QueryService(const POPString &name, [out] paroc_service_base &service);
 
 	/*!@brief Query a user supplied service
 	 * @param name name of the service (string)
 	 * @param service the instance of the service of the given name is returned
 	 * @return true if the service of given name exists. Othewise, false is return
 	*/
-	seq sync bool QueryService(const paroc_string &name, [out] paroc_accesspoint &service);
+	seq sync bool QueryService(const POPString &name, [out] paroc_accesspoint &service);
 
 	/*!@brief Register a new service to AppCoreService
 	 * @param name name of the service (string)
 	 * @param newservice the new service (parallel object)
 	 * @return true if successful. Otherwise, false is returned
 	*/
-	seq sync bool RegisterService(const paroc_string &name, const paroc_service_base &newservice);
+	seq sync bool RegisterService(const POPString &name, const paroc_service_base &newservice);
 
 	/*!@brief Unregister a service
 	 * @param name name of the service (string)
 	 * @return true if successful. Otherwise, false is returned
 	*/
-	seq sync bool UnregisterService(const paroc_string &name);
+	seq sync bool UnregisterService(const POPString &name);
 	classuid(20);
 
 
@@ -96,7 +96,7 @@ private:
     * ViSaG : clementval
     * Variable holding the POPAppID
     */
-   paroc_string _popcAppId;
+   POPString _popcAppId;
 
 
 };

@@ -47,16 +47,16 @@ const POPWayback & POPWayback::operator =(const POPWayback &rhs)
  * Return the POPWayback object as a fromatted string
  * @return The formatted string corresponding to this object
  */
-paroc_string POPWayback::getAsString() const{
-   list<paroc_string> tmp = _lst_wb;
+POPString POPWayback::getAsString() const{
+   list<POPString> tmp = _lst_wb;
    std::string wb;
    while(!tmp.empty()){
-      paroc_string e = tmp.front();
+      POPString e = tmp.front();
       tmp.pop_front();
       wb.append(e.GetString());
       wb.append("//");
    }
-   paroc_string wbstr = wb.c_str();
+   POPString wbstr = wb.c_str();
    return wbstr;
 }
 
@@ -66,11 +66,11 @@ paroc_string POPWayback::getAsString() const{
  * parameter.
  * @param nodeId  The node ID to insert in the POPWayback
  */
-void POPWayback::insertNode(paroc_string nodeId){
+void POPWayback::insertNode(POPString nodeId){
    if(_lst_wb.empty())   
       _lst_wb.push_back(nodeId);
    else{
-      paroc_string tmp = getNextNode();
+      POPString tmp = getNextNode();
       if(strcmp(tmp.GetString(), nodeId.GetString())!=0)
          _lst_wb.push_back(nodeId);
    }
@@ -81,8 +81,8 @@ void POPWayback::insertNode(paroc_string nodeId){
  * return the last Node
  * @return The node ID of the next node in the way back
  */
-paroc_string POPWayback::getNextNode() const {
-   paroc_string node = _lst_wb.back();
+POPString POPWayback::getNextNode() const {
+   POPString node = _lst_wb.back();
    return node;
 }
 
@@ -128,7 +128,7 @@ void POPWayback::Serialize(POPBuffer &buf, bool pack){
       buf.Pack(&size, 1);
       //Pack elements
       while(!_lst_wb.empty()){
-         paroc_string elt = _lst_wb.front();
+         POPString elt = _lst_wb.front();
          _lst_wb.pop_front();
          buf.Pack(&elt, 1);
       }
@@ -140,7 +140,7 @@ void POPWayback::Serialize(POPBuffer &buf, bool pack){
       buf.UnPack(&size, 1);
       //Unpack elements
       for(int i=0; i< size; i++){
-         paroc_string elt;
+         POPString elt;
          buf.UnPack(&elt, 1);
          _lst_wb.push_back(elt);
       }

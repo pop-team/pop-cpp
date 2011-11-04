@@ -608,7 +608,7 @@ top_srcdir = @top_srcdir@
 virtsecure = @virtsecure@
 virtual = @virtual@
 AUTOMAKE_OPTIONS = no-dependencies
-POPC_FLAGS = -parocdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -cxx=@CXX@ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
+POPC_FLAGS = -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -cxx=@CXX@ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
 @LINUX_FALSE@AM_CXXFLAGS = $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS)
 
 #ADD VIX and LIBVIRT flags

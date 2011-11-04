@@ -23,7 +23,7 @@ parclass SecurePOPCSearchNode : public POPCSearchNode {
 
 public:
 	//Node's constructore 
-	SecurePOPCSearchNode(const paroc_string &challenge, bool deamon) @{ od.runLocal(true); od.service(true);};
+	SecurePOPCSearchNode(const POPString &challenge, bool deamon) @{ od.runLocal(true); od.service(true);};
    
 	// Destructor
 	~SecurePOPCSearchNode();
@@ -33,8 +33,8 @@ public:
    sync conc paroc_accesspoint getPSMRef();
 
    //Getter and Setter for the PKI
-   seq sync void setPKI(paroc_string pk);
-   conc sync paroc_string getPKI();
+   seq sync void setPKI(POPString pk);
+   conc sync POPString getPKI();
 
 
    /*

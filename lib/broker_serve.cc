@@ -212,7 +212,7 @@ bool paroc_broker::DoInvoke(paroc_request &request)
 	{
 		if (request.from!=NULL)
 		{
-			paroc_string extra=e->Extra();
+			POPString extra=e->Extra();
 			if (e->Extra().Length()==0)
 			{
 				extra= classname + "@" + accesspoint.GetAccessString();
@@ -229,7 +229,7 @@ bool paroc_broker::DoInvoke(paroc_request &request)
 		if (request.from!=NULL)
 		{
 
-			paroc_string extra=e.Extra();
+			POPString extra=e.Extra();
 			if (e.Extra().Length()==0)
 			{
 				extra=classname+"@"+accesspoint.GetAccessString();

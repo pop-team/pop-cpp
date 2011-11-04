@@ -24,7 +24,7 @@ paroc_buffer * paroc_buffer_xdr_factory::CreateBuffer() {
 	return bufXDR;
 }
 
-bool paroc_buffer_xdr_factory::GetBufferName(paroc_string & bufferName) {
+bool paroc_buffer_xdr_factory::GetBufferName(POPString & bufferName) {
 	bufferName="xdr";
 	return true;
 }

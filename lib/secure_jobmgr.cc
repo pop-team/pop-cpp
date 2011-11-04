@@ -64,7 +64,7 @@ SecureJobMgr::~SecureJobMgr(){
  * @param iptrace
  * @param tracesize
  */
-bool SecureJobMgr::AllocResource(const paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize)
+bool SecureJobMgr::AllocResource(const paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize)
 {
 	bool ret=false;
 	if(!od.isSearchSet()){
@@ -75,7 +75,7 @@ bool SecureJobMgr::AllocResource(const paroc_accesspoint &localservice, const pa
 			paroc_service_log("Local resource has already been traversed!");
 			return false;
 		}
-		paroc_string codefile;
+		POPString codefile;
 	
 		//MATCHING LOCALLY
 		popc_node_log("Resource discovery request: obj=%s, local service: %s (trace=%d)",(const char *)objname,localservice.GetAccessString(),tracesize);
@@ -165,7 +165,7 @@ bool SecureJobMgr::AllocResource(const paroc_accesspoint &localservice, const pa
 		}
 	}	
 	//Set operating system
-	paroc_string r_arch;
+	POPString r_arch;
 	od.getArch(r_arch);
 	if(r_arch != NULL)
 		r.setOperatingSystem(r_arch);

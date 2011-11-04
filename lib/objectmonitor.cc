@@ -16,7 +16,8 @@
 
 #include "objectmonitor.ph"
 
-static IMPLEMENT_TYPE(ObjectMonitor) *myObjMonitor=NULL;
+//static IMPLEMENT_TYPE(ObjectMonitor) *myObjMonitor=NULL;
+static ObjectMonitor *myObjMonitor=NULL;
 
 static void LocalServiceTerminate(int sig)
 {
@@ -25,7 +26,7 @@ static void LocalServiceTerminate(int sig)
 	_exit(1);
 }
 
-ObjectMonitor::ObjectMonitor(const paroc_string &challenge): paroc_service_base(challenge)
+ObjectMonitor::ObjectMonitor(const POPString &challenge): paroc_service_base(challenge)
 {
 	myObjMonitor=this;
 	signal(SIGINT,LocalServiceTerminate);

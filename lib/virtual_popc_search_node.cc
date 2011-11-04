@@ -17,7 +17,7 @@
  * @param challenge  Challenge string used to stop the services
  * @param deamon     If TRUE, the parallel object will run in deamon mode
  */
-VirtualPOPCSearchNode::VirtualPOPCSearchNode(const paroc_string &challenge, bool deamon) : POPCSearchNode(challenge, deamon) {
+VirtualPOPCSearchNode::VirtualPOPCSearchNode(const POPString &challenge, bool deamon) : POPCSearchNode(challenge, deamon) {
 	popc_node_log("VirtualPOPCSearchNode Created ...");
 }
 

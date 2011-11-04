@@ -147,7 +147,7 @@ void NodeInfoMap::GetContacts(paroc_list_string &contacts)
 	maplock.unlock();
 }
 
-bool NodeInfoMap::HasContact(const paroc_string &contact)
+bool NodeInfoMap::HasContact(const POPString &contact)
 {
 	int i=Hash(contact);
 	paroc_list<NodeInfoExt> &node=map[i];
@@ -169,7 +169,7 @@ bool NodeInfoMap::HasContact(const paroc_string &contact)
 	return ret;
 }
 
-bool NodeInfoMap::GetInfo(const paroc_string &contact, NodeInfo &info)
+bool NodeInfoMap::GetInfo(const POPString &contact, NodeInfo &info)
 {
 	int i=Hash(contact);
 	maplock.lock();
@@ -199,7 +199,7 @@ int NodeInfoMap::GetCount()
 	return count;
 }
 
-bool NodeInfoMap::Update(const paroc_string &contact, NodeInfo &info)
+bool NodeInfoMap::Update(const POPString &contact, NodeInfo &info)
 {
 	int i=Hash(contact);
 	maplock.lock();
@@ -220,7 +220,7 @@ bool NodeInfoMap::Update(const paroc_string &contact, NodeInfo &info)
 	return ret;
 }
 
-bool NodeInfoMap::Remove(const paroc_string &contact)
+bool NodeInfoMap::Remove(const POPString &contact)
 {
 	int i=Hash(contact);
 	if (i<0) i=-i;
@@ -243,7 +243,7 @@ bool NodeInfoMap::Remove(const paroc_string &contact)
 	return ret;
 }
 
-bool NodeInfoMap::Add(const paroc_string &contact, NodeInfo &info)
+bool NodeInfoMap::Add(const POPString &contact, NodeInfo &info)
 {
 	maplock.lock();
 
@@ -273,7 +273,7 @@ bool NodeInfoMap::Add(const paroc_string &contact, NodeInfo &info)
 
 }
 
-int NodeInfoMap::Hash(const paroc_string &key)
+int NodeInfoMap::Hash(const POPString &key)
 {
 	const char *s=key;
 	if (s==NULL) return 0;
@@ -344,7 +344,7 @@ int popc_node_log(const char *format,...)
  * @param nodeAccess Access Point of the PSN
  * @param localPSM   Access Point of the PSM
  */
-JobMgr::JobMgr(bool daemon, const paroc_string &conf, const paroc_string &challenge, const paroc_string &url, const paroc_accesspoint &nodeAccess,  const paroc_accesspoint &localPSM): JobCoreService(challenge)
+JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, const POPString &url, const paroc_accesspoint &nodeAccess,  const paroc_accesspoint &localPSM): JobCoreService(challenge)
 {
    //Added by clementval
 
@@ -461,7 +461,7 @@ JobMgr::JobMgr(bool daemon, const paroc_string &conf, const paroc_string &challe
 			}
 			if (paroc_utils::SameContact(mycontact,val)) continue;
 			NodeInfo tmp;
-			paroc_string contact(val);
+			POPString contact(val);
 			tmp.nodetype=NODE_STATIC;
 			tmp.stoptime=-1;
 			tmp.heuristic=0;
@@ -527,7 +527,7 @@ JobMgr::JobMgr(bool daemon, const paroc_string &conf, const paroc_string &challe
 	fclose(f);
 	
 	SelfRegister();
-	paroc_string tmpstr;
+	POPString tmpstr;
 
    if (Query("power",tmpstr)) {
       total.flops=atof(tmpstr);
@@ -694,7 +694,7 @@ void JobMgr::UnregisterNode(const paroc_accesspoint &url){
 //End of add
 
 
-int JobMgr::Query(const paroc_string &type, paroc_string  &val)
+int JobMgr::Query(const POPString &type, POPString  &val)
 {
 	char tmp[1024];
 	if (paroc_utils::isEqual(type,"platform"))
@@ -766,7 +766,7 @@ int JobMgr::Query(const paroc_string &type, paroc_string  &val)
 	return 0;
 }
 
-int JobMgr::CreateObject(paroc_accesspoint &localservice, const paroc_string &objname,const paroc_od &od, int howmany, paroc_accesspoint* objcontacts, int howmany2, paroc_accesspoint* remotejobcontacts)
+int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objname,const paroc_od &od, int howmany, paroc_accesspoint* objcontacts, int howmany2, paroc_accesspoint* remotejobcontacts)
 {
 	if (howmany<=0) return 0;
 	int count=0;
@@ -818,7 +818,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const paroc_string &ob
 						try
 						{
 							paroc_accesspoint ac(jobcontacts[i]);
-							paroc_string acstr(ac.GetAccessString());
+							POPString acstr(ac.GetAccessString());
 							JobMgr jobmgr(ac);
 
 							jobmgr.CancelReservation(reserveIDs+i,1);
@@ -845,7 +845,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const paroc_string &ob
 					try
 					{
 						paroc_accesspoint ac(jobcontacts[i]);
-						paroc_string acstr(ac.GetAccessString());
+						POPString acstr(ac.GetAccessString());
 						JobMgr jobmgr(ac);
 						sz=0;
 						tmpids[sz++]=reserveIDs[i];
@@ -904,7 +904,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const paroc_string &ob
 
 }
 
-bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, 
+bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, 
       float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize) {
 	bool ret=false;
 	// Added by clementval 
@@ -924,7 +924,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const paroc_st
 
 
 
-		paroc_string codefile;
+		POPString codefile;
 	
 		//MATCHING LOCALLY
 		paroc_service_log("Resource discovery request: obj=%s, local service: %s (trace=%d)",(const char *)objname,localservice.GetAccessString(),tracesize);
@@ -1022,7 +1022,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const paroc_st
 	}	
 
 	//Set operating system
-	paroc_string r_arch;
+	POPString r_arch;
 	od.getArch(r_arch);
 	if(r_arch != NULL)
 		r.setOperatingSystem(r_arch);
@@ -1218,7 +1218,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
 			walltime=od.getWallTime();
 			if (walltime<0) walltime=0;
 
-			paroc_string walltime_str;
+			POPString walltime_str;
 			if (Query("walltime",walltime_str))
 			{
 				int walltime_l[4];
@@ -1345,7 +1345,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness)
 			walltime=od.getWallTime();
 			if (walltime<0) walltime=0;
 
-			paroc_string walltime_str;
+			POPString walltime_str;
 			if (Query("walltime",walltime_str))
 			{
 				int walltime_l[4];
@@ -1473,7 +1473,7 @@ void JobMgr::Update()
 }
 
 
-bool JobMgr::Forward(const paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize)
+bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize)
 {
 
 	//The local host is not fully qualified! Find on other hosts....
@@ -1489,7 +1489,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const paroc_string &
 
 	while (pos!=NULL)
 	{
-		paroc_string &contact=nodes.GetNext(pos);
+		POPString &contact=nodes.GetNext(pos);
 		NodeInfo info;
 		if (!neighbors.GetInfo(contact,info)) continue;
 
@@ -1586,11 +1586,11 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const paroc_string &
 		index.SetSize(howmany);
 		for (int i=0;i<howmany;i++) index[i]=(fitness[i]<=0)? 1: -1;
 		int total=0;
-		paroc_string local=GetAccessPoint().GetAccessString();
+		POPString local=GetAccessPoint().GetAccessString();
 		for (int i=0;i<howmany;i++) if (index[i]==-1)
 			{
 				index[i]=1;
-				paroc_string t(jobcontacts[i].GetAccessString());
+				POPString t(jobcontacts[i].GetAccessString());
 				if (t==NULL || paroc_utils::isEqual(t,local)) continue;
 				NodeInfo info;
 				info.nodetype=NODE_LEARNT;
@@ -1706,7 +1706,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
 	char *tmp=NULL;
 	char *first=NULL;
 	char sep[]=" \n\r\t";
-	paroc_string str;
+	POPString str;
 	int n=0;
 
 	char java_exec[100];
@@ -1796,7 +1796,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
 	return 0;
 }
 
-int JobMgr::ExecObj(const paroc_string  &objname, const paroc_od &od, int howmany, int *reserveIDs, const paroc_accesspoint &localservice, paroc_accesspoint *objcontacts)
+int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, int *reserveIDs, const paroc_accesspoint &localservice, paroc_accesspoint *objcontacts)
 {
 	if (howmany<=0) {
 		popc_node_log("[JM]ERROR: Exec failed because howmany is less or equal to 0");
@@ -1807,7 +1807,7 @@ int JobMgr::ExecObj(const paroc_string  &objname, const paroc_od &od, int howman
 	char env_np[256];
 	char env_walltime[256];
 	*env_walltime=0;
-	paroc_string cwd;
+	POPString cwd;
 	od.getDirectory(cwd);
 	sprintf(env_np,"POPC_NP=%d",howmany);
 	*curenv=env_np;
@@ -1843,7 +1843,7 @@ int JobMgr::ExecObj(const paroc_string  &objname, const paroc_od &od, int howman
 	}
 
 	*curenv=NULL;
-	paroc_string mycodefile;
+	POPString mycodefile;
 	try
 	{
 		CodeMgr code(localservice);
@@ -1875,16 +1875,16 @@ int JobMgr::ExecObj(const paroc_string  &objname, const paroc_od &od, int howman
 		argv[n++]=tok;
 		tok=strtok_r(NULL," \t\n",&tmp);
 	}
-	paroc_string obj_arg("-object=");
+	POPString obj_arg("-object=");
 	obj_arg+=objname;
 	argv[n++]=obj_arg.GetString();
 
 	//Setup Global job service
-	paroc_string jobservice_arg("-jobservice=");
+	POPString jobservice_arg("-jobservice=");
 	jobservice_arg+=GetAccessPoint().GetAccessString();
 	argv[n++]=jobservice_arg.GetString();
 	//Setup application specific services...
-	paroc_string localservice_arg("-appservice=");
+	POPString localservice_arg("-appservice=");
 	if (!localservice.IsEmpty())
 	{
 		localservice_arg+=localservice.GetAccessString();
@@ -1899,7 +1899,7 @@ int JobMgr::ExecObj(const paroc_string  &objname, const paroc_od &od, int howman
 		return errno;
 	}
 
-	paroc_string cburl;
+	POPString cburl;
 	tmpsock.GetUrl(cburl);
 	char tmpstr[1024];
 	sprintf(tmpstr,"-callback=%s",(const char *)cburl);
@@ -2008,7 +2008,7 @@ void JobMgr::dump()
 	while (pos!=NULL)
 	{
 		i++;
-		paroc_string &t=keys.GetNext(pos);
+		POPString &t=keys.GetNext(pos);
 		NodeInfo info;
 		if (!neighbors.GetInfo(t,info)) continue;
 		fprintf(f,"%d: %s\t%g\t%d\n",i,(const char *)t, info.heuristic,int(info.nodetype));

@@ -19,7 +19,7 @@
 
 #include <strings.h>
 
-paroc_service_base::paroc_service_base(const paroc_string &challenge):mychallenge(challenge), appservice(paroc_system::appservice)
+paroc_service_base::paroc_service_base(const POPString &challenge):mychallenge(challenge), appservice(paroc_system::appservice)
 {
 	daemonMode=false;
 }
@@ -51,7 +51,7 @@ void paroc_service_base::Start()
 	}
 }
 
-void paroc_service_base::Start(const paroc_string &challenge)
+void paroc_service_base::Start(const POPString &challenge)
 {
 	if (paroc_utils::isEqual(mychallenge,challenge) || mychallenge==NULL)
 	{
@@ -62,7 +62,7 @@ void paroc_service_base::Start(const paroc_string &challenge)
 
 }
 
-bool paroc_service_base::Stop(const paroc_string &challenge)
+bool paroc_service_base::Stop(const POPString &challenge)
 {
 	if (paroc_utils::isEqual(mychallenge,challenge) || mychallenge==NULL)
 	{
@@ -92,12 +92,12 @@ bool paroc_service_base::CanKill()
 }
 
 
-JobCoreService::JobCoreService(const paroc_string &challenge): paroc_service_base(challenge)
+JobCoreService::JobCoreService(const POPString &challenge): paroc_service_base(challenge)
 {
 }
 
 /*
-int JobCoreService::CreateObject(const paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, paroc_accesspoint *objcontacts)
+int JobCoreService::CreateObject(const paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, paroc_accesspoint *objcontacts)
 {
   return POPC_JOBSERVICE_FAIL;
 }

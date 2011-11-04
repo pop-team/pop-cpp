@@ -55,16 +55,16 @@ parclass POPCSearchNode : virtual public paroc_service_base {
 
 public :
 	//Node's constructore 
-	POPCSearchNode(const paroc_string &challenge, bool deamon) @{ od.runLocal(true); od.service(true);};
+	POPCSearchNode(const POPString &challenge, bool deamon) @{ od.runLocal(true); od.service(true);};
    
 	// Destructor
 	~POPCSearchNode();
 	seq sync void setJobMgrRef(const paroc_accesspoint &jobmgrRef);
 	conc sync paroc_accesspoint getJobMgrRef();
-	seq  sync void setPOPCSearchNodeId(paroc_string nodeId);
-   conc sync paroc_string getPOPCSearchNodeId();
-   seq  sync void setOperatingSystem(paroc_string operatingSys);
-   conc sync paroc_string getOperatingSystem();
+	seq  sync void setPOPCSearchNodeId(POPString nodeId);
+   conc sync POPString getPOPCSearchNodeId();
+   seq  sync void setOperatingSystem(POPString operatingSys);
+   conc sync POPString getOperatingSystem();
 	seq  sync void setPower(float p);
 	conc sync float getPower();
    seq  sync void setCpuSpeed(int cpuSpeed);
@@ -75,8 +75,8 @@ public :
    conc sync float getNetworkBandwidth();
    seq  sync void setDiskSpace(int diskSpace);
    conc sync int getDiskSpace();
-	seq  sync void setProtocol(paroc_string prot);
-	conc sync paroc_string getProtocol();
+	seq  sync void setProtocol(POPString prot);
+	conc sync POPString getProtocol();
 	seq  sync void setEncoding(POPString enc);
 	conc sync POPString getEncoding();
    seq sync void setMaxJobs(int maxjobs);
@@ -122,13 +122,13 @@ protected:
 	int logicalClock;  		// own request's counter
 	POPCSearchNodeInfo nodeInfo;     // node's information
 	list<POPCSearchNode *> neighborsList; // node's neighbors list
-  	list<paroc_string> knownRequests; // already-asked requests
-   map<paroc_string, POPCSearchNodeInfos> actualReq;     // own actual requests
+  	list<POPString> knownRequests; // already-asked requests
+   map<POPString, POPCSearchNodeInfos> actualReq;     // own actual requests
    POPSynchronizer actualReqSyn;  // sync. for actual req.
    // internal method to check if local resources fit the request
    
    // internal method returning a list of neighbors
-   conc sync list<paroc_string> getNeighbors();
+   conc sync list<POPString> getNeighbors();
    int psn_currentJobs;
    int psn_maxjobs;
 	struct timeval start, end;	//for test purpose

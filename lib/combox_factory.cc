@@ -46,7 +46,7 @@ paroc_combox_factory::paroc_combox_factory()
 	//Load combox from plugins....
 	int metrics=100;
 	COMBOX_CREATOR creator;
-	paroc_string name;
+	POPString name;
 
 	char *module=getenv("POPC_COMBOX_MODULES");
 	if (module!=NULL)
@@ -80,7 +80,7 @@ paroc_combox_factory::paroc_combox_factory()
 	}
 	else
 	{
-		paroc_string plugindir;
+		POPString plugindir;
 		plugindir=getenv("POPC_PLUGIN_LOCATION");
 #ifdef _PLUGINDIR
 		if (plugindir==NULL) plugindir=_PLUGINDIR;
@@ -88,7 +88,7 @@ paroc_combox_factory::paroc_combox_factory()
 
 		if (plugindir!=NULL)
 		{
-			paroc_string pluginmap(plugindir);
+			POPString pluginmap(plugindir);
 			pluginmap+="/paroc_combox.map";
 			FILE *map=fopen(pluginmap,"r");
 			if (map!=NULL)
@@ -207,7 +207,7 @@ paroc_combox* paroc_combox_factory::Create(int index)
 	return NULL;
 }
 
-void paroc_combox_factory::GetNames(paroc_string &prots)
+void paroc_combox_factory::GetNames(POPString &prots)
 {
 	prots="";
 	POSITION pos=list.GetHeadPosition();
@@ -263,7 +263,7 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
 	return true;
 }
 
-void * paroc_combox_factory::LoadPlugin(char *fname,  paroc_string &name, COMBOX_CREATOR &f)
+void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CREATOR &f)
 {
 #ifdef HAVE_LIBDL
 	void *handle=dlopen(fname,RTLD_LAZY| RTLD_LOCAL);

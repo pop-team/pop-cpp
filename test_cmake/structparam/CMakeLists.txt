@@ -1,0 +1,10 @@
+#
+# IF COMPILED ALONE, PLEASE UNCOMMENT THE THREE FOLLOWING LINES
+#
+#CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+#PROJECT(test-structparam NONE)
+#ENABLE_LANGUAGE(POPCPP)
+
+ADD_POPC_MAIN(main-structparam ParObject.ph ParObject.cc main.cc)
+ADD_POPC_OBJECT(ParObject-sp.obj ParObject.cc ParObject.ph)
+ADD_POPC_OBJMAP(ParObject-sp.obj NOT_APPEND)

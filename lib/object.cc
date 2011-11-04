@@ -6,7 +6,8 @@
  * 
  * Modifications :
  * Authors		Date			Comment
- * P.KUONEN     2.2011          ~paroc_object(), suppress error mess.:Can not unregister...
+ * P.KUONEN    2011/2      ~paroc_object(), suppress error mess.:Can not unregister...
+ * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
  */
 
 
@@ -63,6 +64,15 @@ paroc_object::~paroc_object()
 
 const paroc_accesspoint & paroc_object::GetAccessPoint() const
 {
+	return paroc_broker::accesspoint;
+}
+
+/**
+ * Get the accesspoint of the parallel object and set the _noaddref variavle to TRUE
+ */
+const paroc_accesspoint & paroc_object::GetAccessPointForThis()
+{
+   paroc_broker::accesspoint.SetNoAddRef();
 	return paroc_broker::accesspoint;
 }
 

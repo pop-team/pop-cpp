@@ -54,13 +54,13 @@ void ExplorationList::Serialize(POPBuffer &buf, bool pack){
         
         // unmarshalling the neighbors
         for(i=0; i<nElts; i++){
-            paroc_string nodeId;
+            POPString nodeId;
             buf.UnPack(&nodeId, 1);
             int nNeighbors;
             buf.UnPack(&nNeighbors, 1);
-            list<paroc_string> neighbors;
+            list<POPString> neighbors;
             for(j=0; j<nNeighbors; j++){
-                paroc_string neighborId;
+                POPString neighborId;
                 buf.UnPack(&neighborId, 1);
                 neighbors.push_back(neighborId);
             }
@@ -70,15 +70,15 @@ void ExplorationList::Serialize(POPBuffer &buf, bool pack){
 }
 
 // method used to add node's neighbors
-void ExplorationList::addListNode(paroc_string nodeId,
-                                  list<paroc_string> neighbors){
+void ExplorationList::addListNode(POPString nodeId,
+                                  list<POPString> neighbors){
     explorationList::iterator i;
     explorationList::reverse_iterator j;
     explorationList::reverse_iterator k;
     int crtNeighborsPath = 0;
     
     i=visitedNodes.end();
-    visitedNodes.insert(i, pair <paroc_string, list<paroc_string> >
+    visitedNodes.insert(i, pair <POPString, list<POPString> >
                                      (nodeId, neighbors));
 
     
@@ -95,17 +95,17 @@ void ExplorationList::addListNode(paroc_string nodeId,
 }
 
 // method saying if a node is contained in the exploration list
-bool ExplorationList::isIn(paroc_string nodeId){
+bool ExplorationList::isIn(POPString nodeId){
     explorationList::iterator i;
     for(i = visitedNodes.begin(); i != visitedNodes.end(); i++){
-        paroc_string crtNodeId = (*i).first;
+        POPString crtNodeId = (*i).first;
         if(strcmp(crtNodeId.GetString(), nodeId.GetString()) == 0){	
             return true;
         }
         neighborsList neighbors = (*i).second;
         neighborsList::iterator j;
         for(j = neighbors.begin(); j!= neighbors.end(); j++){
-            paroc_string nId = (*j);
+            POPString nId = (*j);
 				//Modified by clementval
 				// old comparaison was strcmp(crtNodeId.GetString(), nId.GetString() but that was incorrect
             if(strcmp(nodeId.GetString(), nId.GetString()) == 0){

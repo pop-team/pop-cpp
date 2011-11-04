@@ -18,10 +18,10 @@
 Response::Response(){}
 
 // Constructor with all response's information
-Response::Response(paroc_string reqUniqueId,
+Response::Response(POPString reqUniqueId,
                    POPCSearchNodeInfo foundNodeInfo,
                    ExplorationList finalExplorationList,
-                   paroc_string appid){
+                   POPString appid){
    // save the params
    _reqUniqueId = reqUniqueId;
    _foundNodeInfo=foundNodeInfo;
@@ -61,7 +61,7 @@ void Response::Serialize(POPBuffer &buf, bool pack){
 }
 
 // Get the request's uniqueId
-paroc_string Response::getReqUniqueId(){
+POPString Response::getReqUniqueId(){
     return _reqUniqueId;
 }
 
@@ -72,7 +72,7 @@ POPCSearchNodeInfo Response::getFoundNodeInfo(){
 }
 
 // Get the application services access point
-paroc_string Response::getPOPAppId(){
+POPString Response::getPOPAppId(){
    return _appid;
 }
 

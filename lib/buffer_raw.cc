@@ -212,7 +212,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //     }
 // }
 
-// void paroc_buffer_raw::Pack(const paroc_string *list, int n)
+// void paroc_buffer_raw::Pack(const POPString *list, int n)
 // {
 //   if (n<=0 || list==NULL) return;
 //   for (int i=0;i<n;i++,list++)
@@ -224,7 +224,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //     }
 // }
 
-// void paroc_buffer_raw::UnPack(paroc_string *list, int n)
+// void paroc_buffer_raw::UnPack(POPString *list, int n)
 // {
 //   if (n<=0 || list==NULL) return;
 //   paroc_array<char> tmpstr;
@@ -245,7 +245,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 // void paroc_buffer_raw::Pack(const paroc_od *list, int n)
 // {
 //   float val[7];
-//   paroc_string t;
+//   POPString t;
 //   while (n>0)
 //     {
 //       list->getPower(val[0],val[1]);
@@ -278,7 +278,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 // void paroc_buffer_raw::UnPack(paroc_od *list, int n)
 // {
 //   float val[7];
-//   paroc_string t;
+//   POPString t;
 //   while (n>0)
 //     {
 //       UnPack(val,7);

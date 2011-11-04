@@ -28,7 +28,7 @@ public:
 	/** @brief Constructor
 	 * @param challenge challenge string which will be required on stopping the service
 	 */
-	BatchMgr([in] const paroc_string &challenge);
+	BatchMgr([in] const POPString &challenge);
 	~BatchMgr();
 
 	/** @brief Increase the node counter and returns the value

@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <vector>
 
 #include "parser.h"
 #include "paroc_utils.h"
@@ -20,6 +21,10 @@
   char *GetToken(int yyval);
 
   void errormsg(const  char *s);
+  void setReturnParam(int pointer, int ref, int const_virtual); // Methode to group code that set C++ specific C++ Param attributes
+  void setPOPCMethodeModifier(int settings); // mehtode to group code that set/controlle Methode attributes (sync, conc, ...)
+  void errorGlobalMehtode(bool isGlobal);
+  
 extern "C"
 {
   int yywrap();
@@ -46,6 +51,8 @@ CArrayCharPtr searchpath;
  Class *currentClass;
  DataType *currenttype;
  DataType *returntype;
+ 
+ std::vector<bool> constPointerPositions; // counter variables who contains order of conts possition in pointers
 
  TypeClassStruct *seqclass;
 
@@ -97,7 +104,7 @@ struct TemplateArgument
 %}
 
 %token PARCLASS_KEYWORD CLASS_KEYWORD CLASSID ID ID1 INTEGER REAL STRING PUBLIC_KEYWORD PROTECTED_KEYWORD PRIVATE_KEYWORD VIRTUAL_KEYWORD CONST_KEYWORD STRUCT_KEYWORD TYPEDEF_KEYWORD
-%token SYNC_INVOKE ASYNC_INVOKE INPUT OUTPUT  CONCURRENT SEQUENTIAL MUTEX HIDDEN PROC SIZE
+%token SYNC_INVOKE ASYNC_INVOKE INPUT OUTPUT  CONCURRENT SEQUENTIAL MUTEX HIDDEN PROC SIZE THIS_KEYWORD
 %token INCLUDE DIRECTIVE OD AUTO_KEYWORD REGISTER_KEYWORD VOLATILE_KEYWORD PACK_KEYWORD 
 %token AND_OP OR_OP EQUAL_OP NOTEQUAL_OP GREATEREQUAL_OP LESSEQUAL_OP NONSTRICT_OD_OP EOFCODE
 %token SCOPE
@@ -109,10 +116,13 @@ struct TemplateArgument
 %left UMINUS /*supplies precedence for unary minus */
 %nonassoc '('
 
+%error-verbose  /* right now vor parser depuging pourpose, gives more detailes at syntax error */
+
 %%
 
 
-startlist:/*empty*/
+startlist: handle_this startlist
+|/*empty*/
 {
   if (othercodes.GetSize())
     {
@@ -133,6 +143,14 @@ startlist:/*empty*/
   CleanStack();
 }
 ;
+
+handle_this: THIS_KEYWORD
+{
+	printf("handle at Bison\n");
+	othercodes.InsertAt(-1,"\n",strlen("\n"));
+}
+;
+
 
 not_care_code: error ';' 
 {
@@ -296,7 +314,8 @@ struct_elname_list: pointer_specifier ID array_declarator struct_elname_other
   DataType *type1=currenttype;
   if ($1>0)
     {
-      type1=new TypePtr(NULL,$1, type1);
+      //type1=new TypePtr(NULL,$1, type1);
+      type1=new TypePtr(NULL, $1, type1, constPointerPositions);
       thisCodeFile->AddDataType(type1);
     }
   if ($3!=-1)
@@ -332,7 +351,9 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
     }
   if ($3>0)
     {
-      type=new TypePtr(NULL,$3, type);
+      //type=new TypePtr(NULL,$3, type);
+      type=new TypePtr(NULL,$3, type, constPointerPositions);
+      
       thisCodeFile->AddDataType(type);
     }
   if ($5!=-1)
@@ -354,7 +375,9 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
     }
   if ($4>0)
     {
-      type=new TypePtr(NULL,$4, type);
+      //type=new TypePtr(NULL,$4, type);
+      type=new TypePtr(NULL, $4, type, constPointerPositions);
+      
       thisCodeFile->AddDataType(type);
     }
   if ($6!=-1)
@@ -376,7 +399,9 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
     }
   if ($4>0)
     {
-      type=new TypePtr(NULL,$4, type);
+      //type=new TypePtr(NULL,$4, type);
+      type=new TypePtr(NULL, $4, type, constPointerPositions);
+      
       thisCodeFile->AddDataType(type);
     }
   if ($6!=-1)
@@ -394,7 +419,9 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
 
   if ($3>0)
     {
-      type=new TypePtr(NULL,$3, type);
+      //type=new TypePtr(NULL,$3, type);
+      type=new TypePtr(NULL, $3, type, constPointerPositions);
+      
       thisCodeFile->AddDataType(type);
     }
   if ($5!=-1)
@@ -784,7 +811,8 @@ attribute_name: pointer_specifier ref_specifier ID array_declarator
     }
   else 
     {
-      type=new TypePtr(NULL, $1 , currenttype);
+      //type=new TypePtr(NULL, $1 , currenttype);
+      type=new TypePtr(NULL, $1 , currenttype, constPointerPositions);
       thisCodeFile->AddDataType(type);
     }
 
@@ -928,7 +956,8 @@ template_arg: type_specifier pointer_specifier array_declarator ref_specifier
   t->type=(DataType *)$1;
   if ($2>0)
   {
-	t->type=new TypePtr(NULL,$2,t->type);
+	//t->type=new TypePtr(NULL,$2,t->type);
+	t->type=new TypePtr(NULL, $2, t->type, constPointerPositions);
   }
   if ($3!=-1) 
   {
@@ -980,7 +1009,8 @@ template_arg: ID pointer_specifier array_declarator ref_specifier
 */
 
 
-pointer_specifier:/*empty*/
+/*
+pointer_specifier:/*empty
 {
   $$=0;
   
@@ -988,6 +1018,30 @@ pointer_specifier:/*empty*/
 | '*' pointer_specifier
 {
   $$=$2+1;
+}
+;
+*/
+
+pointer_specifier:/*empty*/
+{
+	$$=0;
+	constPointerPositions.clear();
+}
+| '*' const_specifier pointer_specifier
+{
+	$$=$3+1; /* modivied by David (added const)*/
+	constPointerPositions.push_back(($2 == 1 ? true : false));
+}
+;
+
+/* controll if "const" word is present - Added by david */
+const_specifier:/*empty*/
+{
+  $$=0;
+}
+| CONST_KEYWORD
+{
+  $$=1;
 }
 ;
 
@@ -1075,6 +1129,7 @@ destructor_name: ID
 }
 ;
 
+/*
 method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' 
 {
   //Old data:  argument_type function_name 
@@ -1121,7 +1176,7 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
 
   if (($1 & 6)==2) method->invoketype=invokesync;
   else if (($1 & 6)==4) method->invoketype=invokeasync;
-  /*	else method->invoketype=autoselect; */
+  //else method->invoketype=autoselect;
 }
 | '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')'
 {
@@ -1167,7 +1222,84 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
   
   if (($1 & 6)==2) method->invoketype=invokesync;
   else if (($1 & 6)==4) method->invoketype=invokeasync;
-  /* else method->invoketype=autoselect; */
+  // else method->invoketype=autoselect;
+}
+;
+*/
+
+/*
+method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' 
+{
+	setReturnParam($2,$3, 0);
+}
+|  fct_specifier decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')'
+{
+	setReturnParam($3,$4, ($1 & 1));
+	setPOPCMethodeModifier($1 & 254);
+}
+| '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')'
+{
+	setReturnParam($5,$6, ($1 & 1));
+}
+| fct_specifier  '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')'
+{
+	setReturnParam($6,$7, ($1 & 1));
+	setPOPCMethodeModifier($1 & 254);
+}
+;
+*/
+
+
+method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
+{
+	setReturnParam($2,$3, 0);
+	
+	method->isGlobalConst = ($8 == 1 ? true : false); 
+	errorGlobalMehtode(method->isGlobalConst);
+}
+| const_virutal_specifier decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
+{
+	setReturnParam($3,$4, $1);
+	
+	method->isGlobalConst = ($9 == 1 ? true : false); 
+	errorGlobalMehtode(method->isGlobalConst);
+}
+| decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
+{
+	setReturnParam($3,$4, $2);
+	
+	method->isGlobalConst = ($9 == 1 ? true : false); 
+	errorGlobalMehtode(method->isGlobalConst);
+}
+| const_virutal_specifier decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
+{
+	setReturnParam($4,$5, ($1 | $3));
+	
+	method->isGlobalConst = ($10 == 1 ? true : false);
+	errorGlobalMehtode(method->isGlobalConst); 
+}
+| fct_specifier const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
+{
+	setReturnParam($5,$6, ($2|$4));
+	setPOPCMethodeModifier($1);
+	
+	method->isGlobalConst = ($11 == 1 ? true : false);
+	errorGlobalMehtode(method->isGlobalConst);
+}
+| '[' marshal_opt_list ']' const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
+{
+	setReturnParam($7,$8, ($4 | $6));
+	
+	method->isGlobalConst = ($13 == 1 ? true : false);
+	errorGlobalMehtode(method->isGlobalConst);
+}
+| fct_specifier  '[' marshal_opt_list ']' const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
+{
+	setReturnParam($8,$9, ($5 & 7));
+	setPOPCMethodeModifier($1);
+	
+	method->isGlobalConst = ($14 == 1 ? true : false);
+	errorGlobalMehtode(method->isGlobalConst);
 }
 ;
 
@@ -1177,10 +1309,18 @@ fct_specifier:  fct_spec
 }
 |  fct_specifier fct_spec
 {
-  $$=$1 | $2;
+	/* error if multimple time same reserved word */
+	if (($2 & $1) != 0)
+	{
+		errormsg("Multiple occurance of same POP-C++ Mehtode modivier!");
+		exit(1);
+	}
+  
+	$$=$1 | $2;
 }
 ;
 
+/*
 fct_spec: VIRTUAL_KEYWORD
 {
 	$$=1;
@@ -1208,6 +1348,76 @@ fct_spec: VIRTUAL_KEYWORD
 | HIDDEN
 {
   $$=64;
+}
+;
+*/
+
+/* remove C++ Virtual - david  */
+fct_spec: SYNC_INVOKE
+{
+	$$=2;
+}
+| ASYNC_INVOKE
+{
+	$$=4;
+} 
+| CONCURRENT
+{
+	$$=8;
+}
+| SEQUENTIAL
+{
+	$$=32;
+}
+| MUTEX
+{
+  $$=16;
+}
+| HIDDEN
+{
+  $$=64;
+}
+;
+
+/* added by david, for dedection of const or/and vitural methode modivier */
+const_virutal_specifier: VIRTUAL_KEYWORD
+{
+	$$=1;
+} 
+| CONST_KEYWORD
+{
+	$$=2;
+}
+| CONST_KEYWORD VIRTUAL_KEYWORD
+{
+	$$=3;
+}
+| VIRTUAL_KEYWORD CONST_KEYWORD
+{
+	$$=3;
+}
+;
+
+/* added by david, for dedection of none, const or/and vitural methode modivier */
+const_virutal_empty_specifier: /* empty */
+{
+	$$=0;
+}
+|VIRTUAL_KEYWORD
+{
+	$$=1;
+} 
+| CONST_KEYWORD
+{
+	$$=2;
+}
+| CONST_KEYWORD VIRTUAL_KEYWORD
+{
+	$$=3;
+}
+| VIRTUAL_KEYWORD CONST_KEYWORD
+{
+	$$=3;
 }
 ;
 
@@ -1396,35 +1606,37 @@ argument_list:  arg_declaration
 | arg_declaration ',' argument_list 
 ;
 
-arg_declaration: marshal_decl cv_qualifier decl_specifier pointer_specifier ref_specifier argument_name array_declarator arg_default_value
+arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_specifier ref_specifier argument_name array_declarator arg_default_value
 {
   Param *t=method->AddNewParam();
   UpdateMarshalParam($1,t);
 
   DataType *type=currenttype;
-  if ($4>0)
+  if ($5>0)
     {
-      type=new TypePtr(NULL, $4 , type);
+      //type=new TypePtr(NULL, $5 , type);
+      type=new TypePtr(NULL, $5 , type, constPointerPositions);
+      
       thisCodeFile->AddDataType(type);
     }
 
-  if ($5)
+  if ($6)
     {
       t->isRef=true;
     }
 
-  if ($7!=-1)
+  if ($8!=-1)
     {
-      type=new TypeArray(NULL, GetToken($7) , type);
+      type=new TypeArray(NULL, GetToken($8) , type);
       thisCodeFile->AddDataType(type);
     }
 
   t->SetType(type);
-  if ($6!=-1) strcpy(t->name,GetToken($6));
+  if ($7!=-1) strcpy(t->name,GetToken($7));
   else   sprintf(t->name,"V_%d",++counter);
 
-  t->isConst=($2==1);
-  if ($8>=0) t->defaultVal=strdup(GetToken($8));
+  t->isConst=(($2==1) || ($4==1));
+  if ($9>=0) t->defaultVal=strdup(GetToken($9));
   
 
 } 
@@ -1846,4 +2058,76 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker)
   return ret;
 }
 
+
+/* ---- SET normal C++ function return attributes ----- */
+void setReturnParam(int pointer, int ref, int const_virtual)
+{
+	//Old data:  argument_type function_name 
+	strcpy(method->returnparam.name,"_RemoteRet");
+
+	DataType *type=returntype;
+	if (pointer>0)
+	{
+		//type=new TypePtr(NULL, pointer, type);
+		type=new TypePtr(NULL, pointer, type, constPointerPositions);
+		thisCodeFile->AddDataType(type);
+		
+		constPointerPositions.clear(); // empty used struct
+	}
+
+	if (ref)
+	{
+		method->returnparam.isRef=true;
+	}
+	
+	method->isVirtual=((const_virtual & 1)!=0);
+	method->returnparam.isConst = ((const_virtual & 2)!=0);
+	
+	method->returnparam.SetType(type);
+	
+}
+
+/* ---- POPC methode attributes ---- */
+void setPOPCMethodeModifier(int settings)
+{
+	
+	// TEST Mutex, prallel, seq or CONC (hinden ??)
+	if ((settings & 56)==8) 
+		method->isConcurrent=true;
+	else if ((settings & 56)==32) 
+		method->isConcurrent=false;
+	else if ((settings & 56)==16)
+		method->isMutex= true;
+	else if ((settings & 56)!=0)
+	{
+		errormsg("Methode can only have one conc, mutex or seq attribute !");
+		exit(1);
+	}
+	
+	if ((settings & 64)!=0)
+		method->isHidden=true;
+	
+	// TEST SYNC or ASYNC
+	if ((settings & 6)==6) 
+	{
+		errormsg("Methode can not by sync and async at same time!");
+		exit(1);
+	}
+	else if ((settings & 6)==4) method->invoketype=invokeasync;
+	else if ((settings & 6)==2) method->invoketype=invokesync;
+	//else method->invoketype=autoselect;
+}
+
+void errorGlobalMehtode(bool isGlobal)
+{
+	if(isGlobal)
+	{
+		errormsg("inspecotrs/const member functions are not allowed in POP-C++");
+		exit(1);
+	}
+	else
+	{
+		return;
+	}
+}
 

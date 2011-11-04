@@ -66,7 +66,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 		free(libs);
 	}
 
-	paroc_string plugindir;
+	POPString plugindir;
 	plugindir=getenv("POPC_PLUGIN_LOCATION");
 #ifdef _PLUGINDIR
 	if (plugindir==NULL) plugindir=_PLUGINDIR;
@@ -75,7 +75,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 
 	if (plugindir!=NULL)
 	{
-		paroc_string pluginmap(plugindir);
+		POPString pluginmap(plugindir);
 		pluginmap+="/paroc_buffer.map";
 		FILE *map=fopen(pluginmap,"r");
 		if (map!=NULL)
@@ -215,7 +215,7 @@ paroc_buffer_factory* paroc_buffer_factory_finder::GetFactory(int index) {
 	return bfArray[index];
 }
 
-bool paroc_buffer_factory_finder::GetBufferName(int index, paroc_string & bufferName) {
+bool paroc_buffer_factory_finder::GetBufferName(int index, POPString & bufferName) {
 
 	if (index < 0 || index >= size) return false;
 	bfArray[index]->GetBufferName(bufferName);
@@ -224,10 +224,10 @@ bool paroc_buffer_factory_finder::GetBufferName(int index, paroc_string & buffer
 }
 
 
-paroc_buffer_factory* paroc_buffer_factory_finder::FindFactory(const paroc_string bufferName) {
+paroc_buffer_factory* paroc_buffer_factory_finder::FindFactory(const POPString bufferName) {
 
 	int i;
-	paroc_string s;
+	POPString s;
 
 	for (i=0; i < size; i++) {
 		bfArray[i]->GetBufferName(s);
@@ -239,7 +239,7 @@ paroc_buffer_factory* paroc_buffer_factory_finder::FindFactory(const paroc_strin
 }
 
 /*
-paroc_string * paroc_factory_finder::GetFactoryList(){
-  return new paroc_string("socket");
+POPString * paroc_factory_finder::GetFactoryList(){
+  return new POPString("socket");
 }
 */

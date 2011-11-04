@@ -143,7 +143,7 @@ bool paroc_utils::SameContact(const char *contact1, const char *contact2)
 	if (contact1==NULL || contact2==NULL) return false;
 	if (strstr(contact1, contact2)!=NULL || strstr(contact2, contact1)!=NULL) return true;
 
-	paroc_string str2(contact2);
+	POPString str2(contact2);
 	char *token, *ptr;
 
 	token=strtok_r(str2.GetString()," \n\r\t",&ptr);
@@ -161,7 +161,7 @@ bool paroc_utils::IsRemoteDest(const char *dest)
    std::string destination(dest);
 
    //Get local ip and hostame   
-   paroc_string ip = paroc_system::GetIP();
+   POPString ip = paroc_system::GetIP();
    
    char host[256];
    gethostname(host, 256);
@@ -232,12 +232,12 @@ const char* paroc_utils::GetCurrentUser(){
    return username;  
 }
 
-paroc_string paroc_utils::MakeContact(const char *host, int port)
+POPString paroc_utils::MakeContact(const char *host, int port)
 {
 	if (port<=0) return host;
 	char tmpcontact[256];
 	sprintf(tmpcontact,"%s:%d",host,port);
-	return paroc_string(tmpcontact);
+	return POPString(tmpcontact);
 }
 
 
@@ -259,7 +259,7 @@ int rprintf(const char *format,...)
 	try
 	{
 		RemoteLog log(paroc_system::appservice);
-		paroc_string msg(str);
+		POPString msg(str);
 		log.Log(msg);
 	}
 	catch (...)

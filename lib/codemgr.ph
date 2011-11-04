@@ -47,7 +47,7 @@ public:
 	/** @brief Constructor
 	 * @param challenge challenge string which will be required on stopping the service
 	*/
-	CodeMgr(const paroc_string &challenge) @{od.runLocal(true);};
+	CodeMgr(const POPString &challenge) @{od.runLocal(true);};
 	~CodeMgr();
 
 
@@ -56,7 +56,7 @@ public:
 	 * @param platform executable platform
 	 * @param codefile URL or absolute path to the executable
 	*/
-	seq async sync void RegisterCode(const paroc_string &objname, const paroc_string &platform, const paroc_string &codefile);
+	seq sync void RegisterCode(const POPString &objname, const POPString &platform, const POPString &codefile);
 
 
 	/** @brief  Query location of object code for a specific platform (seq,sync)
@@ -65,7 +65,7 @@ public:
 	 * @param codefile stores URL to the executable on success
 	 * @return Return true if the executable is available
 	*/
-	seq sync int QueryCode(const paroc_string &objname, const paroc_string &platform, [out] paroc_string &codefile);
+	seq sync int QueryCode(const POPString &objname, const POPString &platform, [out] POPString &codefile);
 
 
 	/** @brief  Get list of supported platforms for a specific object (seq,sync)
@@ -73,7 +73,7 @@ public:
 	 * @param platform stores list of platform separated by a space
 	 * @return Return number of supported platform stored in platform
 	*/
-	seq sync int GetPlatform(const paroc_string &objname, [out]  paroc_string &platform);
+	seq sync int GetPlatform(const POPString &objname, [out]  POPString &platform);
 
 	classuid(2);
 

@@ -5,9 +5,10 @@
  * Creation date : -
  * 
  * Modifications :
- * Authors		Date			  Comment
- * clementval ViSaG pro.  Add support for POP-C++ Virtual-Secure version
- * P.Kuonen   25.3.2011   Cosmetic on printed error messages
+ * Authors		Date			Comment
+ * clementval  ViSaG pro.  Add support for POP-C++ Virtual-Secure version
+ * P.Kuonen    2011/3/25   Cosmetic on printed error messages
+ * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
  */
 
 #include <stdio.h>
@@ -49,7 +50,7 @@ int RunCmd(char **argv, char *env[], int *status)
 
 	char *file=NULL;
 
-	paroc_string str;
+	POPString str;
 
 	if (argv==NULL || argv[0]==NULL) return ENOENT;
 	file=argv[0];
@@ -149,7 +150,12 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p)
    if(!p.IsEmpty());
    	Bind(p);
 
+   if(p.GetNoAddRef())
+      DecRef();
+
 }
+
+
 
 
 
@@ -164,8 +170,13 @@ paroc_interface::paroc_interface(const paroc_interface &inf)
       accesspoint.SetSecure();
    if(infAP.IsService())
       accesspoint.SetAsService();
+
+   
+  
    
 	Bind(inf.GetAccessPoint());
+
+   
 }
 
 paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer)
@@ -175,12 +186,14 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer)
 	__paroc_buf=buffer;
 	if (combox!=NULL)
 	{
-		paroc_string url;
+		POPString url;
 		combox->GetUrl(url);
 		accesspoint.SetAccessString(url);
 		if (__paroc_buf==NULL) __paroc_buf=combox->GetBufferFactory()->CreateBuffer();
 	}
 }
+
+
 
 paroc_interface::~paroc_interface()
 {
@@ -213,6 +226,14 @@ const paroc_od & paroc_interface::GetOD() const
 
 const paroc_accesspoint &  paroc_interface::GetAccessPoint() const
 {
+	return accesspoint;
+}
+/**
+ * Get the accesspoint of the parallel object and set the _noaddref variavle to TRUE
+ */
+const paroc_accesspoint &  paroc_interface::GetAccessPointForThis()
+{
+   accesspoint.SetNoAddRef();
 	return accesspoint;
 }
 
@@ -321,7 +342,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack)
 void paroc_interface::Allocate()
 {
 	Release();
-	paroc_string p;
+	POPString p;
 	od.getProtocol(p);
 	paroc_accesspoint jobcontact, objaccess, remotejobcontact;
 
@@ -340,10 +361,10 @@ void paroc_interface::Allocate()
 	else if (!TryLocal(objaccess))
 	{
 
-		paroc_string objname(ClassName());
+		POPString objname(ClassName());
 
 		//Exec using JobMgr interface...
-		paroc_string platforms;
+		POPString platforms;
 		od.getPlatforms(platforms);
 
 		if (platforms.Length()<=0)
@@ -357,7 +378,7 @@ void paroc_interface::Allocate()
 		}
 		//Global Resource management system --> Find a resource.
 
-		paroc_string joburl;
+		POPString joburl;
 		od.getJobURL(joburl);
 
 
@@ -461,9 +482,9 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 	accesspoint=dest;
 
 	//Choose the protocol and then bind...
-	paroc_string prots=dest.GetAccessString();
+	POPString prots=dest.GetAccessString();
 	DEBUG("Access string %s : %s\n", ClassName(), dest.GetAccessString());
-	paroc_string od_prots;
+	POPString od_prots;
 	od.getProtocol(od_prots);
 
 	paroc_list<char *> accesslist, pref;
@@ -578,7 +599,7 @@ void paroc_interface::Bind(const char *dest)
 
 	paroc_combox_factory *fact=paroc_combox_factory::GetInstance();
 	DEBUG("%s prot list:", ClassName());
-	paroc_string p;
+	POPString p;
 	fact->GetNames(p);
 	if (fact==NULL) paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
 
@@ -602,8 +623,8 @@ void paroc_interface::Bind(const char *dest)
 	{
 #endif
 		int status;
-		paroc_string info;
-		paroc_string peerplatform;
+		POPString info;
+		POPString peerplatform;
 		BindStatus(status, peerplatform, info);
 		switch (status)
 		{
@@ -643,12 +664,12 @@ void paroc_interface::Bind(const char *dest)
 
 bool paroc_interface::TryLocal(paroc_accesspoint &objaccess)
 {
-	paroc_string hostname;
-	paroc_string rarch;
-	paroc_string codefile;
-	paroc_string batch;
+	POPString hostname;
+	POPString rarch;
+	POPString codefile;
+	POPString batch;
 
-	paroc_string objname(ClassName());
+	POPString objname(ClassName());
 	//bool odEmpty=od.IsEmpty();
 	bool localFlag=od.IsLocal();
 	od.getURL(hostname);
@@ -713,7 +734,7 @@ void paroc_interface::Release()
 
 //ParocCall...
 
-void paroc_interface::BindStatus(int &code, paroc_string &platform, paroc_string &info)
+void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info)
 {
 	if (__paroc_combox==NULL || __paroc_buf==NULL) return;
 	paroc_message_header h(0,0, INVOKE_SYNC ,"BindStatus");
@@ -727,11 +748,11 @@ void paroc_interface::BindStatus(int &code, paroc_string &platform, paroc_string
 	__paroc_buf->UnPack(&code,1);
 	__paroc_buf->Pop();
 
-	__paroc_buf->Push("platform","paroc_string",1);
+	__paroc_buf->Push("platform","POPString",1);
 	__paroc_buf->UnPack(&platform,1);
 	__paroc_buf->Pop();
 
-	__paroc_buf->Push("info","paroc_string",1);
+	__paroc_buf->Push("info","POPString",1);
 	__paroc_buf->UnPack(&info,1);
 	__paroc_buf->Pop();
 
@@ -773,7 +794,7 @@ int paroc_interface::DecRef()
 }
 
 
-bool paroc_interface::Encoding(paroc_string encoding)
+bool paroc_interface::Encoding(POPString encoding)
 {
 	if (__paroc_combox==NULL || __paroc_buf==NULL) return false;
 	paroc_buffer_factory *fact=paroc_buffer_factory_finder::GetInstance()->FindFactory(encoding);
@@ -788,7 +809,7 @@ bool paroc_interface::Encoding(paroc_string encoding)
 	__paroc_buf->Reset();
 	__paroc_buf->SetHeader(h);
 
-	__paroc_buf->Push("encoding","paroc_string",1);
+	__paroc_buf->Push("encoding","POPString",1);
 	__paroc_buf->Pack(&encoding,1);
 	__paroc_buf->Pop();
 
@@ -870,15 +891,15 @@ bool paroc_interface::RecvCtrl()
 }
 #endif
 
-void paroc_interface::NegotiateEncoding(paroc_string &enclist, paroc_string &peerplatform)
+void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatform)
 {
-	paroc_string pref;
+	POPString pref;
 	od.getEncoding(pref);
 	paroc_list<char *> enc_pref, enc_avail;
 	Tokenize(pref,enc_pref);
 	Tokenize(enclist,enc_avail);
 
-	paroc_string cur_enc;
+	POPString cur_enc;
 	__paroc_combox->GetBufferFactory()->GetBufferName(cur_enc);
 
 	if (enc_pref.IsEmpty())
@@ -931,11 +952,11 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 #ifdef OD_DISCONNECT
 	bool checkConnection=od.getCheckConnection();
 #endif
-	paroc_string ruser;
-	paroc_string rcore;
+	POPString ruser;
+	POPString rcore;
 	const char *rport=NULL;
-	paroc_string batch;
-	paroc_string cwd;
+	POPString batch;
+	POPString cwd;
 
 	if (hostname!=NULL&&(tmp=(char*)strchr(hostname,':'))!=NULL) {
 		*tmp=0;
@@ -947,7 +968,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	od.getDirectory(cwd);
 
 	int n=0;
-	paroc_string myhost=paroc_system::GetHost();
+	POPString myhost=paroc_system::GetHost();
 	bool islocal=(isManual||hostname==NULL || *hostname==0 || paroc_utils::SameContact(myhost,hostname) || paroc_utils::isEqual(hostname,"localhost") || paroc_utils::isEqual(hostname,"127.0.0.1"));
 	if (batch==NULL)
 	{
@@ -1003,7 +1024,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	paroc_combox_socket tmpsock;
    bool isServer=true;
 	if (!tmpsock.Create(0,isServer)) paroc_exception::paroc_throw_errno();
-	paroc_string cburl;
+	POPString cburl;
 	tmpsock.GetUrl(cburl);
 
 	sprintf(tmpstr,"-callback=%s", (const char*)cburl);
@@ -1115,7 +1136,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 }
 
 
-void paroc_interface::Tokenize(paroc_string &s, paroc_list<char *> &tokens)
+void paroc_interface::Tokenize(POPString &s, paroc_list<char *> &tokens)
 {
 	char *t=s.GetString();
 	if (t==NULL) return;
@@ -1133,7 +1154,7 @@ void paroc_interface::Tokenize(paroc_string &s, paroc_list<char *> &tokens)
 void paroc_interface::ApplyCommPattern(const char *pattern, paroc_list<char *> &accesslist)
 {
 	if (pattern==NULL) return;
-	paroc_string p(pattern);
+	POPString p(pattern);
 
 	paroc_list<char *> patternlist;
 	Tokenize(p,patternlist);

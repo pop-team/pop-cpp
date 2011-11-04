@@ -1,10 +1,22 @@
 #!@SHELL@
 
-
 POPC_VIRTUAL=@virtual@
 POPC_SECURE_VIRTUAL=@virtsecure@
 POPC_LOCATION=@prefix@
 export POPC_LOCATION
+
+#
+# This part make the copy of the test sub-directory to the destination directory only
+# during the "make install" process. Because the "popc_setup" can be run when necessary
+# from <install_dir>/sbin directory, it must not do any copy of the test sub-directory
+#
+if [ ! -d $POPC_LOCATION/test ]; then
+  echo ""
+  echo "copying test applications to the destination directory, please wait a few seconds"
+  cp -R ../test $POPC_LOCATION/test
+  echo "copy finished ..."
+  echo ""
+fi
 
 if [ "X$1" = "X-ask" ]
 then
@@ -19,26 +31,42 @@ then
 	exit -1
 fi
 
-while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
-do
+# following block shortcuted to not asking for configuration of pop-c++ services / JFR - 06-sep-2011
+
+if false
+then
+
+	while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+	do
 		echo ""
 		echo "DO YOU WANT TO CONFIGURE POP-C++ SERVICES? (y/n)"
 		read answer
-done
+	done
 
-if [ "X${answer}" = "Xn" ]
-then
-	echo "--------------------------------------------------"
-	echo "You chose not to configure the POP-C++ services now."
-	echo "You can configure the POP-C++ services at any time"
-	echo "by executing '$POPC_LOCATION/sbin/popc_setup' or"
-	echo "'make install'"
-	echo "--------------------------------------------------"
-	echo ""
-	echo "Press <Return> to continue "
-	read answer
-	exit 0
+	if [ "X${answer}" = "Xn" ]
+	then
+		echo "--------------------------------------------------"
+		echo "You chose not to configure the POP-C++ services now."
+		echo "You can configure the POP-C++ services at any time"
+		echo "by executing '$POPC_LOCATION/sbin/popc_setup' or"
+		echo "'make install'"
+		echo "--------------------------------------------------"
+		echo ""
+		echo "Press <Return> to continue "
+		read answer
+		exit 0
+	fi
+
+
 fi
+# end of block 
+
+echo ""
+echo ""
+echo " POP-C++ will now be configured. To do this, some information must be"
+echo " entered manually."
+echo ""
+echo ""
 
 echo ""
 echo "**************************************************************************"
@@ -46,7 +74,7 @@ echo ""
 echo "They are 2 different ways to to configure the POP-C++ Services :"
 echo ""
 echo "- if you are new to POP-C++ and simply want to try it on your machine, "
-echo "  select a simple installation (y)"
+echo "  select a simple installation (y)". No further question will be asked.
 echo ""
 echo "- if you want to use POP-C++ on a grid using the jobmanager, or any other advanced "
 echo "  option, select a standard installation (n). More questions will be asked."
@@ -179,33 +207,79 @@ echo " " >> $conf
 
 if [ X$insttype = "Xstandard" ]
 then
-	while [ 1 ]
-	do
-		echo "Enter the full qualified master host name (POPC gateway):"
-		read host
-		if [ "x$host" != "x" ]
-		then
-			myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711"  }'`
-			echo "parent ${myurl}" >>  $conf
-			echo "node ${myurl}" >>  $conf
-		else
-			break
-		fi
-	done
+	echo ""
+	echo "If you want join an existing POP-Community, you must now enter"
+	echo "the neighbour system. Do not enter your system or localhost as"
+	echo "a neighbour since your POP-C++ will hang !"
+	echo ""
+
+#Check OS to be able to find correctly the IP Address / JFR
+
+	OS=`uname`
+	IO="" # store IP
+	case $OS in
+		Linux) HOSTIP=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`;;
+		FreeBSD|OpenBSD) HOSTIP=`ifconfig  | grep -E 'inet.[0-9]' | grep -v '127.0.0.1' | awk '{ print $2}'` ;;
+		SunOS) HOSTIP=`ifconfig -a | grep inet | grep -v '127.0.0.1' | awk '{ print $2} '` ;;
+		Darwin) HOSTIP=`ifconfig -a | grep 'inet ' | grep -v '127.0.0.1' | awk '{ print $2} '` ;;
+		*) IP="Unknown";;
+	esac
 
 	while [ 1 ]
 	do
-		echo "Enter the child node:"
+#		echo "Enter the full qualified master host name (POPC gateway):"
+		echo "Enter the full qualified neighbour host name or IP address :"
 		read host
-		
-	if [ "x$host" != "x" ]
+		if [ "x$host" != "x" ]
 		then
-			myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711" }'`
-			echo "node ${myurl}" >>  $conf
+			if [ "x$host" != "xlocalhost" ] && [ "x$host" != "x127.0.0.1" ] && [ "x$host" != "x$HOSTIP" ]
+			then
+				myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711"  }'`
+				echo "parent ${myurl}" >>  $conf
+				echo "node ${myurl}" >>  $conf
+			else
+				echo ""
+				echo "Please note that POP-C++ will hang if you define your system "
+				echo "as a neighbour system !"
+				echo ""
+				echo "Do you really want to define your system as your neighbour system ? [y/N] :"
+				read response
+				if [ x$response = "xy" ] || [ x$response = "xY" ]
+				then
+					myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711"  }'`
+					echo "parent ${myurl}" >>  $conf
+					echo "node ${myurl}" >>  $conf
+				else
+					echo ""
+				fi
+			fi
 		else
 			break
 		fi
 	done
+	
+	
+# following block shortcuted to not asking entering of child node / JFR - 06-sep-2011
+	# 
+	if false
+	then
+	
+		while [ 1 ]
+		do
+			echo "Enter the child node:"
+			read host
+			
+			if [ "x$host" != "x" ]
+			then
+				myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711" }'`
+				echo "node ${myurl}" >>  $conf
+			else
+				break
+			fi
+		done
+		
+	fi
+# end of block
 
 	while [ 1 ]
 	do
@@ -472,20 +546,38 @@ then
 	echo "CONFIGURATION POP-C++ SERVICES COMPLETED!"
 	echo '====================================================='
 
-	answer=""
-	while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
-	do
-		echo "Do you want to generate the POP-C++ startup scripts? (y/n)"
-		read answer
-	done
+	echo ""
+	echo ""
+	echo " POP-C++ startup scripts will now be generated. To do this, some information"
+	echo " must be entered manually."
+	echo ""
 
-	if [ "X${answer}" = "Xy" ]
+
+# following block is shortcuted to force the generation of startup scripts / JFR - 06-sep-2011
+	if false
 	then
-		$POPC_LOCATION/sbin/popc_script_setup
+
+		answer=""
+		while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+		do
+			echo "Do you want to generate the POP-C++ startup scripts? (y/n)"
+			read answer
+		done
+
+		if [ "X${answer}" = "Xy" ]
+		then
+			$POPC_LOCATION/sbin/popc_script_setup
+		fi
 	fi
+# following line is required because the block above is shortcuted / JFR - 06-sep-2011
+	$POPC_LOCATION/sbin/popc_script_setup
+	
 else
 	$POPC_LOCATION/sbin/popc_script_setup
 fi
+
+
+
 
 echo '====================================================='
 echo "CONFIGURATION DONE!"

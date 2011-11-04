@@ -27,7 +27,7 @@ public:
    classuid(16);
 
    //Virtual Security Manager constructor
-	VirtualPOPCSecurityManager(const paroc_string &challenge, bool deamon) @{ od.runLocal(true); od.service(true); od.service(true);};
+	VirtualPOPCSecurityManager(const POPString &challenge, bool deamon) @{ od.runLocal(true); od.service(true); od.service(true);};
 
    //Virtual Security Manager destructor
    ~VirtualPOPCSecurityManager();

@@ -24,7 +24,7 @@
  * @param challenge  Challenge string used to stop the service
  * @param deamon     If TRUE, the parallel object run as a deamon
  */
-VirtualPOPCSecurityManager::VirtualPOPCSecurityManager(const paroc_string &challenge, bool deamon) : 
+VirtualPOPCSecurityManager::VirtualPOPCSecurityManager(const POPString &challenge, bool deamon) : 
    POPCSecurityManager(challenge, deamon){
    
 }

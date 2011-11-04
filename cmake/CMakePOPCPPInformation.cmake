@@ -72,85 +72,144 @@ ENDMACRO(CDR)
 # POP-C++ special macro
 # This macro is used to compile a parallel object
 MACRO(ADD_POPC_OBJECT)
-#   MESSAGE("CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR}")
-#   MESSAGE("CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}")
-#   MESSAGE("CMAKE_FILES_DIRECTORY ${CMAKE_FILES_DIRECTORY}")
-
    # Be sure that the SOURCE varibale is empty
    SET(SOURCES)
    SET(TARGET_NAME)
    SET(OBJECT_DIR)
+   SET(DEPEN_POPCPP)
+   SET(PAROBJ_DEP)
    # Parse the arguments for this macro
    PARSE_ARGUMENTS(PAROBJ
-      "FLAGS"
-      ""
+      "FLAGS;DEP"
+      "NOBROKER;NOPARALLEL"
       ${ARGN}
    )
-
-   # Get the first arg
-   CAR(OBJECT_NAME ${PAROBJ_DEFAULT_ARGS})
-
-   # Get all the args without the first
-   CDR(OBJECT_SOURCES ${PAROBJ_DEFAULT_ARGS})
-  
-
-   SET(OBJECT_DIR ".${CMAKE_FILES_DIRECTORY}/${OBJECT_NAME}.dir")
-   EXEC_PROGRAM(mkdir
-                ARGS "-p ${OBJECT_DIR}")
-
-   # If no flags set the default one
-   IF(NOT PAROBJ_FLAGS)
-      set(FLAGS_POPCPP ${CMAKE_POPCPP_OBJECT_FLAGS})
-   ENDIF(NOT PAROBJ_FLAGS)
-
-   # Create white-spaced list for the flags
-   FOREACH(flag ${PAROBJ_FLAGS})
-      set(FLAGS_POPCPP ${FLAGS_POPCPP} ${flag})
-   ENDFOREACH(flag ${PAROBJ_FLAGS})
-
-   # Copy source files in CMakeFiles dir
    
+   # Create the working directory for compilation if not yet created
+   SET(OBJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMakeFiles/pop.dir")
+   EXEC_PROGRAM(mkdir ARGS "-p ${OBJECT_DIR}")
 
-   # Create white-spaced list for the source files
-   FOREACH(source ${OBJECT_SOURCES})
-      set(SOURCES ${SOURCES} ../../${source})
-   ENDFOREACH(source ${OBJECT_SOURCES})
+   # Compilation of a parallel object in standard mode
+   IF(${PAROBJ_NOBROKER} STREQUAL "FALSE")
+      # If no flags set the default one
+      IF(NOT PAROBJ_FLAGS)
+         set(FLAGS_POPCPP ${CMAKE_POPCPP_OBJECT_FLAGS})
+      ENDIF(NOT PAROBJ_FLAGS)
+      
+      IF(${PAROBJ_NOPARALLEL} STREQUAL "FALSE")
+         # Get the first arg as name of the compiled file
+         CAR(OBJECT_NAME ${PAROBJ_DEFAULT_ARGS})
+         # Get all the args without the first as sources for compilation
+         CDR(OBJECT_SOURCES ${PAROBJ_DEFAULT_ARGS})
+         SET(STUB_NAME)
+         SET(O_NAME)
+         STRING(REGEX REPLACE "\\..*" ".stub.o" STUB_NAME ${OBJECT_NAME})
+         STRING(REGEX REPLACE "\\..*" ".o" O_NAME ${OBJECT_NAME})
+      ELSE()
+         CAR(FIRST_SOURCE ${PAROBJ_DEFAULT_ARGS})
+         SET(OBJECT_SOURCES ${PAROBJ_DEFAULT_ARGS})
+         SET(STUB_NAME)
+         SET(O_NAME)
+         STRING(REGEX REPLACE "\\..*" ".stub.o" STUB_NAME ${FIRST_SOURCE})
+         STRING(REGEX REPLACE "\\..*" ".o" O_NAME ${FIRST_SOURCE})
+      ENDIF()     
 
-   
+      # Create white-spaced list for the flags
+      FOREACH(flag ${PAROBJ_FLAGS})
+         set(FLAGS_POPCPP ${FLAGS_POPCPP} ${flag})
+      ENDFOREACH(flag ${PAROBJ_FLAGS})
+
+      # Create white-spaced list for the source files
+      FOREACH(source ${OBJECT_SOURCES})
+         set(SOURCES ${SOURCES} ../../${source})
+      ENDFOREACH(source ${OBJECT_SOURCES})
 
 
-  # MESSAGE("POPCPP: Object name: ${OBJECT_NAME}")
-  # MESSAGE("POPCPP: Sources: ${SOURCES}")
-  # MESSAGE("POPCPP: Flags: ${FLAGS_POPCPP}")
+      # Set the variable for compilation
+      IF(${PAROBJ_NOPARALLEL} STREQUAL "FALSE")
+         SET(TARGET_NAME "${OBJECT_NAME}")
+         SET(COMPILE_COMMAND ${CMAKE_POPCPP_COMPILER} ${FLAGS_POPCPP} ${OBJECT_NAME} ${SOURCES})
 
+         # Create the custom target with the POP-C++ compilation
+         ADD_CUSTOM_TARGET(${TARGET_NAME} ALL 
+                        COMMAND ${COMPILE_COMMAND}
+                        COMMAND cp ${OBJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${OBJECT_NAME}
+                        WORKING_DIRECTORY ${OBJECT_DIR}
+                        VERBATIM
+                       )
+      ELSE()
+         
+         SET(TARGET_NAME "object-${FIRST_SOURCE}")
+         SET(COMPILE_COMMAND ${CMAKE_POPCPP_COMPILER} ${FLAGS_POPCPP} ${SOURCES})
+         # Create the custom target with the POP-C++ compilation
+         ADD_CUSTOM_TARGET(${TARGET_NAME} ALL 
+                        COMMAND ${COMPILE_COMMAND}
+                        WORKING_DIRECTORY ${OBJECT_DIR}
+                        VERBATIM
+                       )
+      ENDIF()
 
-   #MESSAGE("${CMAKE_POPCPP_COMPILER} ${FLAGS_POPCPP} ${OBJECT_NAME} ${SOURCES}")
-   #MESSAGE("Current directory ${CMAKE_CURRENT_SOURCE_DIR}")
+      # Add dependencies to the target if there are some specified
+      IF(PAROBJ_DEP)
+         
+         FOREACH(dep ${PAROBJ_DEP})
+           set(DEPEN_POPCPP ${DEPEN_POPCPP} ${dep})
+         ENDFOREACH(dep ${PAROBJ_DEP})
+         ADD_DEPENDENCIES(${TARGET_NAME} ${DEPEN_POPCPP})
+      ENDIF(PAROBJ_DEP)
+      # Set files to be deleted by clean target
+      GET_DIRECTORY_PROPERTY(DIRPROP ADDITIONAL_MAKE_CLEAN_FILES)
+      SET(DIRDROP ${DIRDROP} ${CMAKE_CURRENT_SOURCE_DIR}/${OBJECT_NAME} ${STUB_NAME} ${O_NAME})
+      SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${DIRDROP}")
 
-#   EXEC_PROGRAM(${CMAKE_POPCPP_COMPILER} 
-#                ARGS "${FLAGS_POPCPP} ${OBJECT_NAME} ${SOURCES}"
- #  )
+                  
+   # Compilation of a parallel object without broker
+   ELSE(${PAROBJ_NOBROKER} STREQUAL "FALSE")
+      # Get all paramaters as sources for the compilation
+      SET(OBJECT_SOURCES ${PAROBJ_DEFAULT_ARGS})
+      # Set the target name for the special compilation
+      CAR(FIRST_FILE ${PAROBJ_DEFAULT_ARGS})
+      SET(TARGET_NAME "nobroker-${FIRST_FILE}")
 
-   SET(TARGET_NAME "${OBJECT_NAME}")
-   SET(COMPILE_COMMAND ${CMAKE_POPCPP_COMPILER} ${FLAGS_POPCPP} ${OBJECT_NAME} ${SOURCES})
-   MESSAGE("${COMPILE_COMMAND}")
-   ADD_CUSTOM_TARGET(${TARGET_NAME} ALL 
-                     COMMAND ${COMPILE_COMMAND}
-                     COMMAND cp ${OBJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${OBJECT_NAME}
-                     WORKING_DIRECTORY ${OBJECT_DIR}
-                     VERBATIM
-                    )
+      # If no flags set the default one
+      IF(NOT PAROBJ_FLAGS)
+         set(FLAGS_POPCPP -parclass-nobroker -c)
+      ELSE(NOT PAROBJ_FLAGS)
+         # Create white-spaced list for the flags
+         FOREACH(flag ${PAROBJ_FLAGS})
+            set(FLAGS_POPCPP ${FLAGS_POPCPP} ${flag})
+         ENDFOREACH(flag ${PAROBJ_FLAGS})
+      ENDIF(NOT PAROBJ_FLAGS)
 
-   
-   SET_DIRECTORY_PROPERTIES(PROPERTIES
-                            ADDITIONAL_MAKE_CLEAN_FILES ${CMAKE_CURRENT_SOURCE_DIR}/${OBJECT_NAME})
-               
+      # Create white-spaced list for the source files
+      FOREACH(source ${OBJECT_SOURCES})
+         set(SOURCES ${SOURCES} ../../${source})
+      ENDFOREACH(source ${OBJECT_SOURCES})
+      # Set the compilation command
+      SET(COMPILE_COMMAND ${CMAKE_POPCPP_COMPILER} ${FLAGS_POPCPP} ${SOURCES})
 
-#   ADD_DEPENDENCIES(build ${OBJECT_NAME})
-
+      # Create the custom target with the POP-C++ compilation
+      ADD_CUSTOM_TARGET(${TARGET_NAME} ALL 
+                        COMMAND echo ${COMPILE_COMMAND}
+                        COMMAND ${COMPILE_COMMAND}
+                        WORKING_DIRECTORY ${OBJECT_DIR}
+                        VERBATIM
+                       )
+      # Add dependencies to the target if there are some specified
+      IF(PAROBJ_DEP)
+         SET(DEPEN_POPCPP)
+         FOREACH(dep ${PAROBJ_DEP})
+           set(DEPEN_POPCPP ${DEPEN_POPCPP} ${dep})
+         ENDFOREACH(dep ${PAROBJ_DEP})
+         ADD_DEPENDENCIES(${TARGET_NAME} ${DEPEN_POPCPP})
+      ENDIF(PAROBJ_DEP)
+      SET(PAROBJ_NOBROKER)
+   ENDIF(${PAROBJ_NOBROKER} STREQUAL "FALSE")
 
    SET(PAROBJ_FLAGS)    
+   SET(PAROBJ_DEP)
    SET(FLAGS_POPCPP)
+   
 ENDMACRO(ADD_POPC_OBJECT)
 
 
@@ -164,18 +223,19 @@ MACRO(ADD_POPC_MAIN)
    SET(LIST_MAIN_SOURCES) 
    SET(TARGET_NAME)
    SET(OBJECT_DIR)
+   SET(DEPEN_POPCPP)
 
    PARSE_ARGUMENTS(POPCPPMAIN
-      "FLAGS"
+      "FLAGS;DEP"
       ""
       ${ARGN}
    )
+   
    CAR(MAIN_NAME ${POPCPPMAIN_DEFAULT_ARGS})
    CDR(MAIN_SOURCES ${POPCPPMAIN_DEFAULT_ARGS})
 
-   SET(OBJECT_DIR .${CMAKE_FILES_DIRECTORY}/${MAIN_NAME}.dir)
-   EXEC_PROGRAM(mkdir
-                ARGS "-p ${OBJECT_DIR}")
+   SET(OBJECT_DIR .${CMAKE_FILES_DIRECTORY}/pop.dir)
+   EXEC_PROGRAM(mkdir ARGS "-p ${OBJECT_DIR}")
 
    IF(NOT POPCPPMAIN_FLAGS)
       set(FLAGS_MAIN ${CMAKE_POPCPP_MAIN_FLAGS})
@@ -185,24 +245,46 @@ MACRO(ADD_POPC_MAIN)
       set(FLAGS_MAIN ${FLAGS_MAIN} ${flag})
    ENDFOREACH(flag ${POPCPPMAIN_FLAGS})
 
+   SET(ADDITIONAL_REMOVE)
    FOREACH(source ${MAIN_SOURCES})
-   #   EXEC_PROGRAM(cp 
-    #              ARGS "${source} ${OBJECT_DIR}/${source}")
+      IF("${source}" MATCHES "\\.ph$")
+         SET(STUB_NAME)
+         STRING(REGEX REPLACE "\\..*" ".stub.o" STUB_NAME ${source})
+         SET(ADDITIONAL_REMOVE ${ADDITIONAL_REMOVE} ${STUB_NAME})
+      ENDIF()
+      IF("${source}" MATCHES "\\.cc$")
+         SET(O_NAME) 
+         STRING(REGEX REPLACE "\\..*" ".o" O_NAME ${source})
+         SET(ADDITIONAL_REMOVE ${ADDITIONAL_REMOVE} ${O_NAME})
+      ENDIF()
       set(LIST_MAIN_SOURCES ${LIST_MAIN_SOURCES} ../../${source})
    ENDFOREACH(source ${MAIN_SOURCES})
 
    SET(TARGET_NAME ${MAIN_NAME})
    SET(COMPILE_COMMAND ${CMAKE_POPCPP_COMPILER} ${FLAGS_MAIN} ${MAIN_NAME} ${LIST_MAIN_SOURCES})
 
+   GET_TARGET_PROPERTY(TAR_LOC ${TARGET_NAME} LOCATION)
+
+
+
    ADD_CUSTOM_TARGET(${TARGET_NAME} ALL 
+                     COMMAND echo ${COMPILE_COMMAND}
                      COMMAND ${COMPILE_COMMAND}
                      COMMAND cp ${MAIN_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${MAIN_NAME}
                      WORKING_DIRECTORY ${OBJECT_DIR}
                      VERBATIM
                     )
+   IF(POPCPPMAIN_DEP)
+      FOREACH(dep ${POPCPPMAIN_DEP})
+         set(DEPEN_POPCPP ${DEPEN_POPCPP} ${dep})
+      ENDFOREACH(dep ${POPCPPMAIN_DEP})
+      ADD_DEPENDENCIES(${TARGET_NAME} ${DEPEN_POPCPP})
+   ENDIF(POPCPPMAIN_DEP)
 
-   set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${MAIN_NAME})
-   
+   # Set files to be deleted by clean target
+   GET_DIRECTORY_PROPERTY(DIRPROP ADDITIONAL_MAKE_CLEAN_FILES)
+   SET(DIRDROP ${DIRDROP} ${CMAKE_CURRENT_SOURCE_DIR}/${MAIN_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/${MAIN_NAME}.o ${ADDITIONAL_REMOVE})
+   SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${DIRDROP}")  
    
 ENDMACRO(ADD_POPC_MAIN)
 
@@ -220,7 +302,7 @@ MACRO(ADD_POPC_OBJMAP)
       "NOT_APPEND"
       ${ARGN}
    )
-
+   SET(PAROBJ)
    # Get list of object to add to the object map
    SET(PAROBJ ${POPCPPOBJMAP_DEFAULT_ARGS})
    
@@ -237,22 +319,38 @@ MACRO(ADD_POPC_OBJMAP)
 
    # Execute each object to add there mapping in the file
    FOREACH(par ${PAROBJ})
-      SET(TARGET_NAME ${PAROBJ}.map)
+      SET(TARGET_NAME "zz_objmap_${par}")
       SET(OBJMAP_COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/${par} -listlong >> ${POPCPPOBJMAP_OBJECTMAP})
       ADD_CUSTOM_TARGET(${TARGET_NAME} ALL
                         COMMAND ${OBJMAP_COMMAND}
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                         VERBATIM)
    ENDFOREACH(par ${PAROBJ})
-   
+   # Set files to be deleted by clean target
+   GET_DIRECTORY_PROPERTY(DIRPROP ADDITIONAL_MAKE_CLEAN_FILES)
+   SET(DIRDROP ${DIRDROP} ${CMAKE_CURRENT_SOURCE_DIR}/${POPCPPOBJMAP_OBJECTMAP})
+   SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${DIRDROP}")
 
 ENDMACRO(ADD_POPC_OBJMAP)
 
 
 MACRO(ADD_POPC_RUN)
-   MESSAGE("popcrun ${ARGV0} ${ARGV1}")
-   SET(RUN_COMMAND popcrun ${ARGV0} ./${ARGV1})
-   ADD_CUSTOM_TARGET(run
+   PARSE_ARGUMENTS(POPCRUN
+      "OBJECTMAP;TARGET;MAIN"
+      ""
+      ${ARGN}
+   )
+   IF(NOT POPCRUN_OBJECTMAP)
+      SET(POPCRUN_OBJECTMAP obj.map)
+   ENDIF()
+   IF(NOT POPCRUN_TARGET)
+      SET(POPCRUN_TARGET run)
+   ENDIF()
+   IF(NOT POPCRUN_MAIN)
+      SET(POPCRUN_MAIN main)
+   ENDIF()
+   SET(RUN_COMMAND popcrun ${POPCRUN_OBJECTMAP} ./${POPCRUN_MAIN} ${POPCRUN_DEFAULT_ARGS})
+   ADD_CUSTOM_TARGET(${POPCRUN_TARGET}
                      COMMAND ${RUN_COMMAND}
                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                      VERBATIM)

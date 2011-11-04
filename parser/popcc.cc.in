@@ -26,24 +26,24 @@ char arch[256]= POPC_BUILD_ARCH;
 void Usage()
 {
   fprintf(stderr,"\nPOP-C++ version %s %s on %s\n", VERSION, SVNREV, arch);
-  fprintf(stderr,"\npopcc [-cxxmain] [-object[=type]] [-cpp=<C++ preprocessor>] [-cxx=<compiler>] ] [-parocld=linker] [-parocdir=<path>] [-popcpp=<POP-C++ parser>] [-verbose] [-noclean] [other C++ options] sources...\n");
+  fprintf(stderr,"\npopcc [-cxxmain] [-object[=type]] [-cpp=<C++ preprocessor>] [-cxx=<compiler>] ] [-popcld=linker] [-popcdir=<path>] [-popcpp=<POP-C++ parser>] [-verbose] [-noclean] [other C++ options] sources...\n");
 
   fprintf(stderr,"   -cxxmain:              Use standard C++ main (ignore POP-C++ initialization)\n");
-  fprintf(stderr,"   -paroc-static:         Link with standard POP-C++ libraries statically\n");
-  fprintf(stderr,"   -paroc-nolib:          Avoid standard POP-C++ libraries from linking\n");
+  fprintf(stderr,"   -popc-static:          Link with standard POP-C++ libraries statically\n");
+  fprintf(stderr,"   -popc-nolib:           Avoid standard POP-C++ libraries from linking\n");
   fprintf(stderr,"   -parclass-nointerface: Do not generate POP-C++ interface codes for parallel objects\n");
   fprintf(stderr,"   -parclass-nobroker:    Do not generate POP-C++ broker codes for parallel objects\n");
 
  fprintf(stderr,"\n   -object[=type]:      Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
-  fprintf(stderr,"   -popcpp:            POP-C++ parser\n");
+  fprintf(stderr,"   -popcpp:             POP-C++ parser\n");
   fprintf(stderr,"   -cpp=<preprocessor>: C++ preprocessor command\n");
   fprintf(stderr,"   -cxx=<compiler>:     C++ compiler\n");
-  fprintf(stderr,"   -parocld=<linker>:   C++ linker (default: same as C++ compiler)\n");
-  fprintf(stderr,"   -parocdir:           POP-C++ installed directory\n");
+  fprintf(stderr,"   -popcld=<linker>:    C++ linker (default: same as C++ compiler)\n");
+  fprintf(stderr,"   -popcdir:            POP-C++ installed directory\n");
   fprintf(stderr,"   -noclean:            Do not clean temporary files\n");
   fprintf(stderr,"   -verbose:            Print out additional information\n");
-  
-   fprintf(stderr,"   -no-pipe:            Do not use pipe during compilation phases ( create _paroc2_ files )\n");
+  fprintf(stderr,"   -nopipe:             Do not use pipe during compilation phases ( create _paroc2_ files )\n");
+  fprintf(stderr,"   -version:             Display the installed version of POP-C++\n");
  
 
   fprintf(stderr,"\nEnvironment variables change the default values used by POP-C++:\n");
@@ -54,6 +54,11 @@ void Usage()
   fprintf(stderr,"   POPC_PP:        The POP-C++  parser\n");
 
   exit(1);
+}
+
+void DisplayVersion()
+{
+  fprintf(stderr,"\nPOP-C++ version %s %s on %s\n\n", VERSION, SVNREV, arch);
 }
 
 bool verbose=false;
@@ -386,14 +391,23 @@ int main(int argc, char *argv[])
 
   char objmain[256]="std";
 
-
   char *tmp;
+  
+  
+    // Display version if option "-version" is found on the command
+
+    if ((tmp=paroc_utils::checkremove(&argc,&argv,"-version"))!=NULL)
+    {
+      DisplayVersion();
+      return 0;
+    }
+	
   //Check for POP-C++ installed dir...
-  if ((tmp=paroc_utils::checkremove(&argc,&argv,"-parocdir="))!=NULL) strcpy(parocdir,tmp);
+  if ((tmp=paroc_utils::checkremove(&argc,&argv,"-popcdir="))!=NULL) strcpy(parocdir,tmp);
   else if ((tmp=getenv("POPC_LOCATION"))!=NULL) strcpy(parocdir,tmp);
 
-  paroc_static=(paroc_utils::checkremove(&argc,&argv,"-paroc-static")!=NULL);
-  paroc_nolib=(paroc_utils::checkremove(&argc,&argv,"-paroc-nolib")!=NULL);
+  paroc_static=(paroc_utils::checkremove(&argc,&argv,"-popc-static")!=NULL);
+  paroc_nolib=(paroc_utils::checkremove(&argc,&argv,"-popc-nolib")!=NULL);
 
   if ((tmp=paroc_utils::checkremove(&argc,&argv,"-popcpp="))!=NULL) strcpy(popcpp,tmp);
   else if ((tmp=getenv("POPC_PP"))!=NULL) strcpy(popcpp,tmp);
@@ -412,7 +426,7 @@ int main(int argc, char *argv[])
   if ((tmp=paroc_utils::checkremove(&argc,&argv,"-cxx="))!=NULL) strcpy(parocxx,tmp);
   else if ((tmp=getenv("POPC_CXX"))!=NULL) strcpy(parocxx,tmp);
 
-  if ((tmp=paroc_utils::checkremove(&argc,&argv,"-parocld="))!=NULL) strcpy(parocld,tmp);
+  if ((tmp=paroc_utils::checkremove(&argc,&argv,"-popcld="))!=NULL) strcpy(parocld,tmp);
   else if ((tmp=getenv("POPC_LD"))!=NULL) strcpy(parocld,tmp);
   else strcpy(parocld, parocxx);
 
@@ -422,7 +436,7 @@ int main(int argc, char *argv[])
   broker=(paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")==NULL);
   client=(paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface")==NULL);
 
-  usepipe=(paroc_utils::checkremove(&argc,&argv,"-no-pipe")==NULL);
+  usepipe=(paroc_utils::checkremove(&argc,&argv,"-nopipe")==NULL);
 
   cpp_count=0;
   char *tok=strtok(cpp," \t");

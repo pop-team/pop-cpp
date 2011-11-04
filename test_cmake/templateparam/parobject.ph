@@ -1,0 +1,1 @@
+../../test/templateparam/parobject.ph

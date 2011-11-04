@@ -7,6 +7,7 @@
  * Modifications :
  * Authors		Date			Comment
  * clementval	2011/01/17	Add COUT support
+ * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
  */
 
 #ifndef _POPC_OBJECTBASE_H
@@ -44,6 +45,9 @@ public:
 	virtual bool CanKill();
 
 	const paroc_accesspoint & GetAccessPoint() const;
+   
+   //Get the access point and set the variable _noaddref to TRUE in this access point
+	const paroc_accesspoint & GetAccessPointForThis();
 
 	virtual int eventwait(int event=ANY_EVENT, int timeout=-1); //timeout in milliseconds
 	virtual void eventraise(int event);

@@ -91,7 +91,7 @@ void paroc_receivethread::start()
 //char paroc_broker::myContact[256];
 
 paroc_accesspoint paroc_broker::accesspoint;
-paroc_string paroc_broker::classname;
+POPString paroc_broker::classname;
 
 
 void broker_killed(int sig)
@@ -245,8 +245,8 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 	paroc_combox_factory  *ff=paroc_combox_factory::GetInstance();
 	int comboxCount = ff->GetCount();
 	comboxArray.SetSize(comboxCount);
-	paroc_string protocolName;
-	paroc_string url;
+	POPString protocolName;
+	POPString url;
 
 
 	int count=0;
@@ -292,7 +292,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 				return false;
 			}
 		}
-		paroc_string ap;
+		POPString ap;
 		pc->GetUrl(ap);
 		url+=ap;
 		if (i<comboxCount-1) url+=PROTO_DELIMIT_CHAR;
@@ -334,7 +334,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
 {
 	paroc_combox_factory *fact=paroc_combox_factory::GetInstance();
-	paroc_string url, prot;
+	POPString url, prot;
 
 	bool ok=false;
 	mycombox->GetProtocol(prot);

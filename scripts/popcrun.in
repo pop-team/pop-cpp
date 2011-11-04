@@ -1,11 +1,18 @@
 #!/bin/bash
 
 if [ -z "$*" ]; then
+echo ""
 echo "Usage: popcrun objects.config [-drun] [-runlocal] prog.main args..."
 echo "  -drun     : Print launching command only."
 echo "  -runlocal : Force to create all objects locally : do not use JobMgr"
+echo "  -debug    : Give some debugging informations"
+echo "  -log=<filename> : put all message in the <filename> file"
+echo "  -version	: Display the installed POP-C++ version"
+echo ""
 exit	
 fi
+
+unset POPC_DEBUG
 
 if [ -z "${POPC_LOCATION}" ]; then
 POPC_LOCATION=@prefix@
@@ -27,6 +34,10 @@ MYAPPSERVICE=${POPC_APPSERVICE:-${POPC_LOCATION}/services/appservice}
 drun=0
 noproxy=0
 
+logging=0
+debug=0
+version=0
+
 args=""
 
 CODECONF=""
@@ -34,22 +45,59 @@ PROG=""
 localFlag=""
 
 for arg in $* ; do
-    if [ "$arg" = "-drun" ]; then
-	drun=1
+    if [ "$arg" = "-version" ]; then
+		version=1
+    elif [ "$arg" = "-drun" ]; then
+		drun=1
     elif [ "$arg" = "-runlocal" ]; then
-	localFlag="-runlocal"
+		localFlag="-runlocal"
     elif [ "$arg" = "-noproxy" ]; then
-	noproxy=1
+		noproxy=1
+	elif [ "$arg" = "-debug" ]; then
+		export POPC_DEBUG="Y"
+	elif [ `echo "$arg"|grep "^\-log="` ]; then
+		export LOGGING_FILE=`echo $arg|sed s/-log=//`
+		logging=1
     elif [ `echo "$arg"|grep "^\-batch="` ]; then
-	export POPC_BATCH=`echo $arg|sed s/-batch=//`
+		export POPC_BATCH=`echo $arg|sed s/-batch=//`
     elif [ -z "${CODECONF}" ]; then
-	CODECONF=$arg
+		CODECONF=$arg
     elif [ -z "${PROG}" ]; then
-	PROG=$arg
+		PROG=$arg
     else
-	args="$args $arg"
+		args="$args $arg"
     fi
 done
+
+# display installed version of POP-C++ if asked
+
+if [ $version -eq 1 ]; then
+	popcc -version
+	exit
+fi
+
+# if logging make some check (file exists, file is writable ...)
+
+if [ $logging = 1 ]; then
+	if [ $logging = "1" ] && [ -f $LOGGING_FILE ]; then
+		read -p "The file already exists ! Do you want overwrite it ? (y/N)" yn
+		if [ $yn != "y" ] && [ $yn != "Y" ]; then
+			exit
+		fi
+		if [ ! -w $LOGGING_FILE ]; then
+			echo "The file $LOGGING_FILE cannot be written !!!"
+			exit
+		fi
+		logging_cmd=" |tee $LOGGING_FILE"
+	else
+		touch $LOGGING_FILE
+		if [ $? != 0 ]; then
+			echo "The file $LOGGING_FILE cannot be created !!!"
+			exit
+		fi
+		logging_cmd=" |tee $LOGGING_FILE"
+	fi
+fi
 
 #Check and dowload object map file....
 if [ -z "${CODECONF}" ]; then
@@ -148,7 +196,12 @@ retval=0
 if [ $drun -eq 1 ]; then
     echo Exec: $cmd
 else
-    $cmd
+	#echo "popc_debug = " $POPC_DEBUG
+	echo "#!/bin/bash" > __cmd_to_execute__
+	echo $cmd $logging_cmd >> __cmd_to_execute__
+	chmod a+x __cmd_to_execute__
+	./__cmd_to_execute__
+	rm __cmd_to_execute__
     retval=$?
 fi
 exit $retval

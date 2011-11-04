@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				paroc_string str;
+				POPString str;
 				test->GetBufferName(str);
 				printf("Buffer name:%s\n", (const char *)str);
 				test->Destroy();

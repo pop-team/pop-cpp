@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for i in barrier classparam constparam heritageparam2  param serialize_vect templateparam vectorint1 vectorx callback exception heritageparam1 jobManager method passparam structparam vectorint2 tree matrixNB
+do
+cd $i
+rm -rf CMakeFiles CMakeCache.txt Makefile cmake_install.cmake
+cd ..
+done
+
+rm -rf CMakeFiles CMakeCache.txt Makefile cmake_install.cmake

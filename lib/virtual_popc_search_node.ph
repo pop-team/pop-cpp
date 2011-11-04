@@ -25,7 +25,7 @@ parclass VirtualPOPCSearchNode : POPCSearchNode {
 
 public:
 	//Node's constructore 
-	VirtualPOPCSearchNode(const paroc_string &challenge, bool deamon) @{ od.runLocal(true); od.service(true);};
+	VirtualPOPCSearchNode(const POPString &challenge, bool deamon) @{ od.runLocal(true); od.service(true);};
    
 	// Destructor
 	~VirtualPOPCSearchNode();

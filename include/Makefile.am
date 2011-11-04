@@ -58,7 +58,7 @@ endif
 # paroc_DATA=	proxy.ph paroc_service_base.ph appservice.ph codemgr.ph remotelog.ph objectmonitor.ph jobmgr.ph popc_search_node.ph
 
 #instdir=@includedir@
-# parocdir=@includedir@
+# popcdir=@includedir@
 
 # parocfiles= jobmgr.ph codemgr.ph remotelog.ph appservice.ph objectmonitor.ph proxy.ph paroc_service_base.ph popc_search_node.ph
 

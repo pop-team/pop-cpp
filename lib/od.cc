@@ -262,48 +262,48 @@ float paroc_od::getWallTime() const
 	return time;
 }
 
-void paroc_od::getDirectory(paroc_string &str) const
+void paroc_od::getDirectory(POPString &str) const
 {
 	str=cwd;
 }
 
-void paroc_od::getURL(paroc_string &url) const
+void paroc_od::getURL(POPString &url) const
 {
 	url=hostname;
 }
 
-void paroc_od::getUser(paroc_string &s) const
+void paroc_od::getUser(POPString &s) const
 {
 	s=hostuser;
 }
 
-void paroc_od::getCore(paroc_string &s) const
+void paroc_od::getCore(POPString &s) const
 {
 	s=hostcore;
 }
 
-void paroc_od::getArch(paroc_string &s) const
+void paroc_od::getArch(POPString &s) const
 {
 	s=hostarch;
 }
 
-void paroc_od::getJobURL(paroc_string &joburl) const
+void paroc_od::getJobURL(POPString &joburl) const
 {
 	joburl=jobcontact;
 }
 
-void paroc_od::getExecutable(paroc_string &exec) const
+void paroc_od::getExecutable(POPString &exec) const
 {
 	exec=codefile;
 }
 
-void paroc_od::getProtocol(paroc_string &myproto) const
+void paroc_od::getProtocol(POPString &myproto) const
 {
 	//DEBUG("Set protocol in OD %s\n", myproto.GetString());
 	myproto=proto;
 }
 
-void paroc_od::getEncoding(paroc_string &myencode) const
+void paroc_od::getEncoding(POPString &myencode) const
 {
 	myencode=encode;
 }
@@ -313,7 +313,7 @@ bool paroc_od::getIsManual() const
 	return isManual;
 }
 
-void paroc_od::getBatch(paroc_string& batch) const
+void paroc_od::getBatch(POPString& batch) const
 {
 	batch=batchSystem;
 }
@@ -395,28 +395,28 @@ void paroc_od::setPlatforms(const char *objplatforms)
 }
 
 
-void paroc_od::getPlatforms(paroc_string &objplatforms) const
+void paroc_od::getPlatforms(POPString &objplatforms) const
 {
 	objplatforms=platforms;
 }
 
-void paroc_od::setValue(const paroc_string &key, const paroc_string &val)
+void paroc_od::setValue(const POPString &key, const POPString &val)
 {
-	paroc_string &t1=keys.AddTailNew();
-	paroc_string &t2=values.AddTailNew();
+	POPString &t1=keys.AddTailNew();
+	POPString &t2=values.AddTailNew();
 	t1=key;
 	t2=val;
 }
 
-void paroc_od::getValue(const paroc_string &key, paroc_string &val)
+void paroc_od::getValue(const POPString &key, POPString &val)
 {
 	POSITION posk=keys.GetHeadPosition();
 	POSITION posv=values.GetHeadPosition();
 
 	while (posk!=NULL)
 	{
-		paroc_string &t1=keys.GetNext(posk);
-		paroc_string &t2=values.GetNext(posv);
+		POPString &t1=keys.GetNext(posk);
+		POPString &t2=values.GetNext(posv);
 		if (paroc_utils::isEqual(t1,key))
 		{
 			val=t2;
@@ -431,7 +431,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack)
 	float val[2];
 	int valInt[2];
 	int valSearch[3];
-	paroc_string t;
+	POPString t;
 	if (pack)
 	{
 
@@ -461,7 +461,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack)
 		buf.Pop();
 
 		getDirectory(t);
-		buf.Push("cwd","paroc_string",1);
+		buf.Push("cwd","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
@@ -475,54 +475,54 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack)
 		//End of add
 
 		getURL(t);
-		buf.Push("url","paroc_string",1);
+		buf.Push("url","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
 		getUser(t);
-		buf.Push("user","paroc_string",1);
+		buf.Push("user","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
 		getCore(t);
-		buf.Push("core","paroc_string",1);
+		buf.Push("core","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
 		getArch(t);
-		buf.Push("arch","paroc_string",1);
+		buf.Push("arch","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
 		getBatch(t);
-		buf.Push("batch","paroc_string",1);
+		buf.Push("batch","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
 		
 
 		getJobURL(t);
-		buf.Push("joburl","paroc_string",1);
+		buf.Push("joburl","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
 		getExecutable(t);
-		buf.Push("executable","paroc_string",1);
+		buf.Push("executable","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
 		getPlatforms(t);
-		buf.Push("platforms","paroc_string",1);
+		buf.Push("platforms","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
 		getProtocol(t);
-		buf.Push("protocol","paroc_string",1);
+		buf.Push("protocol","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
 		getEncoding(t);
-		buf.Push("encoding","paroc_string",1);
+		buf.Push("encoding","POPString",1);
 		buf.Pack(&t,1);
 		buf.Pop();
 
@@ -539,15 +539,15 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack)
 			POSITION posv=values.GetHeadPosition();
 			while (posk!=NULL)
 			{
-				paroc_string &t1=keys.GetNext(posk);
-				paroc_string &t2=values.GetNext(posv);
-				buf.Push("element","paroc_string", 2);
+				POPString &t1=keys.GetNext(posk);
+				POPString &t2=values.GetNext(posv);
+				buf.Push("element","POPString", 2);
 
-				buf.Push("key", "paroc_string", 1);
+				buf.Push("key", "POPString", 1);
 				buf.Pack(&t1,1);
 				buf.Pop();
 
-				buf.Push("value", "paroc_string", 1);
+				buf.Push("value", "POPString", 1);
 				buf.Pack(&t2,1);
 				buf.Pop();
 
@@ -591,7 +591,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack)
 		buf.Pop();
 		valInt[0]=isManual;
 
-		buf.Push("cwd","paroc_string",1);
+		buf.Push("cwd","POPString",1);
 		buf.UnPack(&cwd,1);
 		buf.Pop();
 		
@@ -602,48 +602,48 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack)
 		search(valSearch[0], valSearch[1], valSearch[2]);
 		//End of add
 
-		buf.Push("url","paroc_string",1);
+		buf.Push("url","POPString",1);
 		buf.UnPack(&hostname,1);
 		buf.Pop();
 		//url(t);
 
-		buf.Push("user","paroc_string",1);
+		buf.Push("user","POPString",1);
 		buf.UnPack(&hostuser,1);
 		buf.Pop();
 
-		buf.Push("core","paroc_string",1);
+		buf.Push("core","POPString",1);
 		buf.UnPack(&hostcore,1);
 		buf.Pop();
 
-		buf.Push("arch","paroc_string",1);
+		buf.Push("arch","POPString",1);
 		buf.UnPack(&hostarch,1);
 		buf.Pop();
 
-		buf.Push("batch","paroc_string",1);
+		buf.Push("batch","POPString",1);
 		buf.UnPack(&batchSystem,1);
 		buf.Pop();
 
-		buf.Push("joburl","paroc_string",1);
+		buf.Push("joburl","POPString",1);
 		buf.UnPack(&t,1);
 		buf.Pop();
 		joburl(t);
 
-		buf.Push("executable","paroc_string",1);
+		buf.Push("executable","POPString",1);
 		buf.UnPack(&t,1);
 		buf.Pop();
 		executable(t);
 
-		buf.Push("platforms","paroc_string",1);
+		buf.Push("platforms","POPString",1);
 		buf.UnPack(&t,1);
 		buf.Pop();
 		setPlatforms(t);
 
-		buf.Push("protocol","paroc_string",1);
+		buf.Push("protocol","POPString",1);
 		buf.UnPack(&t,1);
 		buf.Pop();
 		protocol(t);
 
-		buf.Push("encoding","paroc_string",1);
+		buf.Push("encoding","POPString",1);
 		buf.UnPack(&t,1);
 		buf.Pop();
 		encoding(t);
@@ -660,14 +660,14 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack)
 
 		for (int i=0;i<count;i++)
 		{
-			paroc_string t1, t2;
-			buf.Push("element","paroc_string", 2);
+			POPString t1, t2;
+			buf.Push("element","POPString", 2);
 
-			buf.Push("key", "paroc_string", 1);
+			buf.Push("key", "POPString", 1);
 			buf.UnPack(&t1,1);
 			buf.Pop();
 
-			buf.Push("value", "paroc_string", 1);
+			buf.Push("value", "POPString", 1);
 			buf.UnPack(&t2,1);
 			buf.Pop();
 

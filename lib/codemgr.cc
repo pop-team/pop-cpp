@@ -15,7 +15,7 @@
 
 #include "codemgr.ph"
 
-CodeMgr::CodeMgr(const paroc_string &challenge): paroc_service_base(challenge)
+CodeMgr::CodeMgr(const POPString &challenge): paroc_service_base(challenge)
 {
 }
 
@@ -24,7 +24,7 @@ CodeMgr::~CodeMgr()
 	DEBUG("Now destroy CodeMgr\n");
 }
 
-void CodeMgr::RegisterCode(const paroc_string &objname, const paroc_string &platform, const paroc_string &codefile)
+void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, const POPString &codefile)
 {
 	int n=info.GetSize();
 	int i;
@@ -55,7 +55,7 @@ void CodeMgr::RegisterCode(const paroc_string &objname, const paroc_string &plat
 	}
 }
 
-int CodeMgr::QueryCode(const paroc_string &objname, const paroc_string &platform, paroc_string &codefile)
+int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPString &codefile)
 {
 	codefile=NULL;
 	int n=info.GetSize();
@@ -74,7 +74,7 @@ int CodeMgr::QueryCode(const paroc_string &objname, const paroc_string &platform
 	return 1;
 }
 
-int CodeMgr::GetPlatform(const paroc_string &objname, paroc_string &platform)
+int CodeMgr::GetPlatform(const POPString &objname, POPString &platform)
 {
 	platform=NULL;
 	int n=info.GetSize();

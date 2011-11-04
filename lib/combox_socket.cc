@@ -361,15 +361,15 @@ void paroc_combox_socket::Close()
 	}
 }
 
-bool paroc_combox_socket::GetProtocol(paroc_string & protocolName)
+bool paroc_combox_socket::GetProtocol(POPString & protocolName)
 {
 	protocolName="socket";
 	return true;
 }
 
-bool paroc_combox_socket::GetUrl(paroc_string & accesspoint)
+bool paroc_combox_socket::GetUrl(POPString & accesspoint)
 {
-	paroc_string prot;
+	POPString prot;
 	GetProtocol(prot);
 	int port=GetPort();
 	char elem[1024];

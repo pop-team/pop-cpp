@@ -12,7 +12,9 @@
   int c;
   int linenumber=0;
   char filename[1024];
+  char classname[1024];
   int mutexCount=0;
+  int dummyCount=0;
 
   extern CArrayCharPtr searchpath, sources;
   extern CodeFile *thisCodeFile;
@@ -163,6 +165,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   return STRING;
 };
 
+
 {id}{whitespace2}"::"{whitespace2}"~"{whitespace2}{id} {
   char clname[256];
   char methname[256];
@@ -172,10 +175,13 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   while (!isspace(*tmp) && *tmp!=':') 
     {
       clname[len]=*tmp;
+      classname[len]=*tmp;
       tmp++;
       len++;
     }
   clname[len]=0;
+  classname[len]=0;
+  
  if (thisCodeFile->FindClass(clname)!=NULL)
     {
       while (isspace(*tmp) || *tmp==':') tmp++;
@@ -201,17 +207,20 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   char methname[256];
   bool shouldreturn=true;
   char newyytext[1024];
+  char thisBuf[1024];
 
   int len=0;
   char *tmp=yytext;
   while (!isspace(*tmp) && *tmp!=':') 
     {
       clname[len]=*tmp;
+      classname[len]=*tmp;
       tmp++;
       len++;
     }
   clname[len]=0;
-
+  classname[len]=0;
+  
   //  printf("Method of class [%s]\n",clname);
 
   if (thisCodeFile->FindClass(clname)!=NULL)
@@ -220,6 +229,8 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       bool constructor=paroc_utils::isEqual(clname,tmp);
       sprintf(newyytext,"%s__parocobj%s",clname,yytext+len);
       othercodes.InsertAt(-1,newyytext,strlen(newyytext));
+      //Create the string to be inserted in every paroc_object constructor
+      sprintf(thisBuf, "__POPThis_%s = new %s(GetAccessPointForThis());", clname, clname);
 
       if (constructor)
 	{
@@ -231,15 +242,15 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 	  char buf[10240];
 	  int n=ReadUntil((char*)");{", buf, 10240);
 	  othercodes.InsertAt(-1,buf,n);
+    
+
 	  linenumber+=CountLine(buf);
-	  if (n && buf[n-1]==')')
-	  {
+	  if (n && buf[n-1]==')'){
 	     n=ReadUntil((char*)":;{", buf, 10240);
 	     othercodes.InsertAt(-1,buf,n);
 	     linenumber+=CountLine(buf);
-   	  }
-	  if (n && buf[n-1]==':')
-	    {
+     }
+	  if (n && buf[n-1]==':'){
 	      while (1)
 		{
 		  //extract base class name
@@ -274,6 +285,9 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 		  if (!n || buf[n-1]!=',') break;
 		}
 	    }
+     //Print the THIS handling string line
+     othercodes.InsertAt(-1, thisBuf, strlen(thisBuf));
+     
 	}
     }
   else
@@ -531,6 +545,35 @@ size {
   return SIZE;
 };
 
+this {
+
+	/* This part of parser is possible source of wrong "this" handling */
+	Class *cl = thisCodeFile->FindClass(classname);
+	bool insertNormalThis = true;
+	
+	if (cl!=NULL)
+	{
+      //If the class is a parclass, replace THIS keyword by the Interface pointer __POPThis_ClassName
+      if(cl->IsParClass()){
+         othercodes.InsertAt(-1,"__POPThis_", strlen("__POPThis_"));
+			othercodes.InsertAt(-1,cl->GetName(),strlen(cl->GetName()));
+			insertNormalThis = false;
+		}
+	}
+	
+	if(insertNormalThis)
+	{
+		othercodes.InsertAt(-1,yytext,strlen(yytext));
+	}
+	
+	
+	/*
+	yylval=PutToken(yytext);
+	othercodes.InsertAt(-1,"this",strlen("this"));
+ 	
+	printf("handle at Flex -> ");
+	return THIS_KEYWORD;*/
+}
 
 unsigned{whitespace1}int {
   yylval=PutToken(yytext);

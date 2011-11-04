@@ -53,7 +53,7 @@ void paroc_broker_factory::List(paroc_list_string &objlist)
 	while (pos!=NULL)
 	{
 		paroc_broker_init &t=brokerlist->GetNext(pos);
-		paroc_string &str=objlist.AddTailNew();
+		POPString &str=objlist.AddTailNew();
 		str=t.objname;
 	}
 }

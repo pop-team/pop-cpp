@@ -423,7 +423,7 @@ virtual = @virtual@
 #Code added by clementval begins with #Added by clementval, ends with #End of add
 #Code modified by clementval begins with #Modified by clementval, ends with #End of modification
 AUTOMAKE_OPTIONS = no-dependencies
-POPC_FLAGS = -parocdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -I@top_srcdir@/lib -cxx=@CXX@ -D_POPC_RUNTIME_
+POPC_FLAGS = -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -I@top_srcdir@/lib -cxx=@CXX@ -D_POPC_RUNTIME_
 AM_CXXFLAGS = $(POPC_FLAGS)
 AM_LDFLAGS = -L@top_srcdir@/lib -L@top_srcdir@/lib/.libs 
 execservices_SCRIPTS = popcobjrun popcobjrun.pbs popcobjrun.lsf popcobjrun.sge popcobjrun.smscg

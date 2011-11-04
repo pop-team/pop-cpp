@@ -28,7 +28,7 @@ public:
 	/** @brief  Constructor
 	 * @param challenge The challenge string will will be require on stoping the service
 	*/
-	paroc_service_base([in] const paroc_string &challenge);
+	paroc_service_base([in] const POPString &challenge);
 
 	paroc_service_base();
 
@@ -41,14 +41,14 @@ public:
 	 * This method will make the object running even if there is no reference to the object.
 	 * @param challenge
 	*/
-	seq sync virtual void Start(const paroc_string &challenge);
+	seq sync virtual void Start(const POPString &challenge);
 
 
 	/** @brief Stop the service.
 	 * @param challenge The challenge string will be tested with the one previously provided through the constructor.
 	 * @return true if the service has been stopped successfully. Otherwise, false is returned.
 	*/
-	seq sync virtual bool Stop([in] const paroc_string &challenge);
+	seq sync virtual bool Stop([in] const POPString &challenge);
 
 	__hidden virtual int AddRef();
 	__hidden virtual int DecRef();
@@ -57,7 +57,7 @@ public:
 	classuid(0);
 
 protected:
-	paroc_string mychallenge;
+	POPString mychallenge;
 	paroc_accesspoint appservice;
 	bool daemonMode;
 };
@@ -77,7 +77,7 @@ public:
 	/** @brief  Constructor
 	 * @param challenge The challenge string will will be require on stoping the service
 	*/
-	JobCoreService([in] const paroc_string &challenge);
+	JobCoreService([in] const POPString &challenge);
 
 	/** @brief Perform resource discovery and create the parallel object on the remote resource.
 	 * @param localservice the application scope service access point. This accesspoint will be used to connect to the CodeMgr to check for supported platform and executable URL
@@ -89,7 +89,7 @@ public:
     * @param remotejobcontacts   Store the job contact of the JobMgr which has created the object
 	 * @return 0 (successful) or error code otherwise.
 	*/
-	sync conc virtual int CreateObject(paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts, int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts)=0;
+	sync conc virtual int CreateObject(paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts, int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts)=0;
 
    sync conc virtual paroc_accesspoint getPSMRef()=0;
 

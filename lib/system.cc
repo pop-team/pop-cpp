@@ -30,11 +30,11 @@
 paroc_accesspoint paroc_system::appservice;
 paroc_accesspoint paroc_system::jobservice;
 paroc_accesspoint paroc_system::popcloner;
-paroc_string paroc_system::platform;
+POPString paroc_system::platform;
 std::ostringstream paroc_system::_popc_cout;
 
 //V1.3m
-paroc_string paroc_system::POPC_HostName;
+POPString paroc_system::POPC_HostName;
 #define LOCALHOST "localhost"
 //End modif
 
@@ -61,7 +61,7 @@ const char *paroc_system::paroc_errstr[17]=
 
 
 AppCoreService *paroc_system::mgr=NULL;
-paroc_string paroc_system::challenge;
+POPString paroc_system::challenge;
 
 paroc_system::paroc_system()
 {
@@ -86,7 +86,7 @@ paroc_system::paroc_system()
 #endif
     platform=str;
   }
-  POPC_HostName = paroc_string(""); //V1.3m
+  POPC_HostName = POPString(""); //V1.3m
 }
 
 
@@ -130,7 +130,7 @@ void paroc_system::perror(const paroc_exception *e)
 // ELSE IF try to use gethostname() and possibly env. variable POPC_DOMAIN
 // ELSE call GetIP()
 //---------------------------------------------------------------------------- 
-paroc_string paroc_system::GetHost()
+POPString paroc_system::GetHost()
 {
   if (POPC_HostName.Length()<1)
   {
@@ -167,11 +167,11 @@ paroc_string paroc_system::GetHost()
 // Try to determine the IP address of the machine.
 // If fail return the localhost IP = LOCALHOST
 //------------------------------------------------------
-paroc_string paroc_system::GetIP()
+POPString paroc_system::GetIP()
 {
-  paroc_string iface,ip;
+  POPString iface,ip;
   char* tmp;
-  ip = paroc_string(LOCALHOST);
+  ip = POPString(LOCALHOST);
 
   tmp=getenv("POPC_IP");
   if (tmp!=NULL)      // Env. variable POPC_IP is defined
@@ -268,7 +268,7 @@ int paroc_system::GetIP(int *iplist, int listsize)
   return n;
 }
 
-paroc_string paroc_system::GetDefaultInterface()
+POPString paroc_system::GetDefaultInterface()
 {
   char buff[1024], iface[16], net_addr[128];
   //char flags[64], mask_addr[128], gate_addr[128];
@@ -296,10 +296,10 @@ paroc_string paroc_system::GetDefaultInterface()
     fclose(fp);
   }
   if (!found) iface[0] = '\0';  // if not found iface = ""
-  return paroc_string(iface);
+  return POPString(iface);
 }
 
-bool paroc_system::GetIPFromInterface(paroc_string &iface, paroc_string &str_ip)
+bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip)
 {
   struct ifaddrs *addrs, *iap;
   struct sockaddr_in *sa;
@@ -407,42 +407,39 @@ bool paroc_system::Initialize(int *argc,char ***argv)
 
 void paroc_system::Finalize(bool normalExit)
 {
-  if (mgr!=NULL)
-  {
-    try
-    {
-      if (normalExit)
-      {
-        //Wait all object to be terminated!
-        int timeout=10;
-        int oldcount=0, count;
-
-        while ((count=mgr->CheckObjects())>0)
-        {
-          if (timeout<1800 && oldcount==count) timeout=timeout*4/3;
-          else timeout=10;
-
-          sleep(timeout);
-          oldcount=count;
-        }
+   if (mgr!=NULL){
+      try{
+         if (normalExit) {
+            //Wait all object to be terminated!
+            int timeout=1;
+            int oldcount=0, count;
+            int loop=0;
+            while ((count=mgr->CheckObjects())>0){            
+               if (timeout<1800 && oldcount==count){ 
+                  timeout=timeout*4/3;
+                  loop++;
+                  if(loop%10 == 0)
+                     timeout+=2;
+               } else {
+                  loop=0;
+                  timeout=1;
+               }
+               sleep(timeout);
+               oldcount=count;
+            }
+         } else {
+            mgr->KillAll();
+         }
+         mgr->Stop(challenge);
+         delete mgr;         
+      } catch (paroc_exception *e) {
+         paroc_system::perror(e->Extra());
+         delete e;
+      } catch (...) {
+         fprintf(stderr,"POP-C++ error on finalizing the application\n");
       }
-      else mgr->KillAll();
-
-      mgr->Stop(challenge);
-      delete mgr;
-      //  DEBUG("Application scope services are terminated");
-    }
-    catch (paroc_exception *e)
-    {
-      paroc_system::perror(e->Extra());
-      delete e;
-    }
-    catch (...)
-    {
-      fprintf(stderr,"POP-C++ error on finalizing the application\n");
-    }
-    mgr=NULL;
-  }
+      mgr=NULL;
+   }
 }
 
 

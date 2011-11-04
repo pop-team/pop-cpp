@@ -109,7 +109,7 @@ void paroc_buffer::Pop()
 {
 }
 
-void paroc_buffer::Pack(const paroc_string *list, int n)
+void paroc_buffer::Pack(const POPString *list, int n)
 {
 	if (n<=0 || list==NULL) return;
 	for (int i=0;i<n;i++,list++)
@@ -121,7 +121,7 @@ void paroc_buffer::Pack(const paroc_string *list, int n)
 	}
 }
 
-void paroc_buffer::UnPack(paroc_string *list, int n)
+void paroc_buffer::UnPack(POPString *list, int n)
 {
 	if (n<=0 || list==NULL) return;
 	paroc_array<char> tmpstr;

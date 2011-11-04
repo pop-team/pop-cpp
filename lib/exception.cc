@@ -28,7 +28,7 @@ paroc_exception & paroc_exception::operator =(paroc_exception &e)
 	info=e.Extra();
 	return *this;
 }
-const paroc_string paroc_exception::Extra()const
+const POPString paroc_exception::Extra()const
 {
 	return info;
 }
@@ -90,7 +90,7 @@ void paroc_exception::Serialize(paroc_buffer &buf, bool pack)
 		buf.Pack(&errcode,1);
 		buf.Pop();
 
-		buf.Push("info","paroc_string",1);
+		buf.Push("info","POPString",1);
 		buf.Pack(&info,1);
 		buf.Pop();
 	}
@@ -100,7 +100,7 @@ void paroc_exception::Serialize(paroc_buffer &buf, bool pack)
 		buf.UnPack(&errcode,1);
 		buf.Pop();
 
-		buf.Push("info","paroc_string",1);
+		buf.Push("info","POPString",1);
 		buf.UnPack(&info,1);
 		buf.Pop();
 	}

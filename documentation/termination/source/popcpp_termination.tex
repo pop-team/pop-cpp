@@ -1,0 +1,133 @@
+\documentclass[a4paper, 11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{verbatim}
+\usepackage{moreverb}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{listings} 
+\usepackage{lastpage}
+\usepackage[top=3cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+\usepackage{color}
+\usepackage{xcolor}
+
+%font change
+\renewcommand{\familydefault}{\sfdefault}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\nl}{\\[0.1cm]}
+\newcommand{\s}{\vspace{0.3cm}}
+\newcommand{\smore}{\vspace{0.6cm}}
+
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+
+\lstset{frame=single}
+
+\lstdefinelanguage{popc}{%
+   morekeywords={%
+   %od
+      od, url, power, @, 100, 80, machine, POPString, search
+  },
+  sensitive=true,
+  morestring=[b]',
+}
+
+\addto\captionsenglish{%
+  \renewcommand{\listfigurename}{}%
+	\renewcommand\refname{}
+}
+
+
+
+%Header and footer 
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+
+%Header definition
+\renewcommand{\headrulewidth}{0.5pt}
+\lhead{POP-C++ : Status on application termination}
+\rhead{Version 1.0}
+
+%Footer definition
+\renewcommand{\footrulewidth}{0.5pt}
+\cfoot{\today}
+\lfoot{Valentin Clément}
+\rfoot{Page \thepage ~on \pageref{LastPage}}
+
+%remove indent for paragraph
+\parindent0ex 
+
+%\setlength{\parskip2ex}
+
+
+
+
+
+
+
+
+%\pagebreak
+
+
+
+\begin{document}
+
+\input{title}
+%\newpage \thispagestyle{empty} \mbox{}\newpage
+
+
+
+\tableofcontents
+\pagebreak
+\section{Introduction}
+In a distributed application, the termination is a non trivial problem. In fact, when the main of the application is over, many parallel object can still be running. \\
+The main of the application should be able to determine when the whole application is ended. This document aims to explains the current status of the application termination in POP-C++ 2.0 and find a way to make it better. 
+
+
+\input{current}
+\pagebreak
+\input{newterm}
+
+\pagebreak
+\section{Table of figures}
+\listoffigures{}
+
+
+
+
+
+%
+% REFERENCES
+%
+
+\section{References}
+\begin{thebibliography}{9}
+\bibitem{vpopc1}
+	Adrian Wyssen,
+  	\emph{VirtualPOPC-1 : Project Report}.
+	EIA-FR, Switzerland, 
+	June-August 2010.
+	
+\bibitem{popcssh}
+	Valentin Clément,
+	\emph{POP-C++ over SSH Tunnel}.
+	EIA-FR, Fribourg, Switzerland,
+	September-November 2010.
+	
+\bibitem{popc_vs_addon_manual}
+	Valentin Clément,
+	\emph{POP-C++ Virtual-Secure : POP-C++ User and Installation manual add-on}.
+	EIA-FR, Fribourg, Switzerland, 
+	January 2011.
+
+\end{thebibliography}
+
+
+\end{document}

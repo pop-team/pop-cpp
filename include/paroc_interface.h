@@ -1,8 +1,13 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: interface base declaration for parclass objects
-*/
+/**
+ * File : accesspoint.h
+ * Author : Tuan Anh Nguyen
+ * Description : interface base declaration for parclass objects
+ * Creation date : -
+ * 
+ * Modifications :
+ * Authors		Date			Comment
+ * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
+ */
 
 #ifndef _POPC_INTERFACE_CORE_H
 #define _POPC_INTERFACE_CORE_H
@@ -60,6 +65,9 @@ public:
 	//  virtual const char * GetResource() const;
 
 	const paroc_accesspoint & GetAccessPoint() const;
+
+   //Get the access point and set the variable _noaddref to TRUE in this access point
+   const paroc_accesspoint & GetAccessPointForThis();
 
 	virtual void Serialize(paroc_buffer &buf, bool pack);
 

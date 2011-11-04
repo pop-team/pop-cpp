@@ -22,7 +22,7 @@
 
 using namespace std;
 
-AppCoreService::AppCoreService(const paroc_string &challenge, bool daemon, const paroc_string &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge)
+AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const POPString &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge)
 {
 
   /**
@@ -31,7 +31,7 @@ AppCoreService::AppCoreService(const paroc_string &challenge, bool daemon, const
     */
    POPString tmpChallenge = challenge;
    time_t now = time(NULL);
-   paroc_string ip = paroc_system::GetIP();
+   POPString ip = paroc_system::GetIP();
    char id[100];
    string tmp(tmpChallenge.GetString());
    locale loc; 
@@ -71,7 +71,7 @@ AppCoreService::~AppCoreService()
 	}
 }
 
-// bool AppCoreService::QueryService(const paroc_string &name)
+// bool AppCoreService::QueryService(const POPString &name)
 // {
 //   if (name==NULL) return false;
 
@@ -82,7 +82,7 @@ AppCoreService::~AppCoreService()
 //   return false;
 // }
 
-bool AppCoreService::QueryService(const paroc_string &name, paroc_service_base &service)
+bool AppCoreService::QueryService(const POPString &name, paroc_service_base &service)
 {
 	if (name.Length()<=0) return false;
 
@@ -99,7 +99,7 @@ bool AppCoreService::QueryService(const paroc_string &name, paroc_service_base &
 	return false;
 }
 
-bool AppCoreService::QueryService(const paroc_string &name, paroc_accesspoint &service)
+bool AppCoreService::QueryService(const POPString &name, paroc_accesspoint &service)
 {
 	if (name.Length()<=0) return false;
 
@@ -116,7 +116,7 @@ bool AppCoreService::QueryService(const paroc_string &name, paroc_accesspoint &s
 	return false;
 }
 
-bool AppCoreService::RegisterService(const paroc_string &name, const paroc_service_base &newservice)
+bool AppCoreService::RegisterService(const POPString &name, const paroc_service_base &newservice)
 {
 	if (name.Length()<=0) return false;
 
@@ -134,7 +134,7 @@ bool AppCoreService::RegisterService(const paroc_string &name, const paroc_servi
 	return true;
 }
 
-bool AppCoreService::UnregisterService(const paroc_string &name)
+bool AppCoreService::UnregisterService(const POPString &name)
 {
 	if (name.Length()<=0) return false;
 
@@ -215,6 +215,6 @@ void AppCoreService::LoadAddOn()
  * Getter for the POP Application Unique ID
  * @return a POPString containing the POPAppID
  */
-paroc_string AppCoreService::GetPOPCAppID(){
+POPString AppCoreService::GetPOPCAppID(){
    return _popcAppId;
 }

@@ -19,7 +19,7 @@
 #include "nodethread.h"
 
 //POPCSearchNode's constructor with challenge string (necessary to stop the object) and deamon boolean value to put the object in a deamon mode
-POPCSearchNode::POPCSearchNode(const paroc_string &challenge, bool deamon) : paroc_service_base(challenge) {
+POPCSearchNode::POPCSearchNode(const POPString &challenge, bool deamon) : paroc_service_base(challenge) {
 	popc_node_log("PSN Created ...");
 	logicalClock=0;
    psn_currentJobs=0;
@@ -40,24 +40,24 @@ POPCSearchNode::~POPCSearchNode(){
 
 
 // Set the ID of the POPCSearchNode
-void POPCSearchNode::setPOPCSearchNodeId(paroc_string nodeId){
+void POPCSearchNode::setPOPCSearchNodeId(POPString nodeId){
 	nodeInfo.nodeId = nodeId;
 	sprintf(log, "[PSN] POPCSearchNode id : %s", nodeInfo.nodeId.GetString());
 	popc_node_log(log);
 }
 
 // Get the ID of this POPCSearchNode
-paroc_string POPCSearchNode::getPOPCSearchNodeId(){
+POPString POPCSearchNode::getPOPCSearchNodeId(){
     return nodeInfo.nodeId;
 }
 
 // Set the operating system
-void POPCSearchNode::setOperatingSystem(paroc_string operatingSystem){
+void POPCSearchNode::setOperatingSystem(POPString operatingSystem){
     nodeInfo.operatingSystem = operatingSystem;
 }
 
 // Get the operating system
-paroc_string POPCSearchNode::getOperatingSystem(){
+POPString POPCSearchNode::getOperatingSystem(){
     return nodeInfo.operatingSystem;
 }
 
@@ -112,22 +112,22 @@ int POPCSearchNode::getDiskSpace(){
 }
 
 //Set the protocol
-void POPCSearchNode::setProtocol(paroc_string prot){
+void POPCSearchNode::setProtocol(POPString prot){
     nodeInfo.protocol = prot;
 }
 
 //Get the protocol
-paroc_string POPCSearchNode::getProtocol(){
+POPString POPCSearchNode::getProtocol(){
     return nodeInfo.protocol;
 }
 
 //Set the encoding
-void POPCSearchNode::setEncoding(paroc_string enc){
+void POPCSearchNode::setEncoding(POPString enc){
     nodeInfo.encoding = enc;
 }
 
 //Get the encoding
-paroc_string POPCSearchNode::getEncoding(){
+POPString POPCSearchNode::getEncoding(){
     return nodeInfo.encoding;
 }
 
@@ -234,11 +234,11 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
     actualReqSyn.lock();
     
     POPCSearchNodeInfos results;
-    map<paroc_string, POPCSearchNodeInfos>::iterator i;
+    map<POPString, POPCSearchNodeInfos>::iterator i;
     
-    // ! for-statement because of problem with map comparison and paroc_string !
+    // ! for-statement because of problem with map comparison and POPString !
     for(i=actualReq.begin(); i != actualReq.end(); i++){
-        paroc_string id = (*i).first;
+        POPString id = (*i).first;
         if(strcmp(id.GetString(), req.getUniqueId().GetString()) == 0){
             results = i->second;
             break;
@@ -270,7 +270,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
          // received exploration list
          for(i = neighborsList.begin(); i != neighborsList.end(); i++){
             if(!oldEL.isIn((*i)->getPOPCSearchNodeId())){
-				   paroc_string nid;
+				   POPString nid;
 				   nid = (*i)->getPOPCSearchNodeId();
 				   //sprintf(log, "FORWARD;DEST;%s", nid.GetString());
 				   popc_node_log(log);
@@ -286,7 +286,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
 	   popc_node_log(log);
 
       // check if the request has already been asked
-      list<paroc_string>::iterator k;
+      list<POPString>::iterator k;
       for(k = knownRequests.begin(); k != knownRequests.end(); k++){
          if(strcmp(k->GetString(),req.getUniqueId().GetString()) == 0){
 			   sprintf(log, "[PSN] ALREADY_ASKED_REQUEST;%s", req.getUniqueId().GetString());
@@ -324,7 +324,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
 	      /* If it's the local node or it's the last node, send directly the answer. Otherwise, send to the next node to reroute 
          the message */
          if(!req.getWayBack().isLastNode()){
-            paroc_string listwb = req.getWayBack().getAsString();
+            POPString listwb = req.getWayBack().getAsString();
             sprintf(log, "[PSN] NEED_REROUTE;WAYBACK;%s", listwb.GetString());
       	   popc_node_log(log);
             rerouteResponse(*resp, req.getWayBack());
@@ -345,7 +345,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
          // received exploration list
          for(i = neighborsList.begin(); i != neighborsList.end(); i++){
             if(!oldEL.isIn((*i)->getPOPCSearchNodeId())){
-               paroc_string nid;
+               POPString nid;
      			   nid = (*i)->getPOPCSearchNodeId();
                sprintf(log, "[PSN] FORWARD;DEST;%s", nid.GetString());
                popc_node_log(log);
@@ -368,7 +368,7 @@ void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb){
    if(wb.isLastNode()){
       //Create the interface to contact the POPCSearchNode
       paroc_accesspoint nextNodeAP;
-      paroc_string nextNodeStr = wb.getNextNode();
+      POPString nextNodeStr = wb.getNextNode();
       nextNodeAP.SetAccessString(nextNodeStr.GetString());
       POPCSearchNode nextNode(nextNodeAP);
       //Give the response to the initiator
@@ -378,7 +378,7 @@ void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb){
       popc_node_log(log);
    } else {
       //Get the next node to contact 
-      paroc_string nextNodeStr = wb.getNextNode();
+      POPString nextNodeStr = wb.getNextNode();
       wb.deleteNextNode();
      
       //Create the interface to contact the POPCSearchNode
@@ -410,11 +410,11 @@ void POPCSearchNode::callbackResult(Response resp){
 	popc_node_log(log);
 	//End for test
    actualReqSyn.lock();
-   map<paroc_string, POPCSearchNodeInfos>::iterator i;
+   map<POPString, POPCSearchNodeInfos>::iterator i;
 
    // visit the currently running list
    for(i=actualReq.begin(); i != actualReq.end(); i++){
-      paroc_string id = (*i).first;
+      POPString id = (*i).first;
       // if the request's uniqueId is present, add the response to the list
       // and break the for-statement.
       if(strcmp(id.GetString(), resp.getReqUniqueId().GetString()) == 0){
@@ -537,8 +537,8 @@ bool POPCSearchNode::checkResource(Request req){
 }
 
 // Return a list of neighbors' nodeId
-list<paroc_string> POPCSearchNode::getNeighbors(){
-    list<paroc_string> neighbors;
+list<POPString> POPCSearchNode::getNeighbors(){
+    list<POPString> neighbors;
     list<POPCSearchNode *>::iterator i;
     for(i = neighborsList.begin(); i != neighborsList.end(); i++){
         neighbors.push_back((*i)->getPOPCSearchNodeId());
@@ -557,12 +557,12 @@ paroc_accesspoint POPCSearchNode::getJobMgrRef(){
 }
 
 //Set the SSH public key
-void POPCSearchNode::setPKI(paroc_string pk){
+void POPCSearchNode::setPKI(POPString pk){
    nodeInfo.pki=pk;
 }
 
 //Get the SSH Public key
-paroc_string POPCSearchNode::getPKI(){
+POPString POPCSearchNode::getPKI(){
    return nodeInfo.pki;
 }
 

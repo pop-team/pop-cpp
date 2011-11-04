@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 
 	paroc_buffer_factory *bf=client->GetBufferFactory();
 	paroc_buffer *buffer=bf->CreateBuffer();
-	paroc_string name;
+	POPString name;
 	if (argc>2)
 	{
 		name=argv[2];

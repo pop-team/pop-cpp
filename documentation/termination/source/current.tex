@@ -1,0 +1,14 @@
+\section{Current status}
+\label{currentstatus}
+This chapter aims to explain the current situation of the application termination in POP-C++. 
+
+\subsection{Parallel object destructor}
+As a parallel object is divided into two parts (interface-side and broker-side), so the termination of a parallel object is also divided into two parts. \s
+
+\textbf{Interface-side}\\
+The termination on the interface side is the easiest one. Indeed, the interface acts as a normal object and its destructor is called. When this destructor is called, the combox and the buffer linked with this interface will be destroyed as well. This action will drag along the destruction of the broker-side of the parallel object. \s
+
+\textbf{Broker-side}\\
+The borker-side will notice the connection lose and make a DecRef() on its related object. Once the instance counter reaches 0, the threads receiving the request will run until all invocations on the object have been terminated. Once this point is reached, the object itself will be destroyed. 
+
+\subsection{Why the termination is slow ?}

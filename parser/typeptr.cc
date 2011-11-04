@@ -1,15 +1,47 @@
+
 #include "string.h"
 #include "stdio.h"
 #include "type.h"
 
 //Pointer of a type....
 
+/*
 TypePtr::TypePtr(char *name, int level, DataType *base): DataType(name)
 {
 	typebase=base;
 	assert(base!=NULL);
 	nptr=(level<=0)? 1: level;
 	size=NULL;
+	
+	//tmp
+	constPos.clear();
+	
+	//tmp
+	do
+	{
+		constPos.push_back(false);
+		level--;
+	} while (level > 0);
+}
+*/
+
+TypePtr::TypePtr(char *name, int level, DataType *base, std::vector<bool> constPositions): DataType(name)
+{
+	typebase=base;
+	assert(base!=NULL);
+	//nptr=(level<=0)? 1: level;
+	size=NULL;
+	
+	if(level <= 0){
+		nptr=1;
+		constPos.clear();
+		constPos.push_back(false);
+	}
+	else
+	{
+		nptr= level;
+		constPos.assign(constPositions.rbegin(), constPositions.rend()); // Copy, without using copy constructor in reverse order !
+	}
 }
 
 TypePtr::~TypePtr()
@@ -101,7 +133,18 @@ bool TypePtr::GetDeclaration(const char *varname, char *output)
 
 	if (!typebase->GetDeclaration(NULL,output)) return false;
 	strcat(output," ");
-	for (int i=0;i<nptr;i++) strcat(output,"*");
+
+	for (int i=0;i<nptr;i++) {
+		strcat(output,"*");
+		if(i < constPos.size())
+		{
+			if(constPos[i])
+			{ 
+				strcat(output,"const ");
+			}
+		}
+		
+	} 
 	if (varname!=NULL) strcat(output,varname);
 	return true;
 }

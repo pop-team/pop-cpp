@@ -358,6 +358,7 @@ public:
 
 	bool isVirtual;
 	bool isPureVirtual;
+	bool isGlobalConst; // add by david
 
 	bool isConcurrent;
 	bool isMutex;
@@ -373,6 +374,7 @@ public:
 	Param returnparam;
 
 protected:
+	virtual void GenerateReturn(CArrayChar &output, bool header, bool interface);
 	virtual void GenerateReturn(CArrayChar &output, bool header);
 	virtual void GeneratePostfix(CArrayChar &output, bool header);
 	virtual void GenerateName(CArrayChar &output, bool header);

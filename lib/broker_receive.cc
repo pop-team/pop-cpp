@@ -195,12 +195,12 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Reset();
 			buf->SetHeader(h);
 			int status=0;
-			paroc_string enclist;
+			POPString enclist;
 			paroc_buffer_factory_finder *finder=paroc_buffer_factory_finder::GetInstance();
 			int count=finder->GetFactoryCount();
 			for (int i=0;i<count;i++)
 			{
-				paroc_string t;
+				POPString t;
 				if (finder->GetBufferName(i,t))
 				{
 					enclist+=t;
@@ -210,11 +210,11 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Push("code","int",1);
 			buf->Pack(&status,1);
 			buf->Pop();
-			buf->Push("platform","paroc_string",1);
+			buf->Push("platform","POPString",1);
 			buf->Pack(&paroc_system::platform,1);
 			buf->Pop();
 
-			buf->Push("info","paroc_string",1);
+			buf->Push("info","POPString",1);
 			buf->Pack(&enclist,1);
 			buf->Pop();
 			buf->Send(req.from);
@@ -265,8 +265,8 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	case 3:
 	{
 		//GetEncoding call...
-		paroc_string enc;
-		buf->Push("encoding","paroc_string",1);
+		POPString enc;
+		buf->Push("encoding","POPString",1);
 		buf->UnPack(&enc,1);
 		buf->Pop();
 		paroc_buffer_factory *fact=paroc_buffer_factory_finder::GetInstance()->FindFactory(enc);

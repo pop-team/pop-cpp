@@ -24,7 +24,7 @@ paroc_buffer * paroc_buffer_raw_factory::CreateBuffer() {
 	return bufRAW;
 }
 
-bool paroc_buffer_raw_factory::GetBufferName(paroc_string & bufferName) {
+bool paroc_buffer_raw_factory::GetBufferName(POPString & bufferName) {
 	bufferName="raw";
 	return true;
 }

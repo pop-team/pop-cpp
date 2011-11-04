@@ -60,7 +60,7 @@ void NodeThread::stop(){
  * @param challenge  Challenge string used to stop the services
  * @param deamon     If TRUE, the parallel object will run in deamon mode
  */
-VirtSecurePOPCSearchNode::VirtSecurePOPCSearchNode(const paroc_string &challenge, 
+VirtSecurePOPCSearchNode::VirtSecurePOPCSearchNode(const POPString &challenge, 
    bool deamon) : VirtualPOPCSearchNode(challenge, deamon) {
 	popc_node_log("VirtualPOPCSearchNode Created ...");
 }
@@ -142,7 +142,7 @@ POPCSearchNodeInfos VirtSecurePOPCSearchNode::launchDiscovery(Request req, int t
 
       //Add the main PKI in the request
       VirtualPOPCSecurityManager psm(_localPSM);
-      paroc_string mainPKI = psm.getMainPKIFromMapping(req.getPOPAppId());
+      POPString mainPKI = psm.getMainPKIFromMapping(req.getPOPAppId());
       if(strcmp(mainPKI, "") == 0){
          //popc_node_log("[VSPSN] SET_SAME_KEY");
          req.setMainPKI(req.getPKI());
@@ -182,11 +182,11 @@ POPCSearchNodeInfos VirtSecurePOPCSearchNode::launchDiscovery(Request req, int t
     actualReqSyn.lock();
     
     POPCSearchNodeInfos results;
-    map<paroc_string, POPCSearchNodeInfos>::iterator i;
+    map<POPString, POPCSearchNodeInfos>::iterator i;
     
-    // ! for-statement because of problem with map comparison and paroc_string !
+    // ! for-statement because of problem with map comparison and POPString !
     for(i=actualReq.begin(); i != actualReq.end(); i++){
-        paroc_string id = (*i).first;
+        POPString id = (*i).first;
         if(strcmp(id.GetString(), req.getUniqueId().GetString()) == 0){
             results = i->second;
             break;
@@ -218,7 +218,7 @@ void VirtSecurePOPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspo
          // received exploration list
          for(i = neighborsList.begin(); i != neighborsList.end(); i++){
             if(!oldEL.isIn((*i)->getPOPCSearchNodeId())){
-				   paroc_string nid;
+				   POPString nid;
 				   nid = (*i)->getPOPCSearchNodeId();
 				   sprintf(log, "[VSPSN] FORWARD;DEST;%s", nid.GetString());
 				   popc_node_log(log);
@@ -246,7 +246,7 @@ void VirtSecurePOPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspo
       psm.addMainPKIMapping(req.getPOPAppId(), req.getMainPKI());
       psm.addMainAPMapping(req.getPOPAppId(), _psm);
       // check if the request has already been asked
-      list<paroc_string>::iterator k;
+      list<POPString>::iterator k;
       for(k = knownRequests.begin(); k != knownRequests.end(); k++){
          if(strcmp(k->GetString(),req.getUniqueId().GetString()) == 0){
 			   sprintf(log, "[VSPSN] ALREADY_ASKED_REQUEST;%s", req.getUniqueId().GetString());
@@ -285,7 +285,7 @@ void VirtSecurePOPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspo
           * the message 
           */
          if(!req.getWayBack().isLastNode()){
-            paroc_string listwb = req.getWayBack().getAsString();
+            POPString listwb = req.getWayBack().getAsString();
             sprintf(log, "[VSPSN] NEED_REROUTE_RESP;WAYBACK;%s", listwb.GetString());
       	   popc_node_log(log);
             rerouteResponse(*resp, req.getWayBack());
@@ -348,10 +348,10 @@ void VirtSecurePOPCSearchNode::callbackResult(Response resp){
 	popc_node_log(log);
 	//End for test
    actualReqSyn.lock();
-   map<paroc_string, POPCSearchNodeInfos>::iterator i;
+   map<POPString, POPCSearchNodeInfos>::iterator i;
     // visit the currently running list
     for(i=actualReq.begin(); i != actualReq.end(); i++){
-        paroc_string id = (*i).first;
+        POPString id = (*i).first;
         // if the request's uniqueId is present, add the response to the list
         // and break the for-statement.
         if(strcmp(id.GetString(), resp.getReqUniqueId().GetString()) == 0){

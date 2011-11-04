@@ -5,6 +5,7 @@
 #define MAXSTLTYPES 8
 
 #include "parser_common.h"
+#include <vector>
 
 #define TYPE_BASE 0
 #define TYPE_STRUCT 1
@@ -174,7 +175,8 @@ protected:
 class TypePtr: public DataType
 {
 public:
-	TypePtr(char *name, int level, DataType *base);
+	//TypePtr(char *name, int level, DataType *base);
+	TypePtr(char *name, int level, DataType *base, std::vector<bool> constPositions);
 	~TypePtr();
 
 	virtual int CanMarshal();
@@ -193,6 +195,7 @@ protected:
 	DataType *typebase;
 	int nptr;
 	char *size;
+	std::vector<bool> constPos; // map which pointers are constant
 
 };
 

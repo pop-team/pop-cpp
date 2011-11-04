@@ -26,6 +26,7 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
 	initDone=false;
 	endid=11;
 	myFile=NULL;
+
 	startline=endline=0;
 	strcpy(constructor.name,clname);
 	constructor.id=10;
@@ -410,13 +411,20 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface)
 		memberList[i]->GenerateHeader(code,interface);
 	}
 
+   //Add the declaration of the __POPThis variable
+   sprintf(str,"%s* __POPThis_%s; \n", name, name);
+   code.InsertAt(-1,str,strlen(str));
+
 	if (interface)
 	{
+
 		sprintf(str,"\npublic:\nvirtual const char *ClassName() { return \"%s\"; };",name);
 		code.InsertAt(-1,str,strlen(str));
 
-		//Generate constructor from paroc_accesspoint...
+      
+    
 
+		//Generate constructor from paroc_accesspoint...
 		sprintf(str,"\npublic:\n%s(const paroc_accesspoint &p)",name);
 		code.InsertAt(-1,str,strlen(str));
 
@@ -473,7 +481,6 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface)
 // 	  code.InsertAt(-1," {};\n",5);
 // 	}
 	}
-
 	strcpy(str,"\n};\n");
 	code.InsertAt(-1,str, strlen(str));
 

@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS=no-dependencies
 
 CXX=@top_srcdir@/parser/popcc
 
-POPC_FLAGS=-parocdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -cxx=@CXX@ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_
+POPC_FLAGS=-popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -cxx=@CXX@ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_
 
 if LINUX
 AM_CXXFLAGS= -D_LINUX $(POPC_FLAGS)

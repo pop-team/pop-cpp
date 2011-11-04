@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 		printf("Usage: alloctest jobmgrcontact object howmany\n");
 		return 1;
 	}
-	paroc_string objname=argv[2];
+	POPString objname=argv[2];
 	paroc_accesspoint job;
 	job.SetAccessString(argv[1]);
 	paroc_list<paroc_accesspoint> resources;

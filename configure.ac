@@ -2,13 +2,16 @@
 # Process this file with autoconf to produce a configure script.
 # Code updated by clementval begins with #Updated by clementval and ends with #End of update
 
-AC_PREREQ(2.57)
+AC_PREREQ([2.67])
+#AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
+#AC_CONFIG_SRCDIR([config.h])
+#AC_CONFIG_HEADERS([config.h])
 
 #AC_CONFIG_SRCDIR([lex.yy.cc])
 #AC_CONFIG_HEADER([config.h])
 
 # Checks for programs.
-AC_INIT( popc, 1.3.1 beta ViSaG)
+AC_INIT( popc, 2.0)
 AM_INIT_AUTOMAKE(no-dependencies)
 
 AC_CANONICAL_HOST
@@ -121,6 +124,8 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_LEX
 AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_LIBTOOL
 
@@ -232,8 +237,7 @@ AC_CONFIG_FILES([scripts/popc_script_setup], [chmod +x scripts/popc_script_setup
 AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile)
 AC_CONFIG_FILES(model/Makefile)
 AC_CONFIG_FILES(modules/Makefile modules/raw-zlib/Makefile  modules/xdr-zlib/Makefile)
-AC_CONFIG_FILES(test/Makefile)
-AC_CONFIG_FILES(test/method/Makefile test/tree/Makefile)
+
 
 test x$globus = xfalse  || AC_CONFIG_FILES(globus/globus_header)
 AC_OUTPUT

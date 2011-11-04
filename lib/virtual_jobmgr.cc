@@ -38,14 +38,14 @@
  * ViSaG : clementval
  * VirtualJobMgr constructor
  * @param daemon     Tell if the parallel object is a daemon   
- * @param conf       URL of the configuration file as a paroc_string
+ * @param conf       URL of the configuration file as a POPString
  * @param challenge  The challenge string used to shutdown the service
  * @param url        
  * @param nodeAccess Access Point of the associated PSN
  * WARNING : DO NEVER CREATE A PARALLEL OBJECT WITHOUT THE OD.URL INSIDE THE JOBMGR CONSTRUCTOR
  */
-VirtualJobMgr::VirtualJobMgr(bool daemon, const paroc_string &virtconf, const paroc_string &conf, 
-   const paroc_string &challenge, const paroc_string &url, const paroc_accesspoint &nodeAccess,
+VirtualJobMgr::VirtualJobMgr(bool daemon, const POPString &virtconf, const POPString &conf, 
+   const POPString &challenge, const POPString &url, const paroc_accesspoint &nodeAccess,
    const paroc_accesspoint &clonerRef, const paroc_accesspoint &psmRef) : JobMgr(daemon, conf, challenge, url, nodeAccess, psmRef) {
 
    popc_node_log("VirtualJobMgr Started %s", nodeAccess.GetAccessString());
@@ -178,7 +178,7 @@ VirtualJobMgr::VirtualJobMgr(bool daemon, const paroc_string &virtconf, const pa
          } else if (key.compare("popc_esx_snapshot") == 0){
             cleanWorkerSnapshotName.append(value);
             POPvm newVM;
-            paroc_string _vm_name = workerName.c_str();
+            POPString _vm_name = workerName.c_str();
             newVM.setName(_vm_name);
             if(vm_list.size()==0){
                std::string file;
@@ -190,7 +190,7 @@ VirtualJobMgr::VirtualJobMgr(bool daemon, const paroc_string &virtconf, const pa
             newVM.setConfigFileName(configFile);
             newVM.setVolumeName(datastoreName);
                   
-            paroc_string _vm_snap = cleanWorkerSnapshotName.c_str();
+            POPString _vm_snap = cleanWorkerSnapshotName.c_str();
             newVM.setSnapshotName(_vm_snap);
             POPString _vm_hostuser = hostUsername.c_str();
             newVM.setHostUsername(_vm_hostuser);
@@ -432,7 +432,7 @@ int VirtualJobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAp
 	char *argv[1024];
 	char *tmp;
 	char sep[]=" \n\r\t";
-	paroc_string str;
+	POPString str;
 	int n=0;
    
    popc_node_log("[VJM] VIRTUAL: Prepare virtual machine now. %s/%s", popAppId.GetString(), reqID.GetString());

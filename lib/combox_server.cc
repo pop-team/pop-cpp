@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 
 	server->Create(0,true);
 
-	paroc_string addr;
+	POPString addr;
 	if (!server->GetUrl(addr))
 	{
 		server->Destroy();
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 
 	paroc_buffer_factory *bf=server->GetBufferFactory();
 	paroc_buffer *buffer=bf->CreateBuffer();
-	paroc_string name;
+	POPString name;
 
 	paroc_array<char> buf;
 
