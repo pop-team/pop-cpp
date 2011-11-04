@@ -496,7 +496,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-treePROGRAMS \
+clean-am: clean-generic clean-libtool clean-local clean-treePROGRAMS \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -566,7 +566,7 @@ uninstall-am: uninstall-treePROGRAMS uninstall-treeSCRIPTS
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-treePROGRAMS ctags distclean \
+	clean-libtool clean-local clean-treePROGRAMS ctags distclean \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
@@ -590,6 +590,9 @@ obj.map:
 	./tree.obj -listlong > obj.map
 run: obj.map
 	popcrun obj.map ./tree.main 2 3
+
+clean-local:
+	rm -rf obj.map
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
