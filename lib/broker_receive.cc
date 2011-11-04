@@ -162,18 +162,21 @@ bool paroc_broker::OnNewConnection(paroc_connection *conn)
 	return true;
 }
 
+/**
+ * This method is called when a connection with an interface is closed.
+ */
 bool paroc_broker::OnCloseConnection(paroc_connection *conn)
 {
 	if (obj!=NULL)
 	{
-      std::ofstream myfile;
+    /*  std::ofstream myfile;
       myfile.open("/tmp/connectionclose", std::ios::app);
       time_t now;
       time(&now);
       myfile << ctime(&now) << std::endl;
       myfile.close();
 		int ret=obj->DecRef();
-		if (ret<=0) execCond.broadcast();
+		if (ret<=0) execCond.broadcast();*/
 	}
 	return true;
 	//(state==POPC_STATE_RUNNING);
