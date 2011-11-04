@@ -26,6 +26,7 @@ POPCSearchNode::POPCSearchNode(const POPString &challenge, bool deamon) : paroc_
    psn_currentJobs=0;
 
 #ifdef __APPLE__
+	popc_node_log("Initialize semaphor for DARWIN arch");
    pt_locker == NULL;
 #else
 	sem_t locker;
@@ -223,7 +224,9 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
 #endif
 		NodeThread *timer = new NodeThread(UNLOCK_TIMEOUT, GetAccessPoint());
 		timer->create();
-		sem_wait(pt_locker);
+		if(sem_wait(pt_locker) != 0){
+			popc_node_log("SEMAPHOR ERROR: The semaphor couldn't not be blocked");
+		}
 		timer->stop();
 #ifdef __APPLE__
 		sem_unlink("popc_sem_resdisc");
@@ -253,7 +256,7 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
 
    if(!req.isEndRequest()){
       sprintf(log, "[PSN] RESULTS;%d", results.getNodeInfos().size());
-   	popc_node_log(log);
+      popc_node_log(log);
    }
    return results;
 }
