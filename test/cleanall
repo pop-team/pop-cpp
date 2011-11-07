@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# script permitting cleaning up of all test directories
+# JFR / 9-sep-2011
+#                         
+for i in 	barrier \
+		callback \
+		classparam \
+		constparam \
+		exception \
+		heritage \
+		heritageparam1 \
+		heritageparam2 \
+		jobManager \
+		matrixNB \
+		method \
+		param \
+		passparam \
+		serialize_vect \
+		structparam \
+		templateparam \
+		tree \
+		vectorint1 \
+		vectorint2 \
+		vectorx
+do
+	cd $i
+	make clean
+	cd ..
+done
