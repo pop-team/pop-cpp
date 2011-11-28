@@ -419,7 +419,7 @@ void paroc_system::Finalize(bool normalExit)
                   timeout=timeout*4/3;
                   loop++;
                   if(loop%10 == 0)
-                     timeout+=2;
+                     timeout+=1;
                } else {
                   loop=0;
                   timeout=1;

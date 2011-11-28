@@ -57,7 +57,7 @@ paroc_combox_socket::paroc_combox_socket()
 	index=0;
 	nready=0;
 	isCanceled=false;
-   isServer=false; //TODO Check 
+   isServer=false;
 }
 
 paroc_combox_socket::~paroc_combox_socket()
@@ -67,7 +67,7 @@ paroc_combox_socket::~paroc_combox_socket()
 
 bool paroc_combox_socket::Create(int port, bool server)
 {
-	Close(); //TODO isServer is not initialized when we call Create for the first time
+	Close(); 
 	isServer=server;
 
 	protoent *ppe;

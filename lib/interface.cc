@@ -152,8 +152,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p)
    if(!p.IsEmpty());
    	Bind(p);
 
-   if(p.GetNoAddRef())
-      DecRef();
+   if(p.GetNoAddRef()) DecRef();
    
 }
 
@@ -200,10 +199,10 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer)
  */
 paroc_interface::~paroc_interface()
 {
-   
+   // printf("INTERFACE DESTRCUTOR CALLED\n");
    // DEV TESTING START
    if(!accesspoint.IsService()){
-      DecRef();
+     // DecRef();
    }
    // DEV TESTING END
 	Release();
