@@ -141,8 +141,6 @@ protected:
 	paroc_od od;
 
 	paroc_mutex _paroc_imutex;
-   // ** TEST FOR SERVICE 
-   bool _isService;
 
 private:
    /**
