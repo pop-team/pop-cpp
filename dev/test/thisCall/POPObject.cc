@@ -19,32 +19,32 @@ POPObject::~POPObject()
  */
 void POPObject::fromSyncConc(int sem)
 {
-   if(__POPThis_POPObject != NULL){
+   if(this != NULL){
       switch(sem){
          case SYNCSEQ:
             cout << "--> (1) Call from sync conc to sync seq" << popcendl;
-            (*__POPThis_POPObject).toSyncSeq(1); 
+            (*this).toSyncSeq(1); 
             break;
          case SYNCCONC:
             cout << "--> (1) Call from sync conc to sync conc" << popcendl;
-            (*__POPThis_POPObject).toSyncConc(1); 
+            (*this).toSyncConc(1); 
             break;
          case SYNCMUTEX:           
             cout << "--> (1) Call from sync conc to sync mutex (NOT POSSIBLE)" << popcendl;
             break;
          case ASYNCSEQ:
             cout << "--> (1) Call from sync conc to async seq" << popcendl;
-            (*__POPThis_POPObject).toAsyncSeq(1); 
+            (*this).toAsyncSeq(1); 
             break;
          case ASYNCCONC:
             cout << "--> (1) Call from sync conc to async conc" << popcendl;
-            (*__POPThis_POPObject).toAsyncConc(1); 
+            (*this).toAsyncConc(1); 
             break;
          case ASYNCMUTEX:
             cout << "--> (1) Call from sync conc to async mutex (NOT RECOMMENDED)" << popcendl;
-            (*__POPThis_POPObject).toAsyncMutex(1); 
+            (*this).toAsyncMutex(1); 
             break;     
-      }
+      } 
    }
 }
 
@@ -54,29 +54,29 @@ void POPObject::fromSyncConc(int sem)
  */
 void POPObject::fromSyncSeq(int sem)
 {
-    if(__POPThis_POPObject != NULL){
+    if(this != NULL){
       switch(sem){
          case SYNCSEQ:
             cout << "--> (2) Call from sync seq to sync seq (NOT POSSIBLE)" << popcendl;
             break;
          case SYNCCONC:
             cout << "--> (2) Call from sync seq to sync conc" << popcendl;
-            (*__POPThis_POPObject).toSyncConc(2); 
+            (*this).toSyncConc(2); 
             break;
          case SYNCMUTEX:           
             cout << "--> (2) Call from sync seq to sync mutex (NOT POSSIBLE)" << popcendl;
             break;
          case ASYNCSEQ:
             cout << "--> (2) Call from sync seq to async seq" << popcendl;
-            (*__POPThis_POPObject).toAsyncSeq(2); 
+            (*this).toAsyncSeq(2); 
             break;
          case ASYNCCONC:
             cout << "--> (2) Call from sync seq to async conc" << popcendl;
-            (*__POPThis_POPObject).toAsyncConc(2); 
+            (*this).toAsyncConc(2); 
             break;
          case ASYNCMUTEX:
             cout << "--> (2) Call from sync seq to async mutex (NOT RECOMMENDED)" << popcendl;
-            (*__POPThis_POPObject).toAsyncMutex(2); 
+            (*this).toAsyncMutex(2); 
             break;     
       }
    }
@@ -88,7 +88,7 @@ void POPObject::fromSyncSeq(int sem)
  */
 void POPObject::fromSyncMutex(int sem)
 {
-      if(__POPThis_POPObject != NULL){
+      if(this != NULL){
       switch(sem){
          case SYNCSEQ:
             cout << "--> (3) Call from sync mutex to sync seq (NOT POSSIBLE)" << popcendl; 
@@ -101,15 +101,15 @@ void POPObject::fromSyncMutex(int sem)
             break;
          case ASYNCSEQ:
             cout << "--> (3) Call from sync mutex to async seq" << popcendl;
-            (*__POPThis_POPObject).toAsyncSeq(3); 
+            (*this).toAsyncSeq(3); 
             break;
          case ASYNCCONC:
             cout << "--> (3) Call from sync mutex to async conc" << popcendl;
-            (*__POPThis_POPObject).toAsyncConc(3); 
+            (*this).toAsyncConc(3); 
             break;
          case ASYNCMUTEX:
             cout << "--> (3) Call from sync mutex to async mutex (NOT RECOMMENDED)" << popcendl;
-            (*__POPThis_POPObject).toAsyncMutex(3); 
+            (*this).toAsyncMutex(3); 
             break;     
       }
    }
@@ -121,26 +121,26 @@ void POPObject::fromSyncMutex(int sem)
  */
 void POPObject::fromAsyncConc(int sem)
 {
-  if(__POPThis_POPObject != NULL){
+  if(this != NULL){
       switch(sem){
          case SYNCSEQ:
             cout << "--> (4) Call from async conc to sync seq" << popcendl;
-            (*__POPThis_POPObject).toSyncSeq(4); 
+            (*this).toSyncSeq(4); 
             break;
          case SYNCCONC:
             cout << "--> (4) Call from async conc to sync conc" << popcendl;
-            (*__POPThis_POPObject).toSyncConc(4); 
+            (*this).toSyncConc(4); 
             break;
          case SYNCMUTEX:           
             cout << "--> (4) Call from async conc to sync mutex (NOT POSSIBLE)" << popcendl;
             break;
          case ASYNCSEQ:
             cout << "--> (4) Call from async conc to async seq" << popcendl;
-            (*__POPThis_POPObject).toAsyncSeq(4); 
+            (*this).toAsyncSeq(4); 
             break;
          case ASYNCCONC:
             cout << "--> (4) Call from async conc to async conc" << popcendl;
-            (*__POPThis_POPObject).toAsyncConc(4); 
+            (*this).toAsyncConc(4); 
             break;
          case ASYNCMUTEX:
             cout << "--> (4) Call from async conc to async mutex (NOT RECOMMENDED)" << popcendl;
@@ -155,29 +155,29 @@ void POPObject::fromAsyncConc(int sem)
  */
 void POPObject::fromAsyncSeq(int sem)
 {
-   if(__POPThis_POPObject != NULL){
+   if(this != NULL){
       switch(sem){
          case SYNCSEQ:
             cout << "--> (5) Call from async seq to sync seq (NOT POSSIBLE)" << popcendl;
             break;
          case SYNCCONC:
             cout << "--> (5) Call from async seq to sync conc" << popcendl;
-            (*__POPThis_POPObject).toSyncConc(5); 
+            (*this).toSyncConc(5); 
             break;
          case SYNCMUTEX:           
             cout << "--> (5) Call from async seq to sync mutex (NOT POSSIBLE)" << popcendl;
             break;
          case ASYNCSEQ:
             cout << "--> (5) Call from async seq to async seq" << popcendl;
-            (*__POPThis_POPObject).toAsyncSeq(5); 
+            (*this).toAsyncSeq(5); 
             break;
          case ASYNCCONC:
             cout << "--> (5) Call from async seq to async conc" << popcendl;
-            (*__POPThis_POPObject).toAsyncConc(5); 
+            (*this).toAsyncConc(5); 
             break;
          case ASYNCMUTEX:
             cout << "--> (5) Call from async seq to async mutex (NOT RECOMMENDED)" << popcendl;
-            (*__POPThis_POPObject).toAsyncMutex(5); 
+            (*this).toAsyncMutex(5); 
             break;     
       }
    }
@@ -189,7 +189,7 @@ void POPObject::fromAsyncSeq(int sem)
  */
 void POPObject::fromAsyncMutex(int sem)
 {
-  if(__POPThis_POPObject != NULL){
+  if(this != NULL){
       switch(sem){
          case SYNCSEQ:
             cout << "--> (6) Call from async mutex to sync seq (NOT POSSIBLE)" << popcendl;
@@ -202,15 +202,15 @@ void POPObject::fromAsyncMutex(int sem)
             break;
          case ASYNCSEQ:
             cout << "--> (6) Call from async mutex to async seq" << popcendl;
-            (*__POPThis_POPObject).toAsyncSeq(6); 
+            (*this).toAsyncSeq(6); 
             break;
          case ASYNCCONC:
             cout << "--> (6) Call from async mutex to async conc" << popcendl;
-            (*__POPThis_POPObject).toAsyncConc(6); 
+            (*this).toAsyncConc(6); 
             break;
          case ASYNCMUTEX:
             cout << "--> (6) Call from async mutex to async mutex (NOT RECOMMENDED)" << popcendl;
-            (*__POPThis_POPObject).toAsyncMutex(6); 
+            (*this).toAsyncMutex(6); 
             break;     
       }
    }
