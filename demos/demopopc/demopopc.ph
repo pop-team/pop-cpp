@@ -8,7 +8,7 @@ parclass POPCobject
 	classuid(1500);
 
 public:
-	POPCobject(int newID, int wanted, int minp) @{od.power(wanted, minp); od.search(0, 3, 0); };
+	POPCobject(int newID, int wanted, int minp) @{od.search(0, 3, 0); };
 	POPCobject(int newID, POPString machine) @{od.url(machine);};
 	~POPCobject();
 

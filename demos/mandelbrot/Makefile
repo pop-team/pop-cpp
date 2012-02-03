@@ -1,7 +1,7 @@
 #POPCDIR=/usr/local/popc
 #INSTDIR=$(POPCDIR)/test/mandelbrot
 QTCC=g++
-QTCCFLAGS=-Wall -DQT_NO_DEBUG -DQT_THREAD_SUPPORT -I/usr/include/qt3 -I/usr/qt/3/include
+QTCCFLAGS=-Wall -DQT_NO_DEBUG -DQT_THREAD_SUPPORT -I/usr/include/qt3 -I/usr/qt/3/include -I/usr/include/i386-linux-gnu/
 #QTMOC=/usr/qt/3/bin/moc
 QTMOC=moc
 QTLD=g++
@@ -60,7 +60,7 @@ depend:
 #	cp *.obj fractal.master $(INSTDIR)/
 
 run: obj.map machines.ip
-	popcrun obj.map ./fractal.master 2 -1.743650449 1.043635821 -1.131818649 1.131833277 1
+	popcrun obj.map ./fractal.master 22 -1.743650449 1.043635821 -1.131818649 1.131833277 1
 
 machines.ip:
 	echo "localhost\nlocalhost\nlocalhost\nlocalhost" > machines.ip
