@@ -5,7 +5,7 @@
 class POPObject
 {
 public:
-   enum Days{Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday};
+   enum Days;
 	POPObject();
 	~POPObject();
 	void fromSyncSeq(int sem);

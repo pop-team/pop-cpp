@@ -3,7 +3,7 @@
 
 POPObject::POPObject()
 {
-   enum Days{Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday};
+	int i = MON;
    cout << "POPCobject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << popcendl;
 }
 
@@ -21,5 +21,4 @@ void POPObject::fromSyncSeq(int sem)
 
 
 }
-
 @pack(POPObject);
