@@ -107,7 +107,7 @@ struct TemplateArgument
 %token SYNC_INVOKE ASYNC_INVOKE INPUT OUTPUT  CONCURRENT SEQUENTIAL MUTEX HIDDEN PROC SIZE THIS_KEYWORD
 %token INCLUDE DIRECTIVE OD AUTO_KEYWORD REGISTER_KEYWORD VOLATILE_KEYWORD PACK_KEYWORD 
 %token AND_OP OR_OP EQUAL_OP NOTEQUAL_OP GREATEREQUAL_OP LESSEQUAL_OP NONSTRICT_OD_OP EOFCODE
-%token SCOPE
+%token SCOPE ENUM CLASS STRUCTURE
 
 %left '+' '-' '*' '/' '%'
 %left '&' '|' '^' '~' '!' '='
@@ -747,7 +747,9 @@ member_list: /*empty*/
 | access_specifier { accessmodifier=(AccessType)$1; } ':' member_list
 ;
 
-member_declaration:  function_definition ';'
+
+member_declaration:  enum_declaration ';'
+| function_definition ';'
 {
   assert(method!=NULL);
   int t=method->CheckMarshal();
@@ -763,6 +765,7 @@ member_declaration:  function_definition ';'
     }
   currenttype=returntype=NULL;
 }
+ 
 | attribute_definition ';'
 {
   if (accessmodifier==PUBLIC)
@@ -785,6 +788,17 @@ member_declaration:  function_definition ';'
 }
 ;
 
+
+enum_declaration: ENUM ID '{' enum_members '}'
+;
+
+enum_members: enum_member 
+| enum_member ',' enum_members
+;
+
+enum_member: ID
+| ID '=' INTEGER
+;
 
 /*
 Attribute declaration....

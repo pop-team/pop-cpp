@@ -332,6 +332,12 @@ class {
   return CLASS_KEYWORD;
 
 };
+
+enum {
+	yylval=PutToken(yytext);
+	othercodes.InsertAt(-1,yytext,strlen(yytext));
+	return ENUM;
+};
  
 classuid {
   if (IsSystemHeader(filename))
