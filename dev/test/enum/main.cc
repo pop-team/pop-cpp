@@ -9,6 +9,11 @@ int main(int argc, char** argv)
 
 {
 	POPObject o;
-
+	for(int i = 0; i<7; i++){
+		o.executeSmthToday(i);
+	}
+	for(int i = 10; i<23; i++){
+		o.executeSmthThisMonth(i);
+	}
 	return 0;
 }
