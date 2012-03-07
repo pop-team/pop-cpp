@@ -429,6 +429,45 @@ Param *Attribute::NewAttribute()
 	return t;
 }
 
+/**
+ * @POPFile
+ * Implementation of Enumeration class
+ */
+ 
+// enum type constrcutor
+Enumeration::Enumeration(Class *cl, AccessType myaccess): ClassMember(cl, myaccess)
+{
+	
+}
+
+// enum type destructor
+Enumeration::~Enumeration()
+{
+
+}
+
+// Save the name of the enum type
+void Enumeration::setName(std::string value)
+{
+	name = value;
+}
+
+// Save the arguments of the enum type
+void Enumeration::setArgs(std::string value)
+{
+	args = value;
+}
+
+// Generation of the appropriate code for the enum type
+void Enumeration::GenerateHeader(CArrayChar &output, bool interface){
+	ClassMember::GenerateHeader(output, interface);
+	output.InsertAt(-1, "enum ",strlen("enum "));
+	output.InsertAt(-1,name.c_str(),strlen(name.c_str()));
+	output.InsertAt(-1, "{", 1);
+	output.InsertAt(-1, args.c_str(), strlen(args.c_str()));	
+	output.InsertAt(-1, "};", 2);
+}
+
 //Directives inside a parallel class
 
 Directive::Directive(Class *cl, char *directive): ClassMember(cl, PUBLIC)

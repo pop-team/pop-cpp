@@ -3,6 +3,7 @@
 
 #include "parser_common.h"
 #include "type.h"
+#include <string>
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef long YYSTYPE; // We force the declaration as long to avoid compilation problems in 64bits
@@ -308,6 +309,27 @@ public:
 protected:
 	CArrayParam attributes;
 };
+
+
+/**
+ * @class Enumeration
+ * @breif This class is holding enum type information 
+ */
+class Enumeration: public ClassMember
+{
+public:
+	Enumeration(Class *cl, AccessType myaccess);
+	~Enumeration();	
+	virtual void GenerateHeader(CArrayChar &output, bool interface);
+	
+	void setName(std::string value);
+	void setArgs(std::string value);
+	
+private:
+	std::string name;	
+	std::string args;
+};
+
 /**
  * @class Directive
  * @brief (to be written)

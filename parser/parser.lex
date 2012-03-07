@@ -338,6 +338,12 @@ enum {
 	othercodes.InsertAt(-1,yytext,strlen(yytext));
 	return ENUM;
 };
+
+structure {
+	yylval=PutToken(yytext);
+	othercodes.InsertAt(-1,yytext,strlen(yytext));
+	return ENUM;
+};
  
 classuid {
   if (IsSystemHeader(filename))

@@ -34,7 +34,7 @@ void Usage()
   fprintf(stderr,"   -parclass-nointerface: Do not generate POP-C++ interface codes for parallel objects\n");
   fprintf(stderr,"   -parclass-nobroker:    Do not generate POP-C++ broker codes for parallel objects\n");
 
- fprintf(stderr,"\n   -object[=type]:      Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
+  fprintf(stderr,"\n   -object[=type]:      Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
   fprintf(stderr,"   -popcpp:             POP-C++ parser\n");
   fprintf(stderr,"   -cpp=<preprocessor>: C++ preprocessor command\n");
   fprintf(stderr,"   -cxx=<compiler>:     C++ compiler\n");

@@ -749,6 +749,7 @@ member_list: /*empty*/
 
 
 member_declaration:  enum_declaration ';'
+| structure_declaration ';'
 | function_definition ';'
 {
   assert(method!=NULL);
@@ -789,15 +790,46 @@ member_declaration:  enum_declaration ';'
 ;
 
 
+/**
+ * @author : clementval
+ * Enum declaration 
+ */
 enum_declaration: ENUM ID '{' enum_members '}'
+{
+	assert(currentClass!=NULL);
+	Enumeration *t = new Enumeration(currentClass, accessmodifier);
+	t->SetLineInfo(linenumber-1);
+	currentClass->AddMember(t);
+	t->setName(GetToken($2));
+	t->setArgs(GetToken($4));
+}
 ;
 
 enum_members: enum_member 
+{
+	$$ = $1;	
+}
 | enum_member ',' enum_members
+{
+	sprintf(tmp,"%s , %s",GetToken($1), GetToken($3));
+	$$ = PutToken(tmp);
+}
 ;
 
 enum_member: ID
+{
+	$$ = $1;
+}
 | ID '=' INTEGER
+{      
+	sprintf(tmp,"%s = %s",GetToken($1), GetToken($3));
+   $$=PutToken(tmp);
+}
+;
+
+
+
+structure_declaration: STRUCTURE '{' '}'
 ;
 
 /*
