@@ -32,7 +32,7 @@ if [ -z "${POPC_LOCATION}" ]; then
   if [ "X${POPC_BATCH}" = "Xsmscg" ]; then
     POPC_LOCATION=`dirname $0`/..
   else
-    POPC_LOCATION=/home/clementval/popc
+    POPC_LOCATION=/usr/local/popc
   fi
 export POPC_LOCATION
 fi

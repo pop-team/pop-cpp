@@ -11,7 +11,7 @@ AC_PREREQ([2.67])
 #AC_CONFIG_HEADER([config.h])
 
 # Checks for programs.
-AC_INIT( popc, 2.0)
+AC_INIT( popc, 2.0.1)
 AM_INIT_AUTOMAKE(no-dependencies)
 
 AC_CANONICAL_HOST

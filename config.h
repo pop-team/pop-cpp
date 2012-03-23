@@ -57,7 +57,7 @@
 #define PACKAGE_NAME "popc"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "popc 2.0"
+#define PACKAGE_STRING "popc 2.0.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "popc"
@@ -66,7 +66,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.0"
+#define PACKAGE_VERSION "2.0.1"
 
 /* Dynamic exec */
 #define POPC_EXTRA_LINK "-rdynamic"
@@ -84,7 +84,7 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.0"
+#define VERSION "2.0.1"
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */

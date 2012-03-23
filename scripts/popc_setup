@@ -2,7 +2,7 @@
 
 POPC_VIRTUAL=false
 POPC_SECURE_VIRTUAL=false
-POPC_LOCATION=/home/clementval/popc
+POPC_LOCATION=/usr/local/popc
 export POPC_LOCATION
 
 #
@@ -25,9 +25,9 @@ else
    answer="y"
 fi
 
-if [ -f /home/clementval/popc/sbin/paroc_setup ]
+if [ -f /usr/local/popc/sbin/paroc_setup ]
 then 
-	echo "Error : You are installing on top of an older version, please clean your directory with 'rm -rf /home/clementval/popc/*' and run 'make install' again."
+	echo "Error : You are installing on top of an older version, please clean your directory with 'rm -rf /usr/local/popc/*' and run 'make install' again."
 	exit -1
 fi
 

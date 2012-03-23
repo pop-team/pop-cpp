@@ -290,12 +290,12 @@ DATA = $(conf_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/clementval/versioning/popc2.1/missing --run aclocal-1.11
-AMTAR = ${SHELL} /home/clementval/versioning/popc2.1/missing --run tar
+ACLOCAL = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run aclocal-1.11
+AMTAR = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /home/clementval/versioning/popc2.1/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/clementval/versioning/popc2.1/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/clementval/versioning/popc2.1/missing --run automake-1.11
+AUTOCONF = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run automake-1.11
 AWK = mawk
 CC = gcc
 CFLAGS = -g -O2
@@ -306,6 +306,7 @@ CXXCPP = g++ -E
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
+DLLTOOL = false
 DSYMUTIL = 
 DUMPBIN = 
 ECHO_C = 
@@ -333,7 +334,8 @@ LIBVIRT_LIBS =
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/clementval/versioning/popc2.1/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run makeinfo
+MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 NM = /usr/bin/nm -B
 NMEDIT = 
@@ -344,10 +346,10 @@ OTOOL64 =
 PACKAGE = popc
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = popc
-PACKAGE_STRING = popc 2.0
+PACKAGE_STRING = popc 2.0.1
 PACKAGE_TARNAME = popc
 PACKAGE_URL = 
-PACKAGE_VERSION = 2.0
+PACKAGE_VERSION = 2.0.1
 PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
@@ -357,15 +359,16 @@ SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = strip
-VERSION = 2.0
+VERSION = 2.0.1
 VIX_CFLAGS = 
 VIX_LIBS = 
 YACC = bison -y
 YFLAGS = 
-abs_builddir = /home/clementval/versioning/popc2.1/services
-abs_srcdir = /home/clementval/versioning/popc2.1/services
-abs_top_builddir = /home/clementval/versioning/popc2.1
-abs_top_srcdir = /home/clementval/versioning/popc2.1
+abs_builddir = /home/clementval/versioning/popc2.0.1/services
+abs_srcdir = /home/clementval/versioning/popc2.0.1/services
+abs_top_builddir = /home/clementval/versioning/popc2.0.1
+abs_top_srcdir = /home/clementval/versioning/popc2.0.1
+ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
@@ -395,17 +398,16 @@ host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/clementval/versioning/popc2.1/install-sh
+install_sh = ${SHELL} /home/clementval/versioning/popc2.0.1/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
-lt_ECHO = echo
 mandir = ${datarootdir}/man
 mkdir_p = /bin/mkdir -p
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /home/clementval/popc
+prefix = /usr/local/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -427,9 +429,9 @@ POPC_FLAGS = -popcdir=.. -popcpp=../parser/popcpp -I../lib -cxx=g++ -D_POPC_RUNT
 AM_CXXFLAGS = $(POPC_FLAGS)
 AM_LDFLAGS = -L../lib -L../lib/.libs 
 execservices_SCRIPTS = popcobjrun popcobjrun.pbs popcobjrun.lsf popcobjrun.sge popcobjrun.smscg
-execservicesdir = /home/clementval/popc/services
+execservicesdir = /usr/local/popc/services
 conf_DATA = jobmgr.conf.in 
-confdir = /home/clementval/popc/etc
+confdir = /usr/local/popc/etc
 bin_SCRIPTS = popcjob.pbs popcjob.lsf popcjob.sge
 popc_search_node_SOURCES = popc_search_node_obj.cc
 popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
@@ -1020,13 +1022,13 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
 	$(LIBTOOL) --mode=compile --tag=CXX $(CXX) -cxxmain $(POPC_FLAGS) $(CXXFLAGS) -c $< -o $@
 
 install-data-hook:
-	@if [ ! -f /home/clementval/popc/etc/popc-runtime-env.sh ]; then cp /home/clementval/popc/etc/popc-runtime-env.in /home/clementval/popc/etc/popc-runtime-env.sh; fi
-	@ln -sf popcc /home/clementval/popc/bin/parocc
-	@ln -sf popcrun /home/clementval/popc/bin/parocrun
-	@ln -sf popcobjrun /home/clementval/popc/services/webrun
-	@ln -sf popc-user-env.csh /home/clementval/popc/bin/paroc-user-env.csh
-	@ln -sf popc-user-env.sh /home/clementval/popc/bin/paroc-user-env.sh
-	@ln -sf SXXpopc /home/clementval/popc/sbin/SXXparoc
+	@if [ ! -f /usr/local/popc/etc/popc-runtime-env.sh ]; then cp /usr/local/popc/etc/popc-runtime-env.in /usr/local/popc/etc/popc-runtime-env.sh; fi
+	@ln -sf popcc /usr/local/popc/bin/parocc
+	@ln -sf popcrun /usr/local/popc/bin/parocrun
+	@ln -sf popcobjrun /usr/local/popc/services/webrun
+	@ln -sf popc-user-env.csh /usr/local/popc/bin/paroc-user-env.csh
+	@ln -sf popc-user-env.sh /usr/local/popc/bin/paroc-user-env.sh
+	@ln -sf SXXpopc /usr/local/popc/sbin/SXXparoc
 	@${exec_prefix}/sbin/popc_setup -ask
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

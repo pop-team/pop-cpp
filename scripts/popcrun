@@ -15,7 +15,7 @@ fi
 unset POPC_DEBUG
 
 if [ -z "${POPC_LOCATION}" ]; then
-POPC_LOCATION=/home/clementval/popc
+POPC_LOCATION=/usr/local/popc
 export POPC_LOCATION
 fi
 

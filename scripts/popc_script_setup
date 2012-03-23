@@ -7,7 +7,7 @@ scriptglobus=SXXpopc.globus
 
 tmpheader=/tmp/SXXpopc_header_${USER}
 
-POPC_LOCATION=/home/clementval/popc
+POPC_LOCATION=/usr/local/popc
 
 if [ ! -d "${POPC_LOCATION}" ]
 then

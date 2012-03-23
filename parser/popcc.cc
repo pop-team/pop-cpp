@@ -14,7 +14,7 @@
 #endif
 
 #ifndef POPC_BUILD_ARCH
-char arch[256]= "x86_64-apple-Darwin";
+char arch[256]= "i686-pc-Linux";
 #else
 char arch[256]= POPC_BUILD_ARCH;
 #endif
@@ -34,7 +34,7 @@ void Usage()
   fprintf(stderr,"   -parclass-nointerface: Do not generate POP-C++ interface codes for parallel objects\n");
   fprintf(stderr,"   -parclass-nobroker:    Do not generate POP-C++ broker codes for parallel objects\n");
 
-  fprintf(stderr,"\n   -object[=type]:      Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
+ fprintf(stderr,"\n   -object[=type]:      Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
   fprintf(stderr,"   -popcpp:             POP-C++ parser\n");
   fprintf(stderr,"   -cpp=<preprocessor>: C++ preprocessor command\n");
   fprintf(stderr,"   -cxx=<compiler>:     C++ compiler\n");
