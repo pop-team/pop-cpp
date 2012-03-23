@@ -61,7 +61,7 @@ VERSION 1.2
 
 
 
-Next release : 1.3 
+Release : 1.3 
 - Add an object descriptor that checks the connection :  od.checkConnection (project disconnect-1)
 - Includes the POPC++ manual sources in Latex
 - Comments added for Doxygen
@@ -94,4 +94,45 @@ Next release : 1.3
 - POP-C++ tested on Kerrighed cluster
 
 
+Release 2.0:
+	changes internal POP-C++ :
+		to compile pop-c++ application (popcc) :
+	
+		- option "-no-pipe" replaced by "-nopipe" to be in adequation with the other flags
+		- option "-paroc-static" replaced by "-popc-static" 
+		- option "-paroc-nolib" replaced by "-popc-nolib"
+		- option "-parocld=<linker>" replaced by "popcld=<linker>"
+		- option "-parocdir" replaced by "popcdir"
+		- option "-version" added for popcc
+		
+		to run pop-c++ application (popcrun) :
+	
+		- flag "-debug" added to display debugging informations 
+		- flag "-log=<file>" added to log messages displayed on stdout and stderr during compilation
+		- if no network is available the system tries to launch the objects on localhost
+			instead the application crashes
+		- option "-version" added for popcrun
 
+	Fixed bugs
+		- CONST keyword is correctly treated
+		- Usage of "this" works now but with little restrictions
+		- fix of some other minor bugs
+
+	New features :
+		- implementation of a new algorithm to find resources
+		- interoperability with POP-Java
+		- secure communications in ssh tunnel
+		- a warning message is displayed when a non-catched exception is raised in a remote method invocation
+		- possibility to use cmake instead of make
+	
+	Documentation :
+		- user and installation guide was improved
+		- additional documents were added for the new features
+		- extended test applications
+		- more samples
+
+Release 2.0.1
+- Improve the termination time of a parallel application
+- Fix slowness of POP-C++ application on MAC OS X
+- Add support for enum type inside a parclass declaration
+- Removing unuseful directory in the release
