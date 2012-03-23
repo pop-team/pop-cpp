@@ -1,0 +1,97 @@
+We start with version 1.0 of POP-C++
+
+CHANGE FROM 1.0
+
+VERSION 1.1
+- JobMgr: rename and change "fixnode" to "nodetype" of NodeInfo. 
+- JobMgr: All non static nodes will be remove from neighbor list upon forwarding failures (Forwarding method).
+- POP-C++ parser: sequential class can now derive from a "struct" type. POP-C++ 1.0 will generate an error in this situation.
+- Add "JobCoreService" parclass that provides the interface to create objects (CreateObject). JobMgr now derives from JobCoreService.
+
+- New class "paroc_broker_factory" added to manage the list of brokers
+- New compiler: on generating the broker code, popc also generates an object of type "paroc_broker_factory" for the corresponding broker. This object's constructor will be executed before the "main" which will register the current broker. Therefore, no need to declare the "@pack". Instead, just add the .ph (or .stub.o) file to the compiler to generate the object code.
+	
+- New intermediate C++ code: the compiler generate separate code for each constructor: allocate a resource and then call a method _paroc_Construct(...) to invoke the corresponding server constructor. This will allow to customize the object creation (MPI support).
+- New option of compiler to specify the start file for object. Option: "-object=<type>".
+- New paroc_interface::LocalExec method: allow to create multiple objects.
+
+- Fix potential bug when a connection is closed on the receiving thread but it is possibly still used in the serving thread: Add "Clone" method to the paroc_combox to clone the combox before passing it to the serving thread.
+
+- Startup script: the temp key file now contains the user name to allow different users to start SXXparoc* on the same system.
+
+- MPI support: sub dir "mpi" added to allow users to startMPI processes and attach them to parallel objects. Require: include "paroc_mpi.h" and add "-object=mpi" on generating object executables.
+
+VERSION 1.2
+
+- New combox and combox factory interface. 
+- Receive thread cancellation: close combox.
+- broker main: Initialization is moved to paroc_broker::Initialize and paroc_broker_factory::Create.
+- Compiler: "typedef struct { ...} X;" should use "X" as the type name (fix null pointer passed to buffer::Push().
+- Allow mix "struct" and "class" declarations:
+	struct X;
+	class X // --> error in POP-C++ 1.1. 
+	{
+		....
+	}
+
+
+- Add PAROC_RSH environment to the runtime allowing the user to specify the "rsh" command to start the execution on a specific host. 
+- JobMgr::Exec: now the query of "jobmgr" can return a consequence of commands.
+
+- paroc_setup: local command to submit jobs will be in front of  "webrun" in jobmgr.conf (avoid problem on starting the jobmgr service.
+
+- Support pure virtual methods and pure class. Pure class can not create the object.
+   parclass PureClass=0 {...}
+
+- If no constructor is specified, add the default one so that the object can be created
+
+- Compiler: add "#pragma interface/broker/object = newbaseclass" directive to define new base class for interface, broker and object
+
+- paroc_interface: add paroc_Dispatch and paroc_Response methods. The compiler will call this method to send/recv requuests
+- Detect reference loop and automatically free the object (ObjectMonitor)
+- Add option "-constructor=id" to object executable to automatically construct default object
+- AppCoreService will load add-on services (RegisterService/QueryService interfaces) specified in etc/appservice.conf
+
+- Update the parser to parse the template types.
+- Support for marshalling C++ STL types: vector, list and dequeue
+
+- Update the parser to parse the template types.
+- Support for marshalling C++ STL types: vector, list and dequeue
+
+
+
+
+Next release : 1.3 
+- Add an object descriptor that checks the connection :  od.checkConnection (project disconnect-1)
+- Includes the POPC++ manual sources in Latex
+- Comments added for Doxygen
+- od.manual: a new object descriptor that simply prints the object launching command. (for debug)
+- Add a od.url(host,arch) that can specify the architecture. 
+- Add std::string as a standard type. No marshalling funciton needs to be specified. 
+- Fix bug : Only list packed objects with -list/-listlong.
+
+- For od.url() : You can now specify user@host{core}:port. (project DUO)
+- Fix parser bugs : 
+	- "::" is accepted in class initialization
+	- attributes can now be references
+	- Add parser.lex and parser.y to the archive
+- Fix bug with g++ compiler version 4.3.3
+- Can compile for uc-linux. (project DUO)
+- Change attribution of IP/URL for objects : use the ip of default gateway interface
+- Rename all environment variables from PAROC_ to POPC_ (+ run autoreconf, automake)
+- Check that an async method does not have an output in parser
+- Added YYERROR_VERBOSE so the parser error are more explicit. (experimental)
+- Create scripts to launch POPC with PBS (+ reedit existant scripts)
+- Rename all scripts with popc- instead of paroc-
+- Marshalling of vector/list is automatic + parser manages templates
+- Improve exception handling
+- Improve execution of POP-C++ as a batch job : PBS,SGE,LSF (+class batchmgr)
+- Added the possibility to set the working directory of remote obj. By default it is equal to the current local working directory
+- Modify the setter of paroc_exception
+- Add two tests cases to the archives : demopopc and chat
+- Fix a bug for POP-C++ with MPI
+- POP-C++ is working on Mac
+- POP-C++ tested on Kerrighed cluster
+
+
+
