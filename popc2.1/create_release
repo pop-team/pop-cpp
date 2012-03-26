@@ -1,0 +1,67 @@
+#!/bin/bash
+
+#############################################################################################
+# POP-C++ Archive Releaser
+# Author : Clement Valentin (clementval)
+# Creation date : 06/04/2011
+# Description : This script is used to create a releasable archive of POP-C++ version 
+# -------------------------------------------------------------------------------------------
+# IMPORTANT : Please, keep this log up to date 
+#
+# Update log
+# Date         Author      Description
+# 31/03/2011	clementval	First version of this script
+#############################################################################################
+
+
+################################################################
+# Define the function to print the program usage
+################################################################
+usage()
+{
+cat << EOF
+
+POP-C++ releaser script v1.0
+
+This program is used to create a releasable archive of POP-C++
+
+Usage: create_release <version>
+       - version should be in the form of 1.0, 2.0, 2.5.1 ...
+EOF
+}
+
+
+
+if [ "x$1" == "x" ]
+then
+   echo "[ERROR] You must specify a version number"
+   usage
+   exit
+fi
+
+echo "IMPORTANT FOR THE RELEASE"
+echo "Did you update the following files:"
+echo "- ChangeLog"
+echo "- RELEASE_NOTES"
+echo "Did you increment the version number in the configure.ac file ?"
+echo "Did you regenerate the files with autoreconf ?"
+echo "If everything is fine just proceed with the archive ! (y/n)"
+
+
+#Clean the current version of POP-C++
+#make clean 
+
+
+VERSION=$1
+#Date of the arhiving
+DDATE=$(date +%Y%m%d)
+RELDIR="popcpp_"$VERSION"_build_"$DDATE
+ARCHIVE="$RELDIR.tar"
+IGNORED=" dev virtualtest autom4te.cache .svn"
+
+
+#echo "The archive $RELDIR.tar.gz will be created"
+#tar -cf $ARCHIVE --exclude='.svn' --exclude='virtualtest' --exclude='dev' --exclude='documentation' --exclude='autom4te.cache' --exclude='create_release' --exclude='stamp-h1' ./*
+#gzip $ARCHIVE
+
+

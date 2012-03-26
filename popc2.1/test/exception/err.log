@@ -1,0 +1,6 @@
+POP-C++ Warning: Exception 'ICI: Object: My Exception SeqSync' raised in method 'SeqSync' of class 'ClassExcep'
+POP-C++ Warning: Exception 'ICI: Object: My Exception ConcSync' raised in method 'ConcSync' of class 'ClassExcep'
+POP-C++ Warning: Exception 'ICI: Object: My Exception MutexSync' raised in method 'MutexSync' of class 'ClassExcep'
+POP-C++ Warning: Exception 'ICI: Object: My Exception ConcAsync' raised in method 'ConcAsync' of class 'ClassExcep'
+POP-C++ Warning: Exception 'ICI: Object: My Exception SeqAsync' raised in method 'SeqAsync' of class 'ClassExcep'
+terminate called after throwing an instance of 'paroc_exception*'

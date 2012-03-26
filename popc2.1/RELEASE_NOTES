@@ -1,0 +1,11 @@
+POP-C++ 2.0.1
+
+These REALEASE_NOTES include the changes made from the previous version 2.0
+to version 2.0.1 of POP-C++. The complete changes is listed in the CHANGLOG.
+
+Release 2.0.1
+- Improve the termination time of a parallel application
+- Fix slowness of POP-C++ application on MAC OS X
+- Add support for enum type inside a parclass declaration
+- Removing unuseful directory in the release
+

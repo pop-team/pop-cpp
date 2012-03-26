@@ -1,0 +1,7 @@
+\section{Current status}
+\label{current_status}
+This chapter aims to explain the current situation of the application termination in POP-C++. 
+
+\subsection{Parallel object destructor}
+Every parallel object inherits from the root parallel object paroc\_object. When a parallel object is destroyed, its own destructor is called and then the destructor of paroc\_object is called. \\
+When the paroc\_object destructor is called, this will make a called to the ObjectMonitor to unmanage this specific object. 

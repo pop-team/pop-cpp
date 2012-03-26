@@ -1,0 +1,29 @@
+README
+
+Title : multi_obj
+
+Version : 1.0
+
+Author : Jean-Francois Roche
+
+Date : 10-dec-2009
+
+
+Compilation of an application in which we have a chain of objects.
+
+The main create a first object of class myObj1 and call a method of this object. This object create another
+object of class myObj2 and call a method of this second object and so on until 4 objects are created. This
+build a chain of object of different parallel classes. The first 3 objects are dependant of the object just 
+following him :
+
+main --> objectA --> objectB --> objectC --> objectD
+
+To avoid a multiple definition of the broker, the compilation must begin with the compilation on the 
+last leaf ( aka objectD ). Then the compilation continue with the element before ( objectC ) and so on until
+the main.
+
+
+Makefile is a very simple example which contains the commands which are used if the compilation would
+be made by hand
+
+Makefile2 is a more complete version which contains the directive to manage all dependancies.

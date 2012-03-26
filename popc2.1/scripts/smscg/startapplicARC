@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+# startapplicARC
+# 
+# version : 0.1
+# author  : J-F. Roche
+# date    : 21-jul-2009
+#
+# purpose :
+#
+#
+#
+# we need to have the current directory in the PATH
+export PATH=`pwd`:${PATH}
+
+# we check if POPC_LOCATION is defined
+# if no, we untar the runtime code of POP-C++ and define the variable POPC_LOCATION
+
+## POPC_LOCATION is provided from the ARC "ENV/POPC"
+
+cp $POPC_LOCATION/etc/chg_objmap.smscg .
+chmod a+x chg_objmap.smscg
+
+#### if [ -z "${POPC_LOCATION}" ]   #### ++ JFR / mise en commentaire tant que l'on utilise pas complètement l'environnementPOPC #### +- JFR
+#### then                           #### ++ JFR	/ mise en commentaire tant que l'on utilise pas complètement l'environnement POPC #### +- JFR
+  tar -zxf popc.tgz
+  POPC_LOCATION=`pwd`/popc
+  export POPC_LOCATION              #### ++ JFR	/ mise en commentaire tant que l'on utilise pas complètement l'environnement POPC #### +- JFR
+#### fi
+
+# we check if POPC_APPLIC is defined
+# if no, we untar the POPC++ application which was trasmitted by the job submission and
+# define the variable POPC_APPLIC
+
+#### if [ -z "${POPC_APPLIC}" ]     #### ++ JFR	/ mise en commentaire tant que l'on utilise pas complètement l'environnementA3DC #### +- JFR
+#### then                           #### ++ JFR	/ mise en commentaire tant que l'on utilise pas complètement l'environnementA3DC #### +- JFR
+  tar -zxf applic.tgz
+##  if [ $APPLIC="A3D" ]
+##	then
+    POPC_APPLIC=`pwd`/deploy
+##  else
+##    POPC_APPLIC=`pwd`/$APPLIC
+##  fi
+##  POPC_APPLIC=`pwd`
+	export POPC_APPLIC
+#### fi                             #### ++ JFR	/ mise en commentaire tant que l'on utilise pas complètement l'environnementA3DC #### +- JFR
+
+# we copy the file containing the address of nodes to current directory ( home directory )
+cp $SMSCG_HOSTLIST_FILE nodefile.smscg
+
+# mostly is the use of rsh not allowed but the use of ssh is
+export POPC_RSH=$(which ssh)
+
+# if we use a batch system, the variable POPC_BATCH must be set here with the correct batch system	
+export POPC_BATCH=smscg
+
+
+if [ $APPLIC="A3D" ]
+then
+
+  cp deploy/obmap .
+  ./chg_objmap.smscg objmap
+	cd setup
+	./run.sh
+else
+	popcrun.smscg
+fi
+
+cd ..
+
+tar -zcf A3Dout.tgz output/*
+
