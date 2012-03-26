@@ -14,6 +14,7 @@ namespace popfile{
 	
 struct infos_t {
 	int nb_strips;
+	long offset;
 };
 
 class POPStream {
@@ -45,6 +46,7 @@ private:
 	bool popfile_try_open_parallel();
 	bool popfile_parallel;
 	bool popfile_open;
+	long popfile_offset;
 	
 	
 	

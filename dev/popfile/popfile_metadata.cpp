@@ -81,7 +81,9 @@ bool POPFileMetaData::load(const char* filename)
 
 		//Read offset node
 		node = crtNode.FirstChild(POPFILE_METADATA_NODE_STRIP_OFFSET).Element();
-		strip.strip_offset = atol(node->GetText());		
+		strip.strip_offset = atol(node->GetText());	
+		
+		if(meta_offset == 0) meta_offset = strip.strip_offset;	
 
 		//Read accesspoint node
 		node = crtNode.FirstChild(POPFILE_METADATA_NODE_STRIP_AP).Element();
@@ -110,6 +112,16 @@ bool POPFileMetaData::load(const char* filename)
 bool POPFileMetaData::is_loaded()
 {
 	return meta_loaded;
+}
+
+long POPFileMetaData::get_offset()
+{
+	return meta_offset;
+}
+
+void POPFileMetaData::set_offset(long value)
+{
+	meta_offset = value;
 }
 
 /** 

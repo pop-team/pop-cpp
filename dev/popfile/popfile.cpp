@@ -1,8 +1,8 @@
 #include "popfile.h"
 
-
 using namespace popfile;
 
+// Constant declaration
 const char* POPStream::POPFILE_METADATA_PREFIX = ".popfile_";
 const char* POPStream::POPFILE_METADATA_SUFFIX = ".xml";
 
@@ -41,6 +41,7 @@ void POPStream::popfile_init_flags()
 {
 	popfile_parallel = false;
 	popfile_open = false;
+	popfile_offset = 0;
 }
 
 /**
@@ -100,19 +101,19 @@ bool POPStream::popfile_try_open_parallel()
 
 /**
  * Check if the file is currently open
- * @return True if the file is open.
+ * @return True if the file is open
  */
 bool POPStream::is_open()
 {
-	if(popfile_parallel){
+	if(popfile_parallel)
 		return popfile_metadata.is_loaded();
-	} else {
+	else
 		return popfile_fstream.is_open();
-	}
 } 
 
 /**
- *
+ * Check if the file is parallel
+ * @return True if the file is parallel
  */
 bool POPStream::is_parallel()
 {
@@ -120,11 +121,14 @@ bool POPStream::is_parallel()
 } 
 
 /**
- *
+ * Get information about the parallel file.
  */
 void POPStream::get_infos(infos_t* info)
 {
-	(*info).nb_strips = popfile_metadata.meta_strips.size();
+	if(popfile_parallel){
+		(*info).nb_strips = popfile_metadata.meta_strips.size();
+		(*info).offset = popfile_metadata.get_offset();	
+	}	
 } 
 
 

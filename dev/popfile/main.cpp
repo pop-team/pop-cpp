@@ -16,7 +16,7 @@ int main( int argc, const char* argv[] )
 			infos_t info;
 			pstream.get_infos(&info);
 			printf("The parallel file has %d strips\n", info.nb_strips);
-			
+			std::cout << "The parallel file has " << info.offset << " for offset" << std::endl;
 			
 			pstream.close();
 		} else {

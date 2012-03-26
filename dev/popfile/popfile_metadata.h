@@ -68,6 +68,8 @@ public:
 	POPFileMetaData();
 
 	bool is_loaded();
+	long get_offset();
+	void set_offset(long value);	
 
 	MetaDataInfo meta_info;
 	MetaDataStripMap meta_strips;
@@ -80,5 +82,6 @@ public:
 private:
 	std::string popfile_metadata_filename;
 	bool meta_loaded;
+	long meta_offset;
 };
 
