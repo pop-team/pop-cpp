@@ -39,8 +39,17 @@ then
    exit
 fi
 
+echo "IMPORTANT FOR THE RELEASE"
+echo "Did you update the following files:"
+echo "- ChangeLog"
+echo "- RELEASE_NOTES"
+echo "Did you increment the version number in the configure.ac file ?"
+echo "Did you regenerate the files with autoreconf ?"
+echo "If everything is fine just proceed with the archive ! (y/n)"
+
+
 #Clean the current version of POP-C++
-make clean 
+#make clean 
 
 
 VERSION=$1
@@ -51,6 +60,8 @@ ARCHIVE="$RELDIR.tar"
 IGNORED=" dev virtualtest autom4te.cache .svn"
 
 
-echo "The archive $RELDIR.tar.gz will be created"
-tar -cf $ARCHIVE --exclude='.svn' --exclude='virtualtest' --exclude='dev' --exclude='documentation' --exclude='autom4te.cache' --exclude='create_release' --exclude='stamp-h1' ./*
-gzip $ARCHIVE
+#echo "The archive $RELDIR.tar.gz will be created"
+#tar -cf $ARCHIVE --exclude='.svn' --exclude='virtualtest' --exclude='dev' --exclude='documentation' --exclude='autom4te.cache' --exclude='create_release' --exclude='stamp-h1' ./*
+#gzip $ARCHIVE
+
+
