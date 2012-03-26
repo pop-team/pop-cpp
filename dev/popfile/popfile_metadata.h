@@ -67,6 +67,8 @@ public:
 			
 	POPFileMetaData();
 
+	bool is_loaded();
+
 	MetaDataInfo meta_info;
 	MetaDataStripMap meta_strips;
 	

@@ -8,7 +8,7 @@ const char* POPStream::POPFILE_METADATA_SUFFIX = ".xml";
 
 
 /**
- *
+ * POPStream constructor without parameters.
  */
 POPStream::POPStream()
 {
@@ -16,7 +16,8 @@ POPStream::POPStream()
 }
 
 /**
- *
+ * POPStream constructor with parameter. The stream will be opened. 
+ * @param filename 
  */
 POPStream::POPStream(const char* filename)
 {
@@ -34,6 +35,7 @@ POPStream::~POPStream()
 
 /**
  *
+ * @return void 
  */
 void POPStream::popfile_init_flags()
 {
@@ -43,6 +45,7 @@ void POPStream::popfile_init_flags()
 
 /**
  *
+ * @return void 
  */
 void POPStream::popfile_init_filename(const char* filename)
 {
@@ -54,7 +57,9 @@ void POPStream::popfile_init_filename(const char* filename)
 
 
 /**
- *
+ * Open the file linked with the given path.
+ * @param filename
+ * @return void
  */
 void POPStream::open(const char* filename)
 {
@@ -73,7 +78,8 @@ void POPStream::open(const char* filename)
 }
 
 /**
- *
+ * Try to open the file in parallel mode. Open the file in standard mode if the file is not parallel.
+ * 
  */
 bool POPStream::popfile_try_open_parallel()
 {
@@ -82,12 +88,10 @@ bool POPStream::popfile_try_open_parallel()
 		popfile_fstream.close();
 		//load meta data
 		bool isLoaded = popfile_metadata.load(popfile_metadata_filename.c_str());
-		if(isLoaded){
-			std::cout << "Meta-data loaded" << std::endl;
-		}
-		
-      
-		return true;
+		if(isLoaded)
+			return true;
+		else 
+			return false;
 	} else {
 		return false;
 	}
@@ -95,12 +99,13 @@ bool POPStream::popfile_try_open_parallel()
 }
 
 /**
- *
+ * Check if the file is currently open
+ * @return True if the file is open.
  */
 bool POPStream::is_open()
 {
 	if(popfile_parallel){
-		
+		return popfile_metadata.is_loaded();
 	} else {
 		return popfile_fstream.is_open();
 	}
@@ -128,7 +133,7 @@ void POPStream::get_infos(infos_t* info)
  */
 void POPStream::close(){
 	if(popfile_parallel){
-		
+		popfile_metadata.save();
 	} else {
 		popfile_fstream.close();
 	}

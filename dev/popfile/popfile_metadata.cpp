@@ -24,6 +24,7 @@ POPFileMetaData::POPFileMetaData()
  */
 void POPFileMetaData::save()
 {
+	meta_loaded = false;
 	meta_strips.clear();
 }
 
@@ -98,13 +99,24 @@ bool POPFileMetaData::load(const char* filename)
 		//Insert the strip in the map
 		meta_strips[strip.strip_name] = strip;
 	}
+	meta_loaded = true;
 	return true;
+}
+
+
+/** 
+ * Print data to cout
+ */
+bool POPFileMetaData::is_loaded()
+{
+	return meta_loaded;
 }
 
 /** 
  * Print data to cout
  */
-void POPFileMetaData::dump_to_cout(){
+void POPFileMetaData::dump_to_cout()
+{
 	std::cout << "### POPFileMetaData ###" << std::endl;
 	std::cout << "- Infos :" << std::endl;	
 	std::cout << "-- Absolute Path: " << meta_info.info_absloute_path << std::endl;	
