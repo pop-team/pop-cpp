@@ -6,7 +6,8 @@
  * 
  * Modifications :
  * Authors		Date			Comment
- * P.Kuonen   June 2011 Modify to print all exceptions raised in methods
+ * P.Kuonen   	June 2011 	Modify to print all exceptions raised in methods
+ * Clementval	March 2012	Add Enum, Struct support
  */
 
 #include "parser.h"
@@ -430,7 +431,6 @@ Param *Attribute::NewAttribute()
 }
 
 /**
- * @POPFile
  * Implementation of Enumeration class
  */
  
@@ -467,6 +467,49 @@ void Enumeration::GenerateHeader(CArrayChar &output, bool interface){
 	output.InsertAt(-1, args.c_str(), strlen(args.c_str()));	
 	output.InsertAt(-1, "};", 2);
 }
+
+/**
+ * Implementation of Structure class
+ */
+ 
+// struct type constrcutor
+Structure::Structure(Class *cl, AccessType myaccess): ClassMember(cl, myaccess)
+{
+	
+}
+
+// struct type destructor
+Structure::~Structure()
+{
+
+}
+
+// Save the name of the struct type
+void Structure::setName(std::string value)
+{
+	name = value;
+}
+
+// Save the objects of the struct type
+void Structure::setObjects(std::string value)
+{
+	objects = value;
+}
+
+// Generation of the appropriate code for the enum type
+void Structure::GenerateHeader(CArrayChar &output, bool interface){
+	ClassMember::GenerateHeader(output, interface);
+	output.InsertAt(-1, "struct ",strlen("struct "));
+	output.InsertAt(-1, name.c_str(),strlen(name.c_str()));
+	output.InsertAt(-1, "{", 1);
+//	output.InsertAt(-1, args.c_str(), strlen(args.c_str()));	
+	output.InsertAt(-1, "}", 1);
+	output.InsertAt(-1, objects.c_str(), strlen(objects.c_str()));
+	output.InsertAt(-1, ";", 1);
+}
+
+
+
 
 //Directives inside a parallel class
 

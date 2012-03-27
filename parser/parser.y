@@ -829,8 +829,46 @@ enum_member: ID
 
 
 
-structure_declaration: STRUCTURE '{' '}'
+structure_declaration: STRUCTURE ID '{' structure_elements '}' structure_objects
+{
+	assert(currentClass!=NULL);
+	Structure *t = new Structure(currentClass, accessmodifier);
+	t->SetLineInfo(linenumber-1);
+	currentClass->AddMember(t);
+	t->setName(GetToken($2));
+	t->setObjects(GetToken($5));
+};
+
+structure_elements: /* blank */
+|
+structure_element
 ;
+
+structure_element: decl_specifier ID ';'
+
+
+structure_objects: structure_object
+{
+	$$ = $1;
+}
+| structure_object ',' structure_objects
+{
+	sprintf(tmp,"%s , %s",GetToken($1), GetToken($3));
+	$$ = PutToken(tmp);
+};
+
+structure_object: ID
+{
+	$$ = $1;
+}
+|
+ID '[' ID ']'
+{
+	sprintf(tmp,"%s [%s]",GetToken($1), GetToken($3));
+   $$=PutToken(tmp);
+}
+;
+
 
 /*
 Attribute declaration....
