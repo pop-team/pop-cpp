@@ -836,15 +836,23 @@ structure_declaration: STRUCTURE ID '{' structure_elements '}' structure_objects
 	t->SetLineInfo(linenumber-1);
 	currentClass->AddMember(t);
 	t->setName(GetToken($2));
-	t->setObjects(GetToken($5));
+	t->setInnerDecl(GetToken($4));
+	t->setObjects(GetToken($6));
 };
 
 structure_elements: /* blank */
 |
 structure_element
+{
+	$$ = $1;
+}
 ;
 
-structure_element: decl_specifier ID ';'
+structure_element: ID ID ';'
+{
+	sprintf(tmp,"%s %s;", GetToken($1), GetToken($3));
+	$$ = PutToken(tmp);
+}
 
 
 structure_objects: structure_object

@@ -1510,7 +1510,7 @@ YY_RULE_SETUP
 {
 	yylval=PutToken(yytext);
 	othercodes.InsertAt(-1,yytext,strlen(yytext));
-	return ENUM;
+	return STRUCTURE;
 };
 	YY_BREAK
 case 19:
