@@ -9,9 +9,12 @@ parclass POPObject
 public:
 	POPObject() @{ od.search(0, 0, 0); };
 	~POPObject();
-	structure product {
-		int test;
-	} apple, banana, pineapple;
+	structure product{
+		double weight;
+	} apple;
+	
+private:
+	product banana;	
 };
 
 

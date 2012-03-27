@@ -3,7 +3,11 @@
 
 POPObject::POPObject()
 {
+	banana.weight = 0.625;
+	apple.weight = 0.500;
    cout << "POPCobject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << popcendl;
+   
+   cout << "Apple weight is:" << apple.weight << " Banana weight is: " << banana.weight << popcendl;
 }
 
 POPObject::~POPObject()
