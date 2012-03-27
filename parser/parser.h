@@ -1,3 +1,14 @@
+/**
+ * File : parser.h
+ * Author : Tuan Anh Nguyen
+ * Description : parser header declaration
+ * Creation date : -
+ * 
+ * Modifications :
+ * Authors		Date			Comment
+ * Clementval	March 2012	Add Enum, Struct support
+ */
+
 #ifndef PARSER_H
 #define PARSER_H
 
@@ -313,7 +324,7 @@ protected:
 
 /**
  * @class Enumeration
- * @breif This class is holding enum type information 
+ * @brief This class is holding enum type information 
  */
 class Enumeration: public ClassMember
 {
@@ -329,6 +340,26 @@ private:
 	std::string name;	
 	std::string args;
 };
+
+/**
+ * @class Structure
+ * @brief This class is holding struct type information
+ */
+class Structure: public ClassMember
+{
+public:
+	Structure(Class *cl, AccessType myaccess);
+	~Structure();
+	virtual void GenerateHeader(CArrayChar &output, bool interface);
+	
+	void setName(std::string value);
+	void setObjects(std::string value);
+	
+private:
+	std::string name;
+	std::string objects;
+};
+
 
 /**
  * @class Directive
