@@ -354,10 +354,12 @@ public:
 	
 	void setName(std::string value);
 	void setObjects(std::string value);
+	void setInnerDecl(std::string value);
 	
 private:
 	std::string name;
 	std::string objects;
+	std::string innerdecl;
 };
 
 
