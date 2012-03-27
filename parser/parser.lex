@@ -342,7 +342,7 @@ enum {
 structure {
 	yylval=PutToken(yytext);
 	othercodes.InsertAt(-1,yytext,strlen(yytext));
-	return ENUM;
+	return STRUCTURE;
 };
  
 classuid {
