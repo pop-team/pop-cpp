@@ -496,13 +496,18 @@ void Structure::setObjects(std::string value)
 	objects = value;
 }
 
+void Structure::setInnerDecl(std::string value)
+{
+	innerdecl = value;
+}
+
 // Generation of the appropriate code for the enum type
 void Structure::GenerateHeader(CArrayChar &output, bool interface){
 	ClassMember::GenerateHeader(output, interface);
 	output.InsertAt(-1, "struct ",strlen("struct "));
 	output.InsertAt(-1, name.c_str(),strlen(name.c_str()));
 	output.InsertAt(-1, "{", 1);
-//	output.InsertAt(-1, args.c_str(), strlen(args.c_str()));	
+	output.InsertAt(-1, innerdecl.c_str(), strlen(innerdecl.c_str()));	
 	output.InsertAt(-1, "}", 1);
 	output.InsertAt(-1, objects.c_str(), strlen(objects.c_str()));
 	output.InsertAt(-1, ";", 1);
