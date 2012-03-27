@@ -18,6 +18,7 @@ int main( int argc, const char* argv[] )
 			printf("The parallel file has %d strips\n", info.nb_strips);
 			std::cout << "The parallel file has " << info.offset << " for offset" << std::endl;
 			
+
 			pstream.close();
 		} else {
 			printf("%s is closed\n", FILEPATH);		

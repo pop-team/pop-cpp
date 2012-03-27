@@ -1,6 +1,11 @@
 /**
- *
+ * PROJECT:		POPFile
+ * AUTHOR:		clementval
+ *	FILENAME:	popfile.h
+ * CREATION:	03.25.2012
+ * 
  */
+ 
 #ifndef POPFILE_H_INCLUDE
 #define POPFILE_H_INCLUDE
 

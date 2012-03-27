@@ -1,3 +1,11 @@
+/**
+ * PROJECT:		POPFile
+ * AUTHOR:		clementval
+ *	FILENAME:	popfile.cpp
+ * CREATION:	03.25.2012
+ * 
+ */
+
 #include "popfile.h"
 
 using namespace popfile;
@@ -137,7 +145,7 @@ void POPStream::get_infos(infos_t* info)
  */
 void POPStream::close(){
 	if(popfile_parallel){
-		popfile_metadata.save();
+		popfile_metadata.save(popfile_metadata_filename.c_str());
 	} else {
 		popfile_fstream.close();
 	}

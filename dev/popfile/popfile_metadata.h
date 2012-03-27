@@ -1,9 +1,14 @@
 /**
- *
+ * PROJECT:		POPFile
+ * AUTHOR:		clementval
+ *	FILENAME:	popfile_metadata.h
+ * CREATION:	03.25.2012
+ * 
  */
  
  
 #include <string>
+#include <sstream>
 #include <map>
 
 class MetaDataStrip;
@@ -53,8 +58,13 @@ class POPFileMetaData
 {
 public: 
 
+	static const char* POPFILE_METADATA_COMMENT;
+	static const char* POPFILE_METADATA_NODE_ROOT;
 	static const char* POPFILE_METADATA_NODE_INFOS;
+	static const char* POPFILE_METADATA_NODE_INFOS_ABS_PATH;
+	static const char* POPFILE_METADATA_NODE_INFOS_ORGI_NAME;	
 	static const char* POPFILE_METADATA_NODE_STRIPS;
+	static const char* POPFILE_METADATA_NODE_STRIP;	
 	static const char* POPFILE_METADATA_NODE_STRIP_ATTRIBUTE_LOCAL;
 	static const char* POPFILE_METADATA_NODE_STRIP_ID;
 	static const char* POPFILE_METADATA_NODE_STRIP_ABS_PATH;
@@ -74,7 +84,7 @@ public:
 	MetaDataInfo meta_info;
 	MetaDataStripMap meta_strips;
 	
-	void save();
+	void save(const char* filename);
 	bool load(const char* filename);
 	
 	void dump_to_cout();
@@ -83,5 +93,8 @@ private:
 	std::string popfile_metadata_filename;
 	bool meta_loaded;
 	long meta_offset;
+	
+	std::string convertInt(int number);
+	std::string convertLong(long number);	
 };
 

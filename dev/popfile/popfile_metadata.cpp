@@ -1,9 +1,21 @@
+/**
+ * PROJECT:		POPFile
+ * AUTHOR:		clementval
+ *	FILENAME:	popfile_metadata.cpp
+ * CREATION:	03.25.2012
+ * 
+ */
+
 #include "tinyxml/tinyxml.h"
 #include "popfile_metadata.h"
 
-
+const char* POPFileMetaData::POPFILE_METADATA_COMMENT = "POPFile v1.0 - THIS FILE HAS BEEN GENERATED, DO NOT MODIFY IT";
+const char* POPFileMetaData::POPFILE_METADATA_NODE_ROOT = "popfile";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_INFOS = "infos";
+const char* POPFileMetaData::POPFILE_METADATA_NODE_INFOS_ABS_PATH = "absolute-path";
+const char* POPFileMetaData::POPFILE_METADATA_NODE_INFOS_ORGI_NAME = "original-name";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIPS = "strips";
+const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIP = "strip";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIP_ATTRIBUTE_LOCAL = "local";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIP_ID = "id";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIP_ABS_PATH = "absolute-path";
@@ -22,9 +34,90 @@ POPFileMetaData::POPFileMetaData()
 /**
  * Save data to file
  */
-void POPFileMetaData::save()
+void POPFileMetaData::save(const char* filename)
 {
 	meta_loaded = false;
+	
+	//
+	TiXmlDocument doc;  
+	TiXmlElement* msg;
+	TiXmlComment* comment;
+	
+	//Create comment element
+ 	TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );  
+	doc.LinkEndChild(decl); 
+	comment = new TiXmlComment();
+	comment->SetValue(POPFILE_METADATA_COMMENT);  
+	doc.LinkEndChild(comment);  	
+	
+	//Create root element
+	TiXmlElement* root = new TiXmlElement(POPFILE_METADATA_NODE_ROOT);  
+	doc.LinkEndChild(root); 
+	
+	//Create the infos element and tie it to root 
+	TiXmlElement* infos = new TiXmlElement(POPFILE_METADATA_NODE_INFOS);  
+	root->LinkEndChild(infos);
+	
+	//
+	TiXmlElement* infos_absolute_path = new TiXmlElement(POPFILE_METADATA_NODE_INFOS_ABS_PATH); 
+	infos->LinkEndChild(infos_absolute_path);
+	infos_absolute_path->LinkEndChild(new TiXmlText(meta_info.info_absloute_path));	
+	
+	TiXmlElement* infos_original_name = new TiXmlElement(POPFILE_METADATA_NODE_INFOS_ORGI_NAME);   	
+	infos->LinkEndChild(infos_original_name);	
+	infos_original_name->LinkEndChild(new TiXmlText(meta_info.info_original_name));	
+	
+	TiXmlElement* strips = new TiXmlElement(POPFILE_METADATA_NODE_STRIPS); 
+	
+	MetaDataStripMap::const_iterator itr;
+	for(itr = meta_strips.begin(); itr != meta_strips.end(); ++itr){
+		
+		TiXmlElement* strip = new TiXmlElement(POPFILE_METADATA_NODE_STRIP);
+		if((*itr).second.strip_is_local)
+			strip->SetAttribute(POPFILE_METADATA_NODE_STRIP_ATTRIBUTE_LOCAL, "true");
+		else
+			strip->SetAttribute(POPFILE_METADATA_NODE_STRIP_ATTRIBUTE_LOCAL, "false");
+
+		char buffer[10];
+
+		TiXmlElement* strip_id = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_ID);   	
+		strip_id->LinkEndChild(new TiXmlText(convertInt((*itr).second.strip_identifier)));	
+		strip->LinkEndChild(strip_id);	
+			
+		TiXmlElement* strip_abs_path = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_ABS_PATH);   	
+		strip_abs_path->LinkEndChild(new TiXmlText((*itr).second.strip_absolute_path));	
+		strip->LinkEndChild(strip_abs_path);	
+		
+		TiXmlElement* strip_name = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_STRIP_NAME);   	
+		strip_name->LinkEndChild(new TiXmlText((*itr).second.strip_name));	
+		strip->LinkEndChild(strip_name);	
+		
+		TiXmlElement* strip_offset = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_OFFSET);   	
+		strip_offset->LinkEndChild(new TiXmlText(convertLong((*itr).second.strip_offset)));	
+		strip->LinkEndChild(strip_offset);
+		
+		TiXmlElement* strip_accesspoint = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_AP); 
+		TiXmlElement* strip_accesspoint_hostname = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_AP_HOSTNAME); 
+		strip_accesspoint_hostname->LinkEndChild(new TiXmlText((*itr).second.strip_accesspoint.accesspoint_hostname));	
+		TiXmlElement* strip_accesspoint_ip_address = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_AP_IPADDR); 
+		strip_accesspoint_ip_address->LinkEndChild(new TiXmlText((*itr).second.strip_accesspoint.accesspoint_ip_address));			
+		TiXmlElement* strip_accesspoint_port = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_AP_PORT);   		
+		strip_accesspoint_port->LinkEndChild(new TiXmlText(convertInt((*itr).second.strip_accesspoint.accesspoint_port)));		
+		
+		strip_accesspoint->LinkEndChild(strip_accesspoint_hostname);
+		strip_accesspoint->LinkEndChild(strip_accesspoint_ip_address);
+		strip_accesspoint->LinkEndChild(strip_accesspoint_port);			
+		
+		strip->LinkEndChild(strip_accesspoint);
+			
+	 	strips->LinkEndChild(strip);	
+	}
+	
+	
+	root->LinkEndChild(strips); 		
+	
+	
+	doc.SaveFile(filename);  
 	meta_strips.clear();
 }
 
@@ -122,6 +215,18 @@ long POPFileMetaData::get_offset()
 void POPFileMetaData::set_offset(long value)
 {
 	meta_offset = value;
+}
+
+std::string POPFileMetaData::convertInt(int number) {
+   std::stringstream ss;
+   ss << number;
+   return ss.str();
+}
+
+std::string POPFileMetaData::convertLong(long number) {
+   std::stringstream ss;
+   ss << number;
+   return ss.str();
 }
 
 /** 
