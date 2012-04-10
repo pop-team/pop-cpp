@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 	b = o.GetData().GetInternalData();
 	printf("Current internal data value = %d\n", b);
 
-	if (b==10) printf("Pogram terminated, destroying objects...\n");
+	if (b==10) printf("Program terminated, destroying objects...\n");
 	else printf("Program failed, bad value transmission\n");
 
 	return 0;
