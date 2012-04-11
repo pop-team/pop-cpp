@@ -15,23 +15,31 @@
 
 #include "popfile_metadata.h"
 
-namespace popfile{
+namespace popfile {
 	
 struct infos_t {
 	int nb_strips;
 	long offset;
 };
 
-class POPStream {
+class POPFStream {
 public:
-	POPStream();
-	POPStream(const char* filename);
-	~POPStream();	
+
+	// Standard functionalities of stream
+	POPFStream();
+	POPFStream(const char* filename);
+	~POPFStream();	
 			
 	void open(const char* filename);		
 	void close();
 	
+
 	
+	
+	
+	// New functionalities of POPFile
+	void scatter();
+	void gather();	
 	bool is_open();
 	bool is_parallel();
 	void get_infos(infos_t* infos);

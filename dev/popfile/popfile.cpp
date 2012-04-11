@@ -7,27 +7,28 @@
  */
 
 #include "popfile.h"
+#include "popfile_datathread.h"
 
 using namespace popfile;
 
 // Constant declaration
-const char* POPStream::POPFILE_METADATA_PREFIX = ".popfile_";
-const char* POPStream::POPFILE_METADATA_SUFFIX = ".xml";
+const char* POPFStream::POPFILE_METADATA_PREFIX = ".popfile_";
+const char* POPFStream::POPFILE_METADATA_SUFFIX = ".xml";
 
 
 /**
- * POPStream constructor without parameters.
+ * POPFStream constructor without parameters.
  */
-POPStream::POPStream()
+POPFStream::POPFStream()
 {
 	popfile_init_flags();
 }
 
 /**
- * POPStream constructor with parameter. The stream will be opened. 
+ * POPFStream constructor with parameter. The stream will be opened. 
  * @param filename 
  */
-POPStream::POPStream(const char* filename)
+POPFStream::POPFStream(const char* filename)
 {
 	popfile_init_flags();
 	open(filename);
@@ -36,7 +37,7 @@ POPStream::POPStream(const char* filename)
 /**
  *
  */
-POPStream::~POPStream()
+POPFStream::~POPFStream()
 {
 	
 }
@@ -45,7 +46,7 @@ POPStream::~POPStream()
  *
  * @return void 
  */
-void POPStream::popfile_init_flags()
+void POPFStream::popfile_init_flags()
 {
 	popfile_parallel = false;
 	popfile_open = false;
@@ -56,7 +57,7 @@ void POPStream::popfile_init_flags()
  *
  * @return void 
  */
-void POPStream::popfile_init_filename(const char* filename)
+void POPFStream::popfile_init_filename(const char* filename)
 {
 	popfile_filename = filename;
 	popfile_metadata_filename = filename;
@@ -70,7 +71,7 @@ void POPStream::popfile_init_filename(const char* filename)
  * @param filename
  * @return void
  */
-void POPStream::open(const char* filename)
+void POPFStream::open(const char* filename)
 {
 	if(!popfile_open){
 		popfile_init_filename(filename);
@@ -90,7 +91,7 @@ void POPStream::open(const char* filename)
  * Try to open the file in parallel mode. Open the file in standard mode if the file is not parallel.
  * 
  */
-bool POPStream::popfile_try_open_parallel()
+bool POPFStream::popfile_try_open_parallel()
 {
 	popfile_fstream.open(popfile_metadata_filename.c_str());
 	if(popfile_fstream.is_open()){
@@ -107,11 +108,39 @@ bool POPStream::popfile_try_open_parallel()
 	return false;
 }
 
+
+/**
+ * Strip a standard file into a parallel file
+ *
+ */
+void POPFStream::scatter(){
+	if(!popfile_parallel){
+	
+	} else {
+		//Can't do it ... already parallel
+		
+	}
+}
+
+/**
+ * Get all the strip and write all in a standard file
+ */
+void POPFStream::gather(){
+	if(popfile_parallel){
+		
+		
+	} else {
+		//Can't do it, not parallel
+		
+	}
+}
+
+
 /**
  * Check if the file is currently open
  * @return True if the file is open
  */
-bool POPStream::is_open()
+bool POPFStream::is_open()
 {
 	if(popfile_parallel)
 		return popfile_metadata.is_loaded();
@@ -123,7 +152,7 @@ bool POPStream::is_open()
  * Check if the file is parallel
  * @return True if the file is parallel
  */
-bool POPStream::is_parallel()
+bool POPFStream::is_parallel()
 {
 	return popfile_parallel;
 } 
@@ -131,7 +160,7 @@ bool POPStream::is_parallel()
 /**
  * Get information about the parallel file.
  */
-void POPStream::get_infos(infos_t* info)
+void POPFStream::get_infos(infos_t* info)
 {
 	if(popfile_parallel){
 		(*info).nb_strips = popfile_metadata.meta_strips.size();
@@ -143,7 +172,7 @@ void POPStream::get_infos(infos_t* info)
 /**
  *
  */
-void POPStream::close(){
+void POPFStream::close(){
 	if(popfile_parallel){
 		popfile_metadata.save(popfile_metadata_filename.c_str());
 	} else {
