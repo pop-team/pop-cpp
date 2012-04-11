@@ -8,24 +8,24 @@ int main( int argc, const char* argv[] )
 {
 	printf("Start of POPFile prototype test program: \n");
 	
-	POPStream pstream(FILEPATH); // Declare and open a file
-	if(pstream.is_parallel()){
+	POPFStream pfstream(FILEPATH); // Declare and open a file
+	if(pfstream.is_parallel()){
 		printf("%s is a parallel file \n", FILEPATH);
-		if(pstream.is_open()){
+		if(pfstream.is_open()){
 			printf("%s is open\n", FILEPATH);	
 			infos_t info;
-			pstream.get_infos(&info);
+			pfstream.get_infos(&info);
 			printf("The parallel file has %d strips\n", info.nb_strips);
 			std::cout << "The parallel file has " << info.offset << " for offset" << std::endl;
 			
 
-			pstream.close();
+			pfstream.close();
 		} else {
 			printf("%s is closed\n", FILEPATH);		
 		}
 	} else {
 		printf("%s is NOT a parallel file \n", FILEPATH);
-		if(pstream.is_open()){
+		if(pfstream.is_open()){
 			printf("%s is open\n", FILEPATH);	
 		} else {
 			printf("%s is closed\n", FILEPATH);		
