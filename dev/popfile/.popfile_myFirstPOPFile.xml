@@ -1,31 +1,32 @@
 <?xml version="1.0" ?>
+<!--POPFile v1.0 - THIS FILE HAS BEEN GENERATED, DO NOT MODIFY IT-->
 <popfile>
-<infos>
-	<absolute-path>/Users/clementval/versioning/popc/popfile_popc2.0.1/dev/popfile/</absolute-path>
-	<original-name>myFirstPOPFile</original-name>
-</infos>
-<strips>
-	<strip local='true'>
-		<id>1</id>
-		<absolute-path>/Users/clementval/versioning/popc/popfile_popc2.0.1/dev/popfile/</absolute-path>
-		<strip-name>.popfile_strip_1_myFirstPOPFile.strip</strip-name>
-		<offset>200</offset>
-		<accesspoint>
-			<hostname>popfile01</hostname>
-			<ip-address>127.0.0.1</ip-address>
-			<port>2712</port>			
-		</accesspoint>
-	</strip>
-	<strip local='false'>
-		<id>2</id>
-		<absolute-path>/home/clementval/popc/dev/popfile/</absolute-path>
-		<strip-name>.popfile_strip_2_myFirstPOPFile.strip</strip-name>		
-		<offset>200</offset>
-		<accesspoint>
-			<hostname>popfile02</hostname>
-			<ip-address>160.98.22.78</ip-address>
-			<port>2712</port>			
-		</accesspoint>			
-	</strip>
-</strips>
+    <infos>
+        <absolute-path>/Users/clementval/versioning/popc/popfile_popc2.0.1/dev/popfile/</absolute-path>
+        <original-name>myFirstPOPFile</original-name>
+    </infos>
+    <strips>
+        <strip local="true">
+            <id>1</id>
+            <absolute-path>/Users/clementval/versioning/popc/popfile_popc2.0.1/dev/popfile/</absolute-path>
+            <strip-name>.popfile_strip_1_myFirstPOPFile.strip</strip-name>
+            <offset>200</offset>
+            <accesspoint>
+                <hostname>popfile01</hostname>
+                <ip-address>127.0.0.1</ip-address>
+                <port>2712</port>
+            </accesspoint>
+        </strip>
+        <strip local="false">
+            <id>2</id>
+            <absolute-path>/home/clementval/popc/dev/popfile/</absolute-path>
+            <strip-name>.popfile_strip_2_myFirstPOPFile.strip</strip-name>
+            <offset>200</offset>
+            <accesspoint>
+                <hostname>popfile02</hostname>
+                <ip-address>160.98.22.78</ip-address>
+                <port>2712</port>
+            </accesspoint>
+        </strip>
+    </strips>
 </popfile>
