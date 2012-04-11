@@ -11,7 +11,7 @@ public:
 	POPObject() @{ od.search(0, 0, 0); };
 	~POPObject();
 	
-	sync seq void transferPOPBaseArray(POPBase d, int n);
+	sync seq void transferPOPBaseArray(int n, [in, out, size=n] POPData* d);
 	sync seq void transferPOPBaseData(POPData d);	
 		
 private:

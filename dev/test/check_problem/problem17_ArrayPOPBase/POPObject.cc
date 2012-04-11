@@ -12,10 +12,10 @@ POPObject::~POPObject()
 }
 
 
-void POPObject::transferPOPBaseArray(POPBase d, int n){
-	/*for(int i = 0; i<n; i++){
-		cout << d[i] << popcendl;
-	}*/
+void POPObject::transferPOPBaseArray(int n, POPData* d){
+	for(int i=0; i < n; i++){
+		cout << "POPBase[" << n << "]: " << d[i].getIntData() << popcendl;
+	}
 }
 
 void POPObject::transferPOPBaseData(POPData d){
