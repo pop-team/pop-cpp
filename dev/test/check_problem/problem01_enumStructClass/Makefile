@@ -3,10 +3,10 @@ all: app object objmap
 compile: app object
 
 app:
-	popcc -o main POPObject.ph POPObject.cc  main.cc
+	popcc -noclean -o main POPObject.ph POPObject.cc  main.cc
 
 object:
-	popcc -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
+	popcc -noclean -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
 
 objmap:
 	./POPObject.obj -listlong > obj.map

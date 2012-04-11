@@ -3,8 +3,21 @@
 
 
 
+typedef unsigned int BeforeType;
 
-enum OutsideEnum { IT1, IT2 };
+enum BeforeEnum { IT1, IT2 };
+
+struct BeforeStruct {
+	double weight;
+	int number;
+};
+
+class BeforeClass {
+public:
+	BeforeClass();
+private:
+		
+};
 
 parclass POPObject
 {
@@ -17,16 +30,41 @@ public:
 
 	
 	sync seq void dummyMethod();	
+
+	/*class InnerClass {
+	public:
+		InnerClass();	
+	private:
+		int number;
+	};	*/
 		
 private:
-	struct Test2 {
-		int i;
-		float t;
-	} apple;
+//	typedef unsigned long InnerType; //NOT SUPPORTED FOR THE MOMENT
+	BeforeType i;
+
+	struct InnerStruct {
+		double weight;
+		int number;
+	};	
 	
-	enum Test { ITEM1, ITEM2 }; 
+	
+	enum InnerEnum { ITEM1, ITEM2 }; 
 };
 
+typedef bool AfterType;
 
+struct AfterStruct {
+	double weight;
+	int number;
+};	
 
+class AfterClass {
+public:
+	AfterClass();
+private:
+		
+};
+	
+	
+enum AfterEnum { ITEM1, ITEM2 }; 
 #endif /*POPOBJECT_PH_*/
