@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./configure CPPFLAGS=-DARCH_MAC --enable-popfile
+make clean 
+make 
