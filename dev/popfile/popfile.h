@@ -1,9 +1,12 @@
 /**
- * PROJECT:		POPFile
- * AUTHOR:		clementval
- *	FILENAME:	popfile.h
- * CREATION:	03.25.2012
+ * File: popfile.h
+ * Author: Valentin Clement
+ * Description: header file for popfile object
+ * Creation date: 2012/03/25
  * 
+ * Modifications: 
+ * Authors		Date			Comment
+ * clementval		2012/03/25  		Creation of this file
  */
  
 #ifndef POPFILE_H_INCLUDE

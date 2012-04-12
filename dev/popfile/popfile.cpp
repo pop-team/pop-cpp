@@ -1,9 +1,12 @@
 /**
- * PROJECT:		POPFile
- * AUTHOR:		clementval
- *	FILENAME:	popfile.cpp
- * CREATION:	03.25.2012
+ * File: popfile.cpp
+ * Author: Valentin Clement
+ * Description: Implementation of popfile object. A popfile object is a parallel file distributed over the nodes available on the network.
+ * Creation date: 2012/03/25
  * 
+ * Modifications: 
+ * Authors		Date			Comment
+ * clementval		2012/03/25  		Creation of this file
  */
 
 #include "popfile.h"
@@ -20,7 +23,8 @@ const char* POPFStream::POPFILE_METADATA_SUFFIX = ".xml";
  * POPFStream constructor without parameters.
  */
 POPFStream::POPFStream()
-{
+{	
+	//Initialite internal flags
 	popfile_init_flags();
 }
 
@@ -30,7 +34,9 @@ POPFStream::POPFStream()
  */
 POPFStream::POPFStream(const char* filename)
 {
+	//Initialize internal flags
 	popfile_init_flags();
+	//Try to open the file
 	open(filename);
 }
 
@@ -39,11 +45,11 @@ POPFStream::POPFStream(const char* filename)
  */
 POPFStream::~POPFStream()
 {
-	
+	//TODO
 }
 
 /**
- *
+ * Initialize the internal flag used in a POPFile object
  * @return void 
  */
 void POPFStream::popfile_init_flags()
@@ -54,7 +60,7 @@ void POPFStream::popfile_init_flags()
 }
 
 /**
- *
+ * Initialize the name of different files used by a POPFile object
  * @return void 
  */
 void POPFStream::popfile_init_filename(const char* filename)
@@ -89,7 +95,7 @@ void POPFStream::open(const char* filename)
 
 /**
  * Try to open the file in parallel mode. Open the file in standard mode if the file is not parallel.
- * 
+ * @return TRUE if the file could be open in parallel way. FALSE in any other cases.
  */
 bool POPFStream::popfile_try_open_parallel()
 {
@@ -111,27 +117,28 @@ bool POPFStream::popfile_try_open_parallel()
 
 /**
  * Strip a standard file into a parallel file
- *
+ * @return void
  */
 void POPFStream::scatter(){
 	if(!popfile_parallel){
-	
+		//TODO
 	} else {
 		//Can't do it ... already parallel
-		
+		//TODO throw exception
 	}
 }
 
 /**
  * Get all the strip and write all in a standard file
+ * @return void
  */
 void POPFStream::gather(){
 	if(popfile_parallel){
-		
+		//TODO
 		
 	} else {
 		//Can't do it, not parallel
-		
+		//TODO throw exception
 	}
 }
 
@@ -165,15 +172,20 @@ void POPFStream::get_infos(infos_t* info)
 	if(popfile_parallel){
 		(*info).nb_strips = popfile_metadata.meta_strips.size();
 		(*info).offset = popfile_metadata.get_offset();	
-	}	
+	} else {
+		//TODO
+	}
 } 
 
 
 /**
- *
+ * Close the POPFile.
  */
 void POPFStream::close(){
 	if(popfile_parallel){
+		//Flush any local data
+		//TODO
+		//Save the metadat in the XML file
 		popfile_metadata.save(popfile_metadata_filename.c_str());
 	} else {
 		popfile_fstream.close();
