@@ -25,6 +25,7 @@ POPCSearchNode::POPCSearchNode(const POPString &challenge, bool deamon) : paroc_
 	logicalClock=0;
    psn_currentJobs=0;
 
+
 #ifdef __APPLE__
 	popc_node_log("Initialize semaphor for DARWIN arch");
    pt_locker == NULL;

@@ -105,8 +105,9 @@ libparoc_common_la_SOURCES=system.cc mutex.cc thread.cc string.cc od.cc event.cc
 	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc \
 	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc
 	
-libparoc_common_la_LIBADD=paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo \
-   remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo
+libparoc_common_la_LIBADD=paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo \
+   codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo \
+   batchmgr.ph.stub_client.lo
 endif
 
 if POPFILESUPPORT
@@ -116,13 +117,12 @@ libparoc_common_la_SOURCES=system.cc mutex.cc thread.cc string.cc od.cc event.cc
 	combox.cc combox_socket.cc buffer_xdr.cc \
 	buffer_factory.cc buffer_factory_finder.cc buffer_xdr_factory.cc \
 	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc \
-	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc popfilemanager.cc
+	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc popfilemanager.ph.stub_client.lo
 	
-libparoc_common_la_LIBADD=paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo \
-   remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo popfilemanager.ph.stub_client.lo
+libparoc_common_la_LIBADD=paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo \
+   codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo \
+   batchmgr.ph.stub_client.lo
 endif
-
-	
 
 libparoc_common_la_LDFLAGS=-static
 libparoc_common_la_CPPFLAGS=
@@ -168,11 +168,11 @@ endif
 
 if STANDARDSUPPORT
 libparoc_service_common_la_SOURCES=service_base.cc jobmgr.cc popc_search_node.cc codemgr.cc \
-   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc
+   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc 
 
 libparoc_service_common_la_LIBADD=paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo \
    popc_search_node.ph.stub.lo codemgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
-   appservice.ph.stub.lo batchmgr.ph.stub.lo
+   appservice.ph.stub.lo batchmgr.ph.stub.lo 
 endif
 
 if POPFILESUPPORT
@@ -181,7 +181,7 @@ libparoc_service_common_la_SOURCES=service_base.cc jobmgr.cc popc_search_node.cc
 
 libparoc_service_common_la_LIBADD=paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo \
    popc_search_node.ph.stub.lo codemgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
-   appservice.ph.stub.lo batchmgr.ph.stub.lo popfilemanager.ph.stub.lo
+   appservice.ph.stub.lo batchmgr.ph.stub.lo popfilemanager.ph.stub.lo 
 endif
 
 libparoc_service_common_la_LDFLAGS=-static -version-info 1:2:0
@@ -258,10 +258,10 @@ endif
 
 if STANDARDSUPPORT
 EXTRA_DIST=paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph popc_search_node.ph codemgr.ph \
-   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph
+   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph 
 
 inst_HEADERS=paroc_service_base.ph appservice.ph popc_search_node.ph codemgr.ph remotelog.ph \
-   objectmonitor.ph batchmgr.ph jobmgr.ph
+   objectmonitor.ph batchmgr.ph jobmgr.ph 
 endif
 
 if POPFILESUPPORT
@@ -271,7 +271,6 @@ EXTRA_DIST=paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph popc_search_n
 inst_HEADERS=paroc_service_base.ph appservice.ph popc_search_node.ph codemgr.ph remotelog.ph \
    objectmonitor.ph batchmgr.ph jobmgr.ph popfilemanager.ph
 endif
-
 
 instdir=@includedir@
 CLEANFILES=_paroc_*.cc _paroc_*.ph
