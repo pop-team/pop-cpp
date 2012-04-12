@@ -6,6 +6,7 @@ clementval	2010/04/19	All code modified during the semester project begins with 
 clementval	2010/05/10	Creating a POPCSearchNode before creating the JobMgr, change the JobMgr creation by passing the POPCSearchNode access point
 clementval	2012/04/12	Add POPFileManager service support
 */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,6 +15,8 @@ clementval	2012/04/12	Add POPFileManager service support
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "config.h"
+
+#include "popfilemanager.ph"
 
 
 /**
@@ -57,14 +60,7 @@ clementval	2012/04/12	Add POPFileManager service support
 #elif defined POPC_SECURE
 #include "popc_security_manager.ph"
 #endif
-
 /* ViSaG */
-
-/* POPFile: clementval */
-#ifdef POPC_POPFILE
-#include "popfilemanager.ph"
-#endif
-/* POPFile */
 
 void Usage()
 {
@@ -126,18 +122,21 @@ int main(int argc, char **argv)
 		if (stop)
 		{
 #ifdef POPC_SECURE_VIRTUAL
-         printf("Stoping POP-C++ [Virtual Secure Version] Global Services\n");
+   printf("Stoping POP-C++ [Virtual Secure Version] Global Services\n");
 #elif defined POPC_SECURE
-         printf("Stoping POP-C++ [Secure Version] Global Services\n");
+   printf("Stoping POP-C++ [Secure Version] Global Services\n");
 #elif defined POPC_VIRTUAL
-         printf("Stoping POP-C++ [Virtual Version] Global Services\n");
+   printf("Stoping POP-C++ [Virtual Version] Global Services\n");	
 #elif defined POPC_POPFILE
-         printf("Stoping POP-C++ [POPFile Version] Global Services\n");		
+   printf("Stoping POP-C++ [POPFile Version] Global Services\n");   
 #else
-         printf("Stoping POP-C++ [Standard Version] Global Services\n");
+	printf("Stoping POP-C++ [Standard Version] Global Services\n");
 #endif
+
 			paroc_accesspoint jobmgr_ap;
 			jobmgr_ap.SetAccessString(host);
+			
+			
 
 		
 #ifdef POPC_SECURE_VIRTUAL
@@ -163,7 +162,7 @@ int main(int argc, char **argv)
             printf("POPCloner stopped successfully!\n");
          } 
 
-#elif POPC_VIRTUAL
+#elif defined POPC_VIRTUAL
 			VirtualJobMgr mgr(jobmgr_ap);
          VirtualPOPCSearchNode vpsn(mgr.GetNodeAccessPoint());
 			if (!vpsn.Stop(challenge)){
@@ -194,8 +193,15 @@ int main(int argc, char **argv)
          } else {
             printf("PSM stopped successfully!\n");
          }
+#elif defined POPC_POPFILE
+			JobMgr mgr(jobmgr_ap);
+         POPCSearchNode psn(mgr.GetNodeAccessPoint());
+			if (!psn.Stop(challenge)){
+				fprintf(stderr, "Bad challenge string. Cannot stop PSN ...\n");
+			} else {
+            printf("PSN stopped successfully!\n");
+         }
 #else
-
 			JobMgr mgr(jobmgr_ap);
          POPCSearchNode psn(mgr.GetNodeAccessPoint());
 			if (!psn.Stop(challenge)){
@@ -253,7 +259,7 @@ int main(int argc, char **argv)
 #elif defined POPC_VIRTUAL
    printf("Starting POP-C++ [Virtual Version] Global Services\n");
 #elif defined POPC_POPFILE
-   printf("Starting POP-C++ [POPFile Version] Global Services\n");
+   printf("Starting POP-C++ [POPFile Version] Global Services\n");   
 #else
    printf("Starting POP-C++ [Standard Version] Global Services\n");
 #endif
@@ -302,28 +308,21 @@ int main(int argc, char **argv)
 
       //Init the ssh secure mode on the PSM
       psm.initSSHMode();
-
-
 #elif defined POPC_POPFILE
-		POPFileManager pfm(challenge, daemon);
-      printf("PFM (POPFile) Started [%s]\n", pfm.GetAccessPoint().GetAccessString());
-      POPCSearchNode psn(challenge, daemon);
-      printf("PSN (POPFile) Started [%s]\n", psn.GetAccessPoint().GetAccessString());
-
-/*
- * STANDARD VERSION
- */
-#else
+		/*
+		 * POPFILE VERSION
+		 */
       POPCSearchNode psn(challenge, daemon);
       printf("PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());
+      POPFileManager pfm(challenge, daemon);
+      printf("PFM Started [%s]\n", pfm.GetAccessPoint().GetAccessString());      
+#else
+		/*
+		 * STANDARD VERSION
+		 */
+      POPCSearchNode psn(challenge, daemon);
+      printf("PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());    
 #endif
-		
-      /* ViSaG */
-
-
-
-
-
 
 
 #ifdef POPC_GLOBUS

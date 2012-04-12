@@ -22,10 +22,9 @@ AM_LDFLAGS=-L@top_srcdir@/lib -L@top_srcdir@/lib/.libs
 
 #Standard version
 if STANDARDSUPPORT
-execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher 
+execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher
 endif
 
-#POPFile version
 if POPFILESUPPORT
 execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher popfilemanager
 endif
@@ -62,13 +61,15 @@ popc_search_node_SOURCES=popc_search_node_obj.cc
 popc_search_node_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
 popc_search_node_LDFLAGS=-object
 
-popfilemanager_SOURCES=popfilemanager_obj.cc
-popfilemanager_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-popfilemanager_LDFLAGS=-object
-
 jobmgr_SOURCES=jobmgr_obj.cc
 jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
 jobmgr_LDFLAGS=-object
+
+if POPFILESUPPORT
+popfilemanager_SOURCES=popfilemanager_obj.cc
+popfilemanager_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
+popfilemanager_LDFLAGS=-object
+endif
 
 #
 # ViSaG : clementval
