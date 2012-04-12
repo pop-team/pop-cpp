@@ -64,3 +64,5 @@ bool POPFileManager::hasStrip(POPString path)
 }
 
 
+@pack(POPFileManager);
+
