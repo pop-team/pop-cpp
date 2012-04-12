@@ -3138,7 +3138,7 @@ yyreduce:
 	/* error if multimple time same reserved word */
 	if (((yyvsp[(2) - (2)]) & (yyvsp[(1) - (2)])) != 0)
 	{
-		errormsg("Multiple occurance of same POP-C++ Mehtode modivier!");
+		errormsg("Multiple semantics keyword");
 		exit(1);
 	}
   
@@ -4301,7 +4301,7 @@ void errorGlobalMehtode(bool isGlobal)
 {
 	if(isGlobal)
 	{
-		errormsg("inspectors/const member functions are not allowed in POP-C++");
+		errormsg("inspectors/const member functions are supported in the current version of POP-C++");
 		exit(1);
 	}
 	else
