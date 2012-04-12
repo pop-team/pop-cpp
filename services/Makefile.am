@@ -25,6 +25,11 @@ if STANDARDSUPPORT
 execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher 
 endif
 
+#POPFile version
+if POPFILESUPPORT
+execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher popfilemanager
+endif
+
 #Virtual version
 if VIRTSUPPORT
 execservices_PROGRAMS=popc_search_node virtual_popc_search_node jobmgr virtual_jobmgr virtual_jobmgr appservice \
@@ -56,6 +61,10 @@ bin_SCRIPTS=popcjob.pbs popcjob.lsf popcjob.sge
 popc_search_node_SOURCES=popc_search_node_obj.cc
 popc_search_node_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
 popc_search_node_LDFLAGS=-object
+
+popfilemanager_SOURCES=popfilemanager_obj.cc
+popfilemanager_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
+popfilemanager_LDFLAGS=-object
 
 jobmgr_SOURCES=jobmgr_obj.cc
 jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
