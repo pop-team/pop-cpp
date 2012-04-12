@@ -136,3 +136,8 @@ Release 2.0.1
 - Fix slowness of POP-C++ application on MAC OS X
 - Add support for enum type inside a parclass declaration
 - Removing unuseful directory in the release
+
+Release 2.0.2
+- Add support for namespace in .ph files
+- Add better error messages at parsing and avoid unsupported code to be compiled
+
