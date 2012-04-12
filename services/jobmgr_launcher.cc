@@ -3,7 +3,8 @@ UPDATES :
 Authors		Date			Comment
 clementval	2010/04/19	All code added for the semester project begin with this comment 	//Added by clementval
 clementval	2010/04/19	All code modified during the semester project begins with //Modified by 								clementval, ends with //End of modification
-clementval	2010/05/10	Creating a POPCSearchNode befor creating the JobMgr, change the JobMgr 		creation by passing the POPCSearchNode access point
+clementval	2010/05/10	Creating a POPCSearchNode before creating the JobMgr, change the JobMgr creation by passing the POPCSearchNode access point
+clementval	2012/04/12	Add POPFileManager service support
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,13 +52,19 @@ clementval	2010/05/10	Creating a POPCSearchNode befor creating the JobMgr, chang
 //Include PSM or VPSM
 #ifdef POPC_SECURE_VIRTUAL
 #include "virtual_popc_security_manager.ph"
-#elif POPC_VIRTUAL
+#elif defined POPC_VIRTUAL
 #include "virtual_popc_security_manager.ph"
 #elif defined POPC_SECURE
 #include "popc_security_manager.ph"
 #endif
 
 /* ViSaG */
+
+/* POPFile: clementval */
+#ifdef POPC_POPFILE
+#include "popfilemanager.ph"
+#endif
+/* POPFile */
 
 void Usage()
 {
@@ -124,6 +131,8 @@ int main(int argc, char **argv)
          printf("Stoping POP-C++ [Secure Version] Global Services\n");
 #elif defined POPC_VIRTUAL
          printf("Stoping POP-C++ [Virtual Version] Global Services\n");
+#elif defined POPC_POPFILE
+         printf("Stoping POP-C++ [POPFile Version] Global Services\n");		
 #else
          printf("Stoping POP-C++ [Standard Version] Global Services\n");
 #endif
@@ -186,6 +195,7 @@ int main(int argc, char **argv)
             printf("PSM stopped successfully!\n");
          }
 #else
+
 			JobMgr mgr(jobmgr_ap);
          POPCSearchNode psn(mgr.GetNodeAccessPoint());
 			if (!psn.Stop(challenge)){
@@ -242,6 +252,8 @@ int main(int argc, char **argv)
    printf("Starting POP-C++ [Secure Version] Global Services\n");
 #elif defined POPC_VIRTUAL
    printf("Starting POP-C++ [Virtual Version] Global Services\n");
+#elif defined POPC_POPFILE
+   printf("Starting POP-C++ [POPFile Version] Global Services\n");
 #else
    printf("Starting POP-C++ [Standard Version] Global Services\n");
 #endif
@@ -267,7 +279,7 @@ int main(int argc, char **argv)
 /*
  * VIRTUAL VERSION
  */
-#elif POPC_VIRTUAL
+#elif defined POPC_VIRTUAL
       //Create the VPSN
 		VirtualPOPCSearchNode psn(challenge, daemon);
       printf("VPSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());      
@@ -291,6 +303,13 @@ int main(int argc, char **argv)
       //Init the ssh secure mode on the PSM
       psm.initSSHMode();
 
+
+#elif defined POPC_POPFILE
+		POPFileManager pfm(challenge, daemon);
+      printf("PFM (POPFile) Started [%s]\n", pfm.GetAccessPoint().GetAccessString());
+      POPCSearchNode psn(challenge, daemon);
+      printf("PSN (POPFile) Started [%s]\n", psn.GetAccessPoint().GetAccessString());
+
 /*
  * STANDARD VERSION
  */
@@ -300,6 +319,9 @@ int main(int argc, char **argv)
 #endif
 		
       /* ViSaG */
+
+
+
 
 
 
