@@ -1,5 +1,20 @@
 #!/bin/bash
 
-./configure CPPFLAGS=-DARCH_MAC --enable-popfile
-make clean 
-make 
+POP_PREFIX=/home/clementval/popc
+
+if [ x$(uname) == "xLinux" ]
+then
+	echo "Building for Linux"
+	rm -rf $POP_PREFIX
+	./configure --prefix=$POP_PREFIX --enable-popfile
+	make clean 
+	make
+else
+	echo "Building for Mac OS X"
+	./configure CPPFLAGS=-DARCH_MAC --enable-popfile
+	make clean 
+	make
+fi
+
+
+
