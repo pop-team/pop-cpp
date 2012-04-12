@@ -339,10 +339,10 @@ enum {
 	return ENUM;
 };
 
-structure {
+namespace {
 	yylval=PutToken(yytext);
 	othercodes.InsertAt(-1,yytext,strlen(yytext));
-	return STRUCTURE;
+	return NAMESPACE;
 };
  
 classuid {

@@ -6,7 +6,8 @@
  * 
  * Modifications :
  * Authors		Date			Comment
- * Clementval	March 2012	Add Enum, Struct support
+ * clementval	March 2012	Add Enum support
+ * clementval	April 2012	Add namespace support to the parser
  */
 
 #ifndef PARSER_H
@@ -542,6 +543,9 @@ public:
 
 	CArrayBaseClass baseClass;
 	CArrayClassMember memberList;
+	
+	void SetNamespace(char* value);
+	std::string GetNamespace();
 
 public:
 	static char interface_base[1024];
@@ -561,6 +565,7 @@ protected:
 	char *my_interface_base;
 	char *my_object_base;
 	char *my_broker_base;
+	std::string strnamespace;
 };
 
 
