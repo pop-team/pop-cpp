@@ -2176,7 +2176,7 @@ void setPOPCMethodeModifier(int settings)
 		method->isMutex= true;
 	else if ((settings & 56)!=0)
 	{
-		errormsg("Method can only have one conc, mutex or seq attribute !");
+		errormsg("Multiple seq, conc or mutex keyword");
 		exit(1);
 	}
 	
@@ -2186,7 +2186,7 @@ void setPOPCMethodeModifier(int settings)
 	// TEST SYNC or ASYNC
 	if ((settings & 6)==6) 
 	{
-		errormsg("Method can not by sync and async at same time!");
+		errormsg("Multiple sync, async keyword");
 		exit(1);
 	}
 	else if ((settings & 6)==4) method->invoketype=invokeasync;
