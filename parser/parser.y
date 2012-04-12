@@ -1387,7 +1387,7 @@ fct_specifier:  fct_spec
 	/* error if multimple time same reserved word */
 	if (($2 & $1) != 0)
 	{
-		errormsg("Multiple occurance of same POP-C++ Mehtode modivier!");
+		errormsg("Multiple semantics keyword");
 		exit(1);
 	}
   
@@ -2198,7 +2198,7 @@ void errorGlobalMehtode(bool isGlobal)
 {
 	if(isGlobal)
 	{
-		errormsg("inspectors/const member functions are not allowed in POP-C++");
+		errormsg("inspectors/const member functions are supported in the current version of POP-C++");
 		exit(1);
 	}
 	else
