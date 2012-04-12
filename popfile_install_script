@@ -7,13 +7,12 @@ then
 	echo "Building for Linux"
 	rm -rf $POP_PREFIX
 	./configure --prefix=$POP_PREFIX --enable-popfile
-	make clean 
-	make
+	make clean all install
 else
 	echo "Building for Mac OS X"
 	./configure CPPFLAGS=-DARCH_MAC --enable-popfile
-	make clean 
-	make
+	make clean all
+	sudo make install
 fi
 
 
