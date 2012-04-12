@@ -14,29 +14,28 @@
 #define POPFILEMANAGER_PH_
 
 #include "paroc_service_base.ph"
+#include "POPString.h"
 
 parclass POPFileManager : virtual public paroc_service_base {
-public: 
+public:
+   //Define class UID. POP-C++ need
+   classuid(20);
+
    //POPFileManager constructor
-   POPFileManager(const POPString &challenge, bool deamon) @{ od.runLocal(true);};
+	POPFileManager(const POPString &challenge, bool deamon) @{ od.runLocal(true); od.service(true); };
    
    //POPFileManager destructor   
    ~POPFileManager();
       
    // Management methods
-   sync conc bool hasStrip(POPString path);
+ /*  sync conc bool hasStrip(POPString path);
    sync conc void getMetaData();
    
    
    
    sync conc POPString readData();
    sync conc void writeData();
-   
-
-	//Define class uid
-   classuid(1021);
-private:
-   paroc_accesspoint psn;	//direct access to the POPSearchNode
+   */
     
 };
 #endif /* POPFILEMANAGER_PH_ */

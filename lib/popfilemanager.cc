@@ -11,7 +11,7 @@
  */
 
 #include "popfilemanager.ph"
-#include <iostream>
+//#include <iostream>
 
 /**
  * POPFile : clementval
@@ -19,9 +19,8 @@
  * @param challenge  Challenge string needed to stop the service
  * @param deamon     Tell if the parallel object is a deamon or not 
  */
-POPFileManager::POPFileManager(const POPString &challenge, bool deamon) : paroc_service_base(challenge) 
-{
-	
+POPFileManager::POPFileManager(const POPString &challenge, bool deamon) : paroc_service_base(challenge) {
+
 	if(deamon) Start();
 }
 
@@ -38,11 +37,12 @@ POPFileManager::~POPFileManager()
  * POPFile : clementval
  * Destructor of the POPCloner
  */
+/*
 void POPFileManager::getMetaData()
 {
 	
 }
-
+*/
 
 /**
  * POPFile : clementval
@@ -50,19 +50,23 @@ void POPFileManager::getMetaData()
  * @param path the absolute path of the strip
  * @return TRUE if the strip is hosted on this node, false in other way
  */
+/*
 bool POPFileManager::hasStrip(POPString path)
 {
-	/*std::ifstream local_strip;
+	std::ifstream local_strip;
 	local_strip(path.GetString());
 	if(local_strip.is_open()){
 		local_strip.close();
 		return true;
 	} else {
 		return false;
-	}*/
+	}
 	return false;
 }
 
-
-@pack(POPFileManager);
-
+POPString POPFileManager::readData()
+{
+}
+void POPFileManager::writeData()
+{
+}*/
