@@ -29,7 +29,7 @@ public:
    
    
 	//Write to strip
-	async conc bool writeToStrip();
+	async conc void writeToStrip();
    
    
    //Save the accesspoint of the POPSearchNode
