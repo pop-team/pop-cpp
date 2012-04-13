@@ -1,5 +1,20 @@
-all: popfile.h popfile.cpp main.cpp popfile_metadata.h popfile_metadata.cpp
-	g++ -o popf_test popfile.cpp main.cpp popfile.h tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp popfile_metadata.h popfile_metadata.cpp popfile_datathread.h popfile_datathread.cpp
+DEP=popfile.h popfile.cpp main.cpp popfile_metadata.h popfile_metadata.cpp
+SOURCES=main.cpp popfile.cpp popfile.h tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp popfile_metadata.h \
+popfile_metadata.cpp popfile_datathread.h popfile_datathread.cpp
+
+GCC=g++
+POPCC=popcc
+POPCC_FLAG=-popc-static -I/Users/clementval/versioning/popc/popfile_popc2.0.1/include
+APP1=popfile_test_alone
+APP2=popfile_test_popc
+
+all: popc
+
+cc: $(DEP)
+	$(GCC) -o $(APP1)  $(SOURCES)
+	
+popc: $(DEP)
+	$(POPCC) -o $(APP2) $(SOURCES)
 	
 clean:
-	rm -f popf_test
+	rm -rf _paroc* $(APP1) $(APP2)

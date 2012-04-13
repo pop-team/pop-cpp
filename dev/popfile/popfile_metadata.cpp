@@ -9,6 +9,9 @@
 #include "tinyxml/tinyxml.h"
 #include "popfile_metadata.h"
 
+
+
+
 const char* POPFileMetaData::POPFILE_METADATA_COMMENT = "POPFile v1.0 - THIS FILE HAS BEEN GENERATED, DO NOT MODIFY IT";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_ROOT = "popfile";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_INFOS = "infos";
@@ -234,24 +237,24 @@ std::string POPFileMetaData::convertLong(long number) {
  */
 void POPFileMetaData::dump_to_cout()
 {
-	std::cout << "### POPFileMetaData ###" << std::endl;
-	std::cout << "- Infos :" << std::endl;	
-	std::cout << "-- Absolute Path: " << meta_info.info_absloute_path << std::endl;	
-	std::cout << "-- Original Filename: " << meta_info.info_original_name << std::endl;
-	std::cout << "- Strips: " << std::endl;	
+	cout << "### POPFileMetaData ###" << popcendl;
+	cout << "- Infos :" << popcendl;	
+	cout << "-- Absolute Path: " << meta_info.info_absloute_path << popcendl;	
+	cout << "-- Original Filename: " << meta_info.info_original_name << popcendl;
+	cout << "- Strips: " << popcendl;	
 	
 	MetaDataStripMap::const_iterator itr;
 	for(itr = meta_strips.begin(); itr != meta_strips.end(); ++itr){
-		std::cout << "-- Strip: (local) - " << (*itr).second.strip_is_local << std::endl;
-		std::cout << "--- Identifier: " << (*itr).second.strip_identifier << std::endl;		
-		std::cout << "--- Absolute Path: " << (*itr).second.strip_absolute_path << std::endl;	
-		std::cout << "--- Filename: " << (*itr).second.strip_name << std::endl;	
-		std::cout << "--- Offset: " << (*itr).second.strip_offset << std::endl;	
-		std::cout << "--- Accesspoint: " << std::endl;
-		std::cout << "---- Hostname: " << (*itr).second.strip_accesspoint.accesspoint_hostname << std::endl;
-		std::cout << "---- IP address: " << (*itr).second.strip_accesspoint.accesspoint_ip_address << std::endl;		
-		std::cout << "---- Port: " << (*itr).second.strip_accesspoint.accesspoint_port << std::endl;		
+		cout << "-- Strip: (local) - " << (*itr).second.strip_is_local << popcendl;
+		cout << "--- Identifier: " << (*itr).second.strip_identifier << popcendl;		
+		cout << "--- Absolute Path: " << (*itr).second.strip_absolute_path << popcendl;	
+		cout << "--- Filename: " << (*itr).second.strip_name << popcendl;	
+		cout << "--- Offset: " << (*itr).second.strip_offset << popcendl;	
+		cout << "--- Accesspoint: " << popcendl;
+		cout << "---- Hostname: " << (*itr).second.strip_accesspoint.accesspoint_hostname << popcendl;
+		cout << "---- IP address: " << (*itr).second.strip_accesspoint.accesspoint_ip_address << popcendl;		
+		cout << "---- Port: " << (*itr).second.strip_accesspoint.accesspoint_port << popcendl;		
 	}
 
-	std::cout << "### POPFileMetaData ###" << std::endl;	
+	cout << "### POPFileMetaData ###" << popcendl;	
 }
