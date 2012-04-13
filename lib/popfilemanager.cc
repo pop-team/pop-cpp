@@ -21,3 +21,29 @@ POPFileManager::POPFileManager(const POPString &challenge, bool deamon, POPStrin
 POPFileManager::~POPFileManager(){
 
 }
+
+bool createStrip()
+{
+}
+   
+   
+/**
+ * POPFile: clementval
+ * Write data to a strip
+ */
+void writeToStrip()
+{
+}
+
+
+
+
+/**
+ * POPFile: clementval
+ * Save the accesspoint of POPSearchNode
+ */
+void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap)
+{
+	psn = ap;
+}
+

@@ -11,6 +11,8 @@
  */
 
 #include "paroc_service_base.ph"
+#include "paroc_accesspoint.h"
+//#include "popfilestrip.h"
 
 parclass POPFileManager : virtual public paroc_service_base {
 public:
@@ -21,4 +23,19 @@ public:
    
    //POPCloner destrcutor   
    ~POPFileManager();
+   
+   //Create a new strip on this node
+   bool createStrip();
+   
+   
+	//Write to strip
+	async conc bool writeToStrip();
+   
+   
+   //Save the accesspoint of the POPSearchNode
+   sync seq void setPSNAccessPoint(paroc_accesspoint ap);
+   
+private: 
+
+	paroc_accesspoint psn;
 };

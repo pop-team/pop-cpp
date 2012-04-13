@@ -117,7 +117,7 @@ libparoc_common_la_SOURCES=system.cc mutex.cc thread.cc string.cc od.cc event.cc
 	combox.cc combox_socket.cc buffer_xdr.cc \
 	buffer_factory.cc buffer_factory_finder.cc buffer_xdr_factory.cc \
 	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc \
-	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc popfilemanager.ph.stub_client.lo
+	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc 
 	
 libparoc_common_la_LIBADD=paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo \
    codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo \
