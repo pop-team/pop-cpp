@@ -70,11 +70,12 @@ void Usage()
 
 int main(int argc, char **argv)
 {
-	paroc_string host;
-	paroc_string conf;
-   paroc_string virtconf;
-	paroc_string objcode;
-	paroc_string challenge;
+	POPString host;
+	POPString hostpfm;
+	POPString conf;
+   POPString virtconf;
+	POPString objcode;
+	POPString challenge;
 	char str[1024];
 
 	char *tmp;
@@ -93,6 +94,9 @@ int main(int argc, char **argv)
 		if (strchr(str,':')==NULL) strcat(str,":2711");
 	}
 	host=str;
+	sprintf(str,"%s:2712",(const char *)paroc_system::GetHost());
+	hostpfm=str;
+	
 
 	tmp=paroc_utils::checkremove(&argc,&argv,"-challenge=");
 	if (tmp!=NULL) challenge=tmp;
@@ -314,7 +318,7 @@ int main(int argc, char **argv)
 		 */
       POPCSearchNode psn(challenge, daemon);
       printf("PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());
-      POPFileManager pfm(challenge, daemon);
+      POPFileManager pfm(challenge, daemon, hostpfm);
       printf("PFM Started [%s]\n", pfm.GetAccessPoint().GetAccessString());      
 #else
 		/*
