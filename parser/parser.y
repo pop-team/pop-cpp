@@ -14,37 +14,37 @@
 #include "debug.h"
 
 
-  //Declaration in parser.lex:
+ //Declaration in parser.lex:
   
-  int  PutToken(char *str);
-  int PutToken(char chr);
-  char *GetToken(int yyval);
+ int PutToken(char *str);
+ int PutToken(char chr);
+ char *GetToken(int yyval);
 
-  void errormsg(const  char *s);
-  void setReturnParam(int pointer, int ref, int const_virtual); // Methode to group code that set C++ specific C++ Param attributes
-  void setPOPCMethodeModifier(int settings); // mehtode to group code that set/controlle Methode attributes (sync, conc, ...)
-  void errorGlobalMehtode(bool isGlobal);
+ void errormsg(const  char *s);
+ void setReturnParam(int pointer, int ref, int const_virtual); // Methode to group code that set C++ specific C++ Param attributes
+ void setPOPCMethodeModifier(int settings); // mehtode to group code that set/controlle Methode attributes (sync, conc, ...)
+ void errorGlobalMehtode(bool isGlobal);
   
-extern "C"
-{
-  int yywrap();
-}
-  void yyerror(const  char *s);
-  int yylex();
+ extern "C"
+ {
+ 	int yywrap();
+ }
+ void yyerror(const  char *s);
+ int yylex();
 
-  extern int linenumber;
-  extern char filename[1024];
+ extern int linenumber;
+ extern char filename[1024];
 
-CArrayCharPtr incl[1000];
-CArrayCharPtr sources;
-CArrayCharPtr searchpath; 
+ CArrayCharPtr incl[1000];
+ CArrayCharPtr sources;
+ CArrayCharPtr searchpath; 
 
  int indexsource=0;  //the index of source file and the include directive
 
 
-  extern CArrayChar othercodes;
-  extern bool insideClass;
-  extern int startPos;
+ extern CArrayChar othercodes;
+ extern bool insideClass;
+ extern int startPos;
 
 
  CodeFile *thisCodeFile;
@@ -60,10 +60,14 @@ CArrayCharPtr searchpath;
 
  PackObject *currentPack;
 
+ Structure *structContainer;
+
  Method *method;
  // Param *param;
 
  int n,t;
+ bool isNamespace = false;
+ char holdnamespace[500];
  char tmp[10240];
  char tmpProc[10240];
  char tmpSize[10240];
@@ -107,7 +111,7 @@ struct TemplateArgument
 %token SYNC_INVOKE ASYNC_INVOKE INPUT OUTPUT  CONCURRENT SEQUENTIAL MUTEX HIDDEN PROC SIZE THIS_KEYWORD
 %token INCLUDE DIRECTIVE OD AUTO_KEYWORD REGISTER_KEYWORD VOLATILE_KEYWORD PACK_KEYWORD 
 %token AND_OP OR_OP EQUAL_OP NOTEQUAL_OP GREATEREQUAL_OP LESSEQUAL_OP NONSTRICT_OD_OP EOFCODE
-%token SCOPE ENUM CLASS STRUCTURE
+%token SCOPE ENUM CLASS NAMESPACE
 
 %left '+' '-' '*' '/' '%'
 %left '&' '|' '^' '~' '!' '='
@@ -133,6 +137,7 @@ startlist: handle_this startlist
       othercodes.SetSize(0);
     }
 }
+| namespace_declaration
 | class_declaration  { insideClass=false; othercodes.SetSize(0); startPos=-1;} startlist 
 | class_prototype startlist
 | DIRECTIVE startlist
@@ -223,6 +228,19 @@ pack_header: PACK_KEYWORD
 }
 ;
 
+namespace_declaration: NAMESPACE ID 
+{
+	// Avoid handling of standard namespace used in POP-C++
+	if(strcmp("__gnu_cxx", GetToken($2)) != 0 &&  strcmp("std", GetToken($2)) != 0 && strcmp("__gnu_debug", GetToken($2)) != 0 && strcmp("rel_ops", GetToken($2)) != 0  && strcmp("__debug", GetToken($2)) != 0){
+			isNamespace = true;
+			sprintf(holdnamespace, "%s", GetToken($2));
+	}
+}
+'{' startlist '}'
+{
+	isNamespace = false;
+}
+
 object_list: ID rest_object_list
 {
   if (currentPack!=NULL)
@@ -257,9 +275,16 @@ STRUCT TYPES...
 
 struct_definition: struct_head '{' struct_body '}'
 {
-  currentstruct=Pop();
-  if (currentstruct!=NULL) currentstruct->SetTypeClass(false);
-  $$=$1;
+	if(currentClass!=NULL){
+		structContainer = new Structure(currentClass, accessmodifier);
+		structContainer->SetLineInfo(linenumber-1);
+		structContainer->setName(GetToken($1));
+		structContainer->setInnerDecl(GetToken($3));		
+		currentClass->AddMember(structContainer);
+	}
+  	currentstruct=Pop();
+  	if (currentstruct!=NULL) currentstruct->SetTypeClass(false);
+  	$$=$1;
 }
 | struct_head not_care_code
 {
@@ -305,6 +330,11 @@ struct_head: STRUCT_KEYWORD ID
 
 struct_body: /*empty*/
 | struct_element ';' struct_body
+{
+	if(structContainer!=NULL)
+		printf("Struct %s", GetToken($1));
+}
+;
 
 struct_element: decl_specifier struct_elname_list 
 ;
@@ -638,6 +668,9 @@ class_key: PARCLASS_KEYWORD ID
   t->SetFileInfo(filename);
   t->SetStartLine(linenumber);
   currentClass=t;
+  if(isNamespace){
+	  t->SetNamespace(holdnamespace);
+  }
 }
 ;
 
@@ -749,7 +782,7 @@ member_list: /*empty*/
 
 
 member_declaration:  enum_declaration ';'
-| structure_declaration ';'
+| struct_definition ';'
 | function_definition ';'
 {
   assert(method!=NULL);
@@ -827,10 +860,6 @@ enum_member: ID
 }
 ;
 
-
-
-structure_declaration: STRUCTURE '{' '}'
-;
 
 /*
 Attribute declaration....
@@ -1358,7 +1387,7 @@ fct_specifier:  fct_spec
 	/* error if multimple time same reserved word */
 	if (($2 & $1) != 0)
 	{
-		errormsg("Multiple occurance of same POP-C++ Mehtode modivier!");
+		errormsg("Multiple semantics keyword");
 		exit(1);
 	}
   
@@ -1969,6 +1998,7 @@ void CleanStack()
 {
   if (typestack.GetCount()) fprintf(stderr,"STRUCT list: %d elements\n",typestack.GetCount());
   currentstruct=NULL;
+  structContainer=NULL;
   typestack.RemoveAll();
 }
 
@@ -2146,7 +2176,7 @@ void setPOPCMethodeModifier(int settings)
 		method->isMutex= true;
 	else if ((settings & 56)!=0)
 	{
-		errormsg("Methode can only have one conc, mutex or seq attribute !");
+		errormsg("Multiple seq, conc or mutex keyword");
 		exit(1);
 	}
 	
@@ -2156,7 +2186,7 @@ void setPOPCMethodeModifier(int settings)
 	// TEST SYNC or ASYNC
 	if ((settings & 6)==6) 
 	{
-		errormsg("Methode can not by sync and async at same time!");
+		errormsg("Multiple sync, async keyword");
 		exit(1);
 	}
 	else if ((settings & 6)==4) method->invoketype=invokeasync;
@@ -2168,7 +2198,7 @@ void errorGlobalMehtode(bool isGlobal)
 {
 	if(isGlobal)
 	{
-		errormsg("inspecotrs/const member functions are not allowed in POP-C++");
+		errormsg("inspectors/const member functions are supported in the current version of POP-C++");
 		exit(1);
 	}
 	else
