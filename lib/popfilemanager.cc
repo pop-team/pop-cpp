@@ -12,7 +12,7 @@
 
 #include "popfilemanager.ph"
 
-POPFileManager::POPFileManager(const POPString &challenge, bool deamon) : paroc_service_base(challenge) {
+POPFileManager::POPFileManager(const POPString &challenge, bool deamon, POPString host) : paroc_service_base(challenge) {
 
 
 	if(deamon) Start();

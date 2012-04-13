@@ -14,12 +14,11 @@
 
 parclass POPFileManager : virtual public paroc_service_base {
 public:
-   
+   classuid(50);   
+
    //POPCloner constructor
-   POPFileManager(const POPString &challenge, bool deamon) @{ od.runLocal(true);};
+   POPFileManager(const POPString &challenge, bool deamon, POPString host) @{ od.runLocal(true); od.service(true); od.url(host); };
    
    //POPCloner destrcutor   
    ~POPFileManager();
-   
-   classuid(1021);
 };
