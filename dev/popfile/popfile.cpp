@@ -40,11 +40,6 @@ POPFStream::POPFStream(const char* filename)
 {
 	//Initialize internal values
 	popfile_init();
-	POPFileManager pfm(pfm_ap);
-	cout << "[POPFILEMANAGER] POPFileManger is connected to: " << pfm.GetAccessPoint().GetAccessString() << popcendl;
-	if(pfm.createStrip()){
-		cout << "[POPFILEMANAGER] Call to POPFileManager succeed" << popcendl;	
-	}
 	
 	//Try to open the file
 	open(filename);
@@ -207,7 +202,7 @@ void POPFStream::close(){
 bool POPFStream::create(const char* filename, const int stripnumber=2, const long offset=1024){
 
 	//Get path and filename to create the file
-	popfile_metadata.set_offset(offset);
+	/*popfile_metadata.set_offset(offset);
 	std::string str_filename(filename);	
 	std::string path;
   	std::size_t found;
@@ -230,7 +225,19 @@ bool POPFStream::create(const char* filename, const int stripnumber=2, const lon
 	}
 	popfile_metadata.set_filename(str_filename, path);
 	
-	cout << "[POPFILE] File will be create: name: " << str_filename << " path: " << path << popcendl;
+	cout << "[POPFILE] File will be create: name: " << str_filename << " path: " << path << popcendl;*/
+	
+	paroc_accesspoint candidates[stripnumber];	//Create an array of possible popfilemanager accesspoint
+	POPFileManager pfm(pfm_ap);
+	if(pfm.findResourcesForStrip(stripnumber, candidates)){
+		
+		
+		
+	} else {
+		cout << "[POPFILE] Error: there is not enough resources to create the parallel file" << popcendl;		
+	}
+	
+	
 	
 	
 	
