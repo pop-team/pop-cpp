@@ -317,9 +317,10 @@ int main(int argc, char **argv)
 		 * POPFILE VERSION
 		 */
       POPCSearchNode psn(challenge, daemon);
-      printf("PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());
+      printf("[POPFILE] PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());
       POPFileManager pfm(challenge, daemon, hostpfm);
-      printf("PFM Started [%s]\n", pfm.GetAccessPoint().GetAccessString());      
+      printf("[POPFILE] PFM Started [%s]\n", pfm.GetAccessPoint().GetAccessString());      
+      pfm.setPSNAccessPoint(psn.GetAccessPoint());
 #else
 		/*
 		 * STANDARD VERSION
@@ -391,7 +392,6 @@ int main(int argc, char **argv)
             printf("POPCloner stopped successfully!\n");
          }
       }
-
 #elif defined POPC_SECURE
       try{
          //Create the SJobMgr
@@ -413,6 +413,22 @@ int main(int argc, char **argv)
             printf("SPSN stopped successfully!\n");
          }
       }
+#elif defined POPC_POPFILE
+		try{
+         //Create the base JobMgr
+         paroc_accesspoint empty;
+         psn.GetAccessPoint();
+	   	JobMgr info(daemon, conf, challenge, host, psn.GetAccessPoint(), empty);
+         printf("[POPFILE] JM created [%s]\n", info.GetAccessPoint().GetAccessString());
+         pfm.getNeighborsFromPSN();
+      } catch(...){
+         fprintf(stderr, "Error: Need to stop PSN\n");
+         if(!psn.Stop(challenge)){
+            fprintf(stderr, "Bad challenge string. Cannot stop PSN ...\n");
+			} else {
+            printf("PSN stopped successfully!\n");
+         }
+      } 
 #else
       try{
          //Create the base JobMgr
@@ -428,7 +444,6 @@ int main(int argc, char **argv)
             printf("PSN stopped successfully!\n");
          }
       }
-      
 #endif
 		if (daemon)
 		{
