@@ -1,6 +1,7 @@
 #include "popfile.h"
 
 #define FILEPATH "myFirstPOPFile"
+#define FILE2 "hugefile"
 
 using namespace popfile;
 
@@ -8,8 +9,11 @@ int main(int argc, char** argv)
 {
 	cout << "[POPFILE] Start of POPFile prototype test program:" << popcendl;
 	
-	POPFStream pfstream(FILEPATH); // Declare and open a file
-	if(pfstream.is_parallel()){
+	POPFStream pfstream; // Declare and open a file
+	
+	pfstream.create(FILE2, 4, 2048);
+	
+	/*if(pfstream.is_parallel()){
 		cout << "[POPFILE] " << FILEPATH << " %s is a parallel file" << popcendl;
 		if(pfstream.is_open()){
 			cout << "[POPFILE] " << FILEPATH << " is open" << popcendl;
@@ -28,7 +32,7 @@ int main(int argc, char** argv)
 		} else {
 			cout << "[POPFILE] " << FILEPATH << " is closed" << popcendl;		
 		}	
-	}
+	}*/
 	
 	cout << "[POPFILE] End of POPFile prototype test program:" << popcendl;
 }
