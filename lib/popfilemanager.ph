@@ -27,10 +27,8 @@ public:
    //Create a new strip on this node
    bool createStrip();
    
-   
 	//Write to strip
 	async conc void writeToStrip();
-   
    
    //Save the accesspoint of the POPSearchNode
    sync seq void setPSNAccessPoint(paroc_accesspoint ap);
@@ -38,3 +36,5 @@ public:
 private:
 	paroc_accesspoint psn;
 };
+
+int popfile_log(const char *format,...);  //log function for error

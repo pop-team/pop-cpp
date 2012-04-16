@@ -12,8 +12,15 @@
 
 #include "popfilemanager.ph"
 
-POPFileManager::POPFileManager(const POPString &challenge, bool deamon, POPString host) : paroc_service_base(challenge) {
+#include <stdlib.h>
+#include <sstream>
+#include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <stdarg.h>
 
+POPFileManager::POPFileManager(const POPString &challenge, bool deamon, POPString host) : paroc_service_base(challenge) {
+	popfile_log("[POPFILEMANAGER] POPFileManager created.");
 
 	if(deamon) Start();
 }
@@ -24,6 +31,8 @@ POPFileManager::~POPFileManager(){
 
 bool POPFileManager::createStrip()
 {
+	popfile_log("[POPFILEMANAGER] Call on createStrip");	
+	return true;
 }
    
    
@@ -47,3 +56,33 @@ void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap)
 	psn = ap;
 }
 
+
+
+
+
+
+
+/**
+ * ViSaG : clementval
+ * Method used to write log
+ * @param String with format
+ */
+int popfile_log(const char *format,...)
+{
+	char *tmp=getenv("POPC_TEMP");
+	char logfile[256];
+	if (tmp!=NULL) sprintf(logfile,"%s/popfile_log",tmp);
+	else strcpy(logfile, "/tmp/popfile.log");
+
+	FILE *f=fopen(logfile,"a");
+	if (f==NULL) return 1;
+	time_t t=time(NULL);
+	fprintf(f,"%s", ctime(&t));
+	va_list ap;
+	va_start(ap, format);
+	vfprintf(f, format, ap);
+	fprintf(f,"%s","\n");
+	va_end(ap);
+	fclose(f);
+	return 0;
+}
