@@ -22,7 +22,7 @@ POPFileManager::~POPFileManager(){
 
 }
 
-bool createStrip()
+bool POPFileManager::createStrip()
 {
 }
    
@@ -31,7 +31,7 @@ bool createStrip()
  * POPFile: clementval
  * Write data to a strip
  */
-void writeToStrip()
+void POPFileManager::writeToStrip()
 {
 }
 
