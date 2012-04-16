@@ -30,7 +30,7 @@ public:
    bool createStrip(POPString abslotuePath);
    
    //Find resource to create strips
-   sync conc void findResourcesForStrip(int nb, [in, out, size=nb] paroc_accesspoint* candidate);
+   sync conc bool findResourcesForStrip(int nb, [in, out, size=nb] paroc_accesspoint* candidate);
    
 	//Write to strip
 	async conc void writeToStrip(POPString stripName, POPString data);

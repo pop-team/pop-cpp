@@ -99,7 +99,7 @@ void POPFileManager::getNeighborsFromPSN(){
 }
 
 
-void POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates){
+bool POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates){
 	int index=0;
 	POPString stripname("/tmp/.strip1");
 	popfile_log("[POPFILEMANAGER] Look for %d nodes for strips", nb);
@@ -113,7 +113,10 @@ void POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates
 	   	popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.GetString());
    	}
    }
-	
+   
+   if(index!=0)
+   	return true;
+	return false;
 }
 
 
