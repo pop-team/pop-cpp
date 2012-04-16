@@ -17,4 +17,4 @@ popc: $(DEP)
 	$(POPCC) -o $(APP2) $(POPCC_FLAG) $(SOURCES)
 	
 clean:
-	rm -rf _paroc* *.o $(APP1) $(APP2)
+	rm -rf _paroc* *.o tinyxml/*.o $(APP1) $(APP2)
