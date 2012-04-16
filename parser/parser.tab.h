@@ -83,7 +83,7 @@
      SCOPE = 299,
      ENUM = 300,
      CLASS = 301,
-     STRUCTURE = 302,
+     NAMESPACE = 302,
      UMINUS = 303
    };
 #endif
@@ -132,7 +132,7 @@
 #define SCOPE 299
 #define ENUM 300
 #define CLASS 301
-#define STRUCTURE 302
+#define NAMESPACE 302
 #define UMINUS 303
 
 
