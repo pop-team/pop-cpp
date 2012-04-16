@@ -11,8 +11,8 @@
 
 #include "popfile.h"
 #include "popfile_datathread.h"
-#include "paroc_accesspoint.h"
 #include "popfilemanager.ph"
+#include <unistd.h>
 
 
 using namespace popfile;
@@ -28,8 +28,8 @@ const char* POPFStream::POPFILE_POPFILEMANAGER_LOCAL = "socket://127.0.0.1:2712"
  */
 POPFStream::POPFStream()
 {	
-	//Initialite internal flags
-	popfile_init_flags();
+	//Initialite internal values
+	popfile_init();
 }
 
 /**
@@ -38,20 +38,13 @@ POPFStream::POPFStream()
  */
 POPFStream::POPFStream(const char* filename)
 {
-	//Initialize internal flags
-	popfile_init_flags();
-	
-		
-	paroc_accesspoint pfm_ap;
-	std::string accessstring(POPFILE_POPFILEMANAGER_LOCAL);
-	pfm_ap.SetAccessString(accessstring.c_str());
+	//Initialize internal values
+	popfile_init();
 	POPFileManager pfm(pfm_ap);
 	cout << "[POPFILEMANAGER] POPFileManger is connected to: " << pfm.GetAccessPoint().GetAccessString() << popcendl;
 	if(pfm.createStrip()){
 		cout << "[POPFILEMANAGER] Call to POPFileManager succeed" << popcendl;	
 	}
-	
-	
 	
 	//Try to open the file
 	open(filename);
@@ -69,11 +62,12 @@ POPFStream::~POPFStream()
  * Initialize the internal flag used in a POPFile object
  * @return void 
  */
-void POPFStream::popfile_init_flags()
+void POPFStream::popfile_init()
 {
 	popfile_parallel = false;
 	popfile_open = false;
 	popfile_offset = 0;
+	pfm_ap.SetAccessString(POPFILE_POPFILEMANAGER_LOCAL);
 }
 
 /**
@@ -207,5 +201,47 @@ void POPFStream::close(){
 		popfile_metadata.save(popfile_metadata_filename.c_str());
 	} else {
 		popfile_fstream.close();
+	}
+}
+
+bool POPFStream::create(const char* filename, const int stripnumber=2, const long offset=1024){
+
+	//Get path and filename to create the file
+	popfile_metadata.set_offset(offset);
+	std::string str_filename(filename);	
+	std::string path;
+  	std::size_t found;
+	found=str_filename.find_first_of("/");
+	if(found == std::string::npos){
+		char * pPath;
+		pPath = getenv("PWD");
+		if (pPath!=NULL){
+			cout << "GET CURRENT WORKING DIRECTORY" << (*pPath) << popcendl;
+			path = (*pPath);
+		} else {
+			cout << "CURRENT WORKING DIRECTORY IS NULL" << popcendl;	
+		}		
+	} else {
+		found = str_filename.find_last_of("/");
+		if(found==std::string::npos)
+			return false;
+		path = str_filename.substr(0, found);
+		str_filename = str_filename.substr(found+1);
+	}
+	popfile_metadata.set_filename(str_filename, path);
+	
+	cout << "[POPFILE] File will be create: name: " << str_filename << " path: " << path << popcendl;
+	
+	
+	
+}
+
+
+
+void POPFStream::write(const char* s, std::streamsize n){
+	if(popfile_parallel){
+		
+	} else {
+		//TODO
 	}
 }

@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "popfile_metadata.h"
+#include "paroc_accesspoint.h"
 
 
 namespace popfile {
@@ -47,6 +48,10 @@ public:
 	bool is_open();
 	bool is_parallel();
 	void get_infos(infos_t* infos);
+	bool create(const char* filename, const int stripnumber, const long offset);
+	
+	
+	void write(const char* s, std::streamsize n);
 	
 private:
 
@@ -56,7 +61,7 @@ private:
 	static const char* POPFILE_METADATA_SUFFIX;
 	static const char* POPFILE_POPFILEMANAGER_LOCAL;
 
-	void popfile_init_flags();
+	void popfile_init();
 	void popfile_init_filename(const char* filename);
 
 	
@@ -75,6 +80,10 @@ private:
 	
 	//Internal C++ standard stream
 	std::fstream popfile_fstream;	
+	
+	
+	//AccessPoint to local POPFileManager
+	paroc_accesspoint pfm_ap;
 };	
 	
 	
