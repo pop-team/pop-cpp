@@ -44,6 +44,7 @@ public:
 private:
 	paroc_accesspoint psn_ap;
 	std::list<paroc_accesspoint> pfm_neighbors;
+	
 };
 
 int popfile_log(const char *format,...);  //log function for error

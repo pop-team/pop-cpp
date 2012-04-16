@@ -20,6 +20,7 @@
 #include <fstream>
 #include <stdarg.h>
 
+
 POPFileManager::POPFileManager(const POPString &challenge, bool deamon, POPString host) : paroc_service_base(challenge) {
 	popfile_log("[POPFILEMANAGER] POPFileManager created.");
 
@@ -32,9 +33,14 @@ POPFileManager::~POPFileManager(){
 
 bool POPFileManager::createStrip(POPString absolutePath)
 {
-	popfile_log("[POPFILEMANAGER] Call on createStrip");
-		
-	return true;
+	popfile_log("[POPFILEMANAGER] Creating strip: %s", absolutePath.GetString());
+  	std::ofstream strip;
+ 	strip.open(absolutePath.GetString());
+ 	if(strip.is_open()){
+ 		strip.close();
+		return true;	
+ 	} 
+	return false;
 }
    
    
@@ -87,7 +93,6 @@ void POPFileManager::getNeighborsFromPSN(){
   		if(port_separator != std::string::npos){
   			ap = ap.substr(0, port_separator+1);
   			ap.append("2712");
-  			
   			paroc_accesspoint neighborAP;
   			neighborAP.SetAccessString(ap.c_str());
   			pfm_neighbors.push_back(neighborAP);
