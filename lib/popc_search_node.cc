@@ -256,7 +256,7 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
    actualReqSyn.unlock();
 
    if(!req.isEndRequest()){
-      sprintf(log, "[PSN] RESULTS;%d", results.getNodeInfos().size());
+      sprintf(log, "[PSN] RESULTS;%d", (int)results.getNodeInfos().size());
       popc_node_log(log);
    }
    return results;
@@ -629,6 +629,8 @@ POPString POPCSearchNode::getNeighborsAsString(){
    	strlst.append((*i)->getPOPCSearchNodeId().GetString());
    	strlst.append(";");
    }
+	sprintf(log, "NODENEIGH:%s", strlst.c_str());
+   popc_node_log(log);   
 	lst = strlst.c_str();	
 	return lst;
 }
