@@ -14,6 +14,8 @@
 #include "paroc_accesspoint.h"
 //#include "popfilestrip.h"
 
+#include <list>
+
 parclass POPFileManager : virtual public paroc_service_base {
 public:
    classuid(50);   
@@ -25,9 +27,10 @@ public:
    ~POPFileManager();
    
    //Create a new strip on this node
-   bool createStrip();
+   bool createStrip(POPString abslotuePath);
    
-   sync conc void findResourcesForStrip(int nb);
+   //Find resource to create strips
+   sync conc void findResourcesForStrip(int nb, [in, out, size=nb] paroc_accesspoint* candidate);
    
 	//Write to strip
 	async conc void writeToStrip(POPString stripName, POPString data);
@@ -35,8 +38,12 @@ public:
    //Save the accesspoint of the POPSearchNode
    sync seq void setPSNAccessPoint(paroc_accesspoint ap);
    
+   //Get neighbors to create strips on them 
+   sync seq void getNeighborsFromPSN();
+   
 private:
 	paroc_accesspoint psn_ap;
+	std::list<paroc_accesspoint> pfm_neighbors;
 };
 
 int popfile_log(const char *format,...);  //log function for error

@@ -30,9 +30,10 @@ POPFileManager::~POPFileManager(){
 
 }
 
-bool POPFileManager::createStrip()
+bool POPFileManager::createStrip(POPString absolutePath)
 {
-	popfile_log("[POPFILEMANAGER] Call on createStrip");	
+	popfile_log("[POPFILEMANAGER] Call on createStrip");
+		
 	return true;
 }
    
@@ -65,17 +66,54 @@ void POPFileManager::writeToStrip(POPString stringName, POPString data)
 void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap)
 {
 	psn_ap = ap;
-	POPCSearchNode psn(psn_ap);
-	POPString neighborsList = psn.getNeighborsAsString();
-	popfile_log("[POPFILEMANAGER] neighbors: %s", neighborsList.GetString());
-	
 }
 
 
-void POPFileManager::findResourcesForStrip(int nb){
+/**
+ * POPFile: clementval
+ * Get list of neighbors as a string and create AP
+ */
+void POPFileManager::getNeighborsFromPSN(){
+	POPCSearchNode psn(psn_ap);
+	POPString neighborsList = psn.getNeighborsAsString();
+	std::string lstNeighbors = neighborsList.GetString();
+	std::size_t found;
+  	found=lstNeighbors.find_first_of(";");
+  	while (found!=std::string::npos){
+  		std::string ap = lstNeighbors.substr(0, found);
+  		lstNeighbors = lstNeighbors.substr(found+1);
+  		std::size_t port_separator;
+  		port_separator = ap.find_last_of(":");
+  		if(port_separator != std::string::npos){
+  			ap = ap.substr(0, port_separator+1);
+  			ap.append("2712");
+  			
+  			paroc_accesspoint neighborAP;
+  			neighborAP.SetAccessString(ap.c_str());
+  			pfm_neighbors.push_back(neighborAP);
+  		} else {
+  			popfile_log("[POPFILEMANAGER] Could not find port separator");		
+  		}
+  		found = lstNeighbors.find_first_of(";");
+  	}
+}
+
+
+void POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates){
+	int index=0;
+	POPString stripname("/tmp/.strip1");
 	popfile_log("[POPFILEMANAGER] Look for %d nodes for strips", nb);
+	std::list<paroc_accesspoint>::iterator it;
+   for(it = pfm_neighbors.begin(); it != pfm_neighbors.end(); it++){
+   	popfile_log("[POPFILEMANAGER] Check creation of strip on %s", (*it).GetAccessString());
+   	POPFileManager tmpPfm((*it));
+   	if(tmpPfm.createStrip(stripname)){
+   		candidates[index] = (*it); //store accesspoint of the node on which the strip is created
+   		index++;
+	   	popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.GetString());
+   	}
+   }
 	
-		
 }
 
 
