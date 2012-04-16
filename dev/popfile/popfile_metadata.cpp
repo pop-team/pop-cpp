@@ -64,7 +64,7 @@ void POPFileMetaData::save(const char* filename)
 	//
 	TiXmlElement* infos_absolute_path = new TiXmlElement(POPFILE_METADATA_NODE_INFOS_ABS_PATH); 
 	infos->LinkEndChild(infos_absolute_path);
-	infos_absolute_path->LinkEndChild(new TiXmlText(meta_info.info_absloute_path));	
+	infos_absolute_path->LinkEndChild(new TiXmlText(meta_info.info_absolute_path));	
 	
 	TiXmlElement* infos_original_name = new TiXmlElement(POPFILE_METADATA_NODE_INFOS_ORGI_NAME);   	
 	infos->LinkEndChild(infos_original_name);	
@@ -145,7 +145,7 @@ bool POPFileMetaData::load(const char* filename)
 	
 	//Getting values of infos node
 	pElem = hRoot.FirstChild(POPFILE_METADATA_NODE_INFOS).FirstChild().Element();
-	meta_info.info_absloute_path = pElem->GetText();
+	meta_info.info_absolute_path = pElem->GetText();
 	pElem = pElem->NextSiblingElement();
 	meta_info.info_original_name = pElem->GetText();
 	
@@ -220,6 +220,15 @@ void POPFileMetaData::set_offset(long value)
 	meta_offset = value;
 }
 
+std::string POPFileMetaData::get_filename(){
+	return meta_info.info_original_name;
+}
+
+void POPFileMetaData::set_filename(std::string filename, std::string path){
+	meta_info.info_original_name = filename;
+	meta_info.info_absolute_path = path;
+}
+
 std::string POPFileMetaData::convertInt(int number) {
    std::stringstream ss;
    ss << number;
@@ -239,7 +248,7 @@ void POPFileMetaData::dump_to_cout()
 {
 	cout << "### POPFileMetaData ###" << popcendl;
 	cout << "- Infos :" << popcendl;	
-	cout << "-- Absolute Path: " << meta_info.info_absloute_path << popcendl;	
+	cout << "-- Absolute Path: " << meta_info.info_absolute_path << popcendl;	
 	cout << "-- Original Filename: " << meta_info.info_original_name << popcendl;
 	cout << "- Strips: " << popcendl;	
 	

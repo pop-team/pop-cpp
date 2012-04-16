@@ -22,7 +22,7 @@ typedef std::map<std::string, MetaDataStrip> MetaDataStripMap;
 class MetaDataInfo
 {
 public:
-	std::string info_absloute_path;
+	std::string info_absolute_path;
 	std::string info_original_name;
 };
 
@@ -80,6 +80,8 @@ public:
 	bool is_loaded();
 	long get_offset();
 	void set_offset(long value);	
+	std::string get_filename();
+	void set_filename(std::string filename, std::string path);
 
 	MetaDataInfo meta_info;
 	MetaDataStripMap meta_strips;
