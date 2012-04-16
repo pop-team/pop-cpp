@@ -27,14 +27,16 @@ public:
    //Create a new strip on this node
    bool createStrip();
    
+   sync conc void findResourcesForStrip(int nb);
+   
 	//Write to strip
-	async conc void writeToStrip();
+	async conc void writeToStrip(POPString stripName, POPString data);
    
    //Save the accesspoint of the POPSearchNode
    sync seq void setPSNAccessPoint(paroc_accesspoint ap);
    
 private:
-	paroc_accesspoint psn;
+	paroc_accesspoint psn_ap;
 };
 
 int popfile_log(const char *format,...);  //log function for error

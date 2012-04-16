@@ -11,6 +11,7 @@
  */
 
 #include "popfilemanager.ph"
+#include "popc_search_node.ph"
 
 #include <stdlib.h>
 #include <sstream>
@@ -39,9 +40,19 @@ bool POPFileManager::createStrip()
 /**
  * POPFile: clementval
  * Write data to a strip
+ * @param stringName	absloute path to the strip
+ * @param data			Actual data to write to the strip
  */
-void POPFileManager::writeToStrip()
+void POPFileManager::writeToStrip(POPString stringName, POPString data)
 {
+	std::ofstream strip;
+  	strip.open (stringName.GetString());
+  	if(strip.is_open()){
+  		strip << data.GetString();
+ 		strip.close();
+  	} else {
+  		popfile_log("[POPFILEMANAGER] Attempt to wrtie data to %s failed", stringName.GetString());
+  	}
 }
 
 
@@ -53,9 +64,19 @@ void POPFileManager::writeToStrip()
  */
 void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap)
 {
-	psn = ap;
+	psn_ap = ap;
+	POPCSearchNode psn(psn_ap);
+	POPString neighborsList = psn.getNeighborsAsString();
+	popfile_log("[POPFILEMANAGER] neighbors: %s", neighborsList.GetString());
+	
 }
 
+
+void POPFileManager::findResourcesForStrip(int nb){
+	popfile_log("[POPFILEMANAGER] Look for %d nodes for strips", nb);
+	
+		
+}
 
 
 
