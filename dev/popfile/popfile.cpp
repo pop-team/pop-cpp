@@ -11,6 +11,9 @@
 
 #include "popfile.h"
 #include "popfile_datathread.h"
+#include "paroc_accesspoint.h"
+#include "popfilemanager.ph"
+
 
 using namespace popfile;
 
@@ -36,6 +39,16 @@ POPFStream::POPFStream(const char* filename)
 {
 	//Initialize internal flags
 	popfile_init_flags();
+	
+		
+	paroc_accesspoint pfm_ap;
+	std::string accessstring("socket://127.0.0.1:2712");
+	pfm_ap.SetAccessString(accessstring.c_str());
+	cout << "POPFileManger" <<	popcendl;
+	POPFileManager pfm(pfm_ap);
+	
+	
+	
 	//Try to open the file
 	open(filename);
 }

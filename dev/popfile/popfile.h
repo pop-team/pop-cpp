@@ -18,6 +18,7 @@
 
 #include "popfile_metadata.h"
 
+
 namespace popfile {
 	
 struct infos_t {

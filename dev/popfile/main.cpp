@@ -2,35 +2,33 @@
 
 #define FILEPATH "myFirstPOPFile"
 
-//using namespace popfile;
+using namespace popfile;
 
-int main( int argc, const char* argv[] )
+int main(int argc, char** argv)
 {
-	//printf("Start of POPFile prototype test program: \n");
+	cout << "Start of POPFile prototype test program:" << popcendl;
 	
-	/*POPFStream pfstream(FILEPATH); // Declare and open a file
+	POPFStream pfstream(FILEPATH); // Declare and open a file
 	if(pfstream.is_parallel()){
-		//printf("%s is a parallel file \n", FILEPATH);
+		cout << FILEPATH << "%s is a parallel file" << popcendl;
 		if(pfstream.is_open()){
-			//printf("%s is open\n", FILEPATH);	
+			cout << FILEPATH << " is open" << popcendl;
 			infos_t info;
 			pfstream.get_infos(&info);
-			//printf("The parallel file has %d strips\n", info.nb_strips);
-			//cout << "The parallel file has " << info.offset << " for offset" << popcendl;
-			
-
+			cout << "The parallel file has " << info.nb_strips << " strips" << popcendl;
+			cout << "The parallel file has " << info.offset << " for offset" << popcendl;
 			pfstream.close();
 		} else {
-			//printf("%s is closed\n", FILEPATH);		
+			cout << FILEPATH << " is closed" << popcendl;
 		}
 	} else {
-		//printf("%s is NOT a parallel file \n", FILEPATH);
+		cout << FILEPATH << " is NOT a parallel file" << popcendl;
 		if(pfstream.is_open()){
-			//printf("%s is open\n", FILEPATH);	
+			cout << FILEPATH << " is open" << popcendl;
 		} else {
-			//printf("%s is closed\n", FILEPATH);		
+			cout << FILEPATH << " is closed" << popcendl;		
 		}	
 	}
 	
-	printf("... End of POPFile prototype test program: \n");	*/
+	cout << "… End of POPFile prototype test program:" << popcendl;
 }
