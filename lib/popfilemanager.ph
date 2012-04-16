@@ -35,7 +35,6 @@ public:
    //Save the accesspoint of the POPSearchNode
    sync seq void setPSNAccessPoint(paroc_accesspoint ap);
    
-private: 
-
+private:
 	paroc_accesspoint psn;
 };
