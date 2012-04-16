@@ -621,6 +621,18 @@ void POPCSearchNode::removeJob(float power, float memorySize, float bandwidth, i
    psn_currentJobs-=nbJob;
 }
 
+POPString POPCSearchNode::getNeighborsAsString(){
+	POPString lst;
+	std::string strlst;
+	list<POPCSearchNode *>::iterator i;
+   for(i = neighborsList.begin(); i != neighborsList.end(); i++){
+   	strlst.append((*i)->getPOPCSearchNodeId().GetString());
+   	strlst.append(";");
+   }
+	lst = strlst.c_str();	
+	return lst;
+}
+
 //Method to write log in a file
 int POPCSearchNode::popc_node_log(const char *log)
 {
