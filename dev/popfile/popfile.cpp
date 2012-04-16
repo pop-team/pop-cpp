@@ -20,6 +20,7 @@ using namespace popfile;
 // Constant declaration
 const char* POPFStream::POPFILE_METADATA_PREFIX = ".popfile_";
 const char* POPFStream::POPFILE_METADATA_SUFFIX = ".xml";
+const char* POPFStream::POPFILE_POPFILEMANAGER_LOCAL = "socket://127.0.0.1:2712";
 
 
 /**
@@ -42,10 +43,13 @@ POPFStream::POPFStream(const char* filename)
 	
 		
 	paroc_accesspoint pfm_ap;
-	std::string accessstring("socket://127.0.0.1:2712");
+	std::string accessstring(POPFILE_POPFILEMANAGER_LOCAL);
 	pfm_ap.SetAccessString(accessstring.c_str());
-	cout << "POPFileManger" <<	popcendl;
 	POPFileManager pfm(pfm_ap);
+	cout << "[POPFILEMANAGER] POPFileManger is connected to: " << pfm.GetAccessPoint().GetAccessString() << popcendl;
+	if(pfm.createStrip()){
+		cout << "[POPFILEMANAGER] Call to POPFileManager succeed" << popcendl;	
+	}
 	
 	
 	
@@ -122,6 +126,7 @@ bool POPFStream::popfile_try_open_parallel()
 		else 
 			return false;
 	} else {
+		//TODO look for remote file
 		return false;
 	}
 	return false;

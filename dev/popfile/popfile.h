@@ -51,9 +51,10 @@ public:
 private:
 
 
-
+	//Constnat declaration
 	static const char* POPFILE_METADATA_PREFIX;
 	static const char* POPFILE_METADATA_SUFFIX;
+	static const char* POPFILE_POPFILEMANAGER_LOCAL;
 
 	void popfile_init_flags();
 	void popfile_init_filename(const char* filename);
