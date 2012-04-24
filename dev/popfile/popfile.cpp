@@ -212,7 +212,7 @@ void POPFStream::close(){
  * @param offset Offset to write and read to strip. Default is 1024.
  * @return TRUE if the creation succeed. FALSE in any other case. Look the log file for more details. 
  */
-bool POPFStream::create(const char* filename, const int stripnumber=2, const long offset=1024){
+bool POPFStream::open(const char* filename, const int stripnumber=2, const long offset=1024){
 	//Init special filename for meta data
 	popfile_init_filename(filename);
 

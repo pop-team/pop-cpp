@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 	
 	POPFStream pfstream; // Declare and open a file
 	
-	pfstream.create(FILE2, 4, 10000000);
+	pfstream.open(FILE2, 4, 10000000);
 	
 	for (int i = 0; i < 2000000; i++){
 		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");

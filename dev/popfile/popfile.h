@@ -52,7 +52,7 @@ public:
 	
 	
 	//TODO rename open and keep parameters
-	bool create(const char* filename, const int stripnumber, const long offset);
+	bool open(const char* filename, const int stripnumber, const long offset);
 
 
 	void scatter();
