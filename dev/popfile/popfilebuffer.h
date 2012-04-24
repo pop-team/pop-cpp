@@ -20,6 +20,9 @@
 #include "paroc_accesspoint.h"
 #include "paroc_string.h"
 
+
+class POPFileManager;
+
 namespace popfile {
 
 class POPFileBuffer {
@@ -43,7 +46,7 @@ private:
 	POPString stripPath;
 	paroc_accesspoint associatedPFM;
 	
-	//POPFileManager* pfmref;
+	POPFileManager* pfmref;
 	
 };	
 	

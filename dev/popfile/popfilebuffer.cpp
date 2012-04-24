@@ -63,8 +63,8 @@ void POPFileBuffer::flush(){
 	if(remainingCapacity < capacity){
 		POPFileManager pfm(associatedPFM);
 		POPString data(popfile_buffer.str().c_str());
-//		pfmref->writeToStrip(stripPath, data);
-		pfm.writeToStrip(stripPath, data);
+		pfmref->writeToStrip(stripPath, data);
+		//pfm.writeToStrip(stripPath, data);
 		//cout << "[POPFILEBUFFER] Flushing buffer[" << identifier << "]" << popcendl;
 		remainingCapacity = capacity;
 	}
@@ -86,7 +86,7 @@ void POPFileBuffer::setStripPath(std::string value)
 void POPFileBuffer::setAssociatedPOPFileManager(paroc_accesspoint ap)
 {
 	associatedPFM = ap;
-	//pfmref = new POPFileManager(associatedPFM);
+	pfmref = new POPFileManager(associatedPFM);
 }
 
 
