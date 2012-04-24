@@ -1,4 +1,6 @@
 #include "popfile.h"
+#include <sys/time.h>
+#include <unistd.h>
 
 #define FILEPATH "myFirstPOPFile"
 #define FILE2 "hugefile"
@@ -7,11 +9,34 @@ using namespace popfile;
 
 int main(int argc, char** argv)
 {
+	struct timeval start, end;
+
+   long mtime, seconds, useconds;  
+	
 	cout << "[POPFILE] Start of POPFile prototype test program:" << popcendl;
+
+
+   gettimeofday(&start, NULL);	
 	
 	POPFStream pfstream; // Declare and open a file
 	
-	pfstream.create(FILE2, 4, 2048);
+	pfstream.create(FILE2, 4, 10000000);
+	
+	for (int i = 0; i < 2000000; i++){
+		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+	}		
+	
+	pfstream.close();
+
+   gettimeofday(&end, NULL);
+
+   seconds  = end.tv_sec  - start.tv_sec;
+   useconds = end.tv_usec - start.tv_usec;
+
+   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+   
+   
+
 	
 	/*if(pfstream.is_parallel()){
 		cout << "[POPFILE] " << FILEPATH << " %s is a parallel file" << popcendl;
@@ -34,5 +59,5 @@ int main(int argc, char** argv)
 		}	
 	}*/
 	
-	cout << "[POPFILE] End of POPFile prototype test program:" << popcendl;
+	cout << "[POPFILE] End of POPFile prototype test program: [ms]" << mtime << popcendl;
 }
