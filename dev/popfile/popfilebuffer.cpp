@@ -38,7 +38,7 @@ POPFileBuffer::POPFileBuffer(){
 	identifier = 0;
 }
 POPFileBuffer::~POPFileBuffer(){
-	
+	delete pfmref;
 }
 
 std::string POPFileBuffer::buffer_add(std::string value){
