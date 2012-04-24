@@ -360,13 +360,8 @@ void POPFStream::get_next_buffer(){
 
 
 /* implementing operators */
-
-/*
-pfstream& operator<<(pfstream& out, const std::string& value)
+template <class T> POPFStream& POPFStream::operator << (const T& ToLog)
 {
-	cout << "[POPFILE] Call to operator overloaded" << popcendl;
-    return out;
-}
-
-*/
-
+	cout <<  "Call to << " << popcendl;   
+   return this;
+}	

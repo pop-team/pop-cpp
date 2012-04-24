@@ -62,13 +62,13 @@ public:
 
 	//To simulate << operator
 	void write(std::string value);
-	
+	template <class T> POPFStream& operator << (const T& ToLog);	
 	
 	void printInfos();
 
 
-	
-	//friend std::ostream& operator<<(ostream& out, const std::string& value);
+//	friend std::ostream& operator<<(ostream& out, const std::string& value);	
+
 	
 private:
 	//Constnat declaration
@@ -110,10 +110,10 @@ private:
 	//AccessPoint to local POPFileManager
 	paroc_accesspoint pfm_ap;
 	
+	
 
 };	
-	
-	
+		
 } // namespace popfile
 
 
