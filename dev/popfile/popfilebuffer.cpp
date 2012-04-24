@@ -1,11 +1,12 @@
 #include "popfilebuffer.h"
 #include "popfilemanager.ph"
 #include "paroc_thread.h"
-#include <semaphor.h>
+//#include <semaphor.h>
 
 
 using namespace popfile;
 
+/*
 class POPFileBufferThread: public paroc_thread
 {
 public:
@@ -28,7 +29,7 @@ void POPFileBufferThread::start()
 		//Do something
 	}
 }
-
+*/
 
 
 POPFileBuffer::POPFileBuffer(){
