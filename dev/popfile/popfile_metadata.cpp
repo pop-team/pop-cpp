@@ -4,7 +4,12 @@
  *	FILENAME:	popfile_metadata.cpp
  * CREATION:	03.25.2012
  * 
+ * Change Log: 
+ * Author		Date			Description
+ * clementval	03.25.2012	Creation of this file
+ * clementval	04.23.2012	Add method to add strip to the metadata 
  */
+
 
 #include "tinyxml/tinyxml.h"
 #include "popfile_metadata.h"
@@ -38,7 +43,7 @@ POPFileMetaData::POPFileMetaData()
  * Save data to file
  */
 void POPFileMetaData::save(const char* filename)
-{
+{		
 	meta_loaded = false;
 	
 	//
@@ -118,7 +123,6 @@ void POPFileMetaData::save(const char* filename)
 	
 	
 	root->LinkEndChild(strips); 		
-	
 	
 	doc.SaveFile(filename);  
 	meta_strips.clear();
@@ -235,35 +239,83 @@ std::string POPFileMetaData::convertInt(int number) {
    return ss.str();
 }
 
+int POPFileMetaData::convertStringToInt(std::string value){
+	return atoi(value.c_str());	
+}
+
 std::string POPFileMetaData::convertLong(long number) {
    std::stringstream ss;
    ss << number;
    return ss.str();
 }
 
+
+void POPFileMetaData::addStripInfo(bool isLocal, int identifier, std::string absolutePath, std::string stripName, long offset, std::string accesspoint){
+	MetaDataStrip strip;
+	strip.strip_is_local = isLocal;
+	strip.strip_identifier = identifier;
+	strip.strip_absolute_path = absolutePath;
+	strip.strip_name = stripName;
+	strip.strip_offset = offset;
+	
+	
+	//Create accesspoint information
+	MetaDataAccessPoint ap;
+	ap.accesspoint_hostname = "";
+	ap.accesspoint_ip_address = "";
+	ap.accesspoint_port = 2712;	
+	
+	size_t found1, found2, length;
+	found1 = accesspoint.find("://") + 3;
+	found2 = accesspoint.rfind(":");
+	length = found2-found1;
+	
+	std::string network = accesspoint.substr(found1, length);
+	std::string port = accesspoint.substr(found2+1);
+
+	cout << "[POPFILE] ACCESSPOINT DEBUG " << network << "//"<< port << popcendl;
+
+	ap.accesspoint_ip_address = network;
+	ap.accesspoint_port = convertStringToInt(port);	
+	strip.strip_accesspoint = ap;
+	
+	
+	//Add the new strip in the map
+	meta_strips[strip.strip_name] = strip;
+		
+}
+
+/**
+ *
+ */
+int POPFileMetaData::get_strips_count(){
+	return meta_strips.size();
+}
+ 
+
 /** 
  * Print data to cout
  */
 void POPFileMetaData::dump_to_cout()
 {
-	cout << "### POPFileMetaData ###" << popcendl;
-	cout << "- Infos :" << popcendl;	
-	cout << "-- Absolute Path: " << meta_info.info_absolute_path << popcendl;	
-	cout << "-- Original Filename: " << meta_info.info_original_name << popcendl;
-	cout << "- Strips: " << popcendl;	
+	cout << "[POPFILE] ### POPFileMetaData ###" << popcendl;
+	cout << "[POPFILE] - Infos :" << popcendl;	
+	cout << "[POPFILE] -- Absolute Path: " << meta_info.info_absolute_path << popcendl;	
+	cout << "[POPFILE] -- Original Filename: " << meta_info.info_original_name << popcendl;
+	cout << "[POPFILE] - Strips: " << popcendl;	
 	
 	MetaDataStripMap::const_iterator itr;
 	for(itr = meta_strips.begin(); itr != meta_strips.end(); ++itr){
-		cout << "-- Strip: (local) - " << (*itr).second.strip_is_local << popcendl;
-		cout << "--- Identifier: " << (*itr).second.strip_identifier << popcendl;		
-		cout << "--- Absolute Path: " << (*itr).second.strip_absolute_path << popcendl;	
-		cout << "--- Filename: " << (*itr).second.strip_name << popcendl;	
-		cout << "--- Offset: " << (*itr).second.strip_offset << popcendl;	
-		cout << "--- Accesspoint: " << popcendl;
-		cout << "---- Hostname: " << (*itr).second.strip_accesspoint.accesspoint_hostname << popcendl;
-		cout << "---- IP address: " << (*itr).second.strip_accesspoint.accesspoint_ip_address << popcendl;		
-		cout << "---- Port: " << (*itr).second.strip_accesspoint.accesspoint_port << popcendl;		
+		cout << "[POPFILE] -- Strip: (local) - " << (*itr).second.strip_is_local << popcendl;
+		cout << "[POPFILE] --- Identifier: " << (*itr).second.strip_identifier << popcendl;		
+		cout << "[POPFILE] --- Absolute Path: " << (*itr).second.strip_absolute_path << popcendl;	
+		cout << "[POPFILE] --- Filename: " << (*itr).second.strip_name << popcendl;	
+		cout << "[POPFILE] --- Offset: " << (*itr).second.strip_offset << popcendl;	
+		cout << "[POPFILE] --- Accesspoint: " << popcendl;
+		cout << "[POPFILE] ---- Hostname: " << (*itr).second.strip_accesspoint.accesspoint_hostname << popcendl;
+		cout << "[POPFILE] ---- IP address: " << (*itr).second.strip_accesspoint.accesspoint_ip_address << popcendl;		
+		cout << "[POPFILE] ---- Port: " << (*itr).second.strip_accesspoint.accesspoint_port << popcendl;		
 	}
 
-	cout << "### POPFileMetaData ###" << popcendl;	
+	cout << "[POPFILE] ### POPFileMetaData ###" << popcendl;	
 }

@@ -4,6 +4,11 @@
  *	FILENAME:	popfile_metadata.h
  * CREATION:	03.25.2012
  * 
+ * Change Log
+ * ----------
+ * Author		Date			Description
+ * clementval	03.25.2012	Creation of this file 
+ * clementval	04.23.2012	Add method to add strip to the metadata
  */
  
  
@@ -82,6 +87,9 @@ public:
 	void set_offset(long value);	
 	std::string get_filename();
 	void set_filename(std::string filename, std::string path);
+	void addStripInfo(bool isLocal, int identifier, std::string absolutePath, std::string stripName, long offset, std::string accesspoint);
+	
+	int get_strips_count();
 
 	MetaDataInfo meta_info;
 	MetaDataStripMap meta_strips;
@@ -98,5 +106,7 @@ private:
 	
 	std::string convertInt(int number);
 	std::string convertLong(long number);	
+	int convertStringToInt(std::string value);
+	
 };
 
