@@ -38,7 +38,7 @@ public:
 	
 	async conc void asyncCall1();
 	
-	async conc void asyncCall2();
+	async conc void asyncCall2(POPString data);
 	
    
    //Save the accesspoint of the POPSearchNode
