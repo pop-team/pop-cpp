@@ -52,7 +52,7 @@ bool POPFileManager::createStrip(POPString absolutePath)
 void POPFileManager::writeToStrip(POPString stringName, POPString data)
 {
 	std::ofstream strip;
-  	strip.open (stringName.GetString());
+  	strip.open (stringName.GetString(), std::ios::out | std::ios::app);
   	if(strip.is_open()){
   		strip << data.GetString();
  		strip.close();
