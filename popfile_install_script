@@ -11,8 +11,12 @@ then
 else
 	echo "Building for Mac OS X"
 	./configure CPPFLAGS=-DARCH_MAC --enable-popfile
-	make clean all
+	make clean all > output
+	sudo rm -rf /usr/local/popc
 	sudo make install
+	sudo cp ./jobmgr.conf /usr/local/popc/etc/
+	sudo cp ./popc-runtime-env.sh /usr/local/popc/etc/ 
+	rm -rf /tmp/pop*
 fi
 
 
