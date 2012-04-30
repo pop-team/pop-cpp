@@ -290,6 +290,7 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, const long 
 				popfile_writebuffers[i].setIdentifier(i);
 				popfile_writebuffers[i].setStripPath(strip_name);
 				popfile_writebuffers[i].setAssociatedPOPFileManager(candidates[i]);
+				popfile_writebuffers[i].setLocalPOPFileManager(pfm_ap);
 
 				cout << "[POPFILE] Resource found (" << i << "): " << candidates[i].GetAccessString() << popcendl;					
 			}
@@ -298,12 +299,7 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, const long 
 		cout << "[POPFILE] Error: there is not enough resources to create the parallel file" << popcendl;		
 		return false;		
 	}
-	
-	// Set attribute to buffers
 
-	for(int i = 0; i < popfile_stripNumber; i++){
-		
-	}
 		
 	// Set the current file as prallel file
 	popfile_parallel = true;
