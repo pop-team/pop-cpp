@@ -1,6 +1,8 @@
 #include "popfilebuffer.h"
 #include "popfilemanager.ph"
 #include "paroc_thread.h"
+#include <sys/time.h>
+#include <unistd.h>
 //#include <semaphor.h>
 
 
@@ -41,32 +43,65 @@ POPFileBuffer::~POPFileBuffer(){
 	delete pfmref;
 }
 
+/**
+ * add string value to the buffer and manage flushing mechanism
+ * @param value 
+ * @return remaining
+ */
 std::string POPFileBuffer::buffer_add(std::string value){
 	std::string remaining;
 	if(value.length() < remainingCapacity){
 		popfile_buffer << value;	
 		remainingCapacity -= value.length();
-//		cout << "[POPFILEBUFFER] Write in buffer (" << identifier << ") / remaining ("<< remainingCapacity <<")" << value << popcendl; 			
 	} else {
- 			
 		remaining = value.substr(remainingCapacity);
 		std::string toadd = value.substr(0, remainingCapacity);
+		remainingCapacity -= toadd.length();
 		popfile_buffer << toadd;	
-//		cout << "[POPFILEBUFFER] Value is too long (" << value.length() << ") / remaining ("<< remaining <<")" << toadd << popcendl;
 		flush();
 	}
-
 	return remaining;
 }
 
 void POPFileBuffer::flush(){
 	if(remainingCapacity < capacity){
-		POPFileManager pfm(associatedPFM);
+		struct timeval start1, end1, start2, end2, start3, end3;
+	   long mtime, seconds, useconds; 
+
+//		POPFileManager pfm(associatedPFM);
+		gettimeofday(&start1, NULL);	
 		POPString data(popfile_buffer.str().c_str());
+		localpfmref->writeToRemoteStrip(stripPath, data, associatedPFM);
+		gettimeofday(&end1, NULL);		
+		seconds  = end1.tv_sec  - start1.tv_sec;
+   	useconds = end1.tv_usec - start1.tv_usec;
+	   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+		
+	//	pfmref->writeToStrip(stripPath, data);
+	//	cout << "[POPFILEBUFFER] Flushing buffer[" << identifier << "] "<< remainingCapacity  <<"/" << popfile_buffer.str().length() << ":" << mtime << popcendl;
+		
+		
+		
+		/*gettimeofday(&start2, NULL);			
+		pfmref->writeToStrip(stripPath, data);	
+		gettimeofday(&end2, NULL);
+	   seconds  = end2.tv_sec  - start2.tv_sec;
+   	useconds = end2.tv_usec - start2.tv_usec;
+	   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+		cout << "[POPFILEBUFFER] async call without parameter [" << identifier << "] time:" << mtime << popcendl;
+		
+		
+		gettimeofday(&start3, NULL);			
 		pfmref->writeToStrip(stripPath, data);
-		//pfm.writeToStrip(stripPath, data);
-		//cout << "[POPFILEBUFFER] Flushing buffer[" << identifier << "]" << popcendl;
-		remainingCapacity = capacity;
+		gettimeofday(&end3, NULL);
+	   seconds  = end3.tv_sec  - start3.tv_sec;
+   	useconds = end3.tv_usec - start3.tv_usec;
+	   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+		cout << "[POPFILEBUFFER] async call with parameter [" << identifier << "] time:" << mtime << popcendl;		*/
+		
+		
+		popfile_buffer.str("");
+		remainingCapacity = capacity;		
 	}
 }
 
@@ -89,6 +124,10 @@ void POPFileBuffer::setAssociatedPOPFileManager(paroc_accesspoint ap)
 	pfmref = new POPFileManager(associatedPFM);
 }
 
+void POPFileBuffer::setLocalPOPFileManager(paroc_accesspoint ap)
+{
+	localpfmref = new POPFileManager(ap);
+}
 
 
 /*

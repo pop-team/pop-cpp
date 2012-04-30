@@ -16,12 +16,12 @@
 #include <iostream>
 #include <sstream>
 
-//#include "popfilemanager.ph"
 #include "paroc_accesspoint.h"
 #include "paroc_string.h"
 
-
+//Forward declaration of POPFileManager interface. It's currently needed as POPCC can't parse .h file. 
 class POPFileManager;
+
 
 namespace popfile {
 
@@ -37,6 +37,7 @@ public:
 	void setIdentifier(int value);
 	void setStripPath(std::string value);
 	void setAssociatedPOPFileManager(paroc_accesspoint ap);
+	void setLocalPOPFileManager(paroc_accesspoint ap);
 	
 private:
 	std::stringstream popfile_buffer;
@@ -47,6 +48,8 @@ private:
 	paroc_accesspoint associatedPFM;
 	
 	POPFileManager* pfmref;
+	
+	POPFileManager* localpfmref;
 	
 };	
 	
