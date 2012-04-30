@@ -4,10 +4,9 @@
  * Description : Implementation of the parallel object POPCloner (POP-C++ Global Services). This object is responsible of the 
  *               VM cloning.
  * Creation date : 2010/11/12
- * 
- * Modifications : 
- * Authors		Date			Comment
- * clementval	2010/11/12  Creation of this file
+ * Change Log: 
+ * Author		Date			Description
+ * clementval	03.25.2012	Creation of this file
  */
 
 #include "popfilemanager.ph"
@@ -104,24 +103,28 @@ void POPFileManager::getNeighborsFromPSN(){
 }
 
 
-bool POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates){
-	int index=0;
-	POPString stripname("/tmp/.strip1");
+int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates, POPString* stripNames, POPString stripPrefix){
+	int index=1;
+	std::string str_stripname(stripPrefix.GetString());
+	str_stripname.append("_strip");
 	popfile_log("[POPFILEMANAGER] Look for %d nodes for strips", nb);
 	std::list<paroc_accesspoint>::iterator it;
    for(it = pfm_neighbors.begin(); it != pfm_neighbors.end(); it++){
    	popfile_log("[POPFILEMANAGER] Check creation of strip on %s", (*it).GetAccessString());
    	POPFileManager tmpPfm((*it));
+   	std::string strip = str_stripname;
+   	std::stringstream intconverter;
+   	intconverter << index;
+   	strip.append(intconverter.str());
+   	POPString stripname(strip.c_str());
    	if(tmpPfm.createStrip(stripname)){
-   		candidates[index] = (*it); //store accesspoint of the node on which the strip is created
+   		candidates[index] = (*it); 		//store accesspoint of the node on which the strip is created
+   		stripNames[index] = stripname;	//store the strip name
    		index++;
 	   	popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.GetString());
    	}
    }
-   
-   if(index!=0)
-   	return true;
-	return false;
+	return index; 
 }
 
 

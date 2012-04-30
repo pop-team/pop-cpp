@@ -5,9 +5,9 @@
  *               VM cloning.
  * Creation date : 2010/11/12
  * 
- * Modifications : 
- * Authors		Date			Comment
- * clementval	2010/11/12  Creation of this file
+ * Change Log: 
+ * Author		Date			Description
+ * clementval	03.25.2012	Creation of this file
  */
 
 #include "paroc_service_base.ph"
@@ -27,10 +27,10 @@ public:
    ~POPFileManager();
    
    //Create a new strip on this node
-   bool createStrip(POPString abslotuePath);
+   sync seq bool createStrip(POPString abslotuePath);
    
    //Find resource to create strips
-   sync conc bool findResourcesForStrip(int nb, [in, out, size=nb] paroc_accesspoint* candidate);
+   sync conc int findResourcesForStrip(int nb, [in, out, size=nb] paroc_accesspoint* candidate, [in, out, size=nb] POPString* stripNames, POPString stripPrefix);
    
 	//Write to strip
 	async conc void writeToStrip(POPString stripName, POPString data);
