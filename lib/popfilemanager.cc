@@ -61,6 +61,11 @@ void POPFileManager::writeToStrip(POPString stringName, POPString data)
   	}
 }
 
+void writeToRemoteStrip(POPString stringName, POPString data, paroc_accesspoint ap){
+	POPFileManager remote(ap);
+	remote.writeToStrip(stringName, data);
+}
+
 void POPFileManager::asyncCall1(){
 	popfile_log("[POPFILEMANAGER] ASYNC CALL 1");
 }

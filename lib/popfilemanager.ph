@@ -35,6 +35,8 @@ public:
 	//Write to strip
 	async conc void writeToStrip(POPString stripName, POPString data);
 	
+	async conc void writeToRemoteStrip(POPString stringName, POPString data, paroc_accesspoint ap);
+	
 	
 	async conc void asyncCall1();
 	
