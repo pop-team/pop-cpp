@@ -34,6 +34,12 @@ public:
    
 	//Write to strip
 	async conc void writeToStrip(POPString stripName, POPString data);
+	
+	
+	async conc void asyncCall1();
+	
+	async conc void asyncCall2();
+	
    
    //Save the accesspoint of the POPSearchNode
    sync seq void setPSNAccessPoint(paroc_accesspoint ap);

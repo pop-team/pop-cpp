@@ -57,8 +57,16 @@ void POPFileManager::writeToStrip(POPString stringName, POPString data)
   		strip << data.GetString();
  		strip.close();
   	} else {
-  		popfile_log("[POPFILEMANAGER] Attempt to wrtie data to %s failed", stringName.GetString());
+  		popfile_log("[POPFILEMANAGER] Attempt to write data to %s failed", stringName.GetString());
   	}
+}
+
+void POPFileManager::asyncCall1(){
+	popfile_log("[POPFILEMANAGER] ASYNC CALL 1");
+}
+	
+void POPFileManager::asyncCall2(POPString data){
+	popfile_log("[POPFILEMANAGER] ASYNC CALL 2");		
 }
 
 
