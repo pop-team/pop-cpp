@@ -25,4 +25,4 @@ run:
 	./$(APPNAME) 
 	
 clean:
-	rm -rf _paroc* *.o tinyxml/*.o $(APPNAME)
+	rm -rf _paroc* *.o tinyxml/*.o $(APPNAME) $(APPNAME_STD) testfile
