@@ -12,7 +12,6 @@
 
 #include "paroc_service_base.ph"
 #include "paroc_accesspoint.h"
-//#include "popfilestrip.h"
 
 #include <list>
 
