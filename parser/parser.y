@@ -275,16 +275,10 @@ STRUCT TYPES...
 
 struct_definition: struct_head '{' struct_body '}'
 {
-	if(currentClass!=NULL){
-		structContainer = new Structure(currentClass, accessmodifier);
-		structContainer->SetLineInfo(linenumber-1);
-		structContainer->setName(GetToken($1));
-		structContainer->setInnerDecl(GetToken($3));		
-		currentClass->AddMember(structContainer);
-	}
   	currentstruct=Pop();
   	if (currentstruct!=NULL) currentstruct->SetTypeClass(false);
   	$$=$1;
+  	structContainer = NULL;
 }
 | struct_head not_care_code
 {
@@ -294,6 +288,12 @@ struct_definition: struct_head '{' struct_body '}'
 
 struct_head: STRUCT_KEYWORD ID
 {
+	if(currentClass!=NULL){
+		structContainer = new Structure(currentClass, accessmodifier);
+		structContainer->SetLineInfo(linenumber-1);
+		currentClass->AddMember(structContainer);
+      structContainer->setName(GetToken($2));	
+	}
   char *tname=GetToken($2);
   DataType *type=thisCodeFile->FindDataType(tname);
   TypeClassStruct *t;
@@ -356,6 +356,7 @@ struct_elname_list: pointer_specifier ID array_declarator struct_elname_other
   TypeClassStruct *t=Peek();
   assert(t!=NULL);
   t->Add(type1, GetToken($2));
+
 
 }
 ;
