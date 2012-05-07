@@ -17,7 +17,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdarg.h>
-
+#include <string.h>
 
 POPFileManager::POPFileManager(const POPString &challenge, bool deamon, POPString host) : paroc_service_base(challenge) {
 	popfile_log("[POPFILEMANAGER] POPFileManager created.");
@@ -84,7 +84,7 @@ POPString POPFileManager::readFromStrip(POPString stripName, long start, long of
 {
 	//TODO Check to not seek after the end of the strip
 	int length=0;
-	popfile_log("[POPFILEMANAGER] Opening strip for read operation : %s", stripName.GetString());
+	popfile_log("[POPFILEMANAGER] Opening strip for read operation : %s offset %ld", stripName.GetString(), offset);
 	std::ifstream strip;
 	strip.open(stripName.GetString(), ios::binary);
 	
@@ -102,11 +102,15 @@ POPString POPFileManager::readFromStrip(POPString stripName, long start, long of
 	popfile_log("[POPFILEMANAGER] crt pos %d", crt_pos);	
 	strip.seekg(start, ios::cur);
 	popfile_log("[POPFILEMANAGER] seek to start");
-	char buffer[offset];
+	char* buffer;
+	buffer = new char[offset+1];
+	buffer[offset] = '\0';
 	strip.read(buffer, offset);
 	popfile_log("[POPFILEMANAGER] read into buffer start");
 	strip.close();
+	popfile_log("[POPFILEMANAGER] close %d", strlen(buffer));
 	POPString data(buffer);
+	popfile_log("[POPFILEMANAGER] before return %d", data.Length());
 	return data;
 }
 
