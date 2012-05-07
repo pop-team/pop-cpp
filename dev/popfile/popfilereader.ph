@@ -32,10 +32,13 @@ public:
    
    
    //Asynchronous read of the strip to further usage
-   async conc void read_in_strip(long begin, long end);
+   async conc void read_in_strip(long start, long offset);
    
    //Read in the current buffer
    sync seq POPString read_current_buffer(long length);
+   
+
+	sync seq void set_offset(long offset);
 
    //Save the associated PFM accesspoint
    sync seq void set_pfm_accesspoint(paroc_accesspoint ap);
@@ -54,6 +57,7 @@ public:
 private:
 	paroc_accesspoint pfm_ap;
 	long current_pos;
+	long pfr_offset;
 	POPFileBuffer* popfilebuffer_ref;
 	POPFileManager* pfm_ref;
 	POPString strip_path;

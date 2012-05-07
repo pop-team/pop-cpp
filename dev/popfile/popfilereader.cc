@@ -26,17 +26,29 @@ POPFileReader::~POPFileReader()
 }
    
 //Asynchronous read of the strip to further usage
-void POPFileReader::read_in_strip(long begin, long end)
+void POPFileReader::read_in_strip(long start, long offset)
 {	
-	POPString data = pfm_ref->readFromStrip(strip_path, begin, end);
-
+	cout << "[POPFILEREADER] Read in strip " << strip_path.GetString() << " from:" << start << " to:" << start+offset << popcendl;	
+	POPString data = pfm_ref->readFromStrip(strip_path, start, offset);
+	cout << "[POPFILEREADER] Read from strip" << strlen(data.GetString()) << popcendl;	
+	popfilebuffer_ref->add_data(data);
 }
 
 POPString POPFileReader::read_current_buffer(long size)
 {
 	POPString data;
-	data = popfilebuffer_ref->buffer_get(size).c_str();
+	if(size != -1)
+		data = popfilebuffer_ref->buffer_get(size).c_str();
+	else 
+		data = popfilebuffer_ref->buffer_get_offset().c_str();
+	cout << "[POPFILEREADER] Sent data size" << strlen(data.GetString()) << popcendl;	
 	return data;
+}
+
+void POPFileReader::set_offset(long offset)
+{
+	pfr_offset = offset;
+	popfilebuffer_ref->set_capacity(pfr_offset);
 }
    
 //Save the local PFM accesspoint
