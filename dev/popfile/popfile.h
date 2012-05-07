@@ -21,6 +21,8 @@
 #include "popfilebuffer.h"
 #include "paroc_accesspoint.h"
 
+class POPFileReader;
+
 namespace popfile {
 	
 struct infos_t {
@@ -62,6 +64,11 @@ public:
 
 	//To simulate << operator
 	void write(std::string value);
+	
+	std::string read();
+	void read_in_background();
+	std::string get_read();	
+	
 	template <class T> POPFStream& operator << (const T& ToLog);	
 	
 	void printInfos();
@@ -110,6 +117,10 @@ private:
 	//AccessPoint to local POPFileManager
 	paroc_accesspoint pfm_ap;
 	
+
+	
+	
+	POPFileReader* reader_ref;
 	
 
 };	
@@ -117,4 +128,4 @@ private:
 } // namespace popfile
 
 
-#endif
+#endif /* POPFILE_H_INCLUDE */

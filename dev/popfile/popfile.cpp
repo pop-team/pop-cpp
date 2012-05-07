@@ -12,6 +12,7 @@
 #include "popfile.h"
 #include "popfile_datathread.h"
 #include "popfilemanager.ph"
+#include "popfilereader.ph"
 
 #include <unistd.h>
 
@@ -51,6 +52,8 @@ POPFStream::POPFStream(const char* filename)
 POPFStream::~POPFStream()
 {
 	//TODO
+	
+	
 }
 
 /**
@@ -65,6 +68,7 @@ void POPFStream::popfile_init()
 	popfile_currentBuffer = 0;
 	popfile_stripNumber	= 0;
 	pfm_ap.SetAccessString(POPFILE_POPFILEMANAGER_LOCAL);
+	reader_ref = NULL;
 }
 
 /**
@@ -133,8 +137,8 @@ void POPFStream::scatter(){
 	if(!popfile_parallel){
 		//TODO
 	} else {
-		//Can't do it ... already parallel
-		//TODO throw exception
+		cout << "[POPFILE-ERROR] Can't do this action on a parallel file!" << popcendl;
+		return;
 	}
 }
 
@@ -147,8 +151,8 @@ void POPFStream::gather(){
 		//TODO
 		
 	} else {
-		//Can't do it, not parallel
-		//TODO throw exception
+		cout << "[POPFILE-ERROR] Can't do this action on a non-parallel file!" << popcendl;
+		return;
 	}
 }
 
@@ -275,7 +279,8 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, const long 
 		popfile_metadata.set_offset(offset);
 		
 		//Procces found resources
-		popfile_writebuffers = new POPFileBuffer[resources];		
+		popfile_writebuffers = new POPFileBuffer[resources];	
+
 		for(int i = 0; i < resources; i++){
 			if(!candidates[i].IsEmpty()){
 				std::string strip_path("/tmp/");
@@ -286,12 +291,11 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, const long 
 					popfile_metadata.addStripInfo(false, i, strip_path, strip_name, offset, candidates[i].GetAccessString());
 					popfile_stripNumber++;
 				}
-				popfile_writebuffers[i].setCapacity(offset);
-				popfile_writebuffers[i].setIdentifier(i);
-				popfile_writebuffers[i].setStripPath(strip_name);
+				popfile_writebuffers[i].set_capacity(offset);
+				popfile_writebuffers[i].set_identifier(i);
+				popfile_writebuffers[i].set_strip_path(strip_name);
 				popfile_writebuffers[i].setAssociatedPOPFileManager(candidates[i]);
 				popfile_writebuffers[i].setLocalPOPFileManager(pfm_ap);
-
 				cout << "[POPFILE] Resource found (" << i << "): " << candidates[i].GetAccessString() << popcendl;					
 			}
 		}	
@@ -299,6 +303,7 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, const long 
 		cout << "[POPFILE] Error: there is not enough resources to create the parallel file" << popcendl;		
 		return false;		
 	}
+
 
 		
 	// Set the current file as prallel file
@@ -320,11 +325,45 @@ void POPFStream::write(const char* s, std::streamsize n){
 
 void POPFStream::write(std::string value){
 	if(popfile_parallel){
-//		cout << "[POPFILE] Call to write(string)" << popcendl;
+		//cout << "[POPFILE] Call to write(string)" << popcendl;
 		popfile_writeToBuffer(value);
 	} else {
 		//TODO
 	}	
+}
+
+std::string POPFStream::read()
+{
+	
+}
+
+void POPFStream::read_in_background()
+{
+	if(popfile_parallel){
+		//Check if reader is already running
+		if(reader_ref == NULL){
+			reader_ref = new POPFileReader[popfile_stripNumber];
+			for(int i = 0; i < popfile_stripNumber; i++){
+				paroc_accesspoint ap;
+				ap.SetAccessString(popfile_metadata.get_accessstring_for_strip(i).c_str());
+				//cout << "[POPFSTREAM] Set ap to reader " << popfile_metadata.get_accessstring_for_strip(i) << popcendl;
+				reader_ref[i].set_pfm_accesspoint(ap);
+				//cout << "[POPFSTREAM] Set path to reader " << popfile_metadata.get_filepath_for_strip(i) << popcendl;
+				POPString path(popfile_metadata.get_filepath_for_strip(i).c_str());
+				reader_ref[i].set_strip_path(path);
+			}
+		}
+		for(int i = 0; i < popfile_stripNumber; i++){
+			//reader_ref[i].read_in_strip(0, 100000);
+		}
+	} else {
+		cout << "[POPFILE-ERROR] Can't do this action on a non-parallel file!" << popcendl;
+	}			
+}
+
+std::string get_read()
+{
+	
 }
 
 void POPFStream::printInfos(){
