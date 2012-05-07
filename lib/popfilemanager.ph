@@ -1,14 +1,15 @@
 /**
- * File : popcloner.ph
+ * File : popfilemanager.ph
  * Author : Valentin Clement
- * Description : Declaration of the parallel object POPCloner (POP-C++ Global Services). This object is responsible of the 
- *               VM cloning.
+ * Description : Declaration of the parallel object POPFileManager. This object is in charge of POPFile management. 
  * Creation date : 2010/11/12
  * 
  * Change Log: 
  * Author		Date			Description
  * clementval	03.25.2012	Creation of this file
  */
+#ifndef POPFILEMANAGER_H_INCLUDE
+#define POPFILEMANAGER_H_INCLUDE
 
 #include "paroc_service_base.ph"
 #include "paroc_accesspoint.h"
@@ -19,10 +20,10 @@ parclass POPFileManager : virtual public paroc_service_base {
 public:
    classuid(50);   
 
-   //POPCloner constructor
+   //POPFileManager constructor
    POPFileManager(const POPString &challenge, bool deamon, POPString host) @{ od.runLocal(true); od.service(true); od.url(host); };
    
-   //POPCloner destrcutor   
+   //POPFileManager destrcutor   
    ~POPFileManager();
    
    //Create a new strip on this node
@@ -35,6 +36,9 @@ public:
 	async conc void writeToStrip(POPString stripName, POPString data);
 	
 	async conc void writeToRemoteStrip(POPString stringName, POPString data, paroc_accesspoint ap);
+
+	sync conc POPString readFromStrip(POPString stripName, long start, long offset);
+
 	
 	
 	async conc void asyncCall1();
@@ -54,4 +58,8 @@ private:
 	
 };
 
+
+
 int popfile_log(const char *format,...);  //log function for error
+
+#endif /* POPFILEMANAGER_H_INCLUDE_ */ 

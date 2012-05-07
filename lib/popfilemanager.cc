@@ -1,8 +1,7 @@
 /**
- * File : popcloner.cc
+ * File : popfilemanager.cc
  * Author : Valentin Clement
- * Description : Implementation of the parallel object POPCloner (POP-C++ Global Services). This object is responsible of the 
- *               VM cloning.
+ * Description : Implementation of the parallel object POPFileManager. This object is in charge of POPFile management. 
  * Creation date : 2010/11/12
  * Change Log: 
  * Author		Date			Description
@@ -45,7 +44,7 @@ bool POPFileManager::createStrip(POPString absolutePath)
    
 /**
  * POPFile: clementval
- * Write data to a strip
+ * Write data to a local strip
  * @param stringName	absloute path to the strip
  * @param data			Actual data to write to the strip
  */
@@ -61,9 +60,41 @@ void POPFileManager::writeToStrip(POPString stringName, POPString data)
   	}
 }
 
-void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, paroc_accesspoint ap){
+/**
+ * POPFile: clementval
+ * Call a remote PFM to write to a remote strip
+ * @param stringName	absloute path to the strip
+ * @param data			Actual data to write to the strip
+ * @param ap			Access point of thre remote PFM
+ */
+void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, paroc_accesspoint ap)
+{
 	POPFileManager remote(ap);
 	remote.writeToStrip(stringName, data);
+}
+
+/**
+ * POPFile: clementval
+ * Read from a local strip
+ * @param stringName	absloute path to the strip
+ * @param begin		Size to begin to read
+ * @param offset		Site to read
+ */
+POPString POPFileManager::readFromStrip(POPString stripName, long start, long offset)
+{
+	//TODO Check to not seek after the end of the strip
+/*	std::ifstream strip;
+	strip.open(stripName.GetString(), ios::binary);
+	strip.seekg (0, ios::beg);
+	int crt_pos = strip.tellg();
+	strip.seekg(start, ios::cur);
+	char buffer[offset];
+	strip.read(buffer, offset);
+	popfile_log("[POPFILEMANAGER] Read in strip : %s", buffer);
+	strip.close();
+	POPString data(buffer);*/
+	POPString data("ok");
+	return data;
 }
 
 void POPFileManager::asyncCall1(){
