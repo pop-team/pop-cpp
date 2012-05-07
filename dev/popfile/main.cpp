@@ -9,7 +9,7 @@ using namespace popfile;
 
 int main(int argc, char** argv)
 {
-	struct timeval start, end;
+	struct timeval start, end, start2, end2;
 
    long mtime, seconds, useconds;  
 	
@@ -33,12 +33,22 @@ int main(int argc, char** argv)
 		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
 		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
 		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");																		pfstream.write("stop_1024_//");		
+		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");														pfstream.write("stop_1024_//");		
 	}		
+	
+	gettimeofday(&end, NULL);
+	
+	
+	
+	gettimeofday(&start2, NULL);
+	
+	pfstream.read_in_background();
+	
+	gettimeofday(&end2, NULL);
 	
 	pfstream.close();
 
-   gettimeofday(&end, NULL);
+   
 
    seconds  = end.tv_sec  - start.tv_sec;
    useconds = end.tv_usec - start.tv_usec;
@@ -68,6 +78,6 @@ int main(int argc, char** argv)
 			cout << "[POPFILE] " << FILEPATH << " is closed" << popcendl;		
 		}	
 	}*/
-	
-	cout << "[POPFILE] End of POPFile prototype test program: [ms]" << mtime << popcendl;
+	cout << "[POPFILE] Writing time : [ms]" << mtime << popcendl;
+	cout << "[POPFILE] End of POPFile prototype test program" << popcendl;
 }
