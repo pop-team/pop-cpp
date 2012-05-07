@@ -31,19 +31,27 @@ public:
 	~POPFileBuffer();	
 	
 	std::string buffer_add(std::string value);
+	std::string buffer_get(long size);
+	
+	void add_data(POPString data);
+	
 	
 	void flush();
-	void setCapacity(long value);
-	void setIdentifier(int value);
-	void setStripPath(std::string value);
+	void set_capacity(long value);
+	void set_identifier(int value);
+	void set_strip_path(std::string value);
 	void setAssociatedPOPFileManager(paroc_accesspoint ap);
+	paroc_accesspoint get_associated_pfm();
 	void setLocalPOPFileManager(paroc_accesspoint ap);
 	
 private:
-	std::stringstream popfile_buffer;
+	std::stringstream popfile_buffer_out;
+	std::stringstream popfile_buffer_in;
 	long capacity;
 	long remainingCapacity;
 	int identifier;
+	
+	
 	POPString stripPath;
 	paroc_accesspoint associatedPFM;
 	
