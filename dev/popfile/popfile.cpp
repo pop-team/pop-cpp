@@ -66,6 +66,7 @@ void POPFStream::popfile_init()
 	popfile_open = false;
 	popfile_offset = 0;
 	popfile_currentBuffer = 0;
+	popfile_current_input_buffer = 0;
 	popfile_stripNumber	= 0;
 	pfm_ap.SetAccessString(POPFILE_POPFILEMANAGER_LOCAL);
 	reader_ref = NULL;
@@ -351,19 +352,26 @@ void POPFStream::read_in_background()
 				//cout << "[POPFSTREAM] Set path to reader " << popfile_metadata.get_filepath_for_strip(i) << popcendl;
 				POPString path(popfile_metadata.get_filepath_for_strip(i).c_str());
 				reader_ref[i].set_strip_path(path);
+				reader_ref[i].set_offset(popfile_metadata.get_offset_for_strip(i));
 			}
 		}
-		for(int i = 0; i < popfile_stripNumber; i++){
-			//reader_ref[i].read_in_strip(0, 100000);
-		}
+		//for(int i = 0; i < popfile_stripNumber; i++){
+			reader_ref[0].read_in_strip(0, popfile_metadata.get_offset_for_strip(0));
+		//}
 	} else {
 		cout << "[POPFILE-ERROR] Can't do this action on a non-parallel file!" << popcendl;
 	}			
 }
 
-std::string get_read()
+/**
+ * Read the parallel file by block of the size of offset
+ * @return String of offset's size filled with data
+ */
+std::string POPFStream::get_read()
 {
-	
+	std::string data = reader_ref[popfile_current_input_buffer].read_current_buffer(-1);
+	popfile_current_input_buffer++;
+	return data;
 }
 
 void POPFStream::printInfos(){

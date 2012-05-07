@@ -92,6 +92,8 @@ private:
 	long popfile_offset;
 	int popfile_stripNumber;
 	int popfile_currentBuffer;
+	
+	int popfile_current_input_buffer;
 
 	
 	
