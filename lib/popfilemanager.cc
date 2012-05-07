@@ -83,17 +83,20 @@ void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, pa
 POPString POPFileManager::readFromStrip(POPString stripName, long start, long offset)
 {
 	//TODO Check to not seek after the end of the strip
-/*	std::ifstream strip;
+	popfile_log("[POPFILEMANAGER] Opening strip for read operation : %s", stripName.GetString());
+	std::ifstream strip;
 	strip.open(stripName.GetString(), ios::binary);
+	popfile_log("[POPFILEMANAGER] opened");	
 	strip.seekg (0, ios::beg);
+	popfile_log("[POPFILEMANAGER] seek to begin");
 	int crt_pos = strip.tellg();
+	popfile_log("[POPFILEMANAGER] crt pos %d", crt_pos);	
 	strip.seekg(start, ios::cur);
+	popfile_log("[POPFILEMANAGER] seek to start");
 	char buffer[offset];
 	strip.read(buffer, offset);
-	popfile_log("[POPFILEMANAGER] Read in strip : %s", buffer);
 	strip.close();
-	POPString data(buffer);*/
-	POPString data("ok");
+	POPString data(buffer);
 	return data;
 }
 
