@@ -199,10 +199,32 @@ bool POPFileMetaData::load(const char* filename)
 		strip.strip_accesspoint.accesspoint_port = atoi(node->GetText());
 		
 		//Insert the strip in the map
-		meta_strips[strip.strip_name] = strip;
+		meta_strips[strip.strip_identifier] = strip;
 	}
 	meta_loaded = true;
 	return true;
+}
+
+
+std::string POPFileMetaData::get_filepath_for_strip(int i)
+{
+	std::string path;
+	path.append(meta_strips[i].strip_name);
+	return path;
+}
+
+std::string POPFileMetaData::get_accessstring_for_strip(int i)
+{
+	std::string ap;
+	ap.append("socket://");
+	ap.append(meta_strips[i].strip_accesspoint.accesspoint_ip_address);
+	ap.append(":");
+	ap.append(convertInt(meta_strips[i].strip_accesspoint.accesspoint_port));
+	return ap;
+}
+
+long POPFileMetaData::get_offset_for_strip(int i){
+	return meta_strips[i].strip_offset;
 }
 
 
@@ -281,7 +303,7 @@ void POPFileMetaData::addStripInfo(bool isLocal, int identifier, std::string abs
 	
 	
 	//Add the new strip in the map
-	meta_strips[strip.strip_name] = strip;
+	meta_strips[strip.strip_identifier] = strip;
 		
 }
 

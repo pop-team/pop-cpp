@@ -10,7 +10,9 @@
  * clementval	03.25.2012	Creation of this file 
  * clementval	04.23.2012	Add method to add strip to the metadata
  */
- 
+
+#ifndef POPFILEMETADATA_H_INCLUDE
+#define POPFILEMETADATA_H_INCLUDE 
  
 #include <string>
 #include <sstream>
@@ -19,7 +21,7 @@
 class MetaDataStrip;
 
 //Define map of strip as a new type
-typedef std::map<std::string, MetaDataStrip> MetaDataStripMap;
+typedef std::map<int, MetaDataStrip> MetaDataStripMap;
 
 /**
  *
@@ -90,6 +92,10 @@ public:
 	void addStripInfo(bool isLocal, int identifier, std::string absolutePath, std::string stripName, long offset, std::string accesspoint);
 	
 	int get_strips_count();
+	
+	std::string get_filepath_for_strip(int i);
+	std::string get_accessstring_for_strip(int i);
+	long get_offset_for_strip(int i);
 
 	MetaDataInfo meta_info;
 	MetaDataStripMap meta_strips;
@@ -110,3 +116,4 @@ private:
 	
 };
 
+#endif /* POPFILEMETADATA_H_INCLUDE */
