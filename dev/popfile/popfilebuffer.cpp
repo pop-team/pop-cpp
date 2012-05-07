@@ -8,37 +8,19 @@
 
 using namespace popfile;
 
-/*
-class POPFileBufferThread: public paroc_thread
-{
-public:
-	POPFileBufferThread(sem_t* lock, POPFileBuffer* buf);
-	virtual void start();
-private:
-	sem_t *locker;
-	POPFileBuffer* buffer; 
-};
 
-POPFileBufferThread::POPFileBufferThread(sem_t* lock, POPFileBuffer* buf): paroc_thread(true)
-{
-	locker = lock;
-}
-
-void POPFileBufferThread::start()
-{
-	while (1)
-	{
-		//Do something
-	}
-}
-*/
-
-
+/**
+ * POPFileBuffer Constructor
+ */
 POPFileBuffer::POPFileBuffer(){
 	capacity = 1024;
 	remainingCapacity = capacity;
 	identifier = 0;
 }
+
+/**
+ * POPFileBuffer Destructor
+ */
 POPFileBuffer::~POPFileBuffer(){
 	delete pfmref;
 }
@@ -63,6 +45,9 @@ std::string POPFileBuffer::buffer_add(std::string value){
 	return remaining;
 }
 
+/**
+ * Flush the buffer to the actual strip when the capacity is exceed
+ */
 void POPFileBuffer::flush(){
 	if(remainingCapacity < capacity){
 		struct timeval start1, end1, start2, end2, start3, end3;
@@ -122,25 +107,33 @@ std::string POPFileBuffer::buffer_get(long size)
 	}
 }
 
+/**
+ * Get a block data of the offset size from the buffer
+ * @return A string object representing the data block read
+ */
 std::string POPFileBuffer::buffer_get_offset()
 {
 	cout << "[POPFILEBUFFER] get offset size is : " << popfile_buffer_in.str().length() << popcendl;
 	if(popfile_buffer_in.str().length() <= capacity){
 		return popfile_buffer_in.str();
 	} else {
-//		std::string data 	
+		//TODO remove from buffer
 		return popfile_buffer_in.str().substr(0, capacity);
 	}
 }
 
-
+/**
+ * Add data into the buffer 
+ * @param data The data to add in the buffer
+ */
 void POPFileBuffer::add_data(POPString data)
 {
 	popfile_buffer_in << data.GetString();
 }
 
 /**
- *
+ * Set the capacity of the buffer
+ *@param value	The capacity to set for this buffer
  */
 void POPFileBuffer::set_capacity(long value)
 {
@@ -149,7 +142,8 @@ void POPFileBuffer::set_capacity(long value)
 }
 
 /**
- *
+ * Set the identifier of this buffer (associated strip)
+ * @param value The identifier to set for this buffer
  */
 void POPFileBuffer::set_identifier(int value)
 {
@@ -157,7 +151,8 @@ void POPFileBuffer::set_identifier(int value)
 }
 
 /**
- *
+ * Set the associated strip path
+ * @param value The associated strip path to be set with this buffer
  */
 void POPFileBuffer::set_strip_path(std::string value)
 {
@@ -165,7 +160,8 @@ void POPFileBuffer::set_strip_path(std::string value)
 }
 
 /**
- *
+ * Set the associated PFM accesspoint
+ * @param ap The accesspoint of the associated PFM
  */
 void POPFileBuffer::setAssociatedPOPFileManager(paroc_accesspoint ap)
 {
@@ -173,13 +169,18 @@ void POPFileBuffer::setAssociatedPOPFileManager(paroc_accesspoint ap)
 	pfmref = new POPFileManager(associatedPFM);
 }
 
+/**
+ * Get the associated PFM accesspoint
+ * @return The accesspoint of the associated PFM
+ */
 paroc_accesspoint POPFileBuffer::get_associated_pfm()
 {
 	return associatedPFM;
 }
 
 /**
- *
+ * Set the local PFM accesspoint
+ * @param ap The accesspoint of the local PFM
  */
 void POPFileBuffer::setLocalPOPFileManager(paroc_accesspoint ap)
 {

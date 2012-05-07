@@ -51,6 +51,9 @@ int main(int argc, char** argv)
 	std::string data = pfstream.get_read();
 	cout << data.substr(2048, 2048) << popcendl;
 	
+	data = pfstream.get_read();
+	cout << data.substr(2048, 2048) << popcendl;
+	
 	gettimeofday(&end2, NULL);
 	
 	pfstream.close();

@@ -1,16 +1,14 @@
 /**
- * PROJECT:		POPFile
- * AUTHOR:		clementval
- *	FILENAME:	popfile_metadata.h
- * CREATION:	03.25.2012
+ * File : popfile_metadata.h
+ * Author : Valentin Clement (clementval)
+ * Description : Declaration of the parallel object POPFileManager. This object is in charge of POPFile management. 
+ * Creation date : 2012/03/25
  * 
- * Change Log
- * ----------
+ * Change Log: 
  * Author		Date			Description
  * clementval	03.25.2012	Creation of this file 
  * clementval	04.23.2012	Add method to add strip to the metadata
  */
-
 #ifndef POPFILEMETADATA_H_INCLUDE
 #define POPFILEMETADATA_H_INCLUDE 
  
@@ -24,7 +22,7 @@ class MetaDataStrip;
 typedef std::map<int, MetaDataStrip> MetaDataStripMap;
 
 /**
- *
+ * This class holds basic information on the parallel file
  */
 class MetaDataInfo
 {
@@ -34,7 +32,7 @@ public:
 };
 
 /**
- *
+ * This class holds value for an access point
  */
 class MetaDataAccessPoint
 {
@@ -45,7 +43,7 @@ public:
 };
 
 /**
- *
+ * This class holds all necessary information about a single strip
  */
 class MetaDataStrip
 {
@@ -59,7 +57,7 @@ public:
 };
 
 /**
- *
+ * This class holds all information about a whole parallel file
  */
 class POPFileMetaData
 {

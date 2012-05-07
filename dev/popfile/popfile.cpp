@@ -47,7 +47,7 @@ POPFStream::POPFStream(const char* filename)
 }
 
 /**
- *
+ * Destructor of the POPFStream object
  */
 POPFStream::~POPFStream()
 {
@@ -313,10 +313,13 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, const long 
 }
 
 
-
+/**
+ * Write an array of char into the parallel file
+ * @param s	A char array
+ * @param n	The size of the array
+ */
 void POPFStream::write(const char* s, std::streamsize n){
 	if(popfile_parallel){
-//		cout << "[POPFILE] Call to write(char*)" << popcendl;
 		std::string value(s);
 		popfile_writeToBuffer(s);
 	} else {
@@ -324,20 +327,31 @@ void POPFStream::write(const char* s, std::streamsize n){
 	}
 }
 
+/**
+ * Write a string value to the parallel file
+ * @param value	The string vakue to write
+ */
 void POPFStream::write(std::string value){
 	if(popfile_parallel){
-		//cout << "[POPFILE] Call to write(string)" << popcendl;
 		popfile_writeToBuffer(value);
 	} else {
 		//TODO
 	}	
 }
 
+/**
+ * Read some data from the parallel file
+ * @return Data formatted in a string object
+ */
 std::string POPFStream::read()
 {
 	
 }
 
+/**
+ * Read data from the parallel file in background. Allow to perform other computation during the reading process. 
+ * Use the method get_read() when the data is really needed. 
+ */
 void POPFStream::read_in_background()
 {
 	if(popfile_parallel){
@@ -355,16 +369,16 @@ void POPFStream::read_in_background()
 				reader_ref[i].set_offset(popfile_metadata.get_offset_for_strip(i));
 			}
 		}
-		//for(int i = 0; i < popfile_stripNumber; i++){
-			reader_ref[0].read_in_strip(0, popfile_metadata.get_offset_for_strip(0));
-		//}
+		for(int i = 0; i < popfile_stripNumber; i++){
+			reader_ref[i].read_in_strip(0, popfile_metadata.get_offset_for_strip(i));
+		}
 	} else {
 		cout << "[POPFILE-ERROR] Can't do this action on a non-parallel file!" << popcendl;
 	}			
 }
 
-/**
- * Read the parallel file by block of the size of offset
+/** TODO blocking 
+ * Read the parallel file by block of the size of offset. Block is the data is not read yet
  * @return String of offset's size filled with data
  */
 std::string POPFStream::get_read()
@@ -374,11 +388,18 @@ std::string POPFStream::get_read()
 	return data;
 }
 
+/**
+ * Print information on the parallel file
+ */
 void POPFStream::printInfos(){
 	popfile_metadata.dump_to_cout();
 }
 
 
+/**
+ * Write data in the internal buffers
+ * @param value Data to write
+ */ 
 void POPFStream::popfile_writeToBuffer(std::string value){
 	std::string remaining; 
 	remaining = popfile_writebuffers[popfile_currentBuffer].buffer_add(value);
@@ -392,7 +413,7 @@ void POPFStream::popfile_writeToBuffer(std::string value){
 
 
 /**
- *
+ * Swicth to the next available buffer. Round robin way.
  */
 void POPFStream::get_next_buffer(){
 	popfile_currentBuffer++;

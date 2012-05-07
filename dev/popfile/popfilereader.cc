@@ -12,20 +12,28 @@
 #include "popfilemanager.ph"
 #include "popfilebuffer.h"
 
-//
+/**
+ * POPFileReader constructor
+ */
 POPFileReader::POPFileReader()
 {
 	cout << "[POPFILEREADER] Created on " << POPGetHost() << popcendl;	
 	popfilebuffer_ref = new POPFileBuffer();
 }
    
-//POPFileReader destructor   
+/**
+ * POPFileReader destructor   
+ */
 POPFileReader::~POPFileReader()
 {
 
 }
    
-//Asynchronous read of the strip to further usage
+/**
+ * Asynchronous read of the strip. Read the data from the strip and store them in the internal buffer
+ * @param start	pointer to start reading
+ * @param offset	Number of byte to read from the start point
+ */
 void POPFileReader::read_in_strip(long start, long offset)
 {	
 	cout << "[POPFILEREADER] Read in strip " << strip_path.GetString() << " from:" << start << " to:" << start+offset << popcendl;	
@@ -34,6 +42,11 @@ void POPFileReader::read_in_strip(long start, long offset)
 	popfilebuffer_ref->add_data(data);
 }
 
+/**
+ * Read data in the internal buffer
+ * @param size Number of byte to read
+ * @return Data read as a POPString object
+ */
 POPString POPFileReader::read_current_buffer(long size)
 {
 	POPString data;
@@ -45,13 +58,20 @@ POPString POPFileReader::read_current_buffer(long size)
 	return data;
 }
 
+/**
+ * Set the offset of the associated strip
+ * @param offset The offset of the associated strip
+ */
 void POPFileReader::set_offset(long offset)
 {
 	pfr_offset = offset;
 	popfilebuffer_ref->set_capacity(pfr_offset);
 }
    
-//Save the local PFM accesspoint
+/**
+ * Save the local PFM accesspoint
+ * @param ap	The access point of the associated PFM
+ */
 void POPFileReader::set_pfm_accesspoint(paroc_accesspoint ap)
 {
 	pfm_ap = ap;

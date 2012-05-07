@@ -40,13 +40,13 @@ POPFileMetaData::POPFileMetaData()
 }
 
 /**
- * Save data to file
+ * Save data to xml file
  */
 void POPFileMetaData::save(const char* filename)
 {		
 	meta_loaded = false;
 	
-	//
+	//Create TinyXML object
 	TiXmlDocument doc;  
 	TiXmlElement* msg;
 	TiXmlComment* comment;
@@ -131,6 +131,8 @@ void POPFileMetaData::save(const char* filename)
 
 /**
  * Load the value of XML in the objects
+ * @param filename absolute path and filename of the metadata file
+ * @return TRUE if the information are loaded correctly. FALSE in all others cases.
  */
 bool POPFileMetaData::load(const char* filename)
 {
@@ -206,6 +208,11 @@ bool POPFileMetaData::load(const char* filename)
 }
 
 
+/**
+ * Get the file path of a strip with its identifier
+ * @param i	Identifier of the strip
+ * @return The path of the strip
+ */
 std::string POPFileMetaData::get_filepath_for_strip(int i)
 {
 	std::string path;
@@ -213,6 +220,11 @@ std::string POPFileMetaData::get_filepath_for_strip(int i)
 	return path;
 }
 
+/**
+ * Get the access string of the associated PFM of a strip with its identifier
+ * @param i	Identifier of the strip
+ * @return The access string of the associated PFM
+ */
 std::string POPFileMetaData::get_accessstring_for_strip(int i)
 {
 	std::string ap;
@@ -223,55 +235,101 @@ std::string POPFileMetaData::get_accessstring_for_strip(int i)
 	return ap;
 }
 
+/**
+ * Get the offset of a strip with its identifier
+ * @param i	Identifier of the strip
+ * @return The offset of the strip
+ */
 long POPFileMetaData::get_offset_for_strip(int i){
 	return meta_strips[i].strip_offset;
 }
 
 
 /** 
- * Print data to cout
+ * Check if the meta data are loaded
+ * @return TRUE if the metadata file is loaded. FALSE in all others cases. 
  */
 bool POPFileMetaData::is_loaded()
 {
 	return meta_loaded;
 }
 
+/**
+ * Get the master offset of the parallel file
+ * @return The master offset
+ */
 long POPFileMetaData::get_offset()
 {
 	return meta_offset;
 }
 
+/**
+ * Set the master offset of the parallel file
+ * @param value 	The offset value to set as master
+ */
 void POPFileMetaData::set_offset(long value)
 {
 	meta_offset = value;
 }
 
+/**
+ * Get the parallel file original name
+ * @return The original filename of the parallel file
+ */
 std::string POPFileMetaData::get_filename(){
 	return meta_info.info_original_name;
 }
 
+/**
+ * Set the original filename of the parallel file
+ * @param filename	The filename to set
+ * @param path			The absolute path to the file
+ */
 void POPFileMetaData::set_filename(std::string filename, std::string path){
 	meta_info.info_original_name = filename;
 	meta_info.info_absolute_path = path;
 }
 
+/**
+ * Convert an integer value to a string
+ * @param number The integer to convert
+ * @return A string value of the given integer
+ */
 std::string POPFileMetaData::convertInt(int number) {
    std::stringstream ss;
    ss << number;
    return ss.str();
 }
 
+/**
+ * Convert a string value to an integer
+ * @param value The string to convert
+ * @return An integer value of the given string
+ */
 int POPFileMetaData::convertStringToInt(std::string value){
 	return atoi(value.c_str());	
 }
 
+/**
+ * Convert a long value to a string
+ * @param number The long to convert
+ * @return A string value of the given long
+ */
 std::string POPFileMetaData::convertLong(long number) {
    std::stringstream ss;
    ss << number;
    return ss.str();
 }
 
-
+/**
+ * Add a strip to the metadata information
+ * @param isLocal			Set to true is the strip is located on the local computer. False otherwise
+ * @param identifier		An integer value identifying the strip uniquely in the parallel file
+ * @param absloutePath	The absolute path to the strip
+ * @param stripName		The file name of the strip
+ * @param offset			The offset of the strip (used to write in the strip)
+ * @param accesspoint	The accesspoint of the associated PFM
+ */
 void POPFileMetaData::addStripInfo(bool isLocal, int identifier, std::string absolutePath, std::string stripName, long offset, std::string accesspoint){
 	MetaDataStrip strip;
 	strip.strip_is_local = isLocal;
@@ -279,7 +337,6 @@ void POPFileMetaData::addStripInfo(bool isLocal, int identifier, std::string abs
 	strip.strip_absolute_path = absolutePath;
 	strip.strip_name = stripName;
 	strip.strip_offset = offset;
-	
 	
 	//Create accesspoint information
 	MetaDataAccessPoint ap;
@@ -295,20 +352,17 @@ void POPFileMetaData::addStripInfo(bool isLocal, int identifier, std::string abs
 	std::string network = accesspoint.substr(found1, length);
 	std::string port = accesspoint.substr(found2+1);
 
-	cout << "[POPFILE] ACCESSPOINT DEBUG " << network << "//"<< port << popcendl;
-
 	ap.accesspoint_ip_address = network;
 	ap.accesspoint_port = convertStringToInt(port);	
 	strip.strip_accesspoint = ap;
 	
-	
 	//Add the new strip in the map
 	meta_strips[strip.strip_identifier] = strip;
-		
 }
 
 /**
- *
+ * Get the number of strips in the parallel file
+ * @return The number of strips in this parallel file
  */
 int POPFileMetaData::get_strips_count(){
 	return meta_strips.size();
