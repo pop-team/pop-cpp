@@ -122,6 +122,17 @@ std::string POPFileBuffer::buffer_get(long size)
 	}
 }
 
+std::string POPFileBuffer::buffer_get_offset()
+{
+	cout << "[POPFILEBUFFER] get offset size is : " << popfile_buffer_in.str().length() << popcendl;
+	if(popfile_buffer_in.str().length() <= capacity){
+		return popfile_buffer_in.str();
+	} else {
+//		std::string data 	
+		return popfile_buffer_in.str().substr(0, capacity);
+	}
+}
+
 
 void POPFileBuffer::add_data(POPString data)
 {
