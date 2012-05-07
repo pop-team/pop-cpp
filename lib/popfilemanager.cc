@@ -3,6 +3,7 @@
  * Author : Valentin Clement
  * Description : Implementation of the parallel object POPFileManager. This object is in charge of POPFile management. 
  * Creation date : 2010/11/12
+ *
  * Change Log: 
  * Author		Date			Description
  * clementval	03.25.2012	Creation of this file
@@ -19,16 +20,31 @@
 #include <stdarg.h>
 #include <string.h>
 
+
+/**
+ * Constructor of the POPFileManager with object description
+ * @param challenge	A challenge string to stop the service
+ * @param deamon		Boolean flag to set the service as a deamon or not
+ * @param host			The url to create the service
+ */
 POPFileManager::POPFileManager(const POPString &challenge, bool deamon, POPString host) : paroc_service_base(challenge) {
 	popfile_log("[POPFILEMANAGER] POPFileManager created.");
-
 	if(deamon) Start();
 }
 
+/**
+ * Destructor of the POPFileManager
+ */
 POPFileManager::~POPFileManager(){
 
 }
 
+
+/**
+ * Create a strip file on the local computer
+ * @param absolutePath 	The absolute path and filename of the strip file to create
+ * @return TRUE if the file was created successfully. FALSE in all others cases.
+ */
 bool POPFileManager::createStrip(POPString absolutePath)
 {
 	popfile_log("[POPFILEMANAGER] Creating strip: %s", absolutePath.GetString());
@@ -114,17 +130,6 @@ POPString POPFileManager::readFromStrip(POPString stripName, long start, long of
 	return data;
 }
 
-void POPFileManager::asyncCall1(){
-	popfile_log("[POPFILEMANAGER] ASYNC CALL 1");
-}
-	
-void POPFileManager::asyncCall2(POPString data){
-	popfile_log("[POPFILEMANAGER] ASYNC CALL 2");		
-}
-
-
-
-
 /**
  * POPFile: clementval
  * Save the accesspoint of POPSearchNode
@@ -133,7 +138,6 @@ void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap)
 {
 	psn_ap = ap;
 }
-
 
 /**
  * POPFile: clementval
@@ -163,7 +167,15 @@ void POPFileManager::getNeighborsFromPSN(){
   	}
 }
 
-
+/**
+ * TODO use the PSN to perform an intelligent Resource Discovery
+ * Find storage resources to store the strips of a new parallel file
+ * @param nb 				The number of desired strips
+ * @param candidates		An output array that will store the candidates for the strips
+ * @param strNames		An output array that will store the real strip names
+ * @param stripPrefix	The prefix used to create strip names
+ * @return The actual number of strip created
+ */
 int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates, POPString* stripNames, POPString stripPrefix){
 	int index=1;
 	std::string str_stripname(stripPrefix.GetString());
@@ -188,13 +200,7 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
 	return index; 
 }
 
-
-
-
-
-
 /**
- * ViSaG : clementval
  * Method used to write log
  * @param String with format
  */
@@ -217,3 +223,13 @@ int popfile_log(const char *format,...)
 	fclose(f);
 	return 0;
 }
+
+
+void POPFileManager::asyncCall1(){
+	popfile_log("[POPFILEMANAGER] ASYNC CALL 1");
+}
+	
+void POPFileManager::asyncCall2(POPString data){
+	popfile_log("[POPFILEMANAGER] ASYNC CALL 2");		
+}
+

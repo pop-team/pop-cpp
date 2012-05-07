@@ -13,7 +13,6 @@
 
 #include "paroc_service_base.ph"
 #include "paroc_accesspoint.h"
-
 #include <list>
 
 parclass POPFileManager : virtual public paroc_service_base {
@@ -35,8 +34,10 @@ public:
 	//Write to strip
 	async conc void writeToStrip(POPString stripName, POPString data);
 	
+	//Write to a remote strip
 	async conc void writeToRemoteStrip(POPString stringName, POPString data, paroc_accesspoint ap);
 
+	// Read a block of data from the strip
 	sync conc POPString readFromStrip(POPString stripName, long start, long offset);
 
 	
@@ -53,8 +54,8 @@ public:
    sync seq void getNeighborsFromPSN();
    
 private:
-	paroc_accesspoint psn_ap;
-	std::list<paroc_accesspoint> pfm_neighbors;
+	paroc_accesspoint psn_ap;	// Saved access point to the local PSN for resource discovery
+	std::list<paroc_accesspoint> pfm_neighbors;	// list of direct neigbors
 	
 };
 
