@@ -9,41 +9,68 @@
  */
 
 #include "popfilereader.ph"
+#include "popfilemanager.ph"
+#include "popfilebuffer.h"
 
-
-POPFileReader::POPFileReader(const POPString &challenge, bool deamon, POPString host) @{ od.runLocal(true); od.service(true); od.url(host); };
+//
+POPFileReader::POPFileReader()
+{
+	cout << "[POPFILEREADER] Created on " << POPGetHost() << popcendl;	
+	popfilebuffer_ref = new POPFileBuffer();
+}
    
-   //POPFileReader destrcutor   
+//POPFileReader destructor   
 POPFileReader::~POPFileReader()
 {
-	
+
 }
-   
    
 //Asynchronous read of the strip to further usage
-void POPFileReader::read_strip(POPString stripName, long begin, long end)
+void POPFileReader::read_in_strip(long begin, long end)
+{	
+	POPString data = pfm_ref->readFromStrip(strip_path, begin, end);
+
+}
+
+POPString POPFileReader::read_current_buffer(long size)
 {
-	
+	POPString data;
+	data = popfilebuffer_ref->buffer_get(size).c_str();
+	return data;
 }
    
-
-POPString POPFileReader::read_current_buffer()
-{
-	
-}
-   
-	
-
-
-
 //Save the local PFM accesspoint
 void POPFileReader::set_pfm_accesspoint(paroc_accesspoint ap)
 {
-
+	pfm_ap = ap;
+	pfm_ref = new POPFileManager(pfm_ap);
 }
    
-//Get the local PFM accesspoint
-POPFileReader::paroc_accesspoint get_pfm_accesspoint()
+/**
+ * Get the local PFM accesspoint
+ * @return 
+ */
+paroc_accesspoint POPFileReader::get_pfm_accesspoint()
 {
-	
+	return pfm_ap;
 }
+
+/** 
+ * Save the associated strip path
+ * @param path The absolute strip file path associated with this reader
+ */
+void POPFileReader::set_strip_path(POPString path)
+{
+	strip_path = path;
+}
+   
+/**
+ * Get the associated strip path
+ * @return the absolute strip file path associated with this reader
+ */
+POPString POPFileReader::get_strip_path()
+{
+	return strip_path;
+}
+
+@pack(POPFileReader);
