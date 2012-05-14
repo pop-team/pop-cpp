@@ -51,9 +51,9 @@ POPFStream::POPFStream(const char* filename)
  */
 POPFStream::~POPFStream()
 {
-	//TODO
-	
-	
+	if(is_open()){
+		close();
+	}	
 }
 
 /**
@@ -65,11 +65,13 @@ void POPFStream::popfile_init()
 	popfile_parallel = false;
 	popfile_open = false;
 	popfile_offset = 0;
-	popfile_currentBuffer = 0;
+	popfile_current_output_buffer = 0;
 	popfile_current_input_buffer = 0;
-	popfile_stripNumber	= 0;
+	popfile_strip_number	= 0;
 	pfm_ap.SetAccessString(POPFILE_POPFILEMANAGER_LOCAL);
 	reader_ref = NULL;
+	popfile_total_bytes = 0;
+	popfile_internal_read_pointer = 0;
 }
 
 /**
@@ -108,6 +110,126 @@ void POPFStream::open(const char* filename)
 }
 
 /**
+ * Creation of a new parallel file
+ * @param filename the filename in relatrive or absolute path
+ * @param stripnumber Number of strip for the file. Default is 2.
+ * @param offset Offset to write and read to strip. Default is 1024.
+ * @return TRUE if the creation succeed. FALSE in any other case. Look the log file for more details. 
+ */
+bool POPFStream::open(const char* filename, const int stripnumber=2, const long offset=1024){
+	//Init special filename for meta data
+	popfile_init_filename(filename);
+
+	std::string str_filename("/tmp/.");
+	str_filename.append(filename);
+	std::string stripPrefix = str_filename;
+	str_filename.append("_strip0");	
+	
+	
+
+	
+
+
+	//TODO avoid create parallel file for already created parallel file. 
+
+
+	//Get path and filename to create the file
+	/*popfile_metadata.set_offset(offset);
+	std::string str_filename(filename);	
+	std::string path;
+  	std::size_t found;
+	found=str_filename.find_first_of("/");
+	if(found == std::string::npos){
+		char * pPath;
+		pPath = getenv("PWD");
+		if (pPath!=NULL){
+			cout << "GET CURRENT WORKING DIRECTORY" << (*pPath) << popcendl;
+			path = (*pPath);
+		} else {
+			cout << "CURRENT WORKING DIRECTORY IS NULL" << popcendl;	
+		}		
+	} else {
+		found = str_filename.find_last_of("/");
+		if(found==std::string::npos)
+			return false;
+		path = str_filename.substr(0, found);
+		str_filename = str_filename.substr(found+1);
+	}
+	popfile_metadata.set_filename(str_filename, path);
+	
+	cout << "[POPFILE] File will be create: name: " << str_filename << " path: " << path << popcendl;*/
+	
+	if(popfile_try_open_parallel()){
+		int resources = popfile_metadata.get_strips_count();
+		popfile_writebuffers = new POPFileBuffer[resources];
+
+		int i = 0;
+		MetaDataStripMap::const_iterator itr;
+		for(itr = popfile_metadata.meta_strips.begin(); itr != popfile_metadata.meta_strips.end(); ++itr){
+			popfile_writebuffers[i].set_capacity((*itr).second.strip_offset);
+			popfile_writebuffers[i].set_identifier((*itr).second.strip_identifier);
+			popfile_writebuffers[i].set_strip_path((*itr).second.strip_name);
+			popfile_writebuffers[i].setAssociatedPOPFileManager(popfile_metadata.get_accessstring_for_strip((*itr).second.strip_identifier));
+			popfile_writebuffers[i].setLocalPOPFileManager(pfm_ap);
+			popfile_strip_number++;
+			i++;
+		}
+	} else { // POPFile doesn't exist ... Try to create it
+	
+		//Create an array of possible popfilemanager accesspoint
+		paroc_accesspoint candidates[stripnumber];	
+		POPString stripNames[stripnumber];
+		//Contact the local PFM to get resources
+		POPFileManager pfm(pfm_ap);
+		POPString localStrip(str_filename.c_str());
+		if(!pfm.createStrip(localStrip)){
+			cout << "[POPFILE] Error: can't create the local strip ... operation failed" << popcendl;
+			return false;
+		}
+		candidates[0] = pfm_ap;
+		stripNames[0] = localStrip;
+		popfile_strip_number++;
+		int resources;
+		POPString pops_stripPrefix = stripPrefix;
+		if((resources = pfm.findResourcesForStrip(stripnumber-1, candidates, stripNames, pops_stripPrefix)) != 0){
+			//Set metadata
+			std::string metadata_filename(filename);
+			std::string metadata_path("/Users/clementval/versioning/popc/popfile_popc2.0.1/dev/popfile/");
+			popfile_metadata.set_filename(metadata_filename, metadata_path);
+			popfile_metadata.set_offset(offset);
+			
+			//Procces found resources
+			popfile_writebuffers = new POPFileBuffer[resources];	
+	
+			for(int i = 0; i < resources; i++){
+				if(!candidates[i].IsEmpty()){
+					std::string strip_path("/tmp/");
+					std::string strip_name(stripNames[i].GetString());
+					if(i == 0){
+						popfile_metadata.addStripInfo(true, i, strip_path, strip_name, offset, candidates[i].GetAccessString());	
+					} else{ 
+						popfile_metadata.addStripInfo(false, i, strip_path, strip_name, offset, candidates[i].GetAccessString());
+						popfile_strip_number++;
+					}
+					popfile_writebuffers[i].set_capacity(offset);
+					popfile_writebuffers[i].set_identifier(i);
+					popfile_writebuffers[i].set_strip_path(strip_name);
+					popfile_writebuffers[i].setAssociatedPOPFileManager(candidates[i]);
+					popfile_writebuffers[i].setLocalPOPFileManager(pfm_ap);
+					cout << "[POPFILE] Resource found (" << i << "): " << candidates[i].GetAccessString() << popcendl;					
+				}
+			}	
+		} else {
+			cout << "[POPFILE] Error: there is not enough resources to create the parallel file" << popcendl;		
+			return false;		
+		}
+	}		
+	// Set the current file as prallel file
+	popfile_parallel = true;
+	return true;
+}
+
+/**
  * Try to open the file in parallel mode. Open the file in standard mode if the file is not parallel.
  * @return TRUE if the file could be open in parallel way. FALSE in any other cases.
  */
@@ -136,7 +258,7 @@ bool POPFStream::popfile_try_open_parallel()
  */
 void POPFStream::scatter(){
 	if(!popfile_parallel){
-		//TODO
+		
 	} else {
 		cout << "[POPFILE-ERROR] Can't do this action on a parallel file!" << popcendl;
 		return;
@@ -200,7 +322,7 @@ void POPFStream::close(){
 	if(popfile_parallel){
 		cout << "[POPFILE] Closing file" << popcendl;
 		//Flush any local data	
-		for(int i = 0; i < popfile_stripNumber; i++){
+		for(int i = 0; i < popfile_strip_number; i++){
 			popfile_writebuffers[i].flush();	
 		}
 		//Save the metadat in the XML file
@@ -210,107 +332,7 @@ void POPFStream::close(){
 	}
 }
 
-/**
- * Creation of a new parallel file
- * @param filename the filename in relatrive or absolute path
- * @param stripnumber Number of strip for the file. Default is 2.
- * @param offset Offset to write and read to strip. Default is 1024.
- * @return TRUE if the creation succeed. FALSE in any other case. Look the log file for more details. 
- */
-bool POPFStream::open(const char* filename, const int stripnumber=2, const long offset=1024){
-	//Init special filename for meta data
-	popfile_init_filename(filename);
 
-	std::string str_filename("/tmp/.");
-	str_filename.append(filename);
-	std::string stripPrefix = str_filename;
-	str_filename.append("_strip0");	
-
-
-	//TODO avoid create parallel file for already created parallel file. 
-
-
-	//Get path and filename to create the file
-	/*popfile_metadata.set_offset(offset);
-	std::string str_filename(filename);	
-	std::string path;
-  	std::size_t found;
-	found=str_filename.find_first_of("/");
-	if(found == std::string::npos){
-		char * pPath;
-		pPath = getenv("PWD");
-		if (pPath!=NULL){
-			cout << "GET CURRENT WORKING DIRECTORY" << (*pPath) << popcendl;
-			path = (*pPath);
-		} else {
-			cout << "CURRENT WORKING DIRECTORY IS NULL" << popcendl;	
-		}		
-	} else {
-		found = str_filename.find_last_of("/");
-		if(found==std::string::npos)
-			return false;
-		path = str_filename.substr(0, found);
-		str_filename = str_filename.substr(found+1);
-	}
-	popfile_metadata.set_filename(str_filename, path);
-	
-	cout << "[POPFILE] File will be create: name: " << str_filename << " path: " << path << popcendl;*/
-	
-	
-	//Create an array of possible popfilemanager accesspoint
-	paroc_accesspoint candidates[stripnumber];	
-	POPString stripNames[stripnumber];
-	//Contact the local PFM to get resources
-	POPFileManager pfm(pfm_ap);
-	POPString localStrip(str_filename.c_str());
-	if(!pfm.createStrip(localStrip)){
-		cout << "[POPFILE] Error: can't create the local strip ... operation failed" << popcendl;
-		return false;
-	}
-	candidates[0] = pfm_ap;
-	stripNames[0] = localStrip;
-	popfile_stripNumber++;
-	int resources;
-	POPString pops_stripPrefix = stripPrefix;
-	if((resources = pfm.findResourcesForStrip(stripnumber-1, candidates, stripNames, pops_stripPrefix)) != 0){
-		//Set metadata
-		std::string metadata_filename(filename);
-		std::string metadata_path("/Users/clementval/versioning/popc/popfile_popc2.0.1/dev/popfile/");
-		popfile_metadata.set_filename(metadata_filename, metadata_path);
-		popfile_metadata.set_offset(offset);
-		
-		//Procces found resources
-		popfile_writebuffers = new POPFileBuffer[resources];	
-
-		for(int i = 0; i < resources; i++){
-			if(!candidates[i].IsEmpty()){
-				std::string strip_path("/tmp/");
-				std::string strip_name(stripNames[i].GetString());
-				if(i == 0){
-					popfile_metadata.addStripInfo(true, i, strip_path, strip_name, offset, candidates[i].GetAccessString());	
-				} else{ 
-					popfile_metadata.addStripInfo(false, i, strip_path, strip_name, offset, candidates[i].GetAccessString());
-					popfile_stripNumber++;
-				}
-				popfile_writebuffers[i].set_capacity(offset);
-				popfile_writebuffers[i].set_identifier(i);
-				popfile_writebuffers[i].set_strip_path(strip_name);
-				popfile_writebuffers[i].setAssociatedPOPFileManager(candidates[i]);
-				popfile_writebuffers[i].setLocalPOPFileManager(pfm_ap);
-				cout << "[POPFILE] Resource found (" << i << "): " << candidates[i].GetAccessString() << popcendl;					
-			}
-		}	
-	} else {
-		cout << "[POPFILE] Error: there is not enough resources to create the parallel file" << popcendl;		
-		return false;		
-	}
-
-
-		
-	// Set the current file as prallel file
-	popfile_parallel = true;
-	return true;
-}
 
 
 /**
@@ -357,8 +379,8 @@ void POPFStream::read_in_background()
 	if(popfile_parallel){
 		//Check if reader is already running
 		if(reader_ref == NULL){
-			reader_ref = new POPFileReader[popfile_stripNumber];
-			for(int i = 0; i < popfile_stripNumber; i++){
+			reader_ref = new POPFileReader[popfile_strip_number];
+			for(int i = 0; i < popfile_strip_number; i++){
 				paroc_accesspoint ap;
 				ap.SetAccessString(popfile_metadata.get_accessstring_for_strip(i).c_str());
 				//cout << "[POPFSTREAM] Set ap to reader " << popfile_metadata.get_accessstring_for_strip(i) << popcendl;
@@ -369,7 +391,7 @@ void POPFStream::read_in_background()
 				reader_ref[i].set_offset(popfile_metadata.get_offset_for_strip(i));
 			}
 		}
-		for(int i = 0; i < popfile_stripNumber; i++){
+		for(int i = 0; i < popfile_strip_number; i++){
 			reader_ref[i].read_in_strip(0, popfile_metadata.get_offset_for_strip(i));
 		}
 	} else {
@@ -402,12 +424,12 @@ void POPFStream::printInfos(){
  */ 
 void POPFStream::popfile_writeToBuffer(std::string value){
 	std::string remaining; 
-	remaining = popfile_writebuffers[popfile_currentBuffer].buffer_add(value);
+	remaining = popfile_writebuffers[popfile_current_output_buffer].buffer_add(value);
 //	cout << "[POPFILEBUFFER] Remaining = " << remaining << popcendl;
 	while(remaining.length() != 0){
 //		cout << "[POPFILEBUFFER] process remaining = " << remaining << popcendl;
 		get_next_buffer();	
-		remaining = popfile_writebuffers[popfile_currentBuffer].buffer_add(remaining);	
+		remaining = popfile_writebuffers[popfile_current_output_buffer].buffer_add(remaining);	
 	}	
 }
 
@@ -416,9 +438,9 @@ void POPFStream::popfile_writeToBuffer(std::string value){
  * Swicth to the next available buffer. Round robin way.
  */
 void POPFStream::get_next_buffer(){
-	popfile_currentBuffer++;
-	if(popfile_currentBuffer%popfile_stripNumber == 0)
-		popfile_currentBuffer = 0;	
+	popfile_current_output_buffer++;
+	if(popfile_current_output_buffer%popfile_strip_number == 0)
+		popfile_current_output_buffer = 0;	
 }
 
 
