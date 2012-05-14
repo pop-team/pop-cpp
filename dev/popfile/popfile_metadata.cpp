@@ -33,6 +33,7 @@ const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIP_AP = "accesspoint";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIP_AP_HOSTNAME = "hostname";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIP_AP_IPADDR = "ip-address";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIP_AP_PORT = "port";
+const char* POPFileMetaData::POPFILE_METADATA_NULL = "NULL";
 
 POPFileMetaData::POPFileMetaData()
 {
@@ -142,19 +143,19 @@ bool POPFileMetaData::load(const char* filename)
 	TiXmlHandle hDoc(&doc);
 	TiXmlElement* pElem;
 	TiXmlHandle hRoot(0);
-	
+
 	pElem=hDoc.FirstChildElement().Element();
 	if(!pElem) return false;
 	
 	//Save the root
 	hRoot=TiXmlHandle(pElem);
-	
+
 	//Getting values of infos node
 	pElem = hRoot.FirstChild(POPFILE_METADATA_NODE_INFOS).FirstChild().Element();
 	meta_info.info_absolute_path = pElem->GetText();
 	pElem = pElem->NextSiblingElement();
 	meta_info.info_original_name = pElem->GetText();
-	
+
 	//Getting values of strips node
 	meta_strips.clear();
 	pElem = hRoot.FirstChild(POPFILE_METADATA_NODE_STRIPS).FirstChild().Element();
@@ -163,7 +164,7 @@ bool POPFileMetaData::load(const char* filename)
 		MetaDataStrip strip;
 		//Get the attribute local
 		pElem->QueryBoolAttribute(POPFILE_METADATA_NODE_STRIP_ATTRIBUTE_LOCAL, &strip.strip_is_local);
-		
+
 		//Save the current node
 		TiXmlHandle crtNode(0);
 		crtNode = TiXmlHandle(pElem);
@@ -176,7 +177,7 @@ bool POPFileMetaData::load(const char* filename)
 		//Read asbolute-path node
 		node = crtNode.FirstChild(POPFILE_METADATA_NODE_STRIP_ABS_PATH).Element();
 		strip.strip_absolute_path = node->GetText();		
-		
+
 		//Read strip-name node
 		node = crtNode.FirstChild(POPFILE_METADATA_NODE_STRIP_STRIP_NAME).Element();
 		strip.strip_name = node->GetText();		
@@ -184,22 +185,21 @@ bool POPFileMetaData::load(const char* filename)
 		//Read offset node
 		node = crtNode.FirstChild(POPFILE_METADATA_NODE_STRIP_OFFSET).Element();
 		strip.strip_offset = atol(node->GetText());	
-		
 		if(meta_offset == 0) meta_offset = strip.strip_offset;	
 
 		//Read accesspoint node
 		node = crtNode.FirstChild(POPFILE_METADATA_NODE_STRIP_AP).Element();
 		crtNode = TiXmlHandle(node);
-
 		node = crtNode.FirstChild(POPFILE_METADATA_NODE_STRIP_AP_HOSTNAME).Element();
 		strip.strip_accesspoint.accesspoint_hostname = node->GetText();
-
+		if(strip.strip_accesspoint.accesspoint_hostname.compare(POPFILE_METADATA_NULL) == 0)
+			strip.strip_accesspoint.accesspoint_hostname = "";
 		node = crtNode.FirstChild(POPFILE_METADATA_NODE_STRIP_AP_IPADDR).Element();
 		strip.strip_accesspoint.accesspoint_ip_address = node->GetText();
-
+		if(strip.strip_accesspoint.accesspoint_ip_address.compare(POPFILE_METADATA_NULL) == 0)
+			strip.strip_accesspoint.accesspoint_ip_address = "";
 		node = crtNode.FirstChild(POPFILE_METADATA_NODE_STRIP_AP_PORT).Element();
 		strip.strip_accesspoint.accesspoint_port = atoi(node->GetText());
-		
 		//Insert the strip in the map
 		meta_strips[strip.strip_identifier] = strip;
 	}
@@ -354,6 +354,12 @@ void POPFileMetaData::addStripInfo(bool isLocal, int identifier, std::string abs
 
 	ap.accesspoint_ip_address = network;
 	ap.accesspoint_port = convertStringToInt(port);	
+	if(ap.accesspoint_ip_addres.compare("") == 0)
+		ap.accesspoint_ip_addres = POPFILE_METADATA_NULL;
+		
+	if(ap.accesspoint_hostname.compare("") == 0)
+		ap.accesspoint_hostname = POPFILE_METADATA_NULL;
+	
 	strip.strip_accesspoint = ap;
 	
 	//Add the new strip in the map

@@ -79,6 +79,7 @@ public:
 	static const char* POPFILE_METADATA_NODE_STRIP_AP_HOSTNAME;
 	static const char* POPFILE_METADATA_NODE_STRIP_AP_IPADDR;
 	static const char* POPFILE_METADATA_NODE_STRIP_AP_PORT;
+	static const char* POPFILE_METADATA_NULL;
 			
 	POPFileMetaData();
 
