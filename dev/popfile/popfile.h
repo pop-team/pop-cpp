@@ -33,6 +33,8 @@ struct infos_t {
 class POPFStream {
 public:
 
+
+
 	// Standard functionalities of stream
 	POPFStream();
 	POPFStream(const char* filename);
@@ -162,6 +164,9 @@ private:
 	
 	// Move the buffer pointer to the next buffer
 	void get_next_buffer();	
+	
+	// Check if a file exist
+	bool is_file_exist(std::string filename);
 	
 };	
 		

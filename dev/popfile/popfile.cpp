@@ -87,6 +87,21 @@ void POPFStream::popfile_init_filename(const char* filename)
 	cout << "[POPFILE-DEBUG] Init metadata filename:" << popfile_metadata_filename << popcendl;	
 }
 
+/**
+ * Check if a file exist
+ * @param filename The absolute path of the file
+ * @return TRUE if the file exists already, FALSE in any other cases
+ */
+bool POPFStream::is_file_exist(std::string filename){
+	std::ofstream o;
+	o.open(filename.c_str());
+	if(o.is_open()){
+		o.close();
+		return true;
+	} 
+	return false;
+}
+
 
 /**
  * Open the file linked with the given path.
@@ -104,6 +119,7 @@ void POPFStream::open(const char* filename)
 			popfile_fstream.open(popfile_filename.c_str(), std::fstream::in | std::fstream::out | std::fstream::app);
 			if(popfile_fstream.is_open()){
 				popfile_open = true;
+				popfile_parallel = false;
 			}
 		} 
 	}
@@ -169,7 +185,8 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, const long 
 			popfile_writebuffers[i].set_capacity((*itr).second.strip_offset);
 			popfile_writebuffers[i].set_identifier((*itr).second.strip_identifier);
 			popfile_writebuffers[i].set_strip_path((*itr).second.strip_name);
-			popfile_writebuffers[i].setAssociatedPOPFileManager(popfile_metadata.get_accessstring_for_strip((*itr).second.strip_identifier));
+			paroc_accesspoint ap; ap.SetAccessString(popfile_metadata.get_accessstring_for_strip((*itr).second.strip_identifier).c_str());			
+			popfile_writebuffers[i].setAssociatedPOPFileManager(ap);
 			popfile_writebuffers[i].setLocalPOPFileManager(pfm_ap);
 			popfile_strip_number++;
 			i++;
@@ -189,9 +206,9 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, const long 
 		candidates[0] = pfm_ap;
 		stripNames[0] = localStrip;
 		popfile_strip_number++;
-		int resources;
+		int resources;		
 		POPString pops_stripPrefix = stripPrefix;
-		if((resources = pfm.findResourcesForStrip(stripnumber-1, candidates, stripNames, pops_stripPrefix)) != 0){
+		if((resources = pfm.findResourcesForStrip(stripnumber, candidates, stripNames, pops_stripPrefix)) != 0){	
 			//Set metadata
 			std::string metadata_filename(filename);
 			std::string metadata_path("/Users/clementval/versioning/popc/popfile_popc2.0.1/dev/popfile/");
@@ -216,11 +233,11 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, const long 
 					popfile_writebuffers[i].set_strip_path(strip_name);
 					popfile_writebuffers[i].setAssociatedPOPFileManager(candidates[i]);
 					popfile_writebuffers[i].setLocalPOPFileManager(pfm_ap);
-					cout << "[POPFILE] Resource found (" << i << "): " << candidates[i].GetAccessString() << popcendl;					
+					cout << "[POPFILE-DEBUG] Resource found (" << i << "): " << candidates[i].GetAccessString() << popcendl;					
 				}
 			}	
 		} else {
-			cout << "[POPFILE] Error: there is not enough resources to create the parallel file" << popcendl;		
+			cout << "[POPFILE-ERROR] There is not enough resources to create the parallel file" << popcendl;		
 			return false;		
 		}
 	}		
@@ -235,9 +252,10 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, const long 
  */
 bool POPFStream::popfile_try_open_parallel()
 {
-	popfile_fstream.open(popfile_metadata_filename.c_str());
-	if(popfile_fstream.is_open()){
-		popfile_fstream.close();
+	std::fstream dummystream;
+	dummystream.open(popfile_metadata_filename.c_str());
+	if(dummystream.is_open()){
+		dummystream.close();
 		//load meta data
 		bool isLoaded = popfile_metadata.load(popfile_metadata_filename.c_str());
 		if(isLoaded)
@@ -258,9 +276,37 @@ bool POPFStream::popfile_try_open_parallel()
  */
 void POPFStream::scatter(){
 	if(!popfile_parallel){
-		
+		if(is_open()){
+			cout << "[POPFILE-DEBUG] Scatter the current file: " << popfile_filename << popcendl;	
+			open(popfile_filename.c_str(), 2, 10000000); // TODO put variable in constant
+			long begin, end, size;
+			popfile_fstream.seekg(0, std::ios::beg);			
+			begin = popfile_fstream.tellg();
+  			popfile_fstream.seekg(0, std::ios::end);
+  			end = popfile_fstream.tellg();  			
+			size = end-begin;	
+			cout << "[POPFILE-DEBUG] Scatter strip number: " << popfile_strip_number << popcendl;		
+			cout << "[POPFILE-DEBUG] Scatter file size: " << size << popcendl;		
+						
+			long offset = 10000000;
+			char* buffer;		
+			buffer = new char[offset];
+  			popfile_fstream.seekg(0, std::ios::beg); // Set the file pointer at the beginning			
+			while(size > offset){
+				popfile_fstream.read(buffer, offset);
+				size -= offset;
+				std::string value(buffer);				
+				cout << "[POPFILE-DEBUG] Scatter read: " << value.length() << popcendl;
+				write(value);
+			}
+			popfile_fstream.read(buffer, size);
+			buffer[size] = '\0';
+			write(buffer, size);
+		} else {
+			cout << "[POPFILE-ERROR] Can't do this action on a closed file !" << popcendl;	
+		}
 	} else {
-		cout << "[POPFILE-ERROR] Can't do this action on a parallel file!" << popcendl;
+		cout << "[POPFILE-ERROR] Can't do this action on a parallel file !" << popcendl;
 		return;
 	}
 }
@@ -274,7 +320,7 @@ void POPFStream::gather(){
 		//TODO
 		
 	} else {
-		cout << "[POPFILE-ERROR] Can't do this action on a non-parallel file!" << popcendl;
+		cout << "[POPFILE-ERROR] Can't do this action on a non-parallel file !" << popcendl;
 		return;
 	}
 }
@@ -343,7 +389,7 @@ void POPFStream::close(){
 void POPFStream::write(const char* s, std::streamsize n){
 	if(popfile_parallel){
 		std::string value(s);
-		popfile_writeToBuffer(s);
+		popfile_writeToBuffer(value);
 	} else {
 		//TODO
 	}
@@ -425,11 +471,14 @@ void POPFStream::printInfos(){
 void POPFStream::popfile_writeToBuffer(std::string value){
 	std::string remaining; 
 	remaining = popfile_writebuffers[popfile_current_output_buffer].buffer_add(value);
-//	cout << "[POPFILEBUFFER] Remaining = " << remaining << popcendl;
 	while(remaining.length() != 0){
-//		cout << "[POPFILEBUFFER] process remaining = " << remaining << popcendl;
-		get_next_buffer();	
-		remaining = popfile_writebuffers[popfile_current_output_buffer].buffer_add(remaining);	
+		if(remaining.compare(POPFileBuffer::POPFILEBUFFER_FULL_WITHOUT_REMAINING) == 0){
+			get_next_buffer();	
+			remaining.erase();	
+		} else {
+			get_next_buffer();	
+			remaining = popfile_writebuffers[popfile_current_output_buffer].buffer_add(remaining);		
+		}	
 	}	
 }
 
