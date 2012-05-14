@@ -10,84 +10,85 @@ using namespace popfile;
 
 int main(int argc, char** argv)
 {
+	
+	int testcase = 0;
+	if(argc < 2){
+		cout << "[POPFILETEST] Please provide a test case identifier:" << popcendl;
+		cout << "[POPFILETEST] 1. Test creation and writing process" << popcendl;
+		cout << "[POPFILETEST] 2. Test opening and reading process" << popcendl;
+		cout << "[POPFILETEST] 3. Test opening of a standard file and scatter" << popcendl;	
+		cout << "[POPFILETEST] Test case number:" << popcendl;	
+		std::cin >> testcase;	
+		cout << "[POPFILETEST] Running test case: " << testcase << popcendl;	
+	}
+		
+		
 	struct timeval start, end, start2, end2;
 
    long mtime, seconds, useconds;  
-	
-	cout << "[POPFILE] Start of POPFile prototype test program:" << popcendl;
-
-
-   gettimeofday(&start, NULL);	
-	
-	POPFStream pfstream; // Declare and open a file
-	
-	pfstream.open(FILE2, 4, 10000000);
-	
-	for (int i = 0; i < 102400; i++){
-		pfstream.write("start1024___");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
-		pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");														pfstream.write("stop_1024___");		
-	}		
-	
-	gettimeofday(&end, NULL);
-	
-
-	
-	gettimeofday(&start2, NULL);
-	
-	sleep(4);
-	
-	pfstream.read_in_background();
-	sleep(4);
-	
-	std::string data = pfstream.get_read();
-	cout << data.substr(2048, 2048) << popcendl;
-	
-	data = pfstream.get_read();
-	cout << data.substr(2048, 2048) << popcendl;
-	
-	gettimeofday(&end2, NULL);
-	
-	pfstream.close();
-
-   
-
-   seconds  = end.tv_sec  - start.tv_sec;
-   useconds = end.tv_usec - start.tv_usec;
-
-   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-   
-   
-
-	
-	/*if(pfstream.is_parallel()){
-		cout << "[POPFILE] " << FILEPATH << " %s is a parallel file" << popcendl;
-		if(pfstream.is_open()){
-			cout << "[POPFILE] " << FILEPATH << " is open" << popcendl;
-			infos_t info;
-			pfstream.get_infos(&info);
-			cout << "[POPFILE] The parallel file has " << info.nb_strips << " strips" << popcendl;
-			cout << "[POPFILE] The parallel file has " << info.offset << " for offset" << popcendl;
+	POPFStream pfstream;
+   switch(testcase){
+   	case 1: {
+	   	gettimeofday(&start, NULL);	
+			pfstream.open(FILE2, 4, 10000000);
+			for (int i = 0; i < 102400; i++){
+				pfstream.write("start1024___");
+				pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+				pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+				pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+				pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+				pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+				pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+				pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+				pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+				pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+				pfstream.write("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");													pfstream.write("stop_1024___");		
+			}		
+			pfstream.close();			
+			gettimeofday(&end, NULL);
+			seconds  = end.tv_sec  - start.tv_sec;
+			useconds = end.tv_usec - start.tv_usec;
+			mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;			
+   		cout << "[POPFILETEST] Writing time : [ms]" << mtime << popcendl;
+   		}
+   		break;
+   	case 2: {
+   		gettimeofday(&start, NULL);	
+			pfstream.open(FILE2, 4, 10000000);
+			pfstream.read_in_background();
+			sleep(4);
+			std::string data = pfstream.get_read();
+			cout << data.substr(2048, 2048) << popcendl;
+			data = pfstream.get_read();
+			cout << data.substr(2048, 2048) << popcendl;
+			gettimeofday(&end, NULL);
 			pfstream.close();
-		} else {
-			cout << "[POPFILE] " << FILEPATH << " is closed" << popcendl;
-		}
-	} else {
-		cout << "[POPFILE] " << FILEPATH << " is NOT a parallel file" << popcendl;
-		if(pfstream.is_open()){
-			cout << "[POPFILE] " << FILEPATH << " is open" << popcendl;
-		} else {
-			cout << "[POPFILE] " << FILEPATH << " is closed" << popcendl;		
-		}	
-	}*/
-	cout << "[POPFILE] Writing time : [ms]" << mtime << popcendl;
-	cout << "[POPFILE] End of POPFile prototype test program" << popcendl;
+			seconds  = end.tv_sec  - start.tv_sec;
+			useconds = end.tv_usec - start.tv_usec;
+			mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;			
+   		cout << "[POPFILETEST] Reading time : [ms]" << mtime << popcendl;			
+   		}
+   		break;	
+   	case 3: {
+	   		pfstream.open("testfile");
+	   		if(pfstream.is_open()) {
+	   			cout << "[POPFILETEST] File is open" << popcendl;
+	   		}
+	   		if(pfstream.is_parallel()){
+	   			cout << "[POPFILETEST] File is parallel" << popcendl;
+	   		} else {
+	   			cout << "[POPFILETEST] File is standard" << popcendl;
+	   		}
+	   		pfstream.scatter();
+	   		pfstream.close();
+   		}
+	   	break;
+	   default:
+	   	cout << "[POPFILETEST] No test case selected. Abort !" << popcendl;
+	   	break;	
+   }
+
+	cout << "[POPFILETEST] End of POPFile prototype test program" << popcendl;
 }
+
+
