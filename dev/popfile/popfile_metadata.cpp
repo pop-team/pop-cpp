@@ -107,9 +107,15 @@ void POPFileMetaData::save(const char* filename)
 		
 		TiXmlElement* strip_accesspoint = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_AP); 
 		TiXmlElement* strip_accesspoint_hostname = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_AP_HOSTNAME); 
-		strip_accesspoint_hostname->LinkEndChild(new TiXmlText((*itr).second.strip_accesspoint.accesspoint_hostname));	
+		if((*itr).second.strip_accesspoint.accesspoint_hostname.compare("") == 0)
+			strip_accesspoint_hostname->LinkEndChild(new TiXmlText(POPFILE_METADATA_NULL));	
+		else
+			strip_accesspoint_hostname->LinkEndChild(new TiXmlText((*itr).second.strip_accesspoint.accesspoint_hostname));	
 		TiXmlElement* strip_accesspoint_ip_address = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_AP_IPADDR); 
-		strip_accesspoint_ip_address->LinkEndChild(new TiXmlText((*itr).second.strip_accesspoint.accesspoint_ip_address));			
+		if((*itr).second.strip_accesspoint.accesspoint_ip_address.compare("") == 0)
+			strip_accesspoint_ip_address->LinkEndChild(new TiXmlText(POPFILE_METADATA_NULL));			
+		else 
+			strip_accesspoint_ip_address->LinkEndChild(new TiXmlText((*itr).second.strip_accesspoint.accesspoint_ip_address));						
 		TiXmlElement* strip_accesspoint_port = new TiXmlElement(POPFILE_METADATA_NODE_STRIP_AP_PORT);   		
 		strip_accesspoint_port->LinkEndChild(new TiXmlText(convertInt((*itr).second.strip_accesspoint.accesspoint_port)));		
 		
@@ -353,9 +359,10 @@ void POPFileMetaData::addStripInfo(bool isLocal, int identifier, std::string abs
 	std::string port = accesspoint.substr(found2+1);
 
 	ap.accesspoint_ip_address = network;
-	ap.accesspoint_port = convertStringToInt(port);	
-	if(ap.accesspoint_ip_addres.compare("") == 0)
-		ap.accesspoint_ip_addres = POPFILE_METADATA_NULL;
+	ap.accesspoint_port = convertStringToInt(port);
+	
+	if(ap.accesspoint_ip_address.compare("") == 0)
+		ap.accesspoint_ip_address = POPFILE_METADATA_NULL;
 		
 	if(ap.accesspoint_hostname.compare("") == 0)
 		ap.accesspoint_hostname = POPFILE_METADATA_NULL;
