@@ -277,7 +277,6 @@ bool POPFStream::popfile_try_open_parallel()
 void POPFStream::scatter(){
 	if(!popfile_parallel){
 		if(is_open()){
-			cout << "[POPFILE-DEBUG] Scatter the current file: " << popfile_filename << popcendl;	
 			open(popfile_filename.c_str(), 2, 10000000); // TODO put variable in constant
 			long begin, end, size;
 			popfile_fstream.seekg(0, std::ios::beg);			
@@ -285,8 +284,6 @@ void POPFStream::scatter(){
   			popfile_fstream.seekg(0, std::ios::end);
   			end = popfile_fstream.tellg();  			
 			size = end-begin;	
-			cout << "[POPFILE-DEBUG] Scatter strip number: " << popfile_strip_number << popcendl;		
-			cout << "[POPFILE-DEBUG] Scatter file size: " << size << popcendl;		
 						
 			long offset = 10000000;
 			char* buffer;		
@@ -296,12 +293,12 @@ void POPFStream::scatter(){
 				popfile_fstream.read(buffer, offset);
 				size -= offset;
 				std::string value(buffer);				
-				cout << "[POPFILE-DEBUG] Scatter read: " << value.length() << popcendl;
 				write(value);
 			}
 			popfile_fstream.read(buffer, size);
 			buffer[size] = '\0';
 			write(buffer, size);
+			delete [] buffer;
 		} else {
 			cout << "[POPFILE-ERROR] Can't do this action on a closed file !" << popcendl;	
 		}
