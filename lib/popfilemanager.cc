@@ -52,6 +52,7 @@ bool POPFileManager::createStrip(POPString absolutePath)
  	strip.open(absolutePath.GetString());
  	if(strip.is_open()){
  		strip.close();
+ 		popfile_log("[POPFILEMANAGER] Strip created on local storage: %s", absolutePath.GetString());
 		return true;	
  	} 
 	return false;
