@@ -179,6 +179,7 @@ void POPFileManager::getNeighborsFromPSN(){
  */
 int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates, POPString* stripNames, POPString stripPrefix){
 	int index=1;
+	nb -= 1;
 	std::string str_stripname(stripPrefix.GetString());
 	str_stripname.append("_strip");
 	popfile_log("[POPFILEMANAGER] Look for %d nodes for strips", nb);
@@ -192,8 +193,11 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
    	strip.append(intconverter.str());
    	POPString stripname(strip.c_str());
    	if(tmpPfm.createStrip(stripname)){
+   		popfile_log("[POPFILEMANAGER] Strip creation success %d", index);
    		candidates[index] = (*it); 		//store accesspoint of the node on which the strip is created
+   		popfile_log("[POPFILEMANAGER] Strip creation success 2");   		
    		stripNames[index] = stripname;	//store the strip name
+   		popfile_log("[POPFILEMANAGER] Strip creation success3");   		
    		index++;
 	   	popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.GetString());
    	}
