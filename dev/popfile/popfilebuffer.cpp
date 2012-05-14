@@ -9,6 +9,8 @@
 using namespace popfile;
 
 
+const char* POPFileBuffer::POPFILEBUFFER_FULL_WITHOUT_REMAINING = "FULL";
+
 /**
  * POPFileBuffer Constructor
  */
@@ -41,6 +43,8 @@ std::string POPFileBuffer::buffer_add(std::string value){
 		remainingCapacity -= toadd.length();
 		popfile_buffer_out << toadd;	
 		flush();
+		if(remaining.compare("") == 0)
+			remaining = POPFILEBUFFER_FULL_WITHOUT_REMAINING;
 	}
 	return remaining;
 }
@@ -53,7 +57,6 @@ void POPFileBuffer::flush(){
 		struct timeval start1, end1, start2, end2, start3, end3;
 	   long mtime, seconds, useconds; 
 
-//		POPFileManager pfm(associatedPFM);
 		gettimeofday(&start1, NULL);	
 		POPString data(popfile_buffer_out.str().c_str());
 		localpfmref->writeToRemoteStrip(stripPath, data, associatedPFM);
@@ -62,8 +65,8 @@ void POPFileBuffer::flush(){
    	useconds = end1.tv_usec - start1.tv_usec;
 	   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
 		
-	//	pfmref->writeToStrip(stripPath, data);
-	//	cout << "[POPFILEBUFFER] Flushing buffer[" << identifier << "] "<< remainingCapacity  <<"/" << popfile_buffer_out.str().length() << ":" << mtime << popcendl;
+	
+		cout << "[POPFILEBUFFER] Flushing buffer[" << identifier << "] "<< remainingCapacity  <<"/" << popfile_buffer_out.str().length() << ":" << mtime << popcendl;
 		
 		
 		

@@ -27,6 +27,9 @@ namespace popfile {
 
 class POPFileBuffer {
 public:
+	/** **/
+	static const char* POPFILEBUFFER_FULL_WITHOUT_REMAINING;
+
 	POPFileBuffer();
 	~POPFileBuffer();	
 	
