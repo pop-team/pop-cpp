@@ -236,8 +236,10 @@
 
  int n,t;
  bool isNamespace = false;
+ bool isInStruct = false;
  char holdnamespace[500];
  char tmp[10240];
+ char typetmp[100];
  char tmpProc[10240];
  char tmpSize[10240];
  int parsingclass=0;
@@ -307,7 +309,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 311 "parser.tab.c"
+#line 313 "parser.tab.c"
 
 #ifdef short
 # undef short
@@ -683,27 +685,27 @@ static const yytype_int16 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   128,   128,   130,   140,   141,   141,   142,   143,   144,
-     145,   146,   152,   160,   173,   186,   202,   213,   232,   231,
-     244,   254,   256,   264,   268,   269,   276,   283,   289,   322,
-     331,   332,   339,   342,   364,   365,   374,   398,   422,   446,
-     471,   475,   477,   498,   499,   503,   504,   507,   531,   556,
-     581,   611,   632,   640,   650,   678,   679,   682,   683,   686,
-     700,   715,   732,   751,   755,   759,   767,   770,   779,   780,
-     781,   781,   785,   786,   787,   804,   815,   820,   831,   842,
-     846,   853,   857,   868,   870,   871,   874,   906,   909,   924,
-     928,   934,   938,   944,   959,   975,   994,  1000,  1013,  1020,
-    1029,  1102,  1106,  1115,  1118,  1125,  1128,  1140,  1141,  1142,
-    1145,  1146,  1152,  1168,  1177,  1186,  1199,  1329,  1336,  1343,
-    1350,  1357,  1365,  1365,  1372,  1372,  1382,  1386,  1432,  1436,
-    1440,  1444,  1448,  1452,  1459,  1463,  1467,  1471,  1479,  1482,
-    1486,  1490,  1494,  1500,  1512,  1515,  1522,  1526,  1543,  1559,
-    1574,  1667,  1670,  1678,  1679,  1681,  1682,  1685,  1722,  1725,
-    1731,  1735,  1741,  1745,  1749,  1754,  1763,  1766,  1770,  1777,
-    1780,  1787,  1790,  1803,  1812,  1816,  1820,  1825,  1830,  1835,
-    1840,  1845,  1850,  1855,  1860,  1865,  1870,  1875,  1880,  1885,
-    1890,  1895,  1900,  1905,  1910,  1915,  1920,  1925,  1931,  1936,
-    1941,  1946,  1953,  1957,  1963,  1967,  1975,  1979
+       0,   130,   130,   132,   142,   143,   143,   144,   145,   146,
+     147,   148,   154,   162,   175,   188,   204,   215,   234,   233,
+     246,   256,   258,   266,   270,   271,   278,   286,   292,   326,
+     335,   336,   339,   342,   370,   371,   380,   404,   428,   452,
+     477,   481,   483,   504,   505,   509,   510,   513,   537,   562,
+     587,   617,   638,   646,   656,   684,   685,   688,   689,   692,
+     706,   721,   738,   757,   761,   765,   773,   776,   785,   786,
+     787,   787,   791,   792,   793,   810,   821,   826,   837,   848,
+     852,   859,   863,   874,   876,   877,   880,   912,   915,   930,
+     934,   942,   946,   952,   963,   979,   998,  1004,  1017,  1024,
+    1033,  1106,  1110,  1119,  1122,  1129,  1132,  1144,  1145,  1146,
+    1149,  1150,  1156,  1172,  1181,  1190,  1203,  1333,  1340,  1347,
+    1354,  1361,  1369,  1369,  1376,  1376,  1386,  1390,  1436,  1440,
+    1444,  1448,  1452,  1456,  1463,  1467,  1471,  1475,  1483,  1486,
+    1490,  1494,  1498,  1504,  1516,  1519,  1526,  1530,  1547,  1563,
+    1578,  1671,  1674,  1682,  1683,  1685,  1686,  1689,  1726,  1729,
+    1735,  1739,  1745,  1749,  1753,  1758,  1767,  1770,  1774,  1781,
+    1784,  1791,  1794,  1807,  1816,  1820,  1824,  1829,  1834,  1839,
+    1844,  1849,  1854,  1859,  1864,  1869,  1874,  1879,  1884,  1889,
+    1894,  1899,  1904,  1909,  1914,  1919,  1924,  1929,  1935,  1940,
+    1945,  1950,  1957,  1961,  1967,  1971,  1979,  1983
 };
 #endif
 
@@ -1955,7 +1957,7 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 130 "parser.y"
+#line 132 "parser.y"
     {
   if (othercodes.GetSize())
     {
@@ -1969,19 +1971,19 @@ yyreduce:
     break;
 
   case 5:
-#line 141 "parser.y"
+#line 143 "parser.y"
     { insideClass=false; othercodes.SetSize(0); startPos=-1;}
     break;
 
   case 11:
-#line 147 "parser.y"
+#line 149 "parser.y"
     {
   CleanStack();
 }
     break;
 
   case 12:
-#line 153 "parser.y"
+#line 155 "parser.y"
     {
 	printf("handle at Bison\n");
 	othercodes.InsertAt(-1,"\n",strlen("\n"));
@@ -1989,7 +1991,7 @@ yyreduce:
     break;
 
   case 13:
-#line 161 "parser.y"
+#line 163 "parser.y"
     {
   startPos=-1;
   insideClass=false;
@@ -2005,7 +2007,7 @@ yyreduce:
     break;
 
   case 14:
-#line 174 "parser.y"
+#line 176 "parser.y"
     {
   startPos=-1;
   insideClass=false;
@@ -2021,7 +2023,7 @@ yyreduce:
     break;
 
   case 15:
-#line 187 "parser.y"
+#line 189 "parser.y"
     {
   startPos=-1;
   insideClass=false;
@@ -2038,7 +2040,7 @@ yyreduce:
     break;
 
   case 16:
-#line 203 "parser.y"
+#line 205 "parser.y"
     {
   currentPack->SetEndLine(linenumber-1);
 
@@ -2050,7 +2052,7 @@ yyreduce:
     break;
 
   case 17:
-#line 214 "parser.y"
+#line 216 "parser.y"
     {
   if (othercodes.GetSize() && startPos>0)
     {
@@ -2069,7 +2071,7 @@ yyreduce:
     break;
 
   case 18:
-#line 232 "parser.y"
+#line 234 "parser.y"
     {
 	// Avoid handling of standard namespace used in POP-C++
 	if(strcmp("__gnu_cxx", GetToken((yyvsp[(2) - (2)]))) != 0 &&  strcmp("std", GetToken((yyvsp[(2) - (2)]))) != 0 && strcmp("__gnu_debug", GetToken((yyvsp[(2) - (2)]))) != 0 && strcmp("rel_ops", GetToken((yyvsp[(2) - (2)]))) != 0  && strcmp("__debug", GetToken((yyvsp[(2) - (2)]))) != 0){
@@ -2080,14 +2082,14 @@ yyreduce:
     break;
 
   case 19:
-#line 240 "parser.y"
+#line 242 "parser.y"
     {
 	isNamespace = false;
 }
     break;
 
   case 20:
-#line 245 "parser.y"
+#line 247 "parser.y"
     {
   if (currentPack!=NULL)
     {
@@ -2097,36 +2099,37 @@ yyreduce:
     break;
 
   case 21:
-#line 254 "parser.y"
+#line 256 "parser.y"
     {
 }
     break;
 
   case 22:
-#line 257 "parser.y"
+#line 259 "parser.y"
     {
 }
     break;
 
   case 23:
-#line 265 "parser.y"
+#line 267 "parser.y"
     {
     CleanStack();
 }
     break;
 
   case 26:
-#line 277 "parser.y"
+#line 279 "parser.y"
     {
   	currentstruct=Pop();
   	if (currentstruct!=NULL) currentstruct->SetTypeClass(false);
   	(yyval)=(yyvsp[(1) - (4)]);
   	structContainer = NULL;
+  	isInStruct = false;
 }
     break;
 
   case 27:
-#line 284 "parser.y"
+#line 287 "parser.y"
     {
   currentstruct=Pop();
   (yyval)=(yyvsp[(1) - (2)]);
@@ -2134,9 +2137,10 @@ yyreduce:
     break;
 
   case 28:
-#line 290 "parser.y"
+#line 293 "parser.y"
     {
 	if(currentClass!=NULL){
+		isInStruct = true;
 		structContainer = new Structure(currentClass, accessmodifier);
 		structContainer->SetLineInfo(linenumber-1);
 		currentClass->AddMember(structContainer);
@@ -2170,7 +2174,7 @@ yyreduce:
     break;
 
   case 29:
-#line 323 "parser.y"
+#line 327 "parser.y"
     {
   TypeClassStruct *t=new TypeClassStruct(NULL,false);
   thisCodeFile->AddDataType(t);
@@ -2179,39 +2183,37 @@ yyreduce:
 }
     break;
 
-  case 31:
-#line 333 "parser.y"
-    {
-	if(structContainer!=NULL)
-		printf("Struct %s", GetToken((yyvsp[(1) - (3)])));
-}
-    break;
-
   case 33:
 #line 343 "parser.y"
     {
-  DataType *type1=currenttype;
-  if ((yyvsp[(1) - (4)])>0)
-    {
-      //type1=new TypePtr(NULL,$1, type1);
+	// Save the attribute in the Strcuture object to be able to produce code
+	if(structContainer!=NULL) {
+		std::string attribute;
+		attribute.append(typetmp);
+		attribute.append(" ");
+		attribute.append(GetToken((yyvsp[(2) - (4)])));
+		attribute.append(";");	
+		structContainer->setInnerDecl(attribute);			
+	}
+
+	DataType *type1=currenttype;
+	if ((yyvsp[(1) - (4)])>0) {
+		//type1=new TypePtr(NULL,$1, type1);
       type1=new TypePtr(NULL, (yyvsp[(1) - (4)]), type1, constPointerPositions);
       thisCodeFile->AddDataType(type1);
-    }
-  if ((yyvsp[(3) - (4)])!=-1)
-    {
+   }
+  	if ((yyvsp[(3) - (4)])!=-1){
       type1=new TypeArray(NULL,GetToken((yyvsp[(3) - (4)])), type1);
       thisCodeFile->AddDataType(type1);     
-    }  
-  TypeClassStruct *t=Peek();
-  assert(t!=NULL);
-  t->Add(type1, GetToken((yyvsp[(2) - (4)])));
-
-
+   }  
+	TypeClassStruct *t=Peek();
+	assert(t!=NULL);
+	t->Add(type1, GetToken((yyvsp[(2) - (4)])));
 }
     break;
 
   case 36:
-#line 375 "parser.y"
+#line 381 "parser.y"
     {
   char *orgtype=GetToken((yyvsp[(2) - (5)]));
   DataType *type=thisCodeFile->FindDataType(orgtype);
@@ -2238,7 +2240,7 @@ yyreduce:
     break;
 
   case 37:
-#line 399 "parser.y"
+#line 405 "parser.y"
     {
   char *orgtype=GetToken((yyvsp[(3) - (6)]));
   DataType *type=thisCodeFile->FindDataType(orgtype);
@@ -2265,7 +2267,7 @@ yyreduce:
     break;
 
   case 38:
-#line 423 "parser.y"
+#line 429 "parser.y"
     {
   char *orgtype=GetToken((yyvsp[(3) - (6)]));
   DataType *type=thisCodeFile->FindDataType(orgtype);
@@ -2292,7 +2294,7 @@ yyreduce:
     break;
 
   case 39:
-#line 447 "parser.y"
+#line 453 "parser.y"
     {
   DataType *type=currentstruct;
   assert(type!=NULL);
@@ -2315,14 +2317,14 @@ yyreduce:
     break;
 
   case 40:
-#line 472 "parser.y"
+#line 478 "parser.y"
     {
   if (seqclass!=NULL) seqclass->SetTypeClass(true);
 }
     break;
 
   case 42:
-#line 478 "parser.y"
+#line 484 "parser.y"
     {
   DataType *t=thisCodeFile->FindDataType(GetToken((yyvsp[(2) - (2)])));
   if (t==NULL)
@@ -2345,7 +2347,7 @@ yyreduce:
     break;
 
   case 47:
-#line 508 "parser.y"
+#line 514 "parser.y"
     {
   assert(seqclass!=NULL);
   TypeClassStruct *seqbase;
@@ -2372,7 +2374,7 @@ yyreduce:
     break;
 
   case 48:
-#line 532 "parser.y"
+#line 538 "parser.y"
     {
   assert(seqclass!=NULL);
   TypeClassStruct *seqbase;
@@ -2400,7 +2402,7 @@ yyreduce:
     break;
 
   case 49:
-#line 557 "parser.y"
+#line 563 "parser.y"
     {
   assert(seqclass!=NULL);
   TypeClassStruct *seqbase;
@@ -2428,7 +2430,7 @@ yyreduce:
     break;
 
   case 50:
-#line 582 "parser.y"
+#line 588 "parser.y"
     {
   assert(seqclass!=NULL);
   TypeClassStruct *seqbase;
@@ -2455,7 +2457,7 @@ yyreduce:
     break;
 
   case 51:
-#line 612 "parser.y"
+#line 618 "parser.y"
     {
   assert(currentClass!=NULL);
   sprintf(tmp,"class %s;",currentClass->GetName());
@@ -2473,7 +2475,7 @@ yyreduce:
     break;
 
   case 52:
-#line 633 "parser.y"
+#line 639 "parser.y"
     {
   currentClass->SetEndLine(linenumber);
   currentClass=NULL;
@@ -2482,7 +2484,7 @@ yyreduce:
     break;
 
   case 53:
-#line 641 "parser.y"
+#line 647 "parser.y"
     {
   accessmodifier=PUBLIC;
   if ((yyvsp[(2) - (3)])) currentClass->SetPureVirtual(true);
@@ -2492,7 +2494,7 @@ yyreduce:
     break;
 
   case 54:
-#line 651 "parser.y"
+#line 657 "parser.y"
     {
   if (othercodes.GetSize() && startPos>0)
     {
@@ -2521,7 +2523,7 @@ yyreduce:
     break;
 
   case 59:
-#line 687 "parser.y"
+#line 693 "parser.y"
     {
 	assert(currentClass!=NULL);
 	Class *cl=thisCodeFile->FindClass(GetToken((yyvsp[(1) - (1)])));
@@ -2538,7 +2540,7 @@ yyreduce:
     break;
 
   case 60:
-#line 701 "parser.y"
+#line 707 "parser.y"
     {
 	assert(currentClass!=NULL);
 	AccessType accessmode=(AccessType)(yyvsp[(1) - (2)]);
@@ -2556,7 +2558,7 @@ yyreduce:
     break;
 
   case 61:
-#line 716 "parser.y"
+#line 722 "parser.y"
     {
 	assert(currentClass!=NULL);
 	AccessType accessmode=(AccessType)(yyvsp[(2) - (3)]);
@@ -2576,7 +2578,7 @@ yyreduce:
     break;
 
   case 62:
-#line 733 "parser.y"
+#line 739 "parser.y"
     {
 	assert(currentClass!=NULL);
 	AccessType accessmode=(AccessType)(yyvsp[(1) - (3)]);
@@ -2596,47 +2598,47 @@ yyreduce:
     break;
 
   case 63:
-#line 752 "parser.y"
+#line 758 "parser.y"
     {
 	(yyval)=PRIVATE;
 }
     break;
 
   case 64:
-#line 756 "parser.y"
+#line 762 "parser.y"
     {
 	(yyval)=PUBLIC;
 }
     break;
 
   case 65:
-#line 760 "parser.y"
+#line 766 "parser.y"
     {
 	(yyval)=PROTECTED;
 }
     break;
 
   case 66:
-#line 767 "parser.y"
+#line 773 "parser.y"
     {
   (yyval)=0;
 }
     break;
 
   case 67:
-#line 771 "parser.y"
+#line 777 "parser.y"
     {
   (yyval)= (paroc_utils::isEqual(GetToken((yyvsp[(2) - (2)])), "0")) ? 1 : 0;
 }
     break;
 
   case 70:
-#line 781 "parser.y"
+#line 787 "parser.y"
     { accessmodifier=(AccessType)(yyvsp[(1) - (1)]); }
     break;
 
   case 74:
-#line 788 "parser.y"
+#line 794 "parser.y"
     {
   assert(method!=NULL);
   int t=method->CheckMarshal();
@@ -2655,7 +2657,7 @@ yyreduce:
     break;
 
   case 75:
-#line 805 "parser.y"
+#line 811 "parser.y"
     {
   if (accessmodifier==PUBLIC)
     {
@@ -2669,7 +2671,7 @@ yyreduce:
     break;
 
   case 76:
-#line 816 "parser.y"
+#line 822 "parser.y"
     {
   //  Directive *t=new Directive(currentClass, GetToken($1));
   //  currentClass->AddMember(t);
@@ -2677,14 +2679,14 @@ yyreduce:
     break;
 
   case 77:
-#line 821 "parser.y"
+#line 827 "parser.y"
     {
   currentClass->SetClassID(GetToken((yyvsp[(3) - (5)])));
 }
     break;
 
   case 78:
-#line 832 "parser.y"
+#line 838 "parser.y"
     {
 	assert(currentClass!=NULL);
 	Enumeration *t = new Enumeration(currentClass, accessmodifier);
@@ -2696,14 +2698,14 @@ yyreduce:
     break;
 
   case 79:
-#line 843 "parser.y"
+#line 849 "parser.y"
     {
 	(yyval) = (yyvsp[(1) - (1)]);	
 }
     break;
 
   case 80:
-#line 847 "parser.y"
+#line 853 "parser.y"
     {
 	sprintf(tmp,"%s , %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
 	(yyval) = PutToken(tmp);
@@ -2711,14 +2713,14 @@ yyreduce:
     break;
 
   case 81:
-#line 854 "parser.y"
+#line 860 "parser.y"
     {
 	(yyval) = (yyvsp[(1) - (1)]);
 }
     break;
 
   case 82:
-#line 858 "parser.y"
+#line 864 "parser.y"
     {      
 	sprintf(tmp,"%s = %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
    (yyval)=PutToken(tmp);
@@ -2726,7 +2728,7 @@ yyreduce:
     break;
 
   case 86:
-#line 875 "parser.y"
+#line 881 "parser.y"
     {
 
   assert(currentClass!=NULL);
@@ -2758,14 +2760,14 @@ yyreduce:
     break;
 
   case 87:
-#line 906 "parser.y"
+#line 912 "parser.y"
     {
   (yyval)=-1;
 }
     break;
 
   case 88:
-#line 910 "parser.y"
+#line 916 "parser.y"
     {
   if ((yyvsp[(4) - (4)])==-1)
     {
@@ -2781,53 +2783,51 @@ yyreduce:
     break;
 
   case 89:
-#line 925 "parser.y"
+#line 931 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (2)]);
 }
     break;
 
   case 90:
-#line 929 "parser.y"
+#line 935 "parser.y"
     {
-  (yyval)=0;
+	
+	
+	(yyval)=0;
 }
     break;
 
   case 91:
-#line 935 "parser.y"
+#line 943 "parser.y"
     {
   (yyval)=1;  
 }
     break;
 
   case 92:
-#line 939 "parser.y"
+#line 947 "parser.y"
     {
   (yyval)=2;
 }
     break;
 
   case 93:
-#line 945 "parser.y"
+#line 953 "parser.y"
     {
-  currenttype=thisCodeFile->FindDataType(GetToken((yyvsp[(1) - (1)])));
-  if (currenttype==NULL)
-    {
-      currenttype=new DataType(GetToken((yyvsp[(1) - (1)])));
+	if(isInStruct)
+		sprintf(typetmp, "%s", GetToken((yyvsp[(1) - (1)]))); // Save the type specifier for struct attribute
+	currenttype=thisCodeFile->FindDataType(GetToken((yyvsp[(1) - (1)])));
+	if (currenttype==NULL) {
+	   currenttype=new DataType(GetToken((yyvsp[(1) - (1)])));
       thisCodeFile->AddDataType(currenttype);
-      /* 
-	 sprintf(tmp,"Undeclared type \"%s\"\n",GetToken($1)); 
-	 errormsg(tmp);
-	 exit(1);
-      */
-    }
-  (yyval)=(YYSTYPE)currenttype;
+   }
+	(yyval)=(YYSTYPE)currenttype;
 }
     break;
 
   case 94:
-#line 960 "parser.y"
+#line 964 "parser.y"
     {
   currenttype=thisCodeFile->FindDataType(GetToken((yyvsp[(1) - (1)])));
   if (currenttype==NULL)
@@ -2846,7 +2846,7 @@ yyreduce:
     break;
 
   case 95:
-#line 976 "parser.y"
+#line 980 "parser.y"
     {
 
   TypeTemplate *type=new TypeTemplate(GetToken((yyvsp[(1) - (4)])));
@@ -2868,7 +2868,7 @@ yyreduce:
     break;
 
   case 96:
-#line 995 "parser.y"
+#line 999 "parser.y"
     {
   assert(currenttype!=NULL);
   currenttype=currentstruct;
@@ -2877,7 +2877,7 @@ yyreduce:
     break;
 
   case 97:
-#line 1001 "parser.y"
+#line 1005 "parser.y"
     {
   DataType *type=thisCodeFile->FindDataType(GetToken((yyvsp[(2) - (2)])));
   if (type==NULL)
@@ -2891,7 +2891,7 @@ yyreduce:
     break;
 
   case 98:
-#line 1014 "parser.y"
+#line 1018 "parser.y"
     {
   paroc_list<TemplateArgument *> *list=new paroc_list<TemplateArgument *>();
   TemplateArgument *v=(TemplateArgument *)(yyvsp[(1) - (1)]);
@@ -2901,7 +2901,7 @@ yyreduce:
     break;
 
   case 99:
-#line 1021 "parser.y"
+#line 1025 "parser.y"
     {
   paroc_list<TemplateArgument *> *list=(paroc_list<TemplateArgument *> *)(yyvsp[(3) - (3)]);
   TemplateArgument *v=(TemplateArgument *)(yyvsp[(1) - (3)]);
@@ -2911,7 +2911,7 @@ yyreduce:
     break;
 
   case 100:
-#line 1030 "parser.y"
+#line 1034 "parser.y"
     {
   TemplateArgument *t=new TemplateArgument;	
   t->type=(DataType *)(yyvsp[(1) - (4)]);
@@ -2931,7 +2931,7 @@ yyreduce:
     break;
 
   case 101:
-#line 1102 "parser.y"
+#line 1106 "parser.y"
     {
 	(yyval)=0;
 	constPointerPositions.clear();
@@ -2939,7 +2939,7 @@ yyreduce:
     break;
 
   case 102:
-#line 1107 "parser.y"
+#line 1111 "parser.y"
     {
 	(yyval)=(yyvsp[(3) - (3)])+1; /* modivied by David (added const)*/
 	constPointerPositions.push_back(((yyvsp[(2) - (3)]) == 1 ? true : false));
@@ -2947,42 +2947,42 @@ yyreduce:
     break;
 
   case 103:
-#line 1115 "parser.y"
+#line 1119 "parser.y"
     {
   (yyval)=0;
 }
     break;
 
   case 104:
-#line 1119 "parser.y"
+#line 1123 "parser.y"
     {
   (yyval)=1;
 }
     break;
 
   case 105:
-#line 1125 "parser.y"
+#line 1129 "parser.y"
     {
   (yyval)=0;
 }
     break;
 
   case 106:
-#line 1129 "parser.y"
+#line 1133 "parser.y"
     {
   (yyval)=1;
 }
     break;
 
   case 111:
-#line 1147 "parser.y"
+#line 1151 "parser.y"
     {
   method->isPureVirtual=paroc_utils::isEqual(GetToken((yyvsp[(2) - (2)])),"0");
 }
     break;
 
   case 112:
-#line 1153 "parser.y"
+#line 1157 "parser.y"
     {
   if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
     {
@@ -2999,7 +2999,7 @@ yyreduce:
     break;
 
   case 113:
-#line 1169 "parser.y"
+#line 1173 "parser.y"
     {
   method=new Constructor(currentClass,accessmodifier);
   method->SetLineInfo(linenumber-1);
@@ -3009,7 +3009,7 @@ yyreduce:
     break;
 
   case 114:
-#line 1178 "parser.y"
+#line 1182 "parser.y"
     {
   if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
     {
@@ -3021,7 +3021,7 @@ yyreduce:
     break;
 
   case 115:
-#line 1187 "parser.y"
+#line 1191 "parser.y"
     {
   if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
     {
@@ -3035,7 +3035,7 @@ yyreduce:
     break;
 
   case 116:
-#line 1200 "parser.y"
+#line 1204 "parser.y"
     {
   method=new Destructor(currentClass,accessmodifier);
   method->SetLineInfo(linenumber-1);
@@ -3045,7 +3045,7 @@ yyreduce:
     break;
 
   case 117:
-#line 1330 "parser.y"
+#line 1334 "parser.y"
     {
 	setReturnParam((yyvsp[(2) - (8)]),(yyvsp[(3) - (8)]), 0);
 	
@@ -3055,7 +3055,7 @@ yyreduce:
     break;
 
   case 118:
-#line 1337 "parser.y"
+#line 1341 "parser.y"
     {
 	setReturnParam((yyvsp[(3) - (9)]),(yyvsp[(4) - (9)]), (yyvsp[(1) - (9)]));
 	
@@ -3065,7 +3065,7 @@ yyreduce:
     break;
 
   case 119:
-#line 1344 "parser.y"
+#line 1348 "parser.y"
     {
 	setReturnParam((yyvsp[(3) - (9)]),(yyvsp[(4) - (9)]), (yyvsp[(2) - (9)]));
 	
@@ -3075,7 +3075,7 @@ yyreduce:
     break;
 
   case 120:
-#line 1351 "parser.y"
+#line 1355 "parser.y"
     {
 	setReturnParam((yyvsp[(4) - (10)]),(yyvsp[(5) - (10)]), ((yyvsp[(1) - (10)]) | (yyvsp[(3) - (10)])));
 	
@@ -3085,7 +3085,7 @@ yyreduce:
     break;
 
   case 121:
-#line 1358 "parser.y"
+#line 1362 "parser.y"
     {
 	setReturnParam((yyvsp[(5) - (11)]),(yyvsp[(6) - (11)]), ((yyvsp[(2) - (11)])|(yyvsp[(4) - (11)])));
 	setPOPCMethodeModifier((yyvsp[(1) - (11)]));
@@ -3096,12 +3096,12 @@ yyreduce:
     break;
 
   case 122:
-#line 1365 "parser.y"
+#line 1369 "parser.y"
     { UpdateMarshalParam((yyvsp[(2) - (9)]),&(method->returnparam) ); }
     break;
 
   case 123:
-#line 1366 "parser.y"
+#line 1370 "parser.y"
     {
 	setReturnParam((yyvsp[(7) - (14)]),(yyvsp[(8) - (14)]), ((yyvsp[(4) - (14)]) | (yyvsp[(6) - (14)])));
 	
@@ -3111,12 +3111,12 @@ yyreduce:
     break;
 
   case 124:
-#line 1372 "parser.y"
+#line 1376 "parser.y"
     { UpdateMarshalParam((yyvsp[(3) - (10)]),&(method->returnparam) ); }
     break;
 
   case 125:
-#line 1373 "parser.y"
+#line 1377 "parser.y"
     {
 	setReturnParam((yyvsp[(8) - (15)]),(yyvsp[(9) - (15)]), ((yyvsp[(5) - (15)]) & 7));
 	setPOPCMethodeModifier((yyvsp[(1) - (15)]));
@@ -3127,14 +3127,14 @@ yyreduce:
     break;
 
   case 126:
-#line 1383 "parser.y"
+#line 1387 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 127:
-#line 1387 "parser.y"
+#line 1391 "parser.y"
     {
 	/* error if multimple time same reserved word */
 	if (((yyvsp[(2) - (2)]) & (yyvsp[(1) - (2)])) != 0)
@@ -3148,112 +3148,112 @@ yyreduce:
     break;
 
   case 128:
-#line 1433 "parser.y"
+#line 1437 "parser.y"
     {
 	(yyval)=2;
 }
     break;
 
   case 129:
-#line 1437 "parser.y"
+#line 1441 "parser.y"
     {
 	(yyval)=4;
 }
     break;
 
   case 130:
-#line 1441 "parser.y"
+#line 1445 "parser.y"
     {
 	(yyval)=8;
 }
     break;
 
   case 131:
-#line 1445 "parser.y"
+#line 1449 "parser.y"
     {
 	(yyval)=32;
 }
     break;
 
   case 132:
-#line 1449 "parser.y"
+#line 1453 "parser.y"
     {
   (yyval)=16;
 }
     break;
 
   case 133:
-#line 1453 "parser.y"
+#line 1457 "parser.y"
     {
   (yyval)=64;
 }
     break;
 
   case 134:
-#line 1460 "parser.y"
+#line 1464 "parser.y"
     {
 	(yyval)=1;
 }
     break;
 
   case 135:
-#line 1464 "parser.y"
+#line 1468 "parser.y"
     {
 	(yyval)=2;
 }
     break;
 
   case 136:
-#line 1468 "parser.y"
-    {
-	(yyval)=3;
-}
-    break;
-
-  case 137:
 #line 1472 "parser.y"
     {
 	(yyval)=3;
 }
     break;
 
+  case 137:
+#line 1476 "parser.y"
+    {
+	(yyval)=3;
+}
+    break;
+
   case 138:
-#line 1479 "parser.y"
+#line 1483 "parser.y"
     {
 	(yyval)=0;
 }
     break;
 
   case 139:
-#line 1483 "parser.y"
+#line 1487 "parser.y"
     {
 	(yyval)=1;
 }
     break;
 
   case 140:
-#line 1487 "parser.y"
+#line 1491 "parser.y"
     {
 	(yyval)=2;
 }
     break;
 
   case 141:
-#line 1491 "parser.y"
-    {
-	(yyval)=3;
-}
-    break;
-
-  case 142:
 #line 1495 "parser.y"
     {
 	(yyval)=3;
 }
     break;
 
+  case 142:
+#line 1499 "parser.y"
+    {
+	(yyval)=3;
+}
+    break;
+
   case 143:
-#line 1501 "parser.y"
+#line 1505 "parser.y"
     {
   method=new Method(currentClass,accessmodifier);
   method->SetLineInfo(linenumber-1);
@@ -3265,28 +3265,28 @@ yyreduce:
     break;
 
   case 144:
-#line 1512 "parser.y"
+#line 1516 "parser.y"
     {
   (yyval)=-1;
 }
     break;
 
   case 145:
-#line 1516 "parser.y"
+#line 1520 "parser.y"
     {
   (yyval)=(yyvsp[(3) - (4)]);
 }
     break;
 
   case 146:
-#line 1522 "parser.y"
+#line 1526 "parser.y"
     {
   (yyval)=-1;
 }
     break;
 
   case 147:
-#line 1527 "parser.y"
+#line 1531 "parser.y"
     {
 
   char *odtmp=GetToken((yyvsp[(1) - (12)]));
@@ -3305,7 +3305,7 @@ yyreduce:
     break;
 
   case 148:
-#line 1544 "parser.y"
+#line 1548 "parser.y"
     {
 
   char *odtmp=GetToken((yyvsp[(1) - (10)]));
@@ -3324,7 +3324,7 @@ yyreduce:
     break;
 
   case 149:
-#line 1560 "parser.y"
+#line 1564 "parser.y"
     {
   char *odtmp=GetToken((yyvsp[(1) - (8)]));
   assert(method!=NULL);
@@ -3342,7 +3342,7 @@ yyreduce:
     break;
 
   case 150:
-#line 1575 "parser.y"
+#line 1579 "parser.y"
     {
     char *odtmp=GetToken((yyvsp[(1) - (6)]));
     if (paroc_utils::isEqual(odtmp,"host"))
@@ -3435,21 +3435,21 @@ yyreduce:
     break;
 
   case 151:
-#line 1667 "parser.y"
+#line 1671 "parser.y"
     {
     (yyval)=-1;
 }
     break;
 
   case 152:
-#line 1671 "parser.y"
+#line 1675 "parser.y"
     {
     (yyval)=(yyvsp[(2) - (2)]);
 }
     break;
 
   case 157:
-#line 1686 "parser.y"
+#line 1690 "parser.y"
     {
   Param *t=method->AddNewParam();
   UpdateMarshalParam((yyvsp[(1) - (9)]),t);
@@ -3486,49 +3486,49 @@ yyreduce:
     break;
 
   case 158:
-#line 1722 "parser.y"
+#line 1726 "parser.y"
     {
   (yyval)=0;
 }
     break;
 
   case 159:
-#line 1726 "parser.y"
+#line 1730 "parser.y"
     {
   (yyval)=(yyvsp[(2) - (3)]);
 }
     break;
 
   case 160:
-#line 1732 "parser.y"
+#line 1736 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 161:
-#line 1736 "parser.y"
+#line 1740 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (3)]) | (yyvsp[(3) - (3)]) ;
 }
     break;
 
   case 162:
-#line 1742 "parser.y"
+#line 1746 "parser.y"
     {
   (yyval)=PARAM_IN;
 }
     break;
 
   case 163:
-#line 1746 "parser.y"
+#line 1750 "parser.y"
     {
   (yyval)=PARAM_OUT;
 }
     break;
 
   case 164:
-#line 1750 "parser.y"
+#line 1754 "parser.y"
     {
   strcpy(tmpSize,GetToken((yyvsp[(3) - (3)])));
   (yyval)=PARAMSIZE;
@@ -3536,7 +3536,7 @@ yyreduce:
     break;
 
   case 165:
-#line 1755 "parser.y"
+#line 1759 "parser.y"
     {
   strcpy(tmpProc,GetToken((yyvsp[(3) - (3)])));
   (yyval)=USERPROC;
@@ -3544,56 +3544,56 @@ yyreduce:
     break;
 
   case 166:
-#line 1763 "parser.y"
+#line 1767 "parser.y"
     {
 	(yyval)=0;
 }
     break;
 
   case 167:
-#line 1767 "parser.y"
+#line 1771 "parser.y"
     {
 	(yyval)=1;
 }
     break;
 
   case 168:
-#line 1771 "parser.y"
+#line 1775 "parser.y"
     {
 	(yyval)=2;
 }
     break;
 
   case 169:
-#line 1777 "parser.y"
+#line 1781 "parser.y"
     {
 	(yyval)=-1;
 }
     break;
 
   case 170:
-#line 1781 "parser.y"
+#line 1785 "parser.y"
     {
 	(yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 171:
-#line 1787 "parser.y"
+#line 1791 "parser.y"
     {
   (yyval)=-1;
 }
     break;
 
   case 172:
-#line 1791 "parser.y"
+#line 1795 "parser.y"
     {
   (yyval)=(yyvsp[(2) - (2)]);
 }
     break;
 
   case 173:
-#line 1804 "parser.y"
+#line 1808 "parser.y"
     {
   if ((yyvsp[(2) - (2)])<0) (yyval)=(yyvsp[(1) - (2)]);
   else 
@@ -3605,21 +3605,21 @@ yyreduce:
     break;
 
   case 174:
-#line 1813 "parser.y"
+#line 1817 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 175:
-#line 1817 "parser.y"
+#line 1821 "parser.y"
     {
     (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 176:
-#line 1821 "parser.y"
+#line 1825 "parser.y"
     {
   sprintf(tmp,"%s + %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3627,7 +3627,7 @@ yyreduce:
     break;
 
   case 177:
-#line 1826 "parser.y"
+#line 1830 "parser.y"
     {
   sprintf(tmp,"%s - %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3635,7 +3635,7 @@ yyreduce:
     break;
 
   case 178:
-#line 1831 "parser.y"
+#line 1835 "parser.y"
     {
   sprintf(tmp,"%s * %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3643,7 +3643,7 @@ yyreduce:
     break;
 
   case 179:
-#line 1836 "parser.y"
+#line 1840 "parser.y"
     {
   sprintf(tmp,"%s / %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3651,7 +3651,7 @@ yyreduce:
     break;
 
   case 180:
-#line 1841 "parser.y"
+#line 1845 "parser.y"
     {
   sprintf(tmp,"%s %% %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3659,7 +3659,7 @@ yyreduce:
     break;
 
   case 181:
-#line 1846 "parser.y"
+#line 1850 "parser.y"
     {
   sprintf(tmp,"%s & %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3667,7 +3667,7 @@ yyreduce:
     break;
 
   case 182:
-#line 1851 "parser.y"
+#line 1855 "parser.y"
     {
   sprintf(tmp,"%s | %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3675,7 +3675,7 @@ yyreduce:
     break;
 
   case 183:
-#line 1856 "parser.y"
+#line 1860 "parser.y"
     {
   sprintf(tmp,"%s ^ %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3683,7 +3683,7 @@ yyreduce:
     break;
 
   case 184:
-#line 1861 "parser.y"
+#line 1865 "parser.y"
     {
   sprintf(tmp,"%s && %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3691,7 +3691,7 @@ yyreduce:
     break;
 
   case 185:
-#line 1866 "parser.y"
+#line 1870 "parser.y"
     {
   sprintf(tmp,"%s || %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3699,7 +3699,7 @@ yyreduce:
     break;
 
   case 186:
-#line 1871 "parser.y"
+#line 1875 "parser.y"
     {
   sprintf(tmp,"%s == %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3707,7 +3707,7 @@ yyreduce:
     break;
 
   case 187:
-#line 1876 "parser.y"
+#line 1880 "parser.y"
     {
   sprintf(tmp,"%s=%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3715,7 +3715,7 @@ yyreduce:
     break;
 
   case 188:
-#line 1881 "parser.y"
+#line 1885 "parser.y"
     {
   sprintf(tmp,"%s ? %s : %s",GetToken((yyvsp[(1) - (5)])), GetToken((yyvsp[(3) - (5)])), GetToken((yyvsp[(5) - (5)])));
   (yyval)=PutToken(tmp);
@@ -3723,7 +3723,7 @@ yyreduce:
     break;
 
   case 189:
-#line 1886 "parser.y"
+#line 1890 "parser.y"
     {
   sprintf(tmp,"%s != %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3731,7 +3731,7 @@ yyreduce:
     break;
 
   case 190:
-#line 1891 "parser.y"
+#line 1895 "parser.y"
     {
   sprintf(tmp,"%s>%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3739,7 +3739,7 @@ yyreduce:
     break;
 
   case 191:
-#line 1896 "parser.y"
+#line 1900 "parser.y"
     {
   sprintf(tmp,"%s<%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3747,7 +3747,7 @@ yyreduce:
     break;
 
   case 192:
-#line 1901 "parser.y"
+#line 1905 "parser.y"
     {
   sprintf(tmp,"%s>=%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3755,7 +3755,7 @@ yyreduce:
     break;
 
   case 193:
-#line 1906 "parser.y"
+#line 1910 "parser.y"
     {
   sprintf(tmp,"%s<=%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3763,7 +3763,7 @@ yyreduce:
     break;
 
   case 194:
-#line 1911 "parser.y"
+#line 1915 "parser.y"
     {
   sprintf(tmp,"-%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
@@ -3771,7 +3771,7 @@ yyreduce:
     break;
 
   case 195:
-#line 1916 "parser.y"
+#line 1920 "parser.y"
     {
   sprintf(tmp,"(%s)",GetToken((yyvsp[(2) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3779,7 +3779,7 @@ yyreduce:
     break;
 
   case 196:
-#line 1921 "parser.y"
+#line 1925 "parser.y"
     {
   sprintf(tmp,"%s()",GetToken((yyvsp[(1) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3787,7 +3787,7 @@ yyreduce:
     break;
 
   case 197:
-#line 1926 "parser.y"
+#line 1930 "parser.y"
     {
   sprintf(tmp,"%s(%s)",GetToken((yyvsp[(1) - (4)])),GetToken((yyvsp[(3) - (4)])));
   (yyval)=PutToken(tmp);
@@ -3796,7 +3796,7 @@ yyreduce:
     break;
 
   case 198:
-#line 1932 "parser.y"
+#line 1936 "parser.y"
     {
   sprintf(tmp,"*%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
@@ -3804,7 +3804,7 @@ yyreduce:
     break;
 
   case 199:
-#line 1937 "parser.y"
+#line 1941 "parser.y"
     {
   sprintf(tmp,"&%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
@@ -3812,7 +3812,7 @@ yyreduce:
     break;
 
   case 200:
-#line 1942 "parser.y"
+#line 1946 "parser.y"
     {
   sprintf(tmp,"!%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
@@ -3820,7 +3820,7 @@ yyreduce:
     break;
 
   case 201:
-#line 1947 "parser.y"
+#line 1951 "parser.y"
     {
   sprintf(tmp,"~%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
@@ -3828,28 +3828,28 @@ yyreduce:
     break;
 
   case 202:
-#line 1954 "parser.y"
-    {
-  (yyval)=(yyvsp[(1) - (1)]);
-}
-    break;
-
-  case 203:
 #line 1958 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
+  case 203:
+#line 1962 "parser.y"
+    {
+  (yyval)=(yyvsp[(1) - (1)]);
+}
+    break;
+
   case 204:
-#line 1964 "parser.y"
+#line 1968 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 205:
-#line 1968 "parser.y"
+#line 1972 "parser.y"
     {
   sprintf(tmp,"%s::%s",GetToken((yyvsp[(1) - (3)])),GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);  
@@ -3857,14 +3857,14 @@ yyreduce:
     break;
 
   case 206:
-#line 1976 "parser.y"
+#line 1980 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 207:
-#line 1980 "parser.y"
+#line 1984 "parser.y"
     {
   sprintf(tmp,"%s, %s", GetToken((yyvsp[(1) - (3)])),GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -4087,7 +4087,7 @@ yyreturn:
 }
 
 
-#line 1988 "parser.y"
+#line 1992 "parser.y"
 
 
 #include "config.h"

@@ -67,8 +67,10 @@
 
  int n,t;
  bool isNamespace = false;
+ bool isInStruct = false;
  char holdnamespace[500];
  char tmp[10240];
+ char typetmp[100];
  char tmpProc[10240];
  char tmpSize[10240];
  int parsingclass=0;
@@ -279,6 +281,7 @@ struct_definition: struct_head '{' struct_body '}'
   	if (currentstruct!=NULL) currentstruct->SetTypeClass(false);
   	$$=$1;
   	structContainer = NULL;
+  	isInStruct = false;
 }
 | struct_head not_care_code
 {
@@ -289,6 +292,7 @@ struct_definition: struct_head '{' struct_body '}'
 struct_head: STRUCT_KEYWORD ID
 {
 	if(currentClass!=NULL){
+		isInStruct = true;
 		structContainer = new Structure(currentClass, accessmodifier);
 		structContainer->SetLineInfo(linenumber-1);
 		currentClass->AddMember(structContainer);
@@ -330,10 +334,6 @@ struct_head: STRUCT_KEYWORD ID
 
 struct_body: /*empty*/
 | struct_element ';' struct_body
-{
-	if(structContainer!=NULL)
-		printf("Struct %s", GetToken($1));
-}
 ;
 
 struct_element: decl_specifier struct_elname_list 
@@ -341,23 +341,29 @@ struct_element: decl_specifier struct_elname_list
 
 struct_elname_list: pointer_specifier ID array_declarator struct_elname_other
 {
-  DataType *type1=currenttype;
-  if ($1>0)
-    {
-      //type1=new TypePtr(NULL,$1, type1);
+	// Save the attribute in the Strcuture object to be able to produce code
+	if(structContainer!=NULL) {
+		std::string attribute;
+		attribute.append(typetmp);
+		attribute.append(" ");
+		attribute.append(GetToken($2));
+		attribute.append(";");	
+		structContainer->setInnerDecl(attribute);			
+	}
+
+	DataType *type1=currenttype;
+	if ($1>0) {
+		//type1=new TypePtr(NULL,$1, type1);
       type1=new TypePtr(NULL, $1, type1, constPointerPositions);
       thisCodeFile->AddDataType(type1);
-    }
-  if ($3!=-1)
-    {
+   }
+  	if ($3!=-1){
       type1=new TypeArray(NULL,GetToken($3), type1);
       thisCodeFile->AddDataType(type1);     
-    }  
-  TypeClassStruct *t=Peek();
-  assert(t!=NULL);
-  t->Add(type1, GetToken($2));
-
-
+   }  
+	TypeClassStruct *t=Peek();
+	assert(t!=NULL);
+	t->Add(type1, GetToken($2));
 }
 ;
 
@@ -927,7 +933,9 @@ decl_specifier: storage_class_specifier type_specifier
 }
 | type_specifier
 {
-  $$=0;
+	
+	
+	$$=0;
 }
 ;
 
@@ -943,18 +951,14 @@ storage_class_specifier:  AUTO_KEYWORD
 
 type_specifier: ID
 {
-  currenttype=thisCodeFile->FindDataType(GetToken($1));
-  if (currenttype==NULL)
-    {
-      currenttype=new DataType(GetToken($1));
+	if(isInStruct)
+		sprintf(typetmp, "%s", GetToken($1)); // Save the type specifier for struct attribute
+	currenttype=thisCodeFile->FindDataType(GetToken($1));
+	if (currenttype==NULL) {
+	   currenttype=new DataType(GetToken($1));
       thisCodeFile->AddDataType(currenttype);
-      /* 
-	 sprintf(tmp,"Undeclared type \"%s\"\n",GetToken($1)); 
-	 errormsg(tmp);
-	 exit(1);
-      */
-    }
-  $$=(YYSTYPE)currenttype;
+   }
+	$$=(YYSTYPE)currenttype;
 }
 | ID1 
 {
