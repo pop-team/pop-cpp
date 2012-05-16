@@ -270,10 +270,24 @@ type_definition: struct_definition
 | typedef_definition
 | seqclass_definition
 
+/**
+ * Inner Class delcaration
+ * Catch inner class definition to raise an error message and abort the compilation
+ */
+ 
+innerclass_definition: CLASS_KEYWORD
+{
+	sprintf(tmp,"Class declaration inside parclass are not currently supported !\n");
+	errormsg(tmp);
+	exit(1);
+} 
+
 
 /* 
 STRUCT TYPES...
 */
+
+
 
 struct_definition: struct_head '{' struct_body '}'
 {
@@ -791,6 +805,7 @@ member_list: /*empty*/
 member_declaration:  enum_declaration ';'
 | struct_definition ';'
 | function_definition ';'
+| innerclass_definition ';'
 {
   assert(method!=NULL);
   int t=method->CheckMarshal();
