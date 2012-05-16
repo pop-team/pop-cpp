@@ -9,12 +9,14 @@ parclass POPObject
 public:
 	POPObject() @{ od.search(0, 0, 0); };
 	~POPObject();
-	structure product{
-		double weight;
-	} apple;
+
 	
 private:
-	product banana;	
+	struct product{
+		double weight;
+		int id;
+	} apple, banana;
+	
 };
 
 
