@@ -19,6 +19,7 @@
 
 #include "popfile_metadata.h"
 #include "popfilebuffer.h"
+#include "popfile_grip.h"
 #include "paroc_accesspoint.h"
 
 class POPFileReader;
@@ -58,7 +59,7 @@ public:
 	void write(std::string value);
 	
 	// Read string data from the file
-	std::string read();
+	std::string read(long size);
 	
 	/** popfile special functionnalities **/
 	
@@ -69,7 +70,7 @@ public:
 	void get_infos(infos_t* infos);
 	
 	// Open a file and create it if it doesn't exists
-	bool open(const char* filename, const int stripnumber, const long offset);
+	bool open(const char* filename, const int stripnumber, const long striping_factor);
 
 	// Scatter a standard file into a parallel file
 	void scatter();
@@ -78,25 +79,26 @@ public:
 	void gather();
 
 	// Call read in background	
-	void read_in_background();
+	POPFileGrip read_in_background(long size);
 	
 	// Get data read by the read in background call
-	std::string get_read();	
+	std::string get_read(POPFileGrip grip);	
 
 	/** popfile operators **/	
 	
 	// 
-	template <class T> POPFStream& operator << (const T& ToLog);	
+	template <class T> POPFStream& operator << (const T& toWrite);	
 	
 	// Print meta data information to stdout
 	void printInfos();
+	
+
 
 private:
 	/** Private constants of popfile **/
 	static const char* POPFILE_METADATA_PREFIX;
 	static const char* POPFILE_METADATA_SUFFIX;
 	static const char* POPFILE_POPFILEMANAGER_LOCAL;
-
 
 
 	/** Private attributes of popfile **/
@@ -138,13 +140,23 @@ private:
 	paroc_accesspoint pfm_ap;
 	
 	// References to parallel objects POPFile readers 
-	POPFileReader* reader_ref;
+	POPFileReader* popfile_reader_ref;
 	
 	// Value pointing to the next byte to be read
 	long popfile_internal_read_pointer;
 	
 	// Value represnting the total number of byte in a popfile
 	long popfile_total_bytes;
+	
+	// Value represnting the number of bytes to be added when opening an old strip
+	long popfile_first_write_pointer;
+	
+	// Value representing the current reader to be called
+	int popfile_current_reader;
+	
+	//
+	int popfile_current_reader_offset;
+	
 	
 
 
@@ -164,6 +176,11 @@ private:
 	
 	// Move the buffer pointer to the next buffer
 	void get_next_buffer();	
+	
+	void get_next_input_buffer();	
+	
+	// Move the reader pointer to the next reader
+	void get_next_reader();
 	
 	// Check if a file exist
 	bool is_file_exist(std::string filename);
