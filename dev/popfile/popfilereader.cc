@@ -62,7 +62,7 @@ void POPFileReader::read_in_strip(long start, long offset)
 	POPString data = pfm_ref->readFromStrip(strip_path, start, offset);
 	cout << "[POPFILEREADER] Read from strip (bytes) " << strlen(data.GetString()) << popcendl;	
 	popfilebuffer_ref->add_data(data);
-	cout << "Sem post" << popcendl;	
+	//cout << "Sem post: id = " << identifier << popcendl;	
 	sem_post(pt_read_locker);
 }
 
@@ -75,11 +75,11 @@ POPString POPFileReader::read_current_buffer(long size)
 {
 	
 	while(popfilebuffer_ref->get_size_input_data() < size){
-		cout << "Before lock" << popcendl;
+		cout << "Before lock: id = " << identifier << " data = "<< popfilebuffer_ref->get_size_input_data() << "Size" << size <<  popcendl;
 		sem_wait(pt_read_locker);
-		cout << "After lock " << popcendl;		
+		//cout << "After lock: id = " << identifier << popcendl;		
 	}
-	cout << "Unlocked" << popcendl;
+	//cout << "Unlocked: id = " << identifier << popcendl;
 	
 	POPString data;
 	if(size != -1)
