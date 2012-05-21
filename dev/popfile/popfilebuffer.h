@@ -60,6 +60,9 @@ public:
 	void add_data(POPString data);
 	
 	
+	//
+	long get_size_input_data();
+	
 	
 	
 	// Setter for internal attributes values

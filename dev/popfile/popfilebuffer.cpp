@@ -119,6 +119,11 @@ std::string POPFileBuffer::buffer_get_offset()
 	return buffer_get(capacity);
 }
 
+long POPFileBuffer::get_size_input_data()
+{
+	return popfile_buffer_in.str().length();
+}
+
 /**
  * Add data into the buffer 
  * @param data The data to add in the buffer
