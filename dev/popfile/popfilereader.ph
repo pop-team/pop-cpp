@@ -16,6 +16,7 @@
 #include "popfilebuffer.h"
 #include <list>
 #include <string.h>
+#include <fcntl.h>
 #include <semaphore.h>
 
 class POPFileManager;
