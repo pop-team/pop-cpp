@@ -185,6 +185,8 @@ private:
 	// Check if a file exist
 	bool is_file_exist(std::string filename);
 	
+	
+	
 };	
 		
 } // namespace popfile
