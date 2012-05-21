@@ -77,12 +77,21 @@ public:
 	
 	// Gather a parallel file into a standard file
 	void gather();
+	
+	// Flush the data in memory to the strips
+	void flush();
 
 	// Call read in background	
 	POPFileGrip read_in_background(long size);
 	
 	// Get data read by the read in background call
 	std::string get_read(POPFileGrip grip);	
+	
+	// Current grip
+	int popfile_current_grip;
+
+	// Grip to be served in the next call
+	int popfile_served_grip;
 
 	/** popfile operators **/	
 	

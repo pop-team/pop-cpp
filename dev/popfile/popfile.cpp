@@ -74,6 +74,8 @@ void POPFStream::popfile_init()
 	popfile_first_write_pointer = 0;
 	popfile_current_reader = 0;
 	popfile_current_reader_offset = 0;
+	popfile_current_grip = 0;
+	popfile_served_grip = 0;
 }
 
 /**
@@ -316,15 +318,32 @@ void POPFStream::scatter(){
 }
 
 /**
- * Get all the strip and write all in a standard file
+ * Get all the strip and write all in a standard file. This action is not meant to be performant
  * @return void
  */
 void POPFStream::gather(){
-	if(popfile_parallel){
-		//TODO
-		
+	if(is_parallel()){
+		if(is_open()){
+			long fullsize = popfile_total_bytes;
+			cout << "[POPFILE-DEBUG] (gather) Total bytes to be gather is " << fullsize << popcendl;
+			std::ofstream gathered_file;
+			gathered_file.open(popfile_filename.c_str());
+			while(fullsize > popfile_offset){
+				std::string data = read(popfile_offset);
+				fullsize -= popfile_offset;
+				gathered_file << data;
+			} 
+			cout << "[POPFILE-DEBUG] (gather) full size " << fullsize << popcendl;
+			if(fullsize > 0){
+				std::string data = read(fullsize);
+				gathered_file << data;
+			}
+			gathered_file.close();
+		} else {
+			cout << "[POPFILE-ERROR] (gather) The parallel file is not open !" << popcendl;	
+		}
 	} else {
-		cout << "[POPFILE-ERROR] Can't do this action on a non-parallel file !" << popcendl;
+		cout << "[POPFILE-ERROR] (gather) Can't do this action on a non-parallel file !" << popcendl;
 		return;
 	}
 }
@@ -384,6 +403,17 @@ void POPFStream::close(){
 	}
 }
 
+/**
+ * Flush the data still in buffer to the strips
+ */
+void POPFStream::flush()
+{
+	//Flush any local data from all buffers
+	for(int i = 0; i < popfile_strip_number; i++){
+		popfile_writebuffers[i].flush();	
+	}
+}
+
 
 
 
@@ -432,34 +462,54 @@ POPFileGrip POPFStream::read_in_background(long size)
 	if(popfile_parallel){
 		//Check if reader is already running
 		if(popfile_reader_ref == NULL){
+			// Create parallel object for the reading process and store their reference
 			popfile_reader_ref = new POPFileReader[popfile_strip_number];
+			
+			// Add some useful information to the readers
 			for(int i = 0; i < popfile_strip_number; i++){
+				// Set the associated PFM
 				paroc_accesspoint ap;
 				ap.SetAccessString(popfile_metadata.get_accessstring_for_strip(i).c_str());
-				//cout << "[POPFSTREAM] Set ap to reader " << popfile_metadata.get_accessstring_for_strip(i) << popcendl;
 				popfile_reader_ref[i].set_pfm_accesspoint(ap);
-				//cout << "[POPFSTREAM] Set path to reader " << popfile_metadata.get_filepath_for_strip(i) << popcendl;
+				
+				// Set the associated path for the strip
 				POPString path(popfile_metadata.get_filepath_for_strip(i).c_str());
 				popfile_reader_ref[i].set_strip_path(path);
+				// Set the offset of the strip
 				popfile_reader_ref[i].set_offset(popfile_metadata.get_offset_for_strip(i));
+				// Set the idenitifer of the reader
 				popfile_reader_ref[i].set_id(i);
 			}
 		}
 		
+		// Create the grip 
 		POPFileGrip grip;
-		grip.set_size(size);
-		grip.set_first_reader(popfile_current_reader);
-		if(size > popfile_offset){
-			while (size > 0){
-				popfile_reader_ref[popfile_current_reader].read_in_strip(popfile_current_reader_offset, popfile_offset);
-				get_next_reader();
-				size -= popfile_offset;
-				cout << "[POPFILE-DEBUG] Read in background size=" << size << popcendl;				
+		grip.set_size(size);										// Define the size of the block top be read
+		grip.set_first_reader(popfile_current_reader);	// Set the first reader called in this process
+		grip.set_order(popfile_current_grip++);			// Set the order for this grip
+		
+		if(size >= popfile_offset){
+			while (size >= popfile_offset){
+				if(popfile_internal_read_pointer != 0){
+					grip.set_first_read(popfile_internal_read_pointer);
+					cout << "[POPFILE-DEBUG] Read from last pointer =" << popfile_internal_read_pointer << popcendl;
+					popfile_reader_ref[popfile_current_reader].read_in_strip(popfile_current_reader_offset, popfile_internal_read_pointer);
+					size -= popfile_internal_read_pointer;
+					popfile_internal_read_pointer = 0;
+				} else {
+					popfile_reader_ref[popfile_current_reader].read_in_strip(popfile_current_reader_offset, popfile_offset);
+					size -= popfile_offset;
+				}
+				cout << "[POPFILE-DEBUG] Read in background size=" << size << popcendl;									
+				get_next_reader();				
 			}
-		} else {
-			popfile_reader_ref[popfile_current_reader].read_in_strip(popfile_current_reader_offset, popfile_offset);
-			get_next_reader();
 		}
+		if(size > 0){
+			popfile_reader_ref[popfile_current_reader].read_in_strip(popfile_current_reader_offset, size);	
+			popfile_internal_read_pointer = popfile_offset - size;
+			cout << "[POPFILE-DEBUG] Next to be read size=" << popfile_internal_read_pointer << popcendl;
+		}
+		
 		return grip;
 	} else {
 		cout << "[POPFILE-ERROR] Can't do this action on a non-parallel file!" << popcendl;
@@ -486,15 +536,28 @@ void POPFStream::get_next_reader(){
  */
 std::string POPFStream::get_read(POPFileGrip grip)
 {
-	long size = grip.get_size();
 	std::string data;
+	if(grip.get_order() != popfile_served_grip){
+		cout << "[POPFILE-WARNING] Reading order is not respected. Reading abort." << popcendl;
+		return data;
+	}
 	
+	long size = grip.get_size();
+	popfile_current_input_buffer = grip.get_first_reader();
 	if(size > popfile_offset){
 		while(size > popfile_offset){
-			cout << "[POPFILE-DEBUG] Get Read 1 size=" << size << "/ buffer="<< popfile_current_input_buffer << popcendl;
-			data.append(popfile_reader_ref[popfile_current_input_buffer].read_current_buffer(-1).GetString());
-			size -= popfile_offset;
-			get_next_input_buffer();
+			if(grip.get_first_read() != 0){
+				data.append(popfile_reader_ref[popfile_current_input_buffer].read_current_buffer(grip.get_first_read()).GetString());
+				size -= grip.get_first_read();			
+				cout << "[POPFILE-DEBUG] Get Read 1.1 size=" << grip.get_first_read() << "/ buffer="<< popfile_current_input_buffer << popcendl;					
+				grip.set_first_read(0);				
+			} else {
+				data.append(popfile_reader_ref[popfile_current_input_buffer].read_current_buffer(-1).GetString());				
+				size -= popfile_offset;		
+				cout << "[POPFILE-DEBUG] Get Read 1.2 size=" << popfile_offset << "/ buffer="<< popfile_current_input_buffer << popcendl;							
+			}
+		
+			get_next_input_buffer();	
 		}
 		if(size > 0){
 			cout << "[POPFILE-DEBUG] Get Read 2 size=" << size << "/ buffer="<< popfile_current_input_buffer << popcendl;
@@ -505,8 +568,8 @@ std::string POPFStream::get_read(POPFileGrip grip)
 		data = popfile_reader_ref[popfile_current_input_buffer].read_current_buffer(size).GetString();
 		get_next_input_buffer();
 	}
-	
-	cout << "[POPFILE-DEBUG] Get Read size end result =" << data.length() << popcendl;
+	popfile_served_grip++;
+	cout << "[POPFILE-DEBUG] Get Read size end result size=" << data.length() << popcendl;
 	return data;
 }
 
