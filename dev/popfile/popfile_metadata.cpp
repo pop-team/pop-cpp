@@ -22,6 +22,8 @@ const char* POPFileMetaData::POPFILE_METADATA_NODE_ROOT = "popfile";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_INFOS = "infos";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_INFOS_ABS_PATH = "absolute-path";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_INFOS_ORGI_NAME = "original-name";
+const char* POPFileMetaData::POPFILE_METADATA_NODE_INFOS_END_POINTER = "end-pointer";
+const char* POPFileMetaData::POPFILE_METADATA_NODE_INFOS_END_STRIP = "end-strip";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIPS = "strips";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIP = "strip";
 const char* POPFileMetaData::POPFILE_METADATA_NODE_STRIP_ATTRIBUTE_LOCAL = "local";
@@ -67,7 +69,7 @@ void POPFileMetaData::save(const char* filename)
 	TiXmlElement* infos = new TiXmlElement(POPFILE_METADATA_NODE_INFOS);  
 	root->LinkEndChild(infos);
 	
-	//
+	//Create elements in the infos element
 	TiXmlElement* infos_absolute_path = new TiXmlElement(POPFILE_METADATA_NODE_INFOS_ABS_PATH); 
 	infos->LinkEndChild(infos_absolute_path);
 	infos_absolute_path->LinkEndChild(new TiXmlText(meta_info.info_absolute_path));	
@@ -75,6 +77,16 @@ void POPFileMetaData::save(const char* filename)
 	TiXmlElement* infos_original_name = new TiXmlElement(POPFILE_METADATA_NODE_INFOS_ORGI_NAME);   	
 	infos->LinkEndChild(infos_original_name);	
 	infos_original_name->LinkEndChild(new TiXmlText(meta_info.info_original_name));	
+	
+	TiXmlElement* info_ending_pointer = new TiXmlElement(POPFILE_METADATA_NODE_INFOS_END_POINTER);   	
+	infos->LinkEndChild(info_ending_pointer);	
+	info_ending_pointer->LinkEndChild(new TiXmlText(convertLong(meta_info.info_ending_pointer)));	
+	
+	TiXmlElement* info_ending_strip = new TiXmlElement(POPFILE_METADATA_NODE_INFOS_END_STRIP);   	
+	infos->LinkEndChild(info_ending_strip);	
+	info_ending_strip->LinkEndChild(new TiXmlText(convertInt(meta_info.info_ending_strip)));	
+	
+
 	
 	TiXmlElement* strips = new TiXmlElement(POPFILE_METADATA_NODE_STRIPS); 
 	
@@ -161,6 +173,11 @@ bool POPFileMetaData::load(const char* filename)
 	meta_info.info_absolute_path = pElem->GetText();
 	pElem = pElem->NextSiblingElement();
 	meta_info.info_original_name = pElem->GetText();
+	pElem = pElem->NextSiblingElement();
+	meta_info.info_ending_pointer = convertStringToLong(pElem->GetText());
+	pElem = pElem->NextSiblingElement();
+	meta_info.info_ending_strip = convertStringToInt(pElem->GetText());	
+	
 
 	//Getting values of strips node
 	meta_strips.clear();
@@ -328,6 +345,15 @@ std::string POPFileMetaData::convertLong(long number) {
 }
 
 /**
+ * Convert a string value to a long
+ * @param value The string to convert
+ * @return A long value of the given string
+ */
+long POPFileMetaData::convertStringToLong(std::string value){
+	return atol(value.c_str());	
+}
+
+/**
  * Add a strip to the metadata information
  * @param isLocal			Set to true is the strip is located on the local computer. False otherwise
  * @param identifier		An integer value identifying the strip uniquely in the parallel file
@@ -377,8 +403,27 @@ void POPFileMetaData::addStripInfo(bool isLocal, int identifier, std::string abs
  * Get the number of strips in the parallel file
  * @return The number of strips in this parallel file
  */
-int POPFileMetaData::get_strips_count(){
+int POPFileMetaData::get_strips_count()
+{
 	return meta_strips.size();
+}
+
+void POPFileMetaData::set_ending_pointer(long value)
+{
+	meta_info.info_ending_pointer = value;
+}
+void POPFileMetaData::set_ending_strip(int index)
+{
+	meta_info.info_ending_strip = index;
+}
+
+long POPFileMetaData::get_ending_pointer()
+{
+	return meta_info.info_ending_pointer;
+}
+int POPFileMetaData::get_ending_strip()
+{
+	return meta_info.info_ending_strip; 
 }
  
 

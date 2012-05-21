@@ -29,6 +29,8 @@ class MetaDataInfo
 public:
 	std::string info_absolute_path;
 	std::string info_original_name;
+	long info_ending_pointer;			// Define the pointer in the last strip used to write.
+	int info_ending_strip;				// Define the last strip used to write. Will be used in the next writing process.
 };
 
 /**
@@ -67,7 +69,9 @@ public:
 	static const char* POPFILE_METADATA_NODE_ROOT;
 	static const char* POPFILE_METADATA_NODE_INFOS;
 	static const char* POPFILE_METADATA_NODE_INFOS_ABS_PATH;
-	static const char* POPFILE_METADATA_NODE_INFOS_ORGI_NAME;	
+	static const char* POPFILE_METADATA_NODE_INFOS_ORGI_NAME;
+	static const char* POPFILE_METADATA_NODE_INFOS_END_POINTER;
+	static const char* POPFILE_METADATA_NODE_INFOS_END_STRIP;			
 	static const char* POPFILE_METADATA_NODE_STRIPS;
 	static const char* POPFILE_METADATA_NODE_STRIP;	
 	static const char* POPFILE_METADATA_NODE_STRIP_ATTRIBUTE_LOCAL;
@@ -88,6 +92,11 @@ public:
 	void set_offset(long value);	
 	std::string get_filename();
 	void set_filename(std::string filename, std::string path);
+	void set_ending_pointer(long value);
+	void set_ending_strip(int index);
+	long get_ending_pointer();
+	int get_ending_strip();	
+		
 	void addStripInfo(bool isLocal, int identifier, std::string absolutePath, std::string stripName, long offset, std::string accesspoint);
 	
 	int get_strips_count();
@@ -111,6 +120,7 @@ private:
 	
 	std::string convertInt(int number);
 	std::string convertLong(long number);	
+	long convertStringToLong(std::string value);	
 	int convertStringToInt(std::string value);
 	
 };
