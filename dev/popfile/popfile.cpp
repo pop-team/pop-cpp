@@ -10,7 +10,6 @@
  */
 
 #include "popfile.h"
-#include "popfile_datathread.h"
 #include "popfilemanager.ph"
 #include "popfilereader.ph"
 
@@ -443,6 +442,7 @@ POPFileGrip POPFStream::read_in_background(long size)
 				POPString path(popfile_metadata.get_filepath_for_strip(i).c_str());
 				popfile_reader_ref[i].set_strip_path(path);
 				popfile_reader_ref[i].set_offset(popfile_metadata.get_offset_for_strip(i));
+				popfile_reader_ref[i].set_id(i);
 			}
 		}
 		
@@ -543,7 +543,6 @@ void POPFStream::popfile_writeToBuffer(std::string value){
 		}	
 	}	
 }
-
 
 /**
  * Swicth to the next available buffer. Round robin way.
