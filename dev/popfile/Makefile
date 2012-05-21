@@ -1,7 +1,7 @@
 POBJECTDEP=popfilereader.cc popfilereader.ph
-DEP=popfile.h popfile.cpp main.cpp popfile_metadata.h popfile_metadata.cpp popfilebuffer.h popfilebuffer.cpp
+DEP=popfile.h popfile.cpp main.cpp popfile_metadata.h popfile_metadata.cpp popfilebuffer.h popfilebuffer.cpp popfile_grip.h popfile_grip.cpp
 SOURCES=main.cpp popfile.cpp popfile.h tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp popfile_metadata.h \
-popfile_metadata.cpp popfile_datathread.h popfile_datathread.cpp popfilebuffer.h popfilebuffer.cpp
+popfile_metadata.cpp popfile_datathread.h popfile_datathread.cpp popfilebuffer.h popfilebuffer.cpp popfile_grip.h popfile_grip.cpp
 SOURCES_STD=main2.cpp
 POPCC=popcc
 POPCRUN=popcrun
@@ -34,4 +34,4 @@ run:
 	$(POPCRUN) $(OBJMAP) ./$(APPNAME) 
 	
 clean:
-	rm -rf _paroc* *.o tinyxml/*.o $(APPNAME) $(APPNAME_STD) $(OBJMAP) $(OBJNAME) testfile
+	rm -rf _paroc* *.o tinyxml/*.o $(APPNAME) $(APPNAME_STD) $(OBJMAP) $(OBJNAME)
