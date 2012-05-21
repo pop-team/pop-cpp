@@ -11,14 +11,19 @@
 #include "popfilereader.ph"
 #include "popfilemanager.ph"
 #include "popfilebuffer.h"
+#include <stdio.h>
+#include <stdlib.h>
+
 
 /**
  * POPFileReader constructor
  */
 POPFileReader::POPFileReader()
 {
+
 	cout << "[POPFILEREADER] Created on " << POPGetHost() << popcendl;	
 	popfilebuffer_ref = new POPFileBuffer();
+   pt_read_locker == NULL;
 }
    
 /**
@@ -26,7 +31,24 @@ POPFileReader::POPFileReader()
  */
 POPFileReader::~POPFileReader()
 {
+	sem_unlink(reader_semname.c_str());
+}
 
+void POPFileReader::set_id(int value)
+{
+	identifier = value;
+	if(pt_read_locker == NULL){
+		std::stringstream semname;
+		semname << "/pfrs";
+		semname << identifier;
+		reader_semname = semname.str();
+		sem_unlink(reader_semname.c_str());
+		pt_read_locker = sem_open(reader_semname.c_str(), O_CREAT|O_EXCL, 0600, 1);
+		/*if(pt_read_locker == SEM_FAILED)
+			cout << "Sem failed " <<  errno << strerror(errno) << popcendl;*/
+			
+		sem_wait(pt_read_locker);
+	}
 }
    
 /**
@@ -40,6 +62,8 @@ void POPFileReader::read_in_strip(long start, long offset)
 	POPString data = pfm_ref->readFromStrip(strip_path, start, offset);
 	cout << "[POPFILEREADER] Read from strip (bytes) " << strlen(data.GetString()) << popcendl;	
 	popfilebuffer_ref->add_data(data);
+	cout << "Sem post" << popcendl;	
+	sem_post(pt_read_locker);
 }
 
 /**
@@ -49,6 +73,14 @@ void POPFileReader::read_in_strip(long start, long offset)
  */
 POPString POPFileReader::read_current_buffer(long size)
 {
+	
+	while(popfilebuffer_ref->get_size_input_data() < size){
+		cout << "Before lock" << popcendl;
+		sem_wait(pt_read_locker);
+		cout << "After lock " << popcendl;		
+	}
+	cout << "Unlocked" << popcendl;
+	
 	POPString data;
 	if(size != -1)
 		data = popfilebuffer_ref->buffer_get(size).c_str();
