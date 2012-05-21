@@ -1,12 +1,10 @@
 #!/bin/bash
 
-POP_PREFIX=/home/clementval/popc
-
 if [ x$(uname) == "xLinux" ]
 then
 	echo "Building for Linux"
-	rm -rf $POP_PREFIX
-	./configure --prefix=$POP_PREFIX --enable-popfile
+	rm -rf /usr/local/popc
+	./configure --enable-popfile
 	make clean all install
 else
 	echo "Building for Mac OS X"
