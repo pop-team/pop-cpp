@@ -22,6 +22,8 @@ POPFileGrip::POPFileGrip()
 {
 	popfilegrip_size = 0;
 	popfilegrip_first_reader = 0;
+	popfilegrip_order = 0;
+	popfilegrip_first_read = 0;
 }
 
 
@@ -31,6 +33,16 @@ POPFileGrip::POPFileGrip()
 POPFileGrip::~POPFileGrip()
 {
 	
+}
+
+void POPFileGrip::set_order(int value)
+{
+	popfilegrip_order = value;
+}
+
+int POPFileGrip::get_order()
+{
+	return popfilegrip_order;	
 }
 
 /**
@@ -63,4 +75,13 @@ void POPFileGrip::set_first_reader(int identifier)
 int POPFileGrip::get_first_reader()
 {
 	return popfilegrip_first_reader;
+}
+
+void POPFileGrip::set_first_read(long value)
+{
+	popfilegrip_first_read = value;
+}
+long POPFileGrip::get_first_read()
+{
+	return popfilegrip_first_read;
 }

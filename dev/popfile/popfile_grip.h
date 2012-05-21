@@ -25,10 +25,19 @@ public:
 	
 	void set_first_reader(int identifier);
 	int get_first_reader();
+	
+	void set_order(int value);
+	int get_order();
+	
+	void set_first_read(long value);
+	long get_first_read();
 
 private:
 	long popfilegrip_size; 
+	long popfilegrip_first_read;
 	int popfilegrip_first_reader;
+	int popfilegrip_order;
+	
 	
 	
 };	
