@@ -38,7 +38,7 @@ void POPFileReader::read_in_strip(long start, long offset)
 {	
 	cout << "[POPFILEREADER] Read in strip " << strip_path.GetString() << " from:" << start << " to:" << start+offset << popcendl;	
 	POPString data = pfm_ref->readFromStrip(strip_path, start, offset);
-	cout << "[POPFILEREADER] Read from strip" << strlen(data.GetString()) << popcendl;	
+	cout << "[POPFILEREADER] Read from strip (bytes) " << strlen(data.GetString()) << popcendl;	
 	popfilebuffer_ref->add_data(data);
 }
 
@@ -54,7 +54,7 @@ POPString POPFileReader::read_current_buffer(long size)
 		data = popfilebuffer_ref->buffer_get(size).c_str();
 	else 
 		data = popfilebuffer_ref->buffer_get_offset().c_str();
-	cout << "[POPFILEREADER] Sent data size" << strlen(data.GetString()) << popcendl;	
+	cout << "[POPFILEREADER] Sent data size " << strlen(data.GetString()) << popcendl;	
 	return data;
 }
 

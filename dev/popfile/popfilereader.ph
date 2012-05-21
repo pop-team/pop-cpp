@@ -32,7 +32,7 @@ public:
    
    
    //Asynchronous read of the strip to further usage
-   async conc void read_in_strip(long start, long offset);
+   async seq void read_in_strip(long start, long offset);
    
    //Read in the current buffer
    sync seq POPString read_current_buffer(long length);
