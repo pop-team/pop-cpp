@@ -104,9 +104,9 @@ std::string POPFileBuffer::buffer_get(long size)
 		
 		cout << "[POPFILEBUFFER] Not enough data in buffer" << popcendl;
 	} else {
-		/*std:string data = popfile_buffer_in.str().substr(0, size);
+		std::string data = popfile_buffer_in.str().substr(0, size);
 		popfile_buffer_in.str(popfile_buffer_in.str().substr(size));	
-		return data;*/
+		return data;
 	}
 }
 
@@ -116,13 +116,7 @@ std::string POPFileBuffer::buffer_get(long size)
  */
 std::string POPFileBuffer::buffer_get_offset()
 {
-	cout << "[POPFILEBUFFER] get offset size is : " << popfile_buffer_in.str().length() << popcendl;
-	if(popfile_buffer_in.str().length() <= capacity){
-		return popfile_buffer_in.str();
-	} else {
-		//TODO remove from buffer
-		return popfile_buffer_in.str().substr(0, capacity);
-	}
+	return buffer_get(capacity);
 }
 
 /**
