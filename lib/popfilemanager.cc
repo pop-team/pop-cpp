@@ -159,6 +159,7 @@ void POPFileManager::getNeighborsFromPSN(){
   			ap = ap.substr(0, port_separator+1);
   			ap.append("2712");
   			paroc_accesspoint neighborAP;
+  			popfile_log("[POPFILEMANAGER] Neighbors is %s", ap.c_str());
   			neighborAP.SetAccessString(ap.c_str());
   			pfm_neighbors.push_back(neighborAP);
   		} else {
