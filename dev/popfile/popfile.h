@@ -96,7 +96,9 @@ public:
 	/** popfile operators **/	
 	
 	// 
-	template <class T> POPFStream& operator << (const T& toWrite);	
+	//template <class T> POPFStream& operator << (const T& toWrite);	
+	
+	//template <class T> POPFStream& operator << (POPFStream& os, const char* str);
 	
 	// Print meta data information to stdout
 	void printInfos();

@@ -629,8 +629,8 @@ void POPFStream::get_next_input_buffer(){
 }
 
 /* implementing operators */
-template <class T> POPFStream& POPFStream::operator << (const T& ToLog)
+/*template <class T> POPFStream& POPFStream::operator << (POPFStream& os, const char* str)
 {
-	cout <<  "Call to << " << popcendl;   
+	os.write(str, strlen(str));
    return this;
-}	
+}*/	
