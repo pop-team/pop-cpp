@@ -35,7 +35,7 @@ AC_SUBST(host_cpu)
 AC_SUBST(host_kernel)
 
 standard=true;
-popfile=false;
+
 
 AC_ARG_ENABLE(globus,
 [ --enable-globus=flavor  Enable Globus-support in Popc++],
@@ -108,32 +108,16 @@ then
 fi
 
 
-##
-# POPFile: clementval
-# Add popfile configuration option
-##
-AC_ARG_ENABLE(popfile,
-[--enable-popfile  Enable POP-C++ POPFile],
-[
-popfile=true;
-], [ popfile=false])
-
-if test x$popfile = xtrue
-then 
-	standard=false;
-fi
 
 
 AC_SUBST(virtual)
 AC_SUBST(secure)
 AC_SUBST(virtsecure)
-AC_SUBST(popfile)
 
 AM_CONDITIONAL(VIRTSUPPORT, test x$virtual = xtrue)
 AM_CONDITIONAL(SECURESUPPORT, test x$secure = xtrue)
 AM_CONDITIONAL(VIRTSECURESUPPORT, test x$virtsecure = xtrue)
 AM_CONDITIONAL(STANDARDSUPPORT, test x$standard = xtrue)
-AM_CONDITIONAL(POPFILESUPPORT, test x$popfile = xtrue)
 
 
 AC_PROG_YACC
@@ -187,10 +171,7 @@ fi
 # ViSaG
 
 
-if test x$popfile = xtrue
-then
-   AC_DEFINE([POPC_POPFILE], [1], [POPFile version])
-fi
+
 
 AC_CHECK_TYPE(socklen_t)
 
