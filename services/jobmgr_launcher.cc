@@ -131,8 +131,6 @@ int main(int argc, char **argv)
    printf("Stoping POP-C++ [Secure Version] Global Services\n");
 #elif defined POPC_VIRTUAL
    printf("Stoping POP-C++ [Virtual Version] Global Services\n");	
-#elif defined POPC_POPFILE
-   printf("Stoping POP-C++ [POPFile Version] Global Services\n");   
 #else
 	printf("Stoping POP-C++ [Standard Version] Global Services\n");
 #endif
@@ -197,14 +195,6 @@ int main(int argc, char **argv)
          } else {
             printf("PSM stopped successfully!\n");
          }
-#elif defined POPC_POPFILE
-			JobMgr mgr(jobmgr_ap);
-         POPCSearchNode psn(mgr.GetNodeAccessPoint());
-			if (!psn.Stop(challenge)){
-				fprintf(stderr, "Bad challenge string. Cannot stop PSN ...\n");
-			} else {
-            printf("PSN stopped successfully!\n");
-         }
 #else
 			JobMgr mgr(jobmgr_ap);
          POPCSearchNode psn(mgr.GetNodeAccessPoint());
@@ -262,10 +252,8 @@ int main(int argc, char **argv)
    printf("Starting POP-C++ [Secure Version] Global Services\n");
 #elif defined POPC_VIRTUAL
    printf("Starting POP-C++ [Virtual Version] Global Services\n");
-#elif defined POPC_POPFILE
-   printf("Starting POP-C++ [POPFile Version] Global Services\n");   
 #else
-   printf("Starting POP-C++ [Standard Version] Global Services\n");
+   printf("Starting POP-C++ [Standard Version (Including POPFile)] Global Services\n");
 #endif
 
 /*
@@ -312,21 +300,15 @@ int main(int argc, char **argv)
 
       //Init the ssh secure mode on the PSM
       psm.initSSHMode();
-#elif defined POPC_POPFILE
-		/*
-		 * POPFILE VERSION
-		 */
-      POPCSearchNode psn(challenge, daemon);
-      printf("[POPFILE] PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());
-      POPFileManager pfm(challenge, daemon, hostpfm);
-      printf("[POPFILE] PFM Started [%s]\n", pfm.GetAccessPoint().GetAccessString());      
-      pfm.setPSNAccessPoint(psn.GetAccessPoint());
 #else
 		/*
 		 * STANDARD VERSION
 		 */
       POPCSearchNode psn(challenge, daemon);
-      printf("PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());    
+      printf("[POPFILE] PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());   
+      POPFileManager pfm(challenge, daemon, hostpfm);
+      printf("[POPFILE] PFM Started [%s]\n", pfm.GetAccessPoint().GetAccessString());      
+      pfm.setPSNAccessPoint(psn.GetAccessPoint()); 
 #endif
 
 
@@ -413,29 +395,14 @@ int main(int argc, char **argv)
             printf("SPSN stopped successfully!\n");
          }
       }
-#elif defined POPC_POPFILE
-		try{
-         //Create the base JobMgr
-         paroc_accesspoint empty;
-         psn.GetAccessPoint();
-	   	JobMgr info(daemon, conf, challenge, host, psn.GetAccessPoint(), empty);
-         printf("[POPFILE] JM created [%s]\n", info.GetAccessPoint().GetAccessString());
-         pfm.getNeighborsFromPSN();
-      } catch(...){
-         fprintf(stderr, "Error: Need to stop PSN\n");
-         if(!psn.Stop(challenge)){
-            fprintf(stderr, "Bad challenge string. Cannot stop PSN ...\n");
-			} else {
-            printf("PSN stopped successfully!\n");
-         }
-      } 
 #else
       try{
          //Create the base JobMgr
          paroc_accesspoint empty;
          psn.GetAccessPoint();
 	   	JobMgr info(daemon, conf, challenge, host, psn.GetAccessPoint(), empty);
-         printf("JM created [%s]\n", info.GetAccessPoint().GetAccessString());
+         printf("[POPFILE] JM created [%s]\n", info.GetAccessPoint().GetAccessString());
+         pfm.getNeighborsFromPSN();
       } catch(...){
          fprintf(stderr, "Error: Need to stop PSN\n");
          if(!psn.Stop(challenge)){
