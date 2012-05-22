@@ -107,7 +107,7 @@ libparoc_common_la_SOURCES=system.cc mutex.cc thread.cc string.cc od.cc event.cc
 	
 libparoc_common_la_LIBADD=paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo \
    codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo \
-   batchmgr.ph.stub_client.lo
+   batchmgr.ph.stub_client.lo popfilemanager.ph.stub_client.lo
 endif
 
 libparoc_common_la_LDFLAGS=-static
