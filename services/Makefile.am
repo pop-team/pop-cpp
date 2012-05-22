@@ -22,12 +22,9 @@ AM_LDFLAGS=-L@top_srcdir@/lib -L@top_srcdir@/lib/.libs
 
 #Standard version
 if STANDARDSUPPORT
-execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher
-endif
-
-if POPFILESUPPORT
 execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher popfilemanager
 endif
+
 
 #Virtual version
 if VIRTSUPPORT
@@ -65,11 +62,9 @@ jobmgr_SOURCES=jobmgr_obj.cc
 jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
 jobmgr_LDFLAGS=-object
 
-if POPFILESUPPORT
 popfilemanager_SOURCES=popfilemanager_obj.cc
 popfilemanager_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
 popfilemanager_LDFLAGS=-object
-endif
 
 #
 # ViSaG : clementval
