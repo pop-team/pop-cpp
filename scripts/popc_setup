@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 POPC_VIRTUAL=false
 POPC_SECURE_VIRTUAL=false
@@ -177,6 +177,11 @@ if [ -f ${POPC_LOCATION}/services/popcloner ]
 then
 	${POPC_LOCATION}/services/popcloner -listlong >> $servicemap 
 fi
+
+if [ -f ${POPC_LOCATION}/services/popfilemanager ]
+then
+	${POPC_LOCATION}/services/popfilemanager -listlong >> $servicemap 
+fi 
 
 if [ -f ${POPC_LOCATION}/services/pqueue ]
 then

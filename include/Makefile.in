@@ -130,8 +130,6 @@ LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
-LIBVIRT_CFLAGS = @LIBVIRT_CFLAGS@
-LIBVIRT_LIBS = @LIBVIRT_LIBS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -152,9 +150,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PKG_CONFIG = @PKG_CONFIG@
-PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
-PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -256,8 +251,6 @@ IDLC = @top_srcdir@/popccpp
 @VIRTSECURESUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
 @VIRTSECURESUPPORT_TRUE@	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h
 
-
-#Updated by Wyssen : Added VPopCWrapper.h, WrapperFactory.h and ESXWrapper.h
 @VIRTSUPPORT_TRUE@include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 @VIRTSUPPORT_TRUE@	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
 @VIRTSUPPORT_TRUE@	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\

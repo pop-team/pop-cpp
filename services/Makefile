@@ -34,8 +34,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = i686-pc-linux-gnu
-host_triplet = i686-pc-linux-gnu
+build_triplet = x86_64-apple-darwin11.4.0
+host_triplet = x86_64-apple-darwin11.4.0
 ##execservices_PROGRAMS = popc_search_node$(EXEEXT) \
 ##	virtual_popc_search_node$(EXEEXT) \
 ##	jobmgr$(EXEEXT) \
@@ -64,7 +64,8 @@ execservices_PROGRAMS = popc_search_node$(EXEEXT) \
 	jobmgr$(EXEEXT) \
 	appservice$(EXEEXT) \
 	localservice_launcher$(EXEEXT) \
-	jobmgr_launcher$(EXEEXT)
+	jobmgr_launcher$(EXEEXT) \
+	popfilemanager$(EXEEXT)
 #execservices_PROGRAMS = popc_search_node$(EXEEXT) \
 #	jobmgr$(EXEEXT) secure_jobmgr$(EXEEXT) \
 #	appservice$(EXEEXT) \
@@ -158,6 +159,12 @@ popcloner_DEPENDENCIES =
 popcloner_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(popcloner_LDFLAGS) $(LDFLAGS) -o $@
+am_popfilemanager_OBJECTS = popfilemanager_obj.$(OBJEXT)
+popfilemanager_OBJECTS = $(am_popfilemanager_OBJECTS)
+popfilemanager_DEPENDENCIES =
+popfilemanager_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(popfilemanager_LDFLAGS) $(LDFLAGS) -o $@
 am__secure_jobmgr_SOURCES_DIST = secure_jobmgr_obj.cc
 #am_secure_jobmgr_OBJECTS = secure_jobmgr_obj.$(OBJEXT)
 #am_secure_jobmgr_OBJECTS =  \
@@ -266,9 +273,9 @@ SOURCES = $(appservice_SOURCES) $(benchmarktest_SOURCES) \
 	$(jobmgr_launcher_SOURCES) $(jobmgrpublish_SOURCES) \
 	$(jobmgrquery_SOURCES) $(localservice_launcher_SOURCES) \
 	$(popc_search_node_SOURCES) $(popc_security_manager_SOURCES) \
-	$(popcloner_SOURCES) $(secure_jobmgr_SOURCES) \
-	$(secure_popc_search_node_SOURCES) $(virtual_jobmgr_SOURCES) \
-	$(virtual_popc_search_node_SOURCES) \
+	$(popcloner_SOURCES) $(popfilemanager_SOURCES) \
+	$(secure_jobmgr_SOURCES) $(secure_popc_search_node_SOURCES) \
+	$(virtual_jobmgr_SOURCES) $(virtual_popc_search_node_SOURCES) \
 	$(virtual_popc_security_manager_SOURCES) \
 	$(virtual_secure_jobmgr_SOURCES) \
 	$(virtual_secure_popc_search_node_SOURCES)
@@ -278,7 +285,7 @@ DIST_SOURCES = $(appservice_SOURCES) $(benchmarktest_SOURCES) \
 	$(jobmgrquery_SOURCES) $(localservice_launcher_SOURCES) \
 	$(popc_search_node_SOURCES) \
 	$(am__popc_security_manager_SOURCES_DIST) \
-	$(am__popcloner_SOURCES_DIST) \
+	$(am__popcloner_SOURCES_DIST) $(popfilemanager_SOURCES) \
 	$(am__secure_jobmgr_SOURCES_DIST) \
 	$(am__secure_popc_search_node_SOURCES_DIST) \
 	$(am__virtual_jobmgr_SOURCES_DIST) \
@@ -290,32 +297,32 @@ DATA = $(conf_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run aclocal-1.11
-AMTAR = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run tar
+ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1/missing --run aclocal-1.11
+AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run automake-1.11
-AWK = mawk
+AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1/missing --run autoconf
+AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1/missing --run autoheader
+AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1/missing --run automake-1.11
+AWK = awk
 CC = gcc
 CFLAGS = -g -O2
 CPP = gcc -E
-CPPFLAGS = 
+CPPFLAGS = -DARCH_MAC
 CXX = ../parser/popcc
 CXXCPP = g++ -E
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DLLTOOL = false
-DSYMUTIL = 
+DSYMUTIL = dsymutil
 DUMPBIN = 
-ECHO_C = 
-ECHO_N = -n
+ECHO_C = \c
+ECHO_N = 
 ECHO_T = 
-EGREP = /bin/grep -E
+EGREP = /usr/bin/grep -E
 EXEEXT = 
-FGREP = /bin/grep -F
-GREP = /bin/grep
+FGREP = /usr/bin/grep -F
+GREP = /usr/bin/grep
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
@@ -327,22 +334,20 @@ LEX = flex
 LEXLIB = 
 LEX_OUTPUT_ROOT = lex.yy
 LIBOBJS = 
-LIBS = -ldl -lnsl -lpthread 
+LIBS = -ldl -lpthread 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
-LIBVIRT_CFLAGS = 
-LIBVIRT_LIBS = 
-LIPO = 
+LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/clementval/versioning/popc2.0.1/missing --run makeinfo
+MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1/missing --run makeinfo
 MANIFEST_TOOL = :
-MKDIR_P = /bin/mkdir -p
-NM = /usr/bin/nm -B
-NMEDIT = 
-OBJDUMP = objdump
+MKDIR_P = .././install-sh -c -d
+NM = /usr/bin/nm
+NMEDIT = nmedit
+OBJDUMP = false
 OBJEXT = o
-OTOOL = 
-OTOOL64 = 
+OTOOL = otool
+OTOOL64 = :
 PACKAGE = popc
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = popc
@@ -351,23 +356,20 @@ PACKAGE_TARNAME = popc
 PACKAGE_URL = 
 PACKAGE_VERSION = 2.0.1
 PATH_SEPARATOR = :
-PKG_CONFIG = /usr/bin/pkg-config
-PKG_CONFIG_LIBDIR = 
-PKG_CONFIG_PATH = 
 RANLIB = ranlib
-SED = /bin/sed
+SED = /usr/bin/sed
 SET_MAKE = 
-SHELL = /bin/bash
+SHELL = /bin/sh
 STRIP = strip
 VERSION = 2.0.1
 VIX_CFLAGS = 
 VIX_LIBS = 
 YACC = bison -y
 YFLAGS = 
-abs_builddir = /home/clementval/versioning/popc2.0.1/services
-abs_srcdir = /home/clementval/versioning/popc2.0.1/services
-abs_top_builddir = /home/clementval/versioning/popc2.0.1
-abs_top_srcdir = /home/clementval/versioning/popc2.0.1
+abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1/services
+abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1/services
+abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1
+abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -376,11 +378,11 @@ am__leading_dot = .
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = i686-pc-linux-gnu
+build = x86_64-apple-darwin11.4.0
 build_alias = 
-build_cpu = i686
-build_os = linux-gnu
-build_vendor = pc
+build_cpu = x86_64
+build_os = darwin11.4.0
+build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
@@ -389,22 +391,22 @@ dvidir = ${docdir}
 exec_prefix = ${prefix}
 globusdir = 
 globusflavor = 
-host = i686-pc-linux-gnu
+host = x86_64-apple-darwin11.4.0
 host_alias = 
-host_cpu = i686
-host_kernel = Linux
-host_os = linux-gnu
-host_vendor = pc
+host_cpu = x86_64
+host_kernel = Darwin
+host_os = darwin11.4.0
+host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/clementval/versioning/popc2.0.1/install-sh
+install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popfile_popc2.0.1/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
 mandir = ${datarootdir}/man
-mkdir_p = /bin/mkdir -p
+mkdir_p = $(top_builddir)/./install-sh -c -d
 oldincludedir = /usr/include
 pdfdir = ${docdir}
 prefix = /usr/local/popc
@@ -439,6 +441,9 @@ popc_search_node_LDFLAGS = -object
 jobmgr_SOURCES = jobmgr_obj.cc
 jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
 jobmgr_LDFLAGS = -object
+popfilemanager_SOURCES = popfilemanager_obj.cc
+popfilemanager_LDADD = -L../lib/.libs -lparoc_service_common
+popfilemanager_LDFLAGS = -object
 
 #
 # ViSaG : clementval
@@ -669,6 +674,9 @@ popc_security_manager$(EXEEXT): $(popc_security_manager_OBJECTS) $(popc_security
 popcloner$(EXEEXT): $(popcloner_OBJECTS) $(popcloner_DEPENDENCIES) 
 	@rm -f popcloner$(EXEEXT)
 	$(popcloner_LINK) $(popcloner_OBJECTS) $(popcloner_LDADD) $(LIBS)
+popfilemanager$(EXEEXT): $(popfilemanager_OBJECTS) $(popfilemanager_DEPENDENCIES) 
+	@rm -f popfilemanager$(EXEEXT)
+	$(popfilemanager_LINK) $(popfilemanager_OBJECTS) $(popfilemanager_LDADD) $(LIBS)
 secure_jobmgr$(EXEEXT): $(secure_jobmgr_OBJECTS) $(secure_jobmgr_DEPENDENCIES) 
 	@rm -f secure_jobmgr$(EXEEXT)
 	$(secure_jobmgr_LINK) $(secure_jobmgr_OBJECTS) $(secure_jobmgr_LDADD) $(LIBS)

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 POPC_LOCATION=/usr/local/popc
 export POPC_LOCATION

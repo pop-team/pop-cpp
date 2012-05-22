@@ -49,7 +49,7 @@ echo "If everything is fine just proceed with the archive ! (y/n)"
 
 
 #Clean the current version of POP-C++
-#make clean 
+make clean 
 
 
 VERSION=$1
@@ -61,7 +61,7 @@ IGNORED=" dev virtualtest autom4te.cache .svn"
 
 
 #echo "The archive $RELDIR.tar.gz will be created"
-#tar -cf $ARCHIVE --exclude='.svn' --exclude='virtualtest' --exclude='dev' --exclude='documentation' --exclude='autom4te.cache' --exclude='create_release' --exclude='stamp-h1' ./*
+ar -cf $ARCHIVE --exclude='.svn' --exclude='virtualtest' --exclude='dev' --exclude='documentation' --exclude='autom4te.cache' --exclude='create_release' --exclude='stamp-h1' ./*
 #gzip $ARCHIVE
 
 

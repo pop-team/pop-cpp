@@ -328,7 +328,8 @@ libparoc_common_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 @SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	remotelog.ph.stub.lo \
 @SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	objectmonitor.ph.stub.lo \
 @SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	appservice.ph.stub.lo \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	batchmgr.ph.stub.lo
+@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	batchmgr.ph.stub.lo \
+@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	popfilemanager.ph.stub.lo
 @SECURESUPPORT_TRUE@libparoc_service_common_la_DEPENDENCIES =  \
 @SECURESUPPORT_TRUE@	paroc_service_base.ph.stub.lo \
 @SECURESUPPORT_TRUE@	jobmgr.ph.stub.lo \
@@ -343,8 +344,8 @@ am__libparoc_service_common_la_SOURCES_DIST = service_base.cc \
 	jobmgr.cc popc_search_node.cc codemgr.cc remotelog.cc \
 	objectmonitor.cc appservice.cc batchmgr.cc secure_jobmgr.cc \
 	secure_popc_search_node.cc popc_security_manager.cc \
-	virtual_popc_search_node.cc virtual_jobmgr.cc \
-	WrapperFactory.cc ESXWrapper.cc popcloner.cc \
+	popfilemanager.cc virtual_popc_search_node.cc \
+	virtual_jobmgr.cc WrapperFactory.cc ESXWrapper.cc popcloner.cc \
 	virtual_secure_jobmgr.cc virtual_secure_popc_search_node.cc \
 	POPWrapper.cc virtual_popc_security_manager.cc
 @SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@am_libparoc_service_common_la_OBJECTS = service_base.lo \
@@ -388,7 +389,8 @@ am__libparoc_service_common_la_SOURCES_DIST = service_base.cc \
 @SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	remotelog.lo \
 @SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	objectmonitor.lo \
 @SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	appservice.lo \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	batchmgr.lo
+@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	batchmgr.lo \
+@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	popfilemanager.lo
 @SECURESUPPORT_TRUE@am_libparoc_service_common_la_OBJECTS =  \
 @SECURESUPPORT_TRUE@	service_base.lo jobmgr.lo \
 @SECURESUPPORT_TRUE@	popc_search_node.lo codemgr.lo \
@@ -470,7 +472,7 @@ DATA = $(main_DATA)
 am__inst_HEADERS_DIST = paroc_service_base.ph appservice.ph \
 	popc_search_node.ph codemgr.ph remotelog.ph objectmonitor.ph \
 	batchmgr.ph jobmgr.ph popc_security_manager.ph \
-	secure_jobmgr.ph secure_popc_search_node.ph \
+	secure_jobmgr.ph secure_popc_search_node.ph popfilemanager.ph \
 	virtual_popc_search_node.ph virtual_jobmgr.ph popcloner.ph \
 	virtual_popc_security_manager.ph virtual_secure_jobmgr.ph \
 	virtual_secure_popc_search_node.ph
@@ -517,8 +519,6 @@ LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
-LIBVIRT_CFLAGS = @LIBVIRT_CFLAGS@
-LIBVIRT_LIBS = @LIBVIRT_LIBS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -539,9 +539,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PKG_CONFIG = @PKG_CONFIG@
-PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
-PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -659,8 +656,9 @@ BUILT_SOURCES = generate.foo
 @SECURESUPPORT_TRUE@   popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo \
 @SECURESUPPORT_TRUE@   appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo secure_popc_search_node.ph.stub_client.lo
 
-@STANDARDSUPPORT_TRUE@libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo \
-@STANDARDSUPPORT_TRUE@   remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo
+@STANDARDSUPPORT_TRUE@libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo \
+@STANDARDSUPPORT_TRUE@   codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo \
+@STANDARDSUPPORT_TRUE@   batchmgr.ph.stub_client.lo
 
 @VIRTSECURESUPPORT_TRUE@libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo popc_security_manager.ph.stub_client.lo\
 @VIRTSECURESUPPORT_TRUE@   popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo \
@@ -679,7 +677,7 @@ libparoc_common_la_CPPFLAGS =
 @SECURESUPPORT_TRUE@   secure_jobmgr.cc secure_popc_search_node.cc popc_security_manager.cc 
 
 @STANDARDSUPPORT_TRUE@libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc popc_search_node.cc codemgr.cc \
-@STANDARDSUPPORT_TRUE@   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc
+@STANDARDSUPPORT_TRUE@   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc popfilemanager.cc
 
 @VIRTSECURESUPPORT_TRUE@libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc  virtual_popc_search_node.cc popc_search_node.cc codemgr.cc \
 @VIRTSECURESUPPORT_TRUE@   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc virtual_jobmgr.cc WrapperFactory.cc ESXWrapper.cc popcloner.cc \
@@ -702,7 +700,7 @@ libparoc_common_la_CPPFLAGS =
 
 @STANDARDSUPPORT_TRUE@libparoc_service_common_la_LIBADD = paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo \
 @STANDARDSUPPORT_TRUE@   popc_search_node.ph.stub.lo codemgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
-@STANDARDSUPPORT_TRUE@   appservice.ph.stub.lo batchmgr.ph.stub.lo
+@STANDARDSUPPORT_TRUE@   appservice.ph.stub.lo batchmgr.ph.stub.lo popfilemanager.ph.stub.lo 
 
 @VIRTSECURESUPPORT_TRUE@libparoc_service_common_la_LIBADD = paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo virtual_popc_search_node.ph.stub.lo \
 @VIRTSECURESUPPORT_TRUE@   popc_search_node.ph.stub.lo codemgr.ph.stub.lo virtual_jobmgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
@@ -747,7 +745,7 @@ combox_test_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
 @SECURESUPPORT_TRUE@   popc_security_manager.ph secure_jobmgr.ph secure_popc_search_node.ph
 
 @STANDARDSUPPORT_TRUE@EXTRA_DIST = paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph popc_search_node.ph codemgr.ph \
-@STANDARDSUPPORT_TRUE@   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph
+@STANDARDSUPPORT_TRUE@   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph popfilemanager.ph
 
 @VIRTSECURESUPPORT_TRUE@EXTRA_DIST = paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph virtual_popc_search_node.ph popc_search_node.ph codemgr.ph \
 @VIRTSECURESUPPORT_TRUE@   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph  virtual_jobmgr.ph popcloner.ph \
@@ -763,7 +761,7 @@ combox_test_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
 @SECURESUPPORT_TRUE@   objectmonitor.ph batchmgr.ph jobmgr.ph popc_security_manager.ph secure_jobmgr.ph secure_popc_search_node.ph
 
 @STANDARDSUPPORT_TRUE@inst_HEADERS = paroc_service_base.ph appservice.ph popc_search_node.ph codemgr.ph remotelog.ph \
-@STANDARDSUPPORT_TRUE@   objectmonitor.ph batchmgr.ph jobmgr.ph
+@STANDARDSUPPORT_TRUE@   objectmonitor.ph batchmgr.ph jobmgr.ph popfilemanager.ph
 
 @VIRTSECURESUPPORT_TRUE@inst_HEADERS = paroc_service_base.ph appservice.ph virtual_popc_search_node.ph popc_search_node.ph codemgr.ph remotelog.ph \
 @VIRTSECURESUPPORT_TRUE@   objectmonitor.ph batchmgr.ph jobmgr.ph virtual_jobmgr.ph popcloner.ph popc_security_manager.ph \

@@ -64,7 +64,8 @@ host_triplet = @host@
 @SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	jobmgr$(EXEEXT) \
 @SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	appservice$(EXEEXT) \
 @SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	localservice_launcher$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	jobmgr_launcher$(EXEEXT)
+@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	jobmgr_launcher$(EXEEXT) \
+@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	popfilemanager$(EXEEXT)
 @SECURESUPPORT_TRUE@execservices_PROGRAMS = popc_search_node$(EXEEXT) \
 @SECURESUPPORT_TRUE@	jobmgr$(EXEEXT) secure_jobmgr$(EXEEXT) \
 @SECURESUPPORT_TRUE@	appservice$(EXEEXT) \
@@ -158,6 +159,12 @@ popcloner_DEPENDENCIES =
 popcloner_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(popcloner_LDFLAGS) $(LDFLAGS) -o $@
+am_popfilemanager_OBJECTS = popfilemanager_obj.$(OBJEXT)
+popfilemanager_OBJECTS = $(am_popfilemanager_OBJECTS)
+popfilemanager_DEPENDENCIES =
+popfilemanager_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(popfilemanager_LDFLAGS) $(LDFLAGS) -o $@
 am__secure_jobmgr_SOURCES_DIST = secure_jobmgr_obj.cc
 @SECURESUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@am_secure_jobmgr_OBJECTS = secure_jobmgr_obj.$(OBJEXT)
 @SECURESUPPORT_TRUE@am_secure_jobmgr_OBJECTS =  \
@@ -266,9 +273,9 @@ SOURCES = $(appservice_SOURCES) $(benchmarktest_SOURCES) \
 	$(jobmgr_launcher_SOURCES) $(jobmgrpublish_SOURCES) \
 	$(jobmgrquery_SOURCES) $(localservice_launcher_SOURCES) \
 	$(popc_search_node_SOURCES) $(popc_security_manager_SOURCES) \
-	$(popcloner_SOURCES) $(secure_jobmgr_SOURCES) \
-	$(secure_popc_search_node_SOURCES) $(virtual_jobmgr_SOURCES) \
-	$(virtual_popc_search_node_SOURCES) \
+	$(popcloner_SOURCES) $(popfilemanager_SOURCES) \
+	$(secure_jobmgr_SOURCES) $(secure_popc_search_node_SOURCES) \
+	$(virtual_jobmgr_SOURCES) $(virtual_popc_search_node_SOURCES) \
 	$(virtual_popc_security_manager_SOURCES) \
 	$(virtual_secure_jobmgr_SOURCES) \
 	$(virtual_secure_popc_search_node_SOURCES)
@@ -278,7 +285,7 @@ DIST_SOURCES = $(appservice_SOURCES) $(benchmarktest_SOURCES) \
 	$(jobmgrquery_SOURCES) $(localservice_launcher_SOURCES) \
 	$(popc_search_node_SOURCES) \
 	$(am__popc_security_manager_SOURCES_DIST) \
-	$(am__popcloner_SOURCES_DIST) \
+	$(am__popcloner_SOURCES_DIST) $(popfilemanager_SOURCES) \
 	$(am__secure_jobmgr_SOURCES_DIST) \
 	$(am__secure_popc_search_node_SOURCES_DIST) \
 	$(am__virtual_jobmgr_SOURCES_DIST) \
@@ -329,8 +336,6 @@ LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
-LIBVIRT_CFLAGS = @LIBVIRT_CFLAGS@
-LIBVIRT_LIBS = @LIBVIRT_LIBS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -351,9 +356,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PKG_CONFIG = @PKG_CONFIG@
-PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
-PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -439,6 +441,9 @@ popc_search_node_LDFLAGS = -object
 jobmgr_SOURCES = jobmgr_obj.cc
 jobmgr_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
 jobmgr_LDFLAGS = -object
+popfilemanager_SOURCES = popfilemanager_obj.cc
+popfilemanager_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
+popfilemanager_LDFLAGS = -object
 
 #
 # ViSaG : clementval
@@ -669,6 +674,9 @@ popc_security_manager$(EXEEXT): $(popc_security_manager_OBJECTS) $(popc_security
 popcloner$(EXEEXT): $(popcloner_OBJECTS) $(popcloner_DEPENDENCIES) 
 	@rm -f popcloner$(EXEEXT)
 	$(popcloner_LINK) $(popcloner_OBJECTS) $(popcloner_LDADD) $(LIBS)
+popfilemanager$(EXEEXT): $(popfilemanager_OBJECTS) $(popfilemanager_DEPENDENCIES) 
+	@rm -f popfilemanager$(EXEEXT)
+	$(popfilemanager_LINK) $(popfilemanager_OBJECTS) $(popfilemanager_LDADD) $(LIBS)
 secure_jobmgr$(EXEEXT): $(secure_jobmgr_OBJECTS) $(secure_jobmgr_DEPENDENCIES) 
 	@rm -f secure_jobmgr$(EXEEXT)
 	$(secure_jobmgr_LINK) $(secure_jobmgr_OBJECTS) $(secure_jobmgr_LDADD) $(LIBS)
