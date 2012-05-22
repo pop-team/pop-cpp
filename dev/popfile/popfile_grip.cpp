@@ -35,11 +35,17 @@ POPFileGrip::~POPFileGrip()
 	
 }
 
+/**
+ * Set the current order of the grip. Grip must be used in the order they have been taken
+ */
 void POPFileGrip::set_order(int value)
 {
 	popfilegrip_order = value;
 }
 
+/**
+ * Get the current order of the grip.
+ */
 int POPFileGrip::get_order()
 {
 	return popfilegrip_order;	
