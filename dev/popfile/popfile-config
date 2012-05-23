@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo -L$POPC_LOCATION/lib
+echo -I$POPC_LOCATION/include
