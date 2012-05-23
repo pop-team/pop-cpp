@@ -35,19 +35,33 @@ lib: popc
 	$(AR) $(LIBNAME) *.o tinyxml/*.o
 	
 install: lib object
+ifeq ($(POPC_LOCATION),)
 	@echo "[POPFILE-INSTALL] Copying lib to destination path"
-	ifndef POPC_LOCATION
-	   cp $(LIBNAME) $(POPC_LOCATION)/lib
-	elif
-		cp $(LIBNAME) /usr/local/popc/lib
-	endif	
+	cp $(LIBNAME) /usr/local/popc/lib/
+
+
+else
+	@echo "[POPFILE-INSTALL] Copying lib to destination path"
+	#cp $(LIBNAME) $(POPC_LOCATION)/lib/
 	
+	@echo "[POPFILE-INSTALL] Copying headers to destination path"
+	#cp popfile.h $(POPC_LOCATION)/include/
 	
-	@echo "[POPFILE-INSTALL] Copying headers to destination path"	
-	 
 	@echo "[POPFILE-INSTALL] Copying parallel objects to destination path"
+	mkdir -p $(POPC_LOCATION)/objects/
+	cp $(OBJNAME) $(POPC_LOCATION)/objects/
 	
 	@echo "[POPFILE-INSTALL] Creating base object map for popfile"
+	$(POPC_LOCATION)/objects/$(OBJNAME) -listlong > $(POPC_LOCATION)/objects/$(OBJMAP)
+
+endif
+
+		
+	
+	 
+
+	
+
 
 		
 	
