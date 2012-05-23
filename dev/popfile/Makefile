@@ -31,10 +31,27 @@ all: object popc objmap
 popc: $(DEP) $(POPOBJECTDEP)
 	$(POPCC) -o $(APPNAME) $(POPCC_FLAG) $(POPCC_LIB) $(SOURCES) $(POBJECTDEP)
 	
-lib: $(DEP) $(POPOBJECTDEP)
-	$(POPCC) -c $(SOURCES) $(POBJECTDEP) -o $(LIBO) $(POPCC_FLAG) $(POPCC_LIB) 
-	$(AR) $(LIBNAME) $(LIBO)
+lib: popc
+	$(AR) $(LIBNAME) *.o tinyxml/*.o
+	
+install: lib object
+	@echo "[POPFILE-INSTALL] Copying lib to destination path"
+	ifndef POPC_LOCATION
+	   cp $(LIBNAME) $(POPC_LOCATION)/lib
+	elif
+		cp $(LIBNAME) /usr/local/popc/lib
+	endif	
+	
+	
+	@echo "[POPFILE-INSTALL] Copying headers to destination path"	
+	 
+	@echo "[POPFILE-INSTALL] Copying parallel objects to destination path"
+	
+	@echo "[POPFILE-INSTALL] Creating base object map for popfile"
 
+		
+	
+	
 main:
 	$(POPCC) -o $(APPNAME) main.cpp $(POPFILE_LIB)
 	
@@ -54,7 +71,7 @@ run:
 	$(POPCRUN) $(OBJMAP) ./$(APPNAME) 
 	
 clean:
-	rm -rf _paroc* *.o tinyxml/*.o $(APPNAME) $(APPNAME_STD) $(OBJMAP) $(OBJNAME) hugefile testfile
+	rm -rf _paroc* *.o tinyxml/*.o $(APPNAME) $(APPNAME_STD) $(OBJMAP) $(OBJNAME) $(LIBNAME)
 	
 clean-test:
 	rm -rf hugefile testfile .popfile_hugefile.xml /tmp/.hugefile_strip* /tmp/.testfile_strip*
