@@ -427,8 +427,87 @@ void POPFStream::write(const char* s, std::streamsize n){
 		std::string value(s);
 		popfile_writeToBuffer(value);
 	} else {
-		//TODO
+		cout << "[POPFILE-ERROR] (write) This action is not implement on a non-parallel file yet !" << popcendl;
 	}
+}
+
+/**
+ * Write a char in the stream
+ * @param a	Char value to be written
+ * @return void
+ */
+void POPFStream::write(char a){
+	if(popfile_parallel){
+		std::stringstream s;
+		s << a;
+		popfile_writeToBuffer(s.str());
+	} else {
+		cout << "[POPFILE-ERROR] (write) This action is not implement on a non-parallel file yet !" << popcendl;		
+	}
+}
+
+/**
+ * Write an integer in the stream
+ * @param a	Int value to be written
+ * @return void
+ */
+void POPFStream::write(int a)
+{
+	if(popfile_parallel){
+		std::stringstream s;
+		s << a;
+		popfile_writeToBuffer(s.str());		
+	} else {
+		cout << "[POPFILE-ERROR] (write) This action is not implement on a non-parallel file yet !" << popcendl;		
+	}	
+}
+
+/**
+ * Write a long in the stream
+ * @param a	Long value to be written
+ * @return void
+ */
+void POPFStream::write(long a)
+{
+	if(popfile_parallel){
+		std::stringstream s;
+		s << a;
+		popfile_writeToBuffer(s.str());
+	} else {
+		cout << "[POPFILE-ERROR] (write) This action is not implement on a non-parallel file yet !" << popcendl;		
+	}
+}
+
+/**
+ * Write a float in the stream
+ * @param a	Float value to be written
+ * @return void
+ */
+void POPFStream::write(float a)
+{
+	if(popfile_parallel){
+		std::stringstream s;
+		s << a;
+		popfile_writeToBuffer(s.str());
+	} else {
+		cout << "[POPFILE-ERROR] (write) This action is not implement on a non-parallel file yet !" << popcendl;		
+	}
+}
+
+/**
+ * Write a double in the stream
+ * @param a	Double value to be written
+ * @return void
+ */
+void POPFStream::write(double a)
+{
+	if(popfile_parallel){
+		std::stringstream s;
+		s << a;
+		popfile_writeToBuffer(s.str());
+	} else {
+		cout << "[POPFILE-ERROR] (write) This action is not implement on a non-parallel file yet !" << popcendl;		
+	}	
 }
 
 /**
@@ -439,7 +518,7 @@ void POPFStream::write(std::string value){
 	if(popfile_parallel){
 		popfile_writeToBuffer(value);
 	} else {
-		//TODO
+		popfile_fstream << value.c_str();
 	}	
 }
 
@@ -628,9 +707,70 @@ void POPFStream::get_next_input_buffer(){
 	}
 }
 
-/* implementing operators */
-/*template <class T> POPFStream& POPFStream::operator << (POPFStream& os, const char* str)
+
+
+/**
+ * Write a string in the stream
+ * @param a	String value to be written
+ * @return The current object
+ */
+POPFStream& POPFStream::operator<< (std::string a)
 {
-	os.write(str, strlen(str));
-   return this;
-}*/	
+	write(a);
+	return *this;	
+}
+
+/**
+ * Write a char in the stream
+ * @param a	Char value to be written
+ * @return The current object
+ */
+POPFStream& POPFStream::operator<< (char a)
+{
+	write(a);
+	return *this;		
+}
+
+/**
+ * Write a int in the stream
+ * @param a	Int value to be written
+ * @return The current object
+ */
+POPFStream& POPFStream::operator<< (int a)
+{
+	write(a);	
+	return *this;	
+}
+
+/**
+ * Write a long in the stream
+ * @param a	Long value to be written
+ * @return The current object
+ */
+POPFStream& POPFStream::operator<< (long a)
+{
+	write(a);	
+	return *this;	
+}
+
+/**
+ * Write a float in the stream
+ * @param a	Float value to be written
+ * @return The current object
+ */
+POPFStream& POPFStream::operator<< (float a)
+{
+	write(a);	
+	return *this;	
+}
+
+/**
+ * Write a double in the stream
+ * @param a	Double value to be written
+ * @return The current object
+ */
+POPFStream& POPFStream::operator<< (double a)
+{
+	write(a);	
+	return *this;	
+}

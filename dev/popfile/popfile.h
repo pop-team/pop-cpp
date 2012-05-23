@@ -58,6 +58,13 @@ public:
 	// Write string data in the file
 	void write(std::string value);
 	
+	
+	void write(char a);
+	void write(int a);
+	void write(long a);
+	void write(float a);	
+	void write(double a);
+	
 	// Read string data from the file
 	std::string read(long size);
 	
@@ -93,12 +100,16 @@ public:
 	// Grip to be served in the next call
 	int popfile_served_grip;
 
-	/** popfile operators **/	
-	
-	// 
-	//template <class T> POPFStream& operator << (const T& toWrite);	
-	
-	//template <class T> POPFStream& operator << (POPFStream& os, const char* str);
+	/**
+	 * popfile operators 
+	 * Redifine output operators to be use as cout or others C++ file stream.
+	 */	
+	POPFStream& operator<< (std::string a);
+	POPFStream& operator<< (char a);
+	POPFStream& operator<< (int a);
+	POPFStream& operator<< (long a);
+	POPFStream& operator<< (float a);	
+	POPFStream& operator<< (double a);
 	
 	// Print meta data information to stdout
 	void printInfos();
