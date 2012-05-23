@@ -1,4 +1,30 @@
 #!/bin/bash
 
-echo -L$POPC_LOCATION/lib
-echo -I$POPC_LOCATION/include
+
+POPC_DEFAULT_LOCATION="/usr/local/popc"
+
+if [ -n "${POPC_LOCATION:+x}" ]
+	then
+		POPC_DEFAULT_LOCATION="/usr/local/popc"
+	else
+		POPC_DEFAULT_LOCATION=$POPC_LOCATION
+fi
+
+
+if [ $# -eq 0 ]
+then
+	echo -I$POPC_DEFAULT_LOCATION/include -L$POPC_DEFAULT_LOCATION/lib
+else 
+	if [ $1 == "--libs" ]
+	then
+		echo -L$POPC_DEFAULT_LOCATION/lib
+	elif [ $1 == "--include" ]
+	then
+		echo -I$POPC_DEFAULT_LOCATION/include
+	elif [ $1 == "--objmap" ]
+	then
+		echo $POPC_DEFAULT_LOCATION/objects/objmap		
+	else
+		echo "Usage: $0 [--libs|--include]"
+	fi
+fi
