@@ -46,6 +46,11 @@ public:
 	
 	async conc void asyncCall2(POPString data);
 	
+	
+	sync conc void syncCall1();
+	
+	sync conc void syncCall2(POPString data);
+	
    
    //Save the accesspoint of the POPSearchNode
    sync seq void setPSNAccessPoint(paroc_accesspoint ap);

@@ -19,6 +19,8 @@
 #include <fstream>
 #include <stdarg.h>
 #include <string.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 
 /**
@@ -88,6 +90,47 @@ void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, pa
 {
 	POPFileManager remote(ap);
 	remote.writeToStrip(stringName, data);
+	
+	struct timeval start1, end1, start2, end2, start3, end3;
+   long mtime, seconds, useconds; 
+
+	gettimeofday(&start1, NULL);	
+	remote.asyncCall1();
+	gettimeofday(&end1, NULL);		
+	seconds  = end1.tv_sec  - start1.tv_sec;
+   useconds = end1.tv_usec - start1.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	
+	popfile_log("async call without parameter %ld", mtime);
+	
+
+	gettimeofday(&start1, NULL);	
+	remote.asyncCall2(data);
+	gettimeofday(&end1, NULL);		
+	seconds  = end1.tv_sec  - start1.tv_sec;
+   useconds = end1.tv_usec - start1.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	
+	popfile_log("async call with parameter %ld", mtime);
+	
+	gettimeofday(&start1, NULL);	
+	remote.syncCall1();
+	gettimeofday(&end1, NULL);		
+	seconds  = end1.tv_sec  - start1.tv_sec;
+   useconds = end1.tv_usec - start1.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	
+	popfile_log("sync call without parameter %ld", mtime);
+	
+	gettimeofday(&start1, NULL);	
+	remote.syncCall2(data);
+	gettimeofday(&end1, NULL);		
+	seconds  = end1.tv_sec  - start1.tv_sec;
+   useconds = end1.tv_usec - start1.tv_usec;
+	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+	
+	popfile_log("sync call with parameter %ld", mtime);
+	
 }
 
 /**
@@ -237,5 +280,13 @@ void POPFileManager::asyncCall1(){
 	
 void POPFileManager::asyncCall2(POPString data){
 	popfile_log("[POPFILEMANAGER] ASYNC CALL 2");		
+}
+
+void POPFileManager::syncCall1(){
+	popfile_log("[POPFILEMANAGER] SYNC CALL 1");
+}
+	
+void POPFileManager::syncCall2(POPString data){
+	popfile_log("[POPFILEMANAGER] SYNC CALL 2");		
 }
 
