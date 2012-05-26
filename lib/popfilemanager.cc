@@ -69,11 +69,19 @@ bool POPFileManager::createStrip(POPString absolutePath)
  */
 void POPFileManager::writeToStrip(POPString stringName, POPString data)
 {
+	struct timeval start1, end1, start2, end2, start3, end3;
+	long mtime, seconds, useconds; 
+	gettimeofday(&start1, NULL);	
 	std::ofstream strip;
   	strip.open (stringName.GetString(), std::ios::out | std::ios::app);
   	if(strip.is_open()){
   		strip << data.GetString();
  		strip.close();
+		gettimeofday(&end1, NULL);		
+		seconds  = end1.tv_sec  - start1.tv_sec;
+   	useconds = end1.tv_usec - start1.tv_usec;
+	   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5; 		
+  		popfile_log("[POPFILEMANAGER] Write in strip %d",  mtime);	   
   	} else {
   		popfile_log("[POPFILEMANAGER] Attempt to write data to %s failed", stringName.GetString());
   	}
@@ -90,47 +98,6 @@ void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, pa
 {
 	POPFileManager remote(ap);
 	remote.writeToStrip(stringName, data);
-	
-	struct timeval start1, end1, start2, end2, start3, end3;
-   long mtime, seconds, useconds; 
-
-	gettimeofday(&start1, NULL);	
-	remote.asyncCall1();
-	gettimeofday(&end1, NULL);		
-	seconds  = end1.tv_sec  - start1.tv_sec;
-   useconds = end1.tv_usec - start1.tv_usec;
-	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-	
-	popfile_log("async call without parameter %ld", mtime);
-	
-
-	gettimeofday(&start1, NULL);	
-	remote.asyncCall2(data);
-	gettimeofday(&end1, NULL);		
-	seconds  = end1.tv_sec  - start1.tv_sec;
-   useconds = end1.tv_usec - start1.tv_usec;
-	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-	
-	popfile_log("async call with parameter %ld", mtime);
-	
-	gettimeofday(&start1, NULL);	
-	remote.syncCall1();
-	gettimeofday(&end1, NULL);		
-	seconds  = end1.tv_sec  - start1.tv_sec;
-   useconds = end1.tv_usec - start1.tv_usec;
-	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-	
-	popfile_log("sync call without parameter %ld", mtime);
-	
-	gettimeofday(&start1, NULL);	
-	remote.syncCall2(data);
-	gettimeofday(&end1, NULL);		
-	seconds  = end1.tv_sec  - start1.tv_sec;
-   useconds = end1.tv_usec - start1.tv_usec;
-	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-	
-	popfile_log("sync call with parameter %ld", mtime);
-	
 }
 
 /**
