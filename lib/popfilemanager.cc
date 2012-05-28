@@ -183,6 +183,7 @@ void POPFileManager::getNeighborsFromPSN(){
  */
 int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates, POPString* stripNames, POPString stripPrefix, bool local){
 	int index=0;
+	int maxStrip = nb;
 	
 	// If a local strip is already present. Set the index to the next empty places. 
 	if(local){
@@ -203,12 +204,14 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
    	POPString stripname(strip.c_str());
    	if(tmpPfm.createStrip(stripname)){
    		popfile_log("[POPFILEMANAGER] Strip creation success %d", index);
-   		candidates[index] = (*it); 		//store accesspoint of the node on which the strip is created
-   		popfile_log("[POPFILEMANAGER] Strip creation success 2");   		
+   		candidates[index] = (*it); 		//store accesspoint of the node on which the strip is created 		
    		stripNames[index] = stripname;	//store the strip name
-   		popfile_log("[POPFILEMANAGER] Strip creation success3");   		
+   		popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.GetString());
    		index++;
-	   	popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.GetString());
+   		if(index = maxStrip){
+   			it = pfm_neighbors.end();
+   			popfile_log("[POPFILEMANAGER] max strips reached");
+   		}
    	}
    }
 	return index; 
