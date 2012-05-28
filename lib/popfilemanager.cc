@@ -101,9 +101,7 @@ void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, pa
  */
 POPString POPFileManager::readFromStrip(POPString stripName, long start, long offset)
 {
-	//TODO Check to not seek after the end of the strip
 	int length=0;
-	popfile_log("[POPFILEMANAGER] Opening strip for read operation : %s offset %ld", stripName.GetString(), offset);
 	std::ifstream strip;
 	strip.open(stripName.GetString(), ios::binary);
 	
@@ -114,22 +112,15 @@ POPString POPFileManager::readFromStrip(POPString stripName, long start, long of
 		return p;	
 	}
 		
-	popfile_log("[POPFILEMANAGER] opened size: %d", length);	
 	strip.seekg (0, ios::beg);
-	popfile_log("[POPFILEMANAGER] seek to begin");
 	int crt_pos = strip.tellg();
-	popfile_log("[POPFILEMANAGER] crt pos %d", crt_pos);	
 	strip.seekg(start, ios::cur);
-	popfile_log("[POPFILEMANAGER] seek to start");
 	char* buffer;
 	buffer = new char[offset+1];
 	buffer[offset] = '\0';
 	strip.read(buffer, offset);
-	popfile_log("[POPFILEMANAGER] read into buffer start");
 	strip.close();
-	popfile_log("[POPFILEMANAGER] close %d", strlen(buffer));
 	POPString data(buffer);
-	popfile_log("[POPFILEMANAGER] before return %d", data.Length());
 	return data;
 }
 
@@ -187,13 +178,12 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
 	
 	// If a local strip is already present. Set the index to the next empty places. 
 	if(local){
-		popfile_log("[POPFILEMANAGER] Find resources for strip with a local one");
 		index=1;
 		nb -= 1;	
 	}	
 	std::string str_stripname(stripPrefix.GetString());
 	str_stripname.append("_strip");
-	popfile_log("[POPFILEMANAGER] Look for %d nodes for strips %d", nb, local);
+	popfile_log("[POPFILEMANAGER] Look for %d nodes for strips", nb);
 	std::list<paroc_accesspoint>::iterator it;
    for(it = pfm_neighbors.begin(); it != pfm_neighbors.end(); it++){
    	popfile_log("[POPFILEMANAGER] Check creation of strip on %s", (*it).GetAccessString());
@@ -204,13 +194,11 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
    	strip.append(intconverter.str());
    	POPString stripname(strip.c_str());
    	if(tmpPfm.createStrip(stripname)){
-   		popfile_log("[POPFILEMANAGER] Strip creation success %d", index);
    		candidates[index] = (*it); 		//store accesspoint of the node on which the strip is created 		
    		stripNames[index] = stripname;	//store the strip name
    		popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.GetString());
    		index++;
    		if(index = maxStrip){
-   			popfile_log("[POPFILEMANAGER] max strips reached");
    			break;
    		}
    	}
