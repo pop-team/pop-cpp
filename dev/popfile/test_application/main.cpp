@@ -67,7 +67,7 @@ int main(int argc, char** argv)
    	case 1: {
 	   	gettimeofday(&start, NULL);	
 
-			pfstream.open(FILE2, 4, STRIP_FACTOR);
+			pfstream.open(FILE2, 4, STRIP_FACTOR, true);
 
 			for (int i = 0; i < FILE_SIZE; i++){
 				pfstream.write("start1024___");
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
    		break; 		
    	case 3: {
    		gettimeofday(&start, NULL);	
-			pfstream.open(FILE2, 4, STRIP_FACTOR);
+			pfstream.open(FILE2, 4, STRIP_FACTOR, true);
 			POPFileGrip grip = pfstream.read_in_background(25000000);			
 			std::string data = pfstream.get_read(grip);
 			cout << data.substr(2048, 2048) << popcendl;
@@ -135,7 +135,7 @@ int main(int argc, char** argv)
    		break;	
   		case 4: {
    		gettimeofday(&start, NULL);	
-			pfstream.open(FILE2, 4, STRIP_FACTOR);
+			pfstream.open(FILE2, 4, STRIP_FACTOR, true);
 			long size = FILE_SIZE;
 			std::string data = pfstream.read(FILE_SIZE*256);		
 			gettimeofday(&end, NULL);
@@ -161,7 +161,7 @@ int main(int argc, char** argv)
    		}
 	   	break;
 		case 6: {
-	   		pfstream.open(FILE2, 4, STRIP_FACTOR);
+	   		pfstream.open(FILE2, 4, STRIP_FACTOR, true);
 	   		if(pfstream.is_open()) {
 	   			cout << "[POPFILETEST] File is open" << popcendl;
 	   		}
