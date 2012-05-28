@@ -1,8 +1,8 @@
 /**
  * File: popfile.cpp
- * Author: Valentin Clement
+ * Author: Valentin Clement (clementval)
  * Description: Implementation of popfile object. A popfile object is a parallel file distributed over the nodes available on the network.
- * Creation date: 2012/03/25
+ * Creation date: 03.25.2012
  * 
  * Change Log: 
  * Author		Date			Description
@@ -134,13 +134,20 @@ void POPFStream::open(const char* filename)
  * Creation of a new parallel file
  * @param filename the filename in relatrive or absolute path
  * @param stripnumber Number of strip for the file. Default is 2.
- * @param offset Offset to write and read to strip. Default is 1024.
+ * @param offset Offset to write and read to strip in Kb. Default is 100Kb. Can't be equal or lower than 0.
  * @return TRUE if the creation succeed. FALSE in any other case. Look the log file for more details. 
  */
-bool POPFStream::open(const char* filename, const int stripnumber=2, const long offset=1024){
+bool POPFStream::open(const char* filename, const int stripnumber=2, long offset=100){
+	
+	// Check offset to be greater than 0
+	if(offset <= 0) offset = 1;
+	
+	offset = offset * 1024; // Offset in Kb
+	
 	//Init special filename for meta data
 	popfile_init_filename(filename);
 
+	
 	std::string str_filename("/tmp/.");
 	str_filename.append(filename);
 	std::string stripPrefix = str_filename;
@@ -579,7 +586,7 @@ POPFileGrip POPFStream::read_in_background(long size)
 					popfile_reader_ref[popfile_current_reader].read_in_strip(popfile_current_reader_offset, popfile_offset);
 					size -= popfile_offset;
 				}
-				cout << "[POPFILE-DEBUG] Read in background size=" << size << popcendl;									
+				//cout << "[POPFILE-DEBUG] Read in background size=" << size << popcendl;									
 				get_next_reader();				
 			}
 		}
