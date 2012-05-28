@@ -200,7 +200,7 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, long offset
 			// Procces found resources
 			popfile_writebuffers = new POPFileBuffer[resources];	
 	
-			for(int i = 0; i < resources; i++){
+			for(int i = 0; i < stripnumber; i++){
 				if(!candidates[i].IsEmpty()){
 					std::string strip_path("/tmp/");
 					std::string strip_name(stripNames[i].GetString());
