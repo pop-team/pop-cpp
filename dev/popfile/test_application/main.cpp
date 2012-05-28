@@ -134,19 +134,20 @@ int main(int argc, char** argv)
    		}
    		break;	
   		case 4: {
-   		gettimeofday(&start, NULL);	
-			pfstream.open(FILE2, 4, STRIP_FACTOR, true);
-			long size = FILE_SIZE;
-			std::string data = pfstream.read(FILE_SIZE*256);		
-			gettimeofday(&end, NULL);
-			pfstream.close();
-			seconds  = end.tv_sec  - start.tv_sec;
-			useconds = end.tv_usec - start.tv_usec;
-			mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;			
-   		cout << "[POPFILETEST] Reading time : [ms]" << mtime << popcendl;		   			
+   			gettimeofday(&start, NULL);	
+				pfstream.open(FILE2, 4, STRIP_FACTOR, true);
+				long size = FILE_SIZE;
+				std::string data = pfstream.read(FILE_SIZE*256);		
+				gettimeofday(&end, NULL);
+				pfstream.close();
+				seconds  = end.tv_sec  - start.tv_sec;
+				useconds = end.tv_usec - start.tv_usec;
+				mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;			
+   			cout << "[POPFILETEST] Reading time : [ms]" << mtime << popcendl;		   			
    		}
    		break;
    	case 5: {
+	   		gettimeofday(&start, NULL);	   		
 	   		pfstream.open("testfile");
 	   		if(pfstream.is_open()) {
 	   			cout << "[POPFILETEST] File is open" << popcendl;
@@ -157,7 +158,12 @@ int main(int argc, char** argv)
 	   			cout << "[POPFILETEST] File is standard" << popcendl;
 	   		}
 	   		pfstream.scatter();
-	   		pfstream.close();	   		
+	   		pfstream.close();	
+				gettimeofday(&end, NULL);	   		
+				seconds  = end.tv_sec  - start.tv_sec;
+				useconds = end.tv_usec - start.tv_usec;
+				mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;	
+   			cout << "[POPFILETEST] Scatter time : [ms]" << mtime << popcendl;						   		   		
    		}
 	   	break;
 		case 6: {
