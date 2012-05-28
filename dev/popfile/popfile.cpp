@@ -137,7 +137,7 @@ void POPFStream::open(const char* filename)
  * @param offset Offset to write and read to strip in Kb. Default is 100Kb. Can't be equal or lower than 0.
  * @return TRUE if the creation succeed. FALSE in any other case. Look the log file for more details. 
  */
-bool POPFStream::open(const char* filename, const int stripnumber=2, long offset=100){
+bool POPFStream::open(const char* filename, const int stripnumber=2, long offset=100, bool local=true){
 	
 	// Check offset to be greater than 0
 	if(offset <= 0) offset = 1;
@@ -188,36 +188,49 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, long offset
 	cout << "[POPFILE] File will be create: name: " << str_filename << " path: " << path << popcendl;*/
 	
 	if(!popfile_try_open_parallel()){
-		//Create an array of possible popfilemanager accesspoint
+		// Create an array of possible popfilemanager accesspoint
 		paroc_accesspoint candidates[stripnumber];	
 		POPString stripNames[stripnumber];
-		//Contact the local PFM to get resources
+		// Contact the local PFM to get resources
 		POPFileManager pfm(pfm_ap);
-		POPString localStrip(str_filename.c_str());
-		if(!pfm.createStrip(localStrip)){
-			cout << "[POPFILE] Error: can't create the local strip ... operation failed" << popcendl;
-			return false;
+		
+		// If local flag is TRUE, create a strip on the local node. 
+		if(local){
+			POPString localStrip(str_filename.c_str());
+			if(!pfm.createStrip(localStrip)){
+				cout << "[POPFILE] Error: can't create the local strip ... operation failed" << popcendl;
+				return false;
+			}
+			candidates[0] = pfm_ap;
+			stripNames[0] = localStrip;
+			popfile_strip_number++;	
 		}
-		candidates[0] = pfm_ap;
-		stripNames[0] = localStrip;
-		popfile_strip_number++;
+		
 		int resources;		
 		POPString pops_stripPrefix = stripPrefix;
-		if((resources = pfm.findResourcesForStrip(stripnumber, candidates, stripNames, pops_stripPrefix)) != 0){	
-			//Set metadata
+		if((resources = pfm.findResourcesForStrip(stripnumber, candidates, stripNames, pops_stripPrefix, local)) != 0){	
+			// Set metadata
 			std::string metadata_filename(filename);
-			std::string metadata_path("/Users/clementval/versioning/popc/popfile_popc2.0.1/dev/popfile/");
+		
+			// Get the current working directory
+			char *path=NULL;
+			size_t size;
+			path=getcwd(path,size);
+	
+			// Set the meta-data filename and path
+			std::string metadata_path(path);
+			metadata_path.append("/");	// Add ending slash
 			popfile_metadata.set_filename(metadata_filename, metadata_path);
 			popfile_metadata.set_offset(offset);
 			
-			//Procces found resources
+			// Procces found resources
 			popfile_writebuffers = new POPFileBuffer[resources];	
 	
 			for(int i = 0; i < resources; i++){
 				if(!candidates[i].IsEmpty()){
 					std::string strip_path("/tmp/");
 					std::string strip_name(stripNames[i].GetString());
-					if(i == 0){
+					if(i == 0 && local){
 						popfile_metadata.addStripInfo(true, i, strip_path, strip_name, offset, candidates[i].GetAccessString());	
 					} else{ 
 						popfile_metadata.addStripInfo(false, i, strip_path, strip_name, offset, candidates[i].GetAccessString());

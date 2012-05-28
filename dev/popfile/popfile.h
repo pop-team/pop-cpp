@@ -77,7 +77,7 @@ public:
 	void get_infos(infos_t* infos);
 	
 	// Open a file and create it if it doesn't exists
-	bool open(const char* filename, const int stripnumber, long striping_factor);
+	bool open(const char* filename, const int stripnumber, long striping_factor, bool local);
 
 	// Scatter a standard file into a parallel file
 	void scatter();
