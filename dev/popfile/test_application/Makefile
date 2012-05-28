@@ -16,7 +16,7 @@ APPNAME=popfile_test
 
 
 all: $(DEPENDENCIES)
-	$(POPCC) -o $(APPNAME) -I$(POPLOCATION)/include -L$(POPLOCATION)/lib -lpopfile $(SOURCES)
+	$(POPCC) -o $(APPNAME) $(SOURCES) -I$(POPLOCATION)/include -L$(POPLOCATION)/lib -lpopfile
 
 run:	
 	$(POPCRUN) $(POPLOCATION)/objects/objmap ./$(APPNAME)
