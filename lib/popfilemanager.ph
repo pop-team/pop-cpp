@@ -30,7 +30,7 @@ public:
    sync seq bool createStrip(POPString abslotuePath);
    
    //Find resource to create strips
-   sync conc int findResourcesForStrip(int nb, [in, out, size=nb] paroc_accesspoint* candidate, [in, out, size=nb] POPString* stripNames, POPString stripPrefix);
+   sync conc int findResourcesForStrip(int nb, [in, out, size=nb] paroc_accesspoint* candidate, [in, out, size=nb] POPString* stripNames, POPString stripPrefix, bool local);
    
 	//Write to strip
 	async conc void writeToStrip(POPString stripName, POPString data);
@@ -40,18 +40,6 @@ public:
 
 	// Read a block of data from the strip
 	sync conc POPString readFromStrip(POPString stripName, long start, long offset);
-
-	
-	
-	async conc void asyncCall1();
-	
-	async conc void asyncCall2(POPString data);
-	
-	
-	sync conc void syncCall1();
-	
-	sync conc void syncCall2(POPString data);
-	
    
    //Save the accesspoint of the POPSearchNode
    sync seq void setPSNAccessPoint(paroc_accesspoint ap);

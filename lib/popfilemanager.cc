@@ -69,19 +69,11 @@ bool POPFileManager::createStrip(POPString absolutePath)
  */
 void POPFileManager::writeToStrip(POPString stringName, POPString data)
 {
-	struct timeval start1, end1, start2, end2, start3, end3;
-	long mtime, seconds, useconds; 
-	gettimeofday(&start1, NULL);	
 	std::ofstream strip;
   	strip.open (stringName.GetString(), std::ios::out | std::ios::app);
   	if(strip.is_open()){
   		strip << data.GetString();
  		strip.close();
-		gettimeofday(&end1, NULL);		
-		seconds  = end1.tv_sec  - start1.tv_sec;
-   	useconds = end1.tv_usec - start1.tv_usec;
-	   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5; 		
-  		popfile_log("[POPFILEMANAGER] Write in strip %d",  mtime);	   
   	} else {
   		popfile_log("[POPFILEMANAGER] Attempt to write data to %s failed", stringName.GetString());
   	}
@@ -186,11 +178,17 @@ void POPFileManager::getNeighborsFromPSN(){
  * @param candidates		An output array that will store the candidates for the strips
  * @param strNames		An output array that will store the real strip names
  * @param stripPrefix	The prefix used to create strip names
+ * @param local			If TRUE, there is a local strip
  * @return The actual number of strip created
  */
-int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates, POPString* stripNames, POPString stripPrefix){
-	int index=1;
-	nb -= 1;
+int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates, POPString* stripNames, POPString stripPrefix, bool local){
+	int index=0;
+	
+	// If a local strip is already present. Set the index to the next empty places. 
+	if(local){
+		int index=1;
+		nb -= 1;	
+	}	
 	std::string str_stripname(stripPrefix.GetString());
 	str_stripname.append("_strip");
 	popfile_log("[POPFILEMANAGER] Look for %d nodes for strips", nb);
@@ -239,21 +237,3 @@ int popfile_log(const char *format,...)
 	fclose(f);
 	return 0;
 }
-
-
-void POPFileManager::asyncCall1(){
-	popfile_log("[POPFILEMANAGER] ASYNC CALL 1");
-}
-	
-void POPFileManager::asyncCall2(POPString data){
-	popfile_log("[POPFILEMANAGER] ASYNC CALL 2");		
-}
-
-void POPFileManager::syncCall1(){
-	popfile_log("[POPFILEMANAGER] SYNC CALL 1");
-}
-	
-void POPFileManager::syncCall2(POPString data){
-	popfile_log("[POPFILEMANAGER] SYNC CALL 2");		
-}
-
