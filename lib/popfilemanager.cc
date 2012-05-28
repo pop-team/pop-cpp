@@ -1,8 +1,8 @@
 /**
- * File : popfilemanager.cc
- * Author : Valentin Clement
- * Description : Implementation of the parallel object POPFileManager. This object is in charge of POPFile management. 
- * Creation date : 2010/11/12
+ * File: popfilemanager.cc
+ * Author: Valentin Clement (clementval)
+ * Description: Implementation of the parallel object POPFileManager. This object is in charge of POPFile management. 
+ * Creation date: 03.25.2012
  *
  * Change Log: 
  * Author		Date			Description

@@ -1,13 +1,14 @@
 /**
  * File : popfilemanager.ph
- * Author : Valentin Clement
+ * Author : Valentin Clement (clementval)
  * Description : Declaration of the parallel object POPFileManager. This object is in charge of POPFile management. 
- * Creation date : 2010/11/12
+ * Creation date : 03.25.2012
  * 
  * Change Log: 
  * Author		Date			Description
  * clementval	03.25.2012	Creation of this file
  */
+ 
 #ifndef POPFILEMANAGER_H_INCLUDE
 #define POPFILEMANAGER_H_INCLUDE
 
