@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 POPC_DEFAULT_LOCATION="/usr/local/popc"
 
 if [ -n "${POPC_LOCATION:+x}" ]
@@ -13,11 +12,11 @@ fi
 
 if [ $# -eq 0 ]
 then
-	echo -I$POPC_DEFAULT_LOCATION/include -L$POPC_DEFAULT_LOCATION/lib
+	echo -I$POPC_DEFAULT_LOCATION/include -L$POPC_DEFAULT_LOCATION/lib -lpopfile
 else 
 	if [ $1 == "--libs" ]
 	then
-		echo -L$POPC_DEFAULT_LOCATION/lib
+		echo -L$POPC_DEFAULT_LOCATION/lib -lpopfile
 	elif [ $1 == "--include" ]
 	then
 		echo -I$POPC_DEFAULT_LOCATION/include
