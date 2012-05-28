@@ -190,9 +190,14 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, long offset
 			char *path=NULL;
 			size_t size;
 			path=getcwd(path,size);
+			
+			if(path == NULL){
+				cout << "[POPFILE-ERROR] Can't get local path. File will be stored under /tmp" << popcendl;	
+				std::string metadata_path("/tmp");			
+			}
 	
 			// Set the meta-data filename and path
-			std::string metadata_path(path);
+
 			metadata_path.append("/");	// Add ending slash
 			popfile_metadata.set_filename(metadata_filename, metadata_path);
 			popfile_metadata.set_offset(offset);
