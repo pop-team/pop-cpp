@@ -22,6 +22,9 @@ const char* POPFStream::POPFILE_METADATA_PREFIX = ".popfile_";
 const char* POPFStream::POPFILE_METADATA_SUFFIX = ".xml";
 const char* POPFStream::POPFILE_POPFILEMANAGER_LOCAL = "socket://127.0.0.1:2712";
 
+const int POPFStream::POPFILE_SCATTER_STRIP_NUMBER = 4;			// 4 strips
+const long POPFStream::POPFILE_SCATTER_STRIP_FACTOR = 1024; 	// 1MB Strip factor
+
 /**
  * POPFStream constructor without parameters.
  */
@@ -148,44 +151,15 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, long offset
 	popfile_init_filename(filename);
 
 	
+	
+	/* 
+	 * Set strip path. Should set in a different directory as tmp is not persistent. For the moment, the only 
+	 * available directory on all nodes 
+	 */
 	std::string str_filename("/tmp/.");
 	str_filename.append(filename);
 	std::string stripPrefix = str_filename;
 	str_filename.append("_strip0");	
-	
-	
-
-	
-
-
-	//TODO avoid create parallel file for already created parallel file. 
-
-
-	//Get path and filename to create the file
-	/*popfile_metadata.set_offset(offset);
-	std::string str_filename(filename);	
-	std::string path;
-  	std::size_t found;
-	found=str_filename.find_first_of("/");
-	if(found == std::string::npos){
-		char * pPath;
-		pPath = getenv("PWD");
-		if (pPath!=NULL){
-			cout << "GET CURRENT WORKING DIRECTORY" << (*pPath) << popcendl;
-			path = (*pPath);
-		} else {
-			cout << "CURRENT WORKING DIRECTORY IS NULL" << popcendl;	
-		}		
-	} else {
-		found = str_filename.find_last_of("/");
-		if(found==std::string::npos)
-			return false;
-		path = str_filename.substr(0, found);
-		str_filename = str_filename.substr(found+1);
-	}
-	popfile_metadata.set_filename(str_filename, path);
-	
-	cout << "[POPFILE] File will be create: name: " << str_filename << " path: " << path << popcendl;*/
 	
 	if(!popfile_try_open_parallel()){
 		// Create an array of possible popfilemanager accesspoint
@@ -292,7 +266,9 @@ bool POPFStream::popfile_try_open_parallel()
 		else 
 			return false;
 	} else {
-		//TODO look for remote file
+		
+		/* TODO: Look on remote nodes */
+		
 		return false;
 	}
 	return false;
@@ -306,7 +282,7 @@ bool POPFStream::popfile_try_open_parallel()
 void POPFStream::scatter(){
 	if(!popfile_parallel){
 		if(is_open()){
-			open(popfile_filename.c_str(), 2, 10000000); // TODO put variable in constant
+			open(popfile_filename.c_str(), POPFILE_SCATTER_STRIP_NUMBER, POPFILE_SCATTER_STRIP_FACTOR);
 			long begin, end, size;
 			popfile_fstream.seekg(0, std::ios::beg);			
 			begin = popfile_fstream.tellg();
@@ -397,9 +373,9 @@ void POPFStream::get_infos(infos_t* info)
 {
 	if(popfile_parallel){
 		(*info).nb_strips = popfile_metadata.meta_strips.size();
-		(*info).offset = popfile_metadata.get_offset();	
+		(*info).strip_factor = popfile_metadata.get_offset();	
 	} else {
-		//TODO
+		cout << "[POPFILE-ERROR] This action is not permitted on a non-parallel file !" << popcendl;
 	}
 } 
 
@@ -629,7 +605,7 @@ void POPFStream::get_next_reader(){
 	
 }
 
-/** TODO blocking 
+/**
  * Read the parallel file by block of the size of offset. Block is the data is not read yet
  * @return String of offset's size filled with data
  */

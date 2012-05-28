@@ -28,7 +28,7 @@ namespace popfile {
 	
 struct infos_t {
 	int nb_strips;
-	long offset;
+	long strip_factor;
 };
 
 class POPFStream {
@@ -121,6 +121,9 @@ private:
 	static const char* POPFILE_METADATA_PREFIX;
 	static const char* POPFILE_METADATA_SUFFIX;
 	static const char* POPFILE_POPFILEMANAGER_LOCAL;
+	
+	static const int POPFILE_SCATTER_STRIP_NUMBER;
+	static const long POPFILE_SCATTER_STRIP_FACTOR;
 
 
 	/** Private attributes of popfile **/
