@@ -1,8 +1,8 @@
 /**
- * PROJECT:		POPFile
- * AUTHOR:		clementval
- *	FILENAME:	popfile_metadata.cpp
- * CREATION:	03.25.2012
+ * File: popfile_metadata.cpp
+ * Author: Valentin Clement (clementval)
+ * Description: Object holding the POPFile meta-data
+ * Creation date: 03.25.2012
  * 
  * Change Log: 
  * Author		Date			Description

@@ -1,8 +1,8 @@
 /**
- * File : popfile_metadata.h
- * Author : Valentin Clement (clementval)
- * Description : Declaration of the parallel object POPFileManager. This object is in charge of POPFile management. 
- * Creation date : 2012/03/25
+ * File: popfile_metadata.h
+ * Author: Valentin Clement (clementval)
+ * Description: Declaration of the parallel object POPFileManager. This object is in charge of POPFile management. 
+ * Creation date: 03.25.2012
  * 
  * Change Log: 
  * Author		Date			Description

@@ -1,8 +1,8 @@
 /**
  * File: popfile_grip.cpp
- * Author: Valentin Clement
+ * Author: Valentin Clement (clementval)
  * Description: Implementation of POPFileGrip object. A POPFileGrip is a grip to read data from read in background process.
- * Creation date: 2012/03/25
+ * Creation date: 05.12.2012
  * 
  * Change Log: 
  * Author		Date			Description

@@ -3,6 +3,7 @@
  * Author : Valentin Clement
  * Description : Implementation of the parallel object POPFileReader. This object is in charge of asynchronous read of strip. 
  * Creation date : 05/04/2012
+ * 
  * Change Log: 
  * Author		Date			Description
  * clementval	05.04.2012	Creation of this file
@@ -58,11 +59,10 @@ void POPFileReader::set_id(int value)
  */
 void POPFileReader::read_in_strip(long start, long offset)
 {	
-	cout << "[POPFILEREADER] Read in strip " << strip_path.GetString() << " from:" << start << " to:" << start+offset << popcendl;	
+	//cout << "[POPFILEREADER] Read in strip " << strip_path.GetString() << " from:" << start << " to:" << start+offset << popcendl;	
 	POPString data = pfm_ref->readFromStrip(strip_path, start, offset);
-	cout << "[POPFILEREADER] Read from strip (bytes) " << strlen(data.GetString()) << popcendl;	
+	//cout << "[POPFILEREADER] Read from strip (bytes) " << strlen(data.GetString()) << popcendl;	
 	popfilebuffer_ref->add_data(data);
-	//cout << "Sem post: id = " << identifier << popcendl;	
 	sem_post(pt_read_locker);
 }
 

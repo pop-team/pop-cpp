@@ -1,8 +1,8 @@
 /**
  * File: popfile_grip.h
- * Author: Valentin Clement
+ * Author: Valentin Clement (clementval)
  * Description: Header declaration of POPFileGrip object. This object is used as a grip in read in background operation
- * Creation date: 2012/03/25
+ * Creation date: 03.25.2012
  * 
  * Change Log: 
  * Author		Date			Description

@@ -1,8 +1,8 @@
 /**
  * File: popfile.h
- * Author: Valentin Clement
+ * Author: Valentin Clement (clementval)
  * Description: header file for popfile object
- * Creation date: 2012/03/25
+ * Creation date: 03.25.2012
  * 
  * Change Log: 
  * Author		Date			Description
@@ -77,7 +77,7 @@ public:
 	void get_infos(infos_t* infos);
 	
 	// Open a file and create it if it doesn't exists
-	bool open(const char* filename, const int stripnumber, const long striping_factor);
+	bool open(const char* filename, const int stripnumber, long striping_factor);
 
 	// Scatter a standard file into a parallel file
 	void scatter();

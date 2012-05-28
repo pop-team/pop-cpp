@@ -1,3 +1,13 @@
+/**
+ * File: popfilebuffer.h
+ * Author: Valentin Clement (clementval)
+ * Description: Implementation of the POPFileBuffer. This Object holds data before sending them to the POPFileManager. 
+ * Creation date: 04.23.2012
+ * 
+ * Change Log: 
+ * Author		Date			Description
+ * clementval	04.23.2012	Creation of this file
+ */
 #include "popfilebuffer.h"
 #include "popfilemanager.ph"
 #include "paroc_thread.h"
@@ -65,27 +75,7 @@ void POPFileBuffer::flush(){
    	useconds = end1.tv_usec - start1.tv_usec;
 	   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
 		
-	
-		cout << "[POPFILEBUFFER] Flushing buffer[" << identifier << "] "<< remainingCapacity  <<"/" << popfile_buffer_out.str().length() << ":" << mtime << popcendl;
-		
-		
-		
-		/*gettimeofday(&start2, NULL);			
-		pfmref->writeToStrip(stripPath, data);	
-		gettimeofday(&end2, NULL);
-	   seconds  = end2.tv_sec  - start2.tv_sec;
-   	useconds = end2.tv_usec - start2.tv_usec;
-	   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		cout << "[POPFILEBUFFER] async call without parameter [" << identifier << "] time:" << mtime << popcendl;
-		
-		
-		gettimeofday(&start3, NULL);			
-		pfmref->writeToStrip(stripPath, data);
-		gettimeofday(&end3, NULL);
-	   seconds  = end3.tv_sec  - start3.tv_sec;
-   	useconds = end3.tv_usec - start3.tv_usec;
-	   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-		cout << "[POPFILEBUFFER] async call with parameter [" << identifier << "] time:" << mtime << popcendl;		*/
+		cout << "[POPFILEBUFFER] Flushing buffer[" << identifier << "] " << " (Remaining Capacity="<< remainingCapacity  <<") - (Data flushed=" << popfile_buffer_out.str().length() << "): time [ms]" << mtime << popcendl;
 		
 		
 		popfile_buffer_out.str("");

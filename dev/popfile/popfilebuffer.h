@@ -1,7 +1,7 @@
 /**
  * File: popfilebuffer.h
  * Author: Valentin Clement
- * Description: special buffer to run with popfile
+ * Description: Declaration of the POPFileBuffer. This Object holds data before sending them to the POPFileManager.
  * Creation date: 04.23.2012
  * 
  * Change Log: 
