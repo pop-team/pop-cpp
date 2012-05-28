@@ -188,7 +188,7 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
 	// If a local strip is already present. Set the index to the next empty places. 
 	if(local){
 		popfile_log("[POPFILEMANAGER] Find resources for strip with a local one");
-		int index=1;
+		index=1;
 		nb -= 1;	
 	}	
 	std::string str_stripname(stripPrefix.GetString());
