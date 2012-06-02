@@ -55,15 +55,29 @@ public:
 	// Write char data in the file
 	void write(const char* s, std::streamsize n);	
 	
-	// Write string data in the file
+	// Write string data into the stream 
 	void write(std::string value);
 	
-	
+	// Write char into the stream
 	void write(char a);
+	
+	// Write int into the stream
 	void write(int a);
+	
+	// Write long into the stream
 	void write(long a);
+	
+	// Write float into the stream
 	void write(float a);	
+	
+	// Write double into the stream
 	void write(double a);
+
+	// Get the positipon of the get pointer	
+	long tellg();
+	
+	// Set the position of the get pointer
+	void seekg(long a);
 	
 	// Read string data from the file
 	std::string read(long size);
@@ -94,11 +108,20 @@ public:
 	// Get data read by the read in background call
 	std::string get_read(POPFileGrip grip);	
 	
-	// Current grip
-	int popfile_current_grip;
+	// Returns true is the reading/writing operations fails
+	bool bad();
+	
+	/* Returns true in the same case as bas(), but also in the case that the format error happens, like when an alphabetical 
+		character is extracted when we are trying to read an integer number. */
+	bool fail();
+	
+	// Return if a file opening for reading as reached the end.
+	bool eof();
+	
+	// Returns false in the same cases in which calling any of the previous operations would return true.
+	bool good();
+	
 
-	// Grip to be served in the next call
-	int popfile_served_grip;
 
 	/**
 	 * popfile operators 
@@ -113,8 +136,6 @@ public:
 	
 	// Print meta data information to stdout
 	void printInfos();
-	
-
 
 private:
 	/** Private constants of popfile **/
@@ -145,6 +166,9 @@ private:
 	
 	// Index of the current popfile input buffer
 	int popfile_current_input_buffer;
+	
+	// Used by the bad() operation to signal an error in the writing reading process. 
+	bool popfile_badflag;
 	
 	// string representing the name of the original file 
 	std::string popfile_filename;
@@ -179,10 +203,14 @@ private:
 	// Value representing the current reader to be called
 	int popfile_current_reader;
 	
-	//
+	// Current position of the get pointer in the strip
 	int popfile_current_reader_offset;
 	
-	
+	// Current grip
+	int popfile_current_grip;
+
+	// Grip to be served in the next call
+	int popfile_served_grip;
 
 
 	/** Private methods of popfile **/

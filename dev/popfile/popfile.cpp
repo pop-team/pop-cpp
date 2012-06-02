@@ -18,12 +18,11 @@
 using namespace popfile;
 
 // Constant declaration
-const char* POPFStream::POPFILE_METADATA_PREFIX = ".popfile_";
-const char* POPFStream::POPFILE_METADATA_SUFFIX = ".xml";
-const char* POPFStream::POPFILE_POPFILEMANAGER_LOCAL = "socket://127.0.0.1:2712";
-
-const int POPFStream::POPFILE_SCATTER_STRIP_NUMBER = 4;			// 4 strips
-const long POPFStream::POPFILE_SCATTER_STRIP_FACTOR = 1024; 	// 1MB Strip factor
+const char* POPFStream::POPFILE_METADATA_PREFIX = ".popfile_";								// Prefix of the meta-data file
+const char* POPFStream::POPFILE_METADATA_SUFFIX = ".xml";									// Extension of the meta-data file
+const char* POPFStream::POPFILE_POPFILEMANAGER_LOCAL = "socket://127.0.0.1:2712";	// Base URL for the POPFileManager
+const int POPFStream::POPFILE_SCATTER_STRIP_NUMBER = 4;										// 4 strips
+const long POPFStream::POPFILE_SCATTER_STRIP_FACTOR = 1024; 								// 1MB Strip factor
 
 /**
  * POPFStream constructor without parameters.
@@ -79,6 +78,7 @@ void POPFStream::popfile_init()
 	popfile_current_reader_offset = 0;
 	popfile_current_grip = 0;
 	popfile_served_grip = 0;
+	popfile_badflag = false;	
 }
 
 /**
@@ -377,6 +377,7 @@ bool POPFStream::is_parallel()
 
 /**
  * Get information about the parallel file.
+ * @return void
  */
 void POPFStream::get_infos(infos_t* info)
 {
@@ -391,6 +392,7 @@ void POPFStream::get_infos(infos_t* info)
 
 /**
  * Close the POPFile.
+ * @return void 
  */
 void POPFStream::close(){
 	if(popfile_parallel){
@@ -403,6 +405,11 @@ void POPFStream::close(){
 		popfile_metadata.set_ending_strip(popfile_current_output_buffer);
 		//Save the metadat in the XML file
 		popfile_metadata.save(popfile_metadata_filename.c_str());
+ 		if(popfile_writebuffers != NULL)
+ 			delete [] popfile_writebuffers;
+ 		if(popfile_reader_ref != NULL)
+	 		delete [] popfile_reader_ref;
+	 	popfile_init();	
 	} else {
 		popfile_fstream.close();
 	}
@@ -410,6 +417,7 @@ void POPFStream::close(){
 
 /**
  * Flush the data still in buffer to the strips
+ * @return void 
  */
 void POPFStream::flush()
 {
@@ -426,6 +434,7 @@ void POPFStream::flush()
  * Write an array of char into the parallel file
  * @param s	A char array
  * @param n	The size of the array
+ * @return void 
  */
 void POPFStream::write(const char* s, std::streamsize n){
 	if(popfile_parallel){
@@ -518,6 +527,7 @@ void POPFStream::write(double a)
 /**
  * Write a string value to the parallel file
  * @param value	The string vakue to write
+ * @return void 
  */
 void POPFStream::write(std::string value){
 	if(popfile_parallel){
@@ -533,6 +543,7 @@ void POPFStream::write(std::string value){
  */
 std::string POPFStream::read(long size)
 {
+	popfile_badflag = false;
 	POPFileGrip grip = read_in_background(size);
 	return get_read(grip);
 }
@@ -540,9 +551,12 @@ std::string POPFStream::read(long size)
 /**
  * Read data from the parallel file in background. Allow to perform other computation during the reading process. 
  * Use the method get_read() when the data is really needed. 
+ * @param size Number of bytes to be read from the parallel file
+ * @return A POPFilGrip object associated with this read action. Needed by get_read() method.
  */
 POPFileGrip POPFStream::read_in_background(long size)
 {
+	popfile_badflag = false;
 	if(popfile_parallel){
 		//Check if reader is already running
 		if(popfile_reader_ref == NULL){
@@ -604,6 +618,7 @@ POPFileGrip POPFStream::read_in_background(long size)
 
 /**
  * Move the reader pointer to the next one
+ * @return void 
  */
 void POPFStream::get_next_reader(){
 	popfile_current_reader++;	
@@ -616,6 +631,7 @@ void POPFStream::get_next_reader(){
 
 /**
  * Read the parallel file by block of the size of offset. Block is the data is not read yet
+ * @param grip A POPFileGrip object given by read_in_background() method
  * @return String of offset's size filled with data
  */
 std::string POPFStream::get_read(POPFileGrip grip)
@@ -623,6 +639,7 @@ std::string POPFStream::get_read(POPFileGrip grip)
 	std::string data;
 	if(grip.get_order() != popfile_served_grip){
 		cout << "[POPFILE-WARNING] Reading order is not respected. Reading abort." << popcendl;
+		popfile_badflag = true;
 		return data;
 	}
 	
@@ -659,6 +676,7 @@ std::string POPFStream::get_read(POPFileGrip grip)
 
 /**
  * Print information on the parallel file
+ * @return void 
  */
 void POPFStream::printInfos(){
 	popfile_metadata.dump_to_cout();
@@ -670,6 +688,7 @@ void POPFStream::printInfos(){
  * @param value Data to write
  */ 
 void POPFStream::popfile_writeToBuffer(std::string value){
+	popfile_badflag = false;
 	if(popfile_first_write_pointer != 0) {
 		popfile_writebuffers[popfile_current_output_buffer].set_capacity(popfile_first_write_pointer);
 		popfile_first_write_pointer = 0;
@@ -692,7 +711,8 @@ void POPFStream::popfile_writeToBuffer(std::string value){
 }
 
 /**
- * Swicth to the next available buffer. Round robin way.
+ * Swicth to the next available buffer. Round robin way. Output buffer.
+ * @return void 
  */
 void POPFStream::get_next_buffer(){
 	popfile_current_output_buffer++;
@@ -703,7 +723,8 @@ void POPFStream::get_next_buffer(){
 
 
 /**
- * Swicth to the next available buffer. Round robin way.
+ * Swicth to the next available buffer. Round robin way. Input buffer.
+ * @return void 
  */
 void POPFStream::get_next_input_buffer(){
 	popfile_current_input_buffer++;
@@ -778,4 +799,86 @@ POPFStream& POPFStream::operator<< (double a)
 {
 	write(a);	
 	return *this;	
+}
+
+/**
+ * Get the position of the get pointer
+ * @return Position of the get pointer
+ */
+long POPFStream::tellg()
+{
+	return popfile_internal_read_pointer;
+}
+
+/**
+ * Set the position of the get pointer
+ * @param a position of the pointer in bytes
+ * @return void 
+ */
+void POPFStream::seekg(long a)
+{
+	long b = a;
+	popfile_current_reader = 0;
+	while (b > popfile_offset){
+		b-=popfile_offset;
+		popfile_current_reader++;
+		if(popfile_current_reader > popfile_strip_number){
+			popfile_current_reader = 0;	
+		}
+	}
+	popfile_internal_read_pointer = a % popfile_offset;
+}
+
+
+/**
+ * Returns true is the reading/writing operations fails
+ * @return True if an error happened in the reading/writing process.
+ */
+bool POPFStream::bad()
+{
+	if(popfile_parallel){
+		return popfile_badflag;
+	} else {
+		return popfile_fstream.bad();
+	}
+}
+	
+/**
+ * Returns true in the same case as bas(), but also in the case that the format error happens, like when an alphabetical 
+ * character is extracted when we are trying to read an integer number. 
+ * @return True if an error happened in the reading/writing process.
+ */
+bool POPFStream::fail()
+{
+	if(popfile_parallel){
+		return false; // Not implemented for POPFile so returns always false
+	} else {
+		return popfile_fstream.bad();
+	}
+}
+	
+/**
+ * Return if a file opening for reading as reached the end.
+ * @return True if an error happened in the reading/writing process.
+ */ 
+bool POPFStream::eof()
+{
+	if(popfile_parallel){
+		return popfile_internal_read_pointer = popfile_total_bytes;
+	} else {
+		return popfile_fstream.eof();
+	}
+}
+	
+/**
+ * Returns false in the same cases in which calling any of the previous operations would return true.
+ * @return True if an error happened in the reading/writing process.
+ */
+bool POPFStream::good()
+{
+	if(popfile_parallel){
+		return !bad() && !eof() && !fail();
+	} else {
+		return popfile_fstream.good();
+	}
 }
