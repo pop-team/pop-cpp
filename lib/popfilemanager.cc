@@ -66,6 +66,7 @@ bool POPFileManager::createStrip(POPString absolutePath)
  * Write data to a local strip
  * @param stringName	absloute path to the strip
  * @param data			Actual data to write to the strip
+ * @return void 
  */
 void POPFileManager::writeToStrip(POPString stringName, POPString data)
 {
@@ -85,6 +86,7 @@ void POPFileManager::writeToStrip(POPString stringName, POPString data)
  * @param stringName	absloute path to the strip
  * @param data			Actual data to write to the strip
  * @param ap			Access point of thre remote PFM
+ * @return void 
  */
 void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, paroc_accesspoint ap)
 {
@@ -98,6 +100,7 @@ void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, pa
  * @param stringName	absloute path to the strip
  * @param begin		Size to begin to read
  * @param offset		Site to read
+ * @return Data retrieved from the strip
  */
 POPString POPFileManager::readFromStrip(POPString stripName, long start, long offset)
 {
@@ -121,12 +124,15 @@ POPString POPFileManager::readFromStrip(POPString stripName, long start, long of
 	strip.read(buffer, offset);
 	strip.close();
 	POPString data(buffer);
+	delete [] buffer; // TODO Check it
 	return data;
 }
 
 /**
  * POPFile: clementval
  * Save the accesspoint of POPSearchNode
+ * @param Access Point of the POPCSearchNode
+ * @return void 
  */
 void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap)
 {
@@ -136,6 +142,7 @@ void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap)
 /**
  * POPFile: clementval
  * Get list of neighbors as a string and create AP
+ * @return void 
  */
 void POPFileManager::getNeighborsFromPSN(){
 	POPCSearchNode psn(psn_ap);
@@ -209,6 +216,7 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
 /**
  * Method used to write log
  * @param String with format
+ * @return Error information
  */
 int popfile_log(const char *format,...)
 {

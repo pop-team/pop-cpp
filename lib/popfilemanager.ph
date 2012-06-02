@@ -53,8 +53,6 @@ private:
 	
 };
 
-
-
 int popfile_log(const char *format,...);  //log function for error
 
 #endif /* POPFILEMANAGER_H_INCLUDE_ */ 
