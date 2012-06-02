@@ -27,24 +27,23 @@ namespace popfile {
 
 class POPFileBuffer {
 public:
-	/** **/
+	// Constant used to know if the buffer was flushed without remaining data
 	static const char* POPFILEBUFFER_FULL_WITHOUT_REMAINING;
-
+	
+	// POPFileBuffer constructor
 	POPFileBuffer();
+	// POPFileBuffer destructor
 	~POPFileBuffer();	
 	
 	/**
 	 * Used by output operation
 	 */
 	
-	// Add 
+	// Add data to the buffer
 	std::string buffer_add(std::string value);
 
 	// Flushing the output buffer into the strip
 	void flush();	
-	
-	
-
 
 	/**
 	 * Used by input operation
@@ -59,11 +58,13 @@ public:
 	// Add data in the input buffer
 	void add_data(POPString data);
 	
-	
-	//
+	// Get size of data in the buffer
 	long get_size_input_data();
 	
 	
+	/**
+	 * Used by both input/output operations
+	 */
 	
 	// Setter for internal attributes values
 	void set_capacity(long value);

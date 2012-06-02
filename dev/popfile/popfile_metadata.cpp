@@ -44,6 +44,7 @@ POPFileMetaData::POPFileMetaData()
 
 /**
  * Save data to xml file
+ * @param filename File name of the XML generated file
  */
 void POPFileMetaData::save(const char* filename)
 {		
@@ -408,19 +409,37 @@ int POPFileMetaData::get_strips_count()
 	return meta_strips.size();
 }
 
+/**
+ * Set the ending pointer value.
+ * @param value The value to be set
+ */
 void POPFileMetaData::set_ending_pointer(long value)
 {
 	meta_info.info_ending_pointer = value;
 }
+
+/**
+ * Set the identifier of the last strip used.
+ * @param index The idenitifier of the strip
+ */
 void POPFileMetaData::set_ending_strip(int index)
 {
 	meta_info.info_ending_strip = index;
 }
 
+/**
+ * Get the position of the pointer at the end of the writing process.
+ * @return Position of the pointer
+ */
 long POPFileMetaData::get_ending_pointer()
 {
 	return meta_info.info_ending_pointer;
 }
+
+/** 
+ * Get the identifier of the last strip used
+ * @return Identifier of the strip
+ */
 int POPFileMetaData::get_ending_strip()
 {
 	return meta_info.info_ending_strip; 
@@ -436,8 +455,9 @@ void POPFileMetaData::dump_to_cout()
 	cout << "[POPFILE] - Infos :" << popcendl;	
 	cout << "[POPFILE] -- Absolute Path: " << meta_info.info_absolute_path << popcendl;	
 	cout << "[POPFILE] -- Original Filename: " << meta_info.info_original_name << popcendl;
+	cout << "[POPFILE] -- Ending pointer: " << meta_info.info_ending_pointer << popcendl;
+	cout << "[POPFILE] -- Ending strip: " << meta_info.info_ending_strip << popcendl;
 	cout << "[POPFILE] - Strips: " << popcendl;	
-	
 	MetaDataStripMap::const_iterator itr;
 	for(itr = meta_strips.begin(); itr != meta_strips.end(); ++itr){
 		cout << "[POPFILE] -- Strip: (local) - " << (*itr).second.strip_is_local << popcendl;
@@ -450,6 +470,5 @@ void POPFileMetaData::dump_to_cout()
 		cout << "[POPFILE] ---- IP address: " << (*itr).second.strip_accesspoint.accesspoint_ip_address << popcendl;		
 		cout << "[POPFILE] ---- Port: " << (*itr).second.strip_accesspoint.accesspoint_port << popcendl;		
 	}
-
 	cout << "[POPFILE] ### POPFileMetaData ###" << popcendl;	
 }

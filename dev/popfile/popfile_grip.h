@@ -17,25 +17,40 @@ namespace popfile {
 
 class POPFileGrip {
 public:
+	// Constructor of the POPFileGrip
 	POPFileGrip();
+	
+	// Destrcutor of the POPFileGrip
 	~POPFileGrip();
 
+	// Get the size of the grip
 	long get_size();
+	// Set the size of the grip
 	void set_size(long value);
 	
+	// Set the first POPFileReader
 	void set_first_reader(int identifier);
+	// Get the first POPFileReader
 	int get_first_reader();
 	
+	// Set the order of this grip
 	void set_order(int value);
+	// Get the order of this grip
 	int get_order();
 	
+	// Set the first byte read for this grip
 	void set_first_read(long value);
+	// Get the first byte read for this grip
 	long get_first_read();
 
 private:
+	// The size of this grip
 	long popfilegrip_size; 
+	// The first byte read for this grip
 	long popfilegrip_first_read;
+	// The POPFileReader used at first call for this grip
 	int popfilegrip_first_reader;
+	// The order of this grip
 	int popfilegrip_order;
 	
 	

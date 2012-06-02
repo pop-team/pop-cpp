@@ -35,6 +35,11 @@ POPFileReader::~POPFileReader()
 	sem_unlink(reader_semname.c_str());
 }
 
+/**
+ * Set the identifier of this POPFileReader and initialize its semaphore
+ * @param value The identifier value
+ * @return void
+ */
 void POPFileReader::set_id(int value)
 {
 	identifier = value;
@@ -45,9 +50,6 @@ void POPFileReader::set_id(int value)
 		reader_semname = semname.str();
 		sem_unlink(reader_semname.c_str());
 		pt_read_locker = sem_open(reader_semname.c_str(), O_CREAT|O_EXCL, 0600, 1);
-		/*if(pt_read_locker == SEM_FAILED)
-			cout << "Sem failed " <<  errno << strerror(errno) << popcendl;*/
-			
 		sem_wait(pt_read_locker);
 	}
 }
@@ -56,6 +58,7 @@ void POPFileReader::set_id(int value)
  * Asynchronous read of the strip. Read the data from the strip and store them in the internal buffer
  * @param start	pointer to start reading
  * @param offset	Number of byte to read from the start point
+ * @return void 
  */
 void POPFileReader::read_in_strip(long start, long offset)
 {	
@@ -77,10 +80,7 @@ POPString POPFileReader::read_current_buffer(long size)
 	while(popfilebuffer_ref->get_size_input_data() < size){
 		cout << "Before lock: id = " << identifier << " data = "<< popfilebuffer_ref->get_size_input_data() << "Size" << size <<  popcendl;
 		sem_wait(pt_read_locker);
-		//cout << "After lock: id = " << identifier << popcendl;		
-	}
-	//cout << "Unlocked: id = " << identifier << popcendl;
-	
+	}	
 	POPString data;
 	if(size != -1)
 		data = popfilebuffer_ref->buffer_get(size).c_str();
@@ -93,6 +93,7 @@ POPString POPFileReader::read_current_buffer(long size)
 /**
  * Set the offset of the associated strip
  * @param offset The offset of the associated strip
+ * @return void 
  */
 void POPFileReader::set_offset(long offset)
 {
@@ -103,6 +104,7 @@ void POPFileReader::set_offset(long offset)
 /**
  * Save the local PFM accesspoint
  * @param ap	The access point of the associated PFM
+ * @return void 
  */
 void POPFileReader::set_pfm_accesspoint(paroc_accesspoint ap)
 {
@@ -112,7 +114,7 @@ void POPFileReader::set_pfm_accesspoint(paroc_accesspoint ap)
    
 /**
  * Get the local PFM accesspoint
- * @return 
+ * @return Access Point of the POPFileManager
  */
 paroc_accesspoint POPFileReader::get_pfm_accesspoint()
 {
@@ -122,6 +124,7 @@ paroc_accesspoint POPFileReader::get_pfm_accesspoint()
 /** 
  * Save the associated strip path
  * @param path The absolute strip file path associated with this reader
+ * @return void 
  */
 void POPFileReader::set_strip_path(POPString path)
 {
@@ -137,4 +140,5 @@ POPString POPFileReader::get_strip_path()
 	return strip_path;
 }
 
+//Specific POP-C++ annotation
 @pack(POPFileReader);

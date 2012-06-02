@@ -54,7 +54,7 @@ public:
    // Get the associated strip path
    sync seq POPString get_strip_path();
    
-   // 
+   // Set the identifier of this POPFileReader
    sync seq void set_id(int value);
    
    // Definition if the class uid
@@ -64,12 +64,12 @@ private:
 	sem_t *pt_read_locker;					// Semaphor used to wait for data in the read process. 
 	paroc_accesspoint pfm_ap;				// Access point of the POPFileManager
 	long current_pos;							// Current position in the internal buffer
-	long pfr_offset;							// 
+	long pfr_offset;							// Strip factor used by the POPFStream
 	POPFileBuffer* popfilebuffer_ref;	// Reference to the internal buffer
 	POPFileManager* pfm_ref;				// Reference to the POPFileManager
 	POPString strip_path;					// Path to the associated strip
-	int identifier; 
-	std::string reader_semname;
+	int identifier; 							// Unique identifier of this POPFileManager in the POPFStream
+	std::string reader_semname;			// Name of the semaphor
 	
 	
 };

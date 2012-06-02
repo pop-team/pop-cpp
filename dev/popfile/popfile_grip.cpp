@@ -37,6 +37,7 @@ POPFileGrip::~POPFileGrip()
 
 /**
  * Set the current order of the grip. Grip must be used in the order they have been taken
+ * @param value The order of this grip
  */
 void POPFileGrip::set_order(int value)
 {
@@ -45,6 +46,7 @@ void POPFileGrip::set_order(int value)
 
 /**
  * Get the current order of the grip.
+ * @return The order of the grip in the get_read() method
  */
 int POPFileGrip::get_order()
 {
@@ -52,7 +54,8 @@ int POPFileGrip::get_order()
 }
 
 /**
- *
+ * Get the size requested when calling the grip.
+ * @return The size for this grip
  */
 long POPFileGrip::get_size()
 {
@@ -60,7 +63,8 @@ long POPFileGrip::get_size()
 }
 
 /**
- *
+ * Set the size of the grip. Set by read_in_background().
+ * @param value	The Size for this grip
  */
 void POPFileGrip::set_size(long value)
 {
@@ -68,7 +72,8 @@ void POPFileGrip::set_size(long value)
 }
 
 /**
- *
+ * Set the first POPFileReader used for this grip.
+ * @param identifier The identifer of the POPFileReader
  */	
 void POPFileGrip::set_first_reader(int identifier)
 {
@@ -76,17 +81,27 @@ void POPFileGrip::set_first_reader(int identifier)
 }
 
 /**
- *
+ * Get the identifier of the first POPFileReader used for this grip.
+ * @return The identifier of the first POPFileReader
  */
 int POPFileGrip::get_first_reader()
 {
 	return popfilegrip_first_reader;
 }
 
+/**
+ * Set the first byte read for this grip.
+ * @param value The location of the first byte read in the file
+ */
 void POPFileGrip::set_first_read(long value)
 {
 	popfilegrip_first_read = value;
 }
+
+/**
+ * Get the first byte read for this grip.
+ * @return The first byte read for this grip
+ */
 long POPFileGrip::get_first_read()
 {
 	return popfilegrip_first_read;

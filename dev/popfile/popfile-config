@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# 
+# POPFile configuration tools v1.0
+# Author: Valentin Clement
+# Creation Date: 05.29.2012
+# Descritpion: This script helps the developer to find the right flags for compilation or run with POPFile library
+# 
+
 POPC_DEFAULT_LOCATION="/usr/local/popc"
 
 if [ -n "${POPC_LOCATION:+x}" ]
