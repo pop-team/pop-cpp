@@ -108,10 +108,10 @@ public:
 	// Get data read by the read in background call
 	std::string get_read(POPFileGrip grip);	
 	
-	// Returns true is the reading/writing operations fails
+	// Returns true if the reading/writing operations fails
 	bool bad();
 	
-	/* Returns true in the same case as bas(), but also in the case that the format error happens, like when an alphabetical 
+	/* Returns true in the same case as bad(), but also in the case that the format error happens, like when an alphabetical 
 		character is extracted when we are trying to read an integer number. */
 	bool fail();
 	
