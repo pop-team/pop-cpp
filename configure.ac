@@ -11,10 +11,26 @@ AC_PREREQ([2.67])
 #AC_CONFIG_HEADER([config.h])
 
 # Checks for programs.
-AC_INIT( popc, 2.0.1)
+AC_INIT( popc, 2.0.3-beta)
 AM_INIT_AUTOMAKE(no-dependencies)
 
 AC_CANONICAL_HOST
+case $host_os in
+	darwin* )
+		echo 'Darwin Architecture detected...'
+		CPPFLAGS+="-DARCH_MAC"
+		;;
+	linux*)
+        # Do something specific for linux
+		;;
+	*BSD*)
+		# Do something specific for BSD
+		;;
+	*)
+		#Default Case
+		AC_MSG_ERROR([Your platform is not currently supported])
+		;;
+esac
 
 AC_LANG(C++)
 AC_PREFIX_DEFAULT(/usr/local/popc)
