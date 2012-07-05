@@ -1,8 +1,21 @@
+/**
+ * File : parser.h
+ * Author : Tuan Anh Nguyen
+ * Description : parser header declaration
+ * Creation date : -
+ * 
+ * Modifications :
+ * Authors		Date			Comment
+ * clementval	March 2012	Add Enum support
+ * clementval	April 2012	Add namespace support to the parser
+ */
+
 #ifndef PARSER_H
 #define PARSER_H
 
 #include "parser_common.h"
 #include "type.h"
+#include <string>
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef long YYSTYPE; // We force the declaration as long to avoid compilation problems in 64bits
@@ -308,6 +321,49 @@ public:
 protected:
 	CArrayParam attributes;
 };
+
+
+/**
+ * @class Enumeration
+ * @brief This class is holding enum type information 
+ */
+class Enumeration: public ClassMember
+{
+public:
+	Enumeration(Class *cl, AccessType myaccess);
+	~Enumeration();	
+	virtual void GenerateHeader(CArrayChar &output, bool interface);
+	
+	void setName(std::string value);
+	void setArgs(std::string value);
+	
+private:
+	std::string name;	
+	std::string args;
+};
+
+/**
+ * @class Structure
+ * @brief This class is holding struct type information
+ */
+class Structure: public ClassMember
+{
+public:
+	Structure(Class *cl, AccessType myaccess);
+	~Structure();
+	virtual void GenerateHeader(CArrayChar &output, bool interface);
+	
+	void setName(std::string value);
+	void setObjects(std::string value);
+	void setInnerDecl(std::string value);
+	
+private:
+	std::string name;
+	std::string objects;
+	std::string innerdecl;
+};
+
+
 /**
  * @class Directive
  * @brief (to be written)
@@ -487,6 +543,9 @@ public:
 
 	CArrayBaseClass baseClass;
 	CArrayClassMember memberList;
+	
+	void SetNamespace(char* value);
+	std::string GetNamespace();
 
 public:
 	static char interface_base[1024];
@@ -506,6 +565,7 @@ protected:
 	char *my_interface_base;
 	char *my_object_base;
 	char *my_broker_base;
+	std::string strnamespace;
 };
 
 

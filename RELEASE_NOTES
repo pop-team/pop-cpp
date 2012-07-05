@@ -1,49 +1,11 @@
-POP-C++ Version 2.0 (16-september-2011)
+POP-C++ 2.0.1
 
-These REALEASE_NOTES include the changes made from the actual (29-July-2011) version 1.3
-to version 2.0 of POP-C++. No RELEASE_NOTES were made before.
+These REALEASE_NOTES include the changes made from the previous version 2.0
+to version 2.0.1 of POP-C++. The complete changes is listed in the CHANGLOG.
 
-
-changes internal POP-C++ :
-
-	to compile pop-c++ application (popcc) :
-
-	- option "-no-pipe" replaced by "-nopipe" to be in adequation with the other flags
-	- option "-paroc-static" replaced by "-popc-static" 
-	- option "-paroc-nolib" replaced by "-popc-nolib"
-	- option "-parocld=<linker>" replaced by "popcld=<linker>"
-	- option "-parocdir" replaced by "popcdir"
-	- option "-version" added for popcc
-	
-	to run pop-c++ application (popcrun) :
-
-	- flag "-debug" added to display debugging informations 
-	- flag "-log=<file>" added to log messages displayed on stdout and stderr during compilation
-	- if no network is available the system tries to launch the objects on localhost
-		instead the application crashes
-	- option "-version" added for popcrun
-
-	
-corrected problems
-
-	- CONST keyword is correctly treated
-	- Usage of "this" works now but with little restrictions
-	- fix of some other minor bugs
-
-
-new features :
-
-	- implementation of a new algorithm to find resources
-	- interoperability with POP-Java
-	- secure communications in ssh tunnel
-	- a warning message is displayed when a non-catched exception is raised in a remote method invocation
-	- possibility to use cmake instead of make
-
-
-documentation :
-
-	- user and installation guide was improved
-	- additional documents were added for the new features
-	- extended test applications
-	- more samples
+Release 2.0.1
+- Improve the termination time of a parallel application
+- Fix slowness of POP-C++ application on MAC OS X
+- Add support for enum type inside a parclass declaration
+- Removing unuseful directory in the release
 

@@ -19,7 +19,6 @@
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_buffer_raw.h"
 
-
 #include "objectmonitor.ph"
 #include "paroc_thread.h"
 #include "appservice.ph"
@@ -106,10 +105,21 @@ paroc_broker::paroc_broker()
 {
 	obj=NULL;
 	state=POPC_STATE_RUNNING;
-
+   sem_t s_addref;
+	sem_add = &s_addref;
+   sem_init(sem_add, 0,1);
+   sem_t s_decref;
+	sem_dec = &s_decref;
+   sem_init(sem_dec, 0,1);
+   sem_t s_connref;
+	sem_conn = &s_connref;
+   sem_init(sem_conn, 0,1);
 	instanceCount=0;
 	mutexCount=0;
 	concPendings=0;
+   addrefcount=0;
+   decrefcount=0;
+   connclosecount=0;
 }
 
 paroc_broker::~paroc_broker()

@@ -11,7 +11,7 @@ AC_PREREQ([2.67])
 #AC_CONFIG_HEADER([config.h])
 
 # Checks for programs.
-AC_INIT( popc, 2.0)
+AC_INIT( popc, 2.0.1)
 AM_INIT_AUTOMAKE(no-dependencies)
 
 AC_CANONICAL_HOST
@@ -35,6 +35,7 @@ AC_SUBST(host_cpu)
 AC_SUBST(host_kernel)
 
 standard=true;
+
 
 AC_ARG_ENABLE(globus,
 [ --enable-globus=flavor  Enable Globus-support in Popc++],
@@ -107,6 +108,8 @@ then
 fi
 
 
+
+
 AC_SUBST(virtual)
 AC_SUBST(secure)
 AC_SUBST(virtsecure)
@@ -115,7 +118,6 @@ AM_CONDITIONAL(VIRTSUPPORT, test x$virtual = xtrue)
 AM_CONDITIONAL(SECURESUPPORT, test x$secure = xtrue)
 AM_CONDITIONAL(VIRTSECURESUPPORT, test x$virtsecure = xtrue)
 AM_CONDITIONAL(STANDARDSUPPORT, test x$standard = xtrue)
-# ViSaG 
 
 
 AC_PROG_YACC
@@ -127,7 +129,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
-AC_PROG_LIBTOOL
+LT_INIT
 
 # Checks for libraries.
 AC_CHECK_LIB(pthread, pthread_create)
@@ -141,7 +143,7 @@ PKG_CONFIG=$(which pkg-config)
 # if virtual enabled, check for libvirt, vix and define POPC_VIRTUAL to 1
 if test x$virtual = xtrue
 then
-   PKG_CHECK_MODULES([LIBVIRT], [libvirt >= 0.8.5])
+ #  PKG_CHECK_MODULES([LIBVIRT], [libvirt >= 0.8.5])
    VIX_LIBS="-I/usr/include/vmware-vix"
    AC_SUBST([VIX_LIBS])
    VIX_CFLAGS="-lvixAllProducts -ldl"
@@ -158,7 +160,7 @@ fi
 
 if test x$virtsecure = xtrue
 then
-   PKG_CHECK_MODULES([LIBVIRT], [libvirt >= 0.8.5])
+  # PKG_CHECK_MODULES([LIBVIRT], [libvirt >= 0.8.5])
    VIX_LIBS="-I/usr/include/vmware-vix"
    AC_SUBST([VIX_LIBS])
    VIX_CFLAGS="-lvixAllProducts -ldl"
@@ -167,6 +169,9 @@ then
 fi
 
 # ViSaG
+
+
+
 
 AC_CHECK_TYPE(socklen_t)
 

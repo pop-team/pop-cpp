@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-POPC_LOCATION=/home/visag/popc
+POPC_LOCATION=/usr/local/popc
 export POPC_LOCATION
 
 if [ "X$1" = "X-ask" ]; then
@@ -119,7 +119,7 @@ scriptglobus=SXXpopc_globus
 
 tmpheader=/tmp/SXXpopc_header_${USER}
 
-POPC_LOCATION=/home/visag/popc
+POPC_LOCATION=/usr/local/popc
 
 if [ ! -d "${POPC_LOCATION}" ]; then
     echo "ERROR: POPC_LOCATION (${POPC_LOCATION}) does not exist!"

@@ -54,13 +54,14 @@ public:
 
 	static int argc;
 	static char **argv;
+
 private:
 	int refcount;
 	paroc_mutex lock;
 	EventQueue _paroc_events;
+
 protected:
 	paroc_mutex _paroc_omutex;
-
    //Added by clementval
    //std::ostringstream _popc_cout;
    //End of add

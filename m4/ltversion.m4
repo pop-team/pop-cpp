@@ -1,0 +1,1 @@
+link /usr/local/share/aclocal/ltversion.m4

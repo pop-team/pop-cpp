@@ -156,6 +156,8 @@ private:
    POPString popAppId;
    /* ViSaG : end */
 
+
+
 	void NegotiateEncoding(paroc_string &enclist, paroc_string &peerplatform);
 
 	void Tokenize(paroc_string &s, paroc_list<char *> &tokens);

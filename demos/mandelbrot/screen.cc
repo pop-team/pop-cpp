@@ -106,7 +106,7 @@ int Screen::run(int argc, char cmdline[32][32])
 	}
 	chronosp->lap("end tile loop");
 
-	Screen myself(this);
+	Screen myself(GetAccessPoint());
 
 	int shift = 0;//rand() % nbOfMachines;
 

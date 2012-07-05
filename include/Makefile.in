@@ -62,9 +62,10 @@ am__include_HEADERS_DIST = paroc_base.h paroc_array.h paroc_list.h \
 	paroc_buffer_raw.h paroc_buffer_raw_factory.h \
 	paroc_exception.h sysinfodef.h paroc_broker.h \
 	paroc_broker_factory.h paroc_object.h paroc_interface.h \
-	paroc_allocobj.h timer.h popwayback.h nodethread.h \
-	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h \
-	popvm.h rijndael.h
+	paroc_allocobj.h timer.h popwayback.h nodethread.h request.h \
+	explorationList.h response.h popc_search_node_info.h \
+	POPString.h VPopCWrapper.h WrapperFactory.h ESXWrapper.h \
+	POPWrapper.h popvm.h rijndael.h
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -130,8 +131,6 @@ LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
-LIBVIRT_CFLAGS = @LIBVIRT_CFLAGS@
-LIBVIRT_LIBS = @LIBVIRT_LIBS@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
@@ -152,9 +151,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PKG_CONFIG = @PKG_CONFIG@
-PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
-PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -232,7 +228,7 @@ IDLC = @top_srcdir@/popccpp
 @SECURESUPPORT_TRUE@	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
 @SECURESUPPORT_TRUE@	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 @SECURESUPPORT_TRUE@	paroc_exception.h sysinfodef.h\
-@SECURESUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h popwayback.h nodethread.h
+@SECURESUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h
 
 @STANDARDSUPPORT_TRUE@include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 @STANDARDSUPPORT_TRUE@	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
@@ -243,7 +239,7 @@ IDLC = @top_srcdir@/popccpp
 @STANDARDSUPPORT_TRUE@	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 @STANDARDSUPPORT_TRUE@	paroc_exception.h sysinfodef.h\
 @STANDARDSUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-@STANDARDSUPPORT_TRUE@	popwayback.h nodethread.h
+@STANDARDSUPPORT_TRUE@	popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h POPString.h
 
 @VIRTSECURESUPPORT_TRUE@include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 @VIRTSECURESUPPORT_TRUE@	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
@@ -254,10 +250,8 @@ IDLC = @top_srcdir@/popccpp
 @VIRTSECURESUPPORT_TRUE@	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 @VIRTSECURESUPPORT_TRUE@	paroc_exception.h sysinfodef.h\
 @VIRTSECURESUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-@VIRTSECURESUPPORT_TRUE@	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h
+@VIRTSECURESUPPORT_TRUE@	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h request.h explorationList.h response.h popc_search_node_info.h
 
-
-#Updated by Wyssen : Added VPopCWrapper.h, WrapperFactory.h and ESXWrapper.h
 @VIRTSUPPORT_TRUE@include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 @VIRTSUPPORT_TRUE@	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
 @VIRTSUPPORT_TRUE@	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
@@ -267,7 +261,7 @@ IDLC = @top_srcdir@/popccpp
 @VIRTSUPPORT_TRUE@	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 @VIRTSUPPORT_TRUE@	paroc_exception.h sysinfodef.h\
 @VIRTSUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-@VIRTSUPPORT_TRUE@	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h
+@VIRTSUPPORT_TRUE@	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h request.h explorationList.h response.h popc_search_node_info.h
 
 all: all-am
 

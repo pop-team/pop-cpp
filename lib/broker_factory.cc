@@ -6,6 +6,7 @@
  * 
  * Modifications :
  * Authors		Date			Comment
+ * clementval  10/27/2011  Set services accesspoint cretaed from String as service accesspoint
  */
 
 #include <unistd.h>
@@ -97,15 +98,18 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 	if (tmp!=NULL)
 	{
 		paroc_system::appservice.SetAccessString(tmp);
+      paroc_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
 
 
 	if ((tmp=getenv("POPC_JOBSERVICE"))!=NULL)
 	{
 		paroc_system::jobservice.SetAccessString(tmp);
+      paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	} else if ((tmp=paroc_utils::checkremove(argc,argv,"-jobservice="))!=NULL)
 	{
 		paroc_system::jobservice.SetAccessString(tmp);
+      paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
 	else
 	{
@@ -113,6 +117,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 		DEBUG("Jobservice is not specified. Use the default one!");
 		sprintf(tmpstr,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
 		paroc_system::jobservice.SetAccessString(tmpstr);
+      paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
 
 	bool nostdio=(paroc_utils::checkremove(argc,argv,"-nostdio")!=NULL);

@@ -24,7 +24,6 @@ using namespace std;
 
 AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const POPString &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge)
 {
-
   /**
     * ViSaG : clementval
     * Generate the POP Application Unique ID
@@ -45,6 +44,7 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
 
 	if (daemon) Start();
 	LoadAddOn();
+      
 }
 
 AppCoreService::~AppCoreService()
@@ -157,6 +157,7 @@ bool AppCoreService::UnregisterService(const POPString &name)
 
 void AppCoreService::LoadAddOn()
 {
+
 	char fname[1024];
 	char *parocdir;
 	if ((parocdir=getenv("POPC_APPSERVICE_CONF"))!=NULL) strcpy(fname, parocdir);
@@ -217,4 +218,27 @@ void AppCoreService::LoadAddOn()
  */
 POPString AppCoreService::GetPOPCAppID(){
    return _popcAppId;
+}
+
+
+
+
+int popc_appservice_log(const char *format,...)
+{
+	char *tmp=getenv("POPC_TEMP");
+	char logfile[256];
+	if (tmp!=NULL) sprintf(logfile,"%s/popc_appservice_log",tmp);
+	else strcpy(logfile, "/tmp/pop_appservice.log");
+
+	FILE *f=fopen(logfile,"a");
+	if (f==NULL) return 1;
+	time_t t=time(NULL);
+	fprintf(f,"%s", ctime(&t));
+	va_list ap;
+	va_start(ap, format);
+	vfprintf(f, format, ap);
+	fprintf(f,"%s","\n");
+	va_end(ap);
+	fclose(f);
+	return 0;
 }

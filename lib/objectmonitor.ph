@@ -28,7 +28,7 @@ public:
 	/** @brief Constructor
 	 * @param challenge challenge string which will be required on stopping the service
 	*/
-	ObjectMonitor([in] const POPString &challenge) @{od.runLocal(true);};
+	ObjectMonitor([in] const POPString &challenge) @{od.runLocal(true); od.service(true); };
 	~ObjectMonitor();
 
 	/** @brief Kill all parallel objects.

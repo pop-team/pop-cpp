@@ -178,6 +178,11 @@ then
 	${POPC_LOCATION}/services/popcloner -listlong >> $servicemap 
 fi
 
+if [ -f ${POPC_LOCATION}/services/popfilemanager ]
+then
+	${POPC_LOCATION}/services/popfilemanager -listlong >> $servicemap 
+fi 
+
 if [ -f ${POPC_LOCATION}/services/pqueue ]
 then
 	${POPC_LOCATION}/services/pqueue -listlong | grep PQueue >> $servicemap 

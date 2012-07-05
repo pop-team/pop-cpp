@@ -30,6 +30,7 @@ paroc_object::paroc_object()
 
 	if (!paroc_system::appservice.IsEmpty())
 	{
+      
 		paroc_accesspoint myself=GetAccessPoint();
 		try
 		{

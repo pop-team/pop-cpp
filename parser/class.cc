@@ -1,3 +1,15 @@
+/**
+ * File : class.cc
+ * Author : Tuan Anh Nguyen
+ * Description : POP-C++ parser/compiler Class object
+ * Creation date : -
+ * 
+ * Modifications :
+ * Authors		Date			Comment
+ * clementval	March 2012	Add Enum support
+ * clementval	April 2012	Add namespace support to the parser
+ */
+
 #include "parser.h"
 #include "paroc_utils.h"
 #include "debug.h"
@@ -267,6 +279,11 @@ bool Class::GenerateClient(CArrayChar &code)
 		int lines=CountCodeLines(code);
 		sprintf(tmpcode,"\n# %d \"%s\"\n",lines+3, outfile);
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));
+
+		if(strcmp(strnamespace.c_str(), "") != 0){
+			sprintf(tmpcode,"using namespace %s;\n", strnamespace.c_str());
+			code.InsertAt(-1,tmpcode,strlen(tmpcode));
+		}
 	}
 
 	int n=memberList.GetSize();
@@ -697,4 +714,14 @@ bool Class::GenerateBroker(CArrayChar &code)
 	return true;
 
 
+}
+
+void Class::SetNamespace(char* value)
+{
+	strnamespace.assign(value);
+}
+
+std::string Class::GetNamespace()
+{
+	return strnamespace;
 }

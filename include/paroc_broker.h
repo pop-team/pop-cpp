@@ -9,6 +9,7 @@ DESCRIPTION: broker declaration for parclass objects
 
 #include <assert.h>
 #include <strings.h>
+#include <semaphore.h>
 
 #define INVOKE_SYNC 1
 //#define INVOKE_ASYNC 2
@@ -132,8 +133,13 @@ protected:
 	paroc_object *obj;
 	paroc_request_fifo_list request_fifo;
 	paroc_condition execCond;
-
+   sem_t *sem_conn;
+   sem_t *sem_dec;
+   sem_t *sem_add;
 	int instanceCount;
+   int addrefcount;     //Count the number of add ref on an object
+   int decrefcount;     //Count the number of dec ref on an object
+   int connclosecount;  //Count the number of connection close on an object
 	int state; // 0=Running, 1=Terminate, 2= Abort
 
 };

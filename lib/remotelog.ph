@@ -27,7 +27,7 @@ public:
 	/** @brief Constructor
 	 * @param challenge challenge string which will be required on stopping the service
 	*/
-	RemoteLog([in] const POPString &challenge) @{ od.runLocal(true);};
+	RemoteLog([in] const POPString &challenge) @{ od.runLocal(true); od.service(true);};
 	~RemoteLog();
 
 	/** @brief Write a message to the user's console

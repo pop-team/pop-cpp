@@ -336,7 +336,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
   char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
   if (info==NULL) return false;
   paroc_system::jobservice.SetAccessString(info);
-   paroc_system::jobservice.SetAsService();
+  paroc_system::jobservice.SetAsService();
 
   char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
   char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
@@ -361,11 +361,11 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       challenge=NULL;
       paroc_accesspoint app;
       app.SetAccessString(appcontact);
-      //rprintf("mgr=CreateAppCoreService(app=accesspoint);\n");
+      app.SetAsService();
       mgr=new AppCoreService(app);
     }
-
     paroc_system::appservice=mgr->GetAccessPoint();
+    paroc_system::appservice.SetAsService();
   }
   catch (POPException *e)
   {
@@ -419,7 +419,7 @@ void paroc_system::Finalize(bool normalExit)
                   timeout=timeout*4/3;
                   loop++;
                   if(loop%10 == 0)
-                     timeout+=2;
+                     timeout+=1;
                } else {
                   loop=0;
                   timeout=1;

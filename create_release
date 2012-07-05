@@ -39,41 +39,29 @@ then
    exit
 fi
 
+echo "IMPORTANT FOR THE RELEASE"
+echo "Did you update the following files:"
+echo "- ChangeLog"
+echo "- RELEASE_NOTES"
+echo "Did you increment the version number in the configure.ac file ?"
+echo "Did you regenerate the files with autoreconf ?"
+echo "If everything is fine just proceed with the archive ! (y/n)"
+
+
+#Clean the current version of POP-C++
 make clean 
 
 
 VERSION=$1
+#Date of the arhiving
 DDATE=$(date +%Y%m%d)
 RELDIR="popcpp_"$VERSION"_build_"$DDATE
 ARCHIVE="$RELDIR.tar"
+IGNORED=" dev virtualtest autom4te.cache .svn"
 
-echo "The archive $RELDIR.tar.gz will be created"
 
-mkdir $RELDIR
+#echo "The archive $RELDIR.tar.gz will be created"
+ar -cf $ARCHIVE --exclude='.svn' --exclude='virtualtest' --exclude='dev' --exclude='documentation' --exclude='autom4te.cache' --exclude='create_release' --exclude='stamp-h1' ./*
+#gzip $ARCHIVE
 
-FILES=$(find ./ -not \( -name .svn -a -prune \))
 
-for FILE in $FILES
-do
-   NEWPATH=$(echo ${FILE:1})
-   #cp $FILE $RELDIR$NEWPATH
-   if [ -d $FILE ]
-   then
-      if [ "$FILE" != "./" ]
-      then
-         #echo "mkdir $RELDIR$NEWPATH"
-         mkdir $RELDIR$NEWPATH
-      fi
-   else
-      #echo "cp $FILE $RELDIR$NEWPATH"
-      if [ "$FILE" != "./create_release" ]
-      then
-         cp $FILE $RELDIR$NEWPATH
-      fi
-   fi
-done
-
-tar -cvf $ARCHIVE $RELDIR/*
-gzip $ARCHIVE
-
-rm -rf $RELDIR

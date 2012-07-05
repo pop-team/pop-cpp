@@ -23,17 +23,11 @@ paroc_accesspoint::paroc_accesspoint()
    _service=false;
    _noaddref=false;
 }
-// paroc_accesspoint::paroc_accesspoint(const char *hostport)
-// {
-//   endpoint=NULL;
-//   SetAccessString(hostport);
-// }
 
 paroc_accesspoint::paroc_accesspoint(const paroc_accesspoint &p)
 {
 	endpoint=NULL;
 	SetAccessString(p.GetAccessString());
-//   SetPKI(p.GetPKI());
    if(p.IsSecure())
       _security = SECURE;
    else
@@ -165,11 +159,6 @@ void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack)
 		buf.Push("url","POPString",1);
 		buf.Pack(&s,1);
 		buf.Pop();      
-      
-   /*   POPString pk(endpoint_pki);
-      buf.Push("pki", "POPString", 1);
-      buf.Pack(&pk, 1);
-      buf.Pop();*/
 
       int sec = _security;
       buf.Push("_security", "int", 1);
@@ -193,12 +182,6 @@ void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack)
 		buf.UnPack(&s,1);
 		buf.Pop();
 		SetAccessString(s);    
-
-  /*    POPString pk;
-      buf.Push("pki", "POPString", 1);
-      buf.UnPack(&pk, 1);
-      buf.Pop();
-      SetPKI(pk);*/
 
       int sec;
       buf.Push("_security", "int", 1);

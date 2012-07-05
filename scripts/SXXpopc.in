@@ -73,7 +73,7 @@ start() {
       echo "Starting delegate service..."
       $POPC_LOCATION/bin/popcrun -noproxy $POPC_LOCATION/etc/service.map $POPC_LOCATION/services/launchproxy -proxyport=${PROXY_PORT} start
    fi
-
+   echo $POPC_LOCATION/bin/popcrun $servicemap $prog start $serviceproxy  -port=${POPC_PORT} -genchallenge=$TMPKEY $ARGS
    $POPC_LOCATION/bin/popcrun $servicemap $prog start $serviceproxy  -port=${POPC_PORT} -genchallenge=$TMPKEY $ARGS
    RETVAL=$?
    return $RETVAL
@@ -112,8 +112,10 @@ kill() {
       killall virtual_popc_search_node 2> /dev/null
       killall jobmgr 2> /dev/null
       killall popc_search_node 2> /dev/null
+      killall popfilemanager 2> /dev/null      
    else
       echo "Kill all POP-C++ Global Services"
+      killall -q popfilemanager
       killall -q secure_jobmgr
       killall -q secure_popc_search_node
       killall -q popc_security_manager

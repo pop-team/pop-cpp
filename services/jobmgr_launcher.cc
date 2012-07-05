@@ -3,8 +3,10 @@ UPDATES :
 Authors		Date			Comment
 clementval	2010/04/19	All code added for the semester project begin with this comment 	//Added by clementval
 clementval	2010/04/19	All code modified during the semester project begins with //Modified by 								clementval, ends with //End of modification
-clementval	2010/05/10	Creating a POPCSearchNode befor creating the JobMgr, change the JobMgr 		creation by passing the POPCSearchNode access point
+clementval	2010/05/10	Creating a POPCSearchNode before creating the JobMgr, change the JobMgr creation by passing the POPCSearchNode access point
+clementval	2012/04/12	Add POPFileManager service support
 */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +15,8 @@ clementval	2010/05/10	Creating a POPCSearchNode befor creating the JobMgr, chang
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "config.h"
+
+#include "popfilemanager.ph"
 
 
 /**
@@ -51,12 +55,11 @@ clementval	2010/05/10	Creating a POPCSearchNode befor creating the JobMgr, chang
 //Include PSM or VPSM
 #ifdef POPC_SECURE_VIRTUAL
 #include "virtual_popc_security_manager.ph"
-#elif POPC_VIRTUAL
+#elif defined POPC_VIRTUAL
 #include "virtual_popc_security_manager.ph"
 #elif defined POPC_SECURE
 #include "popc_security_manager.ph"
 #endif
-
 /* ViSaG */
 
 void Usage()
@@ -67,11 +70,12 @@ void Usage()
 
 int main(int argc, char **argv)
 {
-	paroc_string host;
-	paroc_string conf;
-   paroc_string virtconf;
-	paroc_string objcode;
-	paroc_string challenge;
+	POPString host;
+	POPString hostpfm;
+	POPString conf;
+   POPString virtconf;
+	POPString objcode;
+	POPString challenge;
 	char str[1024];
 
 	char *tmp;
@@ -90,6 +94,9 @@ int main(int argc, char **argv)
 		if (strchr(str,':')==NULL) strcat(str,":2711");
 	}
 	host=str;
+	sprintf(str,"%s:2712",(const char *)paroc_system::GetHost());
+	hostpfm=str;
+	
 
 	tmp=paroc_utils::checkremove(&argc,&argv,"-challenge=");
 	if (tmp!=NULL) challenge=tmp;
@@ -119,16 +126,19 @@ int main(int argc, char **argv)
 		if (stop)
 		{
 #ifdef POPC_SECURE_VIRTUAL
-         printf("Stoping POP-C++ [Virtual Secure Version] Global Services\n");
+   printf("Stoping POP-C++ [Virtual Secure Version] Global Services\n");
 #elif defined POPC_SECURE
-         printf("Stoping POP-C++ [Secure Version] Global Services\n");
+   printf("Stoping POP-C++ [Secure Version] Global Services\n");
 #elif defined POPC_VIRTUAL
-         printf("Stoping POP-C++ [Virtual Version] Global Services\n");
+   printf("Stoping POP-C++ [Virtual Version] Global Services\n");	
 #else
-         printf("Stoping POP-C++ [Standard Version] Global Services\n");
+	printf("Stoping POP-C++ [Standard Version] Global Services\n");
 #endif
+
 			paroc_accesspoint jobmgr_ap;
 			jobmgr_ap.SetAccessString(host);
+			
+			
 
 		
 #ifdef POPC_SECURE_VIRTUAL
@@ -154,7 +164,7 @@ int main(int argc, char **argv)
             printf("POPCloner stopped successfully!\n");
          } 
 
-#elif POPC_VIRTUAL
+#elif defined POPC_VIRTUAL
 			VirtualJobMgr mgr(jobmgr_ap);
          VirtualPOPCSearchNode vpsn(mgr.GetNodeAccessPoint());
 			if (!vpsn.Stop(challenge)){
@@ -243,7 +253,7 @@ int main(int argc, char **argv)
 #elif defined POPC_VIRTUAL
    printf("Starting POP-C++ [Virtual Version] Global Services\n");
 #else
-   printf("Starting POP-C++ [Standard Version] Global Services\n");
+   printf("Starting POP-C++ [Standard Version (Including POPFile)] Global Services\n");
 #endif
 
 /*
@@ -267,7 +277,7 @@ int main(int argc, char **argv)
 /*
  * VIRTUAL VERSION
  */
-#elif POPC_VIRTUAL
+#elif defined POPC_VIRTUAL
       //Create the VPSN
 		VirtualPOPCSearchNode psn(challenge, daemon);
       printf("VPSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());      
@@ -290,18 +300,16 @@ int main(int argc, char **argv)
 
       //Init the ssh secure mode on the PSM
       psm.initSSHMode();
-
-/*
- * STANDARD VERSION
- */
 #else
+		/*
+		 * STANDARD VERSION
+		 */
       POPCSearchNode psn(challenge, daemon);
-      printf("PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());
+      printf("[POPFILE] PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());   
+      POPFileManager pfm(challenge, daemon, hostpfm);
+      printf("[POPFILE] PFM Started [%s]\n", pfm.GetAccessPoint().GetAccessString());      
+      pfm.setPSNAccessPoint(psn.GetAccessPoint()); 
 #endif
-		
-      /* ViSaG */
-
-
 
 
 #ifdef POPC_GLOBUS
@@ -366,7 +374,6 @@ int main(int argc, char **argv)
             printf("POPCloner stopped successfully!\n");
          }
       }
-
 #elif defined POPC_SECURE
       try{
          //Create the SJobMgr
@@ -392,8 +399,10 @@ int main(int argc, char **argv)
       try{
          //Create the base JobMgr
          paroc_accesspoint empty;
+         psn.GetAccessPoint();
 	   	JobMgr info(daemon, conf, challenge, host, psn.GetAccessPoint(), empty);
-         printf("JM created [%s]\n", info.GetAccessPoint().GetAccessString());
+         printf("[POPFILE] JM created [%s]\n", info.GetAccessPoint().GetAccessString());
+         pfm.getNeighborsFromPSN();
       } catch(...){
          fprintf(stderr, "Error: Need to stop PSN\n");
          if(!psn.Stop(challenge)){
@@ -402,7 +411,6 @@ int main(int argc, char **argv)
             printf("PSN stopped successfully!\n");
          }
       }
-      
 #endif
 		if (daemon)
 		{

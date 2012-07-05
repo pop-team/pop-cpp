@@ -8,7 +8,7 @@ parclass Fractal
 	classuid(1002);
 public:
 	Fractal();
-	Fractal(paroc_string machine) @{ od.url(machine);};//added lwk
+	Fractal(paroc_string machine) @{ od.search(10, 3, 0); };//added lwk
 	~Fractal();
 	async void generate([in] int w, [in] int h,
 		[in] float rm, [in] float rs, [in] float im, [in] float is,

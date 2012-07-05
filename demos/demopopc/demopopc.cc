@@ -4,7 +4,7 @@
 POPCobject::POPCobject(int newID, int wanted, int minp)
 {
 //	printf("POPCobject with ID=%d created (by JobMgr) on machine:%s\n", newID, (const char*)POPSystem::GetHost());
-   cout << "POPCobject with ID=" << newID << " created (by JobMgr) on machine:" << (const char*)POPSystem::GetHost() << popcendl;
+   cout << "POPCobject with ID=" << newID << " created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << popcendl;
 	iD=newID;
 }
 

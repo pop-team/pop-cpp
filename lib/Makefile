@@ -35,8 +35,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = i686-pc-linux-gnu
-host_triplet = i686-pc-linux-gnu
+build_triplet = x86_64-apple-darwin11.4.0
+host_triplet = x86_64-apple-darwin11.4.0
 bin_PROGRAMS = testplugin$(EXEEXT) alloctest$(EXEEXT) \
 	combox_client$(EXEEXT) combox_server$(EXEEXT) \
 	combox_test$(EXEEXT) popcipher$(EXEEXT)
@@ -102,7 +102,8 @@ libparoc_common_la_DEPENDENCIES = paroc_service_base.ph.stub_client.lo \
 	remotelog.ph.stub_client.lo \
 	objectmonitor.ph.stub_client.lo \
 	appservice.ph.stub_client.lo \
-	batchmgr.ph.stub_client.lo
+	batchmgr.ph.stub_client.lo \
+	popfilemanager.ph.stub_client.lo
 #libparoc_common_la_DEPENDENCIES =  \
 #	paroc_service_base.ph.stub_client.lo \
 #	popc_security_manager.ph.stub_client.lo \
@@ -328,7 +329,8 @@ libparoc_service_common_la_DEPENDENCIES = paroc_service_base.ph.stub.lo \
 	remotelog.ph.stub.lo \
 	objectmonitor.ph.stub.lo \
 	appservice.ph.stub.lo \
-	batchmgr.ph.stub.lo
+	batchmgr.ph.stub.lo \
+	popfilemanager.ph.stub.lo
 #libparoc_service_common_la_DEPENDENCIES =  \
 #	paroc_service_base.ph.stub.lo \
 #	jobmgr.ph.stub.lo \
@@ -343,8 +345,8 @@ am__libparoc_service_common_la_SOURCES_DIST = service_base.cc \
 	jobmgr.cc popc_search_node.cc codemgr.cc remotelog.cc \
 	objectmonitor.cc appservice.cc batchmgr.cc secure_jobmgr.cc \
 	secure_popc_search_node.cc popc_security_manager.cc \
-	virtual_popc_search_node.cc virtual_jobmgr.cc \
-	WrapperFactory.cc ESXWrapper.cc popcloner.cc \
+	popfilemanager.cc virtual_popc_search_node.cc \
+	virtual_jobmgr.cc WrapperFactory.cc ESXWrapper.cc popcloner.cc \
 	virtual_secure_jobmgr.cc virtual_secure_popc_search_node.cc \
 	POPWrapper.cc virtual_popc_security_manager.cc
 ##am_libparoc_service_common_la_OBJECTS = service_base.lo \
@@ -388,7 +390,8 @@ am_libparoc_service_common_la_OBJECTS =  \
 	remotelog.lo \
 	objectmonitor.lo \
 	appservice.lo \
-	batchmgr.lo
+	batchmgr.lo \
+	popfilemanager.lo
 #am_libparoc_service_common_la_OBJECTS =  \
 #	service_base.lo jobmgr.lo \
 #	popc_search_node.lo codemgr.lo \
@@ -470,7 +473,7 @@ DATA = $(main_DATA)
 am__inst_HEADERS_DIST = paroc_service_base.ph appservice.ph \
 	popc_search_node.ph codemgr.ph remotelog.ph objectmonitor.ph \
 	batchmgr.ph jobmgr.ph popc_security_manager.ph \
-	secure_jobmgr.ph secure_popc_search_node.ph \
+	secure_jobmgr.ph secure_popc_search_node.ph popfilemanager.ph \
 	virtual_popc_search_node.ph virtual_jobmgr.ph popcloner.ph \
 	virtual_popc_security_manager.ph virtual_secure_jobmgr.ph \
 	virtual_secure_popc_search_node.ph
@@ -478,31 +481,32 @@ HEADERS = $(inst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run aclocal-1.11
-AMTAR = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run tar
+ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run aclocal-1.11
+AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run automake-1.11
-AWK = mawk
+AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run autoconf
+AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run autoheader
+AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run automake-1.11
+AWK = awk
 CC = gcc
 CFLAGS = -g -O2
 CPP = gcc -E
-CPPFLAGS = 
+CPPFLAGS = -DARCH_MAC
 CXX = ../parser/popcc
 CXXCPP = g++ -E
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
-DSYMUTIL = 
+DLLTOOL = false
+DSYMUTIL = dsymutil
 DUMPBIN = 
-ECHO_C = 
-ECHO_N = -n
+ECHO_C = \c
+ECHO_N = 
 ECHO_T = 
-EGREP = /bin/grep -E
+EGREP = /usr/bin/grep -E
 EXEEXT = 
-FGREP = /bin/grep -F
-GREP = /bin/grep
+FGREP = /usr/bin/grep -F
+GREP = /usr/bin/grep
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
@@ -510,50 +514,47 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld
 LDFLAGS = 
-LEX = :
+LEX = flex
 LEXLIB = 
-LEX_OUTPUT_ROOT = 
+LEX_OUTPUT_ROOT = lex.yy
 LIBOBJS = 
-LIBS = -ldl -lnsl -lpthread 
+LIBS = -ldl -lpthread 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
-LIBVIRT_CFLAGS = 
-LIBVIRT_LIBS = 
-LIPO = 
+LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run makeinfo
-MKDIR_P = /bin/mkdir -p
-NM = /usr/bin/nm -B
-NMEDIT = 
-OBJDUMP = objdump
+MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run makeinfo
+MANIFEST_TOOL = :
+MKDIR_P = .././install-sh -c -d
+NM = /usr/bin/nm
+NMEDIT = nmedit
+OBJDUMP = false
 OBJEXT = o
-OTOOL = 
-OTOOL64 = 
+OTOOL = otool
+OTOOL64 = :
 PACKAGE = popc
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = popc
-PACKAGE_STRING = popc 1.3.1 beta ViSaG
+PACKAGE_STRING = popc 2.0.1
 PACKAGE_TARNAME = popc
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.3.1 beta ViSaG
+PACKAGE_VERSION = 2.0.1
 PATH_SEPARATOR = :
-PKG_CONFIG = /usr/bin/pkg-config
-PKG_CONFIG_LIBDIR = 
-PKG_CONFIG_PATH = 
 RANLIB = ranlib
-SED = /bin/sed
+SED = /usr/bin/sed
 SET_MAKE = 
-SHELL = /bin/bash
+SHELL = /bin/sh
 STRIP = strip
-VERSION = 1.3.1 beta ViSaG
+VERSION = 2.0.1
 VIX_CFLAGS = 
 VIX_LIBS = 
-YACC = yacc
+YACC = bison -y
 YFLAGS = 
-abs_builddir = /home/visag/versioning/popcpp_forge/lib
-abs_srcdir = /home/visag/versioning/popcpp_forge/lib
-abs_top_builddir = /home/visag/versioning/popcpp_forge
-abs_top_srcdir = /home/visag/versioning/popcpp_forge
+abs_builddir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/lib
+abs_srcdir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/lib
+abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk
+abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk
+ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
@@ -561,11 +562,11 @@ am__leading_dot = .
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = i686-pc-linux-gnu
+build = x86_64-apple-darwin11.4.0
 build_alias = 
-build_cpu = i686
-build_os = linux-gnu
-build_vendor = pc
+build_cpu = x86_64
+build_os = darwin11.4.0
+build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
@@ -574,26 +575,25 @@ dvidir = ${docdir}
 exec_prefix = ${prefix}
 globusdir = 
 globusflavor = 
-host = i686-pc-linux-gnu
+host = x86_64-apple-darwin11.4.0
 host_alias = 
-host_cpu = i686
-host_kernel = Linux
-host_os = linux-gnu
-host_vendor = pc
+host_cpu = x86_64
+host_kernel = Darwin
+host_os = darwin11.4.0
+host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/visag/versioning/popcpp_forge/install-sh
+install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
-lt_ECHO = echo
 mandir = ${datarootdir}/man
-mkdir_p = /bin/mkdir -p
+mkdir_p = $(top_builddir)/./install-sh -c -d
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /home/visag/popc
+prefix = /usr/local/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -608,11 +608,11 @@ top_srcdir = ..
 virtsecure = false
 virtual = false
 AUTOMAKE_OPTIONS = no-dependencies
-POPC_FLAGS = -parocdir=.. -popcpp=../parser/popcpp -cxx=g++ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
-#AM_CXXFLAGS = $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS)
+POPC_FLAGS = -popcdir=.. -popcpp=../parser/popcpp -cxx=g++ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
+AM_CXXFLAGS = $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS)
 
 #ADD VIX and LIBVIRT flags
-AM_CXXFLAGS = -D_LINUX $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS) $(VIX_CFLAGS) $(VIX_LIBS)
+#AM_CXXFLAGS = -D_LINUX $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS) $(VIX_CFLAGS) $(VIX_LIBS)
 lib_LTLIBRARIES = libparoc_common.la  libparoc_service_common.la
 
 #compile popcipher if the version include virtualization
@@ -657,8 +657,9 @@ libparoc_common_la_SOURCES = system.cc mutex.cc thread.cc string.cc od.cc event.
 #   popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo \
 #   appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo secure_popc_search_node.ph.stub_client.lo
 
-libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo \
-   remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo
+libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo \
+   codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo \
+   batchmgr.ph.stub_client.lo popfilemanager.ph.stub_client.lo
 
 #libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo popc_security_manager.ph.stub_client.lo\
 #   popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo \
@@ -677,7 +678,7 @@ libparoc_common_la_CPPFLAGS =
 #   secure_jobmgr.cc secure_popc_search_node.cc popc_security_manager.cc 
 
 libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc popc_search_node.cc codemgr.cc \
-   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc
+   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc popfilemanager.cc
 
 #libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc  virtual_popc_search_node.cc popc_search_node.cc codemgr.cc \
 #   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc virtual_jobmgr.cc WrapperFactory.cc ESXWrapper.cc popcloner.cc \
@@ -700,7 +701,7 @@ libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc popc_search_node.
 
 libparoc_service_common_la_LIBADD = paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo \
    popc_search_node.ph.stub.lo codemgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
-   appservice.ph.stub.lo batchmgr.ph.stub.lo
+   appservice.ph.stub.lo batchmgr.ph.stub.lo popfilemanager.ph.stub.lo 
 
 #libparoc_service_common_la_LIBADD = paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo virtual_popc_search_node.ph.stub.lo \
 #   popc_search_node.ph.stub.lo codemgr.ph.stub.lo virtual_jobmgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
@@ -745,7 +746,7 @@ combox_test_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
 #   popc_security_manager.ph secure_jobmgr.ph secure_popc_search_node.ph
 
 EXTRA_DIST = paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph popc_search_node.ph codemgr.ph \
-   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph
+   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph popfilemanager.ph
 
 #EXTRA_DIST = paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph virtual_popc_search_node.ph popc_search_node.ph codemgr.ph \
 #   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph  virtual_jobmgr.ph popcloner.ph \
@@ -761,7 +762,7 @@ EXTRA_DIST = paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph popc_search
 #   objectmonitor.ph batchmgr.ph jobmgr.ph popc_security_manager.ph secure_jobmgr.ph secure_popc_search_node.ph
 
 inst_HEADERS = paroc_service_base.ph appservice.ph popc_search_node.ph codemgr.ph remotelog.ph \
-   objectmonitor.ph batchmgr.ph jobmgr.ph
+   objectmonitor.ph batchmgr.ph jobmgr.ph popfilemanager.ph
 
 #inst_HEADERS = paroc_service_base.ph appservice.ph virtual_popc_search_node.ph popc_search_node.ph codemgr.ph remotelog.ph \
 #   objectmonitor.ph batchmgr.ph jobmgr.ph virtual_jobmgr.ph popcloner.ph popc_security_manager.ph \

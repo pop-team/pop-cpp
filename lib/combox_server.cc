@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 
 	server->SetCallback(COMBOX_NEW, onNewConnection,&count);
 	server->SetCallback(COMBOX_CLOSE, onCloseConnection,&count);
-	//  server->SetTimeout(30000);
+	//server->SetTimeout(30000);
 	paroc_connection *peer=NULL;
 
 

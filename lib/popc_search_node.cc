@@ -13,6 +13,7 @@
  * clementval 	2010/05/05	Remove useless constructor.
  * clementval	2010/05/15	Add a funcionnality of null waiting (timer + semaphor)
  * clementval	2010/05/19	Rename the Node parclass in POPSearchNode
+ * clementval	2011/10/31	Fix bug with null timeout on Darwin Arch
  */
 
 #include "popc_search_node.ph"
@@ -24,7 +25,9 @@ POPCSearchNode::POPCSearchNode(const POPString &challenge, bool deamon) : paroc_
 	logicalClock=0;
    psn_currentJobs=0;
 
+
 #ifdef __APPLE__
+	popc_node_log("Initialize semaphor for DARWIN arch");
    pt_locker == NULL;
 #else
 	sem_t locker;
@@ -212,16 +215,19 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
    // wait until timeout
 	if(timeout == 0){
 #ifdef __APPLE__
+		popc_node_log("Running semaphor on DARWIN architecture");
 		if(pt_locker == NULL)
-         pt_locker = sem_open("popc_sem_resdisc", O_CREAT, 0, 0);
-      if(pt_locker == SEM_FAILED)
-         popc_node_log("[PSN]ERROR: SEMFAILED TO OPEN");
+           pt_locker = sem_open("popc_sem_resdisc", O_CREAT, 0, 0);
+      	if(pt_locker == SEM_FAILED)
+           popc_node_log("[PSN]ERROR: SEMFAILED TO OPEN");
 #else
 		sem_init(pt_locker, 0, 0);
 #endif
 		NodeThread *timer = new NodeThread(UNLOCK_TIMEOUT, GetAccessPoint());
 		timer->create();
-		sem_wait(pt_locker);
+		if(sem_wait(pt_locker) != 0){
+			popc_node_log("SEMAPHOR ERROR: The semaphor couldn't not be blocked");
+		}
 		timer->stop();
 #ifdef __APPLE__
 		sem_unlink("popc_sem_resdisc");
@@ -250,8 +256,8 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
    actualReqSyn.unlock();
 
    if(!req.isEndRequest()){
-      sprintf(log, "[PSN] RESULTS;%d", results.getNodeInfos().size());
-   	popc_node_log(log);
+      sprintf(log, "[PSN] RESULTS;%d", (int)results.getNodeInfos().size());
+      popc_node_log(log);
    }
    return results;
 }
@@ -423,8 +429,9 @@ void POPCSearchNode::callbackResult(Response resp){
       }
    }
    actualReqSyn.unlock();
-   if(pt_locker != NULL)
-   	sem_post(pt_locker);
+   if(pt_locker != NULL){
+      sem_post(pt_locker);
+   }
 }
 
 // internal comparison between request and local resources
@@ -612,6 +619,20 @@ void POPCSearchNode::removeJob(float power, float memorySize, float bandwidth, i
   /* sprintf(log,"AFTER_REMOVE:MEM:%f:POW:%f:BAN:%f", nodeInfo.memorySize, nodeInfo.power, nodeInfo.networkBandwidth);
    popc_node_log(log);*/
    psn_currentJobs-=nbJob;
+}
+
+POPString POPCSearchNode::getNeighborsAsString(){
+	POPString lst;
+	std::string strlst;
+	list<POPCSearchNode *>::iterator i;
+   for(i = neighborsList.begin(); i != neighborsList.end(); i++){
+   	strlst.append((*i)->getPOPCSearchNodeId().GetString());
+   	strlst.append(";");
+   }
+	sprintf(log, "NODENEIGH:%s", strlst.c_str());
+   popc_node_log(log);   
+	lst = strlst.c_str();	
+	return lst;
 }
 
 //Method to write log in a file

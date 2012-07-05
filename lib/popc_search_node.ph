@@ -92,6 +92,8 @@ public :
 
 	// Method to remove all neighbors (allowing clean destruction of node)
 	seq sync void deleteNeighbors();
+	
+	seq sync POPString getNeighborsAsString();
         
 	// Service's entry point to ressource discovery
 	conc sync virtual POPCSearchNodeInfos launchDiscovery([in, out] Request req, int timeout);        

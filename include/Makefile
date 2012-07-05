@@ -32,8 +32,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = i686-pc-linux-gnu
-host_triplet = i686-pc-linux-gnu
+build_triplet = x86_64-apple-darwin11.4.0
+host_triplet = x86_64-apple-darwin11.4.0
 subdir = include
 DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -62,9 +62,10 @@ am__include_HEADERS_DIST = paroc_base.h paroc_array.h paroc_list.h \
 	paroc_buffer_raw.h paroc_buffer_raw_factory.h \
 	paroc_exception.h sysinfodef.h paroc_broker.h \
 	paroc_broker_factory.h paroc_object.h paroc_interface.h \
-	paroc_allocobj.h timer.h popwayback.h nodethread.h \
-	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h \
-	popvm.h rijndael.h
+	paroc_allocobj.h timer.h popwayback.h nodethread.h request.h \
+	explorationList.h response.h popc_search_node_info.h \
+	POPString.h VPopCWrapper.h WrapperFactory.h ESXWrapper.h \
+	POPWrapper.h popvm.h rijndael.h
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -91,31 +92,32 @@ HEADERS = $(include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run aclocal-1.11
-AMTAR = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run tar
+ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run aclocal-1.11
+AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run automake-1.11
-AWK = mawk
+AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run autoconf
+AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run autoheader
+AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run automake-1.11
+AWK = awk
 CC = gcc
 CFLAGS = -g -O2
 CPP = gcc -E
-CPPFLAGS = 
+CPPFLAGS = -DARCH_MAC
 CXX = g++
 CXXCPP = g++ -E
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
-DSYMUTIL = 
+DLLTOOL = false
+DSYMUTIL = dsymutil
 DUMPBIN = 
-ECHO_C = 
-ECHO_N = -n
+ECHO_C = \c
+ECHO_N = 
 ECHO_T = 
-EGREP = /bin/grep -E
+EGREP = /usr/bin/grep -E
 EXEEXT = 
-FGREP = /bin/grep -F
-GREP = /bin/grep
+FGREP = /usr/bin/grep -F
+GREP = /usr/bin/grep
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
@@ -123,50 +125,47 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld
 LDFLAGS = 
-LEX = :
+LEX = flex
 LEXLIB = 
-LEX_OUTPUT_ROOT = 
+LEX_OUTPUT_ROOT = lex.yy
 LIBOBJS = 
-LIBS = -ldl -lnsl -lpthread 
+LIBS = -ldl -lpthread 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
-LIBVIRT_CFLAGS = 
-LIBVIRT_LIBS = 
-LIPO = 
+LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/visag/versioning/popcpp_forge/missing --run makeinfo
-MKDIR_P = /bin/mkdir -p
-NM = /usr/bin/nm -B
-NMEDIT = 
-OBJDUMP = objdump
+MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run makeinfo
+MANIFEST_TOOL = :
+MKDIR_P = .././install-sh -c -d
+NM = /usr/bin/nm
+NMEDIT = nmedit
+OBJDUMP = false
 OBJEXT = o
-OTOOL = 
-OTOOL64 = 
+OTOOL = otool
+OTOOL64 = :
 PACKAGE = popc
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = popc
-PACKAGE_STRING = popc 1.3.1 beta ViSaG
+PACKAGE_STRING = popc 2.0.1
 PACKAGE_TARNAME = popc
 PACKAGE_URL = 
-PACKAGE_VERSION = 1.3.1 beta ViSaG
+PACKAGE_VERSION = 2.0.1
 PATH_SEPARATOR = :
-PKG_CONFIG = /usr/bin/pkg-config
-PKG_CONFIG_LIBDIR = 
-PKG_CONFIG_PATH = 
 RANLIB = ranlib
-SED = /bin/sed
+SED = /usr/bin/sed
 SET_MAKE = 
-SHELL = /bin/bash
+SHELL = /bin/sh
 STRIP = strip
-VERSION = 1.3.1 beta ViSaG
+VERSION = 2.0.1
 VIX_CFLAGS = 
 VIX_LIBS = 
-YACC = yacc
+YACC = bison -y
 YFLAGS = 
-abs_builddir = /home/visag/versioning/popcpp_forge/include
-abs_srcdir = /home/visag/versioning/popcpp_forge/include
-abs_top_builddir = /home/visag/versioning/popcpp_forge
-abs_top_srcdir = /home/visag/versioning/popcpp_forge
+abs_builddir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/include
+abs_srcdir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/include
+abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk
+abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk
+ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 ac_ct_DUMPBIN = 
@@ -174,11 +173,11 @@ am__leading_dot = .
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = i686-pc-linux-gnu
+build = x86_64-apple-darwin11.4.0
 build_alias = 
-build_cpu = i686
-build_os = linux-gnu
-build_vendor = pc
+build_cpu = x86_64
+build_os = darwin11.4.0
+build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
@@ -187,26 +186,25 @@ dvidir = ${docdir}
 exec_prefix = ${prefix}
 globusdir = 
 globusflavor = 
-host = i686-pc-linux-gnu
+host = x86_64-apple-darwin11.4.0
 host_alias = 
-host_cpu = i686
-host_kernel = Linux
-host_os = linux-gnu
-host_vendor = pc
+host_cpu = x86_64
+host_kernel = Darwin
+host_os = darwin11.4.0
+host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/visag/versioning/popcpp_forge/install-sh
+install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
-lt_ECHO = echo
 mandir = ${datarootdir}/man
-mkdir_p = /bin/mkdir -p
+mkdir_p = $(top_builddir)/./install-sh -c -d
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /home/visag/popc
+prefix = /usr/local/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -230,7 +228,7 @@ IDLC = ../popccpp
 #	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
 #	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 #	paroc_exception.h sysinfodef.h\
-#	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h popwayback.h nodethread.h
+#	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h
 
 include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
@@ -241,7 +239,7 @@ include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od
 	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 	paroc_exception.h sysinfodef.h\
 	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-	popwayback.h nodethread.h
+	popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h POPString.h
 
 #include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 #	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
@@ -252,10 +250,8 @@ include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od
 #	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 #	paroc_exception.h sysinfodef.h\
 #	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-#	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h
+#	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h request.h explorationList.h response.h popc_search_node_info.h
 
-
-#Updated by Wyssen : Added VPopCWrapper.h, WrapperFactory.h and ESXWrapper.h
 #include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 #	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
 #	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
@@ -265,7 +261,7 @@ include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od
 #	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 #	paroc_exception.h sysinfodef.h\
 #	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-#	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h
+#	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h request.h explorationList.h response.h popc_search_node_info.h
 
 all: all-am
 
@@ -526,7 +522,7 @@ uninstall-am: uninstall-includeHEADERS
 # paroc_DATA=	proxy.ph paroc_service_base.ph appservice.ph codemgr.ph remotelog.ph objectmonitor.ph jobmgr.ph popc_search_node.ph
 
 #instdir=${prefix}/include
-# parocdir=${prefix}/include
+# popcdir=${prefix}/include
 
 # parocfiles= jobmgr.ph codemgr.ph remotelog.ph appservice.ph objectmonitor.ph proxy.ph paroc_service_base.ph popc_search_node.ph
 

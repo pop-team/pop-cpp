@@ -130,15 +130,17 @@ paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
 paroc_interface::paroc_interface()
 {
 
-  // DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
+ // DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
    if(od.isSecureSet()) accesspoint.SetSecure();
    _ssh_tunneling=false;
 	__paroc_combox=NULL;
 	__paroc_buf=NULL;
+
 }
 
 paroc_interface::paroc_interface(const paroc_accesspoint &p)
 {
+
 
    
    _ssh_tunneling=false;
@@ -150,9 +152,8 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p)
    if(!p.IsEmpty());
    	Bind(p);
 
-   if(p.GetNoAddRef())
-      DecRef();
-
+   if(p.GetNoAddRef()) DecRef();
+   
 }
 
 
@@ -170,8 +171,7 @@ paroc_interface::paroc_interface(const paroc_interface &inf)
       accesspoint.SetSecure();
    if(infAP.IsService())
       accesspoint.SetAsService();
-
-   
+ 
   
    
 	Bind(inf.GetAccessPoint());
@@ -194,9 +194,17 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer)
 }
 
 
-
+/**
+ * Interface destructor
+ */
 paroc_interface::~paroc_interface()
 {
+   // printf("INTERFACE DESTRCUTOR CALLED\n");
+   // DEV TESTING START
+   if(!accesspoint.IsService()){
+     // DecRef();
+   }
+   // DEV TESTING END
 	Release();
 }
 
@@ -728,7 +736,7 @@ void paroc_interface::Release()
    if(_ssh_tunneling){
       int ret=0;
       ret = KillSSHTunnel(_ssh_user.c_str(), _ssh_dest_ip.c_str(), _ssh_dest_port, _ssh_local_port);
-   }
+   }      
 }
 
 
@@ -995,6 +1003,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		argv[n++]=strdup(tmpstr);
 		if (!islocal)
 		{
+
 			BatchMgr batchman(paroc_system::appservice);
 			sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
 			DEBUG("%s",tmpstr);

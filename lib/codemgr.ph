@@ -47,7 +47,7 @@ public:
 	/** @brief Constructor
 	 * @param challenge challenge string which will be required on stopping the service
 	*/
-	CodeMgr(const POPString &challenge) @{od.runLocal(true);};
+	CodeMgr(const POPString &challenge) @{od.runLocal(true); od.service(true);};
 	~CodeMgr();
 
 

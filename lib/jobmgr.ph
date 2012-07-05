@@ -10,7 +10,7 @@
  *                         //End of add
  * clementval	2010/04/19	All code modified during the semester project begins with //Modified by clementval, ends with 
  *                         //End of modification
- * clementval	2010/04/29	Full functionnal version with the new POPSearchNode that is in charge of the resource discovery. 
+ * clementval	2010/04/29	Full functionnal version with the new POPSearchNode in charge of the resource discovery. 
  *                         Biggest change are in the method AllocResource.
  * 								Add new method UnregisterNode, Reserve, GetNodeAccessPoint
  * clementval	2010/05/02	Better distribution of parallel object on discovered ressources

@@ -347,17 +347,13 @@ int popc_node_log(const char *format,...)
 JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, const POPString &url, const paroc_accesspoint &nodeAccess,  const paroc_accesspoint &localPSM): JobCoreService(challenge)
 {
    //Added by clementval
-
 	//Save the POPCSearchNode's access point for future communication
 	_localPSN = nodeAccess;
 	//Create interface to communicate with the local POPCSearchNode
 	POPCSearchNode psn(_localPSN);
 	//Set a reference of this JobMgr to the POPCSearchNode
 	psn.setJobMgrRef(GetAccessPoint());
-
    _localPSM = localPSM;
-
-
 	//End of add
 	
 	counter=1;

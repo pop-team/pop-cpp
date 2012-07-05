@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 echo '====================================================='
 echo CONFIGURING STARTUP SCRIPT FOR YOUR LOCAL MACHINE...
 
@@ -7,7 +7,7 @@ scriptglobus=SXXpopc.globus
 
 tmpheader=/tmp/SXXpopc_header_${USER}
 
-POPC_LOCATION=/home/visag/popc
+POPC_LOCATION=/usr/local/popc
 
 if [ ! -d "${POPC_LOCATION}" ]
 then
@@ -15,7 +15,7 @@ then
 	exit 1
 fi
 
-echo '#!/bin/sh' > $tmpheader
+echo '#!/bin/bash' > $tmpheader
 echo "POPC_LOCATION=${POPC_LOCATION}" >> $tmpheader
 echo "export POPC_LOCATION" >> $tmpheader
 
