@@ -34,7 +34,6 @@ paroc_objmain.%.o: paroc_objmain.%.cc
 	$(LIBTOOL) --mode=compile --tag=CXX $(CXX) -cxxmain $(POPC_FLAGS) $(CXXFLAGS) -c $< -o $@
 
 lib_LTLIBRARIES = libparoc_common.la  libparoc_service_common.la
-#lib_LTLIBRARIES = libparoc_plugin.la
 
 bin_PROGRAMS= testplugin alloctest combox_client combox_server combox_test popcipher
 
@@ -103,7 +102,7 @@ libparoc_common_la_SOURCES=system.cc mutex.cc thread.cc string.cc od.cc event.cc
 	combox.cc combox_socket.cc buffer_xdr.cc \
 	buffer_factory.cc buffer_factory_finder.cc buffer_xdr_factory.cc \
 	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc \
-	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc
+	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc popc_logger.cpp
 	
 libparoc_common_la_LIBADD=paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo \
    codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo \
@@ -154,7 +153,7 @@ endif
 
 if STANDARDSUPPORT
 libparoc_service_common_la_SOURCES=service_base.cc jobmgr.cc popc_search_node.cc codemgr.cc \
-   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc popfilemanager.cc
+   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc popfilemanager.cc popc_logger.cpp
 
 libparoc_service_common_la_LIBADD=paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo \
    popc_search_node.ph.stub.lo codemgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
@@ -163,38 +162,37 @@ endif
 
 libparoc_service_common_la_LDFLAGS=-static -version-info 1:2:0
 
-
 main_DATA= paroc_objmain.std.o paroc_infmain.std.o
 maindir=@libdir@
 
-
-#paroc_objmain_std.o: paroc_objmain_std.cc
-#	$(CXX) -cxxmain $(POPC_FLAGS) $(CXXFLAGS) -DPIC -fPIC -c $< -o $@
-
 testplugin_SOURCES=testplugin.cc 
-testplugin_LDFLAGS=-paroc-nolib -L./ -lparoc_common 
-testplugin_LDADD=paroc_infmain.std.o
+testplugin_LDFLAGS=-paroc-nolib -L./.libs/ -lparoc_common
+testplugin_LDADD=
 testplugin_CXXFLAGS=$(AM_CXXFLAGS) -DPIC -fPIC
 
 
 alloctest_SOURCES=alloctest.cc 
-alloctest_LDFLAGS=-paroc-nolib -L./ -lparoc_service_common -lparoc_common
-alloctest_LDADD=paroc_infmain.std.o
+alloctest_LDFLAGS=-paroc-nolib -L./.libs/ -lparoc_service_common -lparoc_common
+#alloctest_LDADD=paroc_infmain.std.o
+alloctest_LDADD=
 alloctest_CXXFLAGS=$(AM_CXXFLAGS) -DPIC -fPIC
 
 combox_client_SOURCES=combox_client.cc 
-combox_client_LDFLAGS=-paroc-nolib -L./ -lparoc_common 
-combox_client_LDADD=paroc_infmain.std.o
+combox_client_LDFLAGS=-paroc-nolib -L./.libs/ -lparoc_common 
+#combox_client_LDADD=paroc_infmain.std.o
+combox_client_LDADD=
 combox_client_CXXFLAGS=$(AM_CXXFLAGS) -DPIC -fPIC
 
 combox_server_SOURCES=combox_server.cc 
-combox_server_LDFLAGS=-paroc-nolib -L./ -lparoc_common 
-combox_server_LDADD=paroc_infmain.std.o
+combox_server_LDFLAGS=-paroc-nolib -L./.libs/ -lparoc_common 
+#combox_server_LDADD=paroc_infmain.std.o
+combox_server_LDADD=
 combox_server_CXXFLAGS=$(AM_CXXFLAGS) -DPIC -fPIC
 
 combox_test_SOURCES=combox_test.cc 
-combox_test_LDFLAGS=-paroc-nolib -L./ -lparoc_common 
-combox_test_LDADD=paroc_infmain.std.o
+combox_test_LDFLAGS=-paroc-nolib -L./.libs/ -lparoc_common 
+combox_test_LDADD=
+#combox_test_LDADD=paroc_infmain.std.o
 combox_test_CXXFLAGS=$(AM_CXXFLAGS) -DPIC -fPIC
 
 #Compile the cipher module for virtual configuration file
