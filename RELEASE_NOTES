@@ -9,3 +9,17 @@ Release 2.0.1
 - Add support for enum type inside a parclass declaration
 - Removing unuseful directory in the release
 
+Release 2.0.2
+- Add experimental functionality of parallel file striping
+-- Use the POPFile library to create and manage parallel file. 
+- Several bug fix
+
+Release 2.0.3
+For end-user
+- Better support of Mac OS X version (no need to use CPPFLAGS=-DARCH_MAC anymore)
+- Ability to start the runtime without the POPFileManager (SXXpopc start --no-service popfile)
+- 
+
+For POP-C++ development
+- Add different logging level (POPC_DEBUG, POPC_ERROR, POPC_CORE)
+
