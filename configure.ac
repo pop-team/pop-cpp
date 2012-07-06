@@ -1,19 +1,17 @@
-#                                               -*- Autoconf -*-
+#
+# Autoconf tools configure.ac file
 # Process this file with autoconf to produce a configure script.
-# Code updated by clementval begins with #Updated by clementval and ends with #End of update
+# use the script popc_regenrate_configuration in dev/script/
+#
 
-AC_PREREQ([2.67])
-#AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
-#AC_CONFIG_SRCDIR([config.h])
-#AC_CONFIG_HEADERS([config.h])
+# Version of the tools required
+AC_PREREQ(2.67)
 
-#AC_CONFIG_SRCDIR([lex.yy.cc])
-#AC_CONFIG_HEADER([config.h])
-
-# Checks for programs.
+# Define the project and its version number
 AC_INIT( popc, 2.0.3-beta)
 AM_INIT_AUTOMAKE(no-dependencies)
 
+# Check for host architecture
 AC_CANONICAL_HOST
 case $host_os in
 	darwin* )
@@ -32,7 +30,10 @@ case $host_os in
 		;;
 esac
 
+#Define base language
 AC_LANG(C++)
+
+#Define base prefix if no --prefix is used
 AC_PREFIX_DEFAULT(/usr/local/popc)
 
 test -n "${prefix}" || prefix=/usr/local/popc
@@ -144,7 +145,6 @@ AC_PROG_LEX
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
 LT_INIT
 
 # Checks for libraries.
@@ -259,6 +259,7 @@ AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/M
 AC_CONFIG_FILES(model/Makefile)
 AC_CONFIG_FILES(modules/Makefile modules/raw-zlib/Makefile  modules/xdr-zlib/Makefile)
 
+AC_CONFIG_MACRO_DIR([m4])
 
 test x$globus = xfalse  || AC_CONFIG_FILES(globus/globus_header)
 AC_OUTPUT
