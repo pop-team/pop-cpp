@@ -535,31 +535,30 @@ int main(int argc, char *argv[])
 	
     }
 
-   libpaths[libpaths_count++]="/usr/lib";
-   libpaths[libpaths_count++]="/lib";
 
+	libpaths[libpaths_count++] = (char*)"/usr/lib";
+	libpaths[libpaths_count++] = (char*)"/lib";
 
-    sprintf(buf,"-DPOPC_ARCH=\"%s\"",arch);
-    cpp_opts[cpp_count++]=strdup(buf);
+   sprintf(buf,"-DPOPC_ARCH=\"%s\"",arch);
+   cpp_opts[cpp_count++]=strdup(buf);
 
-  if (useparocmain)
-    {
-      cpp_opts[cpp_count++]=strdup("-Dmain=parocmain");
-    }
+	if (useparocmain) {
+	   cpp_opts[cpp_count++]=strdup("-Dmain=parocmain");
+   }
 
-  sprintf(buf,"-I%s/include",parocdir);
-  cpp_opts[cpp_count++]=strdup(buf);
+	sprintf(buf,"-I%s/include",parocdir);
+	cpp_opts[cpp_count++]=strdup(buf);
 
-  if (*outputfile!=0)
-    {
-      link_cmd[link_count++]=strdup("-o");
+	if (*outputfile!=0)
+	{
+		link_cmd[link_count++]=strdup("-o");
       link_cmd[link_count++]=outputfile;
-    }
+	}
 
-  cxx_opts[cxx_count++]=strdup("-Dparclass=class");
+	cxx_opts[cxx_count++]=strdup("-Dparclass=class");
 
-  cpp_opts[cpp_count]=NULL;
-  cxx_opts[cxx_count]=NULL;
+	cpp_opts[cpp_count]=NULL;
+	cxx_opts[cxx_count]=NULL;
 
 
   for (int i=1;i<argc;i++) if (argv[i][0]!=0)
