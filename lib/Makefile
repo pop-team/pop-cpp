@@ -123,8 +123,9 @@ am__libparoc_common_la_SOURCES_DIST = system.cc mutex.cc thread.cc \
 	buffer_factory_finder.cc buffer_xdr_factory.cc buffer_raw.cc \
 	buffer_raw_factory.cc broker_factory.cc response.cc request.cc \
 	explorationList.cc popc_search_node_info.cc popwayback.cc \
-	popc_security_manager.cc nodethread.cc popvm.cc \
-	WrapperFactory.cc ESXWrapper.cc POPWrapper.cc rijndael.cc
+	popc_security_manager.cc nodethread.cc popc_logger.cpp \
+	popvm.cc WrapperFactory.cc ESXWrapper.cc POPWrapper.cc \
+	rijndael.cc
 ##am_libparoc_common_la_OBJECTS = libparoc_common_la-system.lo \
 ##	libparoc_common_la-mutex.lo \
 ##	libparoc_common_la-thread.lo \
@@ -249,7 +250,8 @@ am_libparoc_common_la_OBJECTS = libparoc_common_la-system.lo \
 	libparoc_common_la-explorationList.lo \
 	libparoc_common_la-popc_search_node_info.lo \
 	libparoc_common_la-popwayback.lo \
-	libparoc_common_la-nodethread.lo
+	libparoc_common_la-nodethread.lo \
+	libparoc_common_la-popc_logger.lo
 #am_libparoc_common_la_OBJECTS =  \
 #	libparoc_common_la-system.lo \
 #	libparoc_common_la-mutex.lo \
@@ -345,7 +347,7 @@ am__libparoc_service_common_la_SOURCES_DIST = service_base.cc \
 	jobmgr.cc popc_search_node.cc codemgr.cc remotelog.cc \
 	objectmonitor.cc appservice.cc batchmgr.cc secure_jobmgr.cc \
 	secure_popc_search_node.cc popc_security_manager.cc \
-	popfilemanager.cc virtual_popc_search_node.cc \
+	popfilemanager.cc popc_logger.cpp virtual_popc_search_node.cc \
 	virtual_jobmgr.cc WrapperFactory.cc ESXWrapper.cc popcloner.cc \
 	virtual_secure_jobmgr.cc virtual_secure_popc_search_node.cc \
 	POPWrapper.cc virtual_popc_security_manager.cc
@@ -391,7 +393,8 @@ am_libparoc_service_common_la_OBJECTS =  \
 	objectmonitor.lo \
 	appservice.lo \
 	batchmgr.lo \
-	popfilemanager.lo
+	popfilemanager.lo \
+	popc_logger.lo
 #am_libparoc_service_common_la_OBJECTS =  \
 #	service_base.lo jobmgr.lo \
 #	popc_search_node.lo codemgr.lo \
@@ -408,25 +411,25 @@ libparoc_service_common_la_LINK = $(LIBTOOL) --tag=CXX \
 PROGRAMS = $(bin_PROGRAMS)
 am_alloctest_OBJECTS = alloctest-alloctest.$(OBJEXT)
 alloctest_OBJECTS = $(am_alloctest_OBJECTS)
-alloctest_DEPENDENCIES = paroc_infmain.std.o
+alloctest_DEPENDENCIES =
 alloctest_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(alloctest_CXXFLAGS) \
 	$(CXXFLAGS) $(alloctest_LDFLAGS) $(LDFLAGS) -o $@
 am_combox_client_OBJECTS = combox_client-combox_client.$(OBJEXT)
 combox_client_OBJECTS = $(am_combox_client_OBJECTS)
-combox_client_DEPENDENCIES = paroc_infmain.std.o
+combox_client_DEPENDENCIES =
 combox_client_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(combox_client_CXXFLAGS) \
 	$(CXXFLAGS) $(combox_client_LDFLAGS) $(LDFLAGS) -o $@
 am_combox_server_OBJECTS = combox_server-combox_server.$(OBJEXT)
 combox_server_OBJECTS = $(am_combox_server_OBJECTS)
-combox_server_DEPENDENCIES = paroc_infmain.std.o
+combox_server_DEPENDENCIES =
 combox_server_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(combox_server_CXXFLAGS) \
 	$(CXXFLAGS) $(combox_server_LDFLAGS) $(LDFLAGS) -o $@
 am_combox_test_OBJECTS = combox_test-combox_test.$(OBJEXT)
 combox_test_OBJECTS = $(am_combox_test_OBJECTS)
-combox_test_DEPENDENCIES = paroc_infmain.std.o
+combox_test_DEPENDENCIES =
 combox_test_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(combox_test_CXXFLAGS) \
 	$(CXXFLAGS) $(combox_test_LDFLAGS) $(LDFLAGS) -o $@
@@ -435,7 +438,7 @@ popcipher_OBJECTS = popcipher.$(OBJEXT)
 popcipher_LDADD = $(LDADD)
 am_testplugin_OBJECTS = testplugin-testplugin.$(OBJEXT)
 testplugin_OBJECTS = $(am_testplugin_OBJECTS)
-testplugin_DEPENDENCIES = paroc_infmain.std.o
+testplugin_DEPENDENCIES =
 testplugin_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(testplugin_CXXFLAGS) \
 	$(CXXFLAGS) $(testplugin_LDFLAGS) $(LDFLAGS) -o $@
@@ -481,12 +484,12 @@ HEADERS = $(inst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run aclocal-1.11
-AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run tar
+ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run aclocal-1.11
+AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run autoconf
-AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run autoheader
-AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run automake-1.11
+AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoconf
+AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoheader
+AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run automake-1.11
 AWK = awk
 CC = gcc
 CFLAGS = -g -O2
@@ -523,7 +526,7 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run makeinfo
+MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = .././install-sh -c -d
 NM = /usr/bin/nm
@@ -535,25 +538,25 @@ OTOOL64 = :
 PACKAGE = popc
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = popc
-PACKAGE_STRING = popc 2.0.1
+PACKAGE_STRING = popc 2.0.3-beta
 PACKAGE_TARNAME = popc
 PACKAGE_URL = 
-PACKAGE_VERSION = 2.0.1
+PACKAGE_VERSION = 2.0.3-beta
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 2.0.1
+VERSION = 2.0.3-beta
 VIX_CFLAGS = 
 VIX_LIBS = 
 YACC = bison -y
 YFLAGS = 
-abs_builddir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/lib
-abs_srcdir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/lib
-abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk
-abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk
+abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/lib
+abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/lib
+abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
+abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -584,7 +587,7 @@ host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/install-sh
+install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -631,7 +634,7 @@ libparoc_common_la_SOURCES = system.cc mutex.cc thread.cc string.cc od.cc event.
 	combox.cc combox_socket.cc buffer_xdr.cc \
 	buffer_factory.cc buffer_factory_finder.cc buffer_xdr_factory.cc \
 	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc \
-	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc
+	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc popc_logger.cpp
 
 #libparoc_common_la_SOURCES = system.cc mutex.cc thread.cc string.cc od.cc event.cc buffer.cc buffer_utils.cc combox.cc  \
 #	broker.cc broker_receive.cc broker_serve.cc object.cc interface.cc allocobj.cc timer.cc accesspoint.cc memspool.cc \
@@ -678,7 +681,7 @@ libparoc_common_la_CPPFLAGS =
 #   secure_jobmgr.cc secure_popc_search_node.cc popc_security_manager.cc 
 
 libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc popc_search_node.cc codemgr.cc \
-   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc popfilemanager.cc
+   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc popfilemanager.cc popc_logger.cpp
 
 #libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc  virtual_popc_search_node.cc popc_search_node.cc codemgr.cc \
 #   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc virtual_jobmgr.cc WrapperFactory.cc ESXWrapper.cc popcloner.cc \
@@ -716,28 +719,29 @@ libparoc_service_common_la_LIBADD = paroc_service_base.ph.stub.lo jobmgr.ph.stub
 libparoc_service_common_la_LDFLAGS = -static -version-info 1:2:0
 main_DATA = paroc_objmain.std.o paroc_infmain.std.o
 maindir = ${exec_prefix}/lib
-
-#paroc_objmain_std.o: paroc_objmain_std.cc
-#	$(CXX) -cxxmain $(POPC_FLAGS) $(CXXFLAGS) -DPIC -fPIC -c $< -o $@
 testplugin_SOURCES = testplugin.cc 
-testplugin_LDFLAGS = -paroc-nolib -L./ -lparoc_common 
-testplugin_LDADD = paroc_infmain.std.o
+testplugin_LDFLAGS = -paroc-nolib -L./.libs/ -lparoc_common
+testplugin_LDADD = 
 testplugin_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
 alloctest_SOURCES = alloctest.cc 
-alloctest_LDFLAGS = -paroc-nolib -L./ -lparoc_service_common -lparoc_common
-alloctest_LDADD = paroc_infmain.std.o
+alloctest_LDFLAGS = -paroc-nolib -L./.libs/ -lparoc_service_common -lparoc_common
+#alloctest_LDADD=paroc_infmain.std.o
+alloctest_LDADD = 
 alloctest_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
 combox_client_SOURCES = combox_client.cc 
-combox_client_LDFLAGS = -paroc-nolib -L./ -lparoc_common 
-combox_client_LDADD = paroc_infmain.std.o
+combox_client_LDFLAGS = -paroc-nolib -L./.libs/ -lparoc_common 
+#combox_client_LDADD=paroc_infmain.std.o
+combox_client_LDADD = 
 combox_client_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
 combox_server_SOURCES = combox_server.cc 
-combox_server_LDFLAGS = -paroc-nolib -L./ -lparoc_common 
-combox_server_LDADD = paroc_infmain.std.o
+combox_server_LDFLAGS = -paroc-nolib -L./.libs/ -lparoc_common 
+#combox_server_LDADD=paroc_infmain.std.o
+combox_server_LDADD = 
 combox_server_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
 combox_test_SOURCES = combox_test.cc 
-combox_test_LDFLAGS = -paroc-nolib -L./ -lparoc_common 
-combox_test_LDADD = paroc_infmain.std.o
+combox_test_LDFLAGS = -paroc-nolib -L./.libs/ -lparoc_common 
+combox_test_LDADD = 
+#combox_test_LDADD=paroc_infmain.std.o
 combox_test_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
 
 #Secure version
@@ -778,7 +782,7 @@ all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .cc .lo .o .obj
+.SUFFIXES: .c .cc .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -1041,6 +1045,9 @@ libparoc_common_la-popc_security_manager.lo: popc_security_manager.cc
 libparoc_common_la-nodethread.lo: nodethread.cc
 	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-nodethread.lo `test -f 'nodethread.cc' || echo '$(srcdir)/'`nodethread.cc
 
+libparoc_common_la-popc_logger.lo: popc_logger.cpp
+	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-popc_logger.lo `test -f 'popc_logger.cpp' || echo '$(srcdir)/'`popc_logger.cpp
+
 libparoc_common_la-popvm.lo: popvm.cc
 	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-popvm.lo `test -f 'popvm.cc' || echo '$(srcdir)/'`popvm.cc
 
@@ -1085,6 +1092,15 @@ testplugin-testplugin.o: testplugin.cc
 
 testplugin-testplugin.obj: testplugin.cc
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testplugin_CXXFLAGS) $(CXXFLAGS) -c -o testplugin-testplugin.obj `if test -f 'testplugin.cc'; then $(CYGPATH_W) 'testplugin.cc'; else $(CYGPATH_W) '$(srcdir)/testplugin.cc'; fi`
+
+.cpp.o:
+	$(CXXCOMPILE) -c -o $@ $<
+
+.cpp.obj:
+	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cpp.lo:
+	$(LTCXXCOMPILE) -c -o $@ $<
 
 mostlyclean-libtool:
 	-rm -f *.lo

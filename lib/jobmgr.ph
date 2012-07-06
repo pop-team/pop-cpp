@@ -22,12 +22,16 @@
 #ifndef JOBMGR_PH
 #define JOBMGR_PH
 
+
+
 #include <time.h>
 #include <sys/time.h>
 #include "paroc_service_base.ph"
 #include <timer.h>
 #include <paroc_accesspoint.h>
 #include <paroc_list.h>
+#include "popc_logger.h"
+
 
 /**
  * ViSaG : clementval 
@@ -327,11 +331,6 @@ protected:
 };
 
 int paroc_service_log(const char *format,...);
-
-//Added by clementval
-//To write in POPSearchNode log file
 int popc_node_log(const char *format,...);
-//End of add
 
-#endif //JOBMGR_PH
-
+#endif /* JOBMGR_PH */

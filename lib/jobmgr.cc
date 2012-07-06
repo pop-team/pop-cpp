@@ -375,13 +375,14 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 	int ret=paroc_system::GetIP(serviceID,1);
 	if (ret!=1)
 	{
-		paroc_service_log("ERROR: can not find IP address");
+		POPC_ERROR(("Can't find IP address"));
+//		paroc_service_log("ERROR: can not find IP address");
 		serviceID[0]=rand();
 	}
 
 	if (sscanf(tmp+1,"%d", serviceID+1)!=1) serviceID[1]=rand();
 
-	paroc_service_log("MyID=%d:%d",serviceID[0], serviceID[1]);
+	POPC_DEBUG(("MyID=%d:%d",serviceID[0], serviceID[1]));
 
 	DEBUGIF(ret<=0, "Can not find IP address of %s for resource discovery tracking",str);
 
@@ -425,7 +426,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 	char mycontact[1024];
 
 	strcpy(mycontact,(GetAccessPoint()).GetAccessString());
-	DEBUG(" jobmgr access string %s", mycontact);
+	POPC_DEBUG(("jobmgr access string %s", mycontact));
 	while (!feof(f))
 	{
 		if (fgets(str,1023,f)==NULL) break;
@@ -572,36 +573,36 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 	}
 
 	memcpy(&available,&total,sizeof(Resources));
-	DEBUG("Total resource power=%g, max per job=%g",total.flops,limit.flops);
+	POPC_DEBUG(("Total resource power=%g, max per job=%g",total.flops,limit.flops));
 
 
 	//Added by clementval
 	
 	//Setting POPCSearchNode informations. Thoses informations are known by the JobMgr 
-	DEBUG("Setting the Node info for JobMgr");
+	POPC_DEBUG(("Setting the Node info for JobMgr"));
 
 	//Setting the POPCSearchNode ID (its access point)
 	psn.setPOPCSearchNodeId(_localPSN.GetAccessString());
-	DEBUG("Node ID : %s", psn.getPOPCSearchNodeId().GetString());
+	POPC_DEBUG(("Node ID : %s", psn.getPOPCSearchNodeId().GetString()));
 
 	//Setting the current operating system (The one of the JobMgr's machine)
 	psn.setOperatingSystem(paroc_system::platform);
-	DEBUG("Node opertating system : %s", psn.getOperatingSystem().GetString());
+	POPC_DEBUG(("Node opertating system : %s", psn.getOperatingSystem().GetString()));
 
 	//Setting the total computing power of this JobMgr
 	psn.setPower(total.flops);
-	DEBUG("Node power : %f", psn.getPower());
+	POPC_DEBUG(("Node power : %f", psn.getPower()));
 
 	//Setting the total RAM of this JobMgr
 	psn.setMemorySize(total.mem);
-	DEBUG("Node memory size : %d", psn.getMemorySize());
+	POPC_DEBUG(("Node memory size : %d", psn.getMemorySize()));
 
 	//Setting the total network bandwith of this JobMgr
 	psn.setNetworkBandwidth(total.bandwidth);
-	DEBUG("Node bandwidth : %f", psn.getNetworkBandwidth());
+	POPC_DEBUG(("Node bandwidth : %f", psn.getNetworkBandwidth()));
 
    psn.setMaxJobs(maxjobs);
-	DEBUG("Node max jobs : %d", psn.getMaxJobs());
+	POPC_DEBUG(("Node max jobs : %d", psn.getMaxJobs()));
 	//End of add
 
 

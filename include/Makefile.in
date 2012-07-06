@@ -64,8 +64,8 @@ am__include_HEADERS_DIST = paroc_base.h paroc_array.h paroc_list.h \
 	paroc_broker_factory.h paroc_object.h paroc_interface.h \
 	paroc_allocobj.h timer.h popwayback.h nodethread.h request.h \
 	explorationList.h response.h popc_search_node_info.h \
-	POPString.h VPopCWrapper.h WrapperFactory.h ESXWrapper.h \
-	POPWrapper.h popvm.h rijndael.h
+	POPString.h popc_logger.h VPopCWrapper.h WrapperFactory.h \
+	ESXWrapper.h POPWrapper.h popvm.h rijndael.h
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -239,7 +239,7 @@ IDLC = @top_srcdir@/popccpp
 @STANDARDSUPPORT_TRUE@	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 @STANDARDSUPPORT_TRUE@	paroc_exception.h sysinfodef.h\
 @STANDARDSUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-@STANDARDSUPPORT_TRUE@	popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h POPString.h
+@STANDARDSUPPORT_TRUE@	popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h POPString.h popc_logger.h
 
 @VIRTSECURESUPPORT_TRUE@include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 @VIRTSECURESUPPORT_TRUE@	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\

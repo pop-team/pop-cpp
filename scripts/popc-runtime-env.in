@@ -14,18 +14,3 @@ export PATH
 LD_LIBRARY_PATH=${POPC_LOCATION}/lib:${LD_LIBRARY_PATH}
 export LD_LIBRARY_PATH
 
-IFACE=lo0
-ARCH=$(uname)
-if test x$ARCH = xDarwin
-then
-	for iface in  `ifconfig -lu` ; do
-   	case $iface in
-    		lo*)     continue ;;
-    	esac
-   	ifconfig $iface | grep -q 'inet ' && ifconfig $iface | grep -q 'active' && IFACE=$iface && break
-	done
-fi
-
-POPC_IFACE=$IFACE
-export POPC_IFACE
-

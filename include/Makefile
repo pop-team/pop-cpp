@@ -64,8 +64,8 @@ am__include_HEADERS_DIST = paroc_base.h paroc_array.h paroc_list.h \
 	paroc_broker_factory.h paroc_object.h paroc_interface.h \
 	paroc_allocobj.h timer.h popwayback.h nodethread.h request.h \
 	explorationList.h response.h popc_search_node_info.h \
-	POPString.h VPopCWrapper.h WrapperFactory.h ESXWrapper.h \
-	POPWrapper.h popvm.h rijndael.h
+	POPString.h popc_logger.h VPopCWrapper.h WrapperFactory.h \
+	ESXWrapper.h POPWrapper.h popvm.h rijndael.h
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -92,12 +92,12 @@ HEADERS = $(include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run aclocal-1.11
-AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run tar
+ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run aclocal-1.11
+AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run autoconf
-AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run autoheader
-AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run automake-1.11
+AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoconf
+AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoheader
+AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run automake-1.11
 AWK = awk
 CC = gcc
 CFLAGS = -g -O2
@@ -134,7 +134,7 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/missing --run makeinfo
+MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = .././install-sh -c -d
 NM = /usr/bin/nm
@@ -146,25 +146,25 @@ OTOOL64 = :
 PACKAGE = popc
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = popc
-PACKAGE_STRING = popc 2.0.1
+PACKAGE_STRING = popc 2.0.3-beta
 PACKAGE_TARNAME = popc
 PACKAGE_URL = 
-PACKAGE_VERSION = 2.0.1
+PACKAGE_VERSION = 2.0.3-beta
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 2.0.1
+VERSION = 2.0.3-beta
 VIX_CFLAGS = 
 VIX_LIBS = 
 YACC = bison -y
 YFLAGS = 
-abs_builddir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/include
-abs_srcdir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/include
-abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk
-abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/merging/popctrunk
+abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/include
+abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/include
+abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
+abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -195,7 +195,7 @@ host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/merging/popctrunk/install-sh
+install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -239,7 +239,7 @@ include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od
 	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 	paroc_exception.h sysinfodef.h\
 	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-	popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h POPString.h
+	popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h POPString.h popc_logger.h
 
 #include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 #	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
