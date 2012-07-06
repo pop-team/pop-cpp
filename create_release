@@ -1,17 +1,18 @@
 #!/bin/bash
 
-#############################################################################################
-# POP-C++ Archive Releaser
+################################################################################################
+# POP-C++ Release Archiver
 # Author : Clement Valentin (clementval)
 # Creation date : 06/04/2011
-# Description : This script is used to create a releasable archive of POP-C++ version 
-# -------------------------------------------------------------------------------------------
+# Description : This script is used to create a releasable archive of POP-C++ 
+# ----------------------------------------------------------------------------------------------
 # IMPORTANT : Please, keep this log up to date 
 #
 # Update log
 # Date         Author      Description
 # 31/03/2011	clementval	First version of this script
-#############################################################################################
+# 05/06/2012	clementval	Update script to have proper release without any dev folder or files
+################################################################################################
 
 
 ################################################################
@@ -61,7 +62,7 @@ IGNORED=" dev virtualtest autom4te.cache .svn"
 
 
 #echo "The archive $RELDIR.tar.gz will be created"
-ar -cf $ARCHIVE --exclude='.svn' --exclude='virtualtest' --exclude='dev' --exclude='documentation' --exclude='autom4te.cache' --exclude='create_release' --exclude='stamp-h1' ./*
-#gzip $ARCHIVE
+tar -cf $ARCHIVE --exclude='.svn' --exclude='virtualtest' --exclude='dev' --exclude='documentation' --exclude='autom4te.cache' --exclude='create_release' --exclude='stamp-h1' ./*
+gzip $ARCHIVE
 
 
