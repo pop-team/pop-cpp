@@ -203,6 +203,17 @@ int main(int argc, char **argv)
          }
 #else
 			JobMgr mgr(jobmgr_ap);
+			try{
+				paroc_accesspoint pfm_ap;
+				pfm_ap.SetAccessString("socket://127.0.0.1:2712");
+      	   POPFileManager pfm(pfm_ap);
+       		if (!pfm.Stop(challenge)){
+					fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop PFM ...\n");
+				} else {
+   	         printf("[POP-C++ Runtime] PFM stopped successfully!\n");
+      	   }  
+      	} catch(...){}
+         
          POPCSearchNode psn(mgr.GetNodeAccessPoint());
 			if (!psn.Stop(challenge)){
 				fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop PSN ...\n");
