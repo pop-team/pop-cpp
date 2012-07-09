@@ -7,7 +7,7 @@ myobj.obj: myobj.ph myobj.cc
 	popcc -object -o myobj.obj myobj.ph myobj.cc
 
 clean:
-	rm -f *.o  *.obj main
+	rm -f *.o  *.obj main obj.map
 
 #install: all 
 #	if [ ! -d $(INSTDIR)/ ]; then mkdir $(INSTDIR)/; fi
