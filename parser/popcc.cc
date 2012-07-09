@@ -535,8 +535,8 @@ int main(int argc, char *argv[])
 	
     }
 
-   libpaths[libpaths_count++]=(char*)"/usr/lib";
-   libpaths[libpaths_count++]=(char*)"/lib";
+   libpaths[libpaths_count++]="/usr/lib";
+   libpaths[libpaths_count++]="/lib";
 
 
     sprintf(buf,"-DPOPC_ARCH=\"%s\"",arch);

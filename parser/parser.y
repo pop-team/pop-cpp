@@ -1,6 +1,7 @@
 %{
 #include <strings.h>
 #include <stdlib.h>
+#include <iostream>
 #include <ctype.h>
 #include <stdio.h>
 #include <assert.h>
@@ -67,8 +68,12 @@
 
  int n,t;
  bool isNamespace = false;
+ bool isInStruct = false;
+ bool isParclassDeclared = false;
+ bool hadParclass = false; 
  char holdnamespace[500];
  char tmp[10240];
+ char typetmp[100];
  char tmpProc[10240];
  char tmpSize[10240];
  int parsingclass=0;
@@ -201,32 +206,27 @@ not_care_code: error ';'
 
 pack_directive: pack_header '(' object_list ')'
 {
-  currentPack->SetEndLine(linenumber-1);
-
-  currentPack=NULL;
-  othercodes.SetSize(0);
-  startPos=-1;
-  
-}
-;
+	isParclassDeclared = true; 
+	currentPack->SetEndLine(linenumber-1);
+  	currentPack=NULL;
+  	othercodes.SetSize(0);
+  	startPos=-1;
+};
 
 pack_header: PACK_KEYWORD
 {
-  if (othercodes.GetSize() && startPos>0)
-    {
+  	if (othercodes.GetSize() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode((char *)othercodes,startPos);
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
-    }  
-  startPos=-1;
-  currentPack=new PackObject(thisCodeFile);
-  currentPack->SetStartLine(linenumber-1);
-
-  thisCodeFile->AddCodeData(currentPack);  
-}
-;
+	}  
+	startPos=-1;
+	currentPack=new PackObject(thisCodeFile);
+	currentPack->SetStartLine(linenumber-1);
+	thisCodeFile->AddCodeData(currentPack);  
+};
 
 namespace_declaration: NAMESPACE ID 
 {
@@ -268,23 +268,32 @@ type_definition: struct_definition
 | typedef_definition
 | seqclass_definition
 
+/**
+ * Inner Class delcaration
+ * Catch inner class definition to raise an error message and abort the compilation
+ */
+ 
+innerclass_definition: CLASS_KEYWORD
+{
+	sprintf(tmp,"Class declaration inside parclass are not currently supported !\n");
+	errormsg(tmp);
+	exit(1);
+} 
+
 
 /* 
 STRUCT TYPES...
 */
 
+
+
 struct_definition: struct_head '{' struct_body '}'
 {
-	if(currentClass!=NULL){
-		structContainer = new Structure(currentClass, accessmodifier);
-		structContainer->SetLineInfo(linenumber-1);
-		structContainer->setName(GetToken($1));
-		structContainer->setInnerDecl(GetToken($3));		
-		currentClass->AddMember(structContainer);
-	}
   	currentstruct=Pop();
   	if (currentstruct!=NULL) currentstruct->SetTypeClass(false);
   	$$=$1;
+  	structContainer = NULL;
+  	isInStruct = false;
 }
 | struct_head not_care_code
 {
@@ -294,6 +303,13 @@ struct_definition: struct_head '{' struct_body '}'
 
 struct_head: STRUCT_KEYWORD ID
 {
+	if(currentClass!=NULL){
+		isInStruct = true;
+		structContainer = new Structure(currentClass, accessmodifier);
+		structContainer->SetLineInfo(linenumber-1);
+		currentClass->AddMember(structContainer);
+      structContainer->setName(GetToken($2));	
+	}
   char *tname=GetToken($2);
   DataType *type=thisCodeFile->FindDataType(tname);
   TypeClassStruct *t;
@@ -330,10 +346,6 @@ struct_head: STRUCT_KEYWORD ID
 
 struct_body: /*empty*/
 | struct_element ';' struct_body
-{
-	if(structContainer!=NULL)
-		printf("Struct %s", GetToken($1));
-}
 ;
 
 struct_element: decl_specifier struct_elname_list 
@@ -341,22 +353,29 @@ struct_element: decl_specifier struct_elname_list
 
 struct_elname_list: pointer_specifier ID array_declarator struct_elname_other
 {
-  DataType *type1=currenttype;
-  if ($1>0)
-    {
-      //type1=new TypePtr(NULL,$1, type1);
+	// Save the attribute in the Strcuture object to be able to produce code
+	if(structContainer!=NULL) {
+		std::string attribute;
+		attribute.append(typetmp);
+		attribute.append(" ");
+		attribute.append(GetToken($2));
+		attribute.append(";");	
+		structContainer->setInnerDecl(attribute);			
+	}
+
+	DataType *type1=currenttype;
+	if ($1>0) {
+		//type1=new TypePtr(NULL,$1, type1);
       type1=new TypePtr(NULL, $1, type1, constPointerPositions);
       thisCodeFile->AddDataType(type1);
-    }
-  if ($3!=-1)
-    {
+   }
+  	if ($3!=-1){
       type1=new TypeArray(NULL,GetToken($3), type1);
       thisCodeFile->AddDataType(type1);     
-    }  
-  TypeClassStruct *t=Peek();
-  assert(t!=NULL);
-  t->Add(type1, GetToken($2));
-
+   }  
+	TypeClassStruct *t=Peek();
+	assert(t!=NULL);
+	t->Add(type1, GetToken($2));
 }
 ;
 
@@ -642,37 +661,34 @@ class_head: class_key pure_class_decl base_spec
   if ($2) currentClass->SetPureVirtual(true);
 
   thisCodeFile->AddCodeData(currentClass);
-}
-;
+};
 
 
 class_key: PARCLASS_KEYWORD ID
 {
-  if (othercodes.GetSize() && startPos>0)
-    {
+	hadParclass = true; 
+	if (othercodes.GetSize() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode((char *)othercodes,startPos);
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
-    }
-  insideClass=true;
-  char *clname=GetToken($2);
+	}
+	insideClass=true;
+	char *clname=GetToken($2);
   
-  Class *t;
-  if ((t=thisCodeFile->FindClass(clname))==NULL)
-    {
+	Class *t;
+	if ((t=thisCodeFile->FindClass(clname))==NULL) {
       t=new Class(clname, thisCodeFile);
       thisCodeFile->AddDataType(t);
-    }
-  t->SetFileInfo(filename);
-  t->SetStartLine(linenumber);
-  currentClass=t;
-  if(isNamespace){
-	  t->SetNamespace(holdnamespace);
-  }
-}
-;
+	}
+	t->SetFileInfo(filename);
+	t->SetStartLine(linenumber);
+	currentClass=t;
+	if(isNamespace) {
+		t->SetNamespace(holdnamespace);
+	}
+};
 
 base_spec: /*empty*/
 | ':' base_list
@@ -784,6 +800,7 @@ member_list: /*empty*/
 member_declaration:  enum_declaration ';'
 | struct_definition ';'
 | function_definition ';'
+| innerclass_definition ';'
 {
   assert(method!=NULL);
   int t=method->CheckMarshal();
@@ -926,7 +943,9 @@ decl_specifier: storage_class_specifier type_specifier
 }
 | type_specifier
 {
-  $$=0;
+	
+	
+	$$=0;
 }
 ;
 
@@ -942,18 +961,14 @@ storage_class_specifier:  AUTO_KEYWORD
 
 type_specifier: ID
 {
-  currenttype=thisCodeFile->FindDataType(GetToken($1));
-  if (currenttype==NULL)
-    {
-      currenttype=new DataType(GetToken($1));
+	if(isInStruct)
+		sprintf(typetmp, "%s", GetToken($1)); // Save the type specifier for struct attribute
+	currenttype=thisCodeFile->FindDataType(GetToken($1));
+	if (currenttype==NULL) {
+	   currenttype=new DataType(GetToken($1));
       thisCodeFile->AddDataType(currenttype);
-      /* 
-	 sprintf(tmp,"Undeclared type \"%s\"\n",GetToken($1)); 
-	 errormsg(tmp);
-	 exit(1);
-      */
-    }
-  $$=(YYSTYPE)currenttype;
+   }
+	$$=(YYSTYPE)currenttype;
 }
 | ID1 
 {
@@ -2039,25 +2054,29 @@ extern FILE *yyin;
 
 int main(int argc, char **argv)
 {
-  bool client=true;
-  bool broker=true;
+	bool client=true;
+	bool broker=true;
 
-  if (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL) broker=false;
-  if (paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface")!=NULL) client=false;
-  
-  int ret;
-  indexsource=-1;
-  errorcode=0;
-  if (argc<2) Usage();
-  else
-    {
-      if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker))!=0)
-	{
-	  fprintf(stderr,"Parse POP-C++ code failed (error=%d)\n",ret);
-	  exit(ret);
+	if (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL){
+		broker=false;
+	} 	
+	
+	if (paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface")!=NULL) {
+		client=false;
+	}  
+	
+	int ret;
+	indexsource=-1;
+	errorcode=0;
+	if (argc<2){
+		Usage();
+	} else {
+		if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker))!=0)	{
+			fprintf(stderr,"Parse POP-C++ code failed (error=%d)\n",ret);
+			exit(ret);
+		}
 	}
-    }
-  return (errorcode!=0);
+	return (errorcode!=0);
 }
 
 void yyerror(const  char *s)
@@ -2084,54 +2103,68 @@ int base=1;
 
 int ParseFile(char *infile, char *outfile, bool client, bool broker)
 {
-  if (infile==NULL || *infile=='-') yyin=stdin;
-  else
-    {
+	if (infile==NULL || *infile=='-'){
+		yyin=stdin;
+	} else {
       yyin=fopen(infile,"rt");
-      if (yyin==NULL)
-	{
-	  perror(infile);
-	  return errno;
-	}
+      if (yyin==NULL) {
+	   	perror(infile);
+	   	return errno;
+		}
       strcpy(filename,infile);
-    }
-  linenumber=1;
-  thisCodeFile=new CodeFile(NULL);
-  if (outfile!=NULL) thisCodeFile->SetOutputName(outfile);
-
-  insideClass=false;
-  othercodes.SetSize(0);
-  startPos=-1;
-
-  int ret=yyparse();
-  if (ret==0)
-    {
-      FILE *outf;
-      if (outfile==NULL || *outfile=='-') outf=stdout;
-      else 
-	{
-	  outf=fopen(outfile,"wt");
-	  if (outf==NULL)
-	    {
-	      ret=errno;
-	      perror(outfile);
-	    }
 	}
-      if (outf!=NULL)
-	{
-	  CArrayChar output(0,32000);
-	  thisCodeFile->GenerateCode(output, client, broker);
-	  fwrite((char *)output,1, output.GetSize(),outf);
+	
+	linenumber=1;
+	thisCodeFile=new CodeFile(NULL);
+	if (outfile!=NULL) {
+		thisCodeFile->SetOutputName(outfile);	
 	}
-      if (outf!=stdout) fclose(outf);
-    }
+	
+	insideClass=false;
+	othercodes.SetSize(0);
+	startPos=-1;
+
+	int ret=yyparse();
+	if (ret==0) {
+		FILE *outf;
+      if (outfile==NULL || *outfile=='-'){
+     		outf=stdout;
+      } else {
+			outf=fopen(outfile,"wt");
+	  		if (outf==NULL){
+		      ret=errno;
+		      perror(outfile);
+	   	}
+		}
+      if (outf!=NULL) {
+			CArrayChar output(0,32000);
+			thisCodeFile->GenerateCode(output, client, broker);
+			fwrite((char *)output,1, output.GetSize(),outf);
+			
+			
+			
+			
+			std::string fname(filename);
+			
+//			if(fname.find(".cc") != std::string::npos && !isParclassDeclared)
+				
+//			std::cout << filename << ":" << linenumber << ": Warning: Pack directive is not present!" << std::endl;
+			
+      }
+      if (outf!=stdout) {
+      	fclose(outf);
+      }
+	}
   
-  othercodes.SetSize(0);
+	othercodes.SetSize(0);
 
-  if (yyin!=stdin) fclose(yyin);
-  delete thisCodeFile;
-  thisCodeFile=NULL;
-  return ret;
+	if (yyin!=stdin) {
+		fclose(yyin);
+	}
+	delete thisCodeFile;
+	thisCodeFile=NULL;
+	isParclassDeclared = false; 
+	return ret;
 }
 
 
