@@ -19,3 +19,4 @@ POPObject::~POPObject()
    cout << "POPCobject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
 }
 
+@pack(POPObject);
