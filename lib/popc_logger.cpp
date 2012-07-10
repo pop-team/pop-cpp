@@ -24,7 +24,7 @@
 
 #include "popc_logger.h"
 
-int popc_logger(const char *format,...){
+int popc_logger(LOGLEVEL level, const char *format,...){
 	char *tmp=getenv("POPC_TEMP");
 	char logfile[256];
 	if (tmp!=NULL) sprintf(logfile,"%s/popc_log",tmp);
