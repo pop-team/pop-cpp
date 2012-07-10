@@ -16,7 +16,7 @@ AC_CANONICAL_HOST
 case $host_os in
 	darwin* )
 		echo 'Darwin Architecture detected...'
-		CPPFLAGS+="-DARCH_MAC"
+		CPPFLAGS+="-DARCH_MAC "
 		;;
 	linux*)
         # Do something specific for linux
