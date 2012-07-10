@@ -2,8 +2,7 @@
 #define POPOBJECT_PH_
 
 
-parclass POPObject
-{
+parclass POPObject {
 	classuid(1500);
 
 public:
