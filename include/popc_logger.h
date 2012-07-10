@@ -37,13 +37,9 @@
 #ifndef POPC_LOGGER_H
 #define POPC_LOGGER_H
 
-#define POPC_CORE(x) 	popc_logger x 	// Used for critical core error of the runtime
-#define POPC_ERROR(x) 	popc_logger x	// Used for common error e.g. Resource Discovery error
-#define POPC_DEBUG(x) 	popc_logger x	// Used for debugging purpose
-#define POPC_INFO(x) 	popc_logger x 	// Used to print log for information purpose
-#define POPC_DEV(x) 		popc_logger x	// Used to print log only for dev purpose
-
 #include <stdarg.h>
-int popc_logger(const char *format,...);
+
+enum LOGLEVEL {CORE, ERROR, DEBUG, DEV, INFO};
+int popc_logger(LOGLEVEL level, const char *format,...);
 
 #endif /* POPC_LOGGER */
