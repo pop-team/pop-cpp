@@ -330,7 +330,6 @@ protected:
 
 };
 
-int paroc_service_log(const char *format,...);
 int popc_node_log(const char *format,...);
 
 #endif /* JOBMGR_PH */
