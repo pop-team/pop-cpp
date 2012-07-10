@@ -33,17 +33,18 @@ void Usage()
   fprintf(stderr,"   -popc-nolib:           Avoid standard POP-C++ libraries from linking\n");
   fprintf(stderr,"   -parclass-nointerface: Do not generate POP-C++ interface codes for parallel objects\n");
   fprintf(stderr,"   -parclass-nobroker:    Do not generate POP-C++ broker codes for parallel objects\n");
-
- fprintf(stderr,"\n   -object[=type]:      Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
-  fprintf(stderr,"   -popcpp:             POP-C++ parser\n");
-  fprintf(stderr,"   -cpp=<preprocessor>: C++ preprocessor command\n");
-  fprintf(stderr,"   -cxx=<compiler>:     C++ compiler\n");
-  fprintf(stderr,"   -popcld=<linker>:    C++ linker (default: same as C++ compiler)\n");
-  fprintf(stderr,"   -popcdir:            POP-C++ installed directory\n");
-  fprintf(stderr,"   -noclean:            Do not clean temporary files\n");
-  fprintf(stderr,"   -verbose:            Print out additional information\n");
-  fprintf(stderr,"   -nopipe:             Do not use pipe during compilation phases ( create _paroc2_ files )\n");
-  fprintf(stderr,"   -version:             Display the installed version of POP-C++\n");
+	
+	fprintf(stderr,"\n   -object[=type]:      Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
+	fprintf(stderr,"   -popcpp:             POP-C++ parser\n");
+	fprintf(stderr,"   -cpp=<preprocessor>: C++ preprocessor command\n");
+	fprintf(stderr,"   -cxx=<compiler>:     C++ compiler\n");
+	fprintf(stderr,"   -popcld=<linker>:    C++ linker (default: same as C++ compiler)\n");
+	fprintf(stderr,"   -popcdir:            POP-C++ installed directory\n");
+	fprintf(stderr,"   -noclean:            Do not clean temporary files\n");
+	fprintf(stderr,"   -nowarning:          Do not print warning on stdout\n");	
+	fprintf(stderr,"   -verbose:            Print out additional information\n");
+	fprintf(stderr,"   -nopipe:             Do not use pipe during compilation phases ( create _paroc2_ files )\n");
+	fprintf(stderr,"   -version:             Display the installed version of POP-C++\n");
  
 
   fprintf(stderr,"\nEnvironment variables change the default values used by POP-C++:\n");
@@ -63,6 +64,7 @@ void DisplayVersion()
 
 bool verbose=false;
 bool noclean=false;
+bool nowarning=false;
 
 void Verbose(int argc, char *argv[])
 {
@@ -186,7 +188,7 @@ void PrepareSource(char *src, char *dest)
   fclose(sf);
 }
 
-char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker)
+char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning)
 {
   char *cmd[1000];
   int count=0;
@@ -202,6 +204,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
   char compile_opt[]="-c";
   char noclient[]="-parclass-nointerface";
   char nobroker[]="-parclass-nobroker";
+  char nowarning[]="-nowarning";  
 
   bool paroc=false;
   static char output[1024];
@@ -270,18 +273,17 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
       int countparoc=3;
       if (!client) cmd1[countparoc++]=noclient;
       if (!broker) cmd1[countparoc++]=nobroker;
-
-      if (!usepipe)
-	{
-  	    ret=RunCmd(countparoc, cmd1);
-   	    if (!noclean) unlink(tmpfile2);
+      if (warning) cmd1[countparoc++]=nowarning;
+      
+      if (!usepipe) {
+			ret=RunCmd(countparoc, cmd1);
+			if (!noclean) 
+				unlink(tmpfile2);
+		} else {
+			ret=RunPipe(count,cmd,countparoc,cmd1);
+		}
+		paroc=true;
 	}
-      else
-	{
-	  ret=RunPipe(count,cmd,countparoc,cmd1);
-	}
-      paroc=true;
-    }
 
    if (!noclean) unlink(tmpfile1);
 
@@ -385,6 +387,7 @@ int main(int argc, char *argv[])
   bool paroc_nolib=false;
   bool broker=true;
   bool client=true;
+  bool warning=true;
   bool staticlib=false;
   
   bool usepipe=true;
@@ -430,11 +433,11 @@ int main(int argc, char *argv[])
   else if ((tmp=getenv("POPC_LD"))!=NULL) strcpy(parocld,tmp);
   else strcpy(parocld, parocxx);
 
- //Check for POP-C++ options...  
-  noclean=(paroc_utils::checkremove(&argc,&argv,"-noclean")!=NULL);
-
-  broker=(paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")==NULL);
-  client=(paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface")==NULL);
+	//Check for POP-C++ options...  
+	noclean=(paroc_utils::checkremove(&argc,&argv,"-noclean")!=NULL);
+	warning=(paroc_utils::checkremove(&argc,&argv,"-nowarning")!=NULL);
+	broker=(paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")==NULL);
+	client=(paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface")==NULL);
 
   usepipe=(paroc_utils::checkremove(&argc,&argv,"-nopipe")==NULL);
 
@@ -535,8 +538,8 @@ int main(int argc, char *argv[])
 	
     }
 
-   libpaths[libpaths_count++]="/usr/lib";
-   libpaths[libpaths_count++]="/lib";
+   libpaths[libpaths_count++]=(char*)"/usr/lib";
+   libpaths[libpaths_count++]=(char*)"/lib";
 
 
     sprintf(buf,"-DPOPC_ARCH=\"%s\"",arch);
@@ -567,22 +570,17 @@ int main(int argc, char *argv[])
       if (argv[i][0]!='-')
 	{
 	  char *str=strrchr(argv[i],'.');
-	  if (str!=NULL)
-	    {
-	      bool paroc_extension= (strcmp(str,".ph")==0 || strcmp(str,".pc")==0);
-	      if (paroc_extension || strcmp(str,".cc")==0 ||  strcmp(str,".C")==0 || strcmp(str,".cpp")==0)
-		{
-
-		  char *outf=Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker);
-
-		  link_cmd[link_count++]=(outf==NULL)? argv[i]: strdup(outf);
-		  continue;
-		} 
-	    }
+		if (str!=NULL) {
+			bool paroc_extension= (strcmp(str,".ph")==0 || strcmp(str,".pc")==0);
+	      if (paroc_extension || strcmp(str,".cc")==0 ||  strcmp(str,".C")==0 || strcmp(str,".cpp")==0) {
+				char *outf=Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning);
+				link_cmd[link_count++]=(outf==NULL)? argv[i]: strdup(outf);
+				continue;
+			} 
+		}
 	}
 
-      if (staticlib && strncmp(argv[i],"-l",2)==0)
-	{
+	if (staticlib && strncmp(argv[i],"-l",2)==0) {
   	   char libfile[1024];
 	   if (FindLib(libpaths, libpaths_count, argv[i]+2,libfile))
 	     {
