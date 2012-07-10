@@ -123,4 +123,3 @@ void ObjectMonitor::UnManageObject(paroc_accesspoint &p)
 		//    DEBUG("ObjectMonitor: unable to unmanage ap: %s",newstr);
 	}
 }
-

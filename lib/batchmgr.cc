@@ -25,5 +25,3 @@ int BatchMgr::NextNode()
 	nodeCount++;
 	return nodeCount;
 }
-
-//@pack(BatchMgr);
