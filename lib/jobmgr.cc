@@ -286,34 +286,6 @@ int NodeInfoMap::Hash(const POPString &key)
 	return sum%HASH_SIZE;
 }
 
-
-#include <stdarg.h>
-
-//Added by clementval
-
-//This is used to write log in a log file  of POPCSearchNode
-int popc_node_log(const char *format,...)
-{
-	char *tmp=getenv("POPC_TEMP");
-	char logfile[256];
-	if (tmp!=NULL) sprintf(logfile,"%s/popc_node_log",tmp);
-	else strcpy(logfile, "/tmp/pop_node.log");
-
-	FILE *f=fopen(logfile,"a");
-	if (f==NULL) return 1;
-	time_t t=time(NULL);
-	fprintf(f,"%s", ctime(&t));
-	va_list ap;
-	va_start(ap, format);
-	vfprintf(f, format, ap);
-	fprintf(f,"%s","\n");
-	va_end(ap);
-	fclose(f);
-	return 0;
-}
-//End of add
-
-
 //*********************    JobMgr implementation    *********************
 
 /**
@@ -835,7 +807,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 						if (execRet!=0)
 						{
 							//Added by clementval
-							popc_node_log("[JM]ERROR: EXEC_FAILED");
+							popc_logger(ERROR, "[JM]ERROR: EXEC_FAILED");
 							//End of add
 							jobmgr.CancelReservation(tmpids,sz);
 						}
@@ -843,7 +815,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 					}
 					catch (...)
 					{
-						popc_node_log("[JM]ERROR: Exception catch in ExecObj");
+						popc_logger(ERROR, "[JM]ERROR: Exception catch in ExecObj");
 					}
 				}
          }
@@ -959,16 +931,13 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 	int maxhopint=0;
 	if((maxhopint=od.getSearchMaxDepth()) > 0){
 		r.setMaxHops(maxhopint);
-		//popc_node_log("JobMgr : Max hop set via OD : %d", maxhopint);
 	} else {
 		//Recover the max Hop env variable
 		char *maxhop;
 		if((maxhop=getenv("POPC_SEARCHMAXHOP"))){
 			maxhopint = atoi(maxhop);
-			//popc_node_log("JobMgr : Max hop set via ENV Variable : %d", maxhopint);
 		} else {
 			maxhopint = MAXHOP;
-			//popc_node_log("(:-)JobMgr : Max hop env variable is not set. Default value %d will be used", maxhopint);
 		}
 	}
 
@@ -978,23 +947,21 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 	//Recover the maximum size of the request. This is not implemented yet
 	int maxsizeint;
 	if((maxsizeint = od.getSearchMaxReqSize()) > 0){
-		//popc_node_log("JobMgr : Request max size set via OD : %d", maxsizeint);
 		//To be implemented
 	}
 
 	//Recover the od waiting time or env var POPC_SEARCHTIMEOUT. If both are not set, TIMEOUT constant is defined in JobMgr.ph
 	int timeoutint = 0;
 	if((timeoutint = od.getSearchWaitTime()) >= 0){
-		//popc_node_log("JobMgr : Timeout set via OD : %d", timeoutint);
+
 	} else {
 		//Recover the timeout in the POPC_SEARCHTIMEOUT env variable
 		char *timeout;
 		if((timeout=getenv("POPC_SEARCHTIMEOUT"))){
 			timeoutint = atoi(timeout);
-			//popc_node_log("JobMgr : Timeout set via ENV Variable : %d", timeoutint);
+
 		}else {
 			timeoutint = TIMEOUT;
-			//popc_node_log("JobMgr : Timeout env variable is not set. Default value %d will be used", timeoutint);
 		}
 	}	
 
@@ -1070,7 +1037,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 		//if reserve ID is egal to 0, the reservation process failed. If we can't reserver on any responding machine, we trow an exception
 		if(reserveIDs[jobindex] == 0){
 			jobindex--;
-			popc_node_log("[JM]ERROR: UNABLE TO RESERVE ON %s", jm_ap.GetAccessString());
+			popc_logger(ERROR, "[JM]ERROR: UNABLE TO RESERVE ON %s", jm_ap.GetAccessString());
 			failedReservation++;
 			if(failedReservation==n_response)
 				return false;
@@ -1079,7 +1046,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 
 			//setting the remote JobMgr info to execute the parallel object
 			jobcontacts[jobindex].SetAccessString(jm_ap.GetAccessString());
-			popc_node_log("[JM]DEBUG: RESID;%d;NODEID;%s", reserveIDs[jobindex], jm_ap.GetAccessString());
+			popc_logger(ERROR, "[JM]DEBUG: RESID;%d;NODEID;%s", reserveIDs[jobindex], jm_ap.GetAccessString());
 			//Setting the fitness
 			fitness[jobindex] = t;
 		}
@@ -1130,7 +1097,6 @@ void JobMgr::CancelReservation(int *req, int howmany)
 int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId, POPString reqID){
 	//Update();   //Called to see if there are jobs to be released
 
-	//popc_node_log("ASKED_FOR_A_RESERVATION");
 	float flops=0;
 	float walltime=0;
 	float mem=0;
@@ -1236,7 +1202,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
          POPCSearchNode psn(_localPSN);
          psn.addJob(t.flops, t.mem, t.bandwidth);
       } catch (...){
-         popc_node_log("[JM]ERROR: Can't add job to PSN");
+         popc_logger(ERROR, "[JM]ERROR: Can't add job to PSN");
          return 0;
       }
 		available.flops-=flops;
@@ -1442,7 +1408,6 @@ void JobMgr::Update()
 				   available.bandwidth+=t.bandwidth;
 				   jobs.RemoveAt(old);
                psn.removeJob(t.flops, t.mem, t.bandwidth, 1);
-               //popc_node_log("REMOVED_RESID:%d", t.Id);
 				}
 			}
 		}
@@ -1615,7 +1580,7 @@ void JobMgr::SelfRegister()
 		}
 		catch (...)
 		{
-			popc_node_log("[JM]ERROR: can not register the local job service [%s] to %s",GetAccessPoint().GetAccessString(), tmp.GetAccessString());
+			popc_logger(ERROR, "[JM]ERROR: can not register the local job service [%s] to %s",GetAccessPoint().GetAccessString(), tmp.GetAccessString());
 		}
 	}
 	lasttime=service_timer.Elapsed();
@@ -1776,7 +1741,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
 int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, int *reserveIDs, const paroc_accesspoint &localservice, paroc_accesspoint *objcontacts)
 {
 	if (howmany<=0) {
-		popc_node_log("[JM]ERROR: Exec failed because howmany is less or equal to 0");
+		popc_logger(ERROR, "ERROR: Exec failed because howmany is less or equal to 0");
 		return EINVAL;
 	}
 	char *env[32];
@@ -1803,7 +1768,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 			if (r==NULL)
 			{
 				CancelReservation(reserveIDs,howmany);
-				popc_node_log("[JM]ERROR: Exec failed because reservation is null");
+				popc_logger(ERROR, "[JM]ERROR: Exec failed because reservation is null");
 				return ECANCELED;
 			}
 
@@ -1829,7 +1794,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 			CancelReservation(reserveIDs,howmany);
          POPString tmpObjname = objname;
          POPString tmpPlatform = paroc_system::platform;
-			popc_node_log("[JM]ERROR: Exec failed: CodeMgr was looking for %s on platform %s", tmpObjname.GetString(), 
+			popc_logger(ERROR, "[JM]ERROR: Exec failed: CodeMgr was looking for %s on platform %s", tmpObjname.GetString(), 
             tmpPlatform.GetString());
 			return ENOENT;
 		}
@@ -1837,7 +1802,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 	catch (...)
 	{
 		CancelReservation(reserveIDs, howmany);
-		popc_node_log("[JM]ERROR: Exec failed. CodeMgr cannot be contacted");
+		popc_logger(ERROR, "[JM]ERROR: Exec failed. CodeMgr cannot be contacted");
 		return ENOENT;
 	}
 
@@ -1872,7 +1837,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 	if (!tmpsock.Create(0,true))
 	{
 		CancelReservation(reserveIDs,howmany);
-		popc_node_log("[JM]ERROR: Exec failed. Socket cannot be created.");
+		popc_logger(ERROR, "[JM]ERROR: Exec failed. Socket cannot be created.");
 		return errno;
 	}
 
@@ -1912,7 +1877,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 	{
 		Pause(localservice, SLEEP_TIME_ON_ERROR);
 		CancelReservation(reserveIDs, howmany);
-		popc_node_log("[JM]ERROR: Exec failed. Exec return value is not 0");
+		popc_logger(ERROR, "[JM]ERROR: Exec failed. Exec return value is not 0");
 		return ret;
 	}
 
@@ -1930,7 +1895,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 			if (pid>0) kill(pid, SIGKILL);
 			Pause(localservice, SLEEP_TIME_ON_ERROR);
 			CancelReservation(reserveIDs, howmany);
-			popc_node_log("[JM]ERROR: Exec failed for accesspoint.");
+			popc_logger(ERROR, "[JM]ERROR: Exec failed for accesspoint.");
 			return err;
 		}
 
@@ -2214,7 +2179,7 @@ void JobMgr::ApplicationEnd(POPString popAppId, bool initiator){
          POPCSearchNode psn(_localPSN);
          psn.removeJob(available.flops, available.mem, available.bandwidth, nbJob);
       } catch(...){
-         popc_node_log("[JM] ERROR: can't update PSN resource");
+         popc_logger(ERROR, "[JM] ERROR: can't update PSN resource");
          
       }
    }

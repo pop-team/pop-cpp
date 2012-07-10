@@ -330,6 +330,4 @@ protected:
 
 };
 
-int popc_node_log(const char *format,...);
-
 #endif /* JOBMGR_PH */
