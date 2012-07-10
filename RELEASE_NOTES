@@ -1,12 +1,13 @@
-POP-C++ 2.0.1
+POP-C++ 2.0.3
 
 These REALEASE_NOTES include the changes made from the previous version 2.0
-to version 2.0.1 of POP-C++. The complete changes is listed in the CHANGLOG.
+to version 2.0.3 of POP-C++. The complete changes is listed in the CHANGLOG.
 
 Release 2.0.1
 - Improve the termination time of a parallel application
 - Fix slowness of POP-C++ application on MAC OS X
 - Add support for enum type inside a parclass declaration
+- Add specific error message for unsupported C++ functionalities inside a parclass declaration
 - Removing unuseful directory in the release
 
 Release 2.0.2
@@ -16,10 +17,13 @@ Release 2.0.2
 
 Release 2.0.3
 For end-user
-- Better support of Mac OS X version (no need to use CPPFLAGS=-DARCH_MAC anymore)
+- Automatic detection of architecture in the configure script (no need to use CPPFLAGS=-DARCH_MAC anymore)
+- Automatic detection of active interface at runtime for Mac OS X (no need to set POPC_IFACE anymore)
 - Ability to start the runtime without the POPFileManager (SXXpopc start --no-service popfile)
-- 
+- Implicit @pack directive added in case developer doesn't mention it. Warning is displayed by the POP-C++ parser. 
+- Add "-nowarning" option to the POP-C++ parser to stop printing warnings on the stdout.
+
 
 For POP-C++ development
-- Add different logging level (POPC_DEBUG, POPC_ERROR, POPC_CORE)
+- Add different logging level in the runtime (POPC_DEBUG, POPC_ERROR, POPC_CORE)
 
