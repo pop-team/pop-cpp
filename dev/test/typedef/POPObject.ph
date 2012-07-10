@@ -1,7 +1,7 @@
 #ifndef POPOBJECT_PH_
 #define POPOBJECT_PH_
 
-typedef short SmallNumber;
+
 
 parclass POPObject
 {
@@ -11,8 +11,7 @@ public:
 	POPObject() @{ od.search(0, 0, 0); };
 	~POPObject();
 
-
-	
+typedef short SmallNumber;
 
 	
 private:
