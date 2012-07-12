@@ -279,7 +279,7 @@ bool Class::GenerateClient(CArrayChar &code)
 		int lines=CountCodeLines(code);
 		sprintf(tmpcode,"\n# %d \"%s\"\n",lines+3, outfile);
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));
-
+		
 		if(strcmp(strnamespace.c_str(), "") != 0){
 			sprintf(tmpcode,"using namespace %s;\n", strnamespace.c_str());
 			code.InsertAt(-1,tmpcode,strlen(tmpcode));
@@ -292,12 +292,11 @@ bool Class::GenerateClient(CArrayChar &code)
 		if (memberList[i]->Type()!=TYPE_METHOD || memberList[i]->GetMyAccess()!=PUBLIC) continue;
 
 		Method *met=(Method *)memberList[i];
-		if (pureVirtual && met->MethodType()==METHOD_CONSTRUCTOR) continue;
-
+		/*PEKA*/ if (pureVirtual && met->MethodType()==METHOD_CONSTRUCTOR) continue;
 		met->GenerateClient(code);
 	}
 
-	if (noConstructor && !pureVirtual)
+	if (noConstructor /*PEKA Removed */ && !pureVirtual)
 	{
 		constructor.GenerateClient(code);
 	}
@@ -421,7 +420,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface)
 			if (t->MethodType()==METHOD_CONSTRUCTOR)
 			{
 				if ( ((Constructor *)t)->isDefault()) defaultconstructor=true;
-				if (interface && pureVirtual) continue;
+				/*PEKA Removed */ if (interface && pureVirtual) continue;
 			}
 		}
 
@@ -469,7 +468,8 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface)
 		code.InsertAt(-1,str,strlen(str));
 
 		//If no constructor, generate default for interface...
-		if (noConstructor && !pureVirtual) constructor.GenerateHeader(code, interface);
+		if (noConstructor /*PEKA Removed */ && !pureVirtual)
+        { constructor.GenerateHeader(code, interface); }
 
 		//Generate constructor from the interface binding
 		sprintf(str,"\n%s(const %s &inf)",name, my_interface_base);
@@ -552,19 +552,19 @@ bool Class::GenerateBrokerHeader(CArrayChar &code)
 	{
 		if (memberList[i]->GetMyAccess()!=PUBLIC || memberList[i]->Type()!=TYPE_METHOD) continue;
 		Method &met=*((Method *)memberList[i]);
-		if (pureVirtual && met.MethodType()==METHOD_CONSTRUCTOR) continue;
-
+		if (pureVirtual &&/*PEKA*/ met.MethodType()==METHOD_CONSTRUCTOR) continue;
 		met.GenerateBrokerHeader(code);
 	}
 
-	if (noConstructor && !pureVirtual) constructor.GenerateBrokerHeader(code);
+	if (noConstructor /*PEKA Removed */ && !pureVirtual)
+    { constructor.GenerateBrokerHeader(code); }
 
 	//Propagate object to parent....
 	//  sprintf(str,"\n\t%s%s *obj;\n\tvoid SetImpObject(%s%s *newobj);",name,OBJ_POSTFIX,name,OBJ_POSTFIX);
 	//  code.InsertAt(-1,str,strlen(str));
 
 	//Now generate the static paroc_broker_factory....
-	if (!pureVirtual)
+	/* PEKA Removed */ if (!pureVirtual)
 	{
 		sprintf(tmpcode,"\npublic:\nstatic paroc_broker *_init();\nstatic paroc_broker_factory _fact;\n");
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));
@@ -622,8 +622,7 @@ bool Class::GenerateBroker(CArrayChar &code)
 		Method &met=*((Method *)memberList[i]);
 
 		int t=met.MethodType();
-		if (t==METHOD_DESTRUCTOR  || met.isHidden || (pureVirtual && t==METHOD_CONSTRUCTOR) || (met.isVirtual && methodInBaseClass(met))) continue;
-
+		if (t==METHOD_DESTRUCTOR  || met.isHidden /*PEKA*/|| (pureVirtual && t==METHOD_CONSTRUCTOR) || (met.isVirtual && methodInBaseClass(met))) continue;
 		sprintf(str,"\ncase %d: Invoke_%s_%d(__brokerbuf, peer); return true;",met.id,met.name,met.id);
 		code.InsertAt(-1,str,strlen(str));
 
@@ -670,7 +669,7 @@ bool Class::GenerateBroker(CArrayChar &code)
 
 	code.InsertAt(-1,str,strlen(str));
 
-//Generate default constructor....
+	//Generate default constructor....
 	sprintf(str,"\n%s::%s()\n{\nstatic paroc_method_info _paroc_minfo[%d]={%s};\nAddMethodInfo(CLASSUID_%s, _paroc_minfo, %d);\n}", brokername, brokername, methodcount, methodinfo, name, methodcount);
 	code.InsertAt(-1,str,strlen(str));
 
@@ -684,18 +683,18 @@ bool Class::GenerateBroker(CArrayChar &code)
 		Method &met=*((Method *)memberList[i]);
 		int t=met.MethodType();
 
-		if (t==METHOD_DESTRUCTOR || met.isHidden || (pureVirtual && t==METHOD_CONSTRUCTOR) || (met.isVirtual && methodInBaseClass(met)))  continue;
-
+		if (t==METHOD_DESTRUCTOR || met.isHidden /*PEKA*/|| (pureVirtual && t==METHOD_CONSTRUCTOR) || (met.isVirtual && methodInBaseClass(met)))  continue;
 		met.GenerateBroker(code);
 	}
 
 	//Generate default constructor stubs
 
+	/* PEKA Removed */ 
 	if (!pureVirtual)
 	{
 		if (noConstructor)
-		{
-			constructor.GenerateBroker(code);
+		{ 
+			constructor.GenerateBroker(code); 
 		}
 
 		//Generate Broker init stuffs...
@@ -715,6 +714,7 @@ bool Class::GenerateBroker(CArrayChar &code)
 
 
 }
+
 
 void Class::SetNamespace(char* value)
 {

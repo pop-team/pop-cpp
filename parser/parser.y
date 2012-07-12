@@ -28,21 +28,21 @@
  void setPOPCMethodeModifier(int settings); // mehtode to group code that set/controlle Methode attributes (sync, conc, ...)
  void errorGlobalMehtode(bool isGlobal);
   
- extern "C"
- {
- 	int yywrap();
- }
- void yyerror(const  char *s);
- int yylex();
+extern "C" {
+	int yywrap();
+}
 
- extern int linenumber;
- extern char filename[1024];
+void yyerror(const  char *s);
+int yylex();
 
- CArrayCharPtr incl[1000];
- CArrayCharPtr sources;
- CArrayCharPtr searchpath; 
+extern int linenumber;
+extern char filename[1024];
 
- int indexsource=0;  //the index of source file and the include directive
+CArrayCharPtr incl[1000];
+CArrayCharPtr sources;
+CArrayCharPtr searchpath; 
+
+int indexsource=0;  //the index of source file and the include directive
 
 
  extern CArrayChar othercodes;
@@ -76,6 +76,8 @@
  
  bool hadParclass = false; 
  
+ bool isWarningEnable;
+ bool isImplicitPackEnable;
  char holdnamespace[500];
  char tmp[10240];
  char typetmp[100];
@@ -85,7 +87,7 @@
 
  void UpdateMarshalParam(int flags, Param *t);
 
- int ParseFile(char *infile, char *outfile, bool client, bool broker, bool warning);
+ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable);
  char *CheckAndCreateDir(char *fname,char *name);
  bool CheckAndInsert(CArrayCharPtr &source, CArrayCharPtr &searchpath, char *fname);
 
@@ -138,26 +140,130 @@ struct TemplateArgument
 startlist: handle_this startlist
 |/*empty*/
 {
-  if (othercodes.GetSize())
-    {
-      assert(thisCodeFile!=NULL);
-      OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode(othercodes);
-      thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
-    }
+	if (othercodes.GetSize()) {
+		assert(thisCodeFile!=NULL);
+		OtherCode *dat=new OtherCode(thisCodeFile);
+		dat->AddCode(othercodes);
+		thisCodeFile->AddCodeData(dat);
+		othercodes.SetSize(0);
+	}
 }
-| namespace_declaration
-| class_declaration  { insideClass=false; othercodes.SetSize(0); startPos=-1;} startlist 
+
+| namespace_declaration 
+| class_declaration  
+{ 
+	insideClass=false; 
+	othercodes.SetSize(0); 
+	startPos=-1;
+} startlist 
 | class_prototype startlist
-| DIRECTIVE startlist
+| DIRECTIVE  startlist
 | pack_directive startlist
 | type_definition startlist
 | not_care_code startlist
 {
-  CleanStack(); 
+	CleanStack(); 
 }
+| handle_eof
 ;
+
+handle_eof: EOFCODE
+{
+	if(isImplicitPackEnable){      
+		/* The following code handles the implicit @pack directive if it's not specified by the developer */
+		std::string fname(filename);
+				
+		std::size_t cc = fname.find(".cc");
+		std::size_t cpp = fname.find(".cpp");
+		std::size_t cxx = fname.find(".cxx");			
+			
+		if((cc != std::string::npos || cpp != std::string::npos || cxx != std::string::npos) && !isParclassDeclared){	
+			std::size_t pos;		
+			if(cc != std::string::npos){
+				pos = cc;
+			} else if (cpp != std::string::npos){ // Extension is
+				pos = cpp;				
+			} else if (cxx != std::string::npos){	// Extension is .cxx
+				pos = cxx;
+			}
+				
+			// Try to find the according .ph file
+			std::string ph_file(fname);
+			std::string ph_extension(".ph");
+					ph_file.replace(pos, std::string::npos, ph_extension);
+					// Check if file exists
+					std::fstream ph_real_file;
+					ph_real_file.open(ph_file.c_str(), std::ios_base::out | std::ios_base::in);
+					if (ph_real_file.is_open()){
+						// Find name of the parclass
+						char line[256]; 
+						bool notFound = true;
+						while (notFound){
+							ph_real_file.getline(line, 256);
+							if(ph_real_file.eof()){
+								notFound = false;
+								ph_real_file.close();
+							} else {
+								std::string str_line(line);
+								std::size_t parclass_pos = str_line.find("parclass"); 
+								if(parclass_pos != std::string::npos){
+									std::size_t parclass_name_start = str_line.find(" ", parclass_pos); 
+									std::size_t parclass_name_stop = str_line.find(" ", parclass_name_start+1); 
+									if(parclass_name_stop == std::string::npos)
+										parclass_name_stop = str_line.find(";", parclass_name_start+1); 
+									if(parclass_name_stop == std::string::npos)
+										parclass_name_stop = str_line.find("{", parclass_name_start+1); 																	
+									if(parclass_name_stop == std::string::npos)								
+										parclass_name_stop = str_line.find("\n", parclass_name_start+1); 		
+									if(parclass_name_stop != std::string::npos && parclass_name_start != std::string::npos){
+										std::string parclass_name = str_line.substr(parclass_name_start, (parclass_name_stop - parclass_name_start));
+
+										notFound = false; 
+										ph_real_file.close();
+
+
+										/* Same code as "pack_header" */
+										if (othercodes.GetSize() && startPos>0) {
+											assert(thisCodeFile!=NULL);
+											OtherCode *dat=new OtherCode(thisCodeFile);
+											dat->AddCode((char *)othercodes,startPos);
+											thisCodeFile->AddCodeData(dat);
+											othercodes.SetSize(0);
+										}  
+										startPos=-1;
+										currentPack=new PackObject(thisCodeFile);
+										currentPack->SetStartLine(linenumber-1);
+										thisCodeFile->AddCodeData(currentPack); 
+										parclass_name.erase(std::remove(parclass_name.begin(), parclass_name.end(), ' '), parclass_name.end());
+										char * objname = new char[parclass_name.size() + 1];
+										std::copy(parclass_name.begin(), parclass_name.end(), objname);
+										objname[parclass_name.size()] = '\0';
+										if (currentPack!=NULL) {
+											currentPack->AddObject(objname);
+										}
+
+										isParclassDeclared = true; 
+										currentPack->SetEndLine(linenumber-1);
+										currentPack=NULL;
+										othercodes.SetSize(0);
+										startPos=-1;
+										
+										delete [] objname;
+										
+										// Ok file exists, so we will find the parclass name and add the pack directive with it
+										if(isWarningEnable){
+											std::cout << filename << ":" << linenumber << ": Warning: Pack directive was not present! Implicit declaration has been added from ";
+											std::cout << ph_file << std::endl;
+																
+										}
+									}
+								}
+							}
+						}
+					}
+				}	
+			}	
+}
 
 handle_this: THIS_KEYWORD
 {
@@ -211,6 +317,8 @@ not_care_code: error ';'
 
 pack_directive: pack_header '(' object_list ')'
 {
+	
+	printf("PACK IS HANDLE HERE %s\n", filename);
 	isParclassDeclared = true; 
 	currentPack->SetEndLine(linenumber-1);
   	currentPack=NULL;
@@ -220,6 +328,7 @@ pack_directive: pack_header '(' object_list ')'
 
 pack_header: PACK_KEYWORD
 {
+	printf("PACK_KEYWORD\n");
   	if (othercodes.GetSize() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
@@ -239,9 +348,12 @@ object_list: ID rest_object_list
 {
   		if (currentPack!=NULL) {
 			currentPack->AddObject(GetToken($1));
+			printf("PACK %s\n", GetToken($1));			
 		}
 }
 ;
+
+
 
 namespace_declaration: NAMESPACE ID 
 
@@ -2086,7 +2198,8 @@ int main(int argc, char **argv)
 {
 	bool client=true;
 	bool broker=true;
-	bool warning=true;
+	isWarningEnable=true;
+	isImplicitPackEnable=true;
 
 	if (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL){
 		
@@ -2101,19 +2214,25 @@ int main(int argc, char **argv)
 	
 	}  
 	
-	if (paroc_utils::checkremove(&argc,&argv,"-nowarning")!=NULL) {
+	if (paroc_utils::checkremove(&argc,&argv,"-no-warning")!=NULL) {
 		
-		warning=false;
+		isWarningEnable=false;
 	
 	}  
+
+	if (paroc_utils::checkremove(&argc,&argv,"-no-implicit-pack")!=NULL) {
+
+		isImplicitPackEnable=false;
 	
+	}  
+			
 	int ret;
 	indexsource=-1;
 	errorcode=0;
 	if (argc<2){
 		Usage();
 	} else {
-		if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker, warning))!=0)	{
+		if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker, isWarningEnable, isImplicitPackEnable))!=0)	{
 			fprintf(stderr,"Parse POP-C++ code failed (error=%d)\n",ret);
 			exit(ret);
 		}
@@ -2135,15 +2254,14 @@ void errormsg(const  char *s)
   errorcode=1;
 }
 
-int yywrap()
-{
-  return(1);
+int yywrap() {
+	return(1);
 }
 
 
 int base=1;
 
-int ParseFile(char *infile, char *outfile, bool client, bool broker, bool warning)
+int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable)
 {
 	if (infile==NULL || *infile=='-'){
 		yyin=stdin;
@@ -2167,6 +2285,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool warnin
 	insideClass=false;
 	othercodes.SetSize(0);
 	startPos=-1;
+	
 
 	int ret=yyparse();
 	if (ret==0) {
@@ -2183,100 +2302,9 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool warnin
 	   	}
 		}
       if (outf!=NULL) {
-			if(warning){      
-				/* The following code handles the implicit @pack directive if it's not specified by the developer */
-				std::string fname(filename);
-				
-				std::size_t cc = fname.find(".cc");
-				std::size_t cpp = fname.find(".cpp");
-				std::size_t cxx = fname.find(".cxx");			
-			
-				if((cc != std::string::npos || cpp != std::string::npos || cxx != std::string::npos) && !isParclassDeclared){	
-					std::size_t pos;		
-					if(cc != std::string::npos){
-						pos = cc;
-					} else if (cpp != std::string::npos){ // Extension is
-						pos = cpp;				
-					} else if (cxx != std::string::npos){	// Extension is .cxx
-						pos = cxx;
-					}
-				
-
-					// Try to find the according .ph file
-					std::string ph_file(fname);
-					std::string ph_extension(".ph");
-					ph_file.replace(pos, std::string::npos, ph_extension);
-					// Check if file exists
-					std::fstream ph_real_file;
-					ph_real_file.open(ph_file.c_str(), std::ios_base::out | std::ios_base::in);
-					if (ph_real_file.is_open()){
-						// Find name of the parclass
-						char line[256]; 
-						bool notFound = true;
-						while (notFound){
-							ph_real_file.getline(line, 256);
-							if(ph_real_file.eof()){
-								notFound = false;
-								ph_real_file.close();
-							} else {
-								std::string str_line(line);
-								std::size_t parclass_pos = str_line.find("parclass"); 
-								if(parclass_pos != std::string::npos){
-									std::size_t parclass_name_start = str_line.find(" ", parclass_pos); 
-									std::size_t parclass_name_stop = str_line.find(" ", parclass_name_start+1); 
-									if(parclass_name_stop == std::string::npos)
-										parclass_name_stop = str_line.find(";", parclass_name_start+1); 
-									if(parclass_name_stop == std::string::npos)
-										parclass_name_stop = str_line.find("{", parclass_name_start+1); 																	
-									if(parclass_name_stop == std::string::npos)								
-										parclass_name_stop = str_line.find("\n", parclass_name_start+1); 		
-									if(parclass_name_stop != std::string::npos && parclass_name_start != std::string::npos){
-										std::string parclass_name = str_line.substr(parclass_name_start, (parclass_name_stop - parclass_name_start));
-
-										notFound = false; 
-										ph_real_file.close();
-									
-										if (othercodes.GetSize() && startPos>0) {
-      									assert(thisCodeFile!=NULL);
-      									OtherCode *dat=new OtherCode(thisCodeFile);
-     										dat->AddCode((char *)othercodes,startPos);
-											thisCodeFile->AddCodeData(dat);
-											othercodes.SetSize(0);
-										}		
-										startPos=-1;
-										currentPack=new PackObject(thisCodeFile);
-										currentPack->SetStartLine(linenumber-1);
-										thisCodeFile->AddCodeData(currentPack); 
-										char * objname = new char[parclass_name.size() + 1];
-										std::copy(parclass_name.begin(), parclass_name.end(), objname);
-										objname[parclass_name.size()] = '\0';
-										
-										currentPack->AddObject(objname);
-										
-										delete [] objname;
-										isParclassDeclared = true; 
-										currentPack->SetEndLine(linenumber-1);
-										currentPack=NULL;
-										othercodes.SetSize(0);
-										startPos=-1;
-
-										// Ok file exists, so we will find the parclass name and add the pack directive with it
-										std::cout << filename << ":" << linenumber << ": Warning: Pack directive was not present! Implicit declaration has been added from ";
-										std::cout << ph_file << std::endl;
-																
-									}
-								}
-							}
-						}
-					}
-				}	
-			}
-			/* End of @pack handling */
-			
 			CArrayChar output(0,32000);
 			thisCodeFile->GenerateCode(output, client, broker);
 			fwrite((char *)output,1, output.GetSize(),outf);
-			
       }
       if (outf!=stdout) {
 			fclose(outf);
@@ -2297,6 +2325,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool warnin
 	isParclassDeclared = false; 
 	
 	return ret;
+	
 }
 
 

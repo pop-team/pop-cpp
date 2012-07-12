@@ -723,7 +723,7 @@ typedef {
 };
 
 <<EOF>> {
-  return EOFCODE;
+	return EOFCODE;
 };
 . {
   othercodes.InsertAt(-1,yytext,strlen(yytext));

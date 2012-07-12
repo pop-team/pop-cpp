@@ -2038,7 +2038,7 @@ YY_RULE_SETUP
 case YY_STATE_EOF(INITIAL):
 #line 725 "parser.lex"
 {
-  return EOFCODE;
+	return EOFCODE;
 };
 	YY_BREAK
 case 63:
