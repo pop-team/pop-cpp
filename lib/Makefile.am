@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS=no-dependencies
 
 CXX=@top_srcdir@/parser/popcc
 
-POPC_FLAGS=-nowarning -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -cxx=@CXX@ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
+POPC_FLAGS=-no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -cxx=@CXX@ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
 
 #ADD VIX and LIBVIRT flags
 if LINUX
