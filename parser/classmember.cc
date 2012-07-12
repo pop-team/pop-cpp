@@ -33,9 +33,9 @@ Param::Param(DataType *ptype)
 {
 	name[0]=0;
 	mytype=ptype;
-
+	
 	paramSize=marshalProc=defaultVal=NULL;
-	isRef=isConst=isInput=isOutput=false;
+	isArray=isRef=isConst=isInput=isOutput=false;
 }
 
 Param::Param()
@@ -44,7 +44,7 @@ Param::Param()
 	mytype=NULL;
 
 	paramSize=marshalProc=defaultVal=NULL;
-	isRef=isConst=isInput=isOutput=false;
+	isArray=isRef=isConst=isInput=isOutput=false;
 }
 
 Param::~Param()
@@ -87,6 +87,11 @@ bool Param::IsRef()
 bool Param::IsConst()
 {
 	return isConst;
+}
+
+bool Param::IsArray()
+{
+	return isArray;
 }
 
 void Param::SetType(DataType *type)
@@ -133,8 +138,14 @@ bool Param::DeclareParam(char *output, bool header)
 		output+=strlen(output);
 	}
 	char tmpvar[1024];
-	if (isRef) sprintf(tmpvar,"&%s", name);
-	else strcpy(tmpvar,name);
+	
+	if (isRef) {
+		sprintf(tmpvar,"&%s", name);
+	} else if (isArray){
+		sprintf(tmpvar,"%s", name);
+	} else {
+		strcpy(tmpvar,name);
+	}
 
 	if (!mytype->GetDeclaration(tmpvar, output)) return false;
 	if (defaultVal!=NULL && header)

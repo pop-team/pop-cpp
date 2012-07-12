@@ -318,7 +318,6 @@ not_care_code: error ';'
 pack_directive: pack_header '(' object_list ')'
 {
 	
-	printf("PACK IS HANDLE HERE %s\n", filename);
 	isParclassDeclared = true; 
 	currentPack->SetEndLine(linenumber-1);
   	currentPack=NULL;
@@ -328,7 +327,6 @@ pack_directive: pack_header '(' object_list ')'
 
 pack_header: PACK_KEYWORD
 {
-	printf("PACK_KEYWORD\n");
   	if (othercodes.GetSize() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
@@ -348,7 +346,6 @@ object_list: ID rest_object_list
 {
   		if (currentPack!=NULL) {
 			currentPack->AddObject(GetToken($1));
-			printf("PACK %s\n", GetToken($1));			
 		}
 }
 ;
@@ -1064,18 +1061,19 @@ array_declarator: /*empty*/
 {
   $$=-1;
 }
+| '[' ']'
+{
+	$$=0;
+}
 | '[' expr_decl ']' array_declarator
 {
-  if ($4==-1)
-    {
-      sprintf(tmp,"[%s]",GetToken($2));
-      $$=PutToken(tmp);
-    }
-  else
-    {
+	if ($4==-1) {
+		sprintf(tmp,"[%s]",GetToken($2));
+		$$=PutToken(tmp);
+	} else {
       sprintf(tmp,"[%s]%s",GetToken($2),GetToken($4));
       $$=PutToken(tmp);
-    }
+	}
 }
 ;
 
@@ -1286,8 +1284,6 @@ ref_specifier: /*empty*/
   $$=1;
 }
 ;
-
-
 
 /*
 Method declaration 
@@ -1840,37 +1836,59 @@ argument_list:  arg_declaration
 
 arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_specifier ref_specifier argument_name array_declarator arg_default_value
 {
-  Param *t=method->AddNewParam();
-  UpdateMarshalParam($1,t);
-
-  DataType *type=currenttype;
-  if ($5>0)
-    {
-      //type=new TypePtr(NULL, $5 , type);
+	Param *t=method->AddNewParam();
+	UpdateMarshalParam($1,t);
+	
+	DataType *type=currenttype;
+	if ($5>0) {
       type=new TypePtr(NULL, $5 , type, constPointerPositions);
-      
       thisCodeFile->AddDataType(type);
-    }
+	}
 
-  if ($6)
-    {
-      t->isRef=true;
-    }
-
-  if ($8!=-1)
-    {
-      type=new TypeArray(NULL, GetToken($8) , type);
+	if ($6) {
+		t->isRef=true;
+	}
+	
+	// Handle standard array passing declaration
+	if($8 == 0){
+		t->isArray=true;
+		//Find last int as size of array
+		int nb=method->params.GetSize()-1;
+		
+		std::string size_variable_name;
+		
+		for (int j=0;j<nb;j++) {
+			Param &p=*(method->params[j]);
+			if(strcmp("int", p.GetType()->GetName())==0){
+				size_variable_name.clear();
+				size_variable_name.append(p.GetName());
+			}
+		}
+		if(size_variable_name.length() == 0){
+			//
+			sprintf(tmp,"Could not find size to marshall array: %s\n", GetToken($7));
+			errormsg(tmp);
+			exit(1);
+		}
+		strcpy(tmpSize, size_variable_name.c_str());
+		UpdateMarshalParam(67,t);
+      type=new TypePtr(NULL, 1, type, constPointerPositions);
       thisCodeFile->AddDataType(type);
-    }
+	} else if ($8 != -1) {
+		type=new TypeArray(NULL, GetToken($8) , type);
+		thisCodeFile->AddDataType(type);
+	}
 
-  t->SetType(type);
-  if ($7!=-1) strcpy(t->name,GetToken($7));
-  else   sprintf(t->name,"V_%d",++counter);
+	t->SetType(type);
+	if ($7 != -1) {
+		strcpy(t->name,GetToken($7));
+	} else {
+		sprintf(t->name,"V_%d",++counter);
+	}
 
-  t->isConst=(($2==1) || ($4==1));
-  if ($9>=0) t->defaultVal=strdup(GetToken($9));
-  
-
+	t->isConst=(($2==1) || ($4==1));
+	if ($9 >= 0) 
+		t->defaultVal=strdup(GetToken($9));
 } 
 ;
 
@@ -1880,17 +1898,17 @@ marshal_decl:  /*empty*/
 }
 | '[' marshal_opt_list ']'
 {
-  $$=$2;
+	$$=$2;
 }
 ;
 
 marshal_opt_list: marshal_opt
 {
-  $$=$1;
+	$$=$1;
 }
 | marshal_opt ',' marshal_opt_list
 {
-  $$=$1 | $3 ;
+	$$=$1 | $3 ;
 }
 ;
 
@@ -2181,15 +2199,15 @@ TypeClassStruct *Peek()
   return t;
 }
 
+// Update marshall options for a specific parameter
 void UpdateMarshalParam(int flags, Param *t)
 {
-  if (flags!=0)
-    {
-      if (flags & PARAM_IN) t->isInput=true;
-      if (flags & PARAM_OUT) t->isOutput=true;
+	if (flags!=0) {
+		if (flags & PARAM_IN) t->isInput=true;
+		if (flags & PARAM_OUT) t->isOutput=true;
       if (flags & USERPROC) t->marshalProc=strdup(tmpProc);
       if (flags & PARAMSIZE) t->paramSize=strdup(tmpSize);
-    }
+	}
 }
 
 extern FILE *yyin;

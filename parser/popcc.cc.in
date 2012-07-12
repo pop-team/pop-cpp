@@ -1,3 +1,10 @@
+/**
+ * Modifications: 
+ * Date			Author		Description
+ * 2012/07/12	clementval	Finalize automatic pack when @pack is not specified. This is handled at the end of parsing only if no 
+ *									@pack directive has been found. 
+ */
+
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,18 +30,25 @@ char arch[256]= POPC_BUILD_ARCH;
 #define SVNREV "(unknown)"
 #endif
 
+bool verbose=false;
+bool noclean=false;
+bool nowarning=false;
+bool noimplicitpack=false;
+
 void Usage()
 {
-  fprintf(stderr,"\nPOP-C++ version %s %s on %s\n", VERSION, SVNREV, arch);
-  fprintf(stderr,"\npopcc [-cxxmain] [-object[=type]] [-cpp=<C++ preprocessor>] [-cxx=<compiler>] ] [-popcld=linker] [-popcdir=<path>] [-popcpp=<POP-C++ parser>] [-verbose] [-noclean] [other C++ options] sources...\n");
+	fprintf(stderr,"\nPOP-C++ version %s %s on %s\n", VERSION, SVNREV, arch);
+	fprintf(stderr,"\npopcc [-cxxmain] [-object[=type]] [-cpp=<C++ preprocessor>] [-cxx=<compiler>] ] [-popcld=linker] [-popcdir=<path>] [-popcpp=<POP-C++ parser>] [-verbose] [-noclean] [-no-warning] [-no-implicit-pack] [other C++ options] sources...\n");
 
-  fprintf(stderr,"   -cxxmain:              Use standard C++ main (ignore POP-C++ initialization)\n");
-  fprintf(stderr,"   -popc-static:          Link with standard POP-C++ libraries statically\n");
-  fprintf(stderr,"   -popc-nolib:           Avoid standard POP-C++ libraries from linking\n");
-  fprintf(stderr,"   -parclass-nointerface: Do not generate POP-C++ interface codes for parallel objects\n");
-  fprintf(stderr,"   -parclass-nobroker:    Do not generate POP-C++ broker codes for parallel objects\n");
+	fprintf(stderr,"   -cxxmain:              Use standard C++ main (ignore POP-C++ initialization)\n");
+	fprintf(stderr,"   -popc-static:          Link with standard POP-C++ libraries statically\n");
+	fprintf(stderr,"   -popc-nolib:           Avoid standard POP-C++ libraries from linking\n");
+	fprintf(stderr,"   -parclass-nointerface: Do not generate POP-C++ interface codes for parallel objects\n");
+	fprintf(stderr,"   -parclass-nobroker:    Do not generate POP-C++ broker codes for parallel objects\n");
 	
-	fprintf(stderr,"\n   -object[=type]:      Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
+	fprintf(stderr,"\n");	
+	
+	fprintf(stderr,"   -object[=type]:      Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
 	fprintf(stderr,"   -popcpp:             POP-C++ parser\n");
 	fprintf(stderr,"   -cpp=<preprocessor>: C++ preprocessor command\n");
 	fprintf(stderr,"   -cxx=<compiler>:     C++ compiler\n");
@@ -46,128 +60,115 @@ void Usage()
 	fprintf(stderr,"   -verbose:            Print out additional information\n");
 	fprintf(stderr,"   -nopipe:             Do not use pipe during compilation phases ( create _paroc2_ files )\n");
 	fprintf(stderr,"   -version:            Display the installed version of POP-C++\n");
- 
+	
+	fprintf(stderr,"\n"); 
+	
+	fprintf(stderr,"Environment variables change the default values used by POP-C++:\n");
+	fprintf(stderr,"   POPC_LOCATION:  Directory where POP-C++ has been installed\n");
+	fprintf(stderr,"   POPC_CXX:       The C++ compiler used to generate object code\n");
+	fprintf(stderr,"   POPC_CPP:       The C++ preprocessor\n");
+	fprintf(stderr,"   POPC_LD:        The C++ linker used to generate binary code\n");
+	fprintf(stderr,"   POPC_PP:        The POP-C++  parser\n");
 
-  fprintf(stderr,"\nEnvironment variables change the default values used by POP-C++:\n");
-  fprintf(stderr,"   POPC_LOCATION:  Directory where POP-C++ has been installed\n");
-  fprintf(stderr,"   POPC_CXX:       The C++ compiler used to generate object code\n");
-  fprintf(stderr,"   POPC_CPP:       The C++ preprocessor\n");
-  fprintf(stderr,"   POPC_LD:        The C++ linker used to generate binary code\n");
-  fprintf(stderr,"   POPC_PP:        The POP-C++  parser\n");
-
-  exit(1);
+	exit(1);
 }
 
 void DisplayVersion()
 {
-  fprintf(stderr,"\nPOP-C++ version %s %s on %s\n\n", VERSION, SVNREV, arch);
+	fprintf(stderr,"\nPOP-C++ version %s %s on %s\n\n", VERSION, SVNREV, arch);
 }
-
-bool verbose=false;
-bool noclean=false;
-bool nowarning=false;
-bool noimplicitpack=false;
 
 void Verbose(int argc, char *argv[])
 {
-  printf("\nEXEC:");
-  for (int i=0;i<argc;i++) printf("%s ", argv[i]);
-  printf("\n");
+	printf("\nEXEC:");
+	for (int i=0;i<argc;i++) 
+		printf("%s ", argv[i]);
+	printf("\n");
 }
 
 int RunCmd(int argc, char *argv[])
 {
-  argv[argc]=0;
-  if (verbose) Verbose(argc,argv);
+	argv[argc]=0;
+	if (verbose) Verbose(argc,argv);
 
-  int status;
-  int pid=vfork();
-  if (pid<0)
-    {
-      perror("ERROR");
-      _exit(1);
-    }
-  else if (pid==0)
-    {
-      execvp(argv[0],argv);
-      fprintf(stderr,"ERROR: %s not found\n",argv[0]);
-      _exit(1);
-    }
-  wait(&status);
-  int ret=WEXITSTATUS(status);
-  return ret;
+	int status;
+	int pid=vfork();
+	if (pid<0) {
+		perror("ERROR");
+		_exit(1);
+	} else if (pid==0) {
+		execvp(argv[0],argv);
+		fprintf(stderr,"ERROR: %s not found\n",argv[0]);
+		_exit(1);
+	}
+	wait(&status);
+	int ret=WEXITSTATUS(status);
+	return ret;
 }
 
 int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[])
 {
-  argv1[argc1]=0;
-  argv2[argc2]=0;
+	argv1[argc1]=0;
+	argv2[argc2]=0;
 
-  if (verbose)
-  {	
-	 Verbose(argc1,argv1);
-	 Verbose(argc2,argv2);
-  }
+	if (verbose) {	
+		Verbose(argc1,argv1);
+		Verbose(argc2,argv2);
+	}
 
-  int p[2]; 
-  if (pipe(p)!=0) 
-  {
-	perror("Error");
-	_exit(1);
-  }
+	int p[2]; 
+	if (pipe(p)!=0) {
+		perror("Error");
+		_exit(1);
+	}
 
-  int status;
-  int pid1=fork();
-  if (pid1<0)
-    {
-      perror("ERROR");
+	int status;
+	int pid1=fork();
+	if (pid1<0) {
+		perror("ERROR");
+		_exit(1);
+	} else if (pid1==0) {
+		close(p[0]);
+		dup2(p[1],1);
+		execvp(argv1[0],argv1);
+		fprintf(stderr,"ERROR: %s not found\n",argv1[0]);
       _exit(1);
-    }
-  else if (pid1==0)
-    {
+	}
+
+	int pid2=fork();
+	if (pid2<0) {
+		perror("ERROR");
+		_exit(1);
+	}
+
+	if (pid2==0) {
+		close(p[1]);
+		dup2(p[0],0);
+		execvp(argv2[0],argv2);
+		fprintf(stderr,"ERROR: %s not found\n",argv2[0]);
+		_exit(1);		
+	}
 	close(p[0]);
-	dup2(p[1],1);
-     	execvp(argv1[0],argv1);
-      	fprintf(stderr,"ERROR: %s not found\n",argv1[0]);
-      _exit(1);
-    }
-
-  int pid2=fork();
-  if (pid2<0)
-  {
-  	perror("ERROR");
-  	_exit(1);
-  }
-
-  if (pid2==0)
-  {
 	close(p[1]);
-	dup2(p[0],0);
-   	execvp(argv2[0],argv2);
-      	fprintf(stderr,"ERROR: %s not found\n",argv2[0]);
-     	_exit(1);		
-  }
-  close(p[0]);
-  close(p[1]);
 
-  wait(&status);
-  int ret=WEXITSTATUS(status);
-  if (ret!=0) return ret;
+	wait(&status);
+	int ret=WEXITSTATUS(status);
+	if (ret!=0) 
+		return ret;
 
-  wait(&status);
-  ret=WEXITSTATUS(status);
-  return ret;
+	wait(&status);
+	ret=WEXITSTATUS(status);
+	return ret;
 }
 
 
 void PrepareSource(char *src, char *dest)
 {
-  FILE *sf=fopen(src,"r+t");
-  if (sf==NULL)
-    {
-      perror(src);
-      exit(1);
-    }
+	FILE *sf=fopen(src,"r+t");
+	if (sf==NULL) {
+		perror(src);
+		exit(1);
+	}
   FILE *df=fopen(dest,"w+t");
   if (df==NULL)
     {
