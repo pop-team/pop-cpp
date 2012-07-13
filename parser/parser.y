@@ -1839,6 +1839,7 @@ arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_s
 	Param *t=method->AddNewParam();
 	UpdateMarshalParam($1,t);
 	
+	
 	DataType *type=currenttype;
 	if ($5>0) {
       type=new TypePtr(NULL, $5 , type, constPointerPositions);
@@ -1883,7 +1884,11 @@ arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_s
 	if ($7 != -1) {
 		strcpy(t->name,GetToken($7));
 	} else {
-		sprintf(t->name,"V_%d",++counter);
+		if(strcmp("void", t->GetType()->GetName()) == 0){
+			t->isVoid = true;
+		} else {
+			sprintf(t->name,"V_%d",++counter);
+		}
 	}
 
 	t->isConst=(($2==1) || ($4==1));

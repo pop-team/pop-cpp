@@ -221,6 +221,7 @@ public:
 	bool IsConst();
 	bool InParam();
 	bool IsArray();
+	bool IsVoid();	
 	bool OutParam();
 
 	void SetType(DataType *type);
@@ -245,6 +246,7 @@ public:
 	bool isConst;
 	bool isRef;
 	bool isArray;
+	bool isVoid;
 	char name[64];
 	DataType *mytype;
 	//  char *cardinal;

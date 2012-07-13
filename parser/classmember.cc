@@ -35,7 +35,7 @@ Param::Param(DataType *ptype)
 	mytype=ptype;
 	
 	paramSize=marshalProc=defaultVal=NULL;
-	isArray=isRef=isConst=isInput=isOutput=false;
+	isVoid=isArray=isRef=isConst=isInput=isOutput=false;
 }
 
 Param::Param()
@@ -44,7 +44,7 @@ Param::Param()
 	mytype=NULL;
 
 	paramSize=marshalProc=defaultVal=NULL;
-	isArray=isRef=isConst=isInput=isOutput=false;
+	isVoid=isArray=isRef=isConst=isInput=isOutput=false;
 }
 
 Param::~Param()
@@ -94,6 +94,11 @@ bool Param::IsArray()
 	return isArray;
 }
 
+bool Param::IsVoid()
+{
+	return isVoid;
+}
+
 void Param::SetType(DataType *type)
 {
 	mytype=type;
@@ -131,7 +136,6 @@ bool Param::CanMarshal()
 bool Param::DeclareParam(char *output, bool header)
 {
 	if (mytype==NULL) return false;
-
 	if (isConst)
 	{
 		strcpy(output,"const ");
@@ -159,7 +163,8 @@ bool Param::DeclareParam(char *output, bool header)
 bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem)
 {
 	if (mytype==NULL) return false;
-
+	if (isVoid) return false;
+	
 	int nptr=mytype->IsPointer();
 	if (nptr==1 && paramSize==NULL)
 	{
@@ -965,7 +970,7 @@ void Method::GenerateBroker(CArrayChar &output)
 	for (int j=0;j<nb;j++)
 	{
 		Param &p=*(params[j]);
-		if (!p.InParam()) continue;
+		if (!p.InParam() /* || strcmp(p.GetType()->GetName(), "void") == 0 */) continue;
 		char decl[1024];
 
 		p.DeclareVariable(decl,reformat[j],false);
@@ -986,7 +991,7 @@ void Method::GenerateBroker(CArrayChar &output)
 	for (int j=0;j<nb;j++)
 	{
 		Param &p=*(params[j]);
-		if (!p.InParam())
+		if (!p.InParam() /* && strcmp(p.GetType()->GetName(), "void") != 0 */)
 		{
 			char decl[1024];
 

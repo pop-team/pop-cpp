@@ -84,16 +84,17 @@ void DataType::Marshal(char *varname, char *bufname, char *sizehelper,  CArrayCh
 	char paramname[256];
 	const char *sz=(sizehelper==NULL)? "1" : sizehelper;
 
+	if(strcmp(GetName(), "void") != 0) {
 	if (!FindVarName(varname,paramname)) strcpy(paramname,"unkown");
-	sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", %s);\n",bufname,paramname, GetName(), sz);
-	output.InsertAt(-1,tmpcode,strlen(tmpcode));
+		sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", %s);\n",bufname,paramname, GetName(), sz);
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-	sprintf(tmpcode,"%s.Pack(&%s, %s);\n",bufname,varname, sz);
-	output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		sprintf(tmpcode,"%s.Pack(&%s, %s);\n",bufname,varname, sz);
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
-	sprintf(tmpcode,"%s.Pop();\n",bufname);
-	output.InsertAt(-1,tmpcode,strlen(tmpcode));
-
+		sprintf(tmpcode,"%s.Pop();\n",bufname);
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+	}
 }
 
 void DataType::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output)
@@ -102,15 +103,17 @@ void DataType::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayC
 	char paramname[256];
 	const char *sz=(sizehelper==NULL)? "1" : sizehelper;
 
-	if (!FindVarName(varname,paramname)) strcpy(paramname,"unkown");
-	sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", %s);\n",bufname,paramname, GetName(), sz);
-	output.InsertAt(-1,tmpcode,strlen(tmpcode));
+	if(strcmp(GetName(), "void") != 0) {
+		if (!FindVarName(varname,paramname)) strcpy(paramname,"unkown");
+		sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", %s);\n",bufname,paramname, GetName(), sz);
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-	sprintf(tmpcode,"%s.UnPack(&%s,%s);\n",bufname,varname, sz);
-	output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		sprintf(tmpcode,"%s.UnPack(&%s,%s);\n",bufname,varname, sz);
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
-	sprintf(tmpcode,"%s.Pop();\n",bufname);
-	output.InsertAt(-1,tmpcode,strlen(tmpcode));
+		sprintf(tmpcode,"%s.Pop();\n",bufname);
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+	}
 }
 
 bool DataType::GetDeclaration(const char *varname, char *output)

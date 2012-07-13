@@ -400,7 +400,6 @@ struct {
   return STRUCT_KEYWORD;
 };
 
-
 sync {
   if (IsSystemHeader(filename))
     {
