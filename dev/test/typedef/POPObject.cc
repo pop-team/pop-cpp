@@ -3,7 +3,6 @@
 
 POPObject::POPObject()
 {
-	one = 10;
    cout << "POPCobject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << popcendl;
    cout << "typedef SmallNumber = " << one << popcendl;   
 }

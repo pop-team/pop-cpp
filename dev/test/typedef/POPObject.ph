@@ -9,7 +9,7 @@ public:
 	POPObject() @{ od.search(0, 0, 0); };
 	~POPObject();
 
-	typedef short SmallNumber;
+	typedef short* SmallNumber[];
 
 private:
 	SmallNumber one;
