@@ -125,6 +125,7 @@ kill() {
       killall -q virtual_popc_search_node
       killall -q jobmgr
       killall -q popc_search_node
+      killall -q popfilemanager         
    fi
       
    if [ X$POPC_SECURE = "Xtrue" ] || [ X$POPC_SECURE_VIRTUAL = "Xtrue" ]
