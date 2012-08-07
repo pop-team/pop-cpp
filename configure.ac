@@ -28,7 +28,7 @@ case $host_os in
 		CPPFLAGS+="-DARCH_MAC "
 		;;
 	linux*)
-        	# Do something specific for linux
+		# Do something specific for linux
 		;;
 	*BSD*)
 		# Do something specific for BSD
