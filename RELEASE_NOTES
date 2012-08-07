@@ -21,9 +21,8 @@ For end-user
 - Automatic detection of active interface at runtime for Mac OS X (no need to set POPC_IFACE anymore)
 - Ability to start the runtime without the POPFileManager (SXXpopc start --no-service popfile)
 - Implicit @pack directive added in case developer doesn't mention it. Warning is displayed by the POP-C++ parser. 
-- Add "-nowarning" option to the POP-C++ parser to stop printing warnings on the stdout.
-
+- Add "-no-implicit-pack" option to the POP-C++ parser to avoid implicit @pack directive to be added.
+- Add "-no-warning" option to the POP-C++ parser to stop printing warnings on the stdout.
 
 For POP-C++ development
-- Add different logging level in the runtime (POPC_DEBUG, POPC_ERROR, POPC_CORE)
-
+- Add different logging level in the runtime (DEBUG, ERROR, CORE, INFO, DEV)
