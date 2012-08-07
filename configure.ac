@@ -1,17 +1,26 @@
 #
 # Autoconf tools configure.ac file
 # Process this file with autoconf to produce a configure script.
-# use the script popc_regenrate_configuration in dev/script/
+# use the script popc_regenrate_configuration in /dev/script/ to 
+# produce new files.
 #
 
 # Version of the tools required
-AC_PREREQ(2.67)
+# Do not update the value if not needed, older user of POP-C++ will not be able to 
+# install the tool.
+
+AC_PREREQ(2.61)
 
 # Define the project and its version number
 AC_INIT( popc, 2.0.3-beta)
 AM_INIT_AUTOMAKE(no-dependencies)
 
+#
 # Check for host architecture
+# With this patch, Mac OS X user doesn't need to add the -DARCH_MAC flag to the
+# configure line. It will be added automatically.
+# 
+
 AC_CANONICAL_HOST
 case $host_os in
 	darwin* )
@@ -19,7 +28,7 @@ case $host_os in
 		CPPFLAGS+="-DARCH_MAC "
 		;;
 	linux*)
-        # Do something specific for linux
+        	# Do something specific for linux
 		;;
 	*BSD*)
 		# Do something specific for BSD
@@ -30,10 +39,16 @@ case $host_os in
 		;;
 esac
 
-#Define base language
+#
+# Define base language
+#
+
 AC_LANG(C++)
 
-#Define base prefix if no --prefix is used
+#
+# Define base prefix if no --prefix is used
+#
+
 AC_PREFIX_DEFAULT(/usr/local/popc)
 
 test -n "${prefix}" || prefix=/usr/local/popc
@@ -91,15 +106,24 @@ esac
 
 AM_CONDITIONAL(LINUX, test x${linux} = xtrue)
 
+
+
+#
 # ViSaG : clementval
 # Add virtual as configure option
+#
+
 AC_ARG_ENABLE(virtual,
 [ --enable-virtual   Enable POP-C++ virtual mode],
 [
 virtual=true;
 ], [ virtual=false])
 
+
+#
 # Add secure as configure option
+#
+
 AC_ARG_ENABLE(secure,
 [--enable-secure  Enable POP-C++ secure mode],
 [
@@ -123,9 +147,6 @@ if test x$secure = xtrue
 then 
    standard=false;
 fi
-
-
-
 
 AC_SUBST(virtual)
 AC_SUBST(secure)
