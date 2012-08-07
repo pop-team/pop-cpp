@@ -47,6 +47,7 @@ typedef int16_t flex_int16_t;
 typedef uint16_t flex_uint16_t;
 typedef int32_t flex_int32_t;
 typedef uint32_t flex_uint32_t;
+typedef uint64_t flex_uint64_t;
 #else
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
@@ -355,7 +356,7 @@ static void yy_fatal_error (yyconst char msg[]  );
  */
 #define YY_DO_BEFORE_ACTION \
 	(yytext_ptr) = yy_bp; \
-	yyleng = (size_t) (yy_cp - yy_bp); \
+	yyleng = (yy_size_t) (yy_cp - yy_bp); \
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
@@ -902,7 +903,7 @@ char *yytext;
 
   int ReadUntil(char *sep, char *output, int sz);
    
-#line 906 "parser.yy.cc"
+#line 907 "parser.yy.cc"
 
 #define INITIAL 0
 
@@ -1090,7 +1091,7 @@ YY_DECL
 #line 59 "parser.lex"
 
 
-#line 1094 "parser.yy.cc"
+#line 1095 "parser.yy.cc"
 
 	if ( !(yy_init) )
 		{
@@ -2054,7 +2055,7 @@ YY_RULE_SETUP
 #line 732 "parser.lex"
 ECHO;
 	YY_BREAK
-#line 2058 "parser.yy.cc"
+#line 2059 "parser.yy.cc"
 
 	case YY_END_OF_BUFFER:
 		{

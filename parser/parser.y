@@ -64,6 +64,7 @@ int indexsource=0;  //the index of source file and the include directive
 	PackObject *currentPack;
 	Structure *structContainer;
 
+	TypeDefinition *typeDefContainer;
 	Method *method;
 	// Param *param;
 
@@ -437,21 +438,26 @@ struct_definition: struct_head '{' struct_body '}'
 
 struct_head: STRUCT_KEYWORD ID
 {
+	
 	if(currentClass!=NULL){
+		
 		isInStruct = true;
+		
 		structContainer = new Structure(currentClass, accessmodifier);
+		
 		structContainer->SetLineInfo(linenumber-1);
+		
 		currentClass->AddMember(structContainer);
-      structContainer->setName(GetToken($2));	
+      
+		structContainer->setName(GetToken($2));	
+	
 	}
-  char *tname=GetToken($2);
-  DataType *type=thisCodeFile->FindDataType(tname);
-  TypeClassStruct *t;
-  if (type!=NULL)
-    {
-      t=dynamic_cast<TypeClassStruct *>(type);
-      if (t==NULL)
-	{
+  	char *tname=GetToken($2);
+	DataType *type=thisCodeFile->FindDataType(tname);
+  	TypeClassStruct *t;
+  	if (type!=NULL){
+		t=dynamic_cast<TypeClassStruct *>(type);
+		if (t==NULL) {
 	  //	  	  thisCodeFile->RemoveDataType(type);
 	  //	  	  delete type;
 	  t=new TypeClassStruct(tname, false);
@@ -459,15 +465,13 @@ struct_head: STRUCT_KEYWORD ID
 	  //	  sprintf(tmp,"data type \"%s\" has been redefined!\n",tname);
 	  //	  errormsg(tmp);
 	  //	  exit(1);
-	}
-    } 
-  else
-    { 
+		}
+	} else { 
       t=new TypeClassStruct(tname,false);
-      thisCodeFile->AddDataType(t);
-    }
-  Push(t);
-  $$=$2;
+      thisCodeFile->AddDataType(t);	
+   }
+	Push(t);
+	$$=$2;
 }
 | STRUCT_KEYWORD
 {
@@ -525,26 +529,38 @@ TYPEDEF TYPES
 
 typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
 {
-	if(insideClass){
-		sprintf(tmp,"typedef definition inside parclass are not currently supported !\n");
+	if(currentClass!=NULL){
+			
+		typeDefContainer = new TypeDefinition(currentClass, accessmodifier);
+		
+		typeDefContainer->SetLineInfo(linenumber-1);
+		
+		currentClass->AddMember(typeDefContainer);
+      
+		typeDefContainer->setName(GetToken($2));	
 	
-		errormsg(tmp);
-		exit(1);
+		typeDefContainer->setBaseType(GetToken($4));	
+	
+		if ($3>0) {
+			typeDefContainer->setAsPtr();	
+
+		}
+		if ($5!=-1) {
+			typeDefContainer->setAsArray();	
+
+    	}
 	}
-  char *orgtype=GetToken($2);
-  DataType *type=thisCodeFile->FindDataType(orgtype);
-  if (type==NULL)
-    {
-      type=new DataType(orgtype);
+	char *orgtype=GetToken($2);
+	DataType *type=thisCodeFile->FindDataType(orgtype);
+	if (type==NULL) {
+		type=new DataType(orgtype);
       thisCodeFile->AddDataType(type);
-    }
-  if ($3>0)
-    {
+	}
+	if ($3>0) {
       //type=new TypePtr(NULL,$3, type);
       type=new TypePtr(NULL,$3, type, constPointerPositions);
-      
       thisCodeFile->AddDataType(type);
-    }
+	}
   if ($5!=-1)
     {
       type=new TypeArray(NULL,GetToken($5), type);
@@ -555,6 +571,12 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
 } 
 | TYPEDEF_KEYWORD STRUCT_KEYWORD ID pointer_specifier ID array_declarator
 {
+	if(insideClass){
+		sprintf(tmp,"typedef definition with structure inside a parclass is not currently supported !\n");
+	
+		errormsg(tmp);
+		exit(1);
+	}
   char *orgtype=GetToken($3);
   DataType *type=thisCodeFile->FindDataType(orgtype);
   if (type==NULL)
@@ -603,6 +625,12 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
 }
 |  TYPEDEF_KEYWORD struct_definition pointer_specifier ID array_declarator
 {
+	if(insideClass){
+		sprintf(tmp,"typedef definition with structure inside a parclass is not currently supported !\n");
+	
+		errormsg(tmp);
+		exit(1);
+	}
   DataType *type=currentstruct;
   assert(type!=NULL);
 

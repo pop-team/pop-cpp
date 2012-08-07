@@ -534,11 +534,76 @@ void Structure::GenerateHeader(CArrayChar &output, bool interface){
 	output.InsertAt(-1, ";", 1);
 }
 
+/**
+ * Implementation of TypeDefinition class
+ */
+ 
+// TypeDefinition constructor
+TypeDefinition::TypeDefinition(Class *cl, AccessType myaccess): ClassMember(cl, myaccess)
+{
+	ptr = false;
+}
+
+// TypeDefinition type destructor
+TypeDefinition::~TypeDefinition()
+{
+
+}
+
+// Save the name of the typedef
+void TypeDefinition::setName(std::string value)
+{
+	name = value;
+}
+
+// Save the basetype of the typedef
+void TypeDefinition::setBaseType(std::string value)
+{
+	basetype = value;
+}
+
+void TypeDefinition::setAsPtr()
+{
+	ptr = true;
+}
+
+bool TypeDefinition::isPtr()
+{
+	return ptr;
+}
+
+void TypeDefinition::setAsArray()
+{
+	array = true;
+}
+
+bool TypeDefinition::isArray()
+{
+	return array;
+}
+
+
+// Generation of the appropriate code for the enum type
+void TypeDefinition::GenerateHeader(CArrayChar &output, bool interface){
+	ClassMember::GenerateHeader(output, interface);
+	output.InsertAt(-1, "typedef ",strlen("typedef "));
+	output.InsertAt(-1, name.c_str(),strlen(name.c_str()));
+	if(isPtr()){
+		output.InsertAt(-1, " * ", 3);
+	} else {
+		output.InsertAt(-1, " ", 1);
+	}
+	output.InsertAt(-1, basetype.c_str(), strlen(basetype.c_str()));
+	if(isArray()){
+		output.InsertAt(-1, "[]", 2);
+	}
+	output.InsertAt(-1, ";", 1);
+}
+
 
 
 
 //Directives inside a parallel class
-
 Directive::Directive(Class *cl, char *directive): ClassMember(cl, PUBLIC)
 {
 	code=strdup(directive);

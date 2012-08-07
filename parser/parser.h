@@ -367,6 +367,32 @@ private:
 	std::string innerdecl;
 };
 
+/**
+ * @class TypeDefinition
+ * @Brief This class is holding typedef information
+ */
+class TypeDefinition: public ClassMember
+{
+public: 
+	TypeDefinition(Class *cl, AccessType myaccess);
+	~TypeDefinition();
+	virtual void GenerateHeader(CArrayChar &output, bool interface);
+	
+	void setName(std::string name);
+	void setBaseType(std::string basetype);
+	void setAsPtr();
+	bool isPtr();
+	void setAsArray();
+	bool isArray();
+
+private:
+	bool ptr;
+	bool array;
+	std::string name;
+	std::string basetype;
+};
+
+
 
 /**
  * @class Directive
