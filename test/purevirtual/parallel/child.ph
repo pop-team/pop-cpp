@@ -15,6 +15,4 @@ public:
 	sync seq void method_pv();
 };
 
-@pack(Child, Mother);
-
 #endif /* CHILD_H */
