@@ -11,8 +11,7 @@ class Child: public Mother
 public:
 	Child();
 	~Child();
-	void method1();
-	void method_pv();
+	virtual void method_pv();
 };
 
 #endif /* CHILD_H */

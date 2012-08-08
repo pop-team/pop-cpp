@@ -8,7 +8,6 @@ class Mother
 public:
 	Mother();
 	~Mother();
-	void method_master();
 	virtual void method_pv()=0;
 };
 
