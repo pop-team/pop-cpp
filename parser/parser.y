@@ -79,6 +79,7 @@ int indexsource=0;  //the index of source file and the include directive
  
  bool isWarningEnable;
  bool isImplicitPackEnable;
+ bool isPOPCPPCompilation; 
  char holdnamespace[500];
  char tmp[10240];
  char typetmp[100];
@@ -88,7 +89,7 @@ int indexsource=0;  //the index of source file and the include directive
 
  void UpdateMarshalParam(int flags, Param *t);
 
- int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable);
+ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation);
  char *CheckAndCreateDir(char *fname,char *name);
  bool CheckAndInsert(CArrayCharPtr &source, CArrayCharPtr &searchpath, char *fname);
 
@@ -849,6 +850,8 @@ class_key: PARCLASS_KEYWORD ID
 	if ((t=thisCodeFile->FindClass(clname))==NULL) {
       t=new Class(clname, thisCodeFile);
       thisCodeFile->AddDataType(t);
+      if(thisCodeFile->IsCoreCompilation())
+      	t->SetAsCoreCompilation();
 	}
 	t->SetFileInfo(filename);
 	t->SetStartLine(linenumber);
@@ -2251,6 +2254,7 @@ int main(int argc, char **argv)
 	bool broker=true;
 	isWarningEnable=true;
 	isImplicitPackEnable=true;
+	isPOPCPPCompilation=false;
 
 	if (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL){
 		
@@ -2271,6 +2275,12 @@ int main(int argc, char **argv)
 	
 	}  
 
+	if (paroc_utils::checkremove(&argc,&argv,"-popcpp-compilation")!=NULL) {
+		
+		isPOPCPPCompilation=true;
+	
+	}  
+	
 	if (paroc_utils::checkremove(&argc,&argv,"-no-implicit-pack")!=NULL) {
 
 		isImplicitPackEnable=false;
@@ -2281,9 +2291,11 @@ int main(int argc, char **argv)
 	indexsource=-1;
 	errorcode=0;
 	if (argc<2){
+		
 		Usage();
+	
 	} else {
-		if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker, isWarningEnable, isImplicitPackEnable))!=0)	{
+		if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker, isWarningEnable, isImplicitPackEnable, isPOPCPPCompilation))!=0)	{
 			fprintf(stderr,"Parse POP-C++ code failed (error=%d)\n",ret);
 			exit(ret);
 		}
@@ -2312,7 +2324,7 @@ int yywrap() {
 
 int base=1;
 
-int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable)
+int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation)
 {
 	if (infile==NULL || *infile=='-'){
 		yyin=stdin;
@@ -2333,6 +2345,8 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 
 	}
 	
+	if(isPOPCPPCompilation)
+		thisCodeFile->SetAsCoreCompilation();
 	insideClass=false;
 	othercodes.SetSize(0);
 	startPos=-1;

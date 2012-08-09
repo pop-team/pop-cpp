@@ -16,6 +16,7 @@
 
 CodeFile::CodeFile(char *fname)
 {
+	isCoreCompilation = false;
 	filename=(fname==NULL) ? NULL : strdup(fname);
 	codes.SetGrowby(1024);
 	outfile=NULL;
@@ -49,7 +50,7 @@ void CodeFile::EmptyCodeData()
 	codes.SetSize(0);
 }
 
-void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker)
+void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker/*, bool isPOPCPPCompilation*/)
 {
 	int n;
    n=classlist.GetSize();
@@ -67,8 +68,8 @@ void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker)
 			char *clfname=cl.GetFileInfo();
 			if (filename==NULL || clfname==NULL || SameFile(clfname,filename))
 			{
-				if (client) cl.GenerateClient(output);
-				if (broker) cl.GenerateBroker(output);
+				if (client) cl.GenerateClient(output/*, isPOPCPPCompilation*/);
+				if (broker) cl.GenerateBroker(output/*, isPOPCPPCompilation*/);
 			}
 		}
 	}
@@ -285,4 +286,14 @@ bool CodeFile::SameFile(char *file1, char *file2)
 
 	return (paroc_utils::isEqual(fn1,fn2) && paroc_utils::isEqual(dir1,dir2));
 
+}
+
+void CodeFile::SetAsCoreCompilation()
+{
+	isCoreCompilation = true;
+}
+
+bool CodeFile::IsCoreCompilation()
+{
+	return isCoreCompilation;
 }

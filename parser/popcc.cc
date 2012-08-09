@@ -33,6 +33,7 @@ char arch[256]= POPC_BUILD_ARCH;
 bool verbose=false;
 bool noclean=false;
 bool nowarning=false;
+bool popcppcompilationflag=false;
 bool noimplicitpack=false;
 
 void Usage()
@@ -191,7 +192,7 @@ void PrepareSource(char *src, char *dest)
   fclose(sf);
 }
 
-char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack)
+char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp)
 {
   char *cmd[1000];
   int count=0;
@@ -208,6 +209,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
   char noclient[]="-parclass-nointerface";
   char nobroker[]="-parclass-nobroker";
   char nowarning[]="-no-warning";  
+  char popccpcompilationtab[]="-popcpp-compilation";    
   char noimplicitpack[]="-no-implicit-pack";    
 
   bool paroc=false;
@@ -278,6 +280,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
       if (!client) cmd1[countparoc++]=noclient;
       if (!broker) cmd1[countparoc++]=nobroker;
       if (warning) cmd1[countparoc++]=nowarning;
+      if (popcppcomp) cmd1[countparoc++]=popccpcompilationtab;      
       if (implicitpack) cmd1[countparoc++]=noimplicitpack;      
       
       if (!usepipe) {
@@ -393,6 +396,7 @@ int main(int argc, char *argv[])
   bool broker=true;
   bool client=true;
   bool warning=false;
+  bool popcppcomp=false;  
   bool implicitpack=false;  
   bool staticlib=false;
   
@@ -442,6 +446,7 @@ int main(int argc, char *argv[])
 	//Check for POP-C++ options...  
 	noclean=(paroc_utils::checkremove(&argc,&argv,"-noclean")!=NULL);
 	warning=(paroc_utils::checkremove(&argc,&argv,"-no-warning")!=NULL);
+	popcppcomp=(paroc_utils::checkremove(&argc,&argv,"-popcpp-compilation")!=NULL);
 	implicitpack=(paroc_utils::checkremove(&argc,&argv,"-no-implicit-pack")!=NULL);
 	broker=(paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")==NULL);
 	client=(paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface")==NULL);
@@ -580,7 +585,7 @@ int main(int argc, char *argv[])
 		if (str!=NULL) {
 			bool paroc_extension= (strcmp(str,".ph")==0 || strcmp(str,".pc")==0);
 	      if (paroc_extension || strcmp(str,".cc")==0 ||  strcmp(str,".C")==0 || strcmp(str,".cpp")==0) {
-				char *outf=Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack);
+				char *outf=Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack, popcppcomp);
 				link_cmd[link_count++]=(outf==NULL)? argv[i]: strdup(outf);
 				continue;
 			} 

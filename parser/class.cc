@@ -45,6 +45,7 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
 
 	noConstructor=true;
 	pureVirtual=false;
+	basePureVirtual=false;
 
 	my_interface_base=strdup(interface_base);
 	my_object_base=strdup(object_base);
@@ -149,7 +150,7 @@ void Class::SetEndLine(int num)
 }
 
 
-void Class::GenerateCode(CArrayChar &output)
+void Class::GenerateCode(CArrayChar &output/*, bool isPOPCPPCompilation*/)
 {
 	char str[1024];
 
@@ -166,17 +167,20 @@ void Class::GenerateCode(CArrayChar &output)
 	if (!pureVirtual)
 	{
 		CArrayMethod puremethods;
-		findPureVirtual(puremethods);
-		pureVirtual=(puremethods.GetSize()>0);
+		bool flag = findPureVirtual(puremethods);
+		if(puremethods.GetSize()>0){
+			SetPureVirtual(true);
+			SetBasePureVirtual(flag);
+		}
 	}
 
 	output.InsertAt(-1,str,strlen(str));
 
-	GenerateHeader(output,true);
+	GenerateHeader(output,true/*, isPOPCPPCompilation*/);
 
-	GenerateHeader(output,false);
+	GenerateHeader(output,false/*, isPOPCPPCompilation*/);
 
-	GenerateBrokerHeader(output);
+	GenerateBrokerHeader(output/*, isPOPCPPCompilation*/);
 
 }
 void Class::AddMember(ClassMember *t)
@@ -215,6 +219,35 @@ void Class::SetPureVirtual(bool val)
 	pureVirtual=val;
 }
 
+/**
+ * Tell if the class is pure virtual
+ * @return TRUE if the class is pure virtual. FALSE otherwise.
+ */
+bool Class::IsPureVirtual()
+{
+	return pureVirtual;
+}
+
+/**
+ * Tell is the class is pure virtual because it's a base class and has a pure virtual method or because it inherits a pure
+ * virtual class.
+ * @return TRUE if the class is a base class and pure virtual. FALSE otherwise.
+ */
+bool Class::IsBasePureVirtual()
+{
+	return basePureVirtual;
+}
+
+/**
+ * Set the base pure virtual flag to the given value.
+ * @param val 	A boolean value. TRUE if base pure virtual.
+ * @return void
+ */
+void Class::SetBasePureVirtual(bool val)
+{
+	basePureVirtual=val;
+}
+
 bool Class::hasMethod(Method &x)
 {
 	int n=memberList.GetSize();
@@ -243,8 +276,9 @@ bool Class::methodInBaseClass(Method &x)
 }
 
 
-void Class::findPureVirtual(CArrayMethod &lst)
+bool Class::findPureVirtual(CArrayMethod &lst)
 {
+	bool returnFlag = true;
 	CodeFile *prog;
    prog=GetCodeFile();
 
@@ -254,22 +288,27 @@ void Class::findPureVirtual(CArrayMethod &lst)
 		BaseClass &t=*(baseClass[i]);
 		if (t.type!=PUBLIC) continue;
 		t.base->findPureVirtual(lst);
+		returnFlag = false;
 	}
 
 	n=memberList.GetSize();
 	int m=lst.GetSize();
-	for (int i=0;i<n;i++) if (memberList[i]->Type()==TYPE_METHOD)
-		{
-			Method *t=(Method *)(memberList[i]);
-			if (t->isPureVirtual) lst.InsertAt(-1,t);
-			else if (m)
-			{
-				for (int j=m-1;j>=0;j--) if  ( *(lst[j]) == (*t) ) lst.RemoveAt(j);
+	for (int i=0;i<n;i++) if (memberList[i]->Type()==TYPE_METHOD) {
+		Method *t=(Method *)(memberList[i]);
+		if (t->isPureVirtual) {
+			lst.InsertAt(-1,t);
+		} else if (m) {
+			for (int j=m-1;j>=0;j--) {
+				if  ( *(lst[j]) == (*t) ) {
+					lst.RemoveAt(j);
+				}
 			}
 		}
+	}
+	return returnFlag;
 }
 
-bool Class::GenerateClient(CArrayChar &code)
+bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 {
 	char tmpcode[10240];
 
@@ -292,7 +331,10 @@ bool Class::GenerateClient(CArrayChar &code)
 		if (memberList[i]->Type()!=TYPE_METHOD || memberList[i]->GetMyAccess()!=PUBLIC) continue;
 
 		Method *met=(Method *)memberList[i];
-		/*PEKA*/ if (pureVirtual && met->MethodType()==METHOD_CONSTRUCTOR) continue;
+		/* LAST MODIFICATION added IsCoreCompilation */ 
+		if (pureVirtual && met->MethodType()==METHOD_CONSTRUCTOR && IsCoreCompilation()){
+			continue; 
+		}
 		met->GenerateClient(code);
 	}
 
@@ -300,8 +342,6 @@ bool Class::GenerateClient(CArrayChar &code)
 	{
 		constructor.GenerateClient(code);
 	}
-
-	//  code.InsertAt(-1,tmpcode,strlen(tmpcode));
 
 	char *fname=GetCodeFile()->GetFileName();
 	if (endline>0 && fname!=NULL)
@@ -346,7 +386,7 @@ unsigned Class::IDFromString(char *str)
 
 }
 
-bool Class::GenerateHeader(CArrayChar &code, bool interface)
+bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPCompilation*/)
 {
 	char tmpcode[10240];
 	char str[1024];
@@ -420,15 +460,15 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface)
 			if (t->MethodType()==METHOD_CONSTRUCTOR)
 			{
 				if ( ((Constructor *)t)->isDefault()) defaultconstructor=true;
-				/*PEKA Removed */ if (interface && pureVirtual) continue;
+				/*PEKA Removed */ //if (interface && pureVirtual) continue;
 			}
 		}
 
 		memberList[i]->GenerateHeader(code,interface);
 	}
 
-   //Add the declaration of the __POPThis variable
-   sprintf(str,"%s* __POPThis_%s; \n", name, name);
+   //Add the declaration of the __POPThis variable for support of the "this" keyword
+   sprintf(str,"\n%s* __POPThis_%s; \n", name, name);
    code.InsertAt(-1,str,strlen(str));
 
 	if (interface)
@@ -509,7 +549,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface)
 	return true;
 }
 
-bool Class::GenerateBrokerHeader(CArrayChar &code)
+bool Class::GenerateBrokerHeader(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 {
 	int i;
 	char str[1024];
@@ -548,23 +588,25 @@ bool Class::GenerateBrokerHeader(CArrayChar &code)
 	code.InsertAt(-1,tmpcode,strlen(tmpcode));
 
 	n=memberList.GetSize();
-	for (i=0;i<n;i++)
-	{
-		if (memberList[i]->GetMyAccess()!=PUBLIC || memberList[i]->Type()!=TYPE_METHOD) continue;
+	for (i=0;i<n;i++) {
+		if (memberList[i]->GetMyAccess()!=PUBLIC || memberList[i]->Type()!=TYPE_METHOD) 
+			continue;
 		Method &met=*((Method *)memberList[i]);
-		if (pureVirtual &&/*PEKA*/ met.MethodType()==METHOD_CONSTRUCTOR) continue;
+		if (pureVirtual && met.MethodType()==METHOD_CONSTRUCTOR /* LAST MODIFICATION */ && IsCoreCompilation()) 
+			continue;
 		met.GenerateBrokerHeader(code);
 	}
 
-	if (noConstructor /*PEKA Removed */ && !pureVirtual)
-    { constructor.GenerateBrokerHeader(code); }
+	if (noConstructor && !pureVirtual) { 
+		constructor.GenerateBrokerHeader(code); 
+	}
 
 	//Propagate object to parent....
 	//  sprintf(str,"\n\t%s%s *obj;\n\tvoid SetImpObject(%s%s *newobj);",name,OBJ_POSTFIX,name,OBJ_POSTFIX);
 	//  code.InsertAt(-1,str,strlen(str));
 
 	//Now generate the static paroc_broker_factory....
-	/* PEKA Removed */ if (!pureVirtual)
+	/* PURE VIRTUAL TEST -- if (!pureVirtual) */
 	{
 		sprintf(tmpcode,"\npublic:\nstatic paroc_broker *_init();\nstatic paroc_broker_factory _fact;\n");
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));
@@ -584,7 +626,7 @@ bool Class::GenerateBrokerHeader(CArrayChar &code)
 
 }
 
-bool Class::GenerateBroker(CArrayChar &code)
+bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 {
 	//Generate Broker-derived class for creation objects and the re-implementation of
 
@@ -622,7 +664,8 @@ bool Class::GenerateBroker(CArrayChar &code)
 		Method &met=*((Method *)memberList[i]);
 
 		int t=met.MethodType();
-		if (t==METHOD_DESTRUCTOR  || met.isHidden /*PEKA*/|| (pureVirtual && t==METHOD_CONSTRUCTOR) || (met.isVirtual && methodInBaseClass(met))) continue;
+		if (t==METHOD_DESTRUCTOR  || met.isHidden /* LAST MODIFICATION */|| (pureVirtual && t==METHOD_CONSTRUCTOR && IsCoreCompilation()) || (met.isVirtual && methodInBaseClass(met))) 
+			continue;
 		sprintf(str,"\ncase %d: Invoke_%s_%d(__brokerbuf, peer); return true;",met.id,met.name,met.id);
 		code.InsertAt(-1,str,strlen(str));
 
@@ -683,14 +726,14 @@ bool Class::GenerateBroker(CArrayChar &code)
 		Method &met=*((Method *)memberList[i]);
 		int t=met.MethodType();
 
-		if (t==METHOD_DESTRUCTOR || met.isHidden /*PEKA*/|| (pureVirtual && t==METHOD_CONSTRUCTOR) || (met.isVirtual && methodInBaseClass(met)))  continue;
+		if (t==METHOD_DESTRUCTOR || met.isHidden /* LAST MODIFICATION */|| (pureVirtual && t==METHOD_CONSTRUCTOR && IsCoreCompilation()) || (met.isVirtual && methodInBaseClass(met)))  continue;
 		met.GenerateBroker(code);
 	}
 
 	//Generate default constructor stubs
 
-	/* PEKA Removed */ 
-	if (!pureVirtual)
+
+	//if (!pureVirtual)
 	{
 		if (noConstructor)
 		{ 
@@ -699,10 +742,11 @@ bool Class::GenerateBroker(CArrayChar &code)
 
 		//Generate Broker init stuffs...
 
-		sprintf(tmpcode,"\nparoc_broker *%s::_init() { return new %s; }\nparoc_broker_factory %s::_fact(_init, \"%s\");\n",brokername, brokername, brokername, name);
-
-		code.InsertAt(-1,tmpcode,strlen(tmpcode));
+		// PURE VIRTUAL TEST -- The two below lines were here
 	}
+	/* PURE VIRTUAL TEST - Moved the two following lines from the above if clause to here */ 
+	sprintf(tmpcode,"\nparoc_broker *%s::_init() { return new %s; }\nparoc_broker_factory %s::_fact(_init, \"%s\");\n",brokername, brokername, brokername, name);
+	code.InsertAt(-1,tmpcode,strlen(tmpcode));
 
 	char *fname=GetCodeFile()->GetFileName();
 	if (endline>0 && fname!=NULL)
@@ -724,4 +768,13 @@ void Class::SetNamespace(char* value)
 std::string Class::GetNamespace()
 {
 	return strnamespace;
+}
+
+void Class::SetAsCoreCompilation()
+{
+	isCoreCompilation = true;
+}
+bool Class::IsCoreCompilation()
+{
+	return isCoreCompilation;
 }

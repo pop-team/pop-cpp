@@ -995,106 +995,101 @@ void Method::GenerateBroker(CArrayChar &output)
 	char methodcall[1024];
 	bool haveReturn=false;
 
-	if (type==METHOD_CONSTRUCTOR)
-	{
-		//Constructor...create object now...
-		sprintf(methodcall,"\ntry {\nobj=new %s%s(",clname,OBJ_POSTFIX);
-	}
-	else if (type!=METHOD_NORMAL || returnparam.GetType()->Same((char*)"void"))
-	{
-		sprintf(methodcall,"\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n_paroc_obj->%s(",clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, name); 
-	}
-	else
-	{
-		//CHECK HERE....
-		char retdecl[1024];
-		char tmpvar[1024];
-		
-		//printf("%s is %d\n", returnparam.name, returnparam.isRef);
-		
-		/*
-		 * Modified by david. If you add const (added here) it can resolve the problem, but I don't know the POP-C runtime impact 
-		if (returnparam.isRef) sprintf(tmpvar,"const &%s",returnparam.GetName());
-		else*/ strcpy(tmpvar,returnparam.GetName());
-		returnparam.GetType()->GetDeclaration(tmpvar,retdecl);
 
-		/* removed for the same reson as above
-		if (returnparam.isRef)
-			sprintf(methodcall,"\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj); \ntry {\n%s=_paroc_obj->%s(",clname,OBJ_POSTFIX,clname,OBJ_POSTFIX,retdecl, name);
-		else*/ if (returnparam.GetType()->IsParClass())
-			sprintf(methodcall,"\n%s(paroc_interface::_paroc_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl,clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, tmpvar,name);
-		else
-			sprintf(methodcall,"\n%s;\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
-
-		haveReturn=true;
-	}
-
-	bool have_memspool=false;
-
-	//unmarhall and allocate memory for inpput arguments first
-	for (int j=0;j<nb;j++)
-	{
-		Param &p=*(params[j]);
-		if (!p.InParam() /* || strcmp(p.GetType()->GetName(), "void") == 0 */) continue;
-		char decl[1024];
-
-		p.DeclareVariable(decl,reformat[j],false);
-		output.InsertAt(-1, decl, strlen(decl));
-
-		strcpy(str,"__paroc_buf");
-		if (p.marshalProc!=NULL && !have_memspool)
+	if(cl->IsBasePureVirtual())
+		printf("PARSING DEBUG: Class %s is abstract\n", clname);
+	if(cl->IsCoreCompilation())
+		printf("PARSING DEBUG: Class %s is core class\n", clname);	
+	
+	
+	if (cl->IsCoreCompilation() || !cl->IsBasePureVirtual()) { // ADDED FOR 2.0.3 Create constructor and stuff only if the parclass is not abstract
+		if (type==METHOD_CONSTRUCTOR)
 		{
-			strcpy(str,"\nparoc_memspool _internal_mem;");
-			output.InsertAt(-1,str,strlen(str));
-			have_memspool=true;
+			//Constructor...create object now...
+			sprintf(methodcall,"\ntry {\nobj=new %s%s(",clname,OBJ_POSTFIX);
 		}
-		p.UnMarshal((char*)"__paroc_buf",reformat[j],true,false,output);
-	}
-
-	//Then, declare and alloc mem  for output-only arguments
-
-	for (int j=0;j<nb;j++)
-	{
-		Param &p=*(params[j]);
-		if (!p.InParam() /* && strcmp(p.GetType()->GetName(), "void") != 0 */)
+		else if (type!=METHOD_NORMAL || returnparam.GetType()->Same((char*)"void"))
 		{
+			sprintf(methodcall,"\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n_paroc_obj->%s(",clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, name); 
+		} else {
+			char retdecl[1024];
+			char tmpvar[1024];
+			strcpy(tmpvar,returnparam.GetName());
+			returnparam.GetType()->GetDeclaration(tmpvar,retdecl);
+
+			if (returnparam.GetType()->IsParClass())
+				sprintf(methodcall,"\n%s(paroc_interface::_paroc_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl,clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, tmpvar,name);
+			else
+				sprintf(methodcall,"\n%s;\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
+
+			haveReturn=true;
+		}
+
+		bool have_memspool=false;
+
+		//unmarhall and allocate memory for inpput arguments first
+		for (int j=0;j<nb;j++) {
+			Param &p=*(params[j]);
+			if (!p.InParam() /* || strcmp(p.GetType()->GetName(), "void") == 0 */) 
+				continue;
 			char decl[1024];
 
-			p.DeclareVariable(decl,reformat[j],true);
+			p.DeclareVariable(decl,reformat[j],false);
 			output.InsertAt(-1, decl, strlen(decl));
+	
+			strcpy(str,"__paroc_buf");
+			if (p.marshalProc!=NULL && !have_memspool) {
+				strcpy(str,"\nparoc_memspool _internal_mem;");
+				output.InsertAt(-1,str,strlen(str));
+				have_memspool=true;
+			}
+			p.UnMarshal((char*)"__paroc_buf",reformat[j],true,false,output);
 		}
 
-		if (reformat[j])  strcat(methodcall," &");
-		strcat(methodcall,p.GetName());
-		if (j<nb-1) strcat(methodcall,", ");
-	}
+		//Then, declare and alloc mem  for output-only arguments
 
-	strcat(methodcall,");");
+		for (int j=0;j<nb;j++) {
+			Param &p=*(params[j]);
+			if (!p.InParam() /* && strcmp(p.GetType()->GetName(), "void") != 0 */) {
+				char decl[1024];
+	
+				p.DeclareVariable(decl,reformat[j],true);
+				output.InsertAt(-1, decl, strlen(decl));
+			}
 
-  // Add 'catch' to catch and print all std exceptions raised in the method
-  char tempcatch[256];
-  sprintf(tempcatch,"\n}\ncatch(std::exception& e) {rprintf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
-  strcat(methodcall,tempcatch); 
-
-
-	//now....generate the call...
-	output.InsertAt(-1,methodcall,strlen(methodcall));
-	sprintf(str,"\nif (__interface_output!=0) \n{\n__paroc_buf.Reset();\nparoc_message_header __paroc_buf_header(\"%s\");\n__paroc_buf.SetHeader(__paroc_buf_header);\n", name);
-	output.InsertAt(-1,str,strlen(str));
-
-	for (int j=0;j<nb;j++)
-	{
-		Param &p=*(params[j]);
-		if (p.OutParam())
-		{
-			p.Marshal((char*)"__paroc_buf", reformat[j], false, output);
+			if (reformat[j])  
+				strcat(methodcall," &");
+			strcat(methodcall,p.GetName());
+			if (j<nb-1) 
+				strcat(methodcall,", ");
 		}
+
+		strcat(methodcall,");");
+
+		// Add 'catch' to catch and print all std exceptions raised in the method
+		char tempcatch[256];
+		sprintf(tempcatch,"\n}\ncatch(std::exception& e) {rprintf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
+		strcat(methodcall,tempcatch); 
+
+
+		//now....generate the call...
+		output.InsertAt(-1,methodcall,strlen(methodcall));
+		sprintf(str,"\nif (__interface_output!=0) \n{\n__paroc_buf.Reset();\nparoc_message_header __paroc_buf_header(\"%s\");\n__paroc_buf.SetHeader(__paroc_buf_header);\n", name);
+		output.InsertAt(-1,str,strlen(str));
+
+		for (int j=0;j<nb;j++) {
+			Param &p=*(params[j]);
+			if (p.OutParam()) {
+				p.Marshal((char*)"__paroc_buf", reformat[j], false, output);
+			}
+		}
+		if (haveReturn) {
+			returnparam.Marshal((char*)"__paroc_buf",false,false, output);
+		}
+		strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n}\n");
+	} else { // ADDED FOR 2.0.3
+		strcpy(str,"}\n");	// Close the method braces
 	}
-	if (haveReturn)
-	{
-		returnparam.Marshal((char*)"__paroc_buf",false,false, output);
-	}
-	strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n}\n");
 	output.InsertAt(-1,str,strlen(str));
 }
 
@@ -1227,11 +1222,6 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 {
 	char tmpcode[10240];
 	od.Generate(tmpcode);
-//   if (baseClass.GetSize()>=2)
-//     {
-//       sprintf(str,"\n\t%s::Allocate();",baseClass[0]->basename);
-//       strcat(tmpcode,str);
-//     } else
 
 	strcat(tmpcode,"\nAllocate();");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));

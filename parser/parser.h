@@ -159,7 +159,7 @@ public:
 	~CodeFile();
 	void AddCodeData(CodeData *code);
 	void EmptyCodeData();
-	void GenerateCode(CArrayChar &output, bool client=true, bool broker=true);
+	void GenerateCode(CArrayChar &output, bool client=true, bool broker=true/*, bool isPOPCPPCompilation=false*/);
 	CArrayCodeData *GetCodes();
 	bool HasClass();
 	char *GetFileName();
@@ -186,10 +186,17 @@ public:
 	void AddDataType(DataType *type);
 	void RemoveDataType(DataType *type);
 
+	void SetAsCoreCompilation();
+	bool IsCoreCompilation();
+	
+	
 	static bool SameFile(char *file1, char *file2);
+	
+	
 protected:
 	char *filename;
 	char *outfile;
+	bool isCoreCompilation;
 	CArrayCodeData codes;
 	CArrayClass classlist;
 
@@ -543,7 +550,7 @@ public:
 	virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
 
 	virtual int Type() { return TYPE_CLASS;};
-	virtual void GenerateCode(CArrayChar &output);
+	virtual void GenerateCode(CArrayChar &output/*, bool isPOPCPPCompilation*/);
 
 	void SetFileInfo(char *file);
 	char *GetFileInfo();
@@ -555,19 +562,23 @@ public:
 
 	void SetClassID(char *id);
 	void SetPureVirtual(bool val);
+	bool IsPureVirtual();
+	void SetBasePureVirtual(bool val);	
+	bool IsBasePureVirtual();
 
 
 	static unsigned IDFromString(char *str);
 
 	bool hasMethod(Method &x);
 	bool methodInBaseClass(Method &x);
-	void findPureVirtual(CArrayMethod &lst);
+	bool findPureVirtual(CArrayMethod &lst);
+	//void findPureVirtual(CArrayMethod &lst);
 
 
-	bool GenerateClient(CArrayChar &code);
-	bool GenerateHeader(CArrayChar &code, bool interface);
-	bool GenerateBrokerHeader(CArrayChar & code);
-	bool GenerateBroker(CArrayChar & code);
+	bool GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/);
+	bool GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPCompilation*/);
+	bool GenerateBrokerHeader(CArrayChar & code/*, bool isPOPCPPCompilation*/);
+	bool GenerateBroker(CArrayChar & code/*, bool isPOPCPPCompilation*/);
 
 	char classid[64];
 
@@ -576,6 +587,9 @@ public:
 	
 	void SetNamespace(char* value);
 	std::string GetNamespace();
+	
+	void SetAsCoreCompilation();
+	bool IsCoreCompilation();
 
 public:
 	static char interface_base[1024];
@@ -583,6 +597,8 @@ public:
 	static char object_base[1024];
 
 protected:
+	Constructor constructor;
+	
 	char *myFile;
 	bool initDone;
 	int endid;
@@ -590,8 +606,9 @@ protected:
 
 	bool noConstructor;
 	bool pureVirtual;
-	Constructor constructor;
-
+	bool basePureVirtual;
+	bool isCoreCompilation;
+	
 	char *my_interface_base;
 	char *my_object_base;
 	char *my_broker_base;
