@@ -23,6 +23,9 @@ For end-user
 - Implicit @pack directive added in case developer doesn't mention it. Warning is displayed by the POP-C++ parser. 
 - Add "-no-implicit-pack" option to the POP-C++ parser to avoid implicit @pack directive to be added.
 - Add "-no-warning" option to the POP-C++ parser to stop printing warnings on the stdout.
+- Add simple typedef support inside parclass declaration
+- Add better support of pure virtual parclass
 
 For POP-C++ development
 - Add different logging level in the runtime (DEBUG, ERROR, CORE, INFO, DEV)
+- Add special flag for POP-C++ compilation itself "-popcpp-compilation". Used for special purpose for compiling POP-C++. 
