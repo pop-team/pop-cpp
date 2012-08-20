@@ -236,7 +236,7 @@ handle_eof: EOFCODE
 										currentPack=new PackObject(thisCodeFile);
 										currentPack->SetStartLine(linenumber-1);
 										thisCodeFile->AddCodeData(currentPack); 
-										parclass_name.erase(std::remove(parclass_name.begin(), parclass_name.end(), ' '), parclass_name.end());
+										parclass_name.erase(std::remove_if(parclass_name.begin(), parclass_name.end(), isspace), parclass_name.end());
 										char * objname = new char[parclass_name.size() + 1];
 										std::copy(parclass_name.begin(), parclass_name.end(), objname);
 										objname[parclass_name.size()] = '\0';
