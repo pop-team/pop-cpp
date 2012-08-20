@@ -858,9 +858,6 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 	bool ret=false;
 	// Added by clementval 
 		
-	/*	For test, the environment variable POPC_SEARCHNODETEST allow the developer to make the local execution failed everytime.
-		If the od.search is set, we don't try to execute locally, we directly ask a resource discovery */
-//	if(!(getenv("POPC_SEARCHNODETEST")) && !od.isSearchSet()){
 	if(!od.isSearchSet()){
 		//End of add
 		if (howmany<1) return false;
