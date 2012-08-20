@@ -329,7 +329,7 @@ then
 		read ram
 		if [ "x$ram" = "x" ]
 		then
-			ram=1024 
+			ram=2048 
 		fi
 	
 		if [ $ram -gt 0 ]
