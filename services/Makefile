@@ -34,8 +34,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin11.4.0
-host_triplet = x86_64-apple-darwin11.4.0
+build_triplet = x86_64-apple-darwin12.0.0
+host_triplet = x86_64-apple-darwin12.0.0
 ##execservices_PROGRAMS = popc_search_node$(EXEEXT) \
 ##	virtual_popc_search_node$(EXEEXT) \
 ##	jobmgr$(EXEEXT) \
@@ -307,7 +307,7 @@ AWK = awk
 CC = gcc
 CFLAGS = -g -O2
 CPP = gcc -E
-CPPFLAGS = -DARCH_MAC
+CPPFLAGS = -DARCH_MAC 
 CXX = ../parser/popcc
 CXXCPP = g++ -E
 CXXFLAGS = -g -O2
@@ -328,7 +328,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LD = /usr/bin/ld
+LD = /usr/llvm-gcc-4.2/libexec/gcc/i686-apple-darwin11/4.2.1/ld
 LDFLAGS = 
 LEX = flex
 LEXLIB = 
@@ -378,10 +378,10 @@ am__leading_dot = .
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin11.4.0
+build = x86_64-apple-darwin12.0.0
 build_alias = 
 build_cpu = x86_64
-build_os = darwin11.4.0
+build_os = darwin12.0.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -391,11 +391,11 @@ dvidir = ${docdir}
 exec_prefix = ${prefix}
 globusdir = 
 globusflavor = 
-host = x86_64-apple-darwin11.4.0
+host = x86_64-apple-darwin12.0.0
 host_alias = 
 host_cpu = x86_64
 host_kernel = Darwin
-host_os = darwin11.4.0
+host_os = darwin12.0.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
@@ -427,7 +427,7 @@ virtual = false
 #Code added by clementval begins with #Added by clementval, ends with #End of add
 #Code modified by clementval begins with #Modified by clementval, ends with #End of modification
 AUTOMAKE_OPTIONS = no-dependencies
-POPC_FLAGS = -popcdir=.. -popcpp=../parser/popcpp -I../lib -cxx=g++ -D_POPC_RUNTIME_
+POPC_FLAGS = -popcpp-compilation -popcdir=.. -popcpp=../parser/popcpp -I../lib -cxx=g++ -D_POPC_RUNTIME_
 AM_CXXFLAGS = $(POPC_FLAGS)
 AM_LDFLAGS = -L../lib -L../lib/.libs 
 execservices_SCRIPTS = popcobjrun popcobjrun.pbs popcobjrun.lsf popcobjrun.sge popcobjrun.smscg
