@@ -10,7 +10,4 @@ public:
 	sync seq virtual void method_pv()=0; // Declare pure virtual method
 };
 
-
-
-
 #endif /* MOTHER_H */
