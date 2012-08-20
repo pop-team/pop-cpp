@@ -46,6 +46,7 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
 	noConstructor=true;
 	pureVirtual=false;
 	basePureVirtual=false;
+	hasWarningEnable=false;
 
 	my_interface_base=strdup(interface_base);
 	my_object_base=strdup(object_base);
@@ -725,7 +726,6 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 		if (memberList[i]->GetMyAccess()!=PUBLIC || memberList[i]->Type()!=TYPE_METHOD) continue;
 		Method &met=*((Method *)memberList[i]);
 		int t=met.MethodType();
-
 		if (t==METHOD_DESTRUCTOR || met.isHidden /* LAST MODIFICATION */|| (pureVirtual && t==METHOD_CONSTRUCTOR && IsCoreCompilation()) || (met.isVirtual && methodInBaseClass(met)))  continue;
 		met.GenerateBroker(code);
 	}
@@ -777,4 +777,13 @@ void Class::SetAsCoreCompilation()
 bool Class::IsCoreCompilation()
 {
 	return isCoreCompilation;
+}
+
+void Class::EnableWarning()
+{
+	hasWarningEnable = true;
+}
+bool Class::IsWarningEnable()
+{
+	return hasWarningEnable;
 }

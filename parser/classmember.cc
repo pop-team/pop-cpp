@@ -994,12 +994,8 @@ void Method::GenerateBroker(CArrayChar &output)
 
 	char methodcall[1024];
 	bool haveReturn=false;
+	
 
-
-	if(cl->IsBasePureVirtual())
-		printf("PARSING DEBUG: Class %s is abstract\n", clname);
-	if(cl->IsCoreCompilation())
-		printf("PARSING DEBUG: Class %s is core class\n", clname);	
 	
 	
 	if (cl->IsCoreCompilation() || !cl->IsBasePureVirtual()) { // ADDED FOR 2.0.3 Create constructor and stuff only if the parclass is not abstract
@@ -1062,7 +1058,7 @@ void Method::GenerateBroker(CArrayChar &output)
 			strcat(methodcall,p.GetName());
 			if (j<nb-1) 
 				strcat(methodcall,", ");
-		}
+		} 
 
 		strcat(methodcall,");");
 
@@ -1088,6 +1084,8 @@ void Method::GenerateBroker(CArrayChar &output)
 		}
 		strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n}\n");
 	} else { // ADDED FOR 2.0.3
+		if(cl->IsWarningEnable())
+			printf("Warning: %s is an abstract parclass. Be aware that only the final class (parallel object) will keep this semantic.\n", clname);
 		strcpy(str,"}\n");	// Close the method braces
 	}
 	output.InsertAt(-1,str,strlen(str));

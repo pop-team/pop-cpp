@@ -590,6 +590,8 @@ public:
 	
 	void SetAsCoreCompilation();
 	bool IsCoreCompilation();
+	void EnableWarning();
+	bool IsWarningEnable();
 
 public:
 	static char interface_base[1024];
@@ -608,6 +610,7 @@ protected:
 	bool pureVirtual;
 	bool basePureVirtual;
 	bool isCoreCompilation;
+	bool hasWarningEnable;
 	
 	char *my_interface_base;
 	char *my_object_base;

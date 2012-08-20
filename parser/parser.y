@@ -50,16 +50,16 @@ int indexsource=0;  //the index of source file and the include directive
  extern int startPos;
 
 
- CodeFile *thisCodeFile;
- Class *currentClass;
- DataType *currenttype;
- DataType *returntype;
+	CodeFile *thisCodeFile;
+	Class *currentClass;
+	DataType *currenttype;
+	DataType *returntype;
  
- std::vector<bool> constPointerPositions; // counter variables who contains order of conts possition in pointers
+	std::vector<bool> constPointerPositions; // counter variables who contains order of conts possition in pointers
 
- TypeClassStruct *seqclass;
+	TypeClassStruct *seqclass;
 
- Param *currentparam;
+	Param *currentparam;
 
 	PackObject *currentPack;
 	Structure *structContainer;
@@ -852,6 +852,9 @@ class_key: PARCLASS_KEYWORD ID
       thisCodeFile->AddDataType(t);
       if(thisCodeFile->IsCoreCompilation())
       	t->SetAsCoreCompilation();
+      if(isWarningEnable)
+      	t->EnableWarning();
+      
 	}
 	t->SetFileInfo(filename);
 	t->SetStartLine(linenumber);
@@ -2347,6 +2350,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 	
 	if(isPOPCPPCompilation)
 		thisCodeFile->SetAsCoreCompilation();
+		
 	insideClass=false;
 	othercodes.SetSize(0);
 	startPos=-1;
