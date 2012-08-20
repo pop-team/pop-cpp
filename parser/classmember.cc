@@ -1053,7 +1053,7 @@ void Method::GenerateBroker(CArrayChar &output)
 				output.InsertAt(-1, decl, strlen(decl));
 			}
 
-			if (reformat[j])  
+			if (reformat[j] && !p.IsVoid())  
 				strcat(methodcall," &");
 			strcat(methodcall,p.GetName());
 			if (j<nb-1) 
