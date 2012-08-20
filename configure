@@ -2805,7 +2805,12 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 
+#
 # Check for host architecture
+# With this patch, Mac OS X user doesn't need to add the -DARCH_MAC flag to the
+# configure line. It will be added automatically.
+#
+
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
   as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
@@ -2880,10 +2885,10 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 case $host_os in
 	darwin* )
 		echo 'Darwin Architecture detected...'
-		CPPFLAGS+="-DARCH_MAC"
+		CPPFLAGS+="-DARCH_MAC "
 		;;
 	linux*)
-        # Do something specific for linux
+		# Do something specific for linux
 		;;
 	*BSD*)
 		# Do something specific for BSD
@@ -2894,7 +2899,10 @@ case $host_os in
 		;;
 esac
 
-#Define base language
+#
+# Define base language
+#
+
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2902,7 +2910,10 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
-#Define base prefix if no --prefix is used
+#
+# Define base prefix if no --prefix is used
+#
+
 
 
 test -n "${prefix}" || prefix=/usr/local/popc
@@ -2989,8 +3000,13 @@ else
 fi
 
 
+
+
+#
 # ViSaG : clementval
 # Add virtual as configure option
+#
+
 # Check whether --enable-virtual was given.
 if test "${enable_virtual+set}" = set; then :
   enableval=$enable_virtual;
@@ -3001,7 +3017,11 @@ else
 fi
 
 
+
+#
 # Add secure as configure option
+#
+
 # Check whether --enable-secure was given.
 if test "${enable_secure+set}" = set; then :
   enableval=$enable_secure;
@@ -3029,9 +3049,6 @@ if test x$secure = xtrue
 then
    standard=false;
 fi
-
-
-
 
 
 

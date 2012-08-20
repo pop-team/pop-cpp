@@ -8,4 +8,4 @@ LIMITATION OF THE POP-C++ PARSER
   
 - class declaration inside a parclass: Class declaration inside parclass is not currently supported. 
 
-- typedef declaration inside a parclass: typedef declaration inside a parclass is not currently supported. 
+- typedef declaration inside a parclass: typedef declaration with structure inside a parclass is not currently supported. 

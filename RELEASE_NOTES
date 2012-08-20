@@ -25,6 +25,8 @@ For end-user
 - Add "-no-warning" option to the POP-C++ parser to stop printing warnings on the stdout.
 - Add simple typedef support inside parclass declaration
 - Add better support of pure virtual parclass
+- Allow the void parameter in function declaration
+
 
 For POP-C++ development
 - Add different logging level in the runtime (DEBUG, ERROR, CORE, INFO, DEV)
