@@ -1,6 +1,15 @@
 #!/bin/bash
 
 aclocal --force
-glibtoolize -f
+
+ARCH=$(uname)
+if test x$ARCH = xDarwin
+then
+	glibtoolize -f
+else 
+	libtoolize -f
+fi
+
+
 autoreconf -f
 automake -f
