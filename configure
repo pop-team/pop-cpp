@@ -3974,6 +3974,7 @@ $as_echo "no" >&6; }
   SET_MAKE="MAKE=${MAKE-make}"
 fi
 
+
 case `pwd` in
   *\ * | *\	*)
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Libtool does not cope well with whitespace in \`pwd\`" >&5
@@ -15509,7 +15510,7 @@ LDFLAGS=$LDFLAGSOLD
 #AC_FUNC_MALLOC
 #AC_FUNC_MEMCMP
 #AC_FUNC_REALLOC
-#AC_TYPE_SIGNAL
+
 #AC_FUNC_STAT
 #AC_FUNC_VPRINTF
 
