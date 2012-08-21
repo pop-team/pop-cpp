@@ -10,6 +10,5 @@ else
 	libtoolize -f
 fi
 
-
-autoreconf -f
+autoreconf --force --install
 automake -f
