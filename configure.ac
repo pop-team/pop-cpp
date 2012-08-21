@@ -12,7 +12,7 @@
 AC_PREREQ(2.61)
 
 # Define the project and its version number
-AC_INIT( popc, 2.0.3-beta)
+AC_INIT([popc], [2.0.3-beta])
 AM_INIT_AUTOMAKE(no-dependencies)
 
 #
@@ -166,6 +166,7 @@ AC_PROG_LEX
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
+LT_PREREQ([2.4.2])
 LT_INIT
 
 # Checks for libraries.
@@ -246,7 +247,7 @@ LDFLAGS=$LDFLAGSOLD
 #AC_FUNC_MALLOC
 #AC_FUNC_MEMCMP
 #AC_FUNC_REALLOC
-#AC_TYPE_SIGNAL
+
 #AC_FUNC_STAT
 #AC_FUNC_VPRINTF
 
