@@ -1,5 +1,5 @@
 /**
- * File : accesspoint.h
+ * File : paroc_interface.h
  * Author : Tuan Anh Nguyen
  * Description : interface base declaration for parclass objects
  * Creation date : -
@@ -7,6 +7,7 @@
  * Modifications :
  * Authors		Date			Comment
  * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
+ * clementval 	2012/8/22	Add thread variable for asynchronous parallel object allocation
  */
 
 #ifndef _POPC_INTERFACE_CORE_H
@@ -128,38 +129,30 @@ public:
 
 
 	/**
+	 * Asynchronous Parallel Object Creation (APOC)
 	 * Thread used for asynchronous allocation of the parallel object. Do not change its name as it is used in the POP-C++ parser
-	 * to generate code. 
+	 * to generate code.
 	 */
 	pthread_t _popc_async_construction_thread;
 
+	//Find a resource that satisfies the Qos and allocate an object on it
 	void Allocate();
-
+	
 protected:
 	virtual const char *ClassName() { return "paroc_interface"; };
 	virtual void paroc_Dispatch(paroc_buffer *buf);
 	virtual void paroc_Response(paroc_buffer *buf);
-	
-	//Find a resource that satisfies the Qos and allocate an object on it
-
-	
-
 
 	paroc_combox *__paroc_combox;
 	paroc_buffer *__paroc_buf;
-
 	paroc_accesspoint accesspoint;
-
 	paroc_od od;
-
 	paroc_mutex _paroc_imutex;
-	
-
 
 private:
    /**
-    * ViSaG : clementval
-    * New variable for SSH tunnelling
+    * POP-C++ Secure version with SSH tunneling
+    * The followings variables are used for SSH Tunneling between the interface and the broker.
     */
    bool _ssh_tunneling;
    int _ssh_local_port;
@@ -168,23 +161,17 @@ private:
    std::string _ssh_user;
    POPWayback wayToNode;   //Save the way to the node running the object
    POPString popAppId;
-   /* ViSaG : end */
-
-
 
 	void NegotiateEncoding(paroc_string &enclist, paroc_string &peerplatform);
-
 	void Tokenize(paroc_string &s, paroc_list<char *> &tokens);
 	void ApplyCommPattern(const char *pattern, paroc_list<char *> &accesslist);
    int CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port);
    int KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port);
    bool IsTunnelAlive(const char *user, const char *dest_ip, int dest_port, int local_port);
 
-   
    int popc_interface_log(const char *log);	//write log in file
    char log[600];	                           //buffer for log
 
-	//used for batch object allocation only
 public:
 	static int batchindex;
 	static int batchsize;

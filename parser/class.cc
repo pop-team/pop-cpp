@@ -8,6 +8,7 @@
  * Authors		Date			Comment
  * clementval	March 2012	Add Enum support
  * clementval	April 2012	Add namespace support to the parser
+ * clementval	August 2012	Add asynchronous parallel object allocation (APOA) support
  */
 
 #include "parser.h"
@@ -327,19 +328,15 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 	}
 	
 	/**
-	 * Asynchronous Parallel Object Creation (APOC)
-	 * The code below is generated to support the APOC in POP-C++ application. 
+	 * Asynchronous Parallel Object Creation (APOA)
+	 * The code below is generated to support the APOA in POP-C++ application. 
 	 */
 	if(!IsCoreCompilation()){
 		sprintf(tmpcode,"extern \"C\"\n{\nvoid* %s_AllocatingThread(void* arg)\n{\n%s* _this_interface = static_cast<%s*>(arg);\n", name, name, name);
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));
-		//sprintf(tmpcode, "_this_interface->%s_AsynchronousAllocation();\nreturn 0;\n}\n}\n", name);
-		//code.InsertAt(-1,tmpcode,strlen(tmpcode));
 		sprintf(tmpcode, "_this_interface->Allocate();\n_this_interface->_paroc_Construct();\nreturn 0;\n}\n}\n", name);
-		code.InsertAt(-1,tmpcode,strlen(tmpcode));
-//		sprintf(tmpcode, "void %s::%s_AsynchronousAllocation()\n{\nod.search(0,0,0);\nAllocate();\n_paroc_Construct();\nsleep(10);\n}\n", name, name);
-//		code.InsertAt(-1,tmpcode,strlen(tmpcode));	
-	}	
+		code.InsertAt(-1,tmpcode,strlen(tmpcode));	
+	}	// End of APOA Support
 
 	int n=memberList.GetSize();
 	for (int i=0;i<n;i++)

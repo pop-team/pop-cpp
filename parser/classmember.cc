@@ -7,7 +7,8 @@
  * Modifications :
  * Authors		Date			Comment
  * P.Kuonen   	June 2011 	Modify to print all exceptions raised in methods
- * Clementval	March 2012	Add Enum, Struct support
+ * clementval	March 2012	Add Enum, Struct support
+ * clementval	August 2012	Add asynchronous parallel object allocation (APOA) support 
  */
 
 #include "parser.h"
@@ -846,13 +847,14 @@ void Method::GenerateClient(CArrayChar &output)
 	
 	
 	/**
-	 * Asynchronous Parallel Object Creation (APOC)
-	 * The code below is generated to support the APOC in POP-C++ application.
+	 * Asynchronous Parallel Object Creation (APOA)
+	 * The code below is generated to support the APOA in POP-C++ application.
+	 * Generated at the beginning of each remote method invocation (not for constructor method).
 	 */
 	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR){
 		sprintf(tmpcode,"void* status;\npthread_join(_popc_async_construction_thread, &status);\n");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));	
-	}
+	} // End of APOA Support
 	
 	
 	sprintf(tmpcode,"\nparoc_mutex_locker __paroc_lock(_paroc_imutex);\n__paroc_buf->Reset();\nparoc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n__paroc_buf->SetHeader(__paroc_buf_header);\n",clname, id, invoke_code, name);
@@ -1237,8 +1239,8 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 
 
 	/**
-	 * Asynchronous Parallel Object Creation (APOC)
-	 * The code below is generated to support the APOC in POP-C++ application. 
+	 * Asynchronous Parallel Object Creation (APOA)
+	 * The code below is generated to support the APOA in POP-C++ application. 
 	 */
 	if(!GetClass()->IsCoreCompilation()){
 		strcpy(tmpcode,"\npthread_attr_t attr;\n pthread_attr_init(&attr);\npthread_attr_setdetachstate(&attr, 1);\n");
@@ -1247,14 +1249,17 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		strcpy(tmpcode, "if(ret != 0)\n{\npthread_attr_destroy(&attr);\nreturn;\n}\npthread_attr_destroy(&attr);\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-	} else {
+	} else { // End of APOA Support
+		/**
+		 * Standard parallel object allocation
+		 */
 		strcpy(tmpcode, "");
-		od.Generate(tmpcode);	
-		strcat(tmpcode,"\nAllocate();");
+		od.Generate(tmpcode);	// Generates the object description
+		strcat(tmpcode,"\nAllocate();");	// Generates call to the Allocate method of paroc_interface
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
-		//SEPARATE ALLOCATION FROM INVOCATION.....
-		strcpy(tmpcode,"\n_paroc_Construct(");
+		// Generates invocation to the constructor of the remote object
+		strcpy(tmpcode,"\n_paroc_Construct(");	
 		int nb=params.GetSize();
 		for (int j=0;j<nb;j++)
 		{
@@ -1262,14 +1267,15 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 			strcat(tmpcode,p.GetName());
 			if (j<nb-1) strcat(tmpcode,", ");
 		}
-
 		strcat(tmpcode,");\n");
-		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		output.InsertAt(-1, tmpcode, strlen(tmpcode)); 
+		// End of constructor invocation
 	}
 	
 	strcpy(tmpcode,"}\n");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
+	
 	sprintf(tmpcode,"\nvoid %s::_paroc_Construct",GetClass()->GetName());
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
 	GenerateArguments(output,false);
