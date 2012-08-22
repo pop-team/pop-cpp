@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS=no-dependencies
 export POPC_CXX=@CXX@
 
 CXX=@top_srcdir@/parser/popcc
-POPC_FLAGS=-no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp 
+POPC_FLAGS=-popcpp-compilation -no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp 
 
 AM_CXXFLAGS=-cxxmain  $(POPC_FLAGS)
 
