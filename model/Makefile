@@ -223,7 +223,7 @@ top_srcdir = ..
 virtsecure = false
 virtual = false
 AUTOMAKE_OPTIONS = no-dependencies
-POPC_FLAGS = -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp 
+POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp 
 AM_CXXFLAGS = -cxxmain  $(POPC_FLAGS)
 lib_LIBRARIES = libparoc_tcmodel.a 
 inst_HEADERS = modelgene.h model.h 
