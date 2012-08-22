@@ -49,18 +49,19 @@ void Usage()
 	
 	fprintf(stderr,"\n");	
 	
-	fprintf(stderr,"   -object[=type]:      Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
-	fprintf(stderr,"   -popcpp:             POP-C++ parser\n");
-	fprintf(stderr,"   -cpp=<preprocessor>: C++ preprocessor command\n");
-	fprintf(stderr,"   -cxx=<compiler>:     C++ compiler\n");
-	fprintf(stderr,"   -popcld=<linker>:    C++ linker (default: same as C++ compiler)\n");
-	fprintf(stderr,"   -popcdir:            POP-C++ installed directory\n");
-	fprintf(stderr,"   -noclean:            Do not clean temporary files\n");
-	fprintf(stderr,"   -no-warning:          Do not print warning on stdout\n");	
-	fprintf(stderr,"   -no-implicit-pack:   Do not pack parclass implicitly if no @pack directive is present\n");		
-	fprintf(stderr,"   -verbose:            Print out additional information\n");
-	fprintf(stderr,"   -nopipe:             Do not use pipe during compilation phases ( create _paroc2_ files )\n");
-	fprintf(stderr,"   -version:            Display the installed version of POP-C++\n");
+	fprintf(stderr,"   -object[=type]:      	Generate parallel object executable (linking only) (type: std (default) or mpi)\n");
+	fprintf(stderr,"   -popcpp:             	POP-C++ parser\n");
+	fprintf(stderr,"   -cpp=<preprocessor>: 	C++ preprocessor command\n");
+	fprintf(stderr,"   -cxx=<compiler>:     	C++ compiler\n");
+	fprintf(stderr,"   -popcld=<linker>:    	C++ linker (default: same as C++ compiler)\n");
+	fprintf(stderr,"   -popcdir:            	POP-C++ installed directory\n");
+	fprintf(stderr,"   -noclean:            	Do not clean temporary files\n");
+	fprintf(stderr,"   -no-warning:          	Do not print warning on stdout\n");	
+	fprintf(stderr,"   -no-implicit-pack:   	Do not pack parclass implicitly if no @pack directive is present\n");
+	fprintf(stderr,"   -no-async-allocation:	Do not use asynchronous mechanism to allocate a parallel object\n");			
+	fprintf(stderr,"   -verbose:            	Print out additional information\n");
+	fprintf(stderr,"   -nopipe:             	Do not use pipe during compilation phases ( create _paroc2_ files )\n");
+	fprintf(stderr,"   -version:            	Display the installed version of POP-C++\n");
 	
 	fprintf(stderr,"\n"); 
 	
