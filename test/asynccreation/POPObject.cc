@@ -3,8 +3,8 @@
 
 /**
  * @author clementval
- * @date 2012.07.11
- * This program tests passing array with the standard C++ declaration instead of specific POP-C++ one. 
+ * @date 2012.08.22
+ * This program tests asynchronous parallel object allocation
  */
 
 POPObject::POPObject()
@@ -16,15 +16,15 @@ POPObject::POPObject()
 
 POPObject::~POPObject()
 {
-   cout << "POPObject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+   cout << "POPObject on machine " << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
 }
 
 void POPObject::firstMethod(){
-	cout << "First method is called on" <<  (const char*)POPSystem::GetHost() << popcendl;
+	cout << "First method is called on " <<  (const char*)POPSystem::GetHost() << popcendl;
 }
 
 void POPObject::secondMethod(){
-	cout << "Second method is called on" <<  (const char*)POPSystem::GetHost() <<popcendl;
+	cout << "Second method is called on " <<  (const char*)POPSystem::GetHost() <<popcendl;
 }
 
 @pack(POPObject);
