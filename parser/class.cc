@@ -325,6 +325,21 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 			code.InsertAt(-1,tmpcode,strlen(tmpcode));
 		}
 	}
+	
+	/**
+	 * Asynchronous Parallel Object Creation (APOC)
+	 * The code below is generated to support the APOC in POP-C++ application. 
+	 */
+	if(!IsCoreCompilation()){
+		sprintf(tmpcode,"extern \"C\"\n{\nvoid* %s_AllocatingThread(void* arg)\n{\n%s* _this_interface = static_cast<%s*>(arg);\n", name, name, name);
+		code.InsertAt(-1,tmpcode,strlen(tmpcode));
+		//sprintf(tmpcode, "_this_interface->%s_AsynchronousAllocation();\nreturn 0;\n}\n}\n", name);
+		//code.InsertAt(-1,tmpcode,strlen(tmpcode));
+		sprintf(tmpcode, "_this_interface->Allocate();\n_this_interface->_paroc_Construct();\nreturn 0;\n}\n}\n", name);
+		code.InsertAt(-1,tmpcode,strlen(tmpcode));
+//		sprintf(tmpcode, "void %s::%s_AsynchronousAllocation()\n{\nod.search(0,0,0);\nAllocate();\n_paroc_Construct();\nsleep(10);\n}\n", name, name);
+//		code.InsertAt(-1,tmpcode,strlen(tmpcode));	
+	}	
 
 	int n=memberList.GetSize();
 	for (int i=0;i<n;i++)
@@ -343,6 +358,8 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 	{
 		constructor.GenerateClient(code);
 	}
+	
+
 
 	char *fname=GetCodeFile()->GetFileName();
 	if (endline>0 && fname!=NULL)
@@ -526,6 +543,11 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 		strcpy(str," { Bind(obj->GetAccessPoint());};\n");
 		code.InsertAt(-1,str,strlen(str));
 
+	/*	if(!IsCoreCompilation()){
+			// Generate method declaration for asynchronous object creation
+			sprintf(str,"void %s_AsynchronousAllocation();\n", name);
+			code.InsertAt(-1,str,strlen(str));
+		}*/
 
 
 //       if (!defaultconstructor && interface)
@@ -541,12 +563,17 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 	}
 	strcpy(str,"\n};\n");
 	code.InsertAt(-1,str, strlen(str));
+	
+	
 
 	if (endline>0 && fname!=NULL)
 	{
 		sprintf(str,"\n# %d \"%s\"\n",endline,fname);
 		code.InsertAt(-1,str,strlen(str));
 	}
+	
+	
+	
 	return true;
 }
 

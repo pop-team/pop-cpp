@@ -14,8 +14,9 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <paroc_base.h>
+#include <pthread.h>	// Added for asynchronous object construction
 
+#include <paroc_base.h>
 #include <paroc_accesspoint.h>
 #include <paroc_od.h>
 #include <paroc_buffer.h>
@@ -123,15 +124,26 @@ public:
 
 	static paroc_accesspoint _paroc_nobind;
 	static int paroc_bind_timeout;
-protected:
 
-	virtual const char *ClassName() { return "paroc_interface"; };
-	//Find a resource that satisfies the Qos and allocate an object on it
 
-	virtual void paroc_Dispatch(paroc_buffer *buf);
-	virtual void paroc_Response(paroc_buffer *buf);
+
+	/**
+	 * Thread used for asynchronous allocation of the parallel object. Do not change its name as it is used in the POP-C++ parser
+	 * to generate code. 
+	 */
+	pthread_t _popc_async_construction_thread;
 
 	void Allocate();
+
+protected:
+	virtual const char *ClassName() { return "paroc_interface"; };
+	virtual void paroc_Dispatch(paroc_buffer *buf);
+	virtual void paroc_Response(paroc_buffer *buf);
+	
+	//Find a resource that satisfies the Qos and allocate an object on it
+
+	
+
 
 	paroc_combox *__paroc_combox;
 	paroc_buffer *__paroc_buf;
@@ -141,6 +153,8 @@ protected:
 	paroc_od od;
 
 	paroc_mutex _paroc_imutex;
+	
+
 
 private:
    /**

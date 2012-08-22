@@ -818,6 +818,7 @@ void Method::GenerateClient(CArrayChar &output)
 	output.InsertAt(-1,"\n{",2);
 
 	GenerateClientPrefixBody(output);
+		
 
 	//Generate method body ---interface part
 	int invoke_code=0;
@@ -838,8 +839,22 @@ void Method::GenerateClient(CArrayChar &output)
 
 		if (isMutex) invoke_code|=INVOKE_MUTEX;
 		else if (isConcurrent) invoke_code|=INVOKE_CONC;
-	}
+		
+		
 
+	}
+	
+	
+	/**
+	 * Asynchronous Parallel Object Creation (APOC)
+	 * The code below is generated to support the APOC in POP-C++ application.
+	 */
+	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR){
+		sprintf(tmpcode,"void* status;\npthread_join(_popc_async_construction_thread, &status);\n");
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));	
+	}
+	
+	
 	sprintf(tmpcode,"\nparoc_mutex_locker __paroc_lock(_paroc_imutex);\n__paroc_buf->Reset();\nparoc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n__paroc_buf->SetHeader(__paroc_buf_header);\n",clname, id, invoke_code, name);
 	output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
@@ -1219,22 +1234,40 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header)
 void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 {
 	char tmpcode[10240];
-	od.Generate(tmpcode);
 
-	strcat(tmpcode,"\nAllocate();");
-	output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
-	//SEPARATE ALLOCATION FROM INVOCATION.....
-	strcpy(tmpcode,"\n_paroc_Construct(");
-	int nb=params.GetSize();
-	for (int j=0;j<nb;j++)
-	{
-		Param &p=*(params[j]);
-		strcat(tmpcode,p.GetName());
-		if (j<nb-1) strcat(tmpcode,", ");
+	/**
+	 * Asynchronous Parallel Object Creation (APOC)
+	 * The code below is generated to support the APOC in POP-C++ application. 
+	 */
+	if(!GetClass()->IsCoreCompilation()){
+		strcpy(tmpcode,"\npthread_attr_t attr;\n pthread_attr_init(&attr);\npthread_attr_setdetachstate(&attr, 1);\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		sprintf(tmpcode, "int ret;\nret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread, this);\n", GetClass()->GetName());	
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		strcpy(tmpcode, "if(ret != 0)\n{\npthread_attr_destroy(&attr);\nreturn;\n}\npthread_attr_destroy(&attr);\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+	} else {
+		strcpy(tmpcode, "");
+		od.Generate(tmpcode);	
+		strcat(tmpcode,"\nAllocate();");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+
+		//SEPARATE ALLOCATION FROM INVOCATION.....
+		strcpy(tmpcode,"\n_paroc_Construct(");
+		int nb=params.GetSize();
+		for (int j=0;j<nb;j++)
+		{
+			Param &p=*(params[j]);
+			strcat(tmpcode,p.GetName());
+			if (j<nb-1) strcat(tmpcode,", ");
+		}
+
+		strcat(tmpcode,");\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 	}
-
-	strcat(tmpcode,");}\n");
+	
+	strcpy(tmpcode,"}\n");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
 	sprintf(tmpcode,"\nvoid %s::_paroc_Construct",GetClass()->GetName());
