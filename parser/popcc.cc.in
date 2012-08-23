@@ -35,6 +35,7 @@ bool noclean=false;
 bool nowarning=false;
 bool popcppcompilationflag=false;
 bool noimplicitpack=false;
+bool noasyncallocation=false;
 
 void Usage()
 {
@@ -193,58 +194,58 @@ void PrepareSource(char *src, char *dest)
   fclose(sf);
 }
 
-char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp)
-{
-  char *cmd[1000];
-  int count=0;
-  char *cmd1[1000];
-  int count1=0;
+char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp, bool noasyncallocation){
+	char *cmd[1000];
+	int count=0;
+	char *cmd1[1000];
+	int count1=0;
 
-  char sdir[1024];
-  char tmpfile1[1024];
-  char tmpfile2[1024];
-  char tmpfile3[1024];
+	char sdir[1024];
+	char tmpfile1[1024];
+	char tmpfile2[1024];
+	char tmpfile3[1024];
 
-  char output_opt[]="-o";
-  char compile_opt[]="-c";
-  char noclient[]="-parclass-nointerface";
-  char nobroker[]="-parclass-nobroker";
-  char nowarning[]="-no-warning";  
-  char popccpcompilationtab[]="-popcpp-compilation";    
-  char noimplicitpack[]="-no-implicit-pack";    
+	char output_opt[]="-o";
+	char compile_opt[]="-c";
+	char noclient[]="-parclass-nointerface";
+	char nobroker[]="-parclass-nobroker";
+	char nowarning[]="-no-warning";  
+	char popccpcompilationtab[]="-popcpp-compilation";    
+	char noimplicitpack[]="-no-implicit-pack";    
+	char noasyncallocationtab[]="-no-async-allocation";
 
-  bool paroc=false;
-  static char output[1024];
-  int ret=0;
+	bool paroc=false;
+	static char output[1024];
+	int ret=0;
   
-  char *fname=strrchr(source,'/');
-  if (fname!=NULL)
-    {
-      fname++;
-      int n=fname-source+1;
-      strncpy(sdir,source,n);
-      sdir[n]=0;
-    }
-  else
-    { fname=source;
+	char *fname=strrchr(source,'/');
+	if (fname!=NULL) {
+		fname++;
+		int n=fname-source+1;
+		strncpy(sdir,source,n);
+		sdir[n]=0;
+	} else { 
+		fname=source;
       *sdir=0;
-    }
-  char *str=strrchr(fname,'.');
-  if (str==NULL) return NULL;
-
-  bool paroc_extension= (strcmp(str,".ph")==0 || strcmp(str,".pc")==0);
-  if (paroc_extension || strcmp(str,".cc")==0 ||  strcmp(str,".C")==0 || strcmp(str,".cpp")==0) 
-    {
-      sprintf(tmpfile1,"%s_paroc1_%s", sdir,fname);
-	    
-      if (usepipe) sprintf(tmpfile2,"-"); else sprintf(tmpfile2,"%s_paroc2_%s", sdir,fname);
-      sprintf(tmpfile3,"%s_paroc3_%s", sdir,fname);
-      if (paroc_extension)
-	{
-	  strcat(tmpfile1 ,".cc");
-	  strcat(tmpfile2 ,".cc");
-	  strcat(tmpfile3 ,".cc");
 	}
+	char *str=strrchr(fname,'.');
+	if (str==NULL) 
+		return NULL;
+
+	bool paroc_extension= (strcmp(str,".ph")==0 || strcmp(str,".pc")==0);
+	if (paroc_extension || strcmp(str,".cc")==0 ||  strcmp(str,".C")==0 || strcmp(str,".cpp")==0) {
+		sprintf(tmpfile1,"%s_paroc1_%s", sdir,fname);
+	    
+      if (usepipe) 
+      	sprintf(tmpfile2,"-"); 
+      else 
+      	sprintf(tmpfile2,"%s_paroc2_%s", sdir,fname);
+      sprintf(tmpfile3,"%s_paroc3_%s", sdir,fname);
+      if (paroc_extension) {
+			strcat(tmpfile1 ,".cc");
+			strcat(tmpfile2 ,".cc");
+			strcat(tmpfile3 ,".cc");
+		}
       
       
       PrepareSource(source,tmpfile1);
@@ -253,35 +254,34 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
       cmd[0]=preprocessor;
       char **t1=cmd+1;
       count=1;
-      for (char **t2=pre_opt; *t2!=NULL; t2++, t1++)
-	{
-	  *t1=*t2;
-	  count++;
-	}
+      for (char **t2=pre_opt; *t2!=NULL; t2++, t1++) {
+			*t1=*t2;
+			count++;
+		}
       *t1=tmpfile1; t1++; count++;
 
-//Preprocessor output...
-      if (!usepipe)
-	{ 
-      	    if (*output_opt!=0) 
-		{
-		  *t1=output_opt;
-		  t1++; count++;
-		}
+		//Preprocessor output...
+      if (!usepipe) { 
+			if (*output_opt!=0) {
+				*t1=output_opt;
+				t1++; 
+				count++;
+			}
    	   *t1=tmpfile2; t1++; count++;
-  	    RunCmd(count, cmd);
-        }
+  	    	RunCmd(count, cmd);
+		}
       
-      //Run POP-C++ preprocessor...
+		//Run POP-C++ preprocessor...
       
-      cmd1[0]=popcpp;
-      cmd1[1]=tmpfile2;
-      cmd1[2]=tmpfile3;
+		cmd1[0]=popcpp;
+		cmd1[1]=tmpfile2;
+		cmd1[2]=tmpfile3;
       int countparoc=3;
       if (!client) cmd1[countparoc++]=noclient;
       if (!broker) cmd1[countparoc++]=nobroker;
       if (warning) cmd1[countparoc++]=nowarning;
       if (popcppcomp) cmd1[countparoc++]=popccpcompilationtab;      
+      if (noasyncallocation) cmd1[countparoc++]=noasyncallocationtab;      
       if (implicitpack) cmd1[countparoc++]=noimplicitpack;      
       
       if (!usepipe) {
@@ -294,60 +294,67 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 		paroc=true;
 	}
 
-   if (!noclean) unlink(tmpfile1);
+   if (!noclean) 
+   	unlink(tmpfile1);
 
-  //Run C++ compiler...
+	//Run C++ compiler...
   
-  cmd[0]=cpp;
-  char **t1=cmd+1;
-  count=1;
-  for (char **t2=cpp_opt; *t2!=NULL; t2++, t1++)
-    {
-      *t1=*t2;
-      count++;
-    }
+	cmd[0]=cpp;
+	char **t1=cmd+1;
+	count=1;
+	for (char **t2=cpp_opt; *t2!=NULL; t2++, t1++) {
+		*t1=*t2;
+		count++;
+	}
 
-  *t1=compile_opt; t1++; count++;
+	*t1=compile_opt; t1++; count++;
 
-  *t1=(paroc) ? tmpfile3 : source; t1++; count++;
-  *t1=output_opt; t1++; count++;
-  if (dest==NULL)
-    {
-      strcpy(output,source);
+	*t1=(paroc) ? tmpfile3 : source; t1++; count++;
+	*t1=output_opt; t1++; count++;
+	
+	if (dest==NULL) {
+		strcpy(output,source);
       str=strrchr(output,'.');
-      if (strcmp(str,".ph")==0) strcpy(str,".stub.o");
-      else strcpy(str,".o");
+      if (strcmp(str,".ph")==0) 
+      	strcpy(str,".stub.o");
+      else 
+      	strcpy(str,".o");
       dest=output;
       *t1=output;
-    }
-  else *t1=dest;
-  t1++; count++;
+	} else {
+		*t1=dest;
+	}
+	t1++; count++;
 
-  if (ret==0) ret=RunCmd(count, cmd);
+	if (ret==0) {
+		ret=RunCmd(count, cmd);
+	}
   
-  if (!noclean && paroc) unlink(tmpfile3);
+	if (!noclean && paroc) {
+		unlink(tmpfile3);
+	}
 
-  if (ret!=0)
-  {
-	_exit(ret);
-  }
+	if (ret!=0) {
+		_exit(ret);
+	}
 
-  return dest;
+	return dest;
 }
 
 bool FindLib(char *libpaths[1024], int count, const char *libname,char libfile[1024])
 {
-	for (int i=0;i<count;i++)
-	{
+	for (int i=0;i<count;i++) {
 		sprintf(libfile,"%s/lib%s.a", libpaths[i], libname);
-		if (access(libfile,F_OK)==0) return true;
+		if (access(libfile,F_OK)==0) 
+			return true;
 	}
 	return false;
 }
 
 int main(int argc, char *argv[])
 {
-  if (argc<=1) Usage();
+	if (argc<=1) 
+		Usage();
 
   char popcpp[1024];
 #ifndef POPC_CXX
@@ -399,6 +406,7 @@ int main(int argc, char *argv[])
   bool warning=false;
   bool popcppcomp=false;  
   bool implicitpack=false;  
+  bool asyncallocation=false;
   bool staticlib=false;
   
   bool usepipe=true;
@@ -449,6 +457,7 @@ int main(int argc, char *argv[])
 	warning=(paroc_utils::checkremove(&argc,&argv,"-no-warning")!=NULL);
 	popcppcomp=(paroc_utils::checkremove(&argc,&argv,"-popcpp-compilation")!=NULL);
 	implicitpack=(paroc_utils::checkremove(&argc,&argv,"-no-implicit-pack")!=NULL);
+	asyncallocation=(paroc_utils::checkremove(&argc,&argv,"-no-async-allocation") != NULL);
 	broker=(paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")==NULL);
 	client=(paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface")==NULL);
 
@@ -586,7 +595,7 @@ int main(int argc, char *argv[])
 		if (str!=NULL) {
 			bool paroc_extension= (strcmp(str,".ph")==0 || strcmp(str,".pc")==0);
 	      if (paroc_extension || strcmp(str,".cc")==0 ||  strcmp(str,".C")==0 || strcmp(str,".cpp")==0) {
-				char *outf=Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack, popcppcomp);
+				char *outf=Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack, popcppcomp, asyncallocation);
 				link_cmd[link_count++]=(outf==NULL)? argv[i]: strdup(outf);
 				continue;
 			} 

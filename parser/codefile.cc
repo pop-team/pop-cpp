@@ -1,3 +1,14 @@
+/**
+ * File : codefile.cc
+ * Author : Tuan Anh Nguyen
+ * Description : POP-C++ parser/compiler CodeFile object
+ * Creation date : -
+ * 
+ * Modifications :
+ * Authors		Date				Comment
+ * clementval	Jul/Aug 2012	Add information for compilation process (core compilation & asynchronous parallel object allocation)
+ */
+
 #include "parser.h"
 #include "paroc_utils.h"
 #include "debug.h"
@@ -12,11 +23,12 @@
 
 #include <sys/types.h>
 #include <time.h>
-//Begin CodeFile implementation
+
 
 CodeFile::CodeFile(char *fname)
 {
-	isCoreCompilation = false;
+	isCoreCompilation = false;				// Core compilation is disable by default.
+	isAsyncAllocationDisable = false;	// Asynchronous allocation is enable by default.
 	filename=(fname==NULL) ? NULL : strdup(fname);
 	codes.SetGrowby(1024);
 	outfile=NULL;
@@ -288,12 +300,38 @@ bool CodeFile::SameFile(char *file1, char *file2)
 
 }
 
+/**
+ * Set the current code file as compilation of the POP-C++ core. 
+ * @return void
+ */
 void CodeFile::SetAsCoreCompilation()
 {
 	isCoreCompilation = true;
 }
 
+/**
+ * Check if the current compilation is the POP-C++ core compilation
+ * @return TRUE if it is the core compilation. FALSE otherwise. 
+ */
 bool CodeFile::IsCoreCompilation()
 {
 	return isCoreCompilation;
+}
+
+/**
+ * Disable the asynchronous parallel object allocation mechanism.
+ * @return void
+ */
+void CodeFile::DisableAsyncAllocation()
+{
+	isAsyncAllocationDisable = true;
+}
+
+/**
+ * Check if asynchronous parallel object allocation is disable
+ * @return TRUE if asynchronous allocation is disable. FALSE otherwise. 
+ */
+bool CodeFile::IsAsyncAllocationDisable()
+{
+	return isAsyncAllocationDisable;
 }

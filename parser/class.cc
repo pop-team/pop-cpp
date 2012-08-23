@@ -22,7 +22,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
 #include <sys/types.h>
 #include <time.h>
 
@@ -31,7 +30,6 @@ char Class::interface_base[]="paroc_interface";
 char Class::broker_base[]="paroc_broker";
 char Class::object_base[]="paroc_object";
 
-//BEGIN Class implementation
 
 Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), constructor(this, PUBLIC)
 {
@@ -331,7 +329,7 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 	 * Asynchronous Parallel Object Creation (APOA)
 	 * The code below is generated to support the APOA in POP-C++ application. 
 	 */
-	if(!IsCoreCompilation()){
+	if(!IsCoreCompilation() && !IsAsyncAllocationDisable()){
 		sprintf(tmpcode,"extern \"C\"\n{\nvoid* %s_AllocatingThread(void* arg)\n{\n%s* _this_interface = static_cast<%s*>(arg);\n", name, name, name);
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));
 		sprintf(tmpcode, "_this_interface->Allocate();\n_this_interface->_paroc_Construct();\nreturn 0;\n}\n}\n", name);
@@ -755,59 +753,91 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 	}
 
 	//Generate default constructor stubs
-
-
-	//if (!pureVirtual)
-	{
-		if (noConstructor)
-		{ 
-			constructor.GenerateBroker(code); 
-		}
-
-		//Generate Broker init stuffs...
-
-		// PURE VIRTUAL TEST -- The two below lines were here
+	if (noConstructor) { 
+		constructor.GenerateBroker(code); 
 	}
-	/* PURE VIRTUAL TEST - Moved the two following lines from the above if clause to here */ 
+
 	sprintf(tmpcode,"\nparoc_broker *%s::_init() { return new %s; }\nparoc_broker_factory %s::_fact(_init, \"%s\");\n",brokername, brokername, brokername, name);
 	code.InsertAt(-1,tmpcode,strlen(tmpcode));
 
 	char *fname=GetCodeFile()->GetFileName();
-	if (endline>0 && fname!=NULL)
-	{
+	if (endline>0 && fname!=NULL) {
 		sprintf(str,"\n# %d \"%s\"\n",endline,fname);
 		code.InsertAt(-1,str,strlen(str));
 	}
+	
 	return true;
-
-
 }
 
-
+/**
+ * Set the namespace associated with this class.
+ * @param value	Name of the namespace
+ * @return void
+ */
 void Class::SetNamespace(char* value)
 {
 	strnamespace.assign(value);
 }
 
+/**
+ * Get the namespace associated with this class.
+ * @return A string value representing the name of the namespace.
+ */
 std::string Class::GetNamespace()
 {
 	return strnamespace;
 }
 
+/**
+ * Set the current code file as compilation of the POP-C++ core. 
+ * @return void
+ */
 void Class::SetAsCoreCompilation()
 {
 	isCoreCompilation = true;
 }
+
+/**
+ * Check if the current compilation is the POP-C++ core compilation.
+ * @return TRUE if it is the core compilation. FALSE otherwise. 
+ */
 bool Class::IsCoreCompilation()
 {
 	return isCoreCompilation;
 }
 
+/**
+ * Enable warnings for the compilation
+ * @return void
+ */
 void Class::EnableWarning()
 {
 	hasWarningEnable = true;
 }
+
+/**
+ *	Check if warning are enable.
+ * @return TRUE if warnings are enable. FALSE otherwise.
+ */
 bool Class::IsWarningEnable()
 {
 	return hasWarningEnable;
+}
+
+/**
+ * Disable the asynchronous parallel object allocation mechanism.
+ * @return void
+ */
+void Class::DisableAsyncAllocation()
+{
+	isAsyncAllocationDisable = true;
+}
+
+/**
+ * Check if asynchronous parallel object allocation is disable
+ * @return TRUE if asynchronous allocation is disable. FALSE otherwise. 
+ */
+bool Class::IsAsyncAllocationDisable()
+{
+	return isAsyncAllocationDisable;
 }

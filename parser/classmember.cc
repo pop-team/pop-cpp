@@ -851,7 +851,7 @@ void Method::GenerateClient(CArrayChar &output)
 	 * The code below is generated to support the APOA in POP-C++ application.
 	 * Generated at the beginning of each remote method invocation (not for constructor method).
 	 */
-	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR){
+	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && !GetClass()->IsAsyncAllocationDisable()){
 		sprintf(tmpcode,"void* status;\npthread_join(_popc_async_construction_thread, &status);\n");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));	
 	} // End of APOA Support
@@ -1242,7 +1242,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 	 * Asynchronous Parallel Object Creation (APOA)
 	 * The code below is generated to support the APOA in POP-C++ application. 
 	 */
-	if(!GetClass()->IsCoreCompilation()){
+	if(!GetClass()->IsCoreCompilation() && !GetClass()->IsAsyncAllocationDisable()){
 		strcpy(tmpcode,"\npthread_attr_t attr;\n pthread_attr_init(&attr);\npthread_attr_setdetachstate(&attr, 1);\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		sprintf(tmpcode, "int ret;\nret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread, this);\n", GetClass()->GetName());	

@@ -80,6 +80,7 @@ int indexsource=0;  //the index of source file and the include directive
  bool isWarningEnable;
  bool isImplicitPackEnable;
  bool isPOPCPPCompilation; 
+ bool isAsyncAllocationDisable;
  char holdnamespace[500];
  char tmp[10240];
  char typetmp[100];
@@ -89,7 +90,7 @@ int indexsource=0;  //the index of source file and the include directive
 
  void UpdateMarshalParam(int flags, Param *t);
 
- int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation);
+ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation, bool isAsyncAllocationDisable);
  char *CheckAndCreateDir(char *fname,char *name);
  bool CheckAndInsert(CArrayCharPtr &source, CArrayCharPtr &searchpath, char *fname);
 
@@ -256,14 +257,13 @@ handle_eof: EOFCODE
 										othercodes.SetSize(0);
 										startPos=-1;
 										
-										delete [] objname;
-										
 										// Ok file exists, so we will find the parclass name and add the pack directive with it
 										if(isWarningEnable){
-											std::cout << filename << ":" << linenumber << ": Warning: Pack directive was not present! Implicit declaration has been added from ";
+											std::cout << filename << ":" << linenumber << ": Warning: No @pack directive for class: " << objname << ", @pack(" << objname << ") is assumed";
 											std::cout << ph_file << std::endl;
 																
 										}
+										delete [] objname;										
 									}
 								}
 							}
@@ -856,18 +856,26 @@ class_key: PARCLASS_KEYWORD ID
 	if ((t=thisCodeFile->FindClass(clname))==NULL) {
       t=new Class(clname, thisCodeFile);
       thisCodeFile->AddDataType(t);
+      
+      // Pass compilation options to classes
       if(thisCodeFile->IsCoreCompilation())
       	t->SetAsCoreCompilation();
+		if(thisCodeFile->IsAsyncAllocationDisable()) {
+			t->DisableAsyncAllocation();
+		}
       if(isWarningEnable)
-      	t->EnableWarning();
-      
+      	t->EnableWarning();  
 	}
 	t->SetFileInfo(filename);
 	t->SetStartLine(linenumber);
 	currentClass=t;
+	
 	if(isNamespace) {
+		
 		t->SetNamespace(holdnamespace);
+	
 	}
+
 };
 
 base_spec: /*empty*/
@@ -2264,6 +2272,7 @@ int main(int argc, char **argv)
 	isWarningEnable=true;
 	isImplicitPackEnable=true;
 	isPOPCPPCompilation=false;
+	isAsyncAllocationDisable=false;
 
 	if (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL){
 		
@@ -2294,8 +2303,12 @@ int main(int argc, char **argv)
 
 		isImplicitPackEnable=false;
 	
-	}  
-			
+	}
+	if (paroc_utils::checkremove(&argc,&argv,"-no-async-allocation")!=NULL) {
+		isAsyncAllocationDisable=true;
+	
+	}	
+
 	int ret;
 	indexsource=-1;
 	errorcode=0;
@@ -2304,7 +2317,7 @@ int main(int argc, char **argv)
 		Usage();
 	
 	} else {
-		if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker, isWarningEnable, isImplicitPackEnable, isPOPCPPCompilation))!=0)	{
+		if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker, isWarningEnable, isImplicitPackEnable, isPOPCPPCompilation, isAsyncAllocationDisable))!=0)	{
 			fprintf(stderr,"Parse POP-C++ code failed (error=%d)\n",ret);
 			exit(ret);
 		}
@@ -2333,7 +2346,7 @@ int yywrap() {
 
 int base=1;
 
-int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation)
+int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation, bool isAsyncAllocationDisable)
 {
 	if (infile==NULL || *infile=='-'){
 		yyin=stdin;
@@ -2354,8 +2367,14 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 
 	}
 	
+
+	// Set the code file as core compilation if the compilation flag is present.
 	if(isPOPCPPCompilation)
 		thisCodeFile->SetAsCoreCompilation();
+
+	// Disable asynchronous parallel object allocation if the compilation flag is present.
+	if(isAsyncAllocationDisable)	
+		thisCodeFile->DisableAsyncAllocation();	
 		
 	insideClass=false;
 	othercodes.SetSize(0);

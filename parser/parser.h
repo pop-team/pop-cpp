@@ -189,6 +189,9 @@ public:
 	void SetAsCoreCompilation();
 	bool IsCoreCompilation();
 	
+	void DisableAsyncAllocation();
+	bool IsAsyncAllocationDisable();
+	
 	
 	static bool SameFile(char *file1, char *file2);
 	
@@ -197,6 +200,7 @@ protected:
 	char *filename;
 	char *outfile;
 	bool isCoreCompilation;
+	bool isAsyncAllocationDisable;
 	CArrayCodeData codes;
 	CArrayClass classlist;
 
@@ -592,6 +596,8 @@ public:
 	bool IsCoreCompilation();
 	void EnableWarning();
 	bool IsWarningEnable();
+	void DisableAsyncAllocation();
+	bool IsAsyncAllocationDisable();	
 
 public:
 	static char interface_base[1024];
@@ -611,6 +617,7 @@ protected:
 	bool basePureVirtual;
 	bool isCoreCompilation;
 	bool hasWarningEnable;
+	bool isAsyncAllocationDisable;
 	
 	char *my_interface_base;
 	char *my_object_base;
