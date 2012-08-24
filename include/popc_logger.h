@@ -40,6 +40,7 @@
 #include <stdarg.h>
 
 enum LOGLEVEL {CORE, ERROR, DEBUG, DEV, INFO};
+
 int popc_logger(LOGLEVEL level, const char *format,...);
 
 #endif /* POPC_LOGGER */
