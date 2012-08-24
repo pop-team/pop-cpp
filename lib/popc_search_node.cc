@@ -269,11 +269,13 @@ try {
 			popc_node_log("[PSN]ERROR: SEMFAILED TO OPEN");*/
 			
 #else	// Handle normal semaphore
-		sem_t* current_sem; 
-		sem_init(current_sem, 0, 0);
+		sem_t current_sem; 
+		sem_t* pt_sem;
+		pt_sem = &current_sem;
+		sem_init(&current_sem, 0, 0);
 		std::string sem_name_reqid(req.getUniqueId().GetString());
    	requestSemMapLock.lock();		
-		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   		
+		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, pt_sem));   		
 	   requestSemMapLock.unlock();		
 #endif
 
