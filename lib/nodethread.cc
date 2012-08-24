@@ -12,11 +12,12 @@
 #include "popc_search_node.ph"
 
 //Implementation of this small class
-NodeThread::NodeThread(int timeout, const paroc_accesspoint &node) : paroc_thread(true) {
+NodeThread::NodeThread(int timeout, const paroc_accesspoint &node, std::string reqid) : paroc_thread(true) {
 	_timeout = timeout;
 	_node = node;
 	_running = true;
 	_unlock = true;
+	_reqid = reqid;
 }
 //Start a timer and contact de POPCSearchNode when it's finished
 void NodeThread::start(){
@@ -30,8 +31,10 @@ void NodeThread::start(){
 			_running = false;
 		}
 	}
-	if(_unlock)
-		n.unlockDiscovery();
+	if(_unlock){
+		POPString r(_reqid.c_str());
+		n.unlockDiscovery(r);
+	}
 }
 //Stop the timer
 void NodeThread::stop(){

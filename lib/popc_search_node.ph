@@ -27,6 +27,7 @@
 
 #include <list>
 #include <map>
+#include <string.h>
 #include "request.h"
 #include "response.h"
 #include "popc_search_node_info.h"
@@ -37,6 +38,7 @@
 #include "jobmgr.ph"
 #include "timer.h"
 #include "paroc_thread.h"
+#include "popc_logger.h"
 
 
 #include <iostream>
@@ -92,23 +94,27 @@ public :
 
 	// Method to remove all neighbors (allowing clean destruction of node)
 	seq sync void deleteNeighbors();
+
+	// Node's entry point to propagate request
+	seq async virtual void askResourcesDiscovery(Request req, paroc_accesspoint jobmgr_ac, paroc_accesspoint sender, paroc_accesspoint psm);
 	
 	seq sync POPString getNeighborsAsString();
         
 	// Service's entry point to ressource discovery
 	conc sync virtual POPCSearchNodeInfos launchDiscovery([in, out] Request req, int timeout);        
 
-	// Node's entry point to propagate request
-	seq async virtual void askResourcesDiscovery(Request req, paroc_accesspoint jobmgr_ac, paroc_accesspoint sender, paroc_accesspoint psm);
-        
 	// Node's return point to give back the response to the initial node
 	conc async virtual void callbackResult(Response resp);
 
    //Unlock the resource discovery when waiting time is set to 0
-	conc async void unlockDiscovery();
+	conc async void unlockDiscovery(POPString reqid);
 
    // Reroute the response by the confidence link
    conc async void rerouteResponse(Response resp, const POPWayback wayback);
+
+
+        
+
 
    sync seq void addJob(float power, float memorySize, float bandwidth);
    sync seq void removeJob(float power, float memorySize, float bandwidth, int nbJob);
@@ -118,16 +124,17 @@ public :
    conc sync virtual POPString getPKI();
 
 	classuid(1001);
-protected:
-
-	sem_t *pt_locker;	//semaphor used for null waiting time
-	int logicalClock;  		// own request's counter
-	POPCSearchNodeInfo nodeInfo;     // node's information
-	list<POPCSearchNode *> neighborsList; // node's neighbors list
-  	list<POPString> knownRequests; // already-asked requests
+protected:	
+	map<std::string, sem_t*> reqsem;			// Map of semaphores used for null waiting time
+	
+	int logicalClock;  							// own request's counter
+	int sem_logicalClock;						// Logical clock used to name semaphore on Darwin architecture
+	POPCSearchNodeInfo nodeInfo;     		// node's information
+	list<POPCSearchNode *> neighborsList; 	// node's neighbors list
+  	list<POPString> knownRequests; 			// already-asked requests
    map<POPString, POPCSearchNodeInfos> actualReq;     // own actual requests
-   POPSynchronizer actualReqSyn;  // sync. for actual req.
-   // internal method to check if local resources fit the request
+   POPSynchronizer actualReqSyn;  			// sync. for actual req.
+   POPSynchronizer requestSemMapLock;  			// sync. for actual req.
    
    // internal method returning a list of neighbors
    conc sync list<POPString> getNeighbors();
@@ -139,6 +146,8 @@ protected:
 	int popc_node_log(const char *log);	//write log in file
 
    seq sync virtual bool checkResource(Request req);
+private: 
+	int getNextSemCounter();
 };
 
 

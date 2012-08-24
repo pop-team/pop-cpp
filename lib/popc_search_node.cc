@@ -13,19 +13,26 @@
  * clementval 	2010/05/05	Remove useless constructor.
  * clementval	2010/05/15	Add a funcionnality of null waiting (timer + semaphor)
  * clementval	2010/05/19	Rename the Node parclass in POPSearchNode
- * clementval	2011/10/31	Fix bug with null timeout on Darwin Arch
+ * clementval	2011/10/31	Fix bug with null timeout under Darwin Arch
+ * clementval	2012/08/23	Fix bug with the semaphore under Darwin Arch
  */
 
 #include "popc_search_node.ph"
 #include "nodethread.h"
 
-//POPCSearchNode's constructor with challenge string (necessary to stop the object) and deamon boolean value to put the object in a deamon mode
+/**
+ * POPCSearchNode's constructor with challenge string (necessary to stop the object) and deamon boolean value to put the object 
+ * in a deamon mode
+ * @param
+ * @param
+ */
 POPCSearchNode::POPCSearchNode(const POPString &challenge, bool deamon) : paroc_service_base(challenge) {
-	popc_node_log("PSN Created ...");
+	// Init variables
 	logicalClock=0;
+	sem_logicalClock=0;
    psn_currentJobs=0;
-
-
+   
+/*
 #ifdef __APPLE__
 	popc_node_log("Initialize semaphor for DARWIN arch");
    pt_locker == NULL;
@@ -33,10 +40,18 @@ POPCSearchNode::POPCSearchNode(const POPString &challenge, bool deamon) : paroc_
 	sem_t locker;
 	pt_locker = &locker;
 #endif
+*/
+
+	// Start service as a daemon
 	if(deamon) Start();
+	
+	// Log entry
+	popc_logger(DEBUG, "POPCSearchNode created ...");	
 }
 
-//POPCSearchNode's destructor
+/**
+ * POPCSearchNode's destructor
+ */
 POPCSearchNode::~POPCSearchNode(){
 	popc_node_log("[PSN] POPCSearchNode destroyed ...");
 }
@@ -167,8 +182,21 @@ void POPCSearchNode::deleteNeighbors(){
 }
 
 // Called from the timer to unlock the semaphor used when the waiting time is set to 0
-void POPCSearchNode::unlockDiscovery(){
-	sem_post(pt_locker);
+void POPCSearchNode::unlockDiscovery(POPString reqid){
+try{
+	// Get the request identifier to unlock the right sempahore
+	std::string _reqid = reqid.GetString();
+	// Acquire the lock to access common resource
+   requestSemMapLock.lock();
+   // Post the semaphore to unlock the resource discovery	
+	sem_post(reqsem[_reqid]);
+   // Log 
+	popc_logger(DEBUG, "Unlocked by timer: %s", _reqid.c_str());   
+	// Release the lock
+   requestSemMapLock.unlock();	
+} catch(...) {
+	popc_logger(ERROR, "Exception caught in unlockDisc");
+}
 }
 
 
@@ -184,6 +212,7 @@ POPString POPCSearchNode::getUID(){
 // object of type "POPCSearchNodeInfos" containing information about nodes which fit the
 // request
 POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
+try {
 	gettimeofday(&start, NULL);	//This line is just for test purpose so it can be removed in production release
    //Log
 
@@ -212,26 +241,58 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
     paroc_accesspoint dummy;
     askResourcesDiscovery(req, GetAccessPoint(), GetAccessPoint(), dummy);
     
-   // wait until timeout
+	popc_logger(DEBUG, "Resource discovery timeout: %d", timeout);    
+   // wait until timeout or 1st answer
 	if(timeout == 0){
-#ifdef __APPLE__
-		popc_node_log("Running semaphor on DARWIN architecture");
-		if(pt_locker == NULL)
-           pt_locker = sem_open("popc_sem_resdisc", O_CREAT, 0, 0);
-      	if(pt_locker == SEM_FAILED)
-           popc_node_log("[PSN]ERROR: SEMFAILED TO OPEN");
-#else
-		sem_init(pt_locker, 0, 0);
+
+#ifdef __APPLE__	// Handling semaphore on Darwin architecture (supports only named semaphore)
+
+		sem_t* current_sem; // Creating new semaphore pointer for the current request
+		// Defining name for the named semaphore
+		std::stringstream semname;
+		semname << "_popc_reqid" << getNextSemCounter();
+		
+		// Opening the semaphore before launching the unlocker thread
+   	current_sem = sem_open(semname.str().c_str(), O_CREAT, 0, 0);	
+		if(current_sem == SEM_FAILED)
+			popc_node_log("[PSN]ERROR: SEMFAILED TO OPEN");   
+		std::string sem_name_reqid(req.getUniqueId().GetString());
+		
+	   requestSemMapLock.lock();
+		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   
+		popc_logger(DEBUG, "Semaphore map size is: %d", reqsem.size());					
+	   requestSemMapLock.unlock();		
+		
+/*		if(pt_locker == NULL)
+         pt_locker = sem_open("popc_sem_resdisc", O_CREAT, 0, 0);	
+		if(pt_locker == SEM_FAILED)
+			popc_node_log("[PSN]ERROR: SEMFAILED TO OPEN");*/
+			
+#else	// Handle normal semaphore
+		sem_t* current_sem; 
+		sem_init(current_sem, 0, 0);
+		std::string sem_name_reqid(req.getUniqueId().GetString());
+   	requestSemMapLock.lock();		
+		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   		
+	   requestSemMapLock.unlock();		
 #endif
-		NodeThread *timer = new NodeThread(UNLOCK_TIMEOUT, GetAccessPoint());
+
+
+		// Starting a timed thread to be able to unlock the resource discovery after a certain time
+		NodeThread *timer = new NodeThread(UNLOCK_TIMEOUT, GetAccessPoint(), req.getUniqueId().GetString());
 		timer->create();
-		if(sem_wait(pt_locker) != 0){
-			popc_node_log("SEMAPHOR ERROR: The semaphor couldn't not be blocked");
+		if(sem_wait(current_sem) != 0){
+			if(sem_wait(current_sem) != 0)
+				popc_node_log("SEMAPHOR ERROR: The semaphor couldn't not be blocked");
 		}
 		timer->stop();
 #ifdef __APPLE__
-		sem_unlink("popc_sem_resdisc");
+		sem_unlink(semname.str().c_str());
 #endif
+	   requestSemMapLock.lock();
+		reqsem.erase(sem_name_reqid);
+	   requestSemMapLock.unlock();		
+		current_sem = NULL;
 	} else {
 		sleep(timeout);
 	}
@@ -253,18 +314,29 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
 	// erase the place for this request disallowing adding more results for this
    // request in the future
    actualReq.erase(req.getUniqueId());
-   actualReqSyn.unlock();
-
    if(!req.isEndRequest()){
       sprintf(log, "[PSN] RESULTS;%d", (int)results.getNodeInfos().size());
       popc_node_log(log);
    }
+   actualReqSyn.unlock();
    return results;
+   
+} catch(...) {
+	popc_logger(ERROR, "Exception caught in launchDiscovery");
+}
+
+
+}
+
+int POPCSearchNode::getNextSemCounter()
+{
+	return sem_logicalClock++;
 }
 
 // POPCSearchNode's entry point to propagate request in the grid
 // asker is the node which will receive positiv result
 void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_ap, paroc_accesspoint sender, paroc_accesspoint _psm){
+try{
    if(req.isEndRequest()){
       //popc_node_log("Recieve application end request");
       ExplorationList oldEL(req.getExplorationList());
@@ -292,6 +364,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
 	   popc_node_log(log);
 
       // check if the request has already been asked
+      
       list<POPString>::iterator k;
       for(k = knownRequests.begin(); k != knownRequests.end(); k++){
          if(strcmp(k->GetString(),req.getUniqueId().GetString()) == 0){
@@ -361,6 +434,9 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
          }
       }
    }
+} catch(...) {
+	popc_logger(ERROR, "Exception caught in askResource");
+}
 }
 
 /**
@@ -370,6 +446,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
  * @param wb   Way to the initiator node
  */
 void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb){
+try{
    //It's Last node to contact
    if(wb.isLastNode()){
       //Create the interface to contact the POPCSearchNode
@@ -397,27 +474,23 @@ void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb){
       sprintf(log, "[PSN] REROUTE;TO;%s;WAYBACK;%s", nextNodeStr.GetString(), wb.getAsString().GetString());
       popc_node_log(log);
    }
+} catch(...) {
+	popc_logger(ERROR, "Exception caught in reroute");
+}
 }
 
 
 // POPCSearchNode's return point to give back the response to the initial node
 void POPCSearchNode::callbackResult(Response resp){
+try{
 	//Just for test purpose, must be removed in production release
-	gettimeofday(&end, NULL);
-	long msec_start;
-	msec_start = (start.tv_sec)*1000000;
-	msec_start += (start.tv_usec);
-	long msec_end;
-	msec_end = (end.tv_sec)*1000000;
-	msec_end += (end.tv_usec);
-	long diff = msec_end-msec_start;
 	POPCSearchNodeInfo dni = resp.getFoundNodeInfo();
-	sprintf(log, "[VSPSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().GetString() , dni.nodeId.GetString());
-	popc_node_log(log);
-	//End for test
-   actualReqSyn.lock();
-   map<POPString, POPCSearchNodeInfos>::iterator i;
+	
+	
 
+   actualReqSyn.lock();
+	popc_logger(DEBUG, "[VSPSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().GetString() , dni.nodeId.GetString());   
+   map<POPString, POPCSearchNodeInfos>::iterator i;
    // visit the currently running list
    for(i=actualReq.begin(); i != actualReq.end(); i++){
       POPString id = (*i).first;
@@ -428,10 +501,18 @@ void POPCSearchNode::callbackResult(Response resp){
          break;
       }
    }
-   actualReqSyn.unlock();
-   if(pt_locker != NULL){
-      sem_post(pt_locker);
+   actualReqSyn.unlock();   
+      
+	// Unlock the semaphore for this request   
+	std::string _reqid = resp.getReqUniqueId().GetString();
+	requestSemMapLock.lock();
+   if(reqsem[_reqid] != NULL){
+      sem_post(reqsem[_reqid]);
    }
+   requestSemMapLock.unlock();
+  } catch(...) {
+	popc_logger(ERROR, "Exception caught in callback");
+} 
 }
 
 // internal comparison between request and local resources
