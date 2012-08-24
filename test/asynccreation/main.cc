@@ -37,6 +37,8 @@ int main(int argc, char** argv)
 		printf("Method with void parameter: test succeeded, destroying objects ...\n");
 	} catch (POPException e) {
 		printf("Method with void parameter: test failed, error no.%d, destroying objects:\n", e.Code());
+	} catch (std::exception& e) {
+		cout << e.what() << popcendl;
 	}
 	return 0;
 }
