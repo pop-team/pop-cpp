@@ -329,12 +329,28 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 	 * Asynchronous Parallel Object Creation (APOA)
 	 * The code below is generated to support the APOA in POP-C++ application. 
 	 */
-	if(!IsCoreCompilation() && !IsAsyncAllocationDisable()){
+	/*if(!IsCoreCompilation() && !IsAsyncAllocationDisable()){
+		 COMMENTED FOR 2.5 BUT TO PUT IN 2.5.1
 		sprintf(tmpcode,"extern \"C\"\n{\nvoid* %s_AllocatingThread(void* arg)\n{\n%s* _this_interface = static_cast<%s*>(arg);\n", name, name, name);
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));
-		sprintf(tmpcode, "_this_interface->Allocate();\n_this_interface->_paroc_Construct();\nreturn 0;\n}\n}\n", name);
+		// TODO generate right od and be able to pass parameters
+		sprintf(tmpcode, "try{\n_this_interface->od.search(0,0,0);\n_this_interface->Allocate();\n_this_interface->_paroc_Construct();\n");
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));	
-	}	// End of APOA Support
+		sprintf(tmpcode, "} catch(paroc_exception* ex) {\n rprintf(\"Async allocation: %%s\", ex->what()); }\nreturn 0;\n}\n}\n");
+		code.InsertAt(-1,tmpcode,strlen(tmpcode));			
+		
+		
+		// Try out
+		sprintf(tmpcode,"%s::AllocateObject(){\n", name);
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		strcpy(tmpcode,"\npthread_attr_t attr;\n pthread_attr_init(&attr);\npthread_attr_setdetachstate(&attr, 1);\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		sprintf(tmpcode, "int ret;\nret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread, this);\n", name);	
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		strcpy(tmpcode, "if(ret != 0)\n{\npthread_attr_destroy(&attr);\nreturn;\n}\npthread_attr_destroy(&attr);\n}\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+	
+	}*/	// End of APOA Support
 
 	int n=memberList.GetSize();
 	for (int i=0;i<n;i++)
@@ -482,6 +498,9 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 
    //Add the declaration of the __POPThis variable for support of the "this" keyword
    sprintf(str,"\n%s* __POPThis_%s; \n", name, name);
+   code.InsertAt(-1,str,strlen(str));
+   
+   sprintf(str,"void AllocateObject();\n");
    code.InsertAt(-1,str,strlen(str));
 
 	if (interface)

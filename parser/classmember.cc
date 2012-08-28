@@ -127,9 +127,11 @@ int  Param::GetAttr()
 
 bool Param::CanMarshal()
 {
-	if (mytype==NULL) return false;
+	if (mytype==NULL) 
+		return false;
 	int stat=mytype->CanMarshal();
-	if (marshalProc!=NULL || stat==1 || (stat==2 && paramSize!=NULL)) return true;
+	if (marshalProc!=NULL || stat==1 || (stat==2 && paramSize!=NULL)) 
+		return true;
 	return false;
 
 }
@@ -333,17 +335,19 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
 
 bool Param::UserProc(char *output)
 {
-	if (mytype==NULL) return false;
+	if (mytype==NULL) 
+		return false;
 
 	*output=0;
-	if (marshalProc==0) return false;
+	
+	if (marshalProc==0) 
+		return false;
+		
 	char decl[1024];
 
 	mytype->GetDeclaration("param",decl);
 	sprintf(output,"void %s(paroc_buffer &buf, %s, int hint,  bool marshal);" , marshalProc, decl);
 	return true;
-
-
 }
 //END Param implementation
 
@@ -649,22 +653,32 @@ Method::~Method()
 	for (i=0;i<n;i++) if (params[i]!=NULL) delete params[i];
 }
 
+/**
+ * Check if the parameter of a specific method can be marshalled
+ * @return 0 in case of succes, -1 is the return argument cannot be marshalled, the number of the parameter that cannot be marshalled
+ */
 int Method::CheckMarshal()
 {
-	if (GetMyAccess()!=PUBLIC || isHidden) return 0;
+	// Avoid if access modifier is not public or if the method is hidden
+	if (GetMyAccess()!=PUBLIC || isHidden) 
+		return 0;
 
-	if (MethodType()==METHOD_NORMAL && !returnparam.CanMarshal()) return -1;
+	if (MethodType()==METHOD_NORMAL && !returnparam.CanMarshal()) 
+		return -1;
+		
+	// Get the number of parameter for this method	
 	int n=params.GetSize();
 	Class *cl=GetClass();
 
-	for (int i=0;i<n;i++)
-	{
-		if (params[i]->GetType()->IsParClass() && !params[i]->IsRef())
-		{
+	// Check all the parameters of the method
+	for (int i=0;i<n;i++) {
+		if (params[i]->GetType()->IsParClass() && !params[i]->IsRef()) {
 			fprintf(stderr,"%s:%d: ERROR in %s::%s : parallel object '%s' must be passed as reference to the remote object.\n",  cl->GetFileInfo(), line, cl->GetName(), name,params[i]->GetName());
 			return(i+1);
 		}
-		if (!params[i]->CanMarshal()) return (i+1);
+		// Check if the parameter can be marshalled 
+		if (!params[i]->CanMarshal()) 
+			return (i+1);
 	}
 	return 0;
 
@@ -851,11 +865,12 @@ void Method::GenerateClient(CArrayChar &output)
 	 * The code below is generated to support the APOA in POP-C++ application.
 	 * Generated at the beginning of each remote method invocation (not for constructor method).
 	 */
+	/* COMMENTED FOR 2.5 BUT TO BE PUT IN 2.5.1	 
 	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && !GetClass()->IsAsyncAllocationDisable()){
-		sprintf(tmpcode,"void* status;\npthread_join(_popc_async_construction_thread, &status);\n");
+		sprintf(tmpcode,"void* status;\npthread_join(_popc_async_construction_thread, &status); if(!isBinded()) {rprintf(\"Not allocated\"); return;}\n");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));	
 	} // End of APOA Support
-	
+	*/
 	
 	sprintf(tmpcode,"\nparoc_mutex_locker __paroc_lock(_paroc_imutex);\n__paroc_buf->Reset();\nparoc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n__paroc_buf->SetHeader(__paroc_buf_header);\n",clname, id, invoke_code, name);
 	output.InsertAt(-1,tmpcode,strlen(tmpcode));
@@ -1242,6 +1257,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 	 * Asynchronous Parallel Object Creation (APOA)
 	 * The code below is generated to support the APOA in POP-C++ application. 
 	 */
+	/* COMMENTED FOR 2.5 BUT TO BE PUT IN 2.5.1
 	if(!GetClass()->IsCoreCompilation() && !GetClass()->IsAsyncAllocationDisable()){
 		strcpy(tmpcode,"\npthread_attr_t attr;\n pthread_attr_init(&attr);\npthread_attr_setdetachstate(&attr, 1);\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
@@ -1249,7 +1265,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		strcpy(tmpcode, "if(ret != 0)\n{\npthread_attr_destroy(&attr);\nreturn;\n}\npthread_attr_destroy(&attr);\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-	} else { // End of APOA Support
+	} else { */ // End of APOA Support
 		/**
 		 * Standard parallel object allocation
 		 */
@@ -1270,7 +1286,9 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		strcat(tmpcode,");\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode)); 
 		// End of constructor invocation
+	/* COMMENTED FOR 2.5 BUT TO BE PUT IN 2.5.1 
 	}
+	*/
 	
 	strcpy(tmpcode,"}\n");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
