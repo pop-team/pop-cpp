@@ -6,7 +6,7 @@
 using namespace std;
 
 
-class POPxVector : public POPBase, public vector<X>
+class POPxVector : public vector<X>, public POPBase
 {
 public:
 	POPxVector();
