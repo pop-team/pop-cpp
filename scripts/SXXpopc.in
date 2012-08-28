@@ -203,8 +203,11 @@ case "$ARG1" in
          	kill
          	start
          	;;
+         clearlog)
+         	rm -rf /tmp/popc_log /tmp/jobmgr_*
+         	;;
         *)
-            echo "Usage: $0 {start|stop|restart|kill|vmstate}"
+            echo "Usage: $0 {start|stop|restart|kill|killnstart|clearlog|vmstate}"
             exit 1
                                                                                 
 esac
