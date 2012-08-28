@@ -12,7 +12,7 @@
 AC_PREREQ(2.61)
 
 # Define the project and its version number
-AC_INIT([popc], [2.0.3-beta])
+AC_INIT([popc], [2.5-beta-pre-release])
 AM_INIT_AUTOMAKE(no-dependencies)
 
 #
