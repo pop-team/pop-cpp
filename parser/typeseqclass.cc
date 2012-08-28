@@ -2,13 +2,9 @@
 #include <stdio.h>
 #include <strings.h>
 
-TypeSeqClass::TypeSeqClass(char *name): DataType(name)
-{
-}
+TypeSeqClass::TypeSeqClass(char *name): DataType(name){}
 
-TypeSeqClass::~TypeSeqClass()
-{
-}
+TypeSeqClass::~TypeSeqClass(){}
 
 void TypeSeqClass::AddBase(DataType *t)
 {
@@ -17,7 +13,6 @@ void TypeSeqClass::AddBase(DataType *t)
 
 int TypeSeqClass::CanMarshal()
 {
-
 	if (IsMarked()) {
 		Mark(false);
 		return 0;
@@ -46,7 +41,8 @@ void TypeSeqClass::Marshal(char *varname, char *bufname, char *sizehelper, CArra
 	char tmpstr[1024];
 	char paramname[256];
 
-	if (!FindVarName(varname,paramname)) strcpy(paramname,"unkown");
+	if (!FindVarName(varname,paramname)) 
+		strcpy(paramname,"unkown");
 	sprintf(tmpstr,"%s.Push(\"%s\",\"%s\",1);\n",bufname,paramname, GetName());
 	output.InsertAt(-1,tmpstr,strlen(tmpstr));
 
@@ -62,7 +58,8 @@ void TypeSeqClass::DeMarshal(char *varname, char *bufname, char *sizehelper, CAr
 	char tmpstr[1024];
 	char paramname[256];
 
-	if (!FindVarName(varname,paramname)) strcpy(paramname,"unkown");
+	if (!FindVarName(varname,paramname)) 
+		strcpy(paramname,"unkown");
 	sprintf(tmpstr,"%s.Push(\"%s\",\"%s\",1);\n",bufname,paramname, GetName());
 	output.InsertAt(-1,tmpstr,strlen(tmpstr));
 
