@@ -4,6 +4,8 @@ CXX=@top_srcdir@/parser/popcc
 
 POPC_FLAGS=-popcpp-compilation -no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -cxx=@CXX@ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
 
+CXXFLAGS=-O3
+
 #ADD VIX and LIBVIRT flags
 if LINUX
 AM_CXXFLAGS= -D_LINUX $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS) $(VIX_CFLAGS) $(VIX_LIBS)
