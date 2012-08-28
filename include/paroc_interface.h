@@ -84,6 +84,8 @@ public:
 	void Release();
 	//Get Binding status...
 	void BindStatus(int &code, paroc_string &platform, paroc_string &info);
+	
+	bool isBinded();
 
 	//Add the object reference counter...return the new counter value...Use with care
 	int AddRef();
@@ -137,7 +139,8 @@ public:
 
 	//Find a resource that satisfies the Qos and allocate an object on it
 	void Allocate();
-	
+
+	paroc_od od;	
 protected:
 	virtual const char *ClassName() { return "paroc_interface"; };
 	virtual void paroc_Dispatch(paroc_buffer *buf);
@@ -146,7 +149,7 @@ protected:
 	paroc_combox *__paroc_combox;
 	paroc_buffer *__paroc_buf;
 	paroc_accesspoint accesspoint;
-	paroc_od od;
+
 	paroc_mutex _paroc_imutex;
 
 private:
