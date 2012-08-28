@@ -17,22 +17,22 @@ void TypeSeqClass::AddBase(DataType *t)
 
 int TypeSeqClass::CanMarshal()
 {
-	if (IsMarked())
-	{
+
+	if (IsMarked()) {
 		Mark(false);
 		return 0;
 	}
 	char *str=GetName();
-	if (str==NULL) return 0;
-	if (strcmp(str,"paroc_base")==0) return 1;
+	if (str==NULL) 
+		return 0;
+	if (strcmp(str,"paroc_base")==0) 
+		return 1;
 
 	Mark(true);
 	POSITION pos=bases.GetHeadPosition();
-	while (pos!=NULL)
-	{
+	while (pos!=NULL) {
 		DataType *t=bases.GetNext(pos);
-		if (t->CanMarshal())
-		{
+		if (t->CanMarshal()) {
 			Mark(false);
 			return 1;
 		}

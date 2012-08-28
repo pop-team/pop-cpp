@@ -126,7 +126,7 @@ struct TemplateArgument
 %token SYNC_INVOKE ASYNC_INVOKE INPUT OUTPUT  CONCURRENT SEQUENTIAL MUTEX HIDDEN PROC SIZE THIS_KEYWORD
 %token INCLUDE DIRECTIVE OD AUTO_KEYWORD REGISTER_KEYWORD VOLATILE_KEYWORD PACK_KEYWORD 
 %token AND_OP OR_OP EQUAL_OP NOTEQUAL_OP GREATEREQUAL_OP LESSEQUAL_OP NONSTRICT_OD_OP EOFCODE
-%token SCOPE ENUM CLASS NAMESPACE
+%token SCOPE ENUM CLASS NAMESPACE STATIC_KEYWORD
 
 %left '+' '-' '*' '/' '%'
 %left '&' '|' '^' '~' '!' '='
@@ -415,7 +415,7 @@ type_definition: struct_definition
 innerclass_definition: CLASS_KEYWORD
 {
 	
-	sprintf(tmp,"Class declaration inside parclass are not currently supported !\n");
+	sprintf(tmp,"Class declaration inside parclass are not currently supported in POP-C++ !\n");
 	
 	errormsg(tmp);
 	exit(1);
@@ -423,6 +423,14 @@ innerclass_definition: CLASS_KEYWORD
 } 
 
 
+
+innerclass_static: STATIC_KEYWORD {
+	sprintf(tmp,"Use of static member inside parclass is not currently supported in POP-C++!\n");
+	
+	errormsg(tmp);
+	exit(1);
+
+}
 /* 
 STRUCT TYPES...
 */
@@ -663,29 +671,26 @@ SEQUENTIAL CLASS DEFINITION...
  */
 seqclass_definition: seqclass_header seqbase_spec '{' error '}' 
 {
-  if (seqclass!=NULL) seqclass->SetTypeClass(true);
+	if (seqclass!=NULL) 
+		seqclass->SetTypeClass(true);
 }
 | seqclass_header ';'
 
 seqclass_header: CLASS_KEYWORD ID
 {
-  DataType *t=thisCodeFile->FindDataType(GetToken($2));
-  if (t==NULL)
-    {
-      seqclass=new TypeClassStruct(GetToken($2),true);
-      thisCodeFile->AddDataType(seqclass);
-    }
-  else if (!t->IsStandardType())
-    {
-      seqclass=dynamic_cast<TypeClassStruct *>(t);
-      if (seqclass==NULL)
-	{
-	  char tmp[256];
-	  sprintf(tmp,"%s has been declared as non-class data type", GetToken($2));
-	  errormsg(tmp);
-	  exit(1);
+	DataType *t=thisCodeFile->FindDataType(GetToken($2));
+	if (t==NULL) {
+		seqclass=new TypeClassStruct(GetToken($2),true);
+		thisCodeFile->AddDataType(seqclass);
+	} else if (!t->IsStandardType()) {
+		seqclass=dynamic_cast<TypeClassStruct *>(t);
+      if (seqclass==NULL) {
+			char tmp[256];
+			sprintf(tmp,"%s has been declared as non-class data type", GetToken($2));
+			errormsg(tmp);
+			exit(1);
+		}
 	}
-    }
 }
 
 seqbase_spec: /*empty*/
@@ -699,77 +704,77 @@ seqbase_list: seqbase_specifier
 
 seqbase_specifier: ID
 {
-  assert(seqclass!=NULL);
-  TypeClassStruct *seqbase;
-  DataType *t=thisCodeFile->FindDataType(GetToken($1));
-  if (t==NULL)
-    {
-      seqbase=new TypeClassStruct(GetToken($1), true);
-      seqclass->AddBase(seqbase);  
-    }
-  else if (!t->IsStandardType())
-    {
+	assert(seqclass!=NULL);
+	TypeClassStruct *seqbase;
+	DataType *t=thisCodeFile->FindDataType(GetToken($1));
+	if (t==NULL) {
+		seqbase=new TypeClassStruct(GetToken($1), true);
+		seqclass->AddBase(seqbase);  
+	} else if (!t->IsStandardType()) {
       /*      seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL)
-	{
-	  char tmp[256];
-	  sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($1));
-	  errormsg(tmp);
-	  exit(1);
-	}
+      if (seqbase==NULL) {
+			char tmp[256];
+			sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($1));
+			errormsg(tmp);
+			exit(1);
+		}
       */
       seqclass->AddBase(t);
-    }
+	}
 }
 | access_specifier ID
 {
-  assert(seqclass!=NULL);
-  TypeClassStruct *seqbase;
-  DataType *t=thisCodeFile->FindDataType(GetToken($2));
-  if (t==NULL)
-    {
-      seqbase=new TypeClassStruct(GetToken($2), true);
+	assert(seqclass!=NULL);
+	TypeClassStruct *seqbase;
+	DataType *t=thisCodeFile->FindDataType(GetToken($2));
+	if (t==NULL) {
+		seqbase=new TypeClassStruct(GetToken($2), true);
       seqclass->AddBase(seqbase);  
-    }
-  else  if (!t->IsStandardType())
-    {
+	} else  if (!t->IsStandardType()) {
       /*
       seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL)
-	{
-	  char tmp[256];
-	  sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($2));
-	  errormsg(tmp);
-	  exit(1);
-	}
+      if (seqbase==NULL) {
+			char tmp[256];
+			sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($2));
+			errormsg(tmp);
+			exit(1);
+		}
       */
-      seqclass->AddBase(t);
-    }
+		seqclass->AddBase(t);
+	}
+}
+| access_specifier ID '<' ID '>'
+{
+	assert(seqclass!=NULL);
+	TypeClassStruct *seqbase;
+	DataType *t=thisCodeFile->FindDataType(GetToken($2));
+	if (t==NULL) {
+		seqbase=new TypeClassStruct(GetToken($2), true);
+      seqclass->AddBase(seqbase);  
+	} else  if (!t->IsStandardType()) {
+		seqclass->AddBase(t);
+	}
 }
 | VIRTUAL_KEYWORD access_specifier ID
 {
-  assert(seqclass!=NULL);
-  TypeClassStruct *seqbase;
-  DataType *t=thisCodeFile->FindDataType(GetToken($3));
-  if (t==NULL)
-    {
-      seqbase=new TypeClassStruct(GetToken($3), true);
-      seqclass->AddBase(seqbase);  
-    }
-  else  if (!t->IsStandardType())
-    {
+	assert(seqclass!=NULL);
+	TypeClassStruct *seqbase;
+	DataType *t=thisCodeFile->FindDataType(GetToken($3));
+	if (t==NULL) {
+		seqbase=new TypeClassStruct(GetToken($3), true);
+		seqclass->AddBase(seqbase);  
+	} else  if (!t->IsStandardType()) {
       /*
-      seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL)
-	{
-	  char tmp[256];
-	  sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($3));
-	  errormsg(tmp);
-	  exit(1);
-	}
+		seqbase=dynamic_cast<TypeClassStruct *>(t);
+      if (seqbase==NULL) {
+			char tmp[256];
+			sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($3));
+			errormsg(tmp);
+			exit(1);
+		}
       */
       seqclass->AddBase(t);
-    }
+	}
 }
 | access_specifier VIRTUAL_KEYWORD ID
 {
@@ -988,32 +993,31 @@ member_list: /*empty*/
 member_declaration:  enum_declaration ';'
 | struct_definition ';'
 | function_definition ';'
-| innerclass_definition ';' | typedef_definition ';'
+| innerclass_definition ';' | innerclass_static ';' | typedef_definition ';'
 {
 	assert(method!=NULL);
 	int t=method->CheckMarshal();
-	if (t!=0)
-	{      
-		if (t==-1) 
+	if (t!=0) {      
+		if (t==-1) {
 			sprintf(tmp,"In method %s::%s: unable to marshal the return argument.\n", currentClass->GetName(), method->name);
-      else 
-			sprintf(tmp,"In method %s::%s: unable to marshal argument %d.\n", currentClass->GetName(), method->name,t);
+      } else {
+      	
+			sprintf(tmp,"In method %s::%s: unable to marshal argument %d.\n", currentClass->GetName(), method->name, t);
+		}
       errormsg(tmp);
-      exit(1);
-    }
-  currenttype=returntype=NULL;
+		exit(1);
+	}
+	currenttype=returntype=NULL;
 }
  
 | attribute_definition ';'
 {
-  if (accessmodifier==PUBLIC)
-    {
+	if (accessmodifier==PUBLIC) {
       sprintf(tmp,"%s:%d: attributes of a parallel class must be private or protected.\n",thisCodeFile->GetFileName(), linenumber);
       errormsg(tmp);
       exit(1);
-    }
-  currenttype=returntype=NULL;  
-
+	}
+	currenttype=returntype=NULL;  
 }
 | DIRECTIVE
 {
@@ -1076,34 +1080,28 @@ attribute_name_list: attribute_name
 
 attribute_name: pointer_specifier ref_specifier ID array_declarator
 {
-
-  assert(currentClass!=NULL);
-  Attribute *t=new Attribute(currentClass,accessmodifier);
-  t->SetLineInfo(linenumber-1);
-  currentClass->AddMember(t);
-  Param *tparam=t->NewAttribute();
-  DataType *type;
-  strcpy(tparam->name,GetToken($3));
-  if ($1==0)
-    {
-      type=currenttype;
-    }
-  else 
-    {
-      //type=new TypePtr(NULL, $1 , currenttype);
+	assert(currentClass!=NULL);
+	Attribute *t=new Attribute(currentClass,accessmodifier);
+	t->SetLineInfo(linenumber-1);
+	currentClass->AddMember(t);
+	Param *tparam = t->NewAttribute();
+	DataType *type;
+	strcpy(tparam->name,GetToken($3));
+	
+	if ($1==0) {
+		type=currenttype;
+	} else {
       type=new TypePtr(NULL, $1 , currenttype, constPointerPositions);
       thisCodeFile->AddDataType(type);
-    }
+	}
 
-  if ($4!=-1)
-    {
-      type=new TypeArray(NULL, GetToken($4) , type);
-      thisCodeFile->AddDataType(type);
-    }
-  tparam->isRef=$2;
-  tparam->SetType(type);
-}
-;
+	if ($4!=-1) {
+		type=new TypeArray(NULL, GetToken($4) , type);
+		thisCodeFile->AddDataType(type);
+	}
+	tparam->isRef=$2;
+	tparam->SetType(type);
+};
 
 array_declarator: /*empty*/
 {

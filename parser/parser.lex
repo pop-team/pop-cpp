@@ -400,6 +400,11 @@ struct {
   return STRUCT_KEYWORD;
 };
 
+static {
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  return STATIC_KEYWORD;
+};
+
 sync {
   if (IsSystemHeader(filename))
     {

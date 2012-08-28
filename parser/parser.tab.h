@@ -84,7 +84,8 @@
      ENUM = 300,
      CLASS = 301,
      NAMESPACE = 302,
-     UMINUS = 303
+     STATIC_KEYWORD = 303,
+     UMINUS = 304
    };
 #endif
 /* Tokens.  */
@@ -133,7 +134,8 @@
 #define ENUM 300
 #define CLASS 301
 #define NAMESPACE 302
-#define UMINUS 303
+#define STATIC_KEYWORD 303
+#define UMINUS 304
 
 
 

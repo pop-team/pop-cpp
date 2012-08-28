@@ -39,8 +39,7 @@ DataType::DataType(char *tname)
 	isStandard=false;
 	isparclass=false;
 
-	if (tname!=NULL)
-	{
+	if (tname!=NULL) {
 		char str[1024];
 		char str1[1024];
 		char sep[]=" \n\t\r";
@@ -48,24 +47,21 @@ DataType::DataType(char *tname)
 		strcpy(str,tname);
 		char *tmp=strtok(str,sep);
 		*str1=0;
-		while (tmp!=NULL)
-		{
+		while (tmp!=NULL) {
 			strcat(str1,tmp);
 			tmp=strtok(NULL,sep);
 			if (tmp!=NULL) strcat(str1," ");
 		}
 		name=strdup(str1);
 
-		for (int i=0;i<MAXSTDTYPES;i++) if (strcmp(name,stdType[i])==0)
-			{
-				isStandard=true;
-				break;
-			}
+		for (int i=0;i<MAXSTDTYPES;i++) if (strcmp(name,stdType[i])==0) {
+			isStandard=true;
+			break;
+		}
+	} else {
+		name=NULL;
 	}
-	else name=NULL;
-
 	mark=false;
-
 }
 
 DataType::~DataType()
@@ -149,17 +145,18 @@ char *DataType::GetName()
 
 void DataType::SetName(const char *tname)
 {
-	if (name!=NULL) free(name);
-	if (tname==NULL) name=NULL;
-	else
-	{
+	if (name!=NULL) { 
+		free(name);
+	}
+	if (tname==NULL) { 
+		name=NULL;
+	} else {
 		name=strdup(tname);
 		isStandard=false;
-		for (int i=0;i<MAXSTDTYPES;i++) if (strcmp(name,stdType[i])==0)
-			{
-				isStandard=true;
-				break;
-			}
+		for (int i=0;i<MAXSTDTYPES;i++) if (strcmp(name,stdType[i])==0) {
+			isStandard=true;
+			break;
+		}
 	}
 }
 
