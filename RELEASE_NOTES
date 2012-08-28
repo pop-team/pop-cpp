@@ -29,6 +29,7 @@ For end-user
 - Asynchronous parallel object creation. Allows the application to set up its set of objects faster. 
 - Add "-no-async-allocation" option to the POP-C++ parser to avoid asynchronous allocation of parallel object and stay with 
   traditional sequential allocation. 
+- Fix parser behavior when inheriting from template class before POPBase.  
 - Add new command to SXXpopc "kill" to kill the POP-C++ runtime services.
 - Add new command to SXXpopc "killnstart" to kill the POP-C++ runtime services and start it.
 - Add new command to SXXpopc "clearlog" to clear the log file of POP-C++.
