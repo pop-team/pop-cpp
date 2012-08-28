@@ -717,6 +717,7 @@ int JobMgr::Query(const POPString &type, POPString  &val)
 
 int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objname,const paroc_od &od, int howmany, paroc_accesspoint* objcontacts, int howmany2, paroc_accesspoint* remotejobcontacts)
 {
+	popc_logger(DEBUG, "Call CreateObject");
 	if (howmany<=0) return 0;
 	int count=0;
 	int ret=0;
@@ -831,6 +832,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 	{
 		Pause(localservice, SLEEP_TIME_ON_ERROR);
 		ret=POPC_JOBSERVICE_FAIL;
+		popc_logger(ERROR, "JobManager failed to allocate resource for the object");
 	}
 
 	fprintf(stderr,"Object count=%d, require=%d\n", count, howmany);
@@ -855,205 +857,210 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 
 bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, 
       float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize) {
-	bool ret=false;
-	// Added by clementval 
+	bool ret=false;      
+	try{      
+		popc_logger(DEBUG, "Call AllocResource");      
+
+		// Added by clementval 
 		
-	if(!od.isSearchSet()){
-		//End of add
-		if (howmany<1) return false;
+		if(!od.isSearchSet()){
+			//End of add
+			if (howmany<1) return false;
 		
-		if (!AddRequest(requestInfo))
-		{
-			popc_logger(DEBUG, "Local resource has already been traversed!");
-			return false;
-		}
-
-
-
-		POPString codefile;
-	
-		//MATCHING LOCALLY
-		popc_logger(DEBUG, "Resource discovery request: obj=%s, local service: %s (trace=%d)",(const char *)objname,localservice.GetAccessString(),tracesize);
-		try
-		{
-			if (CheckPauseList(localservice))
-			{
-				popc_logger(DEBUG, "Local resource matching is temporary paused due to previous errors!");
-			}
-			else if (MatchUser(localservice))
-			{
-				CodeMgr codemgr(localservice);
-				if (codemgr.QueryCode(objname,paroc_system::platform,codefile))
-				{
-					if (MatchAndReserve(od,fitness,jobcontacts,reserveIDs, howmany)) ret=true;
-				}
-			}
-		}
-		catch (...)
-		{
-			popc_logger(ERROR, "Exception on resource discovery");
-			return false;
-		}
-
-		if (ret)
-		{
-			bool allok=true;
-			for (int i=0;i<howmany && allok;i++) if (fitness[i]<1) allok=false;
-			if (allok) return true;
-		}
-	
-		if (tracesize<0 || tracesize>=MAX_HOPS)
-		{
-			popc_logger(DEBUG, "Stop forwarding due to trace size (value=%d)", tracesize);
-			return ret;
-		}
-		AddTrace(iptrace, tracesize);
-	}
-
-
-	// Added by clementval, Creation of a request to find the appropriate resources on the grid 
-	
-	
-
-	//Create an interface to communicate with the local POPCSearchNode
-	POPCSearchNode psn(_localPSN);
-	
-	//Create the request of resource discovery
-	Request r;
-
-	//Set the request's node identifier
-	r.setNodeId(psn.getPOPCSearchNodeId());
-
-	//Recover the od Max depth or env var POPC_SEARCHMAXHOP. If both are not set, MAXHOP constant is defined in JobMgr.ph
-	int maxhopint=0;
-	if((maxhopint=od.getSearchMaxDepth()) > 0){
-		r.setMaxHops(maxhopint);
-	} else {
-		//Recover the max Hop env variable
-		char *maxhop;
-		if((maxhop=getenv("POPC_SEARCHMAXHOP"))){
-			maxhopint = atoi(maxhop);
-		} else {
-			maxhopint = MAXHOP;
-		}
-	}
-
-	//Setting the value of max hop in the request
-	r.setMaxHops(maxhopint);
-	
-	//Recover the maximum size of the request. This is not implemented yet
-	int maxsizeint;
-	if((maxsizeint = od.getSearchMaxReqSize()) > 0){
-		//To be implemented
-	}
-
-	//Recover the od waiting time or env var POPC_SEARCHTIMEOUT. If both are not set, TIMEOUT constant is defined in JobMgr.ph
-	int timeoutint = 0;
-	if((timeoutint = od.getSearchWaitTime()) >= 0){
-
-	} else {
-		//Recover the timeout in the POPC_SEARCHTIMEOUT env variable
-		char *timeout;
-		if((timeout=getenv("POPC_SEARCHTIMEOUT"))){
-			timeoutint = atoi(timeout);
-
-		}else {
-			timeoutint = TIMEOUT;
-		}
-	}	
-
-	//Set operating system
-	POPString r_arch;
-	od.getArch(r_arch);
-	if(r_arch != NULL)
-		r.setOperatingSystem(r_arch);
-	
-	//Set min and expected mem
-	float r_minMem, r_expMem;
-	od.getMemory(r_minMem, r_expMem);
-	if(r_minMem > 0)
-		r.setMinMemorySize(r_minMem);
-	if(r_expMem > 0)
-		r.setExpectedMemorySize(r_expMem);
-
-	//Set min and expected bandwidth
-	float r_minB, r_expB;
-	od.getBandwidth(r_expB, r_minB);
-	if(r_minB > 0)
-		r.setMinNetworkBandwidth(r_minB);
-	if(r_expB > 0)	
-		r.setExpectedNetworkBandwidth(r_expB);      
-
-	//Set min and expected power
-	float r_minPower, r_expPower;
-	od.getPower(r_expPower, r_minPower);
-	if(r_minPower > 0)
-		r.setMinPower(r_minPower);
-	if(r_expPower > 0)
-		r.setExpectedPower(r_expPower);
-
-//   Update();
-   /**
-    * ViSaG : clementval
-    * Retrieve the POPAppID and set it in the request
-    */
-   AppCoreService appservice(localservice);
-   POPString popAppId = appservice.GetPOPCAppID();
-   r.setPOPAppId(popAppId);
-
-   POPString reqID = psn.getUID();
-   r.setUniqueId(reqID);
-	//Launch the discovery and recover the responses
-	POPCSearchNodeInfos responses = psn.launchDiscovery(r, timeoutint);
-	
-	//Check if there is any responses
-	if(responses.getNodeInfos().size() == 0){
-		paroc_exception::paroc_throw("No ressource found for execution");
-	}
-
-
-	// Distribute object creation request on responses
-	list<POPCSearchNodeInfo> nodes;
-	nodes = responses.getNodeInfos();
-	list<POPCSearchNodeInfo>::iterator ni;
-	int jobindex = 0;
-	int n_response = responses.getNodeInfos().size();
-	int failedReservation=0;
-	ni = nodes.begin();
-	for(jobindex = 0; jobindex < howmany; jobindex++){
-		paroc_accesspoint n_ac;
-		n_ac.SetAccessString(ni->nodeId);
-		//Contact the POPSearchNode
-		POPCSearchNode n(n_ac);				
-		paroc_accesspoint jm_ap = n.getJobMgrRef();
-		//Contact the JobMgr
-		JobMgr jobmgr(jm_ap);	
-		float t=0;
-		//Try to reserve on remote JobMgr
-		reserveIDs[jobindex] = jobmgr.Reserve(od, t, popAppId, reqID);	
-		//if reserve ID is egal to 0, the reservation process failed. If we can't reserver on any responding machine, we trow an exception
-		if(reserveIDs[jobindex] == 0){
-			jobindex--;
-			popc_logger(ERROR, "[JM]ERROR: UNABLE TO RESERVE ON %s", jm_ap.GetAccessString());
-			failedReservation++;
-			if(failedReservation==n_response)
+			if (!AddRequest(requestInfo)) {
+				popc_logger(DEBUG, "Local resource has already been traversed!");
 				return false;
-		} else {
-			//Reservation process succeed
+			}
 
-			//setting the remote JobMgr info to execute the parallel object
-			jobcontacts[jobindex].SetAccessString(jm_ap.GetAccessString());
-			popc_logger(ERROR, "[JM]DEBUG: RESID;%d;NODEID;%s", reserveIDs[jobindex], jm_ap.GetAccessString());
-			//Setting the fitness
-			fitness[jobindex] = t;
-		}
-		ni++;
-		//Back to the beginning if we are at the end of the list
-		if(ni == nodes.end())
-			ni = nodes.begin();
-		ret = true;
-	}
+			POPString codefile;
 	
+			//MATCHING LOCALLY
+			popc_logger(DEBUG, "Resource discovery request: obj=%s, local service: %s (trace=%d)",(const char *)objname,localservice.GetAccessString(),tracesize);
+			try {
+				if (CheckPauseList(localservice)) {
+					popc_logger(DEBUG, "Local resource matching is temporary paused due to previous errors!");
+				} else if (MatchUser(localservice)) {
+					CodeMgr codemgr(localservice);
+					if (codemgr.QueryCode(objname,paroc_system::platform,codefile)) {
+						if (MatchAndReserve(od,fitness,jobcontacts,reserveIDs, howmany)) 
+							ret=true;
+					}
+				}
+			} catch (...) {
+				popc_logger(ERROR, "Exception on resource discovery");
+				return false;
+			}
+
+			if (ret) {
+				bool allok=true;
+				for (int i=0;i<howmany && allok;i++) {
+					if (fitness[i]<1) 
+						allok=false;
+				}
+				if (allok) 
+					return true;
+			}
+	
+			if (tracesize<0 || tracesize>=MAX_HOPS) {
+				popc_logger(DEBUG, "Stop forwarding due to trace size (value=%d)", tracesize);
+				return ret;
+			}
+			AddTrace(iptrace, tracesize);
+		}
+
+
+
+		//Create the request of resource discovery
+		Request r;
+
+		//Recover the od Max depth or env var POPC_SEARCHMAXHOP. If both are not set, MAXHOP constant is defined in JobMgr.ph
+		int maxhopint=0;
+		if((maxhopint=od.getSearchMaxDepth()) > 0){
+			r.setMaxHops(maxhopint);
+		} else {
+			//Recover the max Hop env variable
+			char *maxhop;
+			if((maxhop=getenv("POPC_SEARCHMAXHOP"))){
+				maxhopint = atoi(maxhop);
+			} else {
+				maxhopint = MAXHOP;
+			}
+		}
+
+		//Setting the value of max hop in the request
+		r.setMaxHops(maxhopint);
+	
+		//Recover the maximum size of the request. This is not implemented yet
+		int maxsizeint;
+		if((maxsizeint = od.getSearchMaxReqSize()) > 0){
+			//To be implemented
+		}
+
+		//Recover the od waiting time or env var POPC_SEARCHTIMEOUT. If both are not set, TIMEOUT constant is defined in JobMgr.ph
+		int timeoutint = 0;
+		if((timeoutint = od.getSearchWaitTime()) >= 0){
+
+		} else {
+			//Recover the timeout in the POPC_SEARCHTIMEOUT env variable
+			char *timeout;
+			if((timeout=getenv("POPC_SEARCHTIMEOUT"))){
+				timeoutint = atoi(timeout);
+			} else {
+				timeoutint = TIMEOUT;
+			}
+		}	
+
+		//Set operating system
+		POPString r_arch;
+		od.getArch(r_arch);
+		if(r_arch != NULL)
+			r.setOperatingSystem(r_arch);
+	
+		//Set min and expected mem
+		float r_minMem, r_expMem;
+		od.getMemory(r_minMem, r_expMem);
+		if(r_minMem > 0)
+			r.setMinMemorySize(r_minMem);
+		if(r_expMem > 0)
+			r.setExpectedMemorySize(r_expMem);
+
+		//Set min and expected bandwidth
+		float r_minB, r_expB;
+		od.getBandwidth(r_expB, r_minB);
+		if(r_minB > 0)
+			r.setMinNetworkBandwidth(r_minB);
+		if(r_expB > 0)	
+			r.setExpectedNetworkBandwidth(r_expB);      
+
+		//Set min and expected power
+		float r_minPower, r_expPower;
+		od.getPower(r_expPower, r_minPower);
+		if(r_minPower > 0)
+			r.setMinPower(r_minPower);
+		if(r_expPower > 0)
+			r.setExpectedPower(r_expPower);
+
+	
+		popc_logger(DEBUG, "AllocResource before calling AppCoreService");    
+  		//  Retrieve the POPAppID and set it in the request
+  		POPString popAppId;
+  		try {
+	   	AppCoreService appservice(localservice);
+   		popAppId = appservice.GetPOPCAppID();
+		   r.setPOPAppId(popAppId);
+	   } catch(POPException* ex) {
+	   	popc_logger(ERROR, "AllocResource couldn't retrieve AppId"); 
+	   	return false;
+	   }
+
+		POPCSearchNodeInfos responses;
+		POPString reqID;
+		try{
+			//Create an interface to communicate with the local POPCSearchNode
+			POPCSearchNode psn(_localPSN);
+			//Set the request's node identifier
+			r.setNodeId(psn.getPOPCSearchNodeId());		
+   		reqID = psn.getUID();
+		   r.setUniqueId(reqID);
+			//Launch the discovery and recover the responses
+			popc_logger(DEBUG, "AllocResource Call to discovery");   
+			responses = psn.launchDiscovery(r, timeoutint);
+		} catch (POPException* ex) {
+			popc_logger(ERROR, "Can't conntact PSN %s", ex->what());
+		}
+	
+		popc_logger(DEBUG, "Got answer from discovery");   	
+		//Check if there is any responses
+		if(responses.getNodeInfos().size() == 0){
+			
+			paroc_exception::paroc_throw("No ressource found for execution");
+		}
+
+
+		// Distribute object creation request on responses
+		list<POPCSearchNodeInfo> nodes;
+		nodes = responses.getNodeInfos();
+		list<POPCSearchNodeInfo>::iterator ni;
+		int jobindex = 0;
+		int n_response = responses.getNodeInfos().size();
+		int failedReservation=0;
+		ni = nodes.begin();
+		for(jobindex = 0; jobindex < howmany; jobindex++){
+			paroc_accesspoint n_ac;
+			n_ac.SetAccessString(ni->nodeId);
+			//Contact the POPSearchNode
+			POPCSearchNode n(n_ac);				
+			paroc_accesspoint jm_ap = n.getJobMgrRef();
+			//Contact the JobMgr
+			JobMgr jobmgr(jm_ap);	
+			float t=0;
+			//Try to reserve on remote JobMgr
+			reserveIDs[jobindex] = jobmgr.Reserve(od, t, popAppId, reqID);	
+			//if reserve ID is egal to 0, the reservation process failed. If we can't reserver on any responding machine, we trow an exception
+			if(reserveIDs[jobindex] == 0){
+				jobindex--;
+				popc_logger(ERROR, "[JM]ERROR: UNABLE TO RESERVE ON %s", jm_ap.GetAccessString());
+				failedReservation++;
+				if(failedReservation==n_response)
+					return false;
+			} else {
+				//Reservation process succeed
+
+				//setting the remote JobMgr info to execute the parallel object
+				jobcontacts[jobindex].SetAccessString(jm_ap.GetAccessString());
+				popc_logger(ERROR, "[JM]DEBUG: RESID;%d;NODEID;%s", reserveIDs[jobindex], jm_ap.GetAccessString());
+				//Setting the fitness
+				fitness[jobindex] = t;
+			}
+			ni++;
+			//Back to the beginning if we are at the end of the list
+			if(ni == nodes.end())
+				ni = nodes.begin();
+			ret = true;
+		}
+	} catch(...) {
+		popc_logger(ERROR, "JobMgr can't allocate resource for the object (AllocResource)");
+	}
 	
 	//End of add
 	return ret;
@@ -1092,8 +1099,9 @@ void JobMgr::CancelReservation(int *req, int howmany)
  * @return The reservation ID
  */
 int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId, POPString reqID){
+	reserveLock.lock();
 	//Update();   //Called to see if there are jobs to be released
-
+	popc_logger(DEBUG, "Call Reserve");
 	float flops=0;
 	float walltime=0;
 	float mem=0;
@@ -1208,6 +1216,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
 		counter=(counter%1000000000)+1;
 		popc_logger(DEBUG, "Local Match OK (fitness=%f, reserveID=%d)", fitness,t.Id);
 		popc_logger(INFO, "GIVE_RESID;%d:MEM:%f:POW:%f:BAN:%f", t.Id, t.mem, t.flops, t.bandwidth);
+		reserveLock.unlock();		
 		return t.Id;
 	}
 }
@@ -1737,6 +1746,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
 
 int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, int *reserveIDs, const paroc_accesspoint &localservice, paroc_accesspoint *objcontacts)
 {
+	popc_logger(DEBUG, "Call ExecObj");
 	if (howmany<=0) {
 		popc_logger(ERROR, "ERROR: Exec failed because howmany is less or equal to 0");
 		return EINVAL;
