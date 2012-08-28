@@ -711,14 +711,6 @@ seqbase_specifier: ID
 		seqbase=new TypeClassStruct(GetToken($1), true);
 		seqclass->AddBase(seqbase);  
 	} else if (!t->IsStandardType()) {
-      /*      seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL) {
-			char tmp[256];
-			sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($1));
-			errormsg(tmp);
-			exit(1);
-		}
-      */
       seqclass->AddBase(t);
 	}
 }
@@ -731,15 +723,6 @@ seqbase_specifier: ID
 		seqbase=new TypeClassStruct(GetToken($2), true);
       seqclass->AddBase(seqbase);  
 	} else  if (!t->IsStandardType()) {
-      /*
-      seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL) {
-			char tmp[256];
-			sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($2));
-			errormsg(tmp);
-			exit(1);
-		}
-      */
 		seqclass->AddBase(t);
 	}
 }
@@ -764,43 +747,21 @@ seqbase_specifier: ID
 		seqbase=new TypeClassStruct(GetToken($3), true);
 		seqclass->AddBase(seqbase);  
 	} else  if (!t->IsStandardType()) {
-      /*
-		seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL) {
-			char tmp[256];
-			sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($3));
-			errormsg(tmp);
-			exit(1);
-		}
-      */
       seqclass->AddBase(t);
 	}
 }
 | access_specifier VIRTUAL_KEYWORD ID
 {
-  assert(seqclass!=NULL);
-  TypeClassStruct *seqbase;
-  DataType *t=thisCodeFile->FindDataType(GetToken($3));
-  if (t==NULL)
-    {
-      seqbase=new TypeClassStruct(GetToken($3), true);
-      seqclass->AddBase(seqbase);
-    }
-  else  if (!t->IsStandardType())
-    {
-      /*      seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL)
-	{
-	  char tmp[256];
-	  sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($3));
-	  errormsg(tmp);
-	  exit(1);
-	}
-      */
+	assert(seqclass!=NULL);
+	TypeClassStruct *seqbase;
+	DataType *t=thisCodeFile->FindDataType(GetToken($3));
+	if (t==NULL) {
+		seqbase=new TypeClassStruct(GetToken($3), true);
+		seqclass->AddBase(seqbase);
+	} else  if (!t->IsStandardType()) {
       seqclass->AddBase(t);
-    }
-}
-;
+	}
+};
 
 
 /*
