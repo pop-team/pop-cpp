@@ -11,15 +11,23 @@
 #include "nodethread.h"
 #include "popc_search_node.ph"
 
-//Implementation of this small class
-NodeThread::NodeThread(int timeout, const paroc_accesspoint &node, std::string reqid) : paroc_thread(true) {
-	_timeout = timeout;
-	_node = node;
-	_running = true;
-	_unlock = true;
-	_reqid = reqid;
-}
-//Start a timer and contact de POPCSearchNode when it's finished
+/**
+ * @author Valentin Clement
+ * @desc Implementation of small thread that allow the resource discovery algorithm to be unlocked after a timeout
+ */
+
+/**
+ * NodeThread constructor
+ * @param timeout	Time in seconds before unlocking
+ * @param node		The POPCSearchNode associated with this thread
+ * @param reqid	The request identifier associated with this thread
+ */
+NodeThread::NodeThread(int timeout, const paroc_accesspoint &node, std::string reqid) : 
+	_timeout(timeout), _node(node), _running(true), _unlock(true), _reqid(reqid), paroc_thread(true) {}
+	
+/** 
+ * Start a timer and contact de POPCSearchNode when it's finished
+ */
 void NodeThread::start(){
 	POPCSearchNode n(_node);
 	Timer t;
@@ -36,7 +44,9 @@ void NodeThread::start(){
 		n.unlockDiscovery(r);
 	}
 }
-//Stop the timer
+/** 
+ * Stop the timer and 
+ */
 void NodeThread::stop(){
 	_unlock = false;
 	_running = false;
