@@ -6,11 +6,17 @@ TypeSeqClass::TypeSeqClass(char *name): DataType(name){}
 
 TypeSeqClass::~TypeSeqClass(){}
 
+/**
+ * Add a base class to the current sequential class
+ */
 void TypeSeqClass::AddBase(DataType *t)
 {
 	bases.AddTail(t);
 }
 
+/**
+ * Check if the current class can be marshalled 
+ */
 int TypeSeqClass::CanMarshal()
 {
 	if (IsMarked()) {
