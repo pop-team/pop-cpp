@@ -470,7 +470,7 @@ void paroc_interface::Allocate()
 		catch (paroc_exception * e)
 		{
 			paroc_system::perror(e);
-			paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"POP-C++ error: Cannot create object via POP-C++ Job Manager because ");
+			paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"POP-C++ error: Cannot create object via POP-C++ Job Manager");
 		}
 	}
    //Add for SSH Tunneling
@@ -744,7 +744,19 @@ void paroc_interface::Release()
 }
 
 
+bool paroc_interface::isBinded(){
+	if (__paroc_combox==NULL || __paroc_buf==NULL) 
+		return false;
+	return true;
+}
+
+
+
+
 //ParocCall...
+
+
+
 
 void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info)
 {
