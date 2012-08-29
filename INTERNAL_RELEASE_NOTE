@@ -1,4 +1,14 @@
-Internal Release Note for the version 2.5
+!! DON'T INCLUDE THIS FILE IN THE OFFICIAL RELEASE !!
+
+------------------------------------------------------
+POP-C++
+Internal release note for developers
+ATTENTION : These notes are for internal purpose only. 
+------------------------------------------------------
+
+-----------
+POP-C++ 2.5
+-----------
 
 Choice: 
 - We intentionally disabled POPFile for this version at it has not been tested enough. (For version 3.0)
@@ -9,3 +19,9 @@ For POP-C++ development
 - Add different logging level in the runtime (DEBUG, ERROR, CORE, INFO, DEV).
 - Add special flag for POP-C++ compilation itself "-popcpp-compilation". Used for special purpose in the compiling process of 
   POP-C++. 
+  
+  
+-------------  
+POP-C++ 2.5.1
+-------------
+- Dedicated version developed at RIKEN Institute for the Master thesis of Valentin Clement will be named 2.5.1
