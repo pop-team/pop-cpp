@@ -43,9 +43,11 @@ int popc_logger(LOGLEVEL level, const char *format,...){
 		fprintf(f, "%s", LEVEL_DEBUG_PREFIX);			
 		break;
 		case INFO:
-		fprintf(f, "%s", LEVEL_DEBUG_PREFIX);			
+		fprintf(f, "%s", LEVEL_INFO_PREFIX);	
+		break;		
 		case DEV:
 		fprintf(f, "%s", LEVEL_DEV_PREFIX);			
+		break;		
 		case CORE:
 		fprintf(f, "%s", LEVEL_CORE_PREFIX);							
 		break;
