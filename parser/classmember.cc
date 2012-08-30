@@ -1001,6 +1001,7 @@ void Method::GenerateBrokerHeader(CArrayChar &output)
 
 void Method::GenerateBroker(CArrayChar &output)
 {
+	
 	int type=MethodType();
 	if (type==METHOD_DESTRUCTOR || GetMyAccess()!=PUBLIC || isHidden) return;
 	if (isVirtual && GetClass()->methodInBaseClass(*this)) return;
@@ -1020,24 +1021,20 @@ void Method::GenerateBroker(CArrayChar &output)
 	//Now generate method wrappers...
 	char str[1024];
 
-	sprintf(str,"\nvoid %s::Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output)\n{",brokername,name, id);
+	sprintf(str,"// Generate method %s",name);
+	output.InsertAt(-1,str,strlen(str));
 
+	sprintf(str,"\nvoid %s::Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output)\n{",brokername,name, id);
 	output.InsertAt(-1,str,strlen(str));
 
 	char methodcall[1024];
 	bool haveReturn=false;
 	
-
-	
-	
 	if (cl->IsCoreCompilation() || !cl->IsBasePureVirtual()) { // ADDED FOR 2.0.3 Create constructor and stuff only if the parclass is not abstract
-		if (type==METHOD_CONSTRUCTOR)
-		{
+		if (type==METHOD_CONSTRUCTOR) {
 			//Constructor...create object now...
 			sprintf(methodcall,"\ntry {\nobj=new %s%s(",clname,OBJ_POSTFIX);
-		}
-		else if (type!=METHOD_NORMAL || returnparam.GetType()->Same((char*)"void"))
-		{
+		} else if (type!=METHOD_NORMAL || returnparam.GetType()->Same((char*)"void")) {
 			sprintf(methodcall,"\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n_paroc_obj->%s(",clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, name); 
 		} else {
 			char retdecl[1024];
@@ -1058,12 +1055,14 @@ void Method::GenerateBroker(CArrayChar &output)
 		//unmarhall and allocate memory for inpput arguments first
 		for (int j=0;j<nb;j++) {
 			Param &p=*(params[j]);
-			if (!p.InParam() /* || strcmp(p.GetType()->GetName(), "void") == 0 */) 
+			/*if(strcmp(p.GetType()->GetName(), "void") == 0)
+				printf("1DECLARE VARIABLE IS VOID\n");*/
+			if (!p.InParam()) 
 				continue;
 			char decl[1024];
+			if(p.DeclareVariable(decl,reformat[j],false))
+				output.InsertAt(-1, decl, strlen(decl));
 
-			p.DeclareVariable(decl,reformat[j],false);
-			output.InsertAt(-1, decl, strlen(decl));
 	
 			strcpy(str,"__paroc_buf");
 			if (p.marshalProc!=NULL && !have_memspool) {
@@ -1077,10 +1076,10 @@ void Method::GenerateBroker(CArrayChar &output)
 		//Then, declare and alloc mem  for output-only arguments
 
 		for (int j=0;j<nb;j++) {
+		
 			Param &p=*(params[j]);
-			if (!p.InParam() /* && strcmp(p.GetType()->GetName(), "void") != 0 */) {
+			if (!p.InParam()  /*&& strcmp(p.GetType()->GetName(), "void") != 0 */) {
 				char decl[1024];
-	
 				p.DeclareVariable(decl,reformat[j],true);
 				output.InsertAt(-1, decl, strlen(decl));
 			}
@@ -1093,11 +1092,14 @@ void Method::GenerateBroker(CArrayChar &output)
 		} 
 
 		strcat(methodcall,");");
-
 		// Add 'catch' to catch and print all std exceptions raised in the method
 		char tempcatch[256];
+		for (int i=0; i<256; i++)
+            tempcatch[i]='\0';
+
 		sprintf(tempcatch,"\n}\ncatch(std::exception& e) {rprintf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
 		strcat(methodcall,tempcatch); 
+		
 
 
 		//now....generate the call...
