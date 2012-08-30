@@ -173,14 +173,10 @@ void POPCSearchNode::unlockDiscovery(POPString reqid){
 try{
 	// Get the request identifier to unlock the right sempahore
 	std::string _reqid = reqid.GetString();
-	// Acquire the lock to access common resource
-   requestSemMapLock.lock();
    // Post the semaphore to unlock the resource discovery	
 	sem_post(reqsem[_reqid]);
    // Log 
 	popc_logger(DEBUG, "[PSN] Unlocked by timer: %s", _reqid.c_str());   
-	// Release the lock
-   requestSemMapLock.unlock();	
 } catch(...) {
 	popc_logger(ERROR, "[PSN] Exception caught in unlockDisc");
 }
@@ -244,10 +240,8 @@ try {
 			popc_logger(DEBUG, "[PSN] SEMFAILED TO OPEN (DARWIN)");   
 		std::string sem_name_reqid(req.getUniqueId().GetString());
 		
-	   requestSemMapLock.lock();
 		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   
 		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d", reqsem.size());					
-	   requestSemMapLock.unlock();		
 			
 #else	// Handle normal semaphore
 		sem_t linux_sem;
@@ -257,10 +251,9 @@ try {
      		popc_logger(ERROR, "[PSN] SEMFAILED TO OPEN (LINUX)");
 		}
 		std::string sem_name_reqid(req.getUniqueId().GetString());
-	   requestSemMapLock.lock();
+
 		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   
 		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d", reqsem.size());					
-	   requestSemMapLock.unlock();
 #endif
 
 
@@ -275,9 +268,7 @@ try {
 #ifdef __APPLE__
 		sem_unlink(semname.str().c_str());
 #endif
-	   requestSemMapLock.lock();
 		reqsem.erase(sem_name_reqid);
-	   requestSemMapLock.unlock();		
 		current_sem = NULL;
 	} else {
 		sleep(timeout);
@@ -476,12 +467,10 @@ try{
       
 	// Unlock the semaphore for this request   
 	std::string _reqid = resp.getReqUniqueId().GetString();
-	requestSemMapLock.lock();
    if(reqsem[_reqid] != NULL){
    	popc_logger(DEBUG, "[PSN] CALLBACK UNLOCK SEMAPHORE");   
       sem_post(reqsem[_reqid]);
    }
-   requestSemMapLock.unlock();
   } catch(...) {
 	popc_logger(ERROR, "[PSN] Exception caught in callback");
 } 

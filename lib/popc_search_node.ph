@@ -134,7 +134,6 @@ protected:
   	list<POPString> knownRequests; 			// already-asked requests
    map<POPString, POPCSearchNodeInfos> actualReq;     // own actual requests
    POPSynchronizer actualReqSyn;  			// sync. for actual req.
-   POPSynchronizer requestSemMapLock;  			// sync. for actual req.
    
    // internal method returning a list of neighbors
    conc sync list<POPString> getNeighbors();
