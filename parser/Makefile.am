@@ -7,7 +7,6 @@ LEX=@LEX@
 
 bin_PROGRAMS = popcpp popcc
 
-CXXFLAGS=-O3
 
 popcpp_SOURCES = parser.cc parser_common.cc parser_common.h codefile.cc othercode.cc classmember.cc class.cc packobject.cc \
  parser.tab.cc parser.yy.cc parser.h parser.tab.h parser_common.h type.h\
