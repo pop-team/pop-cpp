@@ -192,54 +192,67 @@ public:
    /* End */
 
 	~JobMgr();  //Method ID 11
-	
-	async seq  virtual void CancelReservation([in, size=howmany] int *req, int howmany); //17
-	async seq  void dump();
-	async seq void SelfRegister();
-	
-   //Method to get and set the POPCSecurityManager reference
-   async seq void setPSMRef(paroc_accesspoint secmgr);
-   
-	// Returns information about the job manager : power, jobs, ...
-	sync seq virtual int Query([in] const POPString &type, [out] POPString &val); 
 
+	conc async void RegisterNode([in] const paroc_accesspoint &url);  //Method ID 12
+	
 
 	/**
-	 * Concurrent method
+	 * @brief Returns information about the job manager : power, jobs, ...
+	 * @param type input
+	 * @param val output
 	 */
+	sync seq virtual int Query([in] const POPString &type, [out] POPString &val); //Method ID 13
+
+//Global service...
+	sync conc virtual int CreateObject(paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts,  int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts); //Method ID 14
 
 
-	//Global service...
-	sync seq virtual int CreateObject(paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts,  int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts); 
-	sync conc virtual bool  AllocResource(const paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, [in,out, size=howmany] float *fitness, [in,out, size=howmany] paroc_accesspoint *jobcontacts, [in,out, size=howmany] int *reserveIDs, [in] int requestInfo[3], [in] int trace[MAX_HOPS], [in] int tracesize); 
+	sync conc virtual bool  AllocResource(const paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, [in,out, size=howmany] float *fitness, [in,out, size=howmany] paroc_accesspoint *jobcontacts, [in,out, size=howmany] int *reserveIDs, [in] int requestInfo[3], [in] int trace[MAX_HOPS], [in] int tracesize); //method ID 15
 
-	async conc void RegisterNode([in] const paroc_accesspoint &url);  
+   /**
+    * ViSaG : clementval
+    * Reserve the resource. Add the POPAppID for the reservation
+    * @param od The Object Description for the parallel object requierments
+    * @param inoutfitness The fitness computed for this resource
+    * @param popAppID The POP Application ID
+    * @return The reservation ID
+    */
+	sync conc virtual int Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId, POPString reqID); //16
 
-	// Reserve the resource. Add the POPAppID for the reservation
-	sync conc virtual int Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId, POPString reqID);
-	sync conc virtual int ExecObj(const POPString &objname, const paroc_od &od, int howmany, [in, size=howmany] int *reserveIDs, const paroc_accesspoint &localservice,  [out, size=howmany] paroc_accesspoint *objcontacts);
+	seq async virtual void CancelReservation([in, size=howmany] int *req, int howmany); //17
 
+	conc sync virtual int ExecObj(const POPString &objname, const paroc_od &od, int howmany, [in, size=howmany] int *reserveIDs, const paroc_accesspoint &localservice,  [out, size=howmany] paroc_accesspoint *objcontacts);
 
-	
-	//Allow the unregistration of a specific node
-	async conc void UnregisterNode([in] const paroc_accesspoint &url);
-	
-   //Method called when an application is finished
-   async conc virtual void ApplicationEnd(POPString popAppId, bool initiator);	
-
-
-	//Return the access point for the local POPCSearchNode parclass
-	sync conc paroc_accesspoint GetNodeAccessPoint();
-   
-   sync conc virtual paroc_accesspoint getPSMRef();
-	
-
+	seq async void dump();
 
 	virtual void Start();
 
+	async void SelfRegister();
 
+ //  async conc virtual void ApplicationEnd(POPString popAppId);
    
-   
+	//Added by clementval
+
+	//Return the access point for the local POPCSearchNode parclass
+	conc sync paroc_accesspoint GetNodeAccessPoint();
+
+	//Allow the unregistration of a specific node
+	conc async void UnregisterNode([in] const paroc_accesspoint &url);
+
+
+   /**   
+    * ViSaG : clementval
+    * Method called when an application is finished
+    */
+   async conc virtual void ApplicationEnd(POPString popAppId, bool initiator);
+	//End of add
+
+     /**
+    * ViSaG : clementval
+    * Method to get and set the POPCSecurityManager reference
+    */
+   async seq void setPSMRef(paroc_accesspoint secmgr);
+   sync conc virtual paroc_accesspoint getPSMRef();
 
 	classuid(15);
 protected:
@@ -314,9 +327,6 @@ protected:
 
    paroc_accesspoint _localPSN;  //reference to the local POPCSearchNode
    paroc_accesspoint _localPSM;  //reference to the local POPCSecurityManager
-   
-private: 
-	POPSynchronizer reserveLock;   
 
 };
 
