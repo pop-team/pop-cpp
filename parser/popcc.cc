@@ -59,7 +59,11 @@ void Usage()
 	fprintf(stderr,"   -noclean:            	Do not clean temporary files\n");
 	fprintf(stderr,"   -no-warning:          	Do not print warning on stdout\n");	
 	fprintf(stderr,"   -no-implicit-pack:   	Do not pack parclass implicitly if no @pack directive is present\n");
-	fprintf(stderr,"   -no-async-allocation:	Do not use asynchronous mechanism to allocate a parallel object\n");			
+	
+	/**
+	 * TO BE REMOVED FOR 2.5 RELEASE BUT KEEP FOR 3.0
+	 *	fprintf(stderr,"   -no-async-allocation:	Do not use asynchronous mechanism to allocate a parallel object\n");			
+	 */
 	fprintf(stderr,"   -verbose:            	Print out additional information\n");
 	fprintf(stderr,"   -nopipe:             	Do not use pipe during compilation phases ( create _paroc2_ files )\n");
 	fprintf(stderr,"   -version:            	Display the installed version of POP-C++\n");
