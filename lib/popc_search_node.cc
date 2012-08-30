@@ -219,9 +219,7 @@ try {
     actualReq[req.getUniqueId()] = nInfos;
     actualReqSyn.unlock();
     
-    // begin resources discovery locally
-    paroc_accesspoint dummy;
-    askResourcesDiscovery(req, GetAccessPoint(), GetAccessPoint(), dummy);
+
     
 	popc_logger(DEBUG, "[PSN] Resource discovery timeout: %d", timeout);    
    // wait until timeout or 1st answer
@@ -232,15 +230,19 @@ try {
 		sem_t* current_sem; // Creating new semaphore pointer for the current request
 		// Defining name for the named semaphore
 		std::stringstream semname;
-		semname << "_popc_reqid" << getNextSemCounter();
+		semname << "/_popc_reqid" << getNextSemCounter();
 		
 		// Opening the semaphore before launching the unlocker thread
-   	if((current_sem = sem_open(semname.str().c_str(), O_CREAT, 0644, 0)) == SEM_FAILED)
+   	if((current_sem = sem_open(semname.str().c_str(), O_CREAT, S_IRUSR | S_IWUSR, 0)) == SEM_FAILED){
 			popc_logger(DEBUG, "[PSN] SEMFAILED TO OPEN (DARWIN)");   
+		}	
 			
 		std::string sem_name_reqid(req.getUniqueId().GetString());
-		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   
-		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d", reqsem.size());					
+		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem)); 
+
+	   if(reqsem[sem_name_reqid.c_str()] == NULL)
+	   	popc_logger(ERROR, "[PSN] SEMAPHORE IS NOT IN THE MAP");   
+		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d, %s", reqsem.size(), sem_name_reqid.c_str());					
 			
 /*#else	// Handle normal semaphore
 		sem_t linux_sem;
@@ -255,6 +257,10 @@ try {
 		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d", reqsem.size());					
 #endif*/
 
+    	// begin resources discovery locally
+    	paroc_accesspoint dummy;
+    	askResourcesDiscovery(req, GetAccessPoint(), GetAccessPoint(), dummy);
+
 
 		// Starting a timed thread to be able to unlock the resource discovery after a certain time
 		NodeThread *timer = new NodeThread(UNLOCK_TIMEOUT, GetAccessPoint(), req.getUniqueId().GetString());
@@ -264,12 +270,16 @@ try {
 				popc_logger(ERROR, " [PSN] SEMAPHOR: The semaphor couldn't not be blocked");
 		}
 		timer->stop();
+		sem_unlink(semname.str().c_str());
 /*#ifdef __APPLE__
 		sem_unlink(semname.str().c_str());
 #endif*/
 		reqsem.erase(sem_name_reqid);
 		current_sem = NULL;
 	} else {
+    	// begin resources discovery locally
+    	paroc_accesspoint dummy;
+    	askResourcesDiscovery(req, GetAccessPoint(), GetAccessPoint(), dummy);	
 		sleep(timeout);
 	}
     
@@ -469,7 +479,9 @@ try{
    if(reqsem[_reqid] != NULL){
    	popc_logger(DEBUG, "[PSN] CALLBACK UNLOCK SEMAPHORE");   
       sem_post(reqsem[_reqid]);
-   }
+   } else {
+		popc_logger(DEBUG, "[PSN] SEMAPHORE IS NULL UNABLE TO UNLOCK %s", _reqid.c_str()); 
+	}
   } catch(...) {
 	popc_logger(ERROR, "[PSN] Exception caught in callback");
 } 
