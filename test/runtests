@@ -1,29 +1,42 @@
 #!/bin/bash 
 
+RESULTS=tests_results
+NUMBEROFTEST=0
+NUMBEROFSUCCESS=0
 
 if [ "$1" = "-all" ]
 then
 	echo ""
 	echo Starting test suite...
 	echo ""
-	for test in `ls -d */`
-
+	rm -rf $RESULTS
+	for test in `ls -F -d * | grep -v asynccreation | grep -v runtests | grep -v runtests_short`
 	do
 		echo "---------------------------------------------------------------------------"
 		echo "*** $test test ***"
 		echo "---------------------------------------------------------------------------"
 		cd $test
+		rm -rf $RESULTS
+		((NUMBEROFTEST++))
 		make clean
 		make 
 		make run
+		if [ "$?" = "0" ]
+		then 
+			echo "$test succeed" >> ../$RESULTS
+			((NUMBEROFSUCCESS++))
+		else 
+			echo "$test failed" >> ../$RESULTS			
+		fi
 		make clean
 		cd ..
 		echo ""
 	done
-	echo ""
-	echo End test suite...
-	echo ""
-
+	echo "---------------------------------------------------------------------------"
+	echo "*** TEST SUITE COMPLETED: RESULTS ARE SHOWN BELOW ***"
+	echo "---------------------------------------------------------------------------"
+	cat $RESULTS
+	echo "$NUMBEROFSUCCESS succeed on $NUMBEROFTEST"
 else
 	if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]
 	then
