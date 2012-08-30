@@ -235,11 +235,10 @@ try {
 		semname << "_popc_reqid" << getNextSemCounter();
 		
 		// Opening the semaphore before launching the unlocker thread
-   	current_sem = sem_open(semname.str().c_str(), O_CREAT, 0, 0);	
-		if(current_sem == SEM_FAILED)
+   	if((current_sem = sem_open(semname.str().c_str(), O_CREAT, 0644, 0)) == SEM_FAILED)
 			popc_logger(DEBUG, "[PSN] SEMFAILED TO OPEN (DARWIN)");   
+			
 		std::string sem_name_reqid(req.getUniqueId().GetString());
-		
 		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   
 		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d", reqsem.size());					
 			
