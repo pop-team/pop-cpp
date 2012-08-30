@@ -182,6 +182,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <vector>
+#include <list>
+#include <set>
 
 #include "parser.h"
 #include "paroc_utils.h"
@@ -324,7 +326,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 328 "parser.tab.c"
+#line 330 "parser.tab.c"
 
 #ifdef short
 # undef short
@@ -704,28 +706,28 @@ static const yytype_int16 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   143,   143,   145,   155,   157,   156,   162,   163,   164,
-     165,   166,   170,   173,   276,   284,   297,   310,   326,   336,
-     353,   365,   363,   389,   391,   399,   403,   404,   415,   427,
-     440,   448,   454,   491,   500,   501,   504,   507,   535,   536,
-     545,   587,   617,   641,   672,   677,   679,   696,   697,   701,
-     702,   705,   725,   746,   758,   779,   809,   830,   838,   847,
-     886,   887,   890,   891,   894,   908,   923,   940,   959,   963,
-     967,   975,   978,   987,   988,   989,   989,   993,   994,   995,
-     996,   996,   996,  1013,  1022,  1027,  1038,  1049,  1053,  1060,
-    1064,  1075,  1077,  1078,  1081,  1107,  1110,  1114,  1126,  1130,
-    1138,  1142,  1148,  1159,  1175,  1194,  1200,  1213,  1220,  1229,
-    1302,  1306,  1315,  1318,  1325,  1328,  1338,  1339,  1340,  1343,
-    1344,  1350,  1366,  1375,  1384,  1397,  1527,  1534,  1541,  1548,
-    1555,  1563,  1563,  1570,  1570,  1580,  1584,  1630,  1634,  1638,
-    1642,  1646,  1650,  1657,  1661,  1665,  1669,  1677,  1680,  1684,
-    1688,  1692,  1698,  1710,  1713,  1720,  1724,  1741,  1757,  1772,
-    1865,  1868,  1876,  1877,  1879,  1880,  1883,  1947,  1950,  1956,
-    1960,  1966,  1970,  1974,  1979,  1988,  1991,  1995,  2002,  2005,
-    2012,  2015,  2028,  2037,  2041,  2045,  2050,  2055,  2060,  2065,
-    2070,  2075,  2080,  2085,  2090,  2095,  2100,  2105,  2110,  2115,
-    2120,  2125,  2130,  2135,  2140,  2145,  2150,  2156,  2161,  2166,
-    2171,  2178,  2182,  2188,  2192,  2200,  2204
+       0,   145,   145,   147,   157,   159,   158,   164,   165,   166,
+     167,   168,   172,   175,   361,   368,   381,   394,   410,   420,
+     437,   449,   447,   473,   475,   483,   487,   488,   499,   511,
+     524,   532,   538,   575,   584,   585,   588,   591,   619,   620,
+     629,   671,   701,   725,   756,   761,   763,   780,   781,   785,
+     786,   789,   801,   813,   825,   837,   854,   875,   883,   892,
+     931,   932,   935,   936,   939,   953,   968,   985,  1004,  1008,
+    1012,  1020,  1023,  1032,  1033,  1034,  1034,  1038,  1039,  1040,
+    1041,  1041,  1041,  1058,  1067,  1072,  1083,  1094,  1098,  1105,
+    1109,  1120,  1122,  1123,  1126,  1152,  1155,  1159,  1171,  1175,
+    1183,  1187,  1193,  1204,  1220,  1239,  1245,  1258,  1265,  1274,
+    1347,  1351,  1360,  1363,  1370,  1373,  1383,  1384,  1385,  1388,
+    1389,  1395,  1411,  1420,  1429,  1442,  1572,  1579,  1586,  1593,
+    1600,  1608,  1608,  1615,  1615,  1625,  1629,  1675,  1679,  1683,
+    1687,  1691,  1695,  1702,  1706,  1710,  1714,  1722,  1725,  1729,
+    1733,  1737,  1743,  1755,  1758,  1765,  1769,  1786,  1802,  1817,
+    1910,  1913,  1921,  1922,  1924,  1925,  1928,  1992,  1995,  2001,
+    2005,  2011,  2015,  2019,  2024,  2033,  2036,  2040,  2047,  2050,
+    2057,  2060,  2073,  2082,  2086,  2090,  2095,  2100,  2105,  2110,
+    2115,  2120,  2125,  2130,  2135,  2140,  2145,  2150,  2155,  2160,
+    2165,  2170,  2175,  2180,  2185,  2190,  2195,  2201,  2206,  2211,
+    2216,  2223,  2227,  2233,  2237,  2245,  2249
 };
 #endif
 
@@ -1996,7 +1998,7 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 145 "parser.y"
+#line 147 "parser.y"
     {
 	if (othercodes.GetSize()) {
 		assert(thisCodeFile!=NULL);
@@ -2009,7 +2011,7 @@ yyreduce:
     break;
 
   case 5:
-#line 157 "parser.y"
+#line 159 "parser.y"
     { 
 	insideClass=false; 
 	othercodes.SetSize(0); 
@@ -2018,48 +2020,98 @@ yyreduce:
     break;
 
   case 11:
-#line 167 "parser.y"
+#line 169 "parser.y"
     {
 	CleanStack(); 
 }
     break;
 
   case 13:
-#line 174 "parser.y"
+#line 176 "parser.y"
     {
-	if(isImplicitPackEnable){      
-		/* The following code handles the implicit @pack directive if it's not specified by the developer */
+	
+
+	
+	if(isImplicitPackEnable){     
+	 
+		/** 
+		 * The following code handles the implicit @pack directive if it's not specified by the developer 
+		 * Algo for implicit pack
+		 * 1. Look for all included .ph file in the current file
+		 * 2. For all .ph file find the parclass(s) included in it
+		 * 3. Match the found parclass(s) with the code in the current file (ParClassName::). If match, put in pack directive
+		 */
+		 
+		
+		/** 
+		 * Perform this task only on file with implementation (.C, .cc, .cpp, .cp, .cxx, .c++, .CPP)
+		 * Find the extension of the file in the current C++ extension 
+		 */
 		std::string fname(filename);
 				
 		std::size_t cc = fname.find(".cc");
 		std::size_t cpp = fname.find(".cpp");
-		std::size_t cxx = fname.find(".cxx");			
+		std::size_t cp = fname.find(".cp");		
+		std::size_t cxx = fname.find(".cxx");	
+		std::size_t cplusplus = fname.find(".c++");	
+		std::size_t CPP = fname.find(".CPP");	
+		std::size_t C = fname.find(".C");	
 			
-		if((cc != std::string::npos || cpp != std::string::npos || cxx != std::string::npos) && !isParclassDeclared){	
-			std::size_t pos;		
-			if(cc != std::string::npos){
-				pos = cc;
-			} else if (cpp != std::string::npos){ // Extension is
-				pos = cpp;				
-			} else if (cxx != std::string::npos){	// Extension is .cxx
-				pos = cxx;
-			}
+		if((cc != std::string::npos || cpp != std::string::npos || cxx != std::string::npos || cp != std::string::npos || cplusplus != std::string::npos 
+			|| CPP != std::string::npos || C != std::string::npos) && !isParclassDeclared){	
 				
-			// Try to find the according .ph file
-			std::string ph_file(fname);
-			std::string ph_extension(".ph");
-					ph_file.replace(pos, std::string::npos, ph_extension);
-					// Check if file exists
-					std::fstream ph_real_file;
-					ph_real_file.open(ph_file.c_str(), std::ios_base::out | std::ios_base::in);
+			/**
+			 * Find all .ph files included in the current file
+			 */
+			 
+			// Create a list to store all .ph files' name
+			std::list<std::string> ph_files; 
+			 
+			std::fstream cc_real_file; 
+			cc_real_file.open(fname.c_str(), std::ios_base::out | std::ios_base::in);
+
+			if (cc_real_file.is_open()){
+				// Find name of the parclass
+				char line[512]; 
+				bool notEOF = true;
+				while (notEOF){
+					cc_real_file.getline(line, 512);
+					if(cc_real_file.eof()){
+						notEOF = false;
+						cc_real_file.close();
+					} else {
+						// Get the next line
+						std::string str_line(line);
+						// Find a .ph include in the current file
+						std::size_t ph_extension_pos = str_line.find(".ph"); 
+						if(ph_extension_pos != std::string::npos){
+							std::size_t ph_file_name_start = str_line.rfind('"', ph_extension_pos);
+							std::string ph_file_name = str_line.substr(ph_file_name_start+1, (ph_extension_pos-ph_file_name_start)+2);
+							// Save the .ph file found
+							ph_files.push_back(ph_file_name);
+						}
+					}
+				}
+			}	
+			
+			
+			if(!ph_files.empty()){
+				/**
+				 * Find all the parclass declared in the .ph files found before. 
+				 */
+				std::list<std::string> parclass_names;
+				std::list<std::string>::iterator it;
+				for(it=ph_files.begin(); it != ph_files.end(); it++) {
+					std::fstream ph_real_file;			
+					ph_real_file.open((*it).c_str(), std::ios_base::out | std::ios_base::in);				
 					if (ph_real_file.is_open()){
 						// Find name of the parclass
-						char line[256]; 
-						bool notFound = true;
-						while (notFound){
-							ph_real_file.getline(line, 256);
+						char line[512]; 
+						bool notEOF = true;
+						while (notEOF){
+							ph_real_file.getline(line, 512);
 							if(ph_real_file.eof()){
-								notFound = false;
+								notEOF = false;
 								ph_real_file.close();
 							} else {
 								std::string str_line(line);
@@ -2071,74 +2123,106 @@ yyreduce:
 										parclass_name_stop = str_line.find(";", parclass_name_start+1); 
 									if(parclass_name_stop == std::string::npos)
 										parclass_name_stop = str_line.find("{", parclass_name_start+1); 																	
-									if(parclass_name_stop == std::string::npos)								
+									if(parclass_name_stop == std::string::npos)						
 										parclass_name_stop = str_line.find("\n", parclass_name_start+1); 		
 									if(parclass_name_stop != std::string::npos && parclass_name_start != std::string::npos){
 										std::string parclass_name = str_line.substr(parclass_name_start, (parclass_name_stop - parclass_name_start));
-
-										notFound = false; 
-										ph_real_file.close();
-
-
-										/* Same code as "pack_header" */
-										if (othercodes.GetSize() && startPos>0) {
-											assert(thisCodeFile!=NULL);
-											OtherCode *dat=new OtherCode(thisCodeFile);
-											dat->AddCode((char *)othercodes,startPos);
-											thisCodeFile->AddCodeData(dat);
-											othercodes.SetSize(0);
-										}  
-										startPos=-1;
-										currentPack=new PackObject(thisCodeFile);
-										currentPack->SetStartLine(linenumber-1);
-										thisCodeFile->AddCodeData(currentPack); 
-										//parclass_name.erase(std::remove_if(parclass_name.begin(), parclass_name.end(), isspace), parclass_name.end());
+										// Removed possible withespaces from the parclass name
 										for(int i=0; i < parclass_name.length(); i++){
 											if(parclass_name[i] == ' '){
 												parclass_name.erase(i, 1);
 												i--;
 											}
 										}
-										char * objname = new char[parclass_name.size() + 1];
-										std::copy(parclass_name.begin(), parclass_name.end(), objname);
-										objname[parclass_name.size()] = '\0';
-										if (currentPack!=NULL) {
-											currentPack->AddObject(objname);
-										}
-
-										isParclassDeclared = true; 
-										currentPack->SetEndLine(linenumber-1);
-										currentPack=NULL;
-										othercodes.SetSize(0);
-										startPos=-1;
-										
-										// Ok file exists, so we will find the parclass name and add the pack directive with it
-										if(isWarningEnable){
-											std::cout << filename << ":" << linenumber << ": Warning: No @pack directive for class: " << objname << ", @pack(" << objname << ") is assumed";
-											std::cout << ph_file << std::endl;
-																
-										}
-										delete [] objname;										
+										// Save the parclass's name found
+										parclass_names.push_back(parclass_name);
 									}
+								}
+							}	
+						}			
+					}
+				}	
+				/**
+				 * Find implementation of the found parclass in the current file
+				 */
+				std::set<std::string> matched_parclasses;			
+				cc_real_file.open(fname.c_str(), std::ios_base::out | std::ios_base::in);
+				if (cc_real_file.is_open()){
+					// Find name of the parclass
+					char line[512]; 
+					bool notEOF = true;
+					while (notEOF){
+						cc_real_file.getline(line, 512);
+						if(cc_real_file.eof()){
+							notEOF = false;
+							cc_real_file.close();
+						} else {
+							// Get the next line
+							std::string str_line(line);
+							std::list<std::string>::iterator it;
+							for(it=parclass_names.begin(); it != parclass_names.end(); it++) {
+								std::string prefix = (*it);
+								prefix.append("::");
+								std::size_t pos = str_line.find(prefix);
+								if(pos != std::string::npos){
+									// Saved the matched parclass in a set
+									matched_parclasses.insert((*it));
 								}
 							}
 						}
 					}
 				}	
-			}	
+			
+				if(!matched_parclasses.empty()){
+					// Implict add the pack directive
+					if (othercodes.GetSize() && startPos>0) {
+						assert(thisCodeFile!=NULL);
+						OtherCode *dat=new OtherCode(thisCodeFile);
+						dat->AddCode((char *)othercodes,startPos);
+						thisCodeFile->AddCodeData(dat);
+						othercodes.SetSize(0);
+					}  
+					startPos=-1;
+					currentPack=new PackObject(thisCodeFile);
+					currentPack->SetStartLine(linenumber-1);
+					thisCodeFile->AddCodeData(currentPack); 
+					std::set<std::string>::iterator it;
+					for(it=matched_parclasses.begin() ; it != matched_parclasses.end(); it++ ){
+						if (currentPack!=NULL) {
+
+							char * objname = new char[(*it).size() + 1];
+							std::copy((*it).begin(), (*it).end(), objname);
+							objname[(*it).size()] = '\0';
+							currentPack->AddObject(objname);
+							// Ok file exists, so we will find the parclass name and add the pack directive with it
+							if(isWarningEnable){
+								std::cout << filename << ":" << linenumber << ": Warning: No @pack directive for class: " << objname;
+								std::cout << ", @pack(" << objname << ") is assumed..." << std::endl;
+							}							
+							delete [] objname;
+						}
+					}
+					isParclassDeclared = true; 
+					currentPack->SetEndLine(linenumber-1);
+					currentPack=NULL;
+					othercodes.SetSize(0);
+					startPos=-1;
+				}
+			}
+		}
+	}	
 }
     break;
 
   case 14:
-#line 277 "parser.y"
+#line 362 "parser.y"
     {
-	printf("handle at Bison\n");
 	othercodes.InsertAt(-1,"\n",strlen("\n"));
 }
     break;
 
   case 15:
-#line 285 "parser.y"
+#line 369 "parser.y"
     {
   startPos=-1;
   insideClass=false;
@@ -2154,7 +2238,7 @@ yyreduce:
     break;
 
   case 16:
-#line 298 "parser.y"
+#line 382 "parser.y"
     {
   startPos=-1;
   insideClass=false;
@@ -2170,7 +2254,7 @@ yyreduce:
     break;
 
   case 17:
-#line 311 "parser.y"
+#line 395 "parser.y"
     {
   startPos=-1;
   insideClass=false;
@@ -2187,7 +2271,7 @@ yyreduce:
     break;
 
   case 18:
-#line 327 "parser.y"
+#line 411 "parser.y"
     {
 	
 	isParclassDeclared = true; 
@@ -2199,7 +2283,7 @@ yyreduce:
     break;
 
   case 19:
-#line 337 "parser.y"
+#line 421 "parser.y"
     {
   	if (othercodes.GetSize() && startPos>0) {
       assert(thisCodeFile!=NULL);
@@ -2216,7 +2300,7 @@ yyreduce:
     break;
 
   case 20:
-#line 354 "parser.y"
+#line 438 "parser.y"
     {
   		if (currentPack!=NULL) {
 			currentPack->AddObject(GetToken((yyvsp[(1) - (2)])));
@@ -2225,7 +2309,7 @@ yyreduce:
     break;
 
   case 21:
-#line 365 "parser.y"
+#line 449 "parser.y"
     {
 	
 	// Avoid handling of standard namespace used in POP-C++
@@ -2242,7 +2326,7 @@ yyreduce:
     break;
 
   case 22:
-#line 380 "parser.y"
+#line 464 "parser.y"
     {
 	
 	isNamespace = false;
@@ -2251,26 +2335,26 @@ yyreduce:
     break;
 
   case 23:
-#line 389 "parser.y"
+#line 473 "parser.y"
     {
 }
     break;
 
   case 24:
-#line 392 "parser.y"
+#line 476 "parser.y"
     {
 }
     break;
 
   case 25:
-#line 400 "parser.y"
+#line 484 "parser.y"
     {
     CleanStack();
 }
     break;
 
   case 28:
-#line 416 "parser.y"
+#line 500 "parser.y"
     {
 	
 	sprintf(tmp,"Class declaration inside parclass are not currently supported in POP-C++ !\n");
@@ -2282,7 +2366,7 @@ yyreduce:
     break;
 
   case 29:
-#line 427 "parser.y"
+#line 511 "parser.y"
     {
 	sprintf(tmp,"Use of static member inside parclass is not currently supported in POP-C++!\n");
 	
@@ -2293,7 +2377,7 @@ yyreduce:
     break;
 
   case 30:
-#line 441 "parser.y"
+#line 525 "parser.y"
     {
   	currentstruct=Pop();
   	if (currentstruct!=NULL) currentstruct->SetTypeClass(false);
@@ -2304,7 +2388,7 @@ yyreduce:
     break;
 
   case 31:
-#line 449 "parser.y"
+#line 533 "parser.y"
     {
   currentstruct=Pop();
   (yyval)=(yyvsp[(1) - (2)]);
@@ -2312,7 +2396,7 @@ yyreduce:
     break;
 
   case 32:
-#line 455 "parser.y"
+#line 539 "parser.y"
     {
 	
 	if(currentClass!=NULL){
@@ -2352,7 +2436,7 @@ yyreduce:
     break;
 
   case 33:
-#line 492 "parser.y"
+#line 576 "parser.y"
     {
   TypeClassStruct *t=new TypeClassStruct(NULL,false);
   thisCodeFile->AddDataType(t);
@@ -2362,7 +2446,7 @@ yyreduce:
     break;
 
   case 37:
-#line 508 "parser.y"
+#line 592 "parser.y"
     {
 	// Save the attribute in the Strcuture object to be able to produce code
 	if(structContainer!=NULL) {
@@ -2391,7 +2475,7 @@ yyreduce:
     break;
 
   case 40:
-#line 546 "parser.y"
+#line 630 "parser.y"
     {
 	if(currentClass!=NULL){
 			
@@ -2436,7 +2520,7 @@ yyreduce:
     break;
 
   case 41:
-#line 588 "parser.y"
+#line 672 "parser.y"
     {
 	if(insideClass){
 		sprintf(tmp,"typedef definition with structure inside a parclass is not currently supported !\n");
@@ -2469,7 +2553,7 @@ yyreduce:
     break;
 
   case 42:
-#line 618 "parser.y"
+#line 702 "parser.y"
     {
   char *orgtype=GetToken((yyvsp[(3) - (6)]));
   DataType *type=thisCodeFile->FindDataType(orgtype);
@@ -2496,7 +2580,7 @@ yyreduce:
     break;
 
   case 43:
-#line 642 "parser.y"
+#line 726 "parser.y"
     {
 	if(insideClass){
 		sprintf(tmp,"typedef definition with structure inside a parclass is not currently supported !\n");
@@ -2525,7 +2609,7 @@ yyreduce:
     break;
 
   case 44:
-#line 673 "parser.y"
+#line 757 "parser.y"
     {
 	if (seqclass!=NULL) 
 		seqclass->SetTypeClass(true);
@@ -2533,7 +2617,7 @@ yyreduce:
     break;
 
   case 46:
-#line 680 "parser.y"
+#line 764 "parser.y"
     {
 	DataType *t=thisCodeFile->FindDataType(GetToken((yyvsp[(2) - (2)])));
 	if (t==NULL) {
@@ -2552,7 +2636,7 @@ yyreduce:
     break;
 
   case 51:
-#line 706 "parser.y"
+#line 790 "parser.y"
     {
 	assert(seqclass!=NULL);
 	TypeClassStruct *seqbase;
@@ -2561,21 +2645,13 @@ yyreduce:
 		seqbase=new TypeClassStruct(GetToken((yyvsp[(1) - (1)])), true);
 		seqclass->AddBase(seqbase);  
 	} else if (!t->IsStandardType()) {
-      /*      seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL) {
-			char tmp[256];
-			sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($1));
-			errormsg(tmp);
-			exit(1);
-		}
-      */
       seqclass->AddBase(t);
 	}
 }
     break;
 
   case 52:
-#line 726 "parser.y"
+#line 802 "parser.y"
     {
 	assert(seqclass!=NULL);
 	TypeClassStruct *seqbase;
@@ -2584,22 +2660,13 @@ yyreduce:
 		seqbase=new TypeClassStruct(GetToken((yyvsp[(2) - (2)])), true);
       seqclass->AddBase(seqbase);  
 	} else  if (!t->IsStandardType()) {
-      /*
-      seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL) {
-			char tmp[256];
-			sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($2));
-			errormsg(tmp);
-			exit(1);
-		}
-      */
 		seqclass->AddBase(t);
 	}
 }
     break;
 
   case 53:
-#line 747 "parser.y"
+#line 814 "parser.y"
     {
 	assert(seqclass!=NULL);
 	TypeClassStruct *seqbase;
@@ -2614,7 +2681,7 @@ yyreduce:
     break;
 
   case 54:
-#line 759 "parser.y"
+#line 826 "parser.y"
     {
 	assert(seqclass!=NULL);
 	TypeClassStruct *seqbase;
@@ -2623,49 +2690,28 @@ yyreduce:
 		seqbase=new TypeClassStruct(GetToken((yyvsp[(3) - (3)])), true);
 		seqclass->AddBase(seqbase);  
 	} else  if (!t->IsStandardType()) {
-      /*
-		seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL) {
-			char tmp[256];
-			sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($3));
-			errormsg(tmp);
-			exit(1);
-		}
-      */
       seqclass->AddBase(t);
 	}
 }
     break;
 
   case 55:
-#line 780 "parser.y"
+#line 838 "parser.y"
     {
-  assert(seqclass!=NULL);
-  TypeClassStruct *seqbase;
-  DataType *t=thisCodeFile->FindDataType(GetToken((yyvsp[(3) - (3)])));
-  if (t==NULL)
-    {
-      seqbase=new TypeClassStruct(GetToken((yyvsp[(3) - (3)])), true);
-      seqclass->AddBase(seqbase);
-    }
-  else  if (!t->IsStandardType())
-    {
-      /*      seqbase=dynamic_cast<TypeClassStruct *>(t);
-      if (seqbase==NULL)
-	{
-	  char tmp[256];
-	  sprintf(tmp,"base class %s has been declared as non-class data type", GetToken($3));
-	  errormsg(tmp);
-	  exit(1);
-	}
-      */
+	assert(seqclass!=NULL);
+	TypeClassStruct *seqbase;
+	DataType *t=thisCodeFile->FindDataType(GetToken((yyvsp[(3) - (3)])));
+	if (t==NULL) {
+		seqbase=new TypeClassStruct(GetToken((yyvsp[(3) - (3)])), true);
+		seqclass->AddBase(seqbase);
+	} else  if (!t->IsStandardType()) {
       seqclass->AddBase(t);
-    }
+	}
 }
     break;
 
   case 56:
-#line 810 "parser.y"
+#line 855 "parser.y"
     {
   assert(currentClass!=NULL);
   sprintf(tmp,"class %s;",currentClass->GetName());
@@ -2683,7 +2729,7 @@ yyreduce:
     break;
 
   case 57:
-#line 831 "parser.y"
+#line 876 "parser.y"
     {
   currentClass->SetEndLine(linenumber);
   currentClass=NULL;
@@ -2692,7 +2738,7 @@ yyreduce:
     break;
 
   case 58:
-#line 839 "parser.y"
+#line 884 "parser.y"
     {
   accessmodifier=PUBLIC;
   if ((yyvsp[(2) - (3)])) currentClass->SetPureVirtual(true);
@@ -2702,7 +2748,7 @@ yyreduce:
     break;
 
   case 59:
-#line 848 "parser.y"
+#line 893 "parser.y"
     {
 	hadParclass = true; 
 	if (othercodes.GetSize() && startPos>0) {
@@ -2743,7 +2789,7 @@ yyreduce:
     break;
 
   case 64:
-#line 895 "parser.y"
+#line 940 "parser.y"
     {
 	assert(currentClass!=NULL);
 	Class *cl=thisCodeFile->FindClass(GetToken((yyvsp[(1) - (1)])));
@@ -2760,7 +2806,7 @@ yyreduce:
     break;
 
   case 65:
-#line 909 "parser.y"
+#line 954 "parser.y"
     {
 	assert(currentClass!=NULL);
 	AccessType accessmode=(AccessType)(yyvsp[(1) - (2)]);
@@ -2778,7 +2824,7 @@ yyreduce:
     break;
 
   case 66:
-#line 924 "parser.y"
+#line 969 "parser.y"
     {
 	assert(currentClass!=NULL);
 	AccessType accessmode=(AccessType)(yyvsp[(2) - (3)]);
@@ -2798,7 +2844,7 @@ yyreduce:
     break;
 
   case 67:
-#line 941 "parser.y"
+#line 986 "parser.y"
     {
 	assert(currentClass!=NULL);
 	AccessType accessmode=(AccessType)(yyvsp[(1) - (3)]);
@@ -2818,47 +2864,47 @@ yyreduce:
     break;
 
   case 68:
-#line 960 "parser.y"
+#line 1005 "parser.y"
     {
 	(yyval)=PRIVATE;
 }
     break;
 
   case 69:
-#line 964 "parser.y"
+#line 1009 "parser.y"
     {
 	(yyval)=PUBLIC;
 }
     break;
 
   case 70:
-#line 968 "parser.y"
+#line 1013 "parser.y"
     {
 	(yyval)=PROTECTED;
 }
     break;
 
   case 71:
-#line 975 "parser.y"
+#line 1020 "parser.y"
     {
   (yyval)=0;
 }
     break;
 
   case 72:
-#line 979 "parser.y"
+#line 1024 "parser.y"
     {
   (yyval)= (paroc_utils::isEqual(GetToken((yyvsp[(2) - (2)])), "0")) ? 1 : 0;
 }
     break;
 
   case 75:
-#line 989 "parser.y"
+#line 1034 "parser.y"
     { accessmodifier=(AccessType)(yyvsp[(1) - (1)]); }
     break;
 
   case 82:
-#line 997 "parser.y"
+#line 1042 "parser.y"
     {
 	assert(method!=NULL);
 	int t=method->CheckMarshal();
@@ -2877,7 +2923,7 @@ yyreduce:
     break;
 
   case 83:
-#line 1014 "parser.y"
+#line 1059 "parser.y"
     {
 	if (accessmodifier==PUBLIC) {
       sprintf(tmp,"%s:%d: attributes of a parallel class must be private or protected.\n",thisCodeFile->GetFileName(), linenumber);
@@ -2889,7 +2935,7 @@ yyreduce:
     break;
 
   case 84:
-#line 1023 "parser.y"
+#line 1068 "parser.y"
     {
   //  Directive *t=new Directive(currentClass, GetToken($1));
   //  currentClass->AddMember(t);
@@ -2897,14 +2943,14 @@ yyreduce:
     break;
 
   case 85:
-#line 1028 "parser.y"
+#line 1073 "parser.y"
     {
   currentClass->SetClassID(GetToken((yyvsp[(3) - (5)])));
 }
     break;
 
   case 86:
-#line 1039 "parser.y"
+#line 1084 "parser.y"
     {
 	assert(currentClass!=NULL);
 	Enumeration *t = new Enumeration(currentClass, accessmodifier);
@@ -2916,14 +2962,14 @@ yyreduce:
     break;
 
   case 87:
-#line 1050 "parser.y"
+#line 1095 "parser.y"
     {
 	(yyval) = (yyvsp[(1) - (1)]);	
 }
     break;
 
   case 88:
-#line 1054 "parser.y"
+#line 1099 "parser.y"
     {
 	sprintf(tmp,"%s , %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
 	(yyval) = PutToken(tmp);
@@ -2931,14 +2977,14 @@ yyreduce:
     break;
 
   case 89:
-#line 1061 "parser.y"
+#line 1106 "parser.y"
     {
 	(yyval) = (yyvsp[(1) - (1)]);
 }
     break;
 
   case 90:
-#line 1065 "parser.y"
+#line 1110 "parser.y"
     {      
 	sprintf(tmp,"%s = %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
    (yyval)=PutToken(tmp);
@@ -2946,7 +2992,7 @@ yyreduce:
     break;
 
   case 94:
-#line 1082 "parser.y"
+#line 1127 "parser.y"
     {
 	assert(currentClass!=NULL);
 	Attribute *t=new Attribute(currentClass,accessmodifier);
@@ -2973,21 +3019,21 @@ yyreduce:
     break;
 
   case 95:
-#line 1107 "parser.y"
+#line 1152 "parser.y"
     {
   (yyval)=-1;
 }
     break;
 
   case 96:
-#line 1111 "parser.y"
+#line 1156 "parser.y"
     {
 	(yyval)=0;
 }
     break;
 
   case 97:
-#line 1115 "parser.y"
+#line 1160 "parser.y"
     {
 	if ((yyvsp[(4) - (4)])==-1) {
 		sprintf(tmp,"[%s]",GetToken((yyvsp[(2) - (4)])));
@@ -3000,14 +3046,14 @@ yyreduce:
     break;
 
   case 98:
-#line 1127 "parser.y"
+#line 1172 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (2)]);
 }
     break;
 
   case 99:
-#line 1131 "parser.y"
+#line 1176 "parser.y"
     {
 	
 	
@@ -3016,21 +3062,21 @@ yyreduce:
     break;
 
   case 100:
-#line 1139 "parser.y"
+#line 1184 "parser.y"
     {
   (yyval)=1;  
 }
     break;
 
   case 101:
-#line 1143 "parser.y"
+#line 1188 "parser.y"
     {
   (yyval)=2;
 }
     break;
 
   case 102:
-#line 1149 "parser.y"
+#line 1194 "parser.y"
     {
 	if(isInStruct)
 		sprintf(typetmp, "%s", GetToken((yyvsp[(1) - (1)]))); // Save the type specifier for struct attribute
@@ -3044,7 +3090,7 @@ yyreduce:
     break;
 
   case 103:
-#line 1160 "parser.y"
+#line 1205 "parser.y"
     {
   currenttype=thisCodeFile->FindDataType(GetToken((yyvsp[(1) - (1)])));
   if (currenttype==NULL)
@@ -3063,7 +3109,7 @@ yyreduce:
     break;
 
   case 104:
-#line 1176 "parser.y"
+#line 1221 "parser.y"
     {
 
   TypeTemplate *type=new TypeTemplate(GetToken((yyvsp[(1) - (4)])));
@@ -3085,7 +3131,7 @@ yyreduce:
     break;
 
   case 105:
-#line 1195 "parser.y"
+#line 1240 "parser.y"
     {
   assert(currenttype!=NULL);
   currenttype=currentstruct;
@@ -3094,7 +3140,7 @@ yyreduce:
     break;
 
   case 106:
-#line 1201 "parser.y"
+#line 1246 "parser.y"
     {
   DataType *type=thisCodeFile->FindDataType(GetToken((yyvsp[(2) - (2)])));
   if (type==NULL)
@@ -3108,7 +3154,7 @@ yyreduce:
     break;
 
   case 107:
-#line 1214 "parser.y"
+#line 1259 "parser.y"
     {
   paroc_list<TemplateArgument *> *list=new paroc_list<TemplateArgument *>();
   TemplateArgument *v=(TemplateArgument *)(yyvsp[(1) - (1)]);
@@ -3118,7 +3164,7 @@ yyreduce:
     break;
 
   case 108:
-#line 1221 "parser.y"
+#line 1266 "parser.y"
     {
   paroc_list<TemplateArgument *> *list=(paroc_list<TemplateArgument *> *)(yyvsp[(3) - (3)]);
   TemplateArgument *v=(TemplateArgument *)(yyvsp[(1) - (3)]);
@@ -3128,7 +3174,7 @@ yyreduce:
     break;
 
   case 109:
-#line 1230 "parser.y"
+#line 1275 "parser.y"
     {
   TemplateArgument *t=new TemplateArgument;	
   t->type=(DataType *)(yyvsp[(1) - (4)]);
@@ -3148,7 +3194,7 @@ yyreduce:
     break;
 
   case 110:
-#line 1302 "parser.y"
+#line 1347 "parser.y"
     {
 	(yyval)=0;
 	constPointerPositions.clear();
@@ -3156,7 +3202,7 @@ yyreduce:
     break;
 
   case 111:
-#line 1307 "parser.y"
+#line 1352 "parser.y"
     {
 	(yyval)=(yyvsp[(3) - (3)])+1; /* modivied by David (added const)*/
 	constPointerPositions.push_back(((yyvsp[(2) - (3)]) == 1 ? true : false));
@@ -3164,42 +3210,42 @@ yyreduce:
     break;
 
   case 112:
-#line 1315 "parser.y"
+#line 1360 "parser.y"
     {
   (yyval)=0;
 }
     break;
 
   case 113:
-#line 1319 "parser.y"
+#line 1364 "parser.y"
     {
   (yyval)=1;
 }
     break;
 
   case 114:
-#line 1325 "parser.y"
+#line 1370 "parser.y"
     {
   (yyval)=0;
 }
     break;
 
   case 115:
-#line 1329 "parser.y"
+#line 1374 "parser.y"
     {
   (yyval)=1;
 }
     break;
 
   case 120:
-#line 1345 "parser.y"
+#line 1390 "parser.y"
     {
   method->isPureVirtual=paroc_utils::isEqual(GetToken((yyvsp[(2) - (2)])),"0");
 }
     break;
 
   case 121:
-#line 1351 "parser.y"
+#line 1396 "parser.y"
     {
   if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
     {
@@ -3216,7 +3262,7 @@ yyreduce:
     break;
 
   case 122:
-#line 1367 "parser.y"
+#line 1412 "parser.y"
     {
   method=new Constructor(currentClass,accessmodifier);
   method->SetLineInfo(linenumber-1);
@@ -3226,7 +3272,7 @@ yyreduce:
     break;
 
   case 123:
-#line 1376 "parser.y"
+#line 1421 "parser.y"
     {
   if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
     {
@@ -3238,7 +3284,7 @@ yyreduce:
     break;
 
   case 124:
-#line 1385 "parser.y"
+#line 1430 "parser.y"
     {
   if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
     {
@@ -3252,7 +3298,7 @@ yyreduce:
     break;
 
   case 125:
-#line 1398 "parser.y"
+#line 1443 "parser.y"
     {
   method=new Destructor(currentClass,accessmodifier);
   method->SetLineInfo(linenumber-1);
@@ -3262,7 +3308,7 @@ yyreduce:
     break;
 
   case 126:
-#line 1528 "parser.y"
+#line 1573 "parser.y"
     {
 	setReturnParam((yyvsp[(2) - (8)]),(yyvsp[(3) - (8)]), 0);
 	
@@ -3272,7 +3318,7 @@ yyreduce:
     break;
 
   case 127:
-#line 1535 "parser.y"
+#line 1580 "parser.y"
     {
 	setReturnParam((yyvsp[(3) - (9)]),(yyvsp[(4) - (9)]), (yyvsp[(1) - (9)]));
 	
@@ -3282,7 +3328,7 @@ yyreduce:
     break;
 
   case 128:
-#line 1542 "parser.y"
+#line 1587 "parser.y"
     {
 	setReturnParam((yyvsp[(3) - (9)]),(yyvsp[(4) - (9)]), (yyvsp[(2) - (9)]));
 	
@@ -3292,7 +3338,7 @@ yyreduce:
     break;
 
   case 129:
-#line 1549 "parser.y"
+#line 1594 "parser.y"
     {
 	setReturnParam((yyvsp[(4) - (10)]),(yyvsp[(5) - (10)]), ((yyvsp[(1) - (10)]) | (yyvsp[(3) - (10)])));
 	
@@ -3302,7 +3348,7 @@ yyreduce:
     break;
 
   case 130:
-#line 1556 "parser.y"
+#line 1601 "parser.y"
     {
 	setReturnParam((yyvsp[(5) - (11)]),(yyvsp[(6) - (11)]), ((yyvsp[(2) - (11)])|(yyvsp[(4) - (11)])));
 	setPOPCMethodeModifier((yyvsp[(1) - (11)]));
@@ -3313,12 +3359,12 @@ yyreduce:
     break;
 
   case 131:
-#line 1563 "parser.y"
+#line 1608 "parser.y"
     { UpdateMarshalParam((yyvsp[(2) - (9)]),&(method->returnparam) ); }
     break;
 
   case 132:
-#line 1564 "parser.y"
+#line 1609 "parser.y"
     {
 	setReturnParam((yyvsp[(7) - (14)]),(yyvsp[(8) - (14)]), ((yyvsp[(4) - (14)]) | (yyvsp[(6) - (14)])));
 	
@@ -3328,12 +3374,12 @@ yyreduce:
     break;
 
   case 133:
-#line 1570 "parser.y"
+#line 1615 "parser.y"
     { UpdateMarshalParam((yyvsp[(3) - (10)]),&(method->returnparam) ); }
     break;
 
   case 134:
-#line 1571 "parser.y"
+#line 1616 "parser.y"
     {
 	setReturnParam((yyvsp[(8) - (15)]),(yyvsp[(9) - (15)]), ((yyvsp[(5) - (15)]) & 7));
 	setPOPCMethodeModifier((yyvsp[(1) - (15)]));
@@ -3344,14 +3390,14 @@ yyreduce:
     break;
 
   case 135:
-#line 1581 "parser.y"
+#line 1626 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 136:
-#line 1585 "parser.y"
+#line 1630 "parser.y"
     {
 	/* error if multimple time same reserved word */
 	if (((yyvsp[(2) - (2)]) & (yyvsp[(1) - (2)])) != 0)
@@ -3365,112 +3411,112 @@ yyreduce:
     break;
 
   case 137:
-#line 1631 "parser.y"
+#line 1676 "parser.y"
     {
 	(yyval)=2;
 }
     break;
 
   case 138:
-#line 1635 "parser.y"
+#line 1680 "parser.y"
     {
 	(yyval)=4;
 }
     break;
 
   case 139:
-#line 1639 "parser.y"
+#line 1684 "parser.y"
     {
 	(yyval)=8;
 }
     break;
 
   case 140:
-#line 1643 "parser.y"
+#line 1688 "parser.y"
     {
 	(yyval)=32;
 }
     break;
 
   case 141:
-#line 1647 "parser.y"
+#line 1692 "parser.y"
     {
   (yyval)=16;
 }
     break;
 
   case 142:
-#line 1651 "parser.y"
+#line 1696 "parser.y"
     {
   (yyval)=64;
 }
     break;
 
   case 143:
-#line 1658 "parser.y"
+#line 1703 "parser.y"
     {
 	(yyval)=1;
 }
     break;
 
   case 144:
-#line 1662 "parser.y"
+#line 1707 "parser.y"
     {
 	(yyval)=2;
 }
     break;
 
   case 145:
-#line 1666 "parser.y"
+#line 1711 "parser.y"
     {
 	(yyval)=3;
 }
     break;
 
   case 146:
-#line 1670 "parser.y"
+#line 1715 "parser.y"
     {
 	(yyval)=3;
 }
     break;
 
   case 147:
-#line 1677 "parser.y"
+#line 1722 "parser.y"
     {
 	(yyval)=0;
 }
     break;
 
   case 148:
-#line 1681 "parser.y"
+#line 1726 "parser.y"
     {
 	(yyval)=1;
 }
     break;
 
   case 149:
-#line 1685 "parser.y"
+#line 1730 "parser.y"
     {
 	(yyval)=2;
 }
     break;
 
   case 150:
-#line 1689 "parser.y"
+#line 1734 "parser.y"
     {
 	(yyval)=3;
 }
     break;
 
   case 151:
-#line 1693 "parser.y"
+#line 1738 "parser.y"
     {
 	(yyval)=3;
 }
     break;
 
   case 152:
-#line 1699 "parser.y"
+#line 1744 "parser.y"
     {
   method=new Method(currentClass,accessmodifier);
   method->SetLineInfo(linenumber-1);
@@ -3482,28 +3528,28 @@ yyreduce:
     break;
 
   case 153:
-#line 1710 "parser.y"
+#line 1755 "parser.y"
     {
   (yyval)=-1;
 }
     break;
 
   case 154:
-#line 1714 "parser.y"
+#line 1759 "parser.y"
     {
   (yyval)=(yyvsp[(3) - (4)]);
 }
     break;
 
   case 155:
-#line 1720 "parser.y"
+#line 1765 "parser.y"
     {
   (yyval)=-1;
 }
     break;
 
   case 156:
-#line 1725 "parser.y"
+#line 1770 "parser.y"
     {
 
   char *odtmp=GetToken((yyvsp[(1) - (12)]));
@@ -3522,7 +3568,7 @@ yyreduce:
     break;
 
   case 157:
-#line 1742 "parser.y"
+#line 1787 "parser.y"
     {
 
   char *odtmp=GetToken((yyvsp[(1) - (10)]));
@@ -3541,7 +3587,7 @@ yyreduce:
     break;
 
   case 158:
-#line 1758 "parser.y"
+#line 1803 "parser.y"
     {
   char *odtmp=GetToken((yyvsp[(1) - (8)]));
   assert(method!=NULL);
@@ -3559,7 +3605,7 @@ yyreduce:
     break;
 
   case 159:
-#line 1773 "parser.y"
+#line 1818 "parser.y"
     {
     char *odtmp=GetToken((yyvsp[(1) - (6)]));
     if (paroc_utils::isEqual(odtmp,"host"))
@@ -3652,21 +3698,21 @@ yyreduce:
     break;
 
   case 160:
-#line 1865 "parser.y"
+#line 1910 "parser.y"
     {
     (yyval)=-1;
 }
     break;
 
   case 161:
-#line 1869 "parser.y"
+#line 1914 "parser.y"
     {
     (yyval)=(yyvsp[(2) - (2)]);
 }
     break;
 
   case 166:
-#line 1884 "parser.y"
+#line 1929 "parser.y"
     {
 	Param *t=method->AddNewParam();
 	UpdateMarshalParam((yyvsp[(1) - (9)]),t);
@@ -3730,49 +3776,49 @@ yyreduce:
     break;
 
   case 167:
-#line 1947 "parser.y"
+#line 1992 "parser.y"
     {
   (yyval)=0;
 }
     break;
 
   case 168:
-#line 1951 "parser.y"
+#line 1996 "parser.y"
     {
 	(yyval)=(yyvsp[(2) - (3)]);
 }
     break;
 
   case 169:
-#line 1957 "parser.y"
+#line 2002 "parser.y"
     {
 	(yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 170:
-#line 1961 "parser.y"
+#line 2006 "parser.y"
     {
 	(yyval)=(yyvsp[(1) - (3)]) | (yyvsp[(3) - (3)]) ;
 }
     break;
 
   case 171:
-#line 1967 "parser.y"
+#line 2012 "parser.y"
     {
   (yyval)=PARAM_IN;
 }
     break;
 
   case 172:
-#line 1971 "parser.y"
+#line 2016 "parser.y"
     {
   (yyval)=PARAM_OUT;
 }
     break;
 
   case 173:
-#line 1975 "parser.y"
+#line 2020 "parser.y"
     {
   strcpy(tmpSize,GetToken((yyvsp[(3) - (3)])));
   (yyval)=PARAMSIZE;
@@ -3780,7 +3826,7 @@ yyreduce:
     break;
 
   case 174:
-#line 1980 "parser.y"
+#line 2025 "parser.y"
     {
   strcpy(tmpProc,GetToken((yyvsp[(3) - (3)])));
   (yyval)=USERPROC;
@@ -3788,56 +3834,56 @@ yyreduce:
     break;
 
   case 175:
-#line 1988 "parser.y"
+#line 2033 "parser.y"
     {
 	(yyval)=0;
 }
     break;
 
   case 176:
-#line 1992 "parser.y"
+#line 2037 "parser.y"
     {
 	(yyval)=1;
 }
     break;
 
   case 177:
-#line 1996 "parser.y"
+#line 2041 "parser.y"
     {
 	(yyval)=2;
 }
     break;
 
   case 178:
-#line 2002 "parser.y"
+#line 2047 "parser.y"
     {
 	(yyval)=-1;
 }
     break;
 
   case 179:
-#line 2006 "parser.y"
+#line 2051 "parser.y"
     {
 	(yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 180:
-#line 2012 "parser.y"
+#line 2057 "parser.y"
     {
   (yyval)=-1;
 }
     break;
 
   case 181:
-#line 2016 "parser.y"
+#line 2061 "parser.y"
     {
   (yyval)=(yyvsp[(2) - (2)]);
 }
     break;
 
   case 182:
-#line 2029 "parser.y"
+#line 2074 "parser.y"
     {
   if ((yyvsp[(2) - (2)])<0) (yyval)=(yyvsp[(1) - (2)]);
   else 
@@ -3849,21 +3895,21 @@ yyreduce:
     break;
 
   case 183:
-#line 2038 "parser.y"
+#line 2083 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 184:
-#line 2042 "parser.y"
+#line 2087 "parser.y"
     {
     (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 185:
-#line 2046 "parser.y"
+#line 2091 "parser.y"
     {
   sprintf(tmp,"%s + %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3871,7 +3917,7 @@ yyreduce:
     break;
 
   case 186:
-#line 2051 "parser.y"
+#line 2096 "parser.y"
     {
   sprintf(tmp,"%s - %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3879,7 +3925,7 @@ yyreduce:
     break;
 
   case 187:
-#line 2056 "parser.y"
+#line 2101 "parser.y"
     {
   sprintf(tmp,"%s * %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3887,7 +3933,7 @@ yyreduce:
     break;
 
   case 188:
-#line 2061 "parser.y"
+#line 2106 "parser.y"
     {
   sprintf(tmp,"%s / %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3895,7 +3941,7 @@ yyreduce:
     break;
 
   case 189:
-#line 2066 "parser.y"
+#line 2111 "parser.y"
     {
   sprintf(tmp,"%s %% %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3903,7 +3949,7 @@ yyreduce:
     break;
 
   case 190:
-#line 2071 "parser.y"
+#line 2116 "parser.y"
     {
   sprintf(tmp,"%s & %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3911,7 +3957,7 @@ yyreduce:
     break;
 
   case 191:
-#line 2076 "parser.y"
+#line 2121 "parser.y"
     {
   sprintf(tmp,"%s | %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3919,7 +3965,7 @@ yyreduce:
     break;
 
   case 192:
-#line 2081 "parser.y"
+#line 2126 "parser.y"
     {
   sprintf(tmp,"%s ^ %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3927,7 +3973,7 @@ yyreduce:
     break;
 
   case 193:
-#line 2086 "parser.y"
+#line 2131 "parser.y"
     {
   sprintf(tmp,"%s && %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3935,7 +3981,7 @@ yyreduce:
     break;
 
   case 194:
-#line 2091 "parser.y"
+#line 2136 "parser.y"
     {
   sprintf(tmp,"%s || %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3943,7 +3989,7 @@ yyreduce:
     break;
 
   case 195:
-#line 2096 "parser.y"
+#line 2141 "parser.y"
     {
   sprintf(tmp,"%s == %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3951,7 +3997,7 @@ yyreduce:
     break;
 
   case 196:
-#line 2101 "parser.y"
+#line 2146 "parser.y"
     {
   sprintf(tmp,"%s=%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3959,7 +4005,7 @@ yyreduce:
     break;
 
   case 197:
-#line 2106 "parser.y"
+#line 2151 "parser.y"
     {
   sprintf(tmp,"%s ? %s : %s",GetToken((yyvsp[(1) - (5)])), GetToken((yyvsp[(3) - (5)])), GetToken((yyvsp[(5) - (5)])));
   (yyval)=PutToken(tmp);
@@ -3967,7 +4013,7 @@ yyreduce:
     break;
 
   case 198:
-#line 2111 "parser.y"
+#line 2156 "parser.y"
     {
   sprintf(tmp,"%s != %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3975,7 +4021,7 @@ yyreduce:
     break;
 
   case 199:
-#line 2116 "parser.y"
+#line 2161 "parser.y"
     {
   sprintf(tmp,"%s>%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3983,7 +4029,7 @@ yyreduce:
     break;
 
   case 200:
-#line 2121 "parser.y"
+#line 2166 "parser.y"
     {
   sprintf(tmp,"%s<%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3991,7 +4037,7 @@ yyreduce:
     break;
 
   case 201:
-#line 2126 "parser.y"
+#line 2171 "parser.y"
     {
   sprintf(tmp,"%s>=%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -3999,7 +4045,7 @@ yyreduce:
     break;
 
   case 202:
-#line 2131 "parser.y"
+#line 2176 "parser.y"
     {
   sprintf(tmp,"%s<=%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -4007,7 +4053,7 @@ yyreduce:
     break;
 
   case 203:
-#line 2136 "parser.y"
+#line 2181 "parser.y"
     {
   sprintf(tmp,"-%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
@@ -4015,7 +4061,7 @@ yyreduce:
     break;
 
   case 204:
-#line 2141 "parser.y"
+#line 2186 "parser.y"
     {
   sprintf(tmp,"(%s)",GetToken((yyvsp[(2) - (3)])));
   (yyval)=PutToken(tmp);
@@ -4023,7 +4069,7 @@ yyreduce:
     break;
 
   case 205:
-#line 2146 "parser.y"
+#line 2191 "parser.y"
     {
   sprintf(tmp,"%s()",GetToken((yyvsp[(1) - (3)])));
   (yyval)=PutToken(tmp);
@@ -4031,7 +4077,7 @@ yyreduce:
     break;
 
   case 206:
-#line 2151 "parser.y"
+#line 2196 "parser.y"
     {
   sprintf(tmp,"%s(%s)",GetToken((yyvsp[(1) - (4)])),GetToken((yyvsp[(3) - (4)])));
   (yyval)=PutToken(tmp);
@@ -4040,7 +4086,7 @@ yyreduce:
     break;
 
   case 207:
-#line 2157 "parser.y"
+#line 2202 "parser.y"
     {
   sprintf(tmp,"*%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
@@ -4048,7 +4094,7 @@ yyreduce:
     break;
 
   case 208:
-#line 2162 "parser.y"
+#line 2207 "parser.y"
     {
   sprintf(tmp,"&%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
@@ -4056,7 +4102,7 @@ yyreduce:
     break;
 
   case 209:
-#line 2167 "parser.y"
+#line 2212 "parser.y"
     {
   sprintf(tmp,"!%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
@@ -4064,7 +4110,7 @@ yyreduce:
     break;
 
   case 210:
-#line 2172 "parser.y"
+#line 2217 "parser.y"
     {
   sprintf(tmp,"~%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
@@ -4072,28 +4118,28 @@ yyreduce:
     break;
 
   case 211:
-#line 2179 "parser.y"
+#line 2224 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 212:
-#line 2183 "parser.y"
+#line 2228 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 213:
-#line 2189 "parser.y"
+#line 2234 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 214:
-#line 2193 "parser.y"
+#line 2238 "parser.y"
     {
   sprintf(tmp,"%s::%s",GetToken((yyvsp[(1) - (3)])),GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);  
@@ -4101,14 +4147,14 @@ yyreduce:
     break;
 
   case 215:
-#line 2201 "parser.y"
+#line 2246 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
 }
     break;
 
   case 216:
-#line 2205 "parser.y"
+#line 2250 "parser.y"
     {
   sprintf(tmp,"%s, %s", GetToken((yyvsp[(1) - (3)])),GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
@@ -4117,7 +4163,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 4121 "parser.tab.c"
+#line 4167 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -4331,7 +4377,7 @@ yyreturn:
 }
 
 
-#line 2213 "parser.y"
+#line 2258 "parser.y"
 
 
 #include "config.h"
