@@ -3,9 +3,7 @@
 AUTOMAKE_OPTIONS=no-dependencies
 
 CXX=@top_srcdir@/parser/popcc
-POPC_FLAGS=-popcpp-compilation -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -I@top_srcdir@/lib -cxx=@CXX@ -D_POPC_RUNTIME_
-
-CXXFLAGS=-O3
+POPC_FLAGS=-popcpp-compilation -no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -I@top_srcdir@/lib -cxx=@CXX@ -D_POPC_RUNTIME_
 
 AM_CXXFLAGS=$(POPC_FLAGS)
 AM_LDFLAGS=-L@top_srcdir@/lib -L@top_srcdir@/lib/.libs 

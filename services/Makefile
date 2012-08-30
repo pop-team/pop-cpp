@@ -427,7 +427,7 @@ virtual = false
 #Code added by clementval begins with #Added by clementval, ends with #End of add
 #Code modified by clementval begins with #Modified by clementval, ends with #End of modification
 AUTOMAKE_OPTIONS = no-dependencies
-POPC_FLAGS = -popcpp-compilation -popcdir=.. -popcpp=../parser/popcpp -I../lib -cxx=g++ -D_POPC_RUNTIME_
+POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -I../lib -cxx=g++ -D_POPC_RUNTIME_
 AM_CXXFLAGS = $(POPC_FLAGS)
 AM_LDFLAGS = -L../lib -L../lib/.libs 
 execservices_SCRIPTS = popcobjrun popcobjrun.pbs popcobjrun.lsf popcobjrun.sge popcobjrun.smscg
