@@ -77,7 +77,8 @@ int main(int argc, char **argv)
 	POPString objcode;
 	POPString challenge;
 	char str[1024];
-	bool popfile_service = true;
+	/** TO BE REMOVED FOR 2.5 BUT KEEP FOR 3.0
+	bool popfile_service = true; */
 
 	char *tmp;
 	bool stop=(paroc_utils::checkremove(&argc,&argv,"stop")!=NULL);
@@ -95,10 +96,11 @@ int main(int argc, char **argv)
 		if (strchr(str,':')==NULL) strcat(str,":2711");
 	}
 	
-	if(paroc_utils::checkremove(&argc, &argv, "--no-service")){
+	/** TO BE REMOVED FOR 2.5 BUT KEEP FOR 3.0
+		if(paroc_utils::checkremove(&argc, &argv, "--no-service")){
 		if(paroc_utils::checkremove(&argc, &argv, "popfile"))
 			popfile_service = false;
-	}
+	}*/
 	host=str;
 	sprintf(str,"%s:2712",(const char *)paroc_system::GetHost());
 	hostpfm=str;
@@ -419,13 +421,14 @@ int main(int argc, char **argv)
          printf("[POP-C++ Runtime] JM created [%s]\n", info.GetAccessPoint().GetAccessString());
       
 	      // Start the POPFile manager if no option is specified
-   	   if(popfile_service){
+   	   /** TO BE REMOVE FOR 2.5 BUT KEEP FOR 3.0
+   	   	if(popfile_service){
 	   	   POPFileManager pfm(challenge, daemon, hostpfm);
    	   	printf("[POP-C++ Runtime] PFM Started [%s]\n", pfm.GetAccessPoint().GetAccessString());      
 	      	pfm.setPSNAccessPoint(psn.GetAccessPoint()); 
 	   	   pfm.getNeighborsFromPSN();
-   	   }            
-      } catch(...){
+   	   } */           
+      } catch(...) {
          fprintf(stderr, "Error: Need to stop PSN\n");
          if(!psn.Stop(challenge)){
             fprintf(stderr, "Bad challenge string. Cannot stop PSN ...\n");
@@ -434,39 +437,10 @@ int main(int argc, char **argv)
          }
       }
 #endif
-		if (daemon)
-		{
+		if (daemon) {
 			return 0;
 		}
-		//Testing....
-	/*	printf("Get Info:\n");
-		char type[64];
-		while (1)
-		{
-			printf("Information type:\n");
-			if (scanf("%s",type)!=1) break;
-			try
-			{
-				paroc_string typestr(type), val;
-				if (info.Query(typestr,val))
-				{
-					printf("%s: \tType=%s\tValue=%s\n",info.GetAccessPoint().GetAccessString(), type, (const char *)val);
-				}
-				else
-				{
-					printf("%s: \tValue not found\n",info.GetAccessPoint().GetAccessString());
-				}
-			}
-			catch (paroc_exception *e)
-			{
-				errno=e->Code();
-				paroc_system::perror("Invoke exception occurs\n");
-				delete e;
-			}
-		}*/
-	}
-	catch (paroc_exception *e)
-	{
+	} catch (paroc_exception *e) {
 		errno=e->Code();
 		paroc_system::perror("Exception occurs\n");
 		delete e;
