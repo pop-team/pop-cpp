@@ -32,9 +32,24 @@ int popc_logger(LOGLEVEL level, const char *format,...){
 	FILE *f=fopen(logfile,"a");
 	if (f==NULL) return 1;
 	time_t t=time(NULL);
-	fprintf(f, "%s",ctime(&t));
+	fprintf(f, "%s", ctime(&t));
 	va_list ap;
 	va_start(ap, format);
+	switch(level){
+		case ERROR:
+		fprintf(f, "%s", LEVEL_ERROR_PREFIX);	
+		break;
+		case DEBUG:
+		fprintf(f, "%s", LEVEL_DEBUG_PREFIX);			
+		break;
+		case INFO:
+		fprintf(f, "%s", LEVEL_DEBUG_PREFIX);			
+		case DEV:
+		fprintf(f, "%s", LEVEL_DEV_PREFIX);			
+		case CORE:
+		fprintf(f, "%s", LEVEL_CORE_PREFIX);							
+		break;
+	}
 	vfprintf(f, format, ap);
 	fprintf(f,"%s","\n");
 	va_end(ap);
