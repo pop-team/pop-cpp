@@ -206,8 +206,11 @@ case "$ARG1" in
          clearlog)
          	rm -rf /tmp/popc_log /tmp/jobmgr_*
          	;;
+         log)
+         	cat /tmp/popc_log
+         	;;
         *)
-            echo "Usage: $0 {start|stop|restart|kill|killnstart|clearlog|vmstate}"
+            echo "Usage: $0 {start|stop|restart|kill|killnstart|clearlog|log|vmstate}"
             exit 1
                                                                                 
 esac
