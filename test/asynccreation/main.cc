@@ -1,4 +1,5 @@
 #include "POPObject.ph"
+#include <unistd.h>
 
 /** 
  * @author  clementval
@@ -15,13 +16,13 @@ int main(int argc, char** argv)
 		POPObject o2;
 		printf("Before creating POPObject o3\n");		
 		POPObject o3;
-		POPObject o4;
+	/* POPObject o4;
 		POPObject o5;
 		POPObject o6;
 		POPObject o7;
 		POPObject o8;
 		POPObject o9;
-		POPObject o10;										
+		POPObject o10; */
 		printf("Before calling method 1 on POPObject o1\n");		
 		o1.firstMethod();
 		printf("Before calling method 1 on POPObject o2\n");		

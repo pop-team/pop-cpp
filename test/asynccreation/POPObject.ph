@@ -11,12 +11,15 @@ parclass POPObject {
 	classuid(1500);
 
 public:
-	POPObject() @{ od.search(0, 0, 0); };
+	POPObject() @{ od.url("localhost"); };
 	~POPObject();
 	sync seq void firstMethod();
 	async seq void secondMethod();
-private:
-	
+
+private: 
+
+
+
 };
 
 
