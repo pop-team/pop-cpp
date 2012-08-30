@@ -478,6 +478,7 @@ try{
 	std::string _reqid = resp.getReqUniqueId().GetString();
 	requestSemMapLock.lock();
    if(reqsem[_reqid] != NULL){
+   	popc_logger(DEBUG, "[PSN] CALLBACK UNLOCK SEMAPHORE");   
       sem_post(reqsem[_reqid]);
    }
    requestSemMapLock.unlock();
