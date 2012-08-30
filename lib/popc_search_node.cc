@@ -227,7 +227,7 @@ try {
    // wait until timeout or 1st answer
 	if(timeout == 0){
 
-#ifdef __APPLE__	// Handling semaphore on Darwin architecture (supports only named semaphore)
+//#ifdef __APPLE__	// Handling semaphore on Darwin architecture (supports only named semaphore)
 
 		sem_t* current_sem; // Creating new semaphore pointer for the current request
 		// Defining name for the named semaphore
@@ -243,7 +243,7 @@ try {
 		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   
 		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d", reqsem.size());					
 			
-#else	// Handle normal semaphore
+/*#else	// Handle normal semaphore
 		sem_t linux_sem;
 		sem_t* current_sem;
 		current_sem = &linux_sem;
@@ -254,7 +254,7 @@ try {
 
 		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   
 		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d", reqsem.size());					
-#endif
+#endif*/
 
 
 		// Starting a timed thread to be able to unlock the resource discovery after a certain time
@@ -265,9 +265,9 @@ try {
 				popc_logger(ERROR, " [PSN] SEMAPHOR: The semaphor couldn't not be blocked");
 		}
 		timer->stop();
-#ifdef __APPLE__
+/*#ifdef __APPLE__
 		sem_unlink(semname.str().c_str());
-#endif
+#endif*/
 		reqsem.erase(sem_name_reqid);
 		current_sem = NULL;
 	} else {
