@@ -31,21 +31,12 @@ POPCSearchNode::POPCSearchNode(const POPString &challenge, bool deamon) : paroc_
 	logicalClock=0;
 	sem_logicalClock=0;
    psn_currentJobs=0;
-   
-/*
-#ifdef __APPLE__
-   pt_locker == NULL;
-#else
-	sem_t locker;
-	pt_locker = &locker;
-#endif
-*/
 
 	// Start service as a daemon
 	if(deamon) Start();
 	
 	// Log entry
-	popc_logger(DEBUG, "POPCSearchNode created ...");	
+	popc_logger(DEBUG, "[PSN] POPCSearchNode created ...");	
 }
 
 /**
@@ -187,11 +178,11 @@ try{
    // Post the semaphore to unlock the resource discovery	
 	sem_post(reqsem[_reqid]);
    // Log 
-	popc_logger(DEBUG, "Unlocked by timer: %s", _reqid.c_str());   
+	popc_logger(DEBUG, "[PSN] Unlocked by timer: %s", _reqid.c_str());   
 	// Release the lock
    requestSemMapLock.unlock();	
 } catch(...) {
-	popc_logger(ERROR, "Exception caught in unlockDisc");
+	popc_logger(ERROR, "[PSN] Exception caught in unlockDisc");
 }
 }
 
@@ -236,7 +227,7 @@ try {
     paroc_accesspoint dummy;
     askResourcesDiscovery(req, GetAccessPoint(), GetAccessPoint(), dummy);
     
-	popc_logger(DEBUG, "Resource discovery timeout: %d", timeout);    
+	popc_logger(DEBUG, "[PSN] Resource discovery timeout: %d", timeout);    
    // wait until timeout or 1st answer
 	if(timeout == 0){
 
@@ -250,12 +241,12 @@ try {
 		// Opening the semaphore before launching the unlocker thread
    	current_sem = sem_open(semname.str().c_str(), O_CREAT, 0, 0);	
 		if(current_sem == SEM_FAILED)
-			popc_logger(DEBUG, "[PSN]ERROR: SEMFAILED TO OPEN (DARWIN)");   
+			popc_logger(DEBUG, "[PSN] SEMFAILED TO OPEN (DARWIN)");   
 		std::string sem_name_reqid(req.getUniqueId().GetString());
 		
 	   requestSemMapLock.lock();
 		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   
-		popc_logger(DEBUG, "Semaphore map size is: %d", reqsem.size());					
+		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d", reqsem.size());					
 	   requestSemMapLock.unlock();		
 			
 #else	// Handle normal semaphore
@@ -263,18 +254,13 @@ try {
 		sem_t* current_sem;
 		current_sem = &linux_sem;
 	 	if (sem_init(&linux_sem, 0, 0) < 0) {
-     		popc_logger(ERROR, "[PSN]ERROR: SEMFAILED TO OPEN (LINUX)");
+     		popc_logger(ERROR, "[PSN] SEMFAILED TO OPEN (LINUX)");
 		}
 		std::string sem_name_reqid(req.getUniqueId().GetString());
 	   requestSemMapLock.lock();
 		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   
-		popc_logger(DEBUG, "Semaphore map size is: %d", reqsem.size());					
+		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d", reqsem.size());					
 	   requestSemMapLock.unlock();
-		/*sem_init(current_sem, 0, 0);
-		std::string sem_name_reqid(req.getUniqueId().GetString());
-   	requestSemMapLock.lock();		
-		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   		
-	   requestSemMapLock.unlock();	*/	
 #endif
 
 
@@ -283,7 +269,7 @@ try {
 		timer->create();
 		if(sem_wait(current_sem) != 0){
 			if(sem_wait(current_sem) != 0)
-				popc_logger(ERROR, "SEMAPHOR ERROR: The semaphor couldn't not be blocked");
+				popc_logger(ERROR, " [PSN] SEMAPHOR: The semaphor couldn't not be blocked");
 		}
 		timer->stop();
 #ifdef __APPLE__
@@ -321,7 +307,7 @@ try {
    return results;
    
 } catch(...) {
-	popc_logger(ERROR, "Exception caught in launchDiscovery");
+	popc_logger(ERROR, "[PSN] Exception caught in launchDiscovery");
 }
 
 
@@ -425,7 +411,7 @@ try{
       }
    }
 } catch(...) {
-	popc_logger(ERROR, "Exception caught in askResource");
+	popc_logger(ERROR, "[PSN] Exception caught in askResource");
 }
 }
 
@@ -463,7 +449,7 @@ try{
       popc_logger(DEBUG,  "[PSN] REROUTE;TO;%s;WAYBACK;%s", nextNodeStr.GetString(), wb.getAsString().GetString());
    }
 } catch(...) {
-	popc_logger(ERROR, "Exception caught in reroute");
+	popc_logger(ERROR, "[PSN] Exception caught in reroute");
 }
 }
 
@@ -474,7 +460,7 @@ try{
 	//Just for test purpose, must be removed in production release
 	POPCSearchNodeInfo dni = resp.getFoundNodeInfo();
    actualReqSyn.lock();
-	popc_logger(DEBUG, "RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().GetString() , dni.nodeId.GetString());   
+	popc_logger(DEBUG, "[PSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().GetString() , dni.nodeId.GetString());   
    map<POPString, POPCSearchNodeInfos>::iterator i;
    // visit the currently running list
    for(i=actualReq.begin(); i != actualReq.end(); i++){
@@ -496,14 +482,14 @@ try{
    }
    requestSemMapLock.unlock();
   } catch(...) {
-	popc_logger(ERROR, "Exception caught in callback");
+	popc_logger(ERROR, "[PSN] Exception caught in callback");
 } 
 }
 
 // internal comparison between request and local resources
 bool POPCSearchNode::checkResource(Request req){    
    if(psn_currentJobs >= psn_maxjobs){
-      popc_logger(ERROR, "[PSN]ERROR: FAILED FOR NBJOB");
+      popc_logger(ERROR, "[PSN] FAILED FOR NBJOB");
       return false;
    }
 
@@ -514,8 +500,6 @@ bool POPCSearchNode::checkResource(Request req){
  
    // check about the minimal cpu speed
 	if(req.hasMinCpuSpeedSet()){
-      /*sprintf(log, "MINCPUSPEED %d, %d", req.getMinCpuSpeed(), getCpuSpeed());      
-		popc_node_log(log);*/
       if(req.getMinCpuSpeed() > getCpuSpeed())
           return false;
    }
@@ -523,8 +507,6 @@ bool POPCSearchNode::checkResource(Request req){
 	
    // check about the exact cpu speed
    if(req.hasExpectedCpuSpeedSet()){
-      /*sprintf(log, "EXPCPUSPEED %d, %d", req.getExpectedCpuSpeed(), getCpuSpeed());      
-		popc_node_log(log);*/
       if(req.getExpectedCpuSpeed() <= getCpuSpeed())
           return false;
    }
@@ -533,10 +515,8 @@ bool POPCSearchNode::checkResource(Request req){
 	
    // check about the minimal memory size
    if(req.hasMinMemorySizeSet()){
-     /* sprintf(log, "MINMEM %f, %f", req.getMinMemorySize(), nodeInfo.memorySize);      
-      popc_node_log(log);*/
       if(req.getMinMemorySize() > nodeInfo.memorySize){
-         popc_logger(ERROR, "[PSN]ERROR: FAILED FOR MIN MEM");
+         popc_logger(ERROR, "[PSN] FAILED FOR MIN MEM");
          return false;
       }
    }
@@ -545,10 +525,8 @@ bool POPCSearchNode::checkResource(Request req){
    // check about the exact memory size
    //TODO Should not abort the check as Expected memory size is a wish but not a abort condition. Should be used in the fitness computation but not in Check.
    if(req.hasExpectedMemorySizeSet()){
-      /*sprintf(log,"EXPMEM %f, %f", req.getExpectedMemorySize(), nodeInfo.memorySize);       
-		popc_node_log(log);*/
       if(req.getExpectedMemorySize() >= nodeInfo.memorySize ){
-         popc_logger(ERROR, "[PSN]ERROR: FAILED FOR EXP MEM");
+         popc_logger(ERROR, "[PSN] FAILED FOR EXP MEM");
          return false;
       }
    }
@@ -557,20 +535,16 @@ bool POPCSearchNode::checkResource(Request req){
    if(nodeInfo.networkBandwidth > 0.5){
       // check about the minimal network bandwith
 	   if(req.hasMinNetworkBandwidthSet()){
-         /*sprintf(log,"MINBAN %f, %f", req.getMinNetworkBandwidth(), nodeInfo.networkBandwidth);      
-		   popc_node_log(log);*/
         	if(req.getMinNetworkBandwidth() > nodeInfo.networkBandwidth){
-            popc_logger(ERROR, "[PSN]ERROR: FAILED FOR MIN BAN");
+            popc_logger(ERROR, "[PSN] FAILED FOR MIN BAN");
         		return false;
          }
       }
       
       // check about the exact network bandwith
       if(req.hasExpectedNetworkBandwidthSet()){
-         /*sprintf(log, "EXPBAN %f, %f", req.getExpectedNetworkBandwidth(), nodeInfo.networkBandwidth);      
-		   popc_node_log(log);*/
 		   if(req.getExpectedNetworkBandwidth() >= nodeInfo.networkBandwidth){
-            popc_logger(ERROR, "[PSN]ERROR: FAILED FOR EXP BAN");
+            popc_logger(ERROR, "[PSN] FAILED FOR EXP BAN");
 			   return false;
          }
 	   }
@@ -578,27 +552,21 @@ bool POPCSearchNode::checkResource(Request req){
 
 	// check about the minimal disk space
 	if(req.hasMinDiskSpaceSet()){
-//      sprintf(log, "MINDIS %d, %d", req.getMinDiskSpace(), getDiskSpace());      
-		popc_node_log(log);
 		if(req.getMinDiskSpace() > getDiskSpace()){
-         popc_logger(ERROR, "[PSN]ERROR: FAILED FOR DISK SPACE");
+         popc_logger(ERROR, "[PSN] FAILED FOR DISK SPACE");
 			return false;
       }
 	}
  
     // check about the min power
 	if(req.hasMinPowerSet()){
-      /*sprintf(log, "MINPOW %f, %f", req.getMinPower(), getPower());      
-		popc_node_log(log);*/
 		if(req.getMinPower() > getPower()){
-         popc_logger(ERROR, "[PSN]ERROR: FAILED FOR MIN POW");
+         popc_logger(ERROR, "[PSN] FAILED FOR MIN POW");
 	   	return false;
       }
 	}
 
 	if(req.hasExpectedPowerSet()){
-      /*sprintf(log, "EXPPOW %f, %f", req.getExpectedPower(), getPower());      
-		popc_node_log(log);*/
 		if(req.getExpectedPower() > getPower()){
          popc_logger(ERROR, "[PSN]ERROR: FAILED FOR EXP POW");
 	   	return false;
@@ -682,8 +650,6 @@ void POPCSearchNode::removeJob(float power, float memorySize, float bandwidth, i
    nodeInfo.memorySize=memorySize;
    nodeInfo.power=power;
    nodeInfo.networkBandwidth=bandwidth;
-  /* sprintf(log,"AFTER_REMOVE:MEM:%f:POW:%f:BAN:%f", nodeInfo.memorySize, nodeInfo.power, nodeInfo.networkBandwidth);
-   popc_node_log(log);*/
    psn_currentJobs-=nbJob;
 }
 
@@ -695,30 +661,7 @@ POPString POPCSearchNode::getNeighborsAsString(){
    	strlst.append((*i)->getPOPCSearchNodeId().GetString());
    	strlst.append(";");
    }
-	sprintf(log, "NODENEIGH:%s", strlst.c_str());
-   popc_logger(DEBUG, log);   
+   popc_logger(DEBUG, "[PSN] NODENEIGH:%s", strlst.c_str());   
 	lst = strlst.c_str();	
 	return lst;
-}
-
-//Method to write log in a file
-int POPCSearchNode::popc_node_log(const char *log)
-{
-	char *tmp=getenv("POPC_TEMP");
-	char logfile[256];
-	if (tmp!=NULL) sprintf(logfile,"%s/popc_node_log",tmp);
-	else strcpy(logfile, "/tmp/pop_node.log");
-
-	FILE *f=fopen(logfile,"a");
-	if (f==NULL) return 1;
-	time_t t=time(NULL);
-	fprintf(f, "%s", ctime(&t));
-	/*va_list ap;
-	va_start(ap, log);
-	vfprintf(f, log, ap);*/
-	fprintf(f,"%s",log);
-	fprintf(f,"\n");
-	//va_end(ap);
-	fclose(f);
-	return 0;
 }

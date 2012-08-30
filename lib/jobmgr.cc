@@ -328,7 +328,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 	int ret=paroc_system::GetIP(serviceID,1);
 	if (ret!=1)
 	{
-		popc_logger(ERROR, "Can't find IP address");
+		popc_logger(ERROR, "[JM] Can't find IP address");
 		serviceID[0]=rand();
 	}
 
@@ -336,7 +336,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 
 	popc_logger(DEBUG, "MyID=%d:%d",serviceID[0], serviceID[1]);
 
-	DEBUGIF(ret<=0, "Can not find IP address of %s for resource discovery tracking",str);
+	DEBUGIF(ret<=0, "[JM] Can not find IP address of %s for resource discovery tracking",str);
 
 
 	int service_timeout=0;
@@ -372,13 +372,13 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 	maxdynamicnodes=0;
 	dynamicnodes=0;
 
-	popc_logger(INFO, "Loading information from %s",(const char *)conf);
+	popc_logger(INFO, "[JM] Loading information from %s",(const char *)conf);
 
 	str[1023]=0;
 	char mycontact[1024];
 
 	strcpy(mycontact,(GetAccessPoint()).GetAccessString());
-	popc_logger(DEBUG, "jobmgr access string %s", mycontact);
+	popc_logger(DEBUG, "[JM] jobmgr access string %s", mycontact);
 	while (!feof(f))
 	{
 		if (fgets(str,1023,f)==NULL) break;
@@ -437,7 +437,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 		{
 			if (sscanf(val,"%d",&service_timeout)==1 && service_timeout>0)
 			{
-				popc_logger(DEBUG, "JobMgr Timeout: %ds",service_timeout);
+				popc_logger(DEBUG, "[JM] JobMgr Timeout: %ds",service_timeout);
 
 			} else service_timeout=0;
 		}
@@ -445,7 +445,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 		{
 			if (sscanf(val,"%d",&parent_timeout)==1 && parent_timeout>0)
 			{
-				popc_logger(DEBUG, "Checkpoint every: %d seconds",parent_timeout);
+				popc_logger(DEBUG, "[JM] Checkpoint every: %d seconds",parent_timeout);
 			} else parent_timeout=0;
 		}
 		else if (paroc_utils::isEqual(name,"exec_timeout"))
@@ -525,36 +525,36 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 	}
 
 	memcpy(&available,&total,sizeof(Resources));
-	popc_logger(DEBUG, "Total resource power=%g, max per job=%g",total.flops,limit.flops);
+	popc_logger(DEBUG, "[JM] Total resource power=%g, max per job=%g",total.flops,limit.flops);
 
 
 	//Added by clementval
 	
 	//Setting POPCSearchNode informations. Thoses informations are known by the JobMgr 
-	popc_logger(DEBUG, "Setting the Node info for JobMgr");
+	popc_logger(DEBUG, "[JM] Setting the Node info for JobMgr");
 
 	//Setting the POPCSearchNode ID (its access point)
 	psn.setPOPCSearchNodeId(_localPSN.GetAccessString());
-	popc_logger(DEBUG, "Node ID : %s", psn.getPOPCSearchNodeId().GetString());
+	popc_logger(DEBUG, "[JM] Node ID : %s", psn.getPOPCSearchNodeId().GetString());
 
 	//Setting the current operating system (The one of the JobMgr's machine)
 	psn.setOperatingSystem(paroc_system::platform);
-	popc_logger(DEBUG, "Node opertating system : %s", psn.getOperatingSystem().GetString());
+	popc_logger(DEBUG, "[JM] Node opertating system : %s", psn.getOperatingSystem().GetString());
 
 	//Setting the total computing power of this JobMgr
 	psn.setPower(total.flops);
-	popc_logger(DEBUG, "Node power : %f", psn.getPower());
+	popc_logger(DEBUG, "[JM] Node power : %f", psn.getPower());
 
 	//Setting the total RAM of this JobMgr
 	psn.setMemorySize(total.mem);
-	popc_logger(DEBUG, "Node memory size : %d", psn.getMemorySize());
+	popc_logger(DEBUG, "[JM] Node memory size : %d", psn.getMemorySize());
 
 	//Setting the total network bandwith of this JobMgr
 	psn.setNetworkBandwidth(total.bandwidth);
-	popc_logger(DEBUG, "Node bandwidth : %f", psn.getNetworkBandwidth());
+	popc_logger(DEBUG, "[JM] Node bandwidth : %f", psn.getNetworkBandwidth());
 
    psn.setMaxJobs(maxjobs);
-	popc_logger(DEBUG, "Node max jobs : %d", psn.getMaxJobs());
+	popc_logger(DEBUG, "[JM] Node max jobs : %d", psn.getMaxJobs());
 	//End of add
 
 
@@ -567,7 +567,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 		{
 			if (sscanf(tok,"%s %s",var,val)!=2)
 			{
-				popc_logger(ERROR, "ERROR: can not parse the environment variable string [%s]",tok);
+				popc_logger(ERROR, "[JM] can not parse the environment variable string [%s]",tok);
 			}
 			else
 			{
@@ -747,7 +747,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 
 			if (!AllocResource(localservice,objname,od, howmany-count, fitness+count, jobcontacts+count, reserveIDs+count, requestInfo,traceip, 0))
 			{
-            popc_logger(ERROR, "AllocResource failed");
+            popc_logger(ERROR, "[JM] AllocResource failed");
 				ret=OBJECT_NO_RESOURCE;
 				break;
 			}
@@ -755,7 +755,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 			for (int i=count;i<howmany; i++)
 				if (fitness[i]<=0)
 				{
-               popc_logger(ERROR, "fitness is below zero");
+               popc_logger(ERROR, "[JM] fitness is below zero");
 					nocancel=false;
 					break;
 				}
@@ -807,7 +807,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 						if (execRet!=0)
 						{
 							//Added by clementval
-							popc_logger(ERROR, "[JM]ERROR: EXEC_FAILED");
+							popc_logger(ERROR, "[JM] EXEC_FAILED");
 							//End of add
 							jobmgr.CancelReservation(tmpids,sz);
 						}
@@ -815,7 +815,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 					}
 					catch (...)
 					{
-						popc_logger(ERROR, "[JM]ERROR: Exception catch in ExecObj");
+						popc_logger(ERROR, "[JM] Exception catch in ExecObj");
 					}
 				}
          }
@@ -864,7 +864,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 		
 		if (!AddRequest(requestInfo))
 		{
-			popc_logger(DEBUG, "Local resource has already been traversed!");
+			popc_logger(DEBUG, "[JM] Local resource has already been traversed!");
 			return false;
 		}
 
@@ -873,12 +873,12 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 		POPString codefile;
 	
 		//MATCHING LOCALLY
-		popc_logger(DEBUG, "Resource discovery request: obj=%s, local service: %s (trace=%d)",(const char *)objname,localservice.GetAccessString(),tracesize);
+		popc_logger(DEBUG, "[JM] Resource discovery request: obj=%s, local service: %s (trace=%d)",(const char *)objname,localservice.GetAccessString(),tracesize);
 		try
 		{
 			if (CheckPauseList(localservice))
 			{
-				popc_logger(DEBUG, "Local resource matching is temporary paused due to previous errors!");
+				popc_logger(DEBUG, "[JM] Local resource matching is temporary paused due to previous errors!");
 			}
 			else if (MatchUser(localservice))
 			{
@@ -891,7 +891,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 		}
 		catch (...)
 		{
-			popc_logger(ERROR, "Exception on resource discovery");
+			popc_logger(ERROR, "[JM] Exception on resource discovery");
 			return false;
 		}
 
@@ -904,7 +904,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 	
 		if (tracesize<0 || tracesize>=MAX_HOPS)
 		{
-			popc_logger(DEBUG, "Stop forwarding due to trace size (value=%d)", tracesize);
+			popc_logger(DEBUG, "[JM] Stop forwarding due to trace size (value=%d)", tracesize);
 			return ret;
 		}
 		AddTrace(iptrace, tracesize);
@@ -1034,7 +1034,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 		//if reserve ID is egal to 0, the reservation process failed. If we can't reserver on any responding machine, we trow an exception
 		if(reserveIDs[jobindex] == 0){
 			jobindex--;
-			popc_logger(ERROR, "[JM]ERROR: UNABLE TO RESERVE ON %s", jm_ap.GetAccessString());
+			popc_logger(ERROR, "[JM] UNABLE TO RESERVE ON %s", jm_ap.GetAccessString());
 			failedReservation++;
 			if(failedReservation==n_response)
 				return false;
@@ -1043,7 +1043,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 
 			//setting the remote JobMgr info to execute the parallel object
 			jobcontacts[jobindex].SetAccessString(jm_ap.GetAccessString());
-			popc_logger(ERROR, "[JM]DEBUG: RESID;%d;NODEID;%s", reserveIDs[jobindex], jm_ap.GetAccessString());
+			popc_logger(DEBUG, "[JM] RESID;%d;NODEID;%s", reserveIDs[jobindex], jm_ap.GetAccessString());
 			//Setting the fitness
 			fitness[jobindex] = t;
 		}
@@ -1134,7 +1134,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
 				if (min<0) min=require;
 				if (min>available.mem)
 				{
-					popc_logger(ERROR, "Local Match Failed (reason: memory)");
+					popc_logger(ERROR, "[JM] Local Match Failed (reason: memory)");
 					return 0;
 				}
 				float fitness1;
@@ -1165,7 +1165,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
 				int n=sscanf(walltime_str,"%d:%d:%d:%d",walltime_l,walltime_l+1,walltime_l+2,walltime_l+3);
 				if (n<=0)
 				{
-					popc_logger(ERROR, "Bad walltime expression");
+					popc_logger(ERROR, "[JM] Bad walltime expression");
 				}
 				else
 				{
@@ -1199,15 +1199,15 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
          POPCSearchNode psn(_localPSN);
          psn.addJob(t.flops, t.mem, t.bandwidth);
       } catch (...){
-         popc_logger(ERROR, "[JM]ERROR: Can't add job to PSN");
+         popc_logger(ERROR, "[JM] Can't add job to PSN");
          return 0;
       }
 		available.flops-=flops;
 		available.mem-=mem;
 		available.bandwidth-=bandwidth;
 		counter=(counter%1000000000)+1;
-		popc_logger(DEBUG, "Local Match OK (fitness=%f, reserveID=%d)", fitness,t.Id);
-		popc_logger(INFO, "GIVE_RESID;%d:MEM:%f:POW:%f:BAN:%f", t.Id, t.mem, t.flops, t.bandwidth);
+		popc_logger(INFO, "[JM] Local Match OK (fitness=%f, reserveID=%d)", fitness,t.Id);
+		popc_logger(INFO, "[JM] GIVE_RESID;%d:MEM:%f:POW:%f:BAN:%f", t.Id, t.mem, t.flops, t.bandwidth);
 		return t.Id;
 	}
 }
@@ -1239,7 +1239,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness)
 				if (min<0) min=require;
 				if (min>available.flops || min>limit.flops)
 				{
-					popc_logger(ERROR, "Local Match Failed (reason: power)");
+					popc_logger(ERROR, "[JM] Local Match Failed (reason: power)");
 					return 0;
 				}
 				if (require>available.flops || require> limit.flops)
@@ -1261,7 +1261,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness)
 				if (min<0) min=require;
 				if (min>available.mem)
 				{
-					popc_logger(ERROR, "Local Match Failed (reason: memory)");
+					popc_logger(ERROR, "[JM] Local Match Failed (reason: memory)");
 					return 0;
 				}
 				float fitness1;
@@ -1292,7 +1292,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness)
 				int n=sscanf(walltime_str,"%d:%d:%d:%d",walltime_l,walltime_l+1,walltime_l+2,walltime_l+3);
 				if (n<=0)
 				{
-					popc_logger(ERROR, "Bad walltime expression");
+					popc_logger(ERROR, "[JM] Bad walltime expression");
 				}
 				else
 				{
@@ -1320,7 +1320,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness)
 		available.mem-=mem;
 		available.bandwidth-=bandwidth;
 		counter=(counter%1000000000)+1;
-		popc_logger(DEBUG, "Local Match OK (fitness=%f, reserveID=%d)", fitness,t.Id);
+		popc_logger(DEBUG, "[JM] Local Match OK (fitness=%f, reserveID=%d)", fitness,t.Id);
 		return t.Id;
 	}
 }
@@ -1363,7 +1363,7 @@ bool JobMgr::MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoi
 			}
 			catch (...)
 			{
-				popc_logger(ERROR, "Error: Fail to cancel reservation #%d on %s",reserveIDs[pos],jobcontacts[pos].GetAccessString());
+				popc_logger(ERROR, "[JM] Fail to cancel reservation #%d on %s",reserveIDs[pos],jobcontacts[pos].GetAccessString());
 			}
 		}
 		reserveIDs[pos]=id;
@@ -1504,7 +1504,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
 		}
 		catch (...)
 		{
-			popc_logger(CORE, "Exception on %s", (const char *)contact);
+			popc_logger(CORE, "[JM] Exception on %s", (const char *)contact);
 			if (info.nodetype!=NODE_STATIC)
 			{
 				neighbors.Remove(contact);
@@ -1577,7 +1577,7 @@ void JobMgr::SelfRegister()
 		}
 		catch (...)
 		{
-			popc_logger(ERROR, "[JM]ERROR: can not register the local job service [%s] to %s",GetAccessPoint().GetAccessString(), tmp.GetAccessString());
+			popc_logger(ERROR, "[JM] can not register the local job service [%s] to %s",GetAccessPoint().GetAccessString(), tmp.GetAccessString());
 		}
 	}
 	lasttime=service_timer.Elapsed();
@@ -1608,7 +1608,6 @@ void JobMgr::Start()
 
 	open(filename,O_WRONLY | O_CREAT, S_IRWXU | S_IRGRP);
 
-	popc_logger(INFO, "GO TO DAEMON MODE TEST");
 #else
 	open("/dev/null",O_WRONLY);
 	open("/dev/null",O_WRONLY);
@@ -1687,7 +1686,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
 	pid=fork();
 	if (pid==-1)
 	{
-		popc_logger(ERROR, "Execute command fail. Pause on error...");
+		popc_logger(ERROR, "[JM] Execute command fail. Pause on error...");
 		paroc_accesspoint empty;
 		Pause(empty,SLEEP_TIME_ON_ERROR);
 		return errno;
@@ -1713,14 +1712,14 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
    
 		//Child process
 		execvp(file,argv);
-		popc_logger(ERROR, "Execution of [%s] fail\n",file);
+		popc_logger(ERROR, "[JM] Execution of [%s] fail\n",file);
 		_exit(-1);
 	}
 #else
 	pid=vfork();
 	if (pid==-1)
 	{
-		popc_logger(ERROR, "Execute command fail. Pause on error...");
+		popc_logger(ERROR, "[JM] Execute command fail. Pause on error...");
 		paroc_accesspoint empty;
 		Pause(empty,SLEEP_TIME_ON_ERROR);
 		return errno;
@@ -1728,7 +1727,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
 	else if (pid==0)
 	{
 		execve(file,argv,env);
-		popc_logger(ERROR, "Execution of [%s] fail (vfork)\n",file);
+		popc_logger(ERROR, "[JM] Execution of [%s] fail (vfork)\n",file);
 		_exit(-1);
 	}
 #endif
@@ -1738,7 +1737,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
 int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, int *reserveIDs, const paroc_accesspoint &localservice, paroc_accesspoint *objcontacts)
 {
 	if (howmany<=0) {
-		popc_logger(ERROR, "ERROR: Exec failed because howmany is less or equal to 0");
+		popc_logger(ERROR, "[JM] Exec failed because howmany is less or equal to 0");
 		return EINVAL;
 	}
 	char *env[32];
@@ -1765,7 +1764,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 			if (r==NULL)
 			{
 				CancelReservation(reserveIDs,howmany);
-				popc_logger(ERROR, "[JM]ERROR: Exec failed because reservation is null");
+				popc_logger(ERROR, "[JM] Exec failed because reservation is null");
 				return ECANCELED;
 			}
 
@@ -1791,7 +1790,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 			CancelReservation(reserveIDs,howmany);
          POPString tmpObjname = objname;
          POPString tmpPlatform = paroc_system::platform;
-			popc_logger(ERROR, "[JM]ERROR: Exec failed: CodeMgr was looking for %s on platform %s", tmpObjname.GetString(), 
+			popc_logger(ERROR, "[JM] Exec failed: CodeMgr was looking for %s on platform %s", tmpObjname.GetString(), 
             tmpPlatform.GetString());
 			return ENOENT;
 		}
@@ -1799,7 +1798,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 	catch (...)
 	{
 		CancelReservation(reserveIDs, howmany);
-		popc_logger(ERROR, "[JM]ERROR: Exec failed. CodeMgr cannot be contacted");
+		popc_logger(ERROR, "[JM] Exec failed. CodeMgr cannot be contacted");
 		return ENOENT;
 	}
 
@@ -1834,7 +1833,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 	if (!tmpsock.Create(0,true))
 	{
 		CancelReservation(reserveIDs,howmany);
-		popc_logger(ERROR, "[JM]ERROR: Exec failed. Socket cannot be created.");
+		popc_logger(ERROR, "[JM] Exec failed. Socket cannot be created.");
 		return errno;
 	}
 
@@ -1874,7 +1873,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 	{
 		Pause(localservice, SLEEP_TIME_ON_ERROR);
 		CancelReservation(reserveIDs, howmany);
-		popc_logger(ERROR, "[JM]ERROR: Exec failed. Exec return value is not 0");
+		popc_logger(ERROR, "[JM] Exec failed. Exec return value is not 0");
 		return ret;
 	}
 
@@ -1892,7 +1891,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 			if (pid>0) kill(pid, SIGKILL);
 			Pause(localservice, SLEEP_TIME_ON_ERROR);
 			CancelReservation(reserveIDs, howmany);
-			popc_logger(ERROR, "[JM]ERROR: Exec failed for accesspoint.");
+			popc_logger(ERROR, "[JM] Exec failed for accesspoint.");
 			return err;
 		}
 
@@ -1959,7 +1958,7 @@ void JobMgr::dump()
 
 void JobMgr::Pause(const paroc_accesspoint &app, int duration)
 {
-	popc_logger(DEBUG, "Pause %d seconds", duration);
+	popc_logger(DEBUG, "[JM] Pause %d seconds", duration);
 	mutex {
 		PauseInfo &t=pause_apps.AddTailNew();
 		t.until_time=service_timer.Elapsed()+duration;
@@ -2008,7 +2007,7 @@ bool JobMgr::AddRequest(int reqId[3])
 	memcpy(t.requestID,reqId,3*sizeof(int));
 	t.timestamp=service_timer.Elapsed();
 	if (tracelist.GetCount()>100) 
-		popc_logger(INFO, "Warning: job trace list is too big (%d items)\n",tracelist.GetCount());
+		popc_logger(INFO, "[JM] Warning: job trace list is too big (%d items)\n",tracelist.GetCount());
 	return true;
 	}
 }
@@ -2176,7 +2175,7 @@ void JobMgr::ApplicationEnd(POPString popAppId, bool initiator){
          POPCSearchNode psn(_localPSN);
          psn.removeJob(available.flops, available.mem, available.bandwidth, nbJob);
       } catch(...){
-         popc_logger(ERROR, "[JM] ERROR: can't update PSN resource");
+         popc_logger(ERROR, "[JM] can't update PSN resource");
          
       }
    }

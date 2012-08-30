@@ -141,9 +141,6 @@ protected:
    int psn_currentJobs;
    int psn_maxjobs;
 	struct timeval start, end;	//for test purpose
-	
-	char log[600];	//log char
-	int popc_node_log(const char *log);	//write log in file
 
    seq sync virtual bool checkResource(Request req);
 private: 
