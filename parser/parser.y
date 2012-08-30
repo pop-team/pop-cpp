@@ -11,6 +11,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <vector>
+#include <list>
+#include <set>
 
 #include "parser.h"
 #include "paroc_utils.h"
@@ -172,39 +174,89 @@ startlist: handle_this startlist
 
 handle_eof: EOFCODE
 {
-	if(isImplicitPackEnable){      
-		/* The following code handles the implicit @pack directive if it's not specified by the developer */
+	
+
+	
+	if(isImplicitPackEnable){     
+	 
+		/** 
+		 * The following code handles the implicit @pack directive if it's not specified by the developer 
+		 * Algo for implicit pack
+		 * 1. Look for all included .ph file in the current file
+		 * 2. For all .ph file find the parclass(s) included in it
+		 * 3. Match the found parclass(s) with the code in the current file (ParClassName::). If match, put in pack directive
+		 */
+		 
+		
+		/** 
+		 * Perform this task only on file with implementation (.C, .cc, .cpp, .cp, .cxx, .c++, .CPP)
+		 * Find the extension of the file in the current C++ extension 
+		 */
 		std::string fname(filename);
 				
 		std::size_t cc = fname.find(".cc");
 		std::size_t cpp = fname.find(".cpp");
-		std::size_t cxx = fname.find(".cxx");			
+		std::size_t cp = fname.find(".cp");		
+		std::size_t cxx = fname.find(".cxx");	
+		std::size_t cplusplus = fname.find(".c++");	
+		std::size_t CPP = fname.find(".CPP");	
+		std::size_t C = fname.find(".C");	
 			
-		if((cc != std::string::npos || cpp != std::string::npos || cxx != std::string::npos) && !isParclassDeclared){	
-			std::size_t pos;		
-			if(cc != std::string::npos){
-				pos = cc;
-			} else if (cpp != std::string::npos){ // Extension is
-				pos = cpp;				
-			} else if (cxx != std::string::npos){	// Extension is .cxx
-				pos = cxx;
-			}
+		if((cc != std::string::npos || cpp != std::string::npos || cxx != std::string::npos || cp != std::string::npos || cplusplus != std::string::npos 
+			|| CPP != std::string::npos || C != std::string::npos) && !isParclassDeclared){	
 				
-			// Try to find the according .ph file
-			std::string ph_file(fname);
-			std::string ph_extension(".ph");
-					ph_file.replace(pos, std::string::npos, ph_extension);
-					// Check if file exists
-					std::fstream ph_real_file;
-					ph_real_file.open(ph_file.c_str(), std::ios_base::out | std::ios_base::in);
+			/**
+			 * Find all .ph files included in the current file
+			 */
+			 
+			// Create a list to store all .ph files' name
+			std::list<std::string> ph_files; 
+			 
+			std::fstream cc_real_file; 
+			cc_real_file.open(fname.c_str(), std::ios_base::out | std::ios_base::in);
+
+			if (cc_real_file.is_open()){
+				// Find name of the parclass
+				char line[512]; 
+				bool notEOF = true;
+				while (notEOF){
+					cc_real_file.getline(line, 512);
+					if(cc_real_file.eof()){
+						notEOF = false;
+						cc_real_file.close();
+					} else {
+						// Get the next line
+						std::string str_line(line);
+						// Find a .ph include in the current file
+						std::size_t ph_extension_pos = str_line.find(".ph"); 
+						if(ph_extension_pos != std::string::npos){
+							std::size_t ph_file_name_start = str_line.rfind('"', ph_extension_pos);
+							std::string ph_file_name = str_line.substr(ph_file_name_start+1, (ph_extension_pos-ph_file_name_start)+2);
+							// Save the .ph file found
+							ph_files.push_back(ph_file_name);
+						}
+					}
+				}
+			}	
+			
+			
+			if(!ph_files.empty()){
+				/**
+				 * Find all the parclass declared in the .ph files found before. 
+				 */
+				std::list<std::string> parclass_names;
+				std::list<std::string>::iterator it;
+				for(it=ph_files.begin(); it != ph_files.end(); it++) {
+					std::fstream ph_real_file;			
+					ph_real_file.open((*it).c_str(), std::ios_base::out | std::ios_base::in);				
 					if (ph_real_file.is_open()){
 						// Find name of the parclass
-						char line[256]; 
-						bool notFound = true;
-						while (notFound){
-							ph_real_file.getline(line, 256);
+						char line[512]; 
+						bool notEOF = true;
+						while (notEOF){
+							ph_real_file.getline(line, 512);
 							if(ph_real_file.eof()){
-								notFound = false;
+								notEOF = false;
 								ph_real_file.close();
 							} else {
 								std::string str_line(line);
@@ -216,66 +268,98 @@ handle_eof: EOFCODE
 										parclass_name_stop = str_line.find(";", parclass_name_start+1); 
 									if(parclass_name_stop == std::string::npos)
 										parclass_name_stop = str_line.find("{", parclass_name_start+1); 																	
-									if(parclass_name_stop == std::string::npos)								
+									if(parclass_name_stop == std::string::npos)						
 										parclass_name_stop = str_line.find("\n", parclass_name_start+1); 		
 									if(parclass_name_stop != std::string::npos && parclass_name_start != std::string::npos){
 										std::string parclass_name = str_line.substr(parclass_name_start, (parclass_name_stop - parclass_name_start));
-
-										notFound = false; 
-										ph_real_file.close();
-
-
-										/* Same code as "pack_header" */
-										if (othercodes.GetSize() && startPos>0) {
-											assert(thisCodeFile!=NULL);
-											OtherCode *dat=new OtherCode(thisCodeFile);
-											dat->AddCode((char *)othercodes,startPos);
-											thisCodeFile->AddCodeData(dat);
-											othercodes.SetSize(0);
-										}  
-										startPos=-1;
-										currentPack=new PackObject(thisCodeFile);
-										currentPack->SetStartLine(linenumber-1);
-										thisCodeFile->AddCodeData(currentPack); 
-										//parclass_name.erase(std::remove_if(parclass_name.begin(), parclass_name.end(), isspace), parclass_name.end());
+										// Removed possible withespaces from the parclass name
 										for(int i=0; i < parclass_name.length(); i++){
 											if(parclass_name[i] == ' '){
 												parclass_name.erase(i, 1);
 												i--;
 											}
 										}
-										char * objname = new char[parclass_name.size() + 1];
-										std::copy(parclass_name.begin(), parclass_name.end(), objname);
-										objname[parclass_name.size()] = '\0';
-										if (currentPack!=NULL) {
-											currentPack->AddObject(objname);
-										}
-
-										isParclassDeclared = true; 
-										currentPack->SetEndLine(linenumber-1);
-										currentPack=NULL;
-										othercodes.SetSize(0);
-										startPos=-1;
-										
-										// Ok file exists, so we will find the parclass name and add the pack directive with it
-										if(isWarningEnable){
-											std::cout << filename << ":" << linenumber << ": Warning: No @pack directive for class: " << objname << ", @pack(" << objname << ") is assumed";
-											std::cout << ph_file << std::endl;
-																
-										}
-										delete [] objname;										
+										// Save the parclass's name found
+										parclass_names.push_back(parclass_name);
 									}
+								}
+							}	
+						}			
+					}
+				}	
+				/**
+				 * Find implementation of the found parclass in the current file
+				 */
+				std::set<std::string> matched_parclasses;			
+				cc_real_file.open(fname.c_str(), std::ios_base::out | std::ios_base::in);
+				if (cc_real_file.is_open()){
+					// Find name of the parclass
+					char line[512]; 
+					bool notEOF = true;
+					while (notEOF){
+						cc_real_file.getline(line, 512);
+						if(cc_real_file.eof()){
+							notEOF = false;
+							cc_real_file.close();
+						} else {
+							// Get the next line
+							std::string str_line(line);
+							std::list<std::string>::iterator it;
+							for(it=parclass_names.begin(); it != parclass_names.end(); it++) {
+								std::string prefix = (*it);
+								prefix.append("::");
+								std::size_t pos = str_line.find(prefix);
+								if(pos != std::string::npos){
+									// Saved the matched parclass in a set
+									matched_parclasses.insert((*it));
 								}
 							}
 						}
 					}
 				}	
-			}	
+			
+				if(!matched_parclasses.empty()){
+					// Implict add the pack directive
+					if (othercodes.GetSize() && startPos>0) {
+						assert(thisCodeFile!=NULL);
+						OtherCode *dat=new OtherCode(thisCodeFile);
+						dat->AddCode((char *)othercodes,startPos);
+						thisCodeFile->AddCodeData(dat);
+						othercodes.SetSize(0);
+					}  
+					startPos=-1;
+					currentPack=new PackObject(thisCodeFile);
+					currentPack->SetStartLine(linenumber-1);
+					thisCodeFile->AddCodeData(currentPack); 
+					std::set<std::string>::iterator it;
+					for(it=matched_parclasses.begin() ; it != matched_parclasses.end(); it++ ){
+						if (currentPack!=NULL) {
+
+							char * objname = new char[(*it).size() + 1];
+							std::copy((*it).begin(), (*it).end(), objname);
+							objname[(*it).size()] = '\0';
+							currentPack->AddObject(objname);
+							// Ok file exists, so we will find the parclass name and add the pack directive with it
+							if(isWarningEnable){
+								std::cout << filename << ":" << linenumber << ": Warning: No @pack directive for class: " << objname;
+								std::cout << ", @pack(" << objname << ") is assumed..." << std::endl;
+							}							
+							delete [] objname;
+						}
+					}
+					isParclassDeclared = true; 
+					currentPack->SetEndLine(linenumber-1);
+					currentPack=NULL;
+					othercodes.SetSize(0);
+					startPos=-1;
+				}
+			}
+		}
+	}	
 }
 
 handle_this: THIS_KEYWORD
 {
-	printf("handle at Bison\n");
 	othercodes.InsertAt(-1,"\n",strlen("\n"));
 }
 ;
