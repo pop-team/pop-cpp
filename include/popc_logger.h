@@ -41,6 +41,12 @@
 
 enum LOGLEVEL {CORE, ERROR, DEBUG, DEV, INFO};
 
+static const char* LEVEL_ERROR_PREFIX = "[ERROR]";
+static const char* LEVEL_DEBUG_PREFIX = "[DEBUG]";
+static const char* LEVEL_INFO_PREFIX = "[INFO]";
+static const char* LEVEL_DEV_PREFIX = "[DEV]";
+static const char* LEVEL_CORE_PREFIX = "[CORE]";
+
 int popc_logger(LOGLEVEL level, const char *format,...);
 
 #endif /* POPC_LOGGER */
