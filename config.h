@@ -69,7 +69,7 @@
 #define PACKAGE_VERSION "2.5-beta-pre-release"
 
 /* Dynamic exec */
-/* #undef POPC_EXTRA_LINK */
+#define POPC_EXTRA_LINK "-rdynamic"
 
 /* Secure version */
 /* #undef POPC_SECURE */
