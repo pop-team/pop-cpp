@@ -224,9 +224,6 @@ try {
 	popc_logger(DEBUG, "[PSN] Resource discovery timeout: %d", timeout);    
    // wait until timeout or 1st answer
 	if(timeout == 0){
-
-//#ifdef __APPLE__	// Handling semaphore on Darwin architecture (supports only named semaphore)
-
 		sem_t* current_sem; // Creating new semaphore pointer for the current request
 		// Defining name for the named semaphore
 		std::stringstream semname;
@@ -243,19 +240,6 @@ try {
 	   if(reqsem[sem_name_reqid.c_str()] == NULL)
 	   	popc_logger(ERROR, "[PSN] SEMAPHORE IS NOT IN THE MAP");   
 		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d, %s", reqsem.size(), sem_name_reqid.c_str());					
-			
-/*#else	// Handle normal semaphore
-		sem_t linux_sem;
-		sem_t* current_sem;
-		current_sem = &linux_sem;
-	 	if (sem_init(&linux_sem, 0, 0) < 0) {
-     		popc_logger(ERROR, "[PSN] SEMFAILED TO OPEN (LINUX)");
-		}
-		std::string sem_name_reqid(req.getUniqueId().GetString());
-
-		reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));   
-		popc_logger(DEBUG, "[PSN] Semaphore map size is: %d", reqsem.size());					
-#endif*/
 
     	// begin resources discovery locally
     	paroc_accesspoint dummy;
@@ -270,10 +254,10 @@ try {
 				popc_logger(ERROR, " [PSN] SEMAPHOR: The semaphor couldn't not be blocked");
 		}
 		timer->stop();
+		
+		// Delete the semaphore
 		sem_unlink(semname.str().c_str());
-/*#ifdef __APPLE__
-		sem_unlink(semname.str().c_str());
-#endif*/
+		// Remove the pointer from the map
 		reqsem.erase(sem_name_reqid);
 		current_sem = NULL;
 	} else {
