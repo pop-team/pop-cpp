@@ -157,9 +157,6 @@ void paroc_broker::RegisterRequest(paroc_request &req)
 
 bool paroc_broker::OnNewConnection(paroc_connection *conn)
 {
-   sem_wait(sem_add);
-   addrefcount++; 
-   sem_post(sem_add);
 	//  if (state!=POPC_STATE_RUNNING) return false;
 	if (obj!=NULL) obj->AddRef();
 	return true;
@@ -170,60 +167,12 @@ bool paroc_broker::OnNewConnection(paroc_connection *conn)
  */
 bool paroc_broker::OnCloseConnection(paroc_connection *conn)
 {
-	if (obj!=NULL)
-	{
-     /* sem_wait(sem_conn);
-      connclosecount++;
-      sem_post(sem_conn);
-     /* std::ofstream myfile;
-      myfile.open("/tmp/connectionclose", std::ios::app);
-      time_t now;
-      time(&now);
-      myfile << ctime(&now) << std::endl;
-      myfile << "State of counter connection(" << obj->GetAccessPoint().GetAccessString() << ") Conn,add,dec" << connclosecount << "/" << addrefcount << "/" << decrefcount << std::endl;
-      myfile.close();
-     
-     // if(connclosecount == addrefcount){
-        // int ret=obj->DecRef();
-        // if (ret<=0) execCond.broadcast();
-         /*while(ret > 0)
-            ret=obj->DecRef();        
-         execCond.broadcast();*/
-      //}
-     int ret=obj->DecRef();
-		if (ret<=0) execCond.broadcast();
- 
-  		
+	if (obj!=NULL) {
+		int ret=obj->DecRef();
+		if (ret<=0) 
+			execCond.broadcast();
 	}
 	return true;
-/*	if (obj!=NULL)
-	{
-      connclosecount++;
-     /* std::ofstream myfile;
-         myfile.open("/tmp/connectionclose", std::ios::app);
-         time_t now;
-         time(&now);
-         myfile << ctime(&now) << std::endl;
-         myfile << "State of counter connection(" << obj->GetAccessPoint().GetAccessString() << ")" << connclosecount << "/" << addrefcount << "/" << decrefcount << std::endl;
-         myfile.close();*/
-   /*   if(addrefcount == connclosecount && decrefcount <= connclosecount){
-         int ret=1;
-         while(ret > 0)
-            ret=obj->DecRef();
-         execCond.broadcast();
-       /*  std::ofstream myfile;
-         myfile.open("/tmp/connectionclose", std::ios::app);
-         time_t now;
-         time(&now);
-         myfile << ctime(&now) << std::endl;
-         myfile << "Should kill the connection" << connclosecount << "/" << addrefcount << "/" << decrefcount << std::endl;
-         myfile.close();*/
-  //    }
-
-		/*int ret=obj->DecRef();
-		if (ret<=0) execCond.broadcast();*/
-//	}
-//	return true;
 }
 
 
@@ -280,7 +229,6 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	{
 		//AddRef call...
 		if (obj==NULL) return false;
-      //addrefcount++;
 		int ret=obj->AddRef();
 		if (methodid[2] & INVOKE_SYNC)
 		{
@@ -301,9 +249,6 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	{
 		//DecRef call....
 		if (obj==NULL) return false;
-      sem_wait(sem_dec);
-      decrefcount++;
-      sem_post(sem_dec);
 		int ret=obj->DecRef();
 		if (methodid[2] & INVOKE_SYNC)
 		{
