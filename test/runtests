@@ -13,7 +13,7 @@ then
 	for test in `ls -F -d * | grep -v asynccreation | grep -v runtests | grep -v runtests_short`
 	do
 		echo "---------------------------------------------------------------------------"
-		echo "*** $test test ***"
+		echo "*** $test test ($NUMBEROFTEST) **"
 		echo "---------------------------------------------------------------------------"
 		cd $test
 		rm -rf $RESULTS
@@ -37,6 +37,10 @@ then
 	echo "---------------------------------------------------------------------------"
 	cat $RESULTS
 	echo "$NUMBEROFSUCCESS succeed on $NUMBEROFTEST"
+	if [ "$NUMBEROFSUCCESS" = "$NUMBEROFTEST" ]
+	then
+		echo "ALL TESTS SUCCEED! You are ready to use POP-C++!"
+	fi
 else
 	if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]
 	then
