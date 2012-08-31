@@ -1,4 +1,4 @@
-#include "POPObject.ph"
+#include "popobject.ph"
 
 /** 
  * @author  clementval
