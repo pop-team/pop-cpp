@@ -149,16 +149,9 @@ public:
 
 	virtual void Pack(const std::string *list, int n);
 	virtual void UnPack(std::string *list, int n);
-
-	// Added by lwk
+	
 	virtual void Pack(const signed char *data, int n)=0;
 	virtual void UnPack(signed char *data, int n)=0;
-
-	/*virtual void Pack(const long long *data, int n)=0;
-	virtual void UnPack(long long *data, int n)=0;
-
-	virtual void Pack(const long double *data, int n)=0;
-	virtual void UnPack(long double *data, int n)=0;*/
 
 	virtual bool Send(paroc_combox &s, paroc_connection *conn=0)=0;
 	virtual bool Send(paroc_connection *conn);

@@ -39,8 +39,6 @@ case $host_os in
 		;;
 esac
 
-CXXFLAGS+=-O3
-
 #
 # Define base language
 #

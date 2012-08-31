@@ -53,6 +53,7 @@ void paroc_buffer_raw::Pack(const int *data, int n)
 {
 	Pack((const char *)data,n*sizeof(int));
 }
+
 void paroc_buffer_raw::UnPack(int *data, int n)
 {
 	UnPack((char *)data,n*sizeof(int));
