@@ -41,6 +41,7 @@ then
 	then
 		echo "ALL TESTS SUCCEED! You are ready to use POP-C++!"
 	fi
+	rm -rf $RESULTS
 else
 	if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]
 	then
