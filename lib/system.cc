@@ -460,8 +460,7 @@ AppCoreService *paroc_system::CreateAppCoreService(char *codelocation)
 
 void paroc_system::processor_set(int cpu)
 {
-#ifndef ARCH_MAC
-  //debug(1, "cpu=%d", cpu);
+#ifndef __APPLE__
   if (cpu < 0) {
     printf("POP-C++ Warning: Cannot set processor to %d<0", cpu);
     exit(EXIT_FAILURE);
