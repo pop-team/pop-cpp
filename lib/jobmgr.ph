@@ -10,7 +10,7 @@
  *                         //End of add
  * clementval	2010/04/19	All code modified during the semester project begins with //Modified by clementval, ends with 
  *                         //End of modification
- * clementval	2010/04/29	Full functionnal version with the new POPSearchNode in charge of the resource discovery. 
+ * clementval	2010/04/29	Full functionnal version with the new POPSearchNode that is in charge of the resource discovery. 
  *                         Biggest change are in the method AllocResource.
  * 								Add new method UnregisterNode, Reserve, GetNodeAccessPoint
  * clementval	2010/05/02	Better distribution of parallel object on discovered ressources
@@ -22,21 +22,17 @@
 #ifndef JOBMGR_PH
 #define JOBMGR_PH
 
-
-
 #include <time.h>
 #include <sys/time.h>
 #include "paroc_service_base.ph"
 #include <timer.h>
 #include <paroc_accesspoint.h>
 #include <paroc_list.h>
-#include "popc_logger.h"
-
 
 /**
  * ViSaG : clementval 
  */
-#include "POPString.h"
+#include "paroc_string.h"
 
 //Added by clementval
 #include <list>
@@ -115,8 +111,8 @@ struct PauseInfo
 
 struct HostInfo
 {
-	POPString  name;
-	POPString val;
+	paroc_string  name;
+	paroc_string val;
 	HostInfo & operator = (const HostInfo &t)
 	{
 		name=t.name;
@@ -134,7 +130,7 @@ struct RequestTrace
 
 typedef paroc_list<HostInfo> HostInfoDB;
 typedef paroc_list<NodeInfo> NodeInfoList;
-typedef paroc_list<POPString> paroc_list_string;
+typedef paroc_list<paroc_string> paroc_list_string;
 
 
 
@@ -156,20 +152,20 @@ public:
 	NodeInfoMap();
 //Manipulate neighbor nodes (thread safe)
 	void GetContacts(paroc_list_string &contacts);
-	bool HasContact(const POPString &contact);
+	bool HasContact(const paroc_string &contact);
 
-	bool GetInfo(const POPString &contact, NodeInfo &info);
+	bool GetInfo(const paroc_string &contact, NodeInfo &info);
 	int GetCount();
 
-	bool Update(const POPString &contact, NodeInfo &info);
-	bool Remove(const POPString &key);
-	bool Add(const POPString &contact, NodeInfo &info);
+	bool Update(const paroc_string &contact, NodeInfo &info);
+	bool Remove(const paroc_string &key);
+	bool Add(const paroc_string &contact, NodeInfo &info);
 private:
-	int Hash(const POPString &key);
+	int Hash(const paroc_string &key);
 
 	struct NodeInfoExt
 	{
-		POPString key;
+		paroc_string key;
 		NodeInfo data;
 	};
 	paroc_list<NodeInfoExt> map[HASH_SIZE];
@@ -187,7 +183,7 @@ parclass JobMgr : public JobCoreService
 {
 public:
    /* ViSaG : clementval : Add reference to the PSM */
-	JobMgr(bool daemon, [in] const POPString &conf, [in] const POPString &challenge, const POPString &url, 
+	JobMgr(bool daemon, [in] const paroc_string &conf, [in] const paroc_string &challenge, const paroc_string &url, 
       const paroc_accesspoint &nodeAccess, const paroc_accesspoint &localPSM) @{ od.url(url); od.runLocal(true); od.service(true);};
    /* End */
 
@@ -201,13 +197,13 @@ public:
 	 * @param type input
 	 * @param val output
 	 */
-	sync seq virtual int Query([in] const POPString &type, [out] POPString &val); //Method ID 13
+	sync seq virtual int Query([in] const paroc_string &type, [out] paroc_string &val); //Method ID 13
 
 //Global service...
-	sync conc virtual int CreateObject(paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts,  int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts); //Method ID 14
+	sync conc virtual int CreateObject(paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts,  int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts); //Method ID 14
 
 
-	sync conc virtual bool  AllocResource(const paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, [in,out, size=howmany] float *fitness, [in,out, size=howmany] paroc_accesspoint *jobcontacts, [in,out, size=howmany] int *reserveIDs, [in] int requestInfo[3], [in] int trace[MAX_HOPS], [in] int tracesize); //method ID 15
+	sync conc virtual bool  AllocResource(const paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, [in,out, size=howmany] float *fitness, [in,out, size=howmany] paroc_accesspoint *jobcontacts, [in,out, size=howmany] int *reserveIDs, [in] int requestInfo[3], [in] int trace[MAX_HOPS], [in] int tracesize); //method ID 15
 
    /**
     * ViSaG : clementval
@@ -221,7 +217,7 @@ public:
 
 	seq async virtual void CancelReservation([in, size=howmany] int *req, int howmany); //17
 
-	conc sync virtual int ExecObj(const POPString &objname, const paroc_od &od, int howmany, [in, size=howmany] int *reserveIDs, const paroc_accesspoint &localservice,  [out, size=howmany] paroc_accesspoint *objcontacts);
+	conc sync virtual int ExecObj(const paroc_string &objname, const paroc_od &od, int howmany, [in, size=howmany] int *reserveIDs, const paroc_accesspoint &localservice,  [out, size=howmany] paroc_accesspoint *objcontacts);
 
 	seq async void dump();
 
@@ -260,7 +256,7 @@ protected:
 	virtual int Exec(char **arguments, char **env, int &pid, POPString popAppId, POPString reqID);
 	virtual int MatchAndReserve(const paroc_od &od, float & fitness);
 	virtual bool MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int howmany);
-	virtual bool Forward(const paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, float *fitness,       paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize);
+	virtual bool Forward(const paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, float *fitness,       paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize);
 
 	virtual bool MatchUser(const paroc_accesspoint &localservice);
 
@@ -330,4 +326,12 @@ protected:
 
 };
 
-#endif /* JOBMGR_PH */
+int paroc_service_log(const char *format,...);
+
+//Added by clementval
+//To write in POPSearchNode log file
+int popc_node_log(const char *format,...);
+//End of add
+
+#endif //JOBMGR_PH
+
