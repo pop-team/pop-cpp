@@ -196,10 +196,6 @@ POPString POPCSearchNode::getUID(){
 // request
 POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout){
 try {
-	gettimeofday(&start, NULL);	//This line is just for test purpose so it can be removed in production release
-   //Log
-
-
 
    if(req.isEndRequest()){
       timeout = 1;
@@ -370,9 +366,14 @@ try{
             popc_logger(DEBUG,  "[PSN] NEED_REROUTE;WAYBACK;%s", listwb.GetString());
             rerouteResponse(*resp, req.getWayBack());
          } else {
-            POPCSearchNode asker(node_ap);
-				popc_logger(DEBUG,  "[PSN] SEND_REP;DEST;%s", node_ap.GetAccessString());
-            asker.callbackResult(*resp);  
+         	try{
+            	POPCSearchNode asker(node_ap);
+					popc_logger(DEBUG,  "[PSN] SEND_REP;DEST;%s", node_ap.GetAccessString());
+					asker.callbackResult(*resp);  
+				} catch (POPException* ex){
+					popc_logger(DEBUG,  "[PSN] Can't connect to %s", node_ap.GetAccessString());				
+				}
+            
          }
       }
        
