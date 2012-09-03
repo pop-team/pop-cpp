@@ -136,7 +136,7 @@ paroc_interface::paroc_interface()
    _ssh_tunneling=false;
 	__paroc_combox=NULL;
 	__paroc_buf=NULL;
-	_popc_async_construction_thread=NULL;
+	//_popc_async_construction_thread=NULL;
 
 }
 
@@ -150,7 +150,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p)
       accesspoint.SetAsService();
 	__paroc_combox=NULL;
 	__paroc_buf=NULL;
-	_popc_async_construction_thread=NULL;	
+	//_popc_async_construction_thread=NULL;	
 
    if(!p.IsEmpty());
    	Bind(p);
@@ -169,7 +169,7 @@ paroc_interface::paroc_interface(const paroc_interface &inf)
    _ssh_tunneling=false;
 	__paroc_combox=NULL;
 	__paroc_buf=NULL;
-	_popc_async_construction_thread=NULL;	
+	//_popc_async_construction_thread=NULL;	
 
    if(infAP.IsSecure())
       accesspoint.SetSecure();
@@ -188,7 +188,7 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer)
    _ssh_tunneling=false;
 	__paroc_combox=combox;
 	__paroc_buf=buffer;
-	_popc_async_construction_thread=NULL;	
+	//_popc_async_construction_thread=NULL;	
 	if (combox!=NULL)
 	{
 		POPString url;
@@ -204,12 +204,9 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer)
  */
 paroc_interface::~paroc_interface()
 {
-   // printf("INTERFACE DESTRCUTOR CALLED\n");
-   // DEV TESTING START
    if(!accesspoint.IsService()){
      // DecRef();
    }
-   // DEV TESTING END
 	Release();
 }
 
