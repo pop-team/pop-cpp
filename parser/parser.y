@@ -263,13 +263,25 @@ handle_eof: EOFCODE
 								std::size_t parclass_pos = str_line.find("parclass"); 
 								if(parclass_pos != std::string::npos){
 									std::size_t parclass_name_start = str_line.find(" ", parclass_pos); 
-									std::size_t parclass_name_stop = str_line.find(" ", parclass_name_start+1); 
-									if(parclass_name_stop == std::string::npos)
+									std::size_t parclass_name_stop = str_line.find(" ", parclass_name_start+1);
+									if(parclass_name_stop == std::string::npos){
 										parclass_name_stop = str_line.find(";", parclass_name_start+1); 
-									if(parclass_name_stop == std::string::npos)
+									}
+									if(parclass_name_stop == std::string::npos){
 										parclass_name_stop = str_line.find("{", parclass_name_start+1); 																	
-									if(parclass_name_stop == std::string::npos)						
+									}
+									if(parclass_name_stop == std::string::npos){			
 										parclass_name_stop = str_line.find("\n", parclass_name_start+1); 		
+									}
+									if(parclass_name_stop == std::string::npos){			
+										parclass_name_stop = str_line.find("\r", parclass_name_start+1); 		
+									}
+									if(parclass_name_stop == std::string::npos){			
+										parclass_name_stop = str_line.find("\r\n", parclass_name_start+1); 						
+									}
+									if(parclass_name_stop == std::string::npos){			
+										parclass_name_stop = str_line.size();
+									}
 									if(parclass_name_stop != std::string::npos && parclass_name_start != std::string::npos){
 										std::string parclass_name = str_line.substr(parclass_name_start, (parclass_name_stop - parclass_name_start));
 										// Removed possible withespaces from the parclass name
