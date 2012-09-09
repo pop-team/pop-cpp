@@ -10,10 +10,10 @@ int main(int argc, char** argv)
 {
 	try {
 		cout << "Big data test started" << popcendl;		
-		int size = 60496000; // 60Mb
+		long size = 60496000; // 60Mb
 		char array[size];
 	
-		for (int i = 0; i < size; i++)
+		for (long i = 0; i < size; i++)
 			array[i] = 'a';
 	
 		POPObject o;
