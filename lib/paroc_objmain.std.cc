@@ -6,6 +6,7 @@
  * 
  * Modifications :
  * Authors		Date			Comment
+ * P.Kuonen     18.9.2012       Add "POP-C++ error" in error messages (PEKA)
  */
 
 
@@ -78,7 +79,7 @@ int main(int argc, char **argv)
 		if (!callback->Create(0, false) || !callback->Connect(addr))
 		{
 			callback->Destroy();
-			printf("Error: fail to connect to callback. Check that the URL %s belongs to a node.\n",addr);
+			printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n",addr);
 			return 1;
 		}
 	}
@@ -120,7 +121,7 @@ int main(int argc, char **argv)
 		callback->Destroy();
 		if (!ret)
 		{
-			rprintf("Error: fail to send accesspoint via callback\n");
+			rprintf("POP-C++ Error: fail to send accesspoint via callback\n");
 			delete br;
 			return 1;
 		}

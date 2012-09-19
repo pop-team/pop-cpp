@@ -6,6 +6,7 @@
  * 
  * Modifications :
  * Authors		Date			Comment
+ * P.Kuonen     18.9.2012       Add "POP-C++ Error" in error messages (PEKA)
  */
 
 #include <timer.h>
@@ -42,7 +43,7 @@ int main(int argc, char **argv)
 
 	if (client==NULL)
 	{
-		printf("Error: %s: unknown protocol\n", prot);
+		printf("POP-C++ Error: %s: unknown protocol\n", prot);
 		return 1;
 	}
 
@@ -55,7 +56,7 @@ int main(int argc, char **argv)
 		bf=paroc_buffer_factory_finder::GetInstance()->FindFactory(name);
 		if (bf==NULL)
 		{
-			printf("Error: can not find encoding %s\n", argv[2]);
+			printf("POP-C++ Error: can not find encoding %s\n", argv[2]);
 			return 1;
 		}
 	}
@@ -66,7 +67,7 @@ int main(int argc, char **argv)
 	if (!client->Connect(argv[1]))
 	{
 		client->Destroy();
-		printf("Error: can not connect to %s\n", argv[1]);
+		printf("POP-C++ Error: can not connect to %s\n", argv[1]);
 		return  1;
 	}
 
@@ -84,7 +85,7 @@ int main(int argc, char **argv)
 	buffer->Pack(&name,1);
 	if (!buffer->Send(*client))
 	{
-		printf("Error: send buffer\n");
+		printf("POP-C++ Error: send buffer\n");
 		client->Destroy();
 		return 1;
 	}
@@ -92,7 +93,7 @@ int main(int argc, char **argv)
 	buffer->Reset();
 	if (!buffer->Recv(*client))
 	{
-		printf("Error: receive buffer\n");
+		printf("POP-C++ Error: receive buffer\n");
 		client->Destroy();
 		return 1;
 	}
@@ -123,14 +124,14 @@ int main(int argc, char **argv)
 		buffer->Pack(buf, MSGSIZE);
 		if (!buffer->Send(*client))
 		{
-			printf("Error: can not send the message\n");
+			printf("POP-C++ Error: can not send the message\n");
 			client->Destroy();
 			return 1;
 		}
 		buffer->Reset();
 		if (!buffer->Recv(*client))
 		{
-			printf("Error: can not send the message\n");
+			printf("POP-C++  Error: can not send the message\n");
 			client->Destroy();
 			return 1;
 		}

@@ -6,6 +6,7 @@
  * 
  * Modifications :
  * Authors		Date			Comment
+ * P.Kuonen	    18.9.2012       Add "POP-C++ Error" in error messages (PEKA)
  */
 
 #include <stdio.h>
@@ -41,7 +42,7 @@ int main(int argc, char **argv)
 
 	if (server==NULL)
 	{
-		printf("Error: %s: unknown protocol\n", argv[1]);
+		printf("POP-C++ Error: %s: unknown protocol\n", argv[1]);
 		return 1;
 	}
 
@@ -51,7 +52,7 @@ int main(int argc, char **argv)
 	if (!server->GetUrl(addr))
 	{
 		server->Destroy();
-		printf("Error: can not get listening address\n");
+		printf("POP-C++ Error: can not get listening address\n");
 		return  1;
 	}
 
@@ -84,7 +85,7 @@ int main(int argc, char **argv)
 				bf=paroc_buffer_factory_finder::GetInstance()->FindFactory(name);
 				if (bf==NULL)
 				{
-					printf("Error: can not find encoding %s\n", (const char *)name);
+					printf("POP-C++ Error: can not find encoding %s\n", (const char *)name);
 					status=0;
 				}
 				else

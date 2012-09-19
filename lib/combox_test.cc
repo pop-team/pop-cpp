@@ -6,6 +6,7 @@
  * 
  * Modifications :
  * Authors		Date			Comment
+ * P.Kuonen     18.9.2012       Add "POP-C++ error" in error messages (PEKA)
  */
 
 #include <timer.h>
@@ -39,7 +40,7 @@ int main(int argc, char **argv)
 
 	if (client==NULL)
 	{
-		printf("Error: %s: unknown protocol\n", prot);
+		printf("POP-C++ Error: %s: unknown protocol\n", prot);
 		return 1;
 	}
 
@@ -47,7 +48,7 @@ int main(int argc, char **argv)
 	if (!client->Connect(argv[1]))
 	{
 		client->Destroy();
-		printf("Error: can not connect to %s\n", argv[1]);
+		printf("POP-C++Error: can not connect to %s\n", argv[1]);
 		return  1;
 	}
 
@@ -72,7 +73,7 @@ int main(int argc, char **argv)
 		len+=2;
 		if (client->Send(str,len)!=len)
 		{
-			printf("Send error\n");
+			printf("POP-C++ Error: Send error\n");
 			break;
 		}
 		fprintf(stdout,"SENT[%d]: %s",len, str);

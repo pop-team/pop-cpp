@@ -6,6 +6,7 @@
  * 
  * Modifications :
  * Authors		Date			Comment
+ * P.Kuonen     18.9.2012       Add "POP-C++ error" in error messages (PEKA)
  */
 
 #include <dlfcn.h>
@@ -28,21 +29,21 @@ int main(int argc, char **argv)
 		void *handler=dlopen(argv[i],RTLD_NOW| RTLD_LOCAL);
 		if (handler==NULL)
 		{
-			printf("Error on dlopen(%s): %s\n",argv[i],dlerror());
+			printf("POP-C++ Error on dlopen(%s): %s\n",argv[i],dlerror());
 			continue;
 		}
 		CreateFactory=(paroc_buffer_factory * (*)())dlsym(handler,"ParocBufferFactory");
 
 		if (CreateFactory==NULL)
 		{
-			printf("Error %s: Can not locate ParocBufferFactory\n",argv[i]);
+			printf("POP-C++ Error %s: Can not locate ParocBufferFactory\n",argv[i]);
 		}
 		else
 		{
 			paroc_buffer_factory *test=CreateFactory();
 			if (test==NULL)
 			{
-				printf("Error: Fail to create a buffer factory\n");
+				printf("POP-C++ Error: Fail to create a buffer factory\n");
 			}
 			else
 			{

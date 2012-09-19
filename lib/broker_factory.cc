@@ -7,6 +7,7 @@
  * Modifications :
  * Authors		Date			Comment
  * clementval  10/27/2011  Set services accesspoint cretaed from String as service accesspoint
+ * P.Kuonen     18.9.2012       Add "POP-C++ error" in error messages (PEKA)
  */
 
 #include <unistd.h>
@@ -128,7 +129,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 	paroc_broker *objbroker=Create(object);
 	if (objbroker==NULL)
 	{
-		rprintf("Error: %s: unkown object name\n", (*argv)[1]);
+		rprintf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
 		return NULL;
 	}
 	paroc_broker::classname=object;

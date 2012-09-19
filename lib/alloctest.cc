@@ -6,6 +6,7 @@
  * 
  * Modifications :
  * Authors		Date			Comment
+ * P.Kuonen     18.9.2012       Add "POP-C++ error" in error messages (PEKA)
  */
 
 #include <stdio.h>
@@ -69,7 +70,7 @@ int main(int argc, char **argv)
 			int t=sscanf(buf,"%s %d %d", name,&v1,&v2);
 			if (t<2)
 			{
-				printf("Error: Bad OD value\n");
+				printf("POP-C++ Error: Bad OD value\n");
 				continue;
 			}
 			if (strcmp(name,"power")==0)
@@ -86,7 +87,7 @@ int main(int argc, char **argv)
 			}
 			else
 			{
-				printf("Error: Unkown OD name\n");
+				printf("POP-C++ Error: Unkown OD name\n");
 			}
 		}
 		POSITION pos=resources.GetHeadPosition();
