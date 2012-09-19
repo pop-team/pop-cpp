@@ -58,7 +58,7 @@ void Usage()
 	fprintf(stderr,"   -popcdir:            	POP-C++ installed directory\n");
 	fprintf(stderr,"   -noclean:            	Do not clean temporary files\n");
 	fprintf(stderr,"   -no-warning:          	Do not print warning on stdout\n");	
-	fprintf(stderr,"   -no-implicit-pack:   	Do not pack parclass implicitly if no @pack directive is present\n");
+	//fprintf(stderr,"   -no-implicit-pack:   	Do not pack parclass implicitly if no @pack directive is present\n");
 	
 	/**
 	 * TO BE REMOVED FOR 2.5 RELEASE BUT KEEP FOR 3.0
