@@ -1,0 +1,18 @@
+===============================================================================
+* chat
+===============================================================================
+* Created by Laurent Winkler for fun
+* Date : January 2009
+********************************************************************************
+
+This program creates a chat between two or more workstations. 
+
+usage :
+
+to run the first chat : 
+
+popcrun obj.map ./chat.main
+
+the command to run the second chat is then printed by the program. 
+
+TODO : Avoid conflicts in case of multiple simultaneous connections. 

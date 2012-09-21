@@ -1,0 +1,14 @@
+#!/bin/bash
+
+aclocal --force
+
+ARCH=$(uname)
+if test x$ARCH = xDarwin
+then
+	glibtoolize -f
+else 
+	libtoolize -f
+fi
+
+autoreconf --force --install
+automake -f

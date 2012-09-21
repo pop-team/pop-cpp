@@ -1,0 +1,1 @@
+../../test/heritageparam1/ParObject.ph

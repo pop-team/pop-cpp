@@ -1,0 +1,22 @@
+#ram 	128
+#host	manaslu.slf.ch	
+#power	300
+#node latok4.slf.ch:2711
+#node in1sun1.epfl.ch:2711
+#maxjobs 2
+#np 2
+#parent ielnx1.epfl.ch:2711
+#timeout 36000
+#localuser globus
+#checkpoint  86400 
+#checkpoint sets the number of seconds that this service periodically checks 
+#for its parent nodes (default: each half day)
+#exec_timeout 300
+#reserve_timeout 300
+#platform Fedora-x86
+
+
+degree 20
+#jobmgr popcobjrun
+
+checkpoint 43200

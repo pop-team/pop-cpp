@@ -1,0 +1,224 @@
+POPC_VIRTUAL=@virtual@
+POPC_SECURE_VIRTUAL=@virtsecure@
+POPC_SECURE=@secure@
+
+# Startup script for POPC service, standalone version
+# Update : All updates are surounded by comment with the author's name
+# Date			Author		Comment
+# 13/05/2010	clementval	Add Node entry for service.map
+
+
+#POPC_DOMAIN=UNKNOWN
+
+#This variable is used in popcobjrun on starting the parallel object
+#POPC_PROXY
+
+#The following variables are used if this host runs proxy service
+#PROXY_PORT
+#POPC_PROXY_NETMASK
+#POPC_PROXY_PORTS
+#POPC_PROXY_PARENT
+
+ARG1="$1"
+shift
+ARGS="$*"
+
+if [ -z "${POPC_TEMP}" ]; then
+POPC_TEMP=/tmp
+export POPC_TEMP
+fi
+
+if [ ! -d $POPC_TEMP ]; then
+mkdir $POPC_TEMP
+fi
+
+if [ -z "${POPC_PORT}" ]; then
+POPC_PORT=2711
+fi
+
+#. ${POPC_LOCATION}/etc/popc-runtime-env.sh
+
+PATH=${POPC_LOCATION}/bin:${POPC_LOCATION}/services:${PATH}
+export PATH
+
+LD_LIBRARY_PATH=${POPC_LOCATION}:${POPC_LOCATION}/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
+
+prog="$POPC_LOCATION/services/jobmgr_launcher"
+serviceproxy=""
+
+if [ "X${POPC_JOBMGR_PROXY}" != "X" ]; then
+    serviceproxy="-proxy=${POPC_JOBMGR_PROXY}"
+fi
+
+userid=`whoami`
+
+TMPKEY=${POPC_TEMP}/jobmgr_${userid}.key
+
+servicemap="$POPC_LOCATION/etc/service.map"
+mapentry=`grep "JobMgr " $servicemap`
+if [ -z "${mapentry}" ]; then
+$POPC_LOCATION/services/jobmgr -listlong | grep "JobMgr " >> $POPC_LOCATION/etc/service.map
+fi
+
+#Added by clementval
+nodemapentry=`grep "POPCSearchNode " $servicemap`
+if [ -z "${nodemapentry}" ]; then
+$POPC_LOCATION/services/popc_search_node -listlong | grep "POPCSearchNode " >> $POPC_LOCATION/etc/service.map
+fi
+#End of add
+
+start() {
+   if [ -n "${PROXY_PORT}" ]; then
+      echo "Starting delegate service..."
+      $POPC_LOCATION/bin/popcrun -noproxy $POPC_LOCATION/etc/service.map $POPC_LOCATION/services/launchproxy -proxyport=${PROXY_PORT} start
+   fi
+	$POPC_LOCATION/bin/popcrun $servicemap $prog start $serviceproxy  -port=${POPC_PORT} -genchallenge=$TMPKEY $ARGS   
+   RETVAL=$?
+   return $RETVAL
+}
+
+stop() {
+    if [ -n "${PROXY_PORT}" ]; then
+	echo "Stopping delegate service..."
+	$POPC_LOCATION/bin/popcrun -noproxy $servicemap $POPC_LOCATION/services/launchproxy -proxyport=${PROXY_PORT} stop
+    fi
+    $POPC_LOCATION/bin/popcrun $servicemap $prog stop  -port=${POPC_PORT} -challenge=`cat $TMPKEY` $ARGS
+    RETVAL=$?
+    test $RETVAL -eq 0 || return $RETVAL
+    if [ -f ${POPC_TEMP}/jobmgr.pid ]; then
+	pid=`cat ${POPC_TEMP}/jobmgr.pid`
+	rm ${POPC_TEMP}/jobmgr_stdout_$pid ${POPC_TEMP}/jobmgr_stderr_$pid ${POPC_TEMP}/jobmgr.pid $TMPKEY
+    fi
+    return 0
+}
+
+kill() {
+   
+   ARCH=$(uname -s)
+   if [ $ARCH = "Darwin" ]
+   then 
+      echo "Kill all POP-C++ Global Services"
+      killall secure_jobmgr 2> /dev/null
+      killall secure_popc_search_node 2> /dev/null
+      killall popc_security_manager 2> /dev/null
+      killall virtual_secure_jobmgr 2> /dev/null
+      killall virtual_secure_popc_search_node 2> /dev/null
+      killall virtual_popc_security_manager 2> /dev/null
+      killall popcloner 2> /dev/null
+      killall virtual_jobmgr 2> /dev/null
+      killall virtual_popc_search_node 2> /dev/null
+      killall jobmgr 2> /dev/null
+      killall popc_search_node 2> /dev/null
+      killall popfilemanager 2> /dev/null      
+   else
+      echo "Kill all POP-C++ Global Services"
+      killall -q popfilemanager
+      killall -q secure_jobmgr
+      killall -q secure_popc_search_node
+      killall -q popc_security_manager
+      killall -q virtual_secure_jobmgr
+      killall -q virtual_secure_popc_search_node
+      killall -q virtual_popc_security_manager
+      killall -q popcloner
+      killall -q virtual_jobmgr
+      killall -q virtual_popc_search_node
+      killall -q jobmgr
+      killall -q popc_search_node
+      killall -q popfilemanager         
+   fi
+      
+   if [ X$POPC_SECURE = "Xtrue" ] || [ X$POPC_SECURE_VIRTUAL = "Xtrue" ]
+   then
+      SSHTUNNEL_PID=1
+      while [ "$SSHTUNNEL_PID" != "" ]
+      do
+         SSHTUNNEL_PID=$(ps aux | grep "/usr/bin/ssh -f -N" | grep -v grep | head -n 1 | awk -F" " '{print $2}')
+         if [ "$SSHTUNNEL_PID" != "" ]
+         then
+            echo "Kill Tunnel process ($SSHTUNNEL_PID)"
+            kill $SSHTUNNEL_PID
+         else
+            echo "SSH Tunnel not running"
+            SSHTUNNEL_PID=""
+         fi
+      done
+   fi
+}
+
+vmstate(){
+   TMP=$(echo ${ARGS% *})
+   TMP2=$(echo ${ARGS#* })
+   USER=$(echo ${TMP2% *})
+   PASS=$(echo ${TMP2#* })
+   IP=$(echo ${TMP% *})
+
+   if [ "x$USER" == "x" ] || [ "x$PASS" == "x" ] || [ "x$IP" == "x" ]
+   then 
+      echo "SXXpopc vmstate ip_address username password"
+      exit
+   fi
+
+   echo "Getting information about VM on $IP"
+
+   
+   LIST=$(vmware-cmd --server $IP --username $USER --password $PASS -l)
+
+   for VM in $LIST
+   do
+      VMNAME=$(echo ${VM%/*})
+      TRASH=$(echo ${VMNAME%/*})
+      START=$(echo ${#TRASH})
+      let "START=$START+1"
+      VMNAME=$(echo ${VMNAME:$START})
+
+      STATE=$(vmware-cmd --server $IP --username $USER --password $PASS $VM getstate)
+      STATE_ONLY=$(echo ${STATE#* })
+      echo "VM $VMNAME $STATE_ONLY"
+   done
+   
+}
+
+case "$ARG1" in
+        start)
+            start
+            ;;
+ 
+        stop)
+            stop
+            ;;
+        kill)
+            kill
+            ;;
+        vmstate)
+            vmstate
+            ;;
+        status)
+            ;;
+        restart)
+            stop
+            start
+            ;;
+			killnstart)
+         	kill
+         	start
+         	;;
+         clearlog)
+         	rm -rf /tmp/popc_log /tmp/jobmgr_*
+         	;;
+         log)
+         	cat /tmp/popc_log
+         	;;
+        *)
+            echo "Usage: $0 {start|stop|restart|kill|killnstart|clearlog|log|vmstate}"
+            exit 1
+                                                                                
+esac
+                                                                                
+exit 0
+
+
+
+
+
+

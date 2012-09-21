@@ -1,0 +1,15 @@
+===============================================================================
+* demoPOPC
+===============================================================================
+* Created by Pierre Kuonen for duo project
+* Date : July 2008
+********************************************************************************
+
+This program tests the object creation/communication of POPC
+
+usage :
+
+popcrun obj.map ./main nbObj host1 host2 ...
+
+ex :
+popcrun obj.map ./main 2 localhost localhost

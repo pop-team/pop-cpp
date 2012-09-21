@@ -1,0 +1,187 @@
+#!@SHELL@
+
+POPC_LOCATION=@prefix@
+export POPC_LOCATION
+
+if [ "X$1" = "X-ask" ]; then
+   answer="nothing"
+else
+   answer="y"
+fi
+
+while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ] ; do
+echo "DO YOU WANT TO CONFIGURE GLOBUS-BASED SERVICES OF POP-C++? (y/n)"
+read answer
+done
+if [ "X${answer}" = "Xn" ]; then
+	echo "--------------------------------------------------"
+	echo "You choose not to configure the POP-C++ services now."
+	echo "You can configure the POP-C++ services any time"
+	echo "by executing $POPC_LOCATION/sbin/popc_setup_globus"
+	echo "--------------------------------------------------"
+	exit 0
+fi
+
+if [ ! -d "${POPC_LOCATION}" ]; then
+    echo "ERROR: POPC_LOCATION (${POPC_LOCATION}) does not exist!"
+    exit 1
+fi
+
+LD_LIBRARY_PATH=${POPC_LOCATION}/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
+
+echo '====================================================='
+echo GENERATING SERVICE MAPS...
+servicemap=${POPC_LOCATION}/etc/service.map
+tmpservicemap=/tmp/${USER}_service.map
+
+if [ -f $servicemap ]; then
+sed -e '/GlobusJobMgr/d' $servicemap > $tmpservicemap
+else
+echo "#OBJECT PLATFORM EXECUTABLE" > $tmpservicemap
+fi
+
+if [ -f ${POPC_LOCATION}/services/jobmgr_globus ]; then
+	${POPC_LOCATION}/services/jobmgr_globus -listlong | grep GlobusJobMgr >> $tmpservicemap 
+fi 
+
+cp $tmpservicemap $service.map
+rm -f $tmpservicemap
+
+appservice=${POPC_LOCATION}/etc/appservice.conf
+tmpappservice=/tmp/${USER}_appservice.conf
+
+if [ -f $appservice ]; then 
+	sed -e '/GlobusGram/d' $appservice > $tmpappservice
+
+ else 
+	echo '#EXECUTABLE  -object=<SERVICE OBJECT NAME> ' > $tmpappservice
+ fi
+
+echo "${POPC_LOCATION}/services/globusgram -object=GlobusGram" >> $tmpappservice
+cp  $tmpappservice  $appservice
+rm -f $tmpappservice
+
+conf=${POPC_LOCATION}/etc/jobmgr.conf
+confglobus=${POPC_LOCATION}/etc/jobmgr.globus.conf
+
+cp $conf $confglobus
+hostcert=""
+if [ -f /etc/grid-security/hostcert.pem ]; then
+	hostcert="/etc/grid-security/hostcert.pem"
+elif [ -f ${GLOBUS_LOCATION}/etc/grid-security/hostcert.pem ]; then
+        hostcert="${GLOBUS_LOCATION}/etc/grid-security/hostcert.pem"
+fi
+
+echo "Enter the GRAM/WSGRAM URL:"
+read gramcontact
+if [ "x$gramcontact" = "x" ]; then
+	gramcontact="https://`hostname`:8443"
+fi
+echo "gramcontact $gramcontact" >> $confglobus
+
+defaultgridmap=""
+if [ -r "/etc/grid-security/grid-mapfile" ]; then
+    defaultgridmap="/etc/grid-security/grid-mapfile"
+elif [ -r "${GLOBUS_LOCATION}/etc/grid-security/grid-mapfile" ]; then
+    defaultgridmap="${GLOBUS_LOCATION}/etc/grid-security/grid-mapfile"
+fi
+
+echo "Enter the GLOBUS grid-mapfile([${defaultgridmap}]):"
+read gridmap
+if [ "x$gridmap" = "x" ]; then
+	gridmap=$defaultgridmap
+fi
+if [ -r $gridmap ]; then
+	echo "grid-mapfile $gridmap" >> $confglobus
+else
+	echo "ERROR: unable to read $gridmap"
+	exit 1
+fi
+
+ 
+answer=""
+while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ] ; do
+echo "Do you want to generate the POP-C++ startup scripts for Globus? (y/n)"
+read answer
+done
+
+if [ "X${answer}" != "Xy" ]; then
+exit 0
+fi
+
+
+
+echo '====================================================='
+echo CONFIGURING STARTUP SCRIPT FOR YOUR LOCAL MACHINE...
+
+scriptglobus=SXXpopc_globus
+
+tmpheader=/tmp/SXXpopc_header_${USER}
+
+POPC_LOCATION=@prefix@
+
+if [ ! -d "${POPC_LOCATION}" ]; then
+    echo "ERROR: POPC_LOCATION (${POPC_LOCATION}) does not exist!"
+    exit 1
+fi
+
+echo '#!/bin/sh' > $tmpheader
+echo "POPC_LOCATION=${POPC_LOCATION}" >> $tmpheader
+echo "export POPC_LOCATION" >> $tmpheader
+
+#echo "Enter dynamic library locations (default: [${LD_LIBRARY_PATH}]):"
+#read libdir
+#if [ "x$libdir" != "x" ]; then
+#	echo "LD_LIBRARY_PATH=$libdir; export LD_LIBRARY_PATH" >>  $tmpheader
+#fi
+
+echo "Enter the service port[2711]:"
+read port
+if [ -n "${port}" ]; then
+    echo "POPC_PORT=${port}" >> $tmpheader
+fi
+
+echo "Enter the domain name:"
+read domainname
+if [ -n "${domainname}" ]; then
+    echo "POPC_DOMAIN=${domainname}" >> $tmpheader
+    echo "export POPC_DOMAIN" >> $tmpheader
+fi
+
+echo "Enter the temporary directory for intermediate results:"
+read tempdir
+if [ -n "${tempdir}" ]; then
+    echo "POPC_TEMP=${tempdir}" >> $tmpheader
+    echo "export POPC_TEMP" >> $tmpheader
+fi
+
+echo "Enter the globus installed directory (${GLOBUS_LOCATION}):"
+read globusdir
+if [ "x$globusdir" = "x" ]; then
+	globusdir=${GLOBUS_LOCATION}
+fi
+if [ "x$globusdir" = "x" ]; then
+        echo "ERROR: Globus installed directory is not specified"
+	exit 1
+fi
+if [ ! -d $globusdir ]; then
+	echo "ERROR: Globus installed directory does not exist"
+	exit 1
+fi
+echo "GLOBUS_LOCATION=${globusdir}" >> $tmpheader
+echo "export GLOBUS_LOCATION" >> $tmpheader
+
+cat $tmpheader ${POPC_LOCATION}/sbin/SXXpopc_globus.in > ${POPC_LOCATION}/sbin/SXXpopc_globus
+chmod +x ${POPC_LOCATION}/sbin/SXXpopc_globus
+
+rm $tmpheader
+
+echo "CONFIGURING POP-C++ STARTUP SCRIPT FOR GLOBUS DONE!"
+echo '====================================================='
+
+
+
+
+
+

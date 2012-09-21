@@ -1,0 +1,599 @@
+#!@SHELL@
+
+POPC_VIRTUAL=@virtual@
+POPC_SECURE_VIRTUAL=@virtsecure@
+POPC_LOCATION=@prefix@
+export POPC_LOCATION
+
+#
+# This part make the copy of the test sub-directory to the destination directory only
+# during the "make install" process. Because the "popc_setup" can be run when necessary
+# from <install_dir>/sbin directory, it must not do any copy of the test sub-directory
+#
+if [ ! -d $POPC_LOCATION/test ]; then
+  echo ""
+  echo "copying test applications to the destination directory, please wait a few seconds"
+  cp -R ../test $POPC_LOCATION/test
+  echo "copy finished ..."
+  echo ""
+fi
+
+if [ "X$1" = "X-ask" ]
+then
+   answer="nothing"
+else
+   answer="y"
+fi
+
+if [ -f @prefix@/sbin/paroc_setup ]
+then 
+	echo "Error : You are installing on top of an older version, please clean your directory with 'rm -rf @prefix@/*' and run 'make install' again."
+	exit -1
+fi
+
+# following block shortcuted to not asking for configuration of pop-c++ services / JFR - 06-sep-2011
+
+if false
+then
+
+	while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+	do
+		echo ""
+		echo "DO YOU WANT TO CONFIGURE POP-C++ SERVICES? (y/n)"
+		read answer
+	done
+
+	if [ "X${answer}" = "Xn" ]
+	then
+		echo "--------------------------------------------------"
+		echo "You chose not to configure the POP-C++ services now."
+		echo "You can configure the POP-C++ services at any time"
+		echo "by executing '$POPC_LOCATION/sbin/popc_setup' or"
+		echo "'make install'"
+		echo "--------------------------------------------------"
+		echo ""
+		echo "Press <Return> to continue "
+		read answer
+		exit 0
+	fi
+
+
+fi
+# end of block 
+
+echo ""
+echo ""
+echo " POP-C++ will now be configured. To do this, some information must be"
+echo " entered manually."
+echo ""
+echo ""
+
+echo ""
+echo "**************************************************************************"
+echo ""
+echo "They are 2 different ways to to configure the POP-C++ Services :"
+echo ""
+echo "- if you are new to POP-C++ and simply want to try it on your machine, "
+echo "  select a simple installation (y)". No further question will be asked.
+echo ""
+echo "- if you want to use POP-C++ on a grid using the jobmanager, or any other advanced "
+echo "  option, select a standard installation (n). More questions will be asked."
+echo ""
+echo "For more information about which installation suits you best"
+echo " please read the documentation."
+echo ""
+echo "If needed, you can change the configuration at any time by"
+echo "executing '$POPC_LOCATION/sbin/popc_setup' or 'make install'"
+echo ""
+echo "**************************************************************************"
+echo ""
+
+answer="nothing"
+while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+do
+	echo "DO YOU WANT TO MAKE A SIMPLE INSTALLATION ? (y/n) : "
+	read answer
+done
+if [ X${answer} = "Xy" ]
+then
+	insttype="simple"
+else
+	insttype="standard"
+fi
+export insttype
+
+
+if [ ! -d "${POPC_LOCATION}" ]
+then
+    echo "ERROR: POPC_LOCATION (${POPC_LOCATION}) does not exist!"
+    exit 1
+fi
+
+LD_LIBRARY_PATH=${POPC_LOCATION}/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
+
+echo '====================================================='
+echo GENERATING SERVICE MAPS...
+
+servicemap=${POPC_LOCATION}/etc/service.map
+echo "#object platform location" >  $servicemap 
+
+if [ -f ${POPC_LOCATION}/services/jobmgr.globus ]
+then
+	${POPC_LOCATION}/services/jobmgr.globus -listlong | grep Globus >> $servicemap 
+fi 
+
+if [ -f ${POPC_LOCATION}/services/jobmgr ]
+then
+	${POPC_LOCATION}/services/jobmgr -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/virtual_jobmgr ]
+then
+	${POPC_LOCATION}/services/virtual_jobmgr -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/secure_jobmgr ]
+then
+	${POPC_LOCATION}/services/secure_jobmgr -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/virtual_secure_jobmgr ]
+then
+	${POPC_LOCATION}/services/virtual_secure_jobmgr -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/popc_search_node ]
+then
+	${POPC_LOCATION}/services/popc_search_node -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/virtual_popc_search_node ]
+then
+	${POPC_LOCATION}/services/virtual_popc_search_node -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/secure_popc_search_node ]
+then
+	${POPC_LOCATION}/services/secure_popc_search_node -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/virtual_secure_popc_search_node ]
+then
+	${POPC_LOCATION}/services/virtual_secure_popc_search_node -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/virtual_popc_security_manager ]
+then
+	${POPC_LOCATION}/services/virtual_popc_security_manager -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/popc_security_manager ]
+then
+	${POPC_LOCATION}/services/popc_security_manager -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/popcloner ]
+then
+	${POPC_LOCATION}/services/popcloner -listlong >> $servicemap 
+fi
+
+if [ -f ${POPC_LOCATION}/services/popfilemanager ]
+then
+	${POPC_LOCATION}/services/popfilemanager -listlong >> $servicemap 
+fi 
+
+if [ -f ${POPC_LOCATION}/services/pqueue ]
+then
+	${POPC_LOCATION}/services/pqueue -listlong | grep PQueue >> $servicemap 
+fi
+
+#${POPC_LOCATION}/services/proxy -listlong >> $servicemap 
+
+ if [ X$POPC_SECURE = "Xtrue" ] || [ X$POPC_SECURE_VIRTUAL = "Xtrue" ]
+   then 
+      if [ ! -f $HOME/.ssh/id_rsa.pub ]
+      then
+         echo "Your SSH public key is not generated yet ! POP-C++ will do it for you ..."
+         ssh-keygen
+      fi
+   fi
+
+echo "CONFIGURING POP-C++ SERVICES ON YOUR LOCAL MACHINE..."
+
+conf=${POPC_LOCATION}/etc/jobmgr.conf
+runtime_env=${POPC_LOCATION}/etc/popc-runtime-env.sh
+confglobus=${POPC_LOCATION}/etc/jobmgr.globus.conf
+virtualconf=/tmp/popc_${$}.conf
+virtualconfcipher=${POPC_LOCATION}/etc/virtual.conf.cr
+
+cp ${POPC_LOCATION}/etc/jobmgr.conf.in $conf
+echo " " >> $conf
+
+if [ X$insttype = "Xstandard" ]
+then
+	echo ""
+	echo "If you want join an existing POP-Community, you must now enter"
+	echo "the neighbour system. Do not enter your system or localhost as"
+	echo "a neighbour since your POP-C++ will hang !"
+	echo ""
+
+#Check OS to be able to find correctly the IP Address / JFR
+
+	OS=`uname`
+	IO="" # store IP
+	case $OS in
+		Linux) HOSTIP=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`;;
+		FreeBSD|OpenBSD) HOSTIP=`ifconfig  | grep -E 'inet.[0-9]' | grep -v '127.0.0.1' | awk '{ print $2}'` ;;
+		SunOS) HOSTIP=`ifconfig -a | grep inet | grep -v '127.0.0.1' | awk '{ print $2} '` ;;
+		Darwin) HOSTIP=`ifconfig -a | grep 'inet ' | grep -v '127.0.0.1' | awk '{ print $2} '` ;;
+		*) IP="Unknown";;
+	esac
+
+	while [ 1 ]
+	do
+#		echo "Enter the full qualified master host name (POPC gateway):"
+		echo "Enter the full qualified neighbour host name or IP address :"
+		read host
+		if [ "x$host" != "x" ]
+		then
+			if [ "x$host" != "xlocalhost" ] && [ "x$host" != "x127.0.0.1" ] && [ "x$host" != "x$HOSTIP" ]
+			then
+				myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711"  }'`
+				echo "parent ${myurl}" >>  $conf
+				echo "node ${myurl}" >>  $conf
+			else
+				echo ""
+				echo "Please note that POP-C++ will hang if you define your system "
+				echo "as a neighbour system !"
+				echo ""
+				echo "Do you really want to define your system as your neighbour system ? [y/N] :"
+				read response
+				if [ x$response = "xy" ] || [ x$response = "xY" ]
+				then
+					myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711"  }'`
+					echo "parent ${myurl}" >>  $conf
+					echo "node ${myurl}" >>  $conf
+				else
+					echo ""
+				fi
+			fi
+		else
+			break
+		fi
+	done
+	
+	
+# following block shortcuted to not asking entering of child node / JFR - 06-sep-2011
+	# 
+	if false
+	then
+	
+		while [ 1 ]
+		do
+			echo "Enter the child node:"
+			read host
+			
+			if [ "x$host" != "x" ]
+			then
+				myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711" }'`
+				echo "node ${myurl}" >>  $conf
+			else
+				break
+			fi
+		done
+		
+	fi
+# end of block
+
+	while [ 1 ]
+	do
+		echo "Enter number of processors available (default:1):"
+		read nprocs
+
+		if [ "x$nprocs" = "x" ]
+		then
+			nprocs=1 
+		fi
+	
+		if [ $nprocs -ge 1 ]
+		then
+			echo "np $nprocs" >>  $conf
+			break
+		else
+			echo "Bad input!"
+		fi
+	done
+
+	while [ 1 ]
+	do
+		echo "Enter the maximum number of POP-C++ jobs that can run concurrently (default: 100):"
+		read maxjobs
+		if [ "x$maxjobs" = "x" ]
+		then
+			maxjobs=100 
+		fi
+	
+		if [ $maxjobs -ge 0 ]
+		then
+			echo "maxjobs $maxjobs" >>  $conf
+			break
+		else
+			echo "Bad input!"
+		fi
+	done
+
+	while [ 1 ]
+	do
+		echo "Enter the available RAM for job execution in MB (default: 1024) :"
+		read ram
+		if [ "x$ram" = "x" ]
+		then
+			ram=2048 
+		fi
+	
+		if [ $ram -gt 0 ]
+		then
+			echo "ram $ram" >>  $conf
+			break
+		else
+			echo "Bad input!"
+		fi
+	done
+
+	echo "Which local user you want to use for running POP-C++ jobs?"
+	read parocuser
+
+	if [ "x$parocuser" != "x" ]
+	then
+		echo "localuser $parocuser" >>  $conf
+	fi
+
+else
+#
+# here are the default values put in the jobmgr.conf for a simple installation
+#
+	echo "np 1" >>  $conf
+	echo "maxjobs 100" >>  $conf
+	echo "ram 1024" >>  $conf
+fi
+
+
+echo "CONFIGURING THE RUNTIME ENVIRONMENT"
+
+#backup popc-runtime-env.sh
+cp $runtime_env $POPC_LOCATION/etc/popc-runtime-env.sh.old
+cp $POPC_LOCATION/etc/popc-runtime-env.in $runtime_env
+
+
+if [ X$insttype = "Xstandard" ]
+then
+	echo "Enter the script to submit jobs to the local system:"
+	job_exec=""
+	read job_exec
+fi
+
+echo "jobmgr ${job_exec} $POPC_LOCATION/services/popcobjrun" >> $conf 
+
+if [ "@pqueue@" = "true" ]
+then
+
+	echo "PQUEUE service access point:"
+	pqueue=""
+	read pqueue
+	if [ -n "$pqueue" ]
+	then
+		echo "POPC_PQUEUE=\"$pqueue\"" >> $runtime_env
+		echo "export POPC_PQUEUE" >> $runtime_env
+	fi
+
+fi 
+
+if [ X$insttype = "Xstandard" ]
+then
+	echo "Communication pattern:"
+	comm=""
+	read comm
+fi
+
+if [ -n "$comm" ]
+then
+	echo "POPC_COMM_PATTERN=\"$comm\"" >> $runtime_env
+	echo "export POPC_COMM_PATTERN" >> $runtime_env
+fi
+
+
+# ### Added by Wyssen ### 
+if [ X$insttype = "Xstandard" ]
+then
+   if [ X$POPC_VIRTUAL = "Xtrue" ] || [ X$POPC_SECURE_VIRTUAL = "Xtrue" ]
+   then
+      echo "POPC_VIRTUAL=\"y\"" >> $runtime_env
+	   echo "export POPC_VIRTUAL" >> $runtime_env
+	
+	   echo "SETTING UP VIRTUAL ENVIRONMENT INFORMATION NOW"
+	     
+      #ESX(i) host
+	   echo "ESX(i) hypervisor IP address : e.g. 160.98.20.140"
+	   virt_var=""
+	   read virt_var
+	   if [ -n "$virt_var" ]
+      then
+         echo "popc_esx_uri esx://$virt_var/?no_verify=1" >  $virtualconf
+      fi
+      
+      #ESX(i) username
+	   echo "ESX(i) user name with admin rights (default: root)"
+	   virt_var=""
+	   read virt_var
+	   if [ "x$virt_var" = "x" ]
+      then
+         virt_var="root"
+      fi
+      echo "popc_esx_username $virt_var" >>  $virtualconf
+      
+      #ESX(i) pass
+	   echo "ESX(i) password:"
+	   virt_var=""
+      stty_orig=`stty -g`
+      stty -echo 
+	   read virt_var
+      stty $stty_orig
+      echo ""
+	   if [ -n "$virt_var" ]
+      then
+         echo "popc_esx_password $virt_var" >>  $virtualconf
+      fi
+
+      #ESX(i) datastore name.
+	   echo "ESX(i) datastore name (default: datastore1)"
+	   virt_var=""
+	   read virt_var
+	   if [ "x$virt_var" = "x" ]
+      then
+         virt_var="datastore1"
+      fi
+      echo "popc_esx_datastore $virt_var" >>  $virtualconf
+
+      #ESX(i) max vm.
+	   echo "ESX(i) maximum worker (default: 4)"
+	   virt_var=""
+	   read virt_var
+	   if [ "x$virt_var" = "x" ]
+      then
+         virt_var="4"
+      fi
+      echo "popc_esx_maxvm $virt_var" >>  $virtualconf
+
+      #ESX(i) How many VM do you want at starup.
+	   echo "ESX(i) number of VM cloned at first startup (default: 0)/(-1 = all VM cloned at starup)"
+	   virt_var=""
+	   read virt_var
+	   if [ "x$virt_var" = "x" ]
+      then
+         virt_var="0"
+      fi
+      echo "popc_esx_num_clone $virt_var" >>  $virtualconf
+      
+      #ESX(i) worker name.
+	   echo "ESX(i) worker name (default: popc_worker1)"
+	   virt_var=""
+	   read virt_var
+	   if [ "x$virt_var" = "x" ]
+      then
+         virt_var="popc_worker1"
+      fi
+      echo "popc_esx_worker_name $virt_var" >>  $virtualconf
+
+      #ESX(i) worker OS username.
+
+	   virt_var=""
+      while [ "x$virt_var" = "x" ]; do
+         echo "ESX(i) worker OS username"
+   	   read virt_var
+      done
+      echo "popc_esx_hostuser $virt_var" >>  $virtualconf
+
+	
+      #ESX(i) worker OS password.
+	   virt_var=""
+      while [ "x$virt_var" = "x" ]; do
+         echo "ESX(i) worker OS password"
+    	   read virt_var
+      done
+      echo "popc_esx_hostpass $virt_var" >>  $virtualconf
+      
+      
+      #ESX(i) clean snapshot.
+	   echo "ESX(i) clean snapshot name (default: popc_clean)"
+	   virt_var=""
+	   read virt_var
+	   if [ "x$virt_var" = "x" ]
+      then
+         virt_var="popc_clean"
+      fi
+      echo "popc_esx_snapshot $virt_var" >>  $virtualconf
+	   
+      echo
+      cat $virtualconf | ${POPC_LOCATION}/bin/popcipher $virtualconfcipher
+      rm -f $virtualconf
+   fi
+fi
+# ### End ###
+
+
+echo "SETTING UP RUNTIME ENVIRONMENT VARIABLES"
+
+env_var="nothing"
+env_val="nothing"
+
+hasld=0
+
+if [ X$insttype = "Xstandard" ]
+then
+	while [ "X${env_var}" != "X" ] && [ "Y${env_val}" != "Y" ]
+	do
+		echo "Enter variable name:"
+		read env_var
+		if [ "X${env_var}" != "X" ]
+		then
+			echo "Enter variable value:"
+			read env_val
+			if [ "X${env_val}" != "X" ]
+			then
+				echo "$env_var=\"$env_val\"" >> $runtime_env
+				echo "export $env_var" >> $runtime_env
+			fi
+		fi
+	done
+
+	echo '====================================================='
+	echo "CONFIGURATION POP-C++ SERVICES COMPLETED!"
+	echo '====================================================='
+
+	echo ""
+	echo ""
+	echo " POP-C++ startup scripts will now be generated. To do this, some information"
+	echo " must be entered manually."
+	echo ""
+
+
+# following block is shortcuted to force the generation of startup scripts / JFR - 06-sep-2011
+	if false
+	then
+
+		answer=""
+		while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+		do
+			echo "Do you want to generate the POP-C++ startup scripts? (y/n)"
+			read answer
+		done
+
+		if [ "X${answer}" = "Xy" ]
+		then
+			$POPC_LOCATION/sbin/popc_script_setup
+		fi
+	fi
+# following line is required because the block above is shortcuted / JFR - 06-sep-2011
+	$POPC_LOCATION/sbin/popc_script_setup
+	
+else
+	$POPC_LOCATION/sbin/popc_script_setup
+fi
+
+
+
+
+echo '====================================================='
+echo "CONFIGURATION DONE!"
+echo '====================================================='
+echo ""
+echo "IMPORTANT : Do not forget to add these lines to your .bashrc file or equivalent :"
+echo "---------"
+echo "    POPC_LOCATION=$POPC_LOCATION"
+echo "    export POPC_LOCATION=$POPC_LOCATION"
+echo "    PATH=\$PATH:\$POPC_LOCATION/bin:\$POPC_LOCATION/sbin"
+echo ""
+echo "Press <Return> to continue"
+read answer
+exit 0

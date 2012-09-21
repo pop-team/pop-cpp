@@ -1,0 +1,978 @@
+\chapter{User Manual}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+The POP model (see chapter \ref{chap:model}) is a suitable programming model for
+large heterogenous distributed environments but it should also remain
+as close as possible to traditional object oriented programming. 
+Parallel objects of the POP model generalize sequential objects, 
+keep the properties of object oriented programming (data encapsulation,
+inheritance and polymorphism) and add new properties.
+
+The POP-C++ language is an extension of C++ that implements the POP model.
+Its syntax remains as close as possible to standard
+C++ so that C++ programmers can easily learn it and existing
+C++ libraries can be parallelized without much effort.
+Changing a sequential C++ application into a distributed parallel
+application is rather straightforward.
+
+Parallel objects are created using parallel classes. Any object that
+instantiates a parallel class is a parallel object and can be executed
+remotely. To help the POP-C++ runtime to choose a remote machine
+to execute the remote object, programmers can add object description
+information to each constructor of the parallel object. In order to
+create parallel execution, POP-C++ offers new semantics for method
+invocations. These new semantics are indicated thanks to five new
+keywords. Synchronizations between concurrent calls are sometimes
+necessary, as well as event handling; the standard POP-C++ library supplies
+some tools for that purpose. This chapter describes the syntax of the
+POP-C++ programming language and presents main tools available in the
+POP-C++ standard library.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Parallel Objects}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+POP-C++ parallel objects are a generalization of sequential objects. Unless the term
+\textbf{sequential object} is explicitly specified, a parallel object is
+simply referred to as an object in teh rest of this chapter.
+
+
+
+
+% This is done by
+%replacing the \texttt{class} keyword by the new keyword
+%\texttt{parclass}. Any object that instantiates a parallel class is a
+%parallel object and can be executed remotely. In order to help the
+%POP-C++ runtime to choose a remote machine for the remote object
+%execution, programmers can add \emph{object description} information
+%(OD) to each constructor.
+%
+%When creating remote objects two situations can occur: the remote object
+%immediately starts to execute some code (active object semantic) or the
+%remote object only executes code when there are method invocations
+%(static object semantic). The POP model is based on \emph{static object
+%semantic} because this semantic is closer from the one of traditional
+%sequential OO programming. In order to create parallel execution we add
+%new semantics to method invocations. This new semantic are indicated
+%through five new keywords: \texttt{synch}, \texttt{async}, \texttt{seq},
+%\texttt{mutex} and \texttt{conc}. Together with object descriptions, the
+%six new keywords presented above constitute the core of the POP-C++
+%extension to C++. The rest of the C++ syntax remains identical and
+%especially class implementation are realized using pure C++ syntax.
+
+
+\subsection{Parallel Class} \label{sec:class:dec}
+
+Developing POP-C++ programs mainly consists of designing and
+implementing parallel classes. The declaration of a parallel class
+begins with the keyword \texttt{parclass} followed by the class name and
+the optional list of derived parallel classes separated by commas:
+
+\begin{verbatim}
+    parclass ExampleClass {
+        /* methods and attributes */
+        ...
+    };
+\end{verbatim}
+
+or
+
+\begin{verbatim}
+    parclass ExampleClass: BaseClass1, BaseClass2 {
+        /* methods and attributes */
+        ...
+    };
+\end{verbatim}
+
+As in the C++ language, multiple inheritance and polymorphism are supported
+in POP-C++. A parallel class can be a stand-alone class or it can be
+derived from other parallel classes. Some methods of a
+parallel class can be declared as overridable (virtual methods).
+
+Parallel classes are very similar to standard C++ classes. Nevertheless,
+same restrictions applied to parallel classes. 
+
+\begin{petitem}
+
+\item All data attributes are protected or private;
+
+\item The objects do not access any global variable;
+
+\item There are no programmer-defined operators;
+
+\item There are no methods that return memory address references.
+
+\end{petitem}
+
+These restrictions are not a major issue in object-oriented programming
+and in some cases they can improve the legibility and the clearness of
+programs. The restrictions can be mostly worked around by adding
+\texttt{get()} and \texttt{set()} methods to access data attributes and
+by encapsulating global data and shared memory address variables in
+other parallel objects.
+
+
+\subsection{Creation and Destruction}
+
+The object creation process consists of several steps: locating a
+resource satisfying the object description (resource discovery),
+transmitting and executing the object code, establishing the
+communication, transmitting the constructor arguments and finally
+invoking the corresponding object constructor. Failures on the object
+creation will raise an exception to the caller. Section
+\ref{sec:exceptions} will describe the POP-C++ exception mechanism.
+
+As a parallel object can be accessible concurrently from multiple
+distributed locations (shared object), destroying a parallel object
+should be carried out only if there is no other reference to the object. 
+POP-C++ manages parallel objects' life time by an internal reference
+counter. A null counter value will cause the object to be physically
+destroyed.
+
+Syntactically, the creation and the destruction of a parallel object are
+identical to those of C++. A parallel object can be implicitly created
+by just declaring a variable of the type of parallel object on stack or
+using the standard C++ \texttt{new} operator. When the execution goes
+out of the current stack or the \texttt{delete} operator is used, the
+reference counter of the corresponding object is decreased.
+
+
+\subsection{Parallel Class Methods}
+
+Like sequential classes, parallel classes contain methods and attributes.
+Method can be public, or private while attribute must be either protected
+or private. For each method, the programmer should define the invocation
+semantics. These semantics, described in section \ref{sec:inv:sem}, are
+specified by two keywords, one for each side:
+
+\begin{petitem}
+
+\item Interface side:
+
+	\begin{petitem}
+
+	\item \texttt{sync}: Synchronous invocation. This is the
+		default value. For example: \\
+		\texttt{sync void method1();}
+
+	\item \texttt{async}: Asynchronous invocation. For example:\\
+		\texttt{async void method2();}
+
+	\end{petitem}
+
+\item Object side:
+
+	\begin{petitem}
+
+	\item \texttt{seq}: Sequential invocation. This is the default
+		value. For example:\\
+		\texttt{seq void method1();}
+
+	\item \texttt{mutex}: Mutex invocation. For example:\\
+		\texttt{mutex int method2();}
+
+	\item \texttt{conc}: Concurrent invocation. For example:\\
+		\texttt{conc float method3();}
+
+	\end{petitem}
+
+\end{petitem}
+
+The combination of the interface and the object-side semantics defines
+the overall semantics of a method. For instance, the following
+declaration defines an synchronous concurrent method that returns an
+integer number:
+
+\begin{verbatim}
+    sync conc int myMethod();
+\end{verbatim}
+
+
+%The programmer can add optional argument descriptors to each argument to
+%provide additional information for POP-C++ to marshal data. Arguments
+%can be for input or output or both.
+
+%A custom marshal and demarshal procedure can be supplied. In the
+%current version of POP-C++, all non-structured C++ data types are
+%automatically marshaled. For structured data types, the programmer
+%should also specify the function to marshal data by an optional
+%descriptor. 
+
+%If an argument is an array, it is also necessary that the
+%programmer provide a hint on the number of elements. 
+
+Figure \ref{fig:ex:sort} contains an example of a method \texttt{sort()} that
+has two arguments: an array of integer data (for input and output) and
+its (integer) size.
+
+\begin{figura}{fig:ex:sort}{Array argument example}%
+\vspace{-4mm}%
+\begin{verbatim}
+    parclass Table {
+        ...
+        void sort([in, out, size=n] int *data, int n);
+        ...
+    };
+
+        /* main program */
+        ...
+        Table sales;
+        int amount[10];
+        sales.sort(amount, 10);
+        ...
+\end{verbatim}
+\end{figura}
+
+%\todo{This example should include a marshall function.}
+
+
+
+\subsection{Object Description}
+
+Object descriptions are used to describe the resource requirements
+for the execution of the object. Object descriptions are
+declared along with parallel object constructor statements. Each
+constructor of a parallel object can be associated with an object
+description that resides directly after the argument declaration.
+The syntax of an object descriptor is as follows::
+
+\texttt{~~~~@\{}$expressions$\texttt{\}}
+
+An object description contains a set of resource requirement
+expressions. All resource requirement expressions are separated by
+semicolons and can be any of the following:
+
+\texttt{~~~~od.}$res_N$\texttt{(}$exact$\texttt{);}
+
+\texttt{~~~~od.}$res_N$\texttt{(}$exact$\texttt{, }$lbound$\texttt{);}
+
+\texttt{~~~~od.}$res_S$\texttt{(}$resource$\texttt{);}
+
+\texttt{~~~~}$res_N$ := \texttt{power}$~|~$
+	\texttt{memory}$~|~$
+	\texttt{network}$~|~$
+	\texttt{walltime}
+
+\texttt{~~~~}$res_S$ := \texttt{protocol}$~|~$
+	\texttt{encoding}$~|~$\texttt{url}
+
+Both $exact$ and $lbound$ terms are numeric expressions, and
+$resource$ is a null-terminated string expression. The semantics of those
+expressions depend on the resource requirement specifier (the keyword
+corresponding to $res_N$ or $res_S$).
+The $lbound$ term is only used in non-strict object descriptions, to
+specify the lower bound of the acceptable resource requirements.
+
+The current implementation allows indicating resources requirement in
+terms of:
+
+\begin{petitem}
+
+\item Computing power (in Mflops), keyword \texttt{power}
+
+\item Memory size (in MB), keyword \texttt{memory}
+
+\item Bandwidth (in Mb/s), keyword \texttt{network}
+
+\item Location (host name or IP address), keyword \texttt{url}
+
+\item Protocol (\texttt{"socket"} or \texttt{"http"}), keyword \texttt{protocol}
+
+\item Data encoding (\texttt{"raw"}, \texttt{"xdr"}, \texttt{"raw-zlib"}
+	or \texttt{"xdr-zlib"}), keyword \texttt{encoding}
+
+\end{petitem}
+
+An example of object description is given in the figure \ref{fig:ex:od}.
+There, the constructor for the parallel object \texttt{Bird} requires
+the computing power of \texttt{P} Mflops, the desired memory space of
+100MB (having 60MB is acceptable) and the communication protocol is
+socket or HTTP (socket has higher priority).
+
+
+\begin{figura}{fig:ex:od}{Object descriptor example}%
+\vspace{-4mm}%
+\begin{verbatim}
+    parclass Bird
+    {
+    public:
+        Bird(float P) @{ od.power(P);
+                         od.memory(100,60);
+                         od.protocol("socket http"); };
+        ...
+    };
+\end{verbatim}
+\end{figura}
+
+
+Object descriptors are used by the POP-C++ runtime system to find a
+suitable resource for the parallel object. Matching between object
+descriptors and resources is carried out by a multi-layer filtering
+technique: first, each expression (item) in every object descriptor will
+be evaluated and categorized (e.g., power, network, memory). Then, the
+matching process consists of several layers; each layer filters single
+category within object descriptors and performs matching on that
+category. Finally, if an object descriptor pass all filters, the object
+is assigned to that resource.
+
+If no suitable resource is found to execute the objet then an exception
+is raised (see section \ref{sec:exceptions}).
+
+
+\subsection{Data marshaling} \label{sec:marshaling}
+
+When calling remote methods, the arguments must be transferred to the
+object being called (the same happens for returned values). In order to
+operate with different memory spaces and different architectures, data is marshaled
+into a standard format prior to be send to remote objects. All data passed
+is serialized (marshalled) at the caller side and deserialized (demarshaled)
+at the callee side.
+
+Programmers can help the POP-C++ compiler to generate efficient code by
+optionally specifying which arguments to transfer. This is done using an
+argument information block that can contain the directives \texttt{in}
+(for input), \texttt{out} (for output), or both. The argument
+information block should appear between braces (\texttt{[} and
+\texttt{]}), right before each argument declaration.
+Only input arguments are transferred from the caller to the remote object. 
+Output arguments will only be transferred back to the
+caller for a synchronous method invocation. Without those
+directives, in the current implementation of POP-C++ the following rules
+are applied:
+
+\begin{petitem}
+
+    \item If the method is asynchronous, arguments are input-only.
+
+    \item If the method is synchronous:
+
+	\begin{petitem}
+
+	    \item Constant and passing-by-value arguments are
+		input-only.
+
+	    \item Other arguments are considered as both
+		input and output.
+
+	\end{petitem}
+
+\end{petitem}
+
+
+POP-C++ automatically marshal/demarshal all the basic types of C++
+(\texttt{int, float, char,} ... etc.). For arrays arguments programmers
+have to explicitly supply the number of elements the array contains.
+This is done using the directive \texttt{size} in the argument
+information block.
+ 
+Void pointers (\texttt{void*}) cannot be used as arguments of parallel object methods.
+
+For structured data, the programmer must supply a marshalling and
+demarshalling function through the directive \texttt{proc=}\emph{<function
+name>} in the argument information block (see subsection \ref{sbsec:marshallingData}).
+
+Finally to pass sequential objects as arguments to a \texttt{parclass} method,
+programmers must derive their classes from a POP-C++ system class called
+\texttt{POPBase} and implement the virtual method \texttt{Serialize} (see
+subsection \ref{sbsec:marshallingObject}).
+
+The POP-C++ system library provides two classes to support user specific
+marshalling/demarshalling functions: \texttt{POPBuffer} representing a
+system buffer that store marshalled data and \texttt{POPMeemSpool}
+representing the temporary memory spool that can be used to allocate
+temporary memory space for method invocation. The interfaces of these
+two classes are discussed bellow:
+
+\begin{verbatim}
+class  POPBuffer
+{
+public:
+   void Pack(const Type *data, int n);
+   void UnPack(Type *data, int n);
+};
+
+class POPMemSpool
+{
+public:
+   void *Alloc(int size);
+};
+
+\end{verbatim}
+
+
+The \texttt{POPBuffer} class contains a set of \texttt{Pack}/\texttt{UnPack} methods for
+all simple data types \texttt{Type} (\texttt{char},\texttt{bool},\texttt{int},\texttt{float}, etc.). \texttt{Pack}
+is used to marshal the array of \texttt{data} of size \texttt{n}.  \texttt{Pack} is used
+to demarshal the \texttt{data} from the received buffer. 
+
+\subsection{Marshalling Sequential Objects} \label{sbsec:marshallingObject}
+
+To be able to pass sequential objects as arguments to a \texttt{parclass} method,
+programmers must derive their classes from a POP-C++ system class called
+\texttt{POPBase} and implement the virtual method \texttt{Serialize}.
+The interface of \texttt{POPBase} is described as following.
+
+\begin{verbatim}
+class POPBase
+{
+ public:
+  virtual void Serialize(POPBuffer &buf, bool pack);
+};
+\end{verbatim}
+
+The method \texttt{Serialize} requires two arguments: the \texttt{buf} that stores the
+object data and flag \texttt{pack} specifying if it is to serialize data into the
+buffer or to deserialize data from the buffer.
+
+
+  \begin{figura}{fig:ex:marshalobj}{Marshalling an object}%
+\vspace{-4mm}%
+\begin{verbatim}
+    class Speed: public POPBase {
+       public:
+         Speed();
+         virtual void Serialize(POPBuffer &buf, bool pack);
+  
+         float *val;
+         int count;
+    };
+    void Speed::Serialize(POPBuffer &buf, bool pack) {
+      if (pack) {
+        buf.Pack(&count,1);
+        buf.Pack(val, count);
+      }
+      else {
+        if (val!=NULL) delete [] val;
+        buf.UnPack(&count,1);
+        if (count>0) {
+          val=new float[count];
+          buf.UnPack(val, count);
+        }
+        else val=NULL;
+      }
+    }
+
+    parclass Engine {
+        ...
+        void accelerate(const Speed &data);
+        ...
+    };
+\end{verbatim}
+\end{figura}
+
+Figure \ref{fig:ex:marshalobj} shows an example of marshalling \texttt{Speed}
+class compared to Fig.\ref{fig:ex:marshal}. Instead of specifying the
+marshalling function, the programmer implements the
+method \texttt{Serialize} of the \texttt{POPBase} class.
+
+\subsection{Marshalling Data Structures} \label {sbsec:marshallingData}
+
+For marshalling/demarshalling complex structures which are not objects, such as
+\texttt{struct} of C++, programmers need to indicate which function to use for
+marshalling/demarshalling the structure. In addition it is necessary to
+allocate temporary memory to store the structure to be sent. This memory
+space will be then freed automatically by the system after the invocation is
+finished. POP-C++ provides a class \texttt{POPMemSpool} with the method
+\texttt{Alloc} to do this temporary memory allocation as well as a way to
+indicate, when calling a method, the function to use for
+marshalling/demarshalling an argument (\texttt{proc=}).
+  
+
+\begin{figura}{fig:ex:marshal}{Marshalling a structure}%
+\vspace{-4mm}%
+\begin{verbatim}
+    struct Speed {
+        float *val;
+        int count;
+    };
+
+    void marsh(POPBuffer &buffer, Speed &data, int count,
+                            int flag, POPMemSpool *tmpmem) {
+      if (flag & FLAG_MARSHAL)
+      {
+        buffer.Pack(&data.count,1);
+        buffer.Pack(data.val, data.count);
+      }
+      else
+      {
+        buffer.UnPack(&data.count,1);
+        //performing temporary allocation before calling UnPack
+        data.val=(float *)tmpmem->Alloc(data.count*sizeof(float)); 
+        buffer.UnPack(data.val, data.count);
+      }
+    }
+
+    parclass Engine {
+        ...
+        void accelerate([proc=marsh] const Speed &data);
+        ...
+    };
+\end{verbatim}
+\end{figura}
+
+Figure \ref{fig:ex:marshal} shows an example of data structure marshalling
+in POP-C++.  In this example, the programmer provides the function
+\texttt{marsh()} for marshalling/demarshalling the argument \texttt{data}
+of method \texttt{accelerate()} of parallel class \texttt{Engine}.
+The programmer provided marshalling function
+\texttt{marsh()} takes five arguments:
+
+\begin{petitem}
+
+	\item \texttt{buffer}: a buffer to marshal data into or
+		demarshal from.
+
+	\item \texttt{data}: the data structure to be marshalled or
+		demarshalled, passed by reference.
+
+	\item \texttt{count}: the number of elements to marshal or
+		demarshal.
+
+	\item \texttt{flag}: a bit mask that specifies where this
+		function is called (marshalling or demarshalling, interface side or server-side). 
+
+	\item \texttt{tmpmem}: a temporary memory spool (POPMemspool). 
+
+\end{petitem}
+
+
+The marshalling function should be implemented in such a way that, when
+called to marshal, it packs all relevant fields of \texttt{data} into
+\texttt{buffer}. Likewise, when called to unmarshall, it should unpack
+all \texttt{data} fields from \texttt{buffer}. The \texttt{buffer} has
+two methods, overloaded for all scalar C++ types, to be used to pack and
+unpack data. These methods are \texttt{Pack()} and \texttt{UnPack()}
+respectively. Both methods are used with the number of items to pack,
+one for scalars, more than one for vectors.
+
+
+\texttt{data} is passed to the marshalling function by reference, so the
+function can modify it if necessary. Also, if \texttt{data} is a vector
+(not the case shown in the example), the argument \texttt{count} will be
+greater than one.
+
+A bit mask (\texttt{flag}) is passed to the marshalling function to
+specify whether it should marshal or demarshal data. The bit mask
+contains several bit fields, and if the bit \texttt{FLAG\_MARSHAL} is
+set, the function should marshal data. Otherwise, it
+should demarshal data. If the bit \texttt{FLAG\_INPUT} is set,
+the function is called at the interface side. Otherwise,
+it is called at the object-server side.
+
+The last argument of the function (\texttt{tmpmem}) should be only used to 
+allocate temporary memory space. In the example, the \text{Speed}
+structure contains an array \texttt{val} of \texttt{count} elements. At the
+object-side, before unpacking \texttt{val}, we need to perform temporary
+memory allocation using the memory spool interface provided by \texttt{tmpmem}.  
+ 
+%\todo{the text above is a lie. We should describe tmpmem's methods.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Object Layout} \label{sec:pack}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+A POP-C++ application is build using several executable files. One of
+them is the main program file, used to start running the application.
+Other executable files contain the implementations of the parallel
+classes for a specific platform. An executable file can store the
+implementation of one or several parallel objects. Programmers can help
+the POP-C++ compiler to group parallel objects into a single executable
+file by using the directive \texttt{@pack()}.
+
+\begin{figura}{fig:pack}{Packing objects into an executable file}%
+\vspace{-4mm}%
+\begin{verbatim}
+    Stack::Stack(...) {
+        ...
+    }
+    Stack::push(...) {
+        ...
+    }
+    Stack::pop(...) {
+        ...
+    }
+
+    @pack(Stack, Queue, List)
+\end{verbatim}
+\end{figura}
+
+All POP-C++ objects to be packed in a single executable file should be
+included as arguments of the \texttt{@pack()} directive. It is required
+that among the source codes passed to the compiler, exactly one source
+code must contain \texttt{@pack()} directive. Figure \ref{fig:pack}
+shows an example with a file containing the source code of a certain
+class \texttt{Stack}, and a \texttt{@pack()} directive requiring that in
+the same executable file should be packed the executable code for the
+classes \texttt{Stack}, \texttt{Queue} and \texttt{List}.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Class Library}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Alongside with the compiler, POP-C++ supplies a class library. This
+library basically offers classes for dealing with synchronizations and
+exceptions. These library classes are described in this section.
+
+
+\subsection{Synchronization}
+
+POP-C++ provides several method invocation semantics to control the
+level of concurrency of data access inside each parallel object. 
+Communication between threads using shared attributes is straightforward
+because all threads on the same object share the same memory address
+space. When concurrent invocations happen, it is possible that they
+concurrently access an attribute, leading to errors. The programmer
+should verify and synchronize data accesses manually. To deal with this
+situation, it could be necessary to synchronize the concurrent threads of
+execution.
+
+\begin{figura}{fig:synchro}{The POPSynchronizer class}%
+\vspace{-4mm}%
+\begin{verbatim}
+    class POPSynchronizer {
+    public:
+        POPSyncronizer();
+        lock();
+        unlock();
+        raise();
+        wait();
+    };
+\end{verbatim}
+\end{figura}
+
+The \textbf{synchronizer} is an object used for general thread
+synchronization inside a parallel object. Every synchronizer has an
+associated lock (as in a door lock), and a condition. Locks and
+conditions can be used independently of each other or not. The
+synchronizer class is presented in the figure \ref{fig:synchro}.
+
+Calls to \texttt{lock()} close the lock and calls to \texttt{unlock()}
+open the lock. A call to \texttt{lock()} returns immediately if the lock
+is not closed by any other threads. Otherwise, it will pause the execution
+of the calling thread until other threads release the lock. Calls to
+\texttt{unlock()} will reactivate one (and just one) eventually paused
+call to \texttt{lock()}). The reactivated thread will then succeed
+closing the lock and the call to \texttt{lock()} will finally return.
+Threads that must not run concurrently can exclude each other's
+execution using synchronizer locks. When creating a synchronizer, by
+default the lock is open. A special constructor is provided to create it
+with the lock already closed.
+
+\begin{figura}{fig:ex:lock}{Using the synchronizer lock}%
+\vspace{-4mm}%
+\begin{verbatim}
+    parclass Example {
+    private:
+         POPSynchronizer syn;
+         int counter;
+    public:
+        int getNext() {
+            syn.lock();
+            int r = ++ counter;
+            syn.unlock;
+            return r;
+        }
+    };
+\end{verbatim}
+\end{figura}
+
+Conditions can be waited and raised. Calls to \texttt{wait()} cause the
+calling thread to pause its execution until another thread triggers the signal
+by calling \texttt{raise()}. If the waiting thread possess the lock, it will
+automatically release the lock before waiting for the signal. When the signal
+occurs, the waiting thread will try to re-acquire the lock that it has previously
+released before returning control to the caller. 
+
+Many threads can wait for the same condition. When a thread calls the
+method \texttt{raise()}, all waiting-for-signal threads are reactivated at
+once. If the lock was closed when the \texttt{wait()} was called, the
+reactivated thread will close the lock again before returning from the
+\texttt{wait()} call. If other threads calls \texttt{wait()} with the
+lock closed, all will wait the lock to be open again before they are
+actually reactivated.
+
+The typical use of the synchronizer lock is when many threads can modify
+a certain property at the same time. If this modification must be done
+atomically, no other thread can interfere before it is finished. The
+figure \ref{fig:ex:lock} shows an example of this synchronizer usage.
+
+The typical use of a synchronizer condition is when some thread produces
+some information that must be used by another, or in a producer-consumer
+situation. Consumer threads must wait until the information is
+available. Producer threads must signal that the information is already
+available. Figure \ref{fig:ex:cond} is an example that shows the use of
+the condition.
+
+\begin{figura}{fig:ex:cond}{Using the synchronizer condition}%
+\vspace{-4mm}%
+\begin{verbatim}
+    parclass ExampleBis {
+    private:
+        int cakeCount;
+        boolean proceed;
+        Synchronizer syn;
+    public:
+        void producer(int count) {
+            cakeCount = count;
+            syn.lock();
+            proceed = true;
+            syn.raise();
+            syn.unlock();
+        }
+        void consumer() {
+            syn.lock();
+            if (!proceed) wait();
+            syn.unlock();
+            /* can use cakeCount from now on... */
+        }
+    };
+\end{verbatim}
+\end{figura}
+
+
+
+\subsection{Exceptions} \label{sec:exceptions}
+
+
+Errors can be efficiently handled using exceptions. Instead of handling
+each error separately based on an error code returned by a function
+call, exceptions allow the programmer to filter and centrally manage
+errors trough several calling stacks. When an error is detected inside a
+certain method call, the program can throw an exception that will be
+caught somewhere else.
+
+The implementation of exceptions in non-distributed applications, where
+all components run within the same memory address space is fairly
+simple. The compiler just need to pass a pointer to the exception from
+the place where it is thrown to the place where it is caught. However,
+in distributed environments where each component is executed in a
+separate memory address space (and eventually data are represented
+differently due to heterogeneity), the propagation of exception back to
+a remote component is complex.
+
+\figureps{fig_exception}{130mm}
+{Exception handling example}
+
+
+
+POP-C++ supports transparent exception propagation. Exceptions thrown in
+a parallel object will be automatically propagated back to the remote
+caller (figure \ref{fig_exception}). The current POP-C++ prototype allows
+the following types of exceptions:
+
+\begin{petitem}
+
+\item Scalar data (\texttt{int}, \texttt{float}, etc.)
+
+\item Parallel objects
+
+\item Objects of class \texttt{POPException} (system exception)
+
+\end{petitem}
+
+All other C++ types (\texttt{struct}, \texttt{class}, vectors) will be
+converted to \texttt{POPException} with the \texttt{UNKNOWN}
+exception code.
+
+The invocation semantics of POP-C++ affect the propagation of
+exceptions. For the moment, only synchronous methods can propagate the
+exception. Asynchronous methods will not propagate any exception to the
+caller. POP-C++ current behavior is to abort the application execution
+when such exception occurs.
+
+Besides the exceptions created by programmers, POP-C++ uses an
+exception of type \texttt{POPException} to notify the user about
+the following system failure:
+
+\begin{petitem}
+
+\item Parallel object creation fails. It can happen due to the
+      unavailability of suitable resources, an internal error on POP-C++
+      services, or the failures on executing the corresponding object
+      code.
+
+\item Parallel object method invocation fails. This can be due to the network
+      failure, the remote resource down, or other causes.
+
+\end{petitem}
+
+The interface of \texttt{POPException} is described bellow:
+
+\begin{verbatim}
+class POPException
+{
+public:
+   const paroc_string Extra()const;
+   int Code()const;
+   void Print()const;
+};
+\end{verbatim}
+
+\texttt{Code()} method returns the corresponding error code of the exception.
+\texttt{Extra()} method returns the extra information about the place where the
+exception occurs. This extra information can contains the parallel object name
+and the machine name where the object lives.
+\texttt{Print()} method prints atext describing the exception.
+
+All exceptions that are parallel objects are propagated by reference.
+Only the interface of the exception is sent back to the caller. Other
+exceptions are transmitted to the caller by value.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Coupling MPI code} \label{sec:mpi}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+POP-C++ can encapsulate MPI processes in parallel objects, allowing POP-C++ applications to use existing HPC MPI libraries. Each MPI process will become a parallel object in POP-C++. The user can control the MPI-based using:
+
+\begin{petitem}
+
+\item Standard POP-C++ remote method invocations. This allows the user to initialize data or computation on some or all MPI processes. 
+
+\item MPI communication primitives such as \texttt{MPI\_Send}, \texttt{MPI\_Recv}, etc. These primitives will use vendor specific communication protocol (e.g. Myrinet/GM).  
+
+\end{petitem}
+
+
+Each MPI process in POP-C++ will become a parallel object of identical type that can be accessed from outside through remote method invocations.
+
+\begin{figura}{fig:mpi_obj}{MPI parallel objects}%
+\vspace{-4mm}%
+\begin{verbatim}
+parclass TestMPI {
+public:
+  TestMPI();
+  async void ExecuteMPI();
+  async void Set(int v);
+  sync void Get();
+private:
+   int val;
+};
+
+TestMPI::TestMPI() {
+  val=0;
+}
+
+void TestMPI::ExecuteMPI() {
+  MPI_Bcast(&val,1,MPI_INT, 0, MPI_COMM_WORLD);
+}
+
+void TestMPI::Set(int v) {
+  val=v;
+}
+int TestMPI::Get() {
+  return val;
+}
+
+\end{verbatim}
+\end{figura}
+
+Figure \ref{fig:mpi_obj} shows an example of using MPI in POP-C++. \texttt{TestMPI} methods contains some MPI code. Users need to implement a method named \texttt{ExecuteMPI}. This method is invoked on all MPI processes. In this case, the method will broadcast the local value \texttt{val} of process 0 to all other processes.
+
+\begin{figura}{fig:mpi_main}{Creating MPI parallel objects}%
+\vspace{-4mm}%
+\begin{verbatim} 
+#include <popc_mpi.h>
+int main(int argc, char **argv) {
+  POPMPI<TestMPI> mpi(2);
+  mpi[0].Set(100); //Set on MPI process 0
+  printf(``Values before: proc0=%d, proc1=%d\n'', 
+                         mpi[0].Get(), mpi[1].Get());
+  mpi.ExecuteMPI(); //Call ExecuteMPI methods on all MPI processes
+  printf(``Values after: proc0=%d, proc1=%d\n'', 
+                         mpi[0].Get(), mpi[1].Get());
+}
+
+----------
+Output of the program:
+Values before: proc0=100, proc1=0
+Values after: proc0=100, proc1=100
+
+\end{verbatim}
+\end{figura}
+   
+
+Since an MPI program requires special treatment at startup (mpirun, 
+MPI\_Initialize, etc.), users must use a POP-C++ built-in class 
+template \texttt{POPMPI} to create parallel object-based MPI processes. 
+Figure \ref{fig:mpi_main} illustrates how to start and to call MPI processes. 
+We first create 2 MPI processes of type \texttt{TestMPI} using the template 
+class \texttt{POPMPI} (variable \texttt{mpi}). Then we can invoke methods 
+on a specific MPI process using its rank as the index. \texttt{ExecuteMPI} 
+is a pre-defined method of \texttt{POPMPI} which will then invokes all 
+corresponding \texttt{ExecuteMPI} methods of the MPI parallel objects 
+(\texttt{TestMPI}).
+
+
+The declaration of \texttt{POPMPI} is described as follows:
+
+\begin{verbatim} 
+template<class T> class POPMPI
+{
+ public:
+  POPMPI(); //Do not create MPI process 
+  POPMPI(int np); // Create np MPI process of type T
+  ~POPMPI(); 
+
+  bool Create(int np); // Create np MPI process of type T
+  bool Success(); // Return true if MPI is started. 
+                  // Otherwise, return false
+  int GetNP(); //Get number of MPI processes
+
+  bool ExecuteMPI(); //Execute method ExecuteMPI on all processes
+  inline operator T*(); //type-cast to an array of parclass T
+};
+\end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Limitations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+There are certain limitations to the current implementation of POP-C++. 
+Some of these restrictions are expected to disappear in the future while others are simply due to the nature of parallel programming and the impossibility for parallel objects to share a common memory. For the current version (1.3), the limitations are:
+
+\begin{petitem}
+
+\item A parallel class cannot contain public attributes.
+
+\item A parallel class cannot contain a class attribute (\texttt{static}).
+
+\item A parallel class cannot be template.
+
+\item An asynchronous method cannot return a value and cannot have
+	output parameters.
+
+\item Global variables exist only in the scope of parallel objects
+	(\texttt{@pack()} scope).
+
+\item The programmer must specify the size of pointer parameters in remote method invocation as they are considered as arrays.
+
+\item A parallel object method cannot return a memory address.
+
+\item Sequential classes used as parameter must be derived from
+	\texttt{POPBase} and the programmer must implement the
+	\texttt{Serialize} method.
+
+\item Parameters must have exactly the same dynamic type as in method
+	declaration, an object of a derived class cannot be used (polymorphism).
+
+\item Exceptions. Only scalar, parallel object and POPException type are handled. All other exceptions are converted to POPException with the {\it unknown} code.
+
+\item Exceptions raised in an asynchronous method are not propagated. They abort
+(cleanly) the application.
+
+\end{petitem}
