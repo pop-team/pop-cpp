@@ -198,26 +198,15 @@ int main(int argc, char** argv)
 		else
 			printf("Matrix: Test failed (%d,%d), NON-Correct calculation !!\n",checkI,checkJ);
 
-
 		// Delete the workers
-
 		for (int i=0; i<nbWorker; i++) if (mw[i]!=NULL) delete mw[i];
-
 	} // end try
 
-
-
 	catch (POPException *e)
-
 	{
-
-		printf("Matrix: Test failed, Object creation failure\n");
-
-		return 0;
-
+	  printf("Matrix: Test failed, Object creation failure\n");
+	  return 1;
 	}
-
 	return 0;
-
 }
 

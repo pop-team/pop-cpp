@@ -8,7 +8,7 @@ object:
 	./ParObject.obj -listlong > objmap
 
 clean:
-	rm *.o *.obj main
+	rm -f *.o *.obj main
 
 run:
 	popcrun objmap ./main

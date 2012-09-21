@@ -28,9 +28,15 @@ int main(int argc, char** argv)
 	printf("Heritparam2: Current internal data =%d\n", v);
 	printf("Heritparam2: My current data =%d\n", o.GetData().GetMyData());
 
-	if (v==20) printf("Heritparam2: test succeeded, destroying objects...\n");
-	else printf("Heritparam2: Test failed, bad value transmission\n");
-
-	return 0;
+	if (v==20)
+    {
+       printf("Heritparam2: test succeeded, destroying objects...\n");
+       return 0;
+    }
+	else
+    {
+      printf("Heritparam2: Test failed, bad value transmission\n");
+      return 1;
+    }
 }
 

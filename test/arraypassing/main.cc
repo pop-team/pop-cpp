@@ -8,6 +8,8 @@
 int main(int argc, char** argv)
 
 {
+  	cout << "Standard syntax array: Starting test..." << popcendl;
+
 	int array[5];
 	
 	array[0] = 10;
@@ -24,6 +26,6 @@ int main(int argc, char** argv)
 		cout << "item[" << i << "]=" << array[i] << popcendl;
 	}
 	
-	cout << "Standard syntax array passing succeed !" << popcendl;		
+	cout << "Standard syntax array: test succeeded, destroying object..." << popcendl;		
 	return 0;
 }

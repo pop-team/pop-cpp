@@ -19,5 +19,6 @@ int main(int argc, char** argv)
 		printf("Stress allocation test failed: error no.%d, destroying objects:\n", e.Code());
 		return 1;
 	}
+    printf("Stress allocation test succeeded, destroying objects:\n");
 	return 0;
 }

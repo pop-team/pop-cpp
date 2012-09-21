@@ -8,7 +8,7 @@
 int main(int argc, char** argv)
 {
 	try {
-		printf("Stress test started ...\n");
+		printf("Stress test: Starting test...\n");
 		POPObject o1;
 		for (int i=0; i<10000; i++)
 			o1.increment();

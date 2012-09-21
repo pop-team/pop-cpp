@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include "tree.ph"
 
-Tree::Tree(int id)
-{
-	myid=id;
-	n=0;
-	printf("Node\t%d\ton\t%s\n",myid,(const char *)POPSystem::GetHost());
-}
-
 Tree::Tree()
 {
 	myid=0;
+	n=0;
+	printf("Node\t%d\ton\t%s\n",myid, (const char *)POPSystem::GetHost());
+}
+
+Tree::Tree(int id)
+{
+	myid=id;
 	n=0;
 	printf("Node\t%d\ton\t%s\n",myid, (const char *)POPSystem::GetHost());
 }

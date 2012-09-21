@@ -1,12 +1,15 @@
+/** 
+ * @author  P.Kuonen
+ * @date    2012.09.04
+ * This program tests passing (sequential) object as parameter
+ */
 #include <stdio.h>
-
 #include "ParObject.ph"
 #include "data.h"
 #include "classdata.h"
 
 int main(int argc, char** argv)
 {
-
   printf("\nClassparam: Starting test..\n");
 
   int v;
@@ -41,13 +44,17 @@ int main(int argc, char** argv)
 
   o.Get(b);
 
-  if ((v==20) &&
-      (b.GetMyData()==200) &&
+  if ((v==20) && (b.GetMyData()==200) &&
       (b.GetInternalData().GetInternalData()==20))
+  {
     printf("Classparam: test succeeded, destroying objects...\n");
+    return 0;
+  }
   else
+  {
     printf("Classparam: Test failed, bad value transmission\n");
- 
+    return 1;
+  }
   return 0;
 }
 

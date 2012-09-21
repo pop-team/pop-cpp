@@ -117,6 +117,5 @@ int main(int argc, char** argv)
 		printf("\nSerialize_vect: test succeeded, destroying objects..\n");
 		delete myobj;
 	}
-	printf("\nEND of %s program\n", argv[0]);
 	return 0;
 }

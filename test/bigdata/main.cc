@@ -1,19 +1,20 @@
-#include "POPObject.ph"
-#include <assert.h>
-
 /** 
  * @author  clementval
  * @date    2012.09.04
  * This program tests marshalling and un-masrhalling of big amount of data
  */
+
+#include "POPObject.ph"
+#include <assert.h>
+
 int main(int argc, char** argv)
 {
 	try {
-		cout << "Big data test started" << popcendl;		
-		long size = 60496000; // 60Mb
+		cout << "Big data: Starting test..." << popcendl;		
+		int size = 60496000; // 60Mb
 		char array[size];
 	
-		for (long i = 0; i < size; i++)
+		for (int i = 0; i < size; i++)
 			array[i] = 'a';
 	
 		POPObject o;
@@ -29,5 +30,6 @@ int main(int argc, char** argv)
 		printf("big data test failed: error no.%d, destroying objects:\n", e.Code());
 		return 1;
 	}
+    printf("big data: test succeeded, destroying objects:\n");
 	return 0;	
 }

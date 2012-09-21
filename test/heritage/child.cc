@@ -15,7 +15,4 @@ void Child::callMethod(Mother &c, int v)
 	printf("Heritage: In Child, GetVal=%d\n",c.GetVal());
 }
 
-
-//#ifdef _PAROC_
 @pack(Child, Mother);
-//#endif

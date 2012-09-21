@@ -43,10 +43,14 @@ int main(int argc, char** argv)
   if ((v==20) &&
       (b.myData==200) &&
       (b.theData.theData==20))
+  {
     printf("Structparam: test succeeded, destroying objects...\n");
+    return 0;
+  }
   else
+  {
     printf("Structparam: Test failed, bad value transmission\n");
- 
-  return 0;
+    return 1;
+  }
 }
 

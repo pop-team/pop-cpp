@@ -1,12 +1,15 @@
+/** 
+ * @author  P.Kuonen
+ * @date    2012.09.04
+ * This program tests the const modifier
+ */
 #include "POPCobject.ph"
 #include "structdata.h"
 #include <stdio.h>
 #include <unistd.h>
 
 int main(int argc, char** argv)
-
-{
-   
+{   
    POPCobject o1, o2;
    StructData d;
 

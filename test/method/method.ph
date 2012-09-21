@@ -3,7 +3,7 @@
 parclass TestMethod
 {
 public:
-	TestMethod();
+	TestMethod()@{od.url("localhost");};
 	async conc void TestConc1();
 	async conc void TestConc2();
 	async conc void TestConc3();

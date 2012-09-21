@@ -1,7 +1,13 @@
+/** 
+ * @author  P.Kuonen
+ * @date    2012.09.04
+ * This program tests using hierarchy of class as parameters
+ */
 #include <stdlib.h>
 #include <iostream>
 #include "mother.ph"
 #include "child.ph"
+
 using namespace std;
 
 void callMethod(Mother c, int v)
@@ -38,9 +44,9 @@ int main(int argc, char** argv)
 
 	//cout <<  endl << "Heritage: Appel callMethod de Mother avec Mother, c"<<  endl;
 	//c.callMethod(c,6);
-	cout << "Heritage: test succeeded, destroying objects..." << endl;
-	return 0;
 
+	cout << "Heritage: test succeeded, destroying objects..." << popcendl;
+	return 0;
 }
 
 

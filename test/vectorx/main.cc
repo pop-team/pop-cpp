@@ -35,9 +35,15 @@ int main(int argc, char** argv)
 
 	printf("VectorX: Current vector size =%d\n", b.size());
 
-	if (b.size()==20) printf("VectorX: test succeeded, destroying objects...\n");
-	else printf("VectorX: Test failed, bad value transmission\n");
-
-	return 0;
+	if (b.size()==20)
+    {
+      printf("VectorX: test succeeded, destroying objects...\n");
+      return 0;
+    }
+	else
+    {
+      printf("VectorX: Test failed, bad value transmission\n");
+	  return 1;
+    }
 }
 

@@ -28,9 +28,15 @@ int main(int argc, char** argv)
 	printf("VectorInt2: Current vector size =%d\n", v);
 	printf("VectorInt2: My current data =%d\n", o.GetData().GetMyData());
 
-	if (v==30) printf("VectorInt2: test succeeded, destroying objects...\n");
-	else printf("VectorInt2: Test failed, bad value transmission\n");
-
-	return 0;
+	if (v==30)
+    {
+      printf("VectorInt2: test succeeded, destroying objects...\n");
+      return 0;
+    }
+	else
+    {
+      printf("VectorInt2: Test failed, bad value transmission\n");
+	  return 1;
+    }
 }
 

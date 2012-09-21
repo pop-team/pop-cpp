@@ -11,7 +11,8 @@ int main(int argc, char** argv)
 
 	try  {POPCobject obj2(1,"localhost");}
 	catch (POPException *e)
-		{printf("JobManager: test failed on object creation: URL\n"); ok=false;}
+		{printf("JobManager: test failed on object creation: URL\n");
+         ok=false;}
 
 	try  {POPCobject obj3(2, 40.2);}
 	catch (POPException *e)
@@ -25,6 +26,14 @@ int main(int argc, char** argv)
 	catch (POPException *e)
 		{printf("JobManager: test failed on object creation: Protocol\n"); ok=false;}
 
-	if (ok) printf("JobManager: test succeeded, destroying objects...\n");
-	return 0;
+	if (ok)
+    {
+      printf("JobManager: test succeeded, destroying objects...\n");
+	  return 0;
+    }
+    else
+    {
+      printf("JobManager: test failed, destroying objects...\n");    
+      return 1;
+    }
 }

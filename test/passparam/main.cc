@@ -32,10 +32,15 @@ int main(int argc, char** argv)
    d=o1.m12(11);
 
    if ((d.GetMyData()==11) && (d.GetInternalData().GetInternalData()==0))
-    printf("\nPassParam: test succeeded, destroying objects...\n");
-   else printf("\nPassParam: ...Test failed (%d,%d)\n",
+   {
+     printf("\nPassParam: test succeeded, destroying objects...\n");
+     return 0;
+   }
+   else
+   {
+     printf("\nPassParam: ...Test failed (%d,%d)\n",
                d.GetMyData(), d.GetInternalData().GetInternalData());
-  return 0;
-
+     return 1;
+   }
 } 
   

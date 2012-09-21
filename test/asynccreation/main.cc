@@ -8,7 +8,8 @@
  */
 int main(int argc, char** argv)
 {
-	try {
+	try
+    {
 		printf("Asynchronous allocation of parallel object\n");
 		printf("Before creating POPObject o1\n");
 		POPObject o1;
@@ -37,9 +38,9 @@ int main(int argc, char** argv)
 		o3.secondMethod();						
 		printf("Method with void parameter: test succeeded, destroying objects ...\n");
 	} catch (POPException e) {
-		printf("Method with void parameter: test failed, error no.%d, destroying objects:\n", e.Code());
+		printf("Method with void parameter: test failed, error no.%d, destroying objects:\n", e.Code()); return 1;
 	} catch (std::exception& e) {
-		cout << e.what() << popcendl;
+		cout << e.what() << popcendl; return 1;
 	}
 	return 0;
 }
