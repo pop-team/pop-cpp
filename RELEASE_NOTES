@@ -3,35 +3,23 @@ POP-C++ 2.5
 These REALEASE_NOTES include the changes made from the previous version 2.0
 to version 2.5 of POP-C++. The complete changes is listed in the CHANGLOG.
 
-Release 2.0.1
 - Improve the termination time of a parallel application
 - Fix slowness of POP-C++ application on MAC OS X
 - Add support for enum type inside a parclass declaration
 - Add specific error message for unsupported C++ functionalities inside a parclass declaration
-- Removing unuseful directory in the release
-
-Release 2.0.2
-- Add experimental functionality of parallel file striping
--- Use the POPFile library to create and manage parallel file. 
-- Several bug fix
-
-Release 2.0.3
-For end-user
 - Automatic detection of architecture in the configure script (no need to use CPPFLAGS=-DARCH_MAC anymore)
 - Automatic detection of active interface at runtime for Mac OS X (no need to set POPC_IFACE anymore)
-- Ability to start the runtime without the POPFileManager (SXXpopc start --no-service popfile)
-- Implicit @pack directive added in case developer doesn't mention it. Warning is displayed by the POP-C++ parser. 
-- Add "-no-implicit-pack" option to the POP-C++ parser to avoid implicit @pack directive to be added.
-- Add "-no-warning" option to the POP-C++ parser to stop printing warnings on the stdout.
 - Add simple typedef support inside parclass declaration
 - Add better support of pure virtual parclass
 - Allow the void parameter in function declaration
-- Asynchronous parallel object creation. Allows the application to set up its set of objects faster. 
-- Add "-no-async-allocation" option to the POP-C++ parser to avoid asynchronous allocation of parallel object and stay with 
-  traditional sequential allocation. 
-- Fix parser behavior when inheriting from template class before POPBase.  
+- Solve the problem when using 'namespace'
+- Fix parser erroneous behavior when inheriting from template class before POPBase.
+- Removing non-useful directories in the release
+- Accept the [] syntax for arrays in method parameters
+- Improve coherence of errors and warning messages
+- Solve a compilation issue with when using Fedora
+- Corrections of several minors bugs
 - Add new command to SXXpopc "kill" to kill the POP-C++ runtime services.
 - Add new command to SXXpopc "killnstart" to kill the POP-C++ runtime services and start it.
 - Add new command to SXXpopc "clearlog" to clear the log file of POP-C++.
 - Add new command to SXXpopc "log" to display the log file of POP-C++.
-- Change compilation option to have -O3 by default
