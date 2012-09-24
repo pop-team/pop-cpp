@@ -23,8 +23,7 @@ then
    	case $iface in
     		lo*)     continue ;;
     	esac
-   	ifconfig $iface | grep -q 'inet ' && ifconfig $iface | grep -q 'active' && !(ifconfig $iface | grep -q 'inactive') && IFACE=$iface && break
-#added  && !(ifconfig $iface | grep -q 'inactive') PEKA
+   	ifconfig $iface | grep -q 'inet ' && ifconfig $iface | grep -q 'active' && IFACE=$iface && break
 	done
 	POPC_IFACE=$IFACE
 	export POPC_IFACE
