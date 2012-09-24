@@ -105,7 +105,7 @@ int RunCmd(int argc, char *argv[])
 		_exit(1);
 	} else if (pid==0) {
 		execvp(argv[0],argv);
-		fprintf(stderr,"ERROR: %s not found\n",argv[0]);
+		fprintf(stderr,"POP-C++ Error: %s not found\n",argv[0]);
 		_exit(1);
 	}
 	wait(&status);
@@ -138,7 +138,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[])
 		close(p[0]);
 		dup2(p[1],1);
 		execvp(argv1[0],argv1);
-		fprintf(stderr,"ERROR: %s not found\n",argv1[0]);
+		fprintf(stderr,"POP-C++ Error: %s not found\n",argv1[0]);
       _exit(1);
 	}
 
@@ -152,7 +152,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[])
 		close(p[1]);
 		dup2(p[0],0);
 		execvp(argv2[0],argv2);
-		fprintf(stderr,"ERROR: %s not found\n",argv2[0]);
+		fprintf(stderr,"POP-C++ Error: %s not found\n",argv2[0]);
 		_exit(1);		
 	}
 	close(p[0]);
@@ -504,12 +504,12 @@ int main(int argc, char *argv[])
 	{
 	  if (i==argc-1)
 	    {
-	      fprintf(stderr,"Error: option -o is used but no output file is specified\n");
+	      fprintf(stderr,"POP-C++ Error: option -o is used but no output file is specified\n");
 	      exit(1);
 	    }
 	  if (*outputfile!=0)
 	    {
-	      fprintf(stderr,"Error: multiple output files specified\n");
+	      fprintf(stderr,"POP-C++ Error: multiple output files specified\n");
 	      exit(1);
 	    }
 	  argv[i][0]=0;

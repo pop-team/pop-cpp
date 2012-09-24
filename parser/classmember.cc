@@ -673,7 +673,7 @@ int Method::CheckMarshal()
 	// Check all the parameters of the method
 	for (int i=0;i<n;i++) {
 		if (params[i]->GetType()->IsParClass() && !params[i]->IsRef()) {
-			fprintf(stderr,"%s:%d: ERROR in %s::%s : parallel object '%s' must be passed as reference to the remote object.\n",  cl->GetFileInfo(), line, cl->GetName(), name,params[i]->GetName());
+			fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s : parallel object '%s' must be passed as reference to the remote object.\n",  cl->GetFileInfo(), line, cl->GetName(), name,params[i]->GetName());
 			return(i+1);
 		}
 		// Check if the parameter can be marshalled 
@@ -701,12 +701,12 @@ void Method::GenerateReturn(CArrayChar &output, bool header, bool interface)
 		/* changed by David : no more warning, error ! */
 		//fprintf(stderr,"%s:%d: WARNING in %s::%s : the return argument '%s' is treated as a reference to a parallel object.\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name, returnparam.GetType()->GetName());
 		
-		fprintf(stderr,"%s:%d: ERROR in %s::%s : the return argument '%s' should by a reference to a parallel object !\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name, returnparam.GetType()->GetName());
+		fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s : the return argument '%s' should by a reference to a parallel object !\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name, returnparam.GetType()->GetName());
 		exit(1);
 	}
 	if (returnparam.IsRef() && !returnparam.GetType()->IsParClass())
 	{
-		fprintf(stderr,"%s:%d: ERROR in %s::%s : methods of parallel objects can not technically return a reference.\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name);
+		fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s : methods of parallel objects can not technically return a reference.\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name);
 		exit(1);
 	}
 
@@ -803,16 +803,16 @@ void Method::GenerateClient(CArrayChar &output)
 		if (t==-1)
 		{
 			if(returnparam.IsPointer())
-				fprintf(stderr,"%s:%d: ERROR in %s::%s: The return argument is a Illegal Pointer.\n", cl->GetFileInfo(),line, cl->GetName(), name);
+				fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s: The return argument is a Illegal Pointer.\n", cl->GetFileInfo(),line, cl->GetName(), name);
 			else
-				fprintf(stderr,"%s:%d: ERROR in %s::%s: unable to marshal the return argument.\n", cl->GetFileInfo(),line, cl->GetName(), name);
+				fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s: unable to marshal the return argument.\n", cl->GetFileInfo(),line, cl->GetName(), name);
 		}
 		else
 		{
 			if(params[t-1]->IsPointer())
-				fprintf(stderr,"%s:%d: ERROR in %s::%s: Illegal Pointer Parameter at argument %d.\n",  cl->GetFileInfo(), line, cl->GetName(), name,t);
+				fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s: Illegal Pointer Parameter at argument %d.\n",  cl->GetFileInfo(), line, cl->GetName(), name,t);
 			else
-				fprintf(stderr,"%s:%d: ERROR in %s::%s: unable to marshal argument %d.\n",  cl->GetFileInfo(), line, cl->GetName(), name,t);
+				fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s: unable to marshal argument %d.\n",  cl->GetFileInfo(), line, cl->GetName(), name,t);
 		}
 		exit(1);
 	}
@@ -934,13 +934,13 @@ void Method::GenerateClient(CArrayChar &output)
 		for (j=0;j<nb;j++) {
 			if (params[j]->OutParam() && !params[j]->GetType()->IsParClass() ) {
 				Class *cl=GetClass();
-				fprintf(stderr,"%s:%d: ERROR in %s::%s: Asynchronous method cannot have an output (parameter %s must be declared with [in])\n",cl->GetFileInfo(),line, cl->GetName(), name, params[j]->name);
+				fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s: Asynchronous method cannot have an output (parameter %s must be declared with [in])\n",cl->GetFileInfo(),line, cl->GetName(), name, params[j]->name);
 				exit(1);
 			}
 		}
 		if (MethodType()==METHOD_NORMAL &&!returnparam.GetType()->Same((char*)"void")) {
 			Class *cl=GetClass();
-			fprintf(stderr,"%s:%d: ERROR in %s::%s: Asynchronous method must return void\n",cl->GetFileInfo(),line, cl->GetName(), name);
+			fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s: Asynchronous method must return void\n",cl->GetFileInfo(),line, cl->GetName(), name);
 			exit(1);
 		}
 #ifdef OD_DISCONNECT
@@ -1119,7 +1119,7 @@ void Method::GenerateBroker(CArrayChar &output)
 		strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n}\n");
 	} else { // ADDED FOR 2.0.3
 		if(cl->IsWarningEnable())
-			printf("Warning: %s is an abstract parclass. Be aware that only the final class (parallel object) will keep this semantic.\n", clname);
+			printf("POP-C++ Warning: %s is an abstract parclass. Be aware that only the final class (parallel object) will keep this semantic.\n", clname);
 		strcpy(str,"}\n");	// Close the method braces
 	}
 	output.InsertAt(-1,str,strlen(str));

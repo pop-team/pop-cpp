@@ -157,7 +157,7 @@ void Class::GenerateCode(CArrayChar &output/*, bool isPOPCPPCompilation*/)
 	if (*classid==0)
 	{
 		sprintf(str,"\nconst unsigned CLASSUID_%s=unsigned(%u);\n",name,IDFromString(name));
-		fprintf(stderr,"Warning: class unique identifier (classuid) for %s is not specified.\n",name);
+		fprintf(stderr,"POP-C++ Warning: class unique identifier (classuid) for %s is not specified.\n",name);
 	}
 	else
 	{
