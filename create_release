@@ -63,9 +63,21 @@ IGNORED=" dev virtualtest autom4te.cache .svn"
 
 
 mkdir $RELDIR
-rsync -rv * --exclude=.svn --exclude=virtualtest --exclude=dev --exclude=documentation --exclude=autom4te.cache --exclude=$RELDIR --exclude=create_release ..exclude=stamp-h1 ./* $RELDIR
-#tar -cf $ARCHIVE --exclude='.svn' --exclude='virtualtest' --exclude='dev' --exclude='documentation' --exclude='autom4te.cache' --exclude='create_release' --exclude='stamp-h1' ./*
-tar -cf $ARCHIVE $RELDIR/*
+GOODDIR=$(ls . | grep -v ReleaseNotes.dev.txt | grep -v documentation | grep -v dev | grep -v popfile_install_script | grep -v virtualtest | grep -v autom4te.cache | grep -v stamp-h1 | grep -v create_release | grep -v ChangeLog | grep -v config.log | grep -v config.status)
+
+echo $GOODDIR
+
+for d in $GOODDIR
+do
+	if [ "x$d" != "x$RELDIR" ]
+	then
+		cp -R $d $RELDIR
+		echo "cp -R $d $RELDIR"
+	fi
+done
+
+
+tar -cf $ARCHIVE --exclude='.svn' $RELDIR/*
 gzip $ARCHIVE
 rm -rf $RELDIR
 
