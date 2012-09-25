@@ -1,12 +1,12 @@
 all: object app objmap
 
 app:
-	popcc -noclean -o main child.ph child.cc mother.ph mother.cc main.cc 
+	popcc -o main child.ph child.cc mother.ph mother.cc main.cc 
 
 object: 
-	popcc -noclean -c mother.ph mother.cc
-	popcc -noclean -c child.ph child.cc
-	popcc -noclean -object -o child.obj  child.o child.stub.o mother.stub.o mother.o
+	popcc -c mother.ph mother.cc
+	popcc -c child.ph child.cc
+	popcc -object -o child.obj  child.o child.stub.o mother.stub.o mother.o
 	
 objmap:
 	./child.obj -listlong > obj.map
