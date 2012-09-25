@@ -1,1 +1,0 @@
-../../test/templateparam/main.cc

@@ -1,1 +1,0 @@
-../../test/classparam/main.cc

@@ -1,1 +1,0 @@
-../../test/templateparam/ClassA.cc

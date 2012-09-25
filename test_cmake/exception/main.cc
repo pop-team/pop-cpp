@@ -1,1 +1,0 @@
-../../test/exception/main.cc

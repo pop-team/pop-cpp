@@ -1,1 +1,0 @@
-../../test/structparam/main.cc
