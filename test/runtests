@@ -4,6 +4,15 @@ RESULTS=tests_results
 NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
 
+SXXLOCATION=/usr/local/popc/sbin
+
+if [ "x" != "x$POPC_LOCATION" ]
+then
+SXXLOCATION=$POPC_LOCATION/sbin/
+fi
+
+$SXXLOCATION/SXXpopc killnstart
+
 if [ "$1" = "-all" ]
 then
 	echo ""
@@ -89,5 +98,7 @@ else
 		fi
 	fi
 fi
+
+$SXXLOCATION/SXXpopc kill
 
 
