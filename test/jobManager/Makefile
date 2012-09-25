@@ -11,5 +11,5 @@ run:
 	popcrun obj.map ./main 2 localhost localhost
 
 clean:
-	rm -f *.o *.obj main obj.map
+	rm -f *.o *.obj main obj.map _paroc*
 
