@@ -12,7 +12,7 @@ public:
 	sync seq void AddContact(const Chat& contact);
 	sync seq void ForwardContact(Chat& from);
 	sync conc void IntroduceMyself();
-	sync conc Chat GetRef();
+	sync conc Chat& GetRef();
 	sync conc void PrintRef(const Chat& ref);
 	~Chat();
 private:
