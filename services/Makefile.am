@@ -3,7 +3,7 @@
 AUTOMAKE_OPTIONS=no-dependencies
 
 CXX=@top_srcdir@/parser/popcc
-POPC_FLAGS=-popcpp-compilation -no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -I@top_srcdir@/lib -cxx=@CXX@ -D_POPC_RUNTIME_
+POPC_FLAGS=-popcpp-compilation -no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -I@top_srcdir@/lib -cxx=mpic++ -D_POPC_RUNTIME_
 
 AM_CXXFLAGS=$(POPC_FLAGS)
 AM_LDFLAGS=-L@top_srcdir@/lib -L@top_srcdir@/lib/.libs 
@@ -21,29 +21,8 @@ AM_LDFLAGS=-L@top_srcdir@/lib -L@top_srcdir@/lib/.libs
 	$(LIBTOOL) --mode=compile --tag=CXX $(CXX) -cxxmain $(POPC_FLAGS) $(CXXFLAGS) -c $< -o $@
 
 #Standard version
-if STANDARDSUPPORT
-execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher popfilemanager
-endif
-
-
-#Virtual version
-if VIRTSUPPORT
-execservices_PROGRAMS=popc_search_node virtual_popc_search_node jobmgr virtual_jobmgr virtual_jobmgr appservice \
-   localservice_launcher jobmgr_launcher popcloner
-endif
-
-#Virtual Secure version
-if VIRTSECURESUPPORT
-execservices_PROGRAMS=popc_search_node virtual_popc_search_node jobmgr virtual_jobmgr virtual_jobmgr appservice \
-   localservice_launcher jobmgr_launcher popcloner virtual_secure_popc_search_node popc_security_manager secure_jobmgr \
-   secure_popc_search_node virtual_secure_jobmgr virtual_popc_security_manager
-endif
-
-#Secure version
-if SECURESUPPORT
-execservices_PROGRAMS=popc_search_node jobmgr secure_jobmgr appservice \
-   localservice_launcher jobmgr_launcher popc_security_manager secure_popc_search_node 
-endif
+execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher
+#execservices_PROGRAMS=appservice localservice_launcher
 
 execservices_SCRIPTS= popcobjrun popcobjrun.pbs popcobjrun.lsf popcobjrun.sge popcobjrun.smscg
 execservicesdir=@prefix@/services
@@ -61,85 +40,6 @@ popc_search_node_LDFLAGS=-object
 jobmgr_SOURCES=jobmgr_obj.cc
 jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
 jobmgr_LDFLAGS=-object
-
-popfilemanager_SOURCES=popfilemanager_obj.cc
-popfilemanager_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-popfilemanager_LDFLAGS=-object
-
-#
-# ViSaG : clementval
-# Add conditional compiling libraries for the different version of POP-C++
-#
-
-
-#VIRTUAL SECURE VERSION
-if VIRTSECURESUPPORT
-virtual_popc_search_node_SOURCES=virtual_popc_search_node_obj.cc
-virtual_popc_search_node_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-virtual_popc_search_node_LDFLAGS=-object
-
-virtual_secure_popc_search_node_SOURCES=virtual_secure_popc_search_node_obj.cc
-virtual_secure_popc_search_node_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-virtual_secure_popc_search_node_LDFLAGS=-object
-
-virtual_jobmgr_SOURCES=virtual_jobmgr_obj.cc
-virtual_jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-virtual_jobmgr_LDFLAGS=-object
-
-virtual_secure_jobmgr_SOURCES=virtual_secure_jobmgr_obj.cc
-virtual_secure_jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-virtual_secure_jobmgr_LDFLAGS=-object
-
-popcloner_SOURCES=popcloner_obj.cc
-popcloner_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-popcloner_LDFLAGS=-object
-
-popc_security_manager_SOURCES=popc_security_manager_obj.cc
-popc_security_manager_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-popc_security_manager_LDFLAGS=-object
-
-virtual_popc_security_manager_SOURCES=virtual_popc_security_manager_obj.cc
-virtual_popc_security_manager_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-virtual_popc_security_manager_LDFLAGS=-object
-
-secure_jobmgr_SOURCES=secure_jobmgr_obj.cc
-secure_jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-secure_jobmgr_LDFLAGS=-object
-
-secure_popc_search_node_SOURCES=secure_popc_search_node_obj.cc
-secure_popc_search_node_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-secure_popc_search_node_LDFLAGS=-object
-endif
-
-#VIRTUAL VERSION
-if VIRTSUPPORT
-virtual_popc_search_node_SOURCES=virtual_popc_search_node_obj.cc
-virtual_popc_search_node_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-virtual_popc_search_node_LDFLAGS=-object
-
-virtual_jobmgr_SOURCES=virtual_jobmgr_obj.cc
-virtual_jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-virtual_jobmgr_LDFLAGS=-object
-
-popcloner_SOURCES=popcloner_obj.cc
-popcloner_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-popcloner_LDFLAGS=-object
-endif
-
-#SECURE VERSION
-if SECURESUPPORT
-popc_security_manager_SOURCES=popc_security_manager_obj.cc
-popc_security_manager_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-popc_security_manager_LDFLAGS=-object
-
-secure_jobmgr_SOURCES=secure_jobmgr_obj.cc
-secure_jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-secure_jobmgr_LDFLAGS=-object
-
-secure_popc_search_node_SOURCES=secure_popc_search_node_obj.cc
-secure_popc_search_node_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-secure_popc_search_node_LDFLAGS=-object
-endif
 
 appservice_SOURCES=appservice_obj.cc
 appservice_LDADD=
@@ -179,4 +79,4 @@ install-data-hook:
 	@ln -sf SXXpopc @prefix@/sbin/SXXparoc
 	@@sbindir@/popc_setup -ask
 
-EXTRA_DIST=jobmgr.conf.in  popcobjrun.in
+EXTRA_DIST= jobmgr.conf.in popcobjrun.in

@@ -36,43 +36,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@execservices_PROGRAMS = popc_search_node$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@	virtual_popc_search_node$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@	jobmgr$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@	virtual_jobmgr$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@	virtual_jobmgr$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@	appservice$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@	localservice_launcher$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@	jobmgr_launcher$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@	popcloner$(EXEEXT)
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@execservices_PROGRAMS = popc_search_node$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	virtual_popc_search_node$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	jobmgr$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	virtual_jobmgr$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	virtual_jobmgr$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	appservice$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	localservice_launcher$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	jobmgr_launcher$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	popcloner$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	virtual_secure_popc_search_node$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	popc_security_manager$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	secure_jobmgr$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	secure_popc_search_node$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	virtual_secure_jobmgr$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@	virtual_popc_security_manager$(EXEEXT)
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@execservices_PROGRAMS = popc_search_node$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	jobmgr$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	appservice$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	localservice_launcher$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	jobmgr_launcher$(EXEEXT) \
-@SECURESUPPORT_FALSE@@STANDARDSUPPORT_TRUE@	popfilemanager$(EXEEXT)
-@SECURESUPPORT_TRUE@execservices_PROGRAMS = popc_search_node$(EXEEXT) \
-@SECURESUPPORT_TRUE@	jobmgr$(EXEEXT) secure_jobmgr$(EXEEXT) \
-@SECURESUPPORT_TRUE@	appservice$(EXEEXT) \
-@SECURESUPPORT_TRUE@	localservice_launcher$(EXEEXT) \
-@SECURESUPPORT_TRUE@	jobmgr_launcher$(EXEEXT) \
-@SECURESUPPORT_TRUE@	popc_security_manager$(EXEEXT) \
-@SECURESUPPORT_TRUE@	secure_popc_search_node$(EXEEXT)
+execservices_PROGRAMS = popc_search_node$(EXEEXT) jobmgr$(EXEEXT) \
+	appservice$(EXEEXT) localservice_launcher$(EXEEXT) \
+	jobmgr_launcher$(EXEEXT)
 bin_PROGRAMS = jobmgrpublish$(EXEEXT) jobmgrquery$(EXEEXT) \
 	dumpjobmgr$(EXEEXT) benchmarktest$(EXEEXT)
 subdir = services
@@ -141,99 +107,6 @@ popc_search_node_DEPENDENCIES =
 popc_search_node_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(popc_search_node_LDFLAGS) $(LDFLAGS) -o $@
-am__popc_security_manager_SOURCES_DIST = popc_security_manager_obj.cc
-@SECURESUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@am_popc_security_manager_OBJECTS = popc_security_manager_obj.$(OBJEXT)
-@SECURESUPPORT_TRUE@am_popc_security_manager_OBJECTS =  \
-@SECURESUPPORT_TRUE@	popc_security_manager_obj.$(OBJEXT)
-popc_security_manager_OBJECTS = $(am_popc_security_manager_OBJECTS)
-popc_security_manager_DEPENDENCIES =
-popc_security_manager_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(popc_security_manager_LDFLAGS) $(LDFLAGS) -o $@
-am__popcloner_SOURCES_DIST = popcloner_obj.cc
-@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@am_popcloner_OBJECTS = popcloner_obj.$(OBJEXT)
-@VIRTSECURESUPPORT_TRUE@am_popcloner_OBJECTS =  \
-@VIRTSECURESUPPORT_TRUE@	popcloner_obj.$(OBJEXT)
-popcloner_OBJECTS = $(am_popcloner_OBJECTS)
-popcloner_DEPENDENCIES =
-popcloner_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(popcloner_LDFLAGS) $(LDFLAGS) -o $@
-am_popfilemanager_OBJECTS = popfilemanager_obj.$(OBJEXT)
-popfilemanager_OBJECTS = $(am_popfilemanager_OBJECTS)
-popfilemanager_DEPENDENCIES =
-popfilemanager_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(popfilemanager_LDFLAGS) $(LDFLAGS) -o $@
-am__secure_jobmgr_SOURCES_DIST = secure_jobmgr_obj.cc
-@SECURESUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@am_secure_jobmgr_OBJECTS = secure_jobmgr_obj.$(OBJEXT)
-@SECURESUPPORT_TRUE@am_secure_jobmgr_OBJECTS =  \
-@SECURESUPPORT_TRUE@	secure_jobmgr_obj.$(OBJEXT)
-secure_jobmgr_OBJECTS = $(am_secure_jobmgr_OBJECTS)
-secure_jobmgr_DEPENDENCIES =
-secure_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(secure_jobmgr_LDFLAGS) $(LDFLAGS) -o $@
-am__secure_popc_search_node_SOURCES_DIST =  \
-	secure_popc_search_node_obj.cc
-@SECURESUPPORT_FALSE@@VIRTSECURESUPPORT_TRUE@am_secure_popc_search_node_OBJECTS = secure_popc_search_node_obj.$(OBJEXT)
-@SECURESUPPORT_TRUE@am_secure_popc_search_node_OBJECTS =  \
-@SECURESUPPORT_TRUE@	secure_popc_search_node_obj.$(OBJEXT)
-secure_popc_search_node_OBJECTS =  \
-	$(am_secure_popc_search_node_OBJECTS)
-secure_popc_search_node_DEPENDENCIES =
-secure_popc_search_node_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(secure_popc_search_node_LDFLAGS) $(LDFLAGS) -o \
-	$@
-am__virtual_jobmgr_SOURCES_DIST = virtual_jobmgr_obj.cc
-@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@am_virtual_jobmgr_OBJECTS = virtual_jobmgr_obj.$(OBJEXT)
-@VIRTSECURESUPPORT_TRUE@am_virtual_jobmgr_OBJECTS =  \
-@VIRTSECURESUPPORT_TRUE@	virtual_jobmgr_obj.$(OBJEXT)
-virtual_jobmgr_OBJECTS = $(am_virtual_jobmgr_OBJECTS)
-virtual_jobmgr_DEPENDENCIES =
-virtual_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(virtual_jobmgr_LDFLAGS) $(LDFLAGS) -o $@
-am__virtual_popc_search_node_SOURCES_DIST =  \
-	virtual_popc_search_node_obj.cc
-@VIRTSECURESUPPORT_FALSE@@VIRTSUPPORT_TRUE@am_virtual_popc_search_node_OBJECTS = virtual_popc_search_node_obj.$(OBJEXT)
-@VIRTSECURESUPPORT_TRUE@am_virtual_popc_search_node_OBJECTS = virtual_popc_search_node_obj.$(OBJEXT)
-virtual_popc_search_node_OBJECTS =  \
-	$(am_virtual_popc_search_node_OBJECTS)
-virtual_popc_search_node_DEPENDENCIES =
-virtual_popc_search_node_LINK = $(LIBTOOL) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(AM_CXXFLAGS) $(CXXFLAGS) $(virtual_popc_search_node_LDFLAGS) \
-	$(LDFLAGS) -o $@
-am__virtual_popc_security_manager_SOURCES_DIST =  \
-	virtual_popc_security_manager_obj.cc
-@VIRTSECURESUPPORT_TRUE@am_virtual_popc_security_manager_OBJECTS = virtual_popc_security_manager_obj.$(OBJEXT)
-virtual_popc_security_manager_OBJECTS =  \
-	$(am_virtual_popc_security_manager_OBJECTS)
-virtual_popc_security_manager_DEPENDENCIES =
-virtual_popc_security_manager_LINK = $(LIBTOOL) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(virtual_popc_security_manager_LDFLAGS) $(LDFLAGS) -o $@
-am__virtual_secure_jobmgr_SOURCES_DIST = virtual_secure_jobmgr_obj.cc
-@VIRTSECURESUPPORT_TRUE@am_virtual_secure_jobmgr_OBJECTS =  \
-@VIRTSECURESUPPORT_TRUE@	virtual_secure_jobmgr_obj.$(OBJEXT)
-virtual_secure_jobmgr_OBJECTS = $(am_virtual_secure_jobmgr_OBJECTS)
-virtual_secure_jobmgr_DEPENDENCIES =
-virtual_secure_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(virtual_secure_jobmgr_LDFLAGS) $(LDFLAGS) -o $@
-am__virtual_secure_popc_search_node_SOURCES_DIST =  \
-	virtual_secure_popc_search_node_obj.cc
-@VIRTSECURESUPPORT_TRUE@am_virtual_secure_popc_search_node_OBJECTS = virtual_secure_popc_search_node_obj.$(OBJEXT)
-virtual_secure_popc_search_node_OBJECTS =  \
-	$(am_virtual_secure_popc_search_node_OBJECTS)
-virtual_secure_popc_search_node_DEPENDENCIES =
-virtual_secure_popc_search_node_LINK = $(LIBTOOL) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(virtual_secure_popc_search_node_LDFLAGS) $(LDFLAGS) -o $@
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -272,27 +145,12 @@ SOURCES = $(appservice_SOURCES) $(benchmarktest_SOURCES) \
 	$(dumpjobmgr_SOURCES) $(jobmgr_SOURCES) \
 	$(jobmgr_launcher_SOURCES) $(jobmgrpublish_SOURCES) \
 	$(jobmgrquery_SOURCES) $(localservice_launcher_SOURCES) \
-	$(popc_search_node_SOURCES) $(popc_security_manager_SOURCES) \
-	$(popcloner_SOURCES) $(popfilemanager_SOURCES) \
-	$(secure_jobmgr_SOURCES) $(secure_popc_search_node_SOURCES) \
-	$(virtual_jobmgr_SOURCES) $(virtual_popc_search_node_SOURCES) \
-	$(virtual_popc_security_manager_SOURCES) \
-	$(virtual_secure_jobmgr_SOURCES) \
-	$(virtual_secure_popc_search_node_SOURCES)
+	$(popc_search_node_SOURCES)
 DIST_SOURCES = $(appservice_SOURCES) $(benchmarktest_SOURCES) \
 	$(dumpjobmgr_SOURCES) $(jobmgr_SOURCES) \
 	$(jobmgr_launcher_SOURCES) $(jobmgrpublish_SOURCES) \
 	$(jobmgrquery_SOURCES) $(localservice_launcher_SOURCES) \
-	$(popc_search_node_SOURCES) \
-	$(am__popc_security_manager_SOURCES_DIST) \
-	$(am__popcloner_SOURCES_DIST) $(popfilemanager_SOURCES) \
-	$(am__secure_jobmgr_SOURCES_DIST) \
-	$(am__secure_popc_search_node_SOURCES_DIST) \
-	$(am__virtual_jobmgr_SOURCES_DIST) \
-	$(am__virtual_popc_search_node_SOURCES_DIST) \
-	$(am__virtual_popc_security_manager_SOURCES_DIST) \
-	$(am__virtual_secure_jobmgr_SOURCES_DIST) \
-	$(am__virtual_secure_popc_search_node_SOURCES_DIST)
+	$(popc_search_node_SOURCES)
 DATA = $(conf_DATA)
 ETAGS = etags
 CTAGS = ctags
@@ -362,8 +220,6 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
-VIX_CFLAGS = @VIX_CFLAGS@
-VIX_LIBS = @VIX_LIBS@
 YACC = @YACC@
 YFLAGS = @YFLAGS@
 abs_builddir = @abs_builddir@
@@ -413,7 +269,6 @@ prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
-secure = @secure@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
@@ -421,15 +276,14 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-virtsecure = @virtsecure@
-virtual = @virtual@
 
 #Code added by clementval begins with #Added by clementval, ends with #End of add
 #Code modified by clementval begins with #Modified by clementval, ends with #End of modification
 AUTOMAKE_OPTIONS = no-dependencies
-POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -I@top_srcdir@/lib -cxx=@CXX@ -D_POPC_RUNTIME_
+POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp -I@top_srcdir@/lib -cxx=mpic++ -D_POPC_RUNTIME_
 AM_CXXFLAGS = $(POPC_FLAGS)
 AM_LDFLAGS = -L@top_srcdir@/lib -L@top_srcdir@/lib/.libs 
+#execservices_PROGRAMS=appservice localservice_launcher
 execservices_SCRIPTS = popcobjrun popcobjrun.pbs popcobjrun.lsf popcobjrun.sge popcobjrun.smscg
 execservicesdir = @prefix@/services
 conf_DATA = jobmgr.conf.in 
@@ -441,65 +295,6 @@ popc_search_node_LDFLAGS = -object
 jobmgr_SOURCES = jobmgr_obj.cc
 jobmgr_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
 jobmgr_LDFLAGS = -object
-popfilemanager_SOURCES = popfilemanager_obj.cc
-popfilemanager_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-popfilemanager_LDFLAGS = -object
-
-#
-# ViSaG : clementval
-# Add conditional compiling libraries for the different version of POP-C++
-#
-
-#VIRTUAL SECURE VERSION
-@VIRTSECURESUPPORT_TRUE@virtual_popc_search_node_SOURCES = virtual_popc_search_node_obj.cc
-
-#VIRTUAL VERSION
-@VIRTSUPPORT_TRUE@virtual_popc_search_node_SOURCES = virtual_popc_search_node_obj.cc
-@VIRTSECURESUPPORT_TRUE@virtual_popc_search_node_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSUPPORT_TRUE@virtual_popc_search_node_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSECURESUPPORT_TRUE@virtual_popc_search_node_LDFLAGS = -object
-@VIRTSUPPORT_TRUE@virtual_popc_search_node_LDFLAGS = -object
-@VIRTSECURESUPPORT_TRUE@virtual_secure_popc_search_node_SOURCES = virtual_secure_popc_search_node_obj.cc
-@VIRTSECURESUPPORT_TRUE@virtual_secure_popc_search_node_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSECURESUPPORT_TRUE@virtual_secure_popc_search_node_LDFLAGS = -object
-@VIRTSECURESUPPORT_TRUE@virtual_jobmgr_SOURCES = virtual_jobmgr_obj.cc
-@VIRTSUPPORT_TRUE@virtual_jobmgr_SOURCES = virtual_jobmgr_obj.cc
-@VIRTSECURESUPPORT_TRUE@virtual_jobmgr_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSUPPORT_TRUE@virtual_jobmgr_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSECURESUPPORT_TRUE@virtual_jobmgr_LDFLAGS = -object
-@VIRTSUPPORT_TRUE@virtual_jobmgr_LDFLAGS = -object
-@VIRTSECURESUPPORT_TRUE@virtual_secure_jobmgr_SOURCES = virtual_secure_jobmgr_obj.cc
-@VIRTSECURESUPPORT_TRUE@virtual_secure_jobmgr_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSECURESUPPORT_TRUE@virtual_secure_jobmgr_LDFLAGS = -object
-@VIRTSECURESUPPORT_TRUE@popcloner_SOURCES = popcloner_obj.cc
-@VIRTSUPPORT_TRUE@popcloner_SOURCES = popcloner_obj.cc
-@VIRTSECURESUPPORT_TRUE@popcloner_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSUPPORT_TRUE@popcloner_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSECURESUPPORT_TRUE@popcloner_LDFLAGS = -object
-@VIRTSUPPORT_TRUE@popcloner_LDFLAGS = -object
-
-#SECURE VERSION
-@SECURESUPPORT_TRUE@popc_security_manager_SOURCES = popc_security_manager_obj.cc
-@VIRTSECURESUPPORT_TRUE@popc_security_manager_SOURCES = popc_security_manager_obj.cc
-@SECURESUPPORT_TRUE@popc_security_manager_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSECURESUPPORT_TRUE@popc_security_manager_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@SECURESUPPORT_TRUE@popc_security_manager_LDFLAGS = -object
-@VIRTSECURESUPPORT_TRUE@popc_security_manager_LDFLAGS = -object
-@VIRTSECURESUPPORT_TRUE@virtual_popc_security_manager_SOURCES = virtual_popc_security_manager_obj.cc
-@VIRTSECURESUPPORT_TRUE@virtual_popc_security_manager_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSECURESUPPORT_TRUE@virtual_popc_security_manager_LDFLAGS = -object
-@SECURESUPPORT_TRUE@secure_jobmgr_SOURCES = secure_jobmgr_obj.cc
-@VIRTSECURESUPPORT_TRUE@secure_jobmgr_SOURCES = secure_jobmgr_obj.cc
-@SECURESUPPORT_TRUE@secure_jobmgr_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSECURESUPPORT_TRUE@secure_jobmgr_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@SECURESUPPORT_TRUE@secure_jobmgr_LDFLAGS = -object
-@VIRTSECURESUPPORT_TRUE@secure_jobmgr_LDFLAGS = -object
-@SECURESUPPORT_TRUE@secure_popc_search_node_SOURCES = secure_popc_search_node_obj.cc
-@VIRTSECURESUPPORT_TRUE@secure_popc_search_node_SOURCES = secure_popc_search_node_obj.cc
-@SECURESUPPORT_TRUE@secure_popc_search_node_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@VIRTSECURESUPPORT_TRUE@secure_popc_search_node_LDADD = -L@top_srcdir@/lib/.libs -lparoc_service_common
-@SECURESUPPORT_TRUE@secure_popc_search_node_LDFLAGS = -object
-@VIRTSECURESUPPORT_TRUE@secure_popc_search_node_LDFLAGS = -object
 appservice_SOURCES = appservice_obj.cc
 appservice_LDADD = 
 appservice_LDFLAGS = -object -L@top_srcdir@/lib/.libs -lparoc_service_common
@@ -518,7 +313,7 @@ dumpjobmgr_LDFLAGS = -L@top_srcdir@/lib/.libs -lparoc_service_common
 dumpjobmgr_DEPENDENCIES = 
 benchmarktest_SOURCES = test_benchmark.cc 
 CLEANFILES = _paroc_*.cc _paroc_*.ph
-EXTRA_DIST = jobmgr.conf.in  popcobjrun.in
+EXTRA_DIST = jobmgr.conf.in popcobjrun.in
 all: all-am
 
 .SUFFIXES:
@@ -668,36 +463,6 @@ localservice_launcher$(EXEEXT): $(localservice_launcher_OBJECTS) $(localservice_
 popc_search_node$(EXEEXT): $(popc_search_node_OBJECTS) $(popc_search_node_DEPENDENCIES) 
 	@rm -f popc_search_node$(EXEEXT)
 	$(popc_search_node_LINK) $(popc_search_node_OBJECTS) $(popc_search_node_LDADD) $(LIBS)
-popc_security_manager$(EXEEXT): $(popc_security_manager_OBJECTS) $(popc_security_manager_DEPENDENCIES) 
-	@rm -f popc_security_manager$(EXEEXT)
-	$(popc_security_manager_LINK) $(popc_security_manager_OBJECTS) $(popc_security_manager_LDADD) $(LIBS)
-popcloner$(EXEEXT): $(popcloner_OBJECTS) $(popcloner_DEPENDENCIES) 
-	@rm -f popcloner$(EXEEXT)
-	$(popcloner_LINK) $(popcloner_OBJECTS) $(popcloner_LDADD) $(LIBS)
-popfilemanager$(EXEEXT): $(popfilemanager_OBJECTS) $(popfilemanager_DEPENDENCIES) 
-	@rm -f popfilemanager$(EXEEXT)
-	$(popfilemanager_LINK) $(popfilemanager_OBJECTS) $(popfilemanager_LDADD) $(LIBS)
-secure_jobmgr$(EXEEXT): $(secure_jobmgr_OBJECTS) $(secure_jobmgr_DEPENDENCIES) 
-	@rm -f secure_jobmgr$(EXEEXT)
-	$(secure_jobmgr_LINK) $(secure_jobmgr_OBJECTS) $(secure_jobmgr_LDADD) $(LIBS)
-secure_popc_search_node$(EXEEXT): $(secure_popc_search_node_OBJECTS) $(secure_popc_search_node_DEPENDENCIES) 
-	@rm -f secure_popc_search_node$(EXEEXT)
-	$(secure_popc_search_node_LINK) $(secure_popc_search_node_OBJECTS) $(secure_popc_search_node_LDADD) $(LIBS)
-virtual_jobmgr$(EXEEXT): $(virtual_jobmgr_OBJECTS) $(virtual_jobmgr_DEPENDENCIES) 
-	@rm -f virtual_jobmgr$(EXEEXT)
-	$(virtual_jobmgr_LINK) $(virtual_jobmgr_OBJECTS) $(virtual_jobmgr_LDADD) $(LIBS)
-virtual_popc_search_node$(EXEEXT): $(virtual_popc_search_node_OBJECTS) $(virtual_popc_search_node_DEPENDENCIES) 
-	@rm -f virtual_popc_search_node$(EXEEXT)
-	$(virtual_popc_search_node_LINK) $(virtual_popc_search_node_OBJECTS) $(virtual_popc_search_node_LDADD) $(LIBS)
-virtual_popc_security_manager$(EXEEXT): $(virtual_popc_security_manager_OBJECTS) $(virtual_popc_security_manager_DEPENDENCIES) 
-	@rm -f virtual_popc_security_manager$(EXEEXT)
-	$(virtual_popc_security_manager_LINK) $(virtual_popc_security_manager_OBJECTS) $(virtual_popc_security_manager_LDADD) $(LIBS)
-virtual_secure_jobmgr$(EXEEXT): $(virtual_secure_jobmgr_OBJECTS) $(virtual_secure_jobmgr_DEPENDENCIES) 
-	@rm -f virtual_secure_jobmgr$(EXEEXT)
-	$(virtual_secure_jobmgr_LINK) $(virtual_secure_jobmgr_OBJECTS) $(virtual_secure_jobmgr_LDADD) $(LIBS)
-virtual_secure_popc_search_node$(EXEEXT): $(virtual_secure_popc_search_node_OBJECTS) $(virtual_secure_popc_search_node_DEPENDENCIES) 
-	@rm -f virtual_secure_popc_search_node$(EXEEXT)
-	$(virtual_secure_popc_search_node_LINK) $(virtual_secure_popc_search_node_OBJECTS) $(virtual_secure_popc_search_node_LDADD) $(LIBS)
 install-binSCRIPTS: $(bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"

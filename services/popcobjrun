@@ -84,8 +84,8 @@ else
         exit 1
     else
         chmod +x $prog1
-#        echo "Now EXEC: ${POPC_JOB_EXEC} ${TMPDIR}/$prog1 $* ${MY_POPC_PROXY}"
-	${POPC_JOB_EXEC} $prog1 $args
+        echo "Now EXEC: ${POPC_JOB_EXEC} ${TMPDIR}/$prog1 $* ${MY_POPC_PROXY}"
+			${POPC_JOB_EXEC} $prog1 $args
         RETVAL=$?
 	rm -f $prog1
         exit $RETVAL
