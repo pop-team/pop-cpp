@@ -57,7 +57,7 @@ paroc_combox_socket::paroc_combox_socket()
 	index=0;
 	nready=0;
 	isCanceled=false;
-   isServer=false;
+  _isServer=false;
 }
 
 paroc_combox_socket::~paroc_combox_socket()
@@ -65,51 +65,50 @@ paroc_combox_socket::~paroc_combox_socket()
 	Close();
 }
 
-bool paroc_combox_socket::Create(int port, bool server)
+bool paroc_combox_socket::Create(char* host, int port, bool server)
 {
 	Close(); 
-	isServer=server;
+	_isServer = server;
 
 	protoent *ppe;
-	char prot[]="tcp";
+	char prot[] = "tcp";
 	int type, protocol;
 	char tmpbuf[2048];
 
-	//THESE LINES OF CODE MAKE THEM LESS PORTABLE...
-	protocol=PROTO_TCP;
-//  if ( (ppe=getprotobyname(prot))==0) return false;
-//  else protocol=ppe->p_proto;
+	protocol = PROTO_TCP;
+	
+	type = SOCK_STREAM;
 
-	type= SOCK_STREAM;
-
-	sockfd=socket(PF_INET,type,protocol);
-	if (sockfd<0) return false;
-	if (port>0)
-	{
+	sockfd = socket(PF_INET,type,protocol);
+	
+	if (sockfd < 0) 
+	  return false;
+	  
+	if (port > 0) {
 		sockaddr_in sin;
 		memset(&sin,0,sizeof(sin));
-		sin.sin_family=AF_INET;
-		sin.sin_addr.s_addr=INADDR_ANY;
-		sin.sin_port=htons(port);
-		SetOpt(SOL_SOCKET,SO_REUSEADDR,(char*)&sin,sizeof(sin)); // lwk : Added this line to allow reuse an earlier socket with the same address
-		if (bind(sockfd,(sockaddr *)&sin,sizeof(sin))!=0)
-		{
+		sin.sin_family = AF_INET;
+		sin.sin_addr.s_addr = INADDR_ANY;
+		sin.sin_port = htons(port);
+		SetOpt(SOL_SOCKET, SO_REUSEADDR, (char*)&sin, sizeof(sin)); // lwk : Added this line to allow reuse an earlier socket with the same address
+		if (bind(sockfd, (sockaddr *)&sin, sizeof(sin)) != 0) {
 			return false;
 		}
 	}
-	if (server)
-	{
+	
+	if (server) {
 		pollarray.SetSize(1);
-		pollarray[0].fd=sockfd;
-		pollarray[0].events=POLLIN;
-		pollarray[0].revents=0;
-		index=1;
-		nready=0;
+		pollarray[0].fd = sockfd;
+		pollarray[0].events = POLLIN;
+		pollarray[0].revents = 0;
+		index = 1;
+		nready = 0;
 		connarray.SetSize(1);
-		connarray[0]=CreateConnection(sockfd);
-		return (listen(sockfd,10)==0);
+		connarray[0] = CreateConnection(sockfd);
+		return (listen(sockfd,10) == 0);
+	} else {
+	  peer = CreateConnection(-1);
 	}
-	else peer=CreateConnection(-1);
 	return true;
 }
 
@@ -253,78 +252,68 @@ paroc_connection* paroc_combox_socket::Wait()
 		return NULL;
 	}
 
-	if (isServer)
-	{
+	if (_isServer) {
 		pollfd *tmpfd;
-		while (1)
-		{
-			if (nready>0)
-			{
-				int n=pollarray.GetSize();
-				tmpfd=pollarray+index;
-				for (int i=index;i>=0;i--, tmpfd--) if (tmpfd->revents!=0)
-					{
+		while (1) {
+			if (nready > 0) {
+				int n = pollarray.GetSize();
+				tmpfd = pollarray + index;
+				for (int i = index; i >= 0; i--, tmpfd--) {
+				  if (tmpfd->revents != 0) {
 						nready--;
-						index=i-1;
-						tmpfd->revents=0;
-						if (i==0)
-						{
-							//Accept new connection....
+						index = i-1;
+						tmpfd->revents = 0;
+						if (i == 0) {
+							// Accept new connection
 							sockaddr addr;
-							socklen_t addrlen=sizeof(addr);
+							socklen_t addrlen = sizeof(addr);
 							int s;
-							while ((s=accept(sockfd,&addr,&addrlen))<0 && errno==EINTR);
-							if (s<0)
-							{
+							while ((s = accept(sockfd,&addr,&addrlen)) < 0 && errno == EINTR);
+							if (s<0) {
 								return NULL;
 							}
 							pollarray.SetSize(n+1);
-							pollarray[n].fd=s;
-							pollarray[n].events=POLLIN;
-							pollarray[n].revents=0;
+							pollarray[n].fd = s;
+							pollarray[n].events = POLLIN;
+							pollarray[n].revents = 0;
 							connarray.SetSize(n+1);
-							connarray[n]=CreateConnection(s);
-							bool ret=OnNewConnection(connarray[n]);
+							connarray[n] = CreateConnection(s);
+							bool ret = OnNewConnection(connarray[n]);
 							n++;
-							if (!ret) return NULL;
-						}
-						else
+							if (!ret) 
+							  return NULL;
+						} else {
 							return connarray[i];
+						}
 					}
+				}
 			}
 
-			//Poll for ready fds....
-			do
-			{
-				tmpfd=pollarray;
-				int n=pollarray.GetSize();
-				index=n-1;
-//	      DEBUG("STEP1: socket poll (addr=%p, size=%d, fd0=%d, timeout=%d)", tmpfd,n, tmpfd->fd, timeout);
-				nready=poll(tmpfd,n,timeout);
-//	      DEBUG("STEP1: socket poll returned (addr=%p, size=%d, nready=%d)", tmpfd,n, nready);
-			}  while (nready<0 && errno==EINTR && sockfd>=0);
+			//Poll for ready fds
+			do {
+				tmpfd = pollarray;
+				int n = pollarray.GetSize();
+				index = n-1;
+				nready = poll(tmpfd, n, timeout);
+			}  while (nready < 0 && errno == EINTR && sockfd >= 0);
 
-			if (nready<=0)
-			{
-
-				if (nready==0) errno=ETIMEDOUT;
+			if (nready <= 0) {
+				if (nready == 0) 
+				  errno=ETIMEDOUT;
 				return NULL;
 			}
 		}
-	}
-	else
-	{
-		if (timeout>=0)
-		{
+	} else {
+		if (timeout >= 0) {
 			pollfd tmpfd;
-			tmpfd.fd=sockfd;
-			tmpfd.events=POLLIN;
-			tmpfd.revents=0;
+			tmpfd.fd = sockfd;
+			tmpfd.events = POLLIN;
+			tmpfd.revents = 0;
 			int t;
-			while ((t=poll(&tmpfd,1,timeout))==-1 && errno==EINTR);
-			if (t<=0)
-			{
-				if (t==0) errno=ETIMEDOUT;
+			while ((t=poll(&tmpfd,1,timeout)) == -1 && errno==EINTR);
+			if (t <= 0) {
+				if (t == 0) 
+				  errno=ETIMEDOUT;
 				return NULL;
 			}
 		}
@@ -339,7 +328,7 @@ void paroc_combox_socket::Close()
 	nready=0;
 	index=-1;
 
-	if (isServer)
+	if (_isServer)
 	{
 		int n=pollarray.GetSize();
 		for (int i=0;i<n;i++) if (fd!=pollarray[i].fd) OnCloseConnection(connarray[i]);
@@ -381,7 +370,7 @@ bool paroc_combox_socket::GetUrl(POPString & accesspoint)
 
 bool paroc_combox_socket::CloseSock(int fd)
 {
-	if (isServer)
+	if (_isServer)
 	{
 		int n=pollarray.GetSize();
 		pollfd *t=pollarray;
@@ -404,6 +393,17 @@ bool paroc_combox_socket::CloseSock(int fd)
 		return true;
 	}
 	return false;
+}
+
+
+bool paroc_combox_socket::disconnect()
+{
+
+}
+
+bool paroc_combox_socket::is_server()
+{
+  return _isServer;
 }
 
 bool paroc_combox_socket::Connect(const char *host,int port)
@@ -460,6 +460,14 @@ bool paroc_combox_socket::Connect(const char *host,int port)
 	}
 }
 
+/**
+ * Not used in socket combox
+ * @return FLASE
+ */
+bool paroc_combox_socket::reconnect()
+{
+  return false;
+}
 
 int paroc_combox_socket::GetSockInfo(sockaddr &info,socklen_t &len)
 {

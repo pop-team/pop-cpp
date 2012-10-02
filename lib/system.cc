@@ -331,78 +331,87 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip)
 }
 
 
+/**
+ * Initialize the base system to run a POP-C++ application
+ * @param	argc	Number of arguments (passed from the main)
+ * @param 	argv	Arguments (passed from the main)
+ * @return 	TRUE if the system is initialized. FALSE in any others cases. 
+ */
 bool paroc_system::Initialize(int *argc,char ***argv)
 {
-  char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
-  if (info==NULL) return false;
-  paroc_system::jobservice.SetAccessString(info);
-  paroc_system::jobservice.SetAsService();
+	printf("Initiliaze system\n");
+	// Get access point address of the Job Manager
+	char *info = paroc_utils::checkremove(argc, argv, "-jobservice=");
+	if (info == NULL) 
+	  return false;
+	paroc_system::jobservice.SetAccessString(info);
+	paroc_system::jobservice.SetAsService();
 
-  char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
-  char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
+	// Get path of the application service executable
+	char *application_service_path = paroc_utils::checkremove(argc,argv,"-appservicecode=");
+	
+	//char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
 
-  if (paroc_utils::checkremove(argc,argv,"-runlocal"))  paroc_od::defaultLocalJob=true;
-  char *appcontact=paroc_utils::checkremove(argc,argv,"-appservicecontact=");
+	// Check if need to run on local node only
+	if (paroc_utils::checkremove(argc,argv,"-runlocal"))  
+		paroc_od::defaultLocalJob=true;
 
-  if (codeser==NULL && appcontact==NULL) return false;
+	// Get application service contact address 
+	char *application_service_contact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
-  try
-  {
-    if (appcontact==NULL)
-    {
-      char url[1024];
-      if (proxy==NULL) strcpy(url,codeser);
-      else sprintf(url,"%s -proxy=%s",codeser, proxy);
-      //rprintf("mgr=CreateAppCoreService(url=%s);\n", url);
-      mgr=CreateAppCoreService(url);
-    }
-    else
-    {
-      challenge=NULL;
-      paroc_accesspoint app;
-      app.SetAccessString(appcontact);
+	
+	if (application_service_path == NULL && application_service_contact == NULL) 
+		return false;
+
+	try {
+		if (application_service_contact == NULL) {
+		
+			char url[1024];
+			strcpy(url, application_service_path);
+         	  
+      // Creating application services 
+      mgr = CreateAppCoreService(url);
+      printf("POP-C++ Application Service created ...\n");
+      
+		} else {
+			challenge=NULL;
+			paroc_accesspoint app;
+      app.SetAccessString(application_service_contact);
       app.SetAsService();
-      mgr=new AppCoreService(app);
-    }
-    paroc_system::appservice=mgr->GetAccessPoint();
-    paroc_system::appservice.SetAsService();
-  }
-  catch (POPException *e)
-  {
-    printf("POP-C++ Exception occurs in paroc_system::Initialize\n");
-    POPSystem::perror(e);
-    delete e;
-    if (mgr!=NULL)
-    {
-      mgr->KillAll();
-      mgr->Stop(challenge);
-      delete mgr;
-      mgr=NULL;
-    }
+      mgr = new AppCoreService(app);
+   	}
+		paroc_system::appservice = mgr->GetAccessPoint();
+		paroc_system::appservice.SetAsService();
+	} catch (POPException *e) {
+		printf("POP-C++ Exception occurs in paroc_system::Initialize\n");
+		POPSystem::perror(e);
+		delete e;
+		if (mgr!=NULL) {
+			mgr->KillAll();
+			mgr->Stop(challenge);
+			delete mgr;
+			mgr=NULL;
+		}
+		return false;
+	} catch (...) {
+		if (mgr!=NULL) {
+			mgr->KillAll();
+			mgr->Stop(challenge);
+			delete mgr;
+			mgr=NULL;
+		}
+		return false;
+	}
 
+	char *codeconf=paroc_utils::checkremove(argc,argv,"-codeconf=");
+
+	DEBUGIF(codeconf==NULL,"No code config file\n");
+
+	/*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
     return false;
-  }
-  catch (...)
-  {
-    if (mgr!=NULL)
-    {
-      mgr->KillAll();
-      mgr->Stop(challenge);
-      delete mgr;
-      mgr=NULL;
-    }
-    return false;
-  }
+    else return true; */
 
-  char *codeconf=paroc_utils::checkremove(argc,argv,"-codeconf=");
-
-  DEBUGIF(codeconf==NULL,"No code config file\n");
-
-  /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
-    return false;
-  else return true; */
-
-  return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
+	return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
 }
 
 void paroc_system::Finalize(bool normalExit)
@@ -446,15 +455,15 @@ void paroc_system::Finalize(bool normalExit)
 
 AppCoreService *paroc_system::CreateAppCoreService(char *codelocation)
 {
-  srand(time(NULL));
-  char tmp[256];
+	// Create challenge string
+	srand(time(NULL));
+	char tmp[256];
+	for (int i=0;i<255;i++) 
+		tmp[i]=(char)(1+254.0*rand()/(RAND_MAX+1.0) );
+	tmp[255]='\0';
+	challenge=tmp;
 
-  for (int i=0;i<255;i++) tmp[i]=(char)(1+254.0*rand()/(RAND_MAX+1.0) );
-  tmp[255]='\0';
-
-  challenge=tmp;
-
-  return new AppCoreService(challenge, false, codelocation);
+	return new AppCoreService(challenge, false, codelocation);
 }
 
 

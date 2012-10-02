@@ -22,17 +22,23 @@
 #endif
 
 #include "paroc_combox_factory.h"
-#include "paroc_combox_socket.h"
+#include "popc_combox_mpi.h"
+
 
 paroc_combox_registration::paroc_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator)
 {
-	paroc_combox_factory *f=paroc_combox_factory::GetInstance();
+	paroc_combox_factory *f = paroc_combox_factory::GetInstance();
 	f->Register(name,metrics, creator);
 }
 
-paroc_combox * combox_socket_creator()
+/*paroc_combox * combox_socket_creator()
 {
 	return new paroc_combox_socket;
+}*/
+
+paroc_combox * combox_mpi_creator()
+{
+	return new popc_combox_mpi;
 }
 
 paroc_combox_factory *paroc_combox_factory::fact=NULL;
@@ -41,8 +47,9 @@ paroc_combox_factory *paroc_combox_factory::fact=NULL;
 paroc_combox_factory::paroc_combox_factory()
 {
 	
-	Register("socket",0,combox_socket_creator);
-
+//	Register("socket",0,combox_socket_creator);
+	Register("mpi", 0, combox_mpi_creator);
+	
 	//Load combox from plugins....
 	int metrics=100;
 	COMBOX_CREATOR creator;

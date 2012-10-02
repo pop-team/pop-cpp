@@ -6,29 +6,39 @@
  * 
  * Modifications :
  * Authors		Date			Comment
- * P.Kuonen	    18.9.2012       Add "POP-C++ Error" in error messages (PEKA)
+ * P.Kuonen    2012/09/18  Add "POP-C++ Error" in error messages (PEKA)
+ * clementval  2012/09/27  Code cleaning (indent, convention ...)
  */
 
 #include <stdio.h>
 
+/**
+ * TODO comment
+ */
 bool onNewConnection(void *data, paroc_connection *conn)
 {
-	int *t=(int *)data;
+	int *t = (int *)data;
 	(*t)++;
 	paroc_combox *cb;
-   cb=conn->GetCombox();
-	printf("Connections: %d\n",*t);
+   cb = conn->GetCombox();
+	printf("Connections: %d\n", *t);
 	return true;
 }
 
+/**
+ * TODO comment
+ */
 bool onCloseConnection(void *data, paroc_connection *conn)
 {
-	int *t=(int *)data;
+	int *t = (int *)data;
 	(*t)--;
-	printf("Connections: %d\n",*t);
-	return (*t!=0);
+	printf("Connections: %d\n", *t);
+	return (*t != 0);
 }
 
+/**
+ * TODO comment
+ */
 int main(int argc, char **argv)
 {
 	if (argc<=1)
@@ -36,9 +46,10 @@ int main(int argc, char **argv)
 		printf("Usage: combox_server <protocol>\n");
 		return 1;
 	}
-	paroc_combox_factory *fact=paroc_combox_factory::GetInstance();
+	
+	paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
 
-	paroc_combox *server=fact->Create(argv[1]);
+	paroc_combox *server = fact->Create(argv[1]);
 
 	if (server==NULL)
 	{
@@ -46,7 +57,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	server->Create(0,true);
+	server->Create(NULL, 0, true);
 
 	POPString addr;
 	if (!server->GetUrl(addr))
@@ -59,61 +70,49 @@ int main(int argc, char **argv)
 	printf("SERVER ACCESS POINT: %s\n",(const char *)addr);
 	int count=0;
 
-	server->SetCallback(COMBOX_NEW, onNewConnection,&count);
-	server->SetCallback(COMBOX_CLOSE, onCloseConnection,&count);
-	//server->SetTimeout(30000);
-	paroc_connection *peer=NULL;
+	server->SetCallback(COMBOX_NEW, onNewConnection, &count);
+	server->SetCallback(COMBOX_CLOSE, onCloseConnection, &count);
+	paroc_connection *peer = NULL;
 
 
-	paroc_buffer_factory *bf=server->GetBufferFactory();
-	paroc_buffer *buffer=bf->CreateBuffer();
+	paroc_buffer_factory *bf = server->GetBufferFactory();
+	paroc_buffer *buffer = bf->CreateBuffer();
 	POPString name;
 
 	paroc_array<char> buf;
 
-	while ((peer=server->Wait())!=NULL)
-	{
-		paroc_buffer_factory *bf=peer->GetBufferFactory();
-		buffer=bf->CreateBuffer();
-		if (buffer->Recv(peer))
-		{
+	while ((peer=server->Wait()) != NULL) {
+		paroc_buffer_factory *bf = peer->GetBufferFactory();
+		buffer = bf->CreateBuffer();
+		if (buffer->Recv(peer)) {
 			int status;
-			buffer->UnPack(&status,1);
-			if (status<=-1)
-			{
-				buffer->UnPack(&name,1);
-				bf=paroc_buffer_factory_finder::GetInstance()->FindFactory(name);
-				if (bf==NULL)
-				{
+			buffer->UnPack(&status, 1);
+			if (status <= -1) {
+				buffer->UnPack(&name, 1);
+				bf = paroc_buffer_factory_finder::GetInstance()->FindFactory(name);
+				if (bf == NULL) {
 					printf("POP-C++ Error: can not find encoding %s\n", (const char *)name);
-					status=0;
-				}
-				else
-				{
+					status = 0;
+				} else {
 					printf("Using encoding %s\n", (const char *)name);
 					peer->SetBufferFactory(bf);
 				}
 				buffer->Reset();
-				buffer->Pack(&status,1);
-				if (!buffer->Send(peer))
-				{
+				buffer->Pack(&status, 1);
+				if (!buffer->Send(peer)) {
 					printf("Can not send back encoding status (%d)\n", status);
 				}
-			}
-			else
-			{
-
+			} else {
 				buf.SetSize(status);
 				int count;
-				buffer->UnPack(&count,1);
+				buffer->UnPack(&count, 1);
 				buffer->UnPack(buf, status);
 				count++;
 				buffer->Reset();
-				buffer->Pack(&status,1);
-				buffer->Pack(&count,1);
-				buffer->Pack(buf,status);
-				if (!buffer->Send(peer))
-				{
+				buffer->Pack(&status, 1);
+				buffer->Pack(&count, 1);
+				buffer->Pack(buf, status);
+				if (!buffer->Send(peer)) {
 					printf("Can not send back message\n");
 				}
 			}

@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <mpi.h>
 
 #include "paroc_broker_factory.h"
 #include "paroc_utils.h"
@@ -37,13 +38,14 @@ paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name
 paroc_broker *paroc_broker_factory::Create(const char *objname)
 {
 	DEBUG("Create broker for %s\n", objname);
-	if (brokerlist==NULL || objname==NULL) return NULL;
+	if (brokerlist==NULL || objname==NULL) 
+		return NULL;
 
 	POSITION pos=brokerlist->GetHeadPosition();
-	while (pos!=NULL)
-	{
+	while (pos!=NULL) {
 		paroc_broker_init &t=brokerlist->GetNext(pos);
-		if (paroc_utils::isEqual(objname, t.objname)) return t.func();
+		if (paroc_utils::isEqual(objname, t.objname)) 
+			return t.func();
 	}
 	return NULL;
 }
@@ -75,6 +77,9 @@ bool paroc_broker_factory::Test(const char *objname)
 
 paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 {
+	/**
+	 * Display the information about the parallel object executable
+	 */
 	char *tmp=paroc_utils::checkremove(argc,argv,"-list");
 	if (tmp!=NULL)
 	{
@@ -87,60 +92,59 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 	}
 
 	char *usage=paroc_utils::checkremove(argc,argv,"-help");
-	char *object=paroc_utils::checkremove(argc,argv,"-object=");
-	if (usage!=NULL || object==NULL)
-	{
-		printf("\n Usage:\n\t%s [-help] [-list | -listlong] [-port=<local port>] [-callback=<host:port>] [-appservice=<host:port>] [-nostdio] -object=<objectname>\n",(*argv)[0]);
+	char *object_classname = paroc_utils::checkremove(argc,argv,"-object=");
+	if (usage != NULL || object_classname == NULL) {
+		printf("\n Usage:\n\t%s [-help] [-list | -listlong] [-port=<local port>] [-callback=<host:port>] [-appservice=<host:port>] [-nostdio] [-mpi] -object=<objectname>\n",(*argv)[0]);
 		return NULL;
 	}
 
-
-	tmp=paroc_utils::checkremove(argc,argv,"-appservice=");
-	if (tmp!=NULL)
-	{
-		paroc_system::appservice.SetAccessString(tmp);
-      paroc_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
+	tmp = paroc_utils::checkremove(argc,argv,"-appservice=");
+	if (tmp != NULL) {
+		paroc_system::appservice.SetAccessString(tmp);  
+		paroc_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
 
 
-	if ((tmp=getenv("POPC_JOBSERVICE"))!=NULL)
-	{
+	if ((tmp = getenv("POPC_JOBSERVICE")) != NULL) {
 		paroc_system::jobservice.SetAccessString(tmp);
-      paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
-	} else if ((tmp=paroc_utils::checkremove(argc,argv,"-jobservice="))!=NULL)
-	{
+    paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
+	} else if ((tmp = paroc_utils::checkremove(argc, argv, "-jobservice=")) != NULL) {
 		paroc_system::jobservice.SetAccessString(tmp);
-      paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
-	}
-	else
-	{
+    paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
+	} else {
 		char tmpstr[256];
 		DEBUG("Jobservice is not specified. Use the default one!");
-		sprintf(tmpstr,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
+		sprintf(tmpstr, "%s:%d", (const char *)paroc_system::GetHost(), DEFAULTPORT);
 		paroc_system::jobservice.SetAccessString(tmpstr);
-      paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
+    paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
 
-	bool nostdio=(paroc_utils::checkremove(argc,argv,"-nostdio")!=NULL);
+	bool nostdio = (paroc_utils::checkremove(argc, argv, "-nostdio") != NULL);
 
-	//Now create the broker
-	if (object==NULL || *object==0) return NULL;
 
-	paroc_broker *objbroker=Create(object);
-	if (objbroker==NULL)
-	{
+  // Check the class name for the object to be instantiated
+	if (object_classname == NULL || *object_classname == 0) {
+	   return NULL;
+	}
+
+  // Create the real Broker object
+	paroc_broker *objbroker = Create(object_classname);
+	if (objbroker == NULL) {
 		rprintf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
 		return NULL;
 	}
-	paroc_broker::classname=object;
 
-	if (nostdio)
-	{
+  // Set the classname for this broker
+	paroc_broker::classname = object_classname;
+
+   
+	if (nostdio) {
 		close(0);
 		close(1);
 		close(2);
 
 		open("/dev/null",O_RDONLY);
+		
 #ifndef NDEBUG
 		char fname[256];
 		sprintf(fname,"/tmp/object_%s_%d.log", (const char *)paroc_broker::classname,getpid());
@@ -150,12 +154,16 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 		open("/dev/null",O_WRONLY);
 		open("/dev/null",O_WRONLY);
 #endif
+	
 	}
 
 	return objbroker;
 }
 
 
+/**
+ *
+ */
 void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat)
 {
 	if (!longformat) printf("List of parallel object classes:\n====\n");

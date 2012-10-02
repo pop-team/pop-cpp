@@ -15,7 +15,7 @@
 #include "paroc_array.h"
 
 #define METH_VECT_PACK(type) \
-void paroc_buffer::Pack( std::vector<type> *vect, int n)\
+void paroc_buffer::Pack(std::vector<type> *vect, int n)\
 {\
 	int s=vect->size();\
 	Pack(&s,1);\
@@ -23,7 +23,7 @@ void paroc_buffer::Pack( std::vector<type> *vect, int n)\
 }
 
 #define METH_VECT_UNPACK(type) \
-void paroc_buffer::UnPack( std::vector<type> *vect, int n)\
+void paroc_buffer::UnPack(std::vector<type> *vect, int n)\
 {\
 	int s=0;\
 	UnPack(&s,1);\
@@ -36,52 +36,56 @@ void paroc_buffer::UnPack( std::vector<type> *vect, int n)\
 
 paroc_message_header::paroc_message_header(int classid, int methodid, int semantics, const char *metname)
 {
-	type=TYPE_REQUEST;
-
-	id[0]=classid;
-	id[1]=methodid;
-	id[2]=semantics;
-	methodname=metname;
+	type = TYPE_REQUEST;
+	id[0] = classid;
+	id[1] = methodid;
+	id[2] = semantics;
+	methodname = metname;
 }
 
 paroc_message_header::paroc_message_header(const char *metname)
 {
-	type=TYPE_RESPONSE;
-	methodname=metname;
+	type = TYPE_RESPONSE;
+	methodname = metname;
 }
 
 paroc_message_header::paroc_message_header(int exceptioncode, const char *metname)
 {
-	type=TYPE_EXCEPTION;
-	methodname=metname;
+	type = TYPE_EXCEPTION;
+	methodname = metname;
 	SetExceptionCode(exceptioncode);
 }
 
 paroc_message_header::paroc_message_header()
 {
-	type=-1;
-	methodname=NULL;
+	type = -1;
+	methodname = NULL;
 }
 
 void paroc_message_header::operator =(const  paroc_message_header &dat)
 {
-	if (&dat==this) return;
-	type=dat.GetType();
+	if (&dat == this) 
+	  return;
+	type = dat.GetType();
 	SetMethodName(dat.GetMethodName());
-	switch (type)
-	{
-	case TYPE_REQUEST:
-		id[0]=dat.GetClassID();
-		id[1]=dat.GetMethodID();
-		id[2]=dat.GetSemantics();
-		break;
-	case TYPE_EXCEPTION:
-		exception=dat.GetExceptionCode();
-		break;
-	}
+	switch (type) {
+  	case TYPE_REQUEST:
+	  	id[0]=dat.GetClassID();
+		  id[1]=dat.GetMethodID();
+  		id[2]=dat.GetSemantics();
+	  	break;
+  	case TYPE_EXCEPTION:
+	  	exception=dat.GetExceptionCode();
+		  break;
+  }
 }
 
 //Message envelop
+
+
+// Constant initialization
+const int paroc_buffer::POPC_BUFFER_HEADER_SIZE = 20;
+
 
 paroc_buffer::paroc_buffer()
 {
@@ -192,15 +196,17 @@ METH_VECT_UNPACK(std::string)
 
 bool paroc_buffer::Send(paroc_connection *conn)
 {
-	if (conn==NULL) return false;
-	paroc_combox *combox=conn->GetCombox();
+	if (conn==NULL) 
+	  return false;
+	paroc_combox *combox = conn->GetCombox();
 	return Send(*combox, conn);
 }
 
 bool paroc_buffer::Recv(paroc_connection *conn)
 {
-	if (conn==NULL) return false;
-	paroc_combox *combox=conn->GetCombox();
+	if (conn == NULL) 
+	  return false;
+	paroc_combox *combox = conn->GetCombox();
 	return Recv(*combox, conn);
 }
 

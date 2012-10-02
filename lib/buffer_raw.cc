@@ -373,155 +373,174 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 
 void paroc_buffer_raw::CheckUnPack(int sz)
 {
-	if (sz+unpackpos > packeddata.GetSize()) paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+	if (sz+unpackpos > packeddata.GetSize()) 
+	  paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
 }
 
 bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn)
 {
-//Pack the header (20 bytes)
+  // Send the header first as 20 bytes packet
+  printf("RAW: Send\n");
 
-	char *dat=(char *)packeddata;
-
-	if (dat==NULL) return false;
-	int n=packeddata.GetSize();
+	char *data = (char *)packeddata;
+	if (data == NULL) 
+	  return false;
+	  
+	int n = packeddata.GetSize();
 	int h[5];
-	memset(h,0, 5*sizeof(int));
+	memset(h, 0, 5 * sizeof(int));
 
-	int type=header.GetType();
+	int type = header.GetType();
 
-	h[0]=n;
-	h[1]=type;
+  printf("RAW: Set message size to %d\n", n);    
+	h[0] = n;
+	h[1] = type;
 
-	switch (type)
-	{
-	case TYPE_REQUEST:
-		h[2]=header.GetClassID();
-		h[3]=header.GetMethodID();
-		h[4]=header.GetSemantics();
-		break;
-	case TYPE_EXCEPTION:
-		h[2]=header.GetExceptionCode();
-		break;
-	case TYPE_RESPONSE:
-		h[2]=header.GetClassID();
-		h[3]=header.GetMethodID();
-		break;
-	default:
-		return false;
+	switch (type) {
+  	case TYPE_REQUEST:
+	  	h[2]=header.GetClassID();
+		  h[3]=header.GetMethodID();
+  		h[4]=header.GetSemantics();
+	  	break;
+  	case TYPE_EXCEPTION:
+	  	h[2]=header.GetExceptionCode();
+		  break;
+  	case TYPE_RESPONSE:
+	  	h[2]=header.GetClassID();
+  		h[3]=header.GetMethodID();
+	  	break;
+  	default:
+	  	return false;
+ 	}
+ 	
+ 	memcpy(data, h, 20);
+	
+	// MPI mod - beg
+	char* data_header = new char[20];
+	memcpy(data_header, h, 20);
+	
+	if(s.Send(data_header, 20, conn)) {
+	  printf("Error while sending header\n");
+	  return false;
 	}
-	memcpy(dat,h,20);
-	if (s.Send(dat,n, conn)<0)
-	{
-		DEBUG("Fail to send a message!");
-		return false;
-	}
-	return true;
+  // MPI mod - end
+  
+  data += 20;
+  n -= 20;
+  if(n > 0){
+    printf("RAW: Send message size is %d: %s\n", n, (char*)packeddata);  
+    if (s.Send(data, n, conn) < 0) {
+		  DEBUG("Fail to send a message!");
+  		return false;
+	  }
+  }
+
+  return true;
 }
 
-//Propagation of exceptions back to caller...
+  // Propagation of exceptions back to caller...
 
 bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn)
 {
+
+  printf("RAW: Recv\n");
 	int h[5];
 	int n, i;
 
 	//Recv the header...
 
-	char *dat=(char *)h;
-	n=20;
-	do
-	{
-		if ((i=s.Recv(dat,n, conn)) <=0)
-		{
+	char *data_header = (char *)h;
+  int ret = s.Recv(data_header, 20, conn);
+  printf("RAW: header received\n");
+/*	n = 20;
+	do {
+		if ((i = s.Recv(dat,n, conn)) <= 0) {
 			return false;
 		}
-		n-=i;
-		dat+=i;
-	}
-	while (n);
+		n -= i;
+		dat += i;
+	} while (n);*/
 
 	Reset();
-	n=h[0];
-	if (n<20)
-	{
+	n = h[0];
+	
+	
+	if (n<20) {
 		DEBUG("Bad message header(size error:%d)",n);
 		return false;
 	}
 
-	int type=h[1];
+	int type = h[1];
 	header.SetType(type);
-	switch (type)
-	{
-	case TYPE_REQUEST:
-		header.SetClassID(h[2]);
-		header.SetMethodID(h[3]);
-		header.SetSemantics(h[4]);
-		break;
-	case TYPE_EXCEPTION:
-		header.SetExceptionCode(h[2]);
-		break;
-	case TYPE_RESPONSE:
-		header.SetClassID(h[2]);
-		header.SetMethodID(h[3]);
-		break;
-	default:
-		return false;
+	switch (type) {
+	  case TYPE_REQUEST:
+		  header.SetClassID(h[2]);
+  		header.SetMethodID(h[3]);
+	  	header.SetSemantics(h[4]);
+		  break;
+  	case TYPE_EXCEPTION:
+	  	header.SetExceptionCode(h[2]);
+		  break;
+  	case TYPE_RESPONSE:
+	  	header.SetClassID(h[2]);
+		  header.SetMethodID(h[3]);
+		  break;
+	  default:
+		  return false;
 	}
 
 	packeddata.SetSize(n);
-	dat=(char *)packeddata+20;
-	n-=20;
-
-	i=0;
-	while (n>0)
-	{
-		if ((i=s.Recv(dat,n, conn))<=0)
-		{
+	n -= 20;
+	
+  if(n > 0){
+  	data_header = (char *)packeddata+20;	
+  	printf("RAW: ready to receive %d\n", n);
+		ret = s.Recv(data_header, n, conn);
+  	printf("RAW: received %d\n", n);	
+	}
+/*
+	i = 0;
+	while (n > 0) {
+		if ((i = s.Recv(dat,n, conn)) <= 0) {
 			return false;
 		}
-		dat+=i;
-		n-=i;
-	}
+		dat += i;
+		n -= i;
+	}*/
 	return true;
 }
 
 #ifdef OD_DISCONNECT
 bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn)
 {
-	while (true)
-	{
-		paroc_connection * t = (paroc_connection *) s.Wait();
-		if (t == NULL)
-		{
-			paroc_exception::paroc_throw(9999,
-										 "[paroc_buffer_raw.cc] : Remote Object not alive\n");
+	while (true) {
+		paroc_connection* t = (paroc_connection*) s.Wait();
+		if (t == NULL) {
+			paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive\n");
 		}
-		if (!Recv(s, t))
+		if (!Recv(s, t)) {
 			paroc_exception::paroc_throw(errno);
-		if (header.GetType() == TYPE_RESPONSE)
-		{
-			if (header.GetClassID() == 0 && header.GetMethodID() == 6)
-			{
+		}
+		if (header.GetType() == TYPE_RESPONSE) {
+			if (header.GetClassID() == 0 && header.GetMethodID() == 6) {
 				return true;
 			} else {
 				paroc_message_header h = header;
 				int unpackposold = unpackpos;
 				paroc_array<char> packeddataold = packeddata;
 				paroc_connection * t = (paroc_connection *) s.Wait();
-				if (t == NULL)
-				{
-					paroc_exception::paroc_throw(9999,
-												 "[paroc_buffer_raw.cc] : Remote Object not alive\n");
+				if (t == NULL) {
+					paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive\n");
 				}
-				if (!Recv(s, t))
+				if (!Recv(s, t)) {
 					paroc_exception::paroc_throw(errno);
+				}
 				Reset();
 				header = h;
 				unpackpos = unpackposold;
 				packeddata = packeddataold;
 				return false;
 			}
-
 		}
 	}
 }

@@ -5,8 +5,9 @@
  * Creation date : -
  * 
  * Modifications :
- * Authors		Date			Comment
- * P.Kuonen     18.9.2012       Add "POP-C++ error" in error messages (PEKA)
+ * Authors		Date			  Comment
+ * P.Kuonen   2012/09/18  Add "POP-C++ error" in error messages (PEKA)
+ * clementval 2012/09/27  Code cleaning (indent, convention ...)
  */
 
 #include <timer.h>
@@ -17,34 +18,29 @@
 
 int main(int argc, char **argv)
 {
-	if (argc<2)
-	{
+	if (argc<2) {
 		printf("Usage: combox_test <address>\n");
 		return 1;
 	}
-	paroc_combox_factory *fact=paroc_combox_factory::GetInstance();
+	paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
 	char prot[32];
 	char *tmp;
-	if ((tmp=strstr(argv[1],"://"))==NULL)
-	{
+	if ((tmp = strstr(argv[1],"://")) == NULL) {
 		strcpy(prot,"socket");
-	}
-	else
-	{
+	} else {
 		*tmp=0;
-		strcpy(prot,argv[1]);
+		strcpy(prot, argv[1]);
 		*tmp=':';
 	}
 
-	paroc_combox *client=fact->Create(prot);
+	paroc_combox *client = fact->Create(prot);
 
-	if (client==NULL)
-	{
+	if (client == NULL) {
 		printf("POP-C++ Error: %s: unknown protocol\n", prot);
 		return 1;
 	}
 
-	client->Create(0,false);
+	client->Create(NULL, 0, false);
 	if (!client->Connect(argv[1]))
 	{
 		client->Destroy();
@@ -61,35 +57,31 @@ int main(int argc, char **argv)
 	Timer timer;
 	timer.Start();
 
-	while (fgets(str, MSGSIZE-1,stdin)!=NULL)
+	while (fgets(str, MSGSIZE-1, stdin) != NULL)
 	{
 		int len=strlen(str);
-		while (len>0 && str[len-1]=='\n' || str[len-1]=='\r')
-		{
+		while (len>0 && str[len-1] == '\n' || str[len-1] == '\r') {
 			len--;
 			str[len]=0;
 		}
-		strcat(str,"\r\n");
+		strcat(str, "\r\n");
 		len+=2;
-		if (client->Send(str,len)!=len)
-		{
+		if (client->Send(str,len) != len) {
 			printf("POP-C++ Error: Send error\n");
 			break;
 		}
-		fprintf(stdout,"SENT[%d]: %s",len, str);
+		fprintf(stdout, "SENT[%d]: %s", len, str);
 	}
 	client->SetTimeout(300000);
 
 	fprintf(stdout,"NOW WAITING FOR REPLY\n");
-	while (1)
-	{
-		int n=client->Recv(str,MSGSIZE-1);
-		if (n<=0)
-		{
+	while (1) {
+		int n=client->Recv(str, MSGSIZE-1);
+		if (n<=0) {
 			break;
 		}
-		str[n]=0;
-		fprintf(stdout,"%s",str);
+		str[n] = 0;
+		fprintf(stdout, "%s", str);
 		fflush(stdout);
 	}
 

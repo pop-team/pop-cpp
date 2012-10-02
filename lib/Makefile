@@ -35,13 +35,13 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin12.1.0
-host_triplet = x86_64-apple-darwin12.1.0
+build_triplet = x86_64-apple-darwin12.2.0
+host_triplet = x86_64-apple-darwin12.2.0
 bin_PROGRAMS = testplugin$(EXEEXT) alloctest$(EXEEXT) \
 	combox_client$(EXEEXT) combox_server$(EXEEXT) \
-	combox_test$(EXEEXT) popcipher$(EXEEXT)
+	combox_test$(EXEEXT)
 subdir = lib
-DIST_COMMON = $(am__inst_HEADERS_DIST) $(srcdir)/Makefile.am \
+DIST_COMMON = $(inst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/appservice.ph \
 	$(srcdir)/batchmgr.ph $(srcdir)/codemgr.ph $(srcdir)/debug.cc \
 	$(srcdir)/jobmgr.ph $(srcdir)/objectmonitor.ph \
@@ -79,165 +79,29 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(maindir)" "$(DESTDIR)$(instdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-##libparoc_common_la_DEPENDENCIES = paroc_service_base.ph.stub_client.lo \
-##	virtual_popc_search_node.ph.stub_client.lo \
-##	popc_search_node.ph.stub_client.lo \
-##	codemgr.ph.stub_client.lo \
-##	remotelog.ph.stub_client.lo \
-##	objectmonitor.ph.stub_client.lo \
-##	appservice.ph.stub_client.lo \
-##	batchmgr.ph.stub_client.lo \
-##	popcloner.ph.stub_client.lo
-##libparoc_common_la_DEPENDENCIES = paroc_service_base.ph.stub_client.lo \
-##	popc_security_manager.ph.stub_client.lo \
-##	popc_search_node.ph.stub_client.lo \
-##	codemgr.ph.stub_client.lo \
-##	remotelog.ph.stub_client.lo \
-##	objectmonitor.ph.stub_client.lo \
-##	appservice.ph.stub_client.lo \
-##	batchmgr.ph.stub_client.lo
-libparoc_common_la_DEPENDENCIES = paroc_service_base.ph.stub_client.lo \
-	popc_search_node.ph.stub_client.lo \
-	codemgr.ph.stub_client.lo \
-	remotelog.ph.stub_client.lo \
-	objectmonitor.ph.stub_client.lo \
-	appservice.ph.stub_client.lo \
-	batchmgr.ph.stub_client.lo \
-	popfilemanager.ph.stub_client.lo
-#libparoc_common_la_DEPENDENCIES =  \
-#	paroc_service_base.ph.stub_client.lo \
-#	popc_security_manager.ph.stub_client.lo \
-#	popc_search_node.ph.stub_client.lo \
-#	codemgr.ph.stub_client.lo \
-#	remotelog.ph.stub_client.lo \
-#	objectmonitor.ph.stub_client.lo \
-#	appservice.ph.stub_client.lo \
-#	batchmgr.ph.stub_client.lo \
-#	secure_popc_search_node.ph.stub_client.lo
-am__libparoc_common_la_SOURCES_DIST = system.cc mutex.cc thread.cc \
-	string.cc od.cc event.cc buffer.cc buffer_utils.cc combox.cc \
-	broker.cc broker_receive.cc broker_serve.cc object.cc \
-	interface.cc allocobj.cc timer.cc accesspoint.cc memspool.cc \
-	utils.cc debug.cc exception.cc benchmark.cc combox_factory.cc \
-	combox_socket.cc buffer_xdr.cc buffer_factory.cc \
-	buffer_factory_finder.cc buffer_xdr_factory.cc buffer_raw.cc \
-	buffer_raw_factory.cc broker_factory.cc response.cc request.cc \
-	explorationList.cc popc_search_node_info.cc popwayback.cc \
-	popc_security_manager.cc nodethread.cc popc_logger.cpp \
-	popvm.cc WrapperFactory.cc ESXWrapper.cc POPWrapper.cc \
-	rijndael.cc
-##am_libparoc_common_la_OBJECTS = libparoc_common_la-system.lo \
-##	libparoc_common_la-mutex.lo \
-##	libparoc_common_la-thread.lo \
-##	libparoc_common_la-string.lo \
-##	libparoc_common_la-od.lo \
-##	libparoc_common_la-event.lo \
-##	libparoc_common_la-buffer.lo \
-##	libparoc_common_la-buffer_utils.lo \
-##	libparoc_common_la-combox.lo \
-##	libparoc_common_la-broker.lo \
-##	libparoc_common_la-broker_receive.lo \
-##	libparoc_common_la-broker_serve.lo \
-##	libparoc_common_la-object.lo \
-##	libparoc_common_la-interface.lo \
-##	libparoc_common_la-allocobj.lo \
-##	libparoc_common_la-timer.lo \
-##	libparoc_common_la-accesspoint.lo \
-##	libparoc_common_la-memspool.lo \
-##	libparoc_common_la-utils.lo \
-##	libparoc_common_la-debug.lo \
-##	libparoc_common_la-exception.lo \
-##	libparoc_common_la-benchmark.lo \
-##	libparoc_common_la-combox_factory.lo \
-##	libparoc_common_la-combox.lo \
-##	libparoc_common_la-combox_socket.lo \
-##	libparoc_common_la-buffer_xdr.lo \
-##	libparoc_common_la-buffer_factory.lo \
-##	libparoc_common_la-buffer_factory_finder.lo \
-##	libparoc_common_la-buffer_xdr_factory.lo \
-##	libparoc_common_la-buffer_raw.lo \
-##	libparoc_common_la-buffer_raw_factory.lo \
-##	libparoc_common_la-broker_factory.lo \
-##	libparoc_common_la-response.lo \
-##	libparoc_common_la-request.lo \
-##	libparoc_common_la-explorationList.lo \
-##	libparoc_common_la-popc_search_node_info.lo \
-##	libparoc_common_la-popwayback.lo \
-##	libparoc_common_la-popvm.lo \
-##	libparoc_common_la-WrapperFactory.lo \
-##	libparoc_common_la-ESXWrapper.lo \
-##	libparoc_common_la-POPWrapper.lo \
-##	libparoc_common_la-nodethread.lo \
-##	libparoc_common_la-rijndael.lo
-##am_libparoc_common_la_OBJECTS = libparoc_common_la-system.lo \
-##	libparoc_common_la-mutex.lo \
-##	libparoc_common_la-thread.lo \
-##	libparoc_common_la-string.lo \
-##	libparoc_common_la-od.lo \
-##	libparoc_common_la-event.lo \
-##	libparoc_common_la-buffer.lo \
-##	libparoc_common_la-buffer_utils.lo \
-##	libparoc_common_la-combox.lo \
-##	libparoc_common_la-broker.lo \
-##	libparoc_common_la-broker_receive.lo \
-##	libparoc_common_la-broker_serve.lo \
-##	libparoc_common_la-object.lo \
-##	libparoc_common_la-interface.lo \
-##	libparoc_common_la-allocobj.lo \
-##	libparoc_common_la-timer.lo \
-##	libparoc_common_la-accesspoint.lo \
-##	libparoc_common_la-memspool.lo \
-##	libparoc_common_la-utils.lo \
-##	libparoc_common_la-debug.lo \
-##	libparoc_common_la-exception.lo \
-##	libparoc_common_la-benchmark.lo \
-##	libparoc_common_la-combox_factory.lo \
-##	libparoc_common_la-combox.lo \
-##	libparoc_common_la-combox_socket.lo \
-##	libparoc_common_la-buffer_xdr.lo \
-##	libparoc_common_la-buffer_factory.lo \
-##	libparoc_common_la-buffer_factory_finder.lo \
-##	libparoc_common_la-buffer_xdr_factory.lo \
-##	libparoc_common_la-buffer_raw.lo \
-##	libparoc_common_la-buffer_raw_factory.lo \
-##	libparoc_common_la-broker_factory.lo \
-##	libparoc_common_la-response.lo \
-##	libparoc_common_la-request.lo \
-##	libparoc_common_la-explorationList.lo \
-##	libparoc_common_la-popc_search_node_info.lo \
-##	libparoc_common_la-popwayback.lo \
-##	libparoc_common_la-popvm.lo \
-##	libparoc_common_la-WrapperFactory.lo \
-##	libparoc_common_la-ESXWrapper.lo \
-##	libparoc_common_la-POPWrapper.lo \
-##	libparoc_common_la-nodethread.lo \
-##	libparoc_common_la-popc_security_manager.lo \
-##	libparoc_common_la-rijndael.lo
+libparoc_common_la_DEPENDENCIES =  \
+	paroc_service_base.ph.stub_client.lo \
+	popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo \
+	remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo \
+	appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo
 am_libparoc_common_la_OBJECTS = libparoc_common_la-system.lo \
-	libparoc_common_la-mutex.lo \
-	libparoc_common_la-thread.lo \
-	libparoc_common_la-string.lo \
-	libparoc_common_la-od.lo \
-	libparoc_common_la-event.lo \
-	libparoc_common_la-buffer.lo \
+	libparoc_common_la-mutex.lo libparoc_common_la-thread.lo \
+	libparoc_common_la-string.lo libparoc_common_la-od.lo \
+	libparoc_common_la-event.lo libparoc_common_la-buffer.lo \
 	libparoc_common_la-buffer_utils.lo \
-	libparoc_common_la-combox.lo \
-	libparoc_common_la-broker.lo \
+	libparoc_common_la-combox.lo libparoc_common_la-broker.lo \
 	libparoc_common_la-broker_receive.lo \
 	libparoc_common_la-broker_serve.lo \
-	libparoc_common_la-object.lo \
-	libparoc_common_la-interface.lo \
-	libparoc_common_la-allocobj.lo \
-	libparoc_common_la-timer.lo \
+	libparoc_common_la-object.lo libparoc_common_la-interface.lo \
+	libparoc_common_la-allocobj.lo libparoc_common_la-timer.lo \
 	libparoc_common_la-accesspoint.lo \
-	libparoc_common_la-memspool.lo \
-	libparoc_common_la-utils.lo \
-	libparoc_common_la-debug.lo \
-	libparoc_common_la-exception.lo \
+	libparoc_common_la-memspool.lo libparoc_common_la-utils.lo \
+	libparoc_common_la-debug.lo libparoc_common_la-exception.lo \
 	libparoc_common_la-benchmark.lo \
 	libparoc_common_la-combox_factory.lo \
 	libparoc_common_la-combox.lo \
 	libparoc_common_la-combox_socket.lo \
+	libparoc_common_la-popc_combox_mpi.lo \
 	libparoc_common_la-buffer_xdr.lo \
 	libparoc_common_la-buffer_factory.lo \
 	libparoc_common_la-buffer_factory_finder.lo \
@@ -245,163 +109,24 @@ am_libparoc_common_la_OBJECTS = libparoc_common_la-system.lo \
 	libparoc_common_la-buffer_raw.lo \
 	libparoc_common_la-buffer_raw_factory.lo \
 	libparoc_common_la-broker_factory.lo \
-	libparoc_common_la-response.lo \
-	libparoc_common_la-request.lo \
+	libparoc_common_la-response.lo libparoc_common_la-request.lo \
 	libparoc_common_la-explorationList.lo \
 	libparoc_common_la-popc_search_node_info.lo \
 	libparoc_common_la-popwayback.lo \
 	libparoc_common_la-nodethread.lo \
 	libparoc_common_la-popc_logger.lo
-#am_libparoc_common_la_OBJECTS =  \
-#	libparoc_common_la-system.lo \
-#	libparoc_common_la-mutex.lo \
-#	libparoc_common_la-thread.lo \
-#	libparoc_common_la-string.lo \
-#	libparoc_common_la-od.lo \
-#	libparoc_common_la-event.lo \
-#	libparoc_common_la-buffer.lo \
-#	libparoc_common_la-buffer_utils.lo \
-#	libparoc_common_la-combox.lo \
-#	libparoc_common_la-broker.lo \
-#	libparoc_common_la-broker_receive.lo \
-#	libparoc_common_la-broker_serve.lo \
-#	libparoc_common_la-object.lo \
-#	libparoc_common_la-interface.lo \
-#	libparoc_common_la-allocobj.lo \
-#	libparoc_common_la-timer.lo \
-#	libparoc_common_la-accesspoint.lo \
-#	libparoc_common_la-memspool.lo \
-#	libparoc_common_la-utils.lo \
-#	libparoc_common_la-debug.lo \
-#	libparoc_common_la-exception.lo \
-#	libparoc_common_la-benchmark.lo \
-#	libparoc_common_la-combox_factory.lo \
-#	libparoc_common_la-combox.lo \
-#	libparoc_common_la-combox_socket.lo \
-#	libparoc_common_la-buffer_xdr.lo \
-#	libparoc_common_la-buffer_factory.lo \
-#	libparoc_common_la-buffer_factory_finder.lo \
-#	libparoc_common_la-buffer_xdr_factory.lo \
-#	libparoc_common_la-buffer_raw.lo \
-#	libparoc_common_la-buffer_raw_factory.lo \
-#	libparoc_common_la-broker_factory.lo \
-#	libparoc_common_la-response.lo \
-#	libparoc_common_la-request.lo \
-#	libparoc_common_la-explorationList.lo \
-#	libparoc_common_la-popc_search_node_info.lo \
-#	libparoc_common_la-popwayback.lo \
-#	libparoc_common_la-popc_security_manager.lo \
-#	libparoc_common_la-nodethread.lo
 libparoc_common_la_OBJECTS = $(am_libparoc_common_la_OBJECTS)
 libparoc_common_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(libparoc_common_la_LDFLAGS) $(LDFLAGS) -o $@
-##libparoc_service_common_la_DEPENDENCIES = paroc_service_base.ph.stub.lo \
-##	jobmgr.ph.stub.lo \
-##	virtual_popc_search_node.ph.stub.lo \
-##	popc_search_node.ph.stub.lo \
-##	codemgr.ph.stub.lo \
-##	virtual_jobmgr.ph.stub.lo \
-##	remotelog.ph.stub.lo \
-##	objectmonitor.ph.stub.lo \
-##	appservice.ph.stub.lo \
-##	batchmgr.ph.stub.lo \
-##	popcloner.ph.stub.lo
-##libparoc_service_common_la_DEPENDENCIES = paroc_service_base.ph.stub.lo \
-##	jobmgr.ph.stub.lo \
-##	virtual_popc_search_node.ph.stub.lo \
-##	popc_search_node.ph.stub.lo \
-##	codemgr.ph.stub.lo \
-##	virtual_jobmgr.ph.stub.lo \
-##	remotelog.ph.stub.lo \
-##	objectmonitor.ph.stub.lo \
-##	appservice.ph.stub.lo \
-##	batchmgr.ph.stub.lo \
-##	popcloner.ph.stub.lo \
-##	popc_security_manager.ph.stub.lo \
-##	virtual_popc_security_manager.ph.stub.lo \
-##	virtual_secure_jobmgr.ph.stub.lo \
-##	virtual_secure_popc_search_node.ph.stub.lo \
-##	secure_jobmgr.ph.stub.lo \
-##	secure_popc_search_node.ph.stub.lo
-libparoc_service_common_la_DEPENDENCIES = paroc_service_base.ph.stub.lo \
-	jobmgr.ph.stub.lo \
-	popc_search_node.ph.stub.lo \
-	codemgr.ph.stub.lo \
-	remotelog.ph.stub.lo \
-	objectmonitor.ph.stub.lo \
-	appservice.ph.stub.lo \
-	batchmgr.ph.stub.lo \
-	popfilemanager.ph.stub.lo
-#libparoc_service_common_la_DEPENDENCIES =  \
-#	paroc_service_base.ph.stub.lo \
-#	jobmgr.ph.stub.lo \
-#	popc_search_node.ph.stub.lo \
-#	codemgr.ph.stub.lo remotelog.ph.stub.lo \
-#	objectmonitor.ph.stub.lo \
-#	appservice.ph.stub.lo batchmgr.ph.stub.lo \
-#	popc_security_manager.ph.stub.lo \
-#	secure_jobmgr.ph.stub.lo \
-#	secure_popc_search_node.ph.stub.lo
-am__libparoc_service_common_la_SOURCES_DIST = service_base.cc \
-	jobmgr.cc popc_search_node.cc codemgr.cc remotelog.cc \
-	objectmonitor.cc appservice.cc batchmgr.cc secure_jobmgr.cc \
-	secure_popc_search_node.cc popc_security_manager.cc \
-	popfilemanager.cc popc_logger.cpp virtual_popc_search_node.cc \
-	virtual_jobmgr.cc WrapperFactory.cc ESXWrapper.cc popcloner.cc \
-	virtual_secure_jobmgr.cc virtual_secure_popc_search_node.cc \
-	POPWrapper.cc virtual_popc_security_manager.cc
-##am_libparoc_service_common_la_OBJECTS = service_base.lo \
-##	jobmgr.lo \
-##	virtual_popc_search_node.lo \
-##	popc_search_node.lo \
-##	codemgr.lo \
-##	remotelog.lo \
-##	objectmonitor.lo \
-##	appservice.lo \
-##	batchmgr.lo \
-##	virtual_jobmgr.lo \
-##	WrapperFactory.lo \
-##	ESXWrapper.lo \
-##	popcloner.lo
-##am_libparoc_service_common_la_OBJECTS = service_base.lo \
-##	jobmgr.lo \
-##	virtual_popc_search_node.lo \
-##	popc_search_node.lo \
-##	codemgr.lo \
-##	remotelog.lo \
-##	objectmonitor.lo \
-##	appservice.lo \
-##	batchmgr.lo \
-##	virtual_jobmgr.lo \
-##	WrapperFactory.lo \
-##	ESXWrapper.lo \
-##	popcloner.lo \
-##	virtual_secure_jobmgr.lo \
-##	virtual_secure_popc_search_node.lo \
-##	popc_security_manager.lo \
-##	POPWrapper.lo \
-##	virtual_popc_security_manager.lo \
-##	secure_jobmgr.lo \
-##	secure_popc_search_node.lo
-am_libparoc_service_common_la_OBJECTS =  \
-	service_base.lo \
-	jobmgr.lo \
-	popc_search_node.lo \
-	codemgr.lo \
-	remotelog.lo \
-	objectmonitor.lo \
-	appservice.lo \
-	batchmgr.lo \
-	popfilemanager.lo \
-	popc_logger.lo
-#am_libparoc_service_common_la_OBJECTS =  \
-#	service_base.lo jobmgr.lo \
-#	popc_search_node.lo codemgr.lo \
-#	remotelog.lo objectmonitor.lo \
-#	appservice.lo batchmgr.lo secure_jobmgr.lo \
-#	secure_popc_search_node.lo \
-#	popc_security_manager.lo
+libparoc_service_common_la_DEPENDENCIES =  \
+	paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo \
+	popc_search_node.ph.stub.lo codemgr.ph.stub.lo \
+	remotelog.ph.stub.lo objectmonitor.ph.stub.lo \
+	appservice.ph.stub.lo batchmgr.ph.stub.lo
+am_libparoc_service_common_la_OBJECTS = service_base.lo jobmgr.lo \
+	popc_search_node.lo codemgr.lo remotelog.lo objectmonitor.lo \
+	appservice.lo batchmgr.lo popc_logger.lo
 libparoc_service_common_la_OBJECTS =  \
 	$(am_libparoc_service_common_la_OBJECTS)
 libparoc_service_common_la_LINK = $(LIBTOOL) --tag=CXX \
@@ -433,9 +158,6 @@ combox_test_DEPENDENCIES =
 combox_test_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(combox_test_CXXFLAGS) \
 	$(CXXFLAGS) $(combox_test_LDFLAGS) $(LDFLAGS) -o $@
-popcipher_SOURCES = popcipher.c
-popcipher_OBJECTS = popcipher.$(OBJEXT)
-popcipher_LDADD = $(LDADD)
 am_testplugin_OBJECTS = testplugin-testplugin.$(OBJEXT)
 testplugin_OBJECTS = $(am_testplugin_OBJECTS)
 testplugin_DEPENDENCIES =
@@ -445,15 +167,6 @@ testplugin_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -466,30 +179,22 @@ CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 SOURCES = $(libparoc_common_la_SOURCES) \
 	$(libparoc_service_common_la_SOURCES) $(alloctest_SOURCES) \
 	$(combox_client_SOURCES) $(combox_server_SOURCES) \
-	$(combox_test_SOURCES) popcipher.c $(testplugin_SOURCES)
-DIST_SOURCES = $(am__libparoc_common_la_SOURCES_DIST) \
-	$(am__libparoc_service_common_la_SOURCES_DIST) \
-	$(alloctest_SOURCES) $(combox_client_SOURCES) \
-	$(combox_server_SOURCES) $(combox_test_SOURCES) popcipher.c \
-	$(testplugin_SOURCES)
+	$(combox_test_SOURCES) $(testplugin_SOURCES)
+DIST_SOURCES = $(libparoc_common_la_SOURCES) \
+	$(libparoc_service_common_la_SOURCES) $(alloctest_SOURCES) \
+	$(combox_client_SOURCES) $(combox_server_SOURCES) \
+	$(combox_test_SOURCES) $(testplugin_SOURCES)
 DATA = $(main_DATA)
-am__inst_HEADERS_DIST = paroc_service_base.ph appservice.ph \
-	popc_search_node.ph codemgr.ph remotelog.ph objectmonitor.ph \
-	batchmgr.ph jobmgr.ph popc_security_manager.ph \
-	secure_jobmgr.ph secure_popc_search_node.ph popfilemanager.ph \
-	virtual_popc_search_node.ph virtual_jobmgr.ph popcloner.ph \
-	virtual_popc_security_manager.ph virtual_secure_jobmgr.ph \
-	virtual_secure_popc_search_node.ph
 HEADERS = $(inst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run aclocal-1.11
-AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run tar
+ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run aclocal-1.11
+AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoconf
-AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoheader
-AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run automake-1.11
+AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run autoconf
+AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run autoheader
+AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run automake-1.11
 AWK = awk
 CC = gcc
 CFLAGS = -g -O2
@@ -526,7 +231,7 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run makeinfo
+MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = .././install-sh -c -d
 NM = /usr/bin/nm
@@ -538,25 +243,23 @@ OTOOL64 = :
 PACKAGE = popc
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = popc
-PACKAGE_STRING = popc 2.5
+PACKAGE_STRING = popc 2.6 K Computer
 PACKAGE_TARNAME = popc
 PACKAGE_URL = 
-PACKAGE_VERSION = 2.5
+PACKAGE_VERSION = 2.6 K Computer
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 2.5
-VIX_CFLAGS = 
-VIX_LIBS = 
+VERSION = 2.6 K Computer
 YACC = bison -y
 YFLAGS = 
-abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/lib
-abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/lib
-abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
-abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
+abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/lib
+abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/lib
+abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6
+abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -565,10 +268,10 @@ am__leading_dot = .
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin12.1.0
+build = x86_64-apple-darwin12.2.0
 build_alias = 
 build_cpu = x86_64
-build_os = darwin12.1.0
+build_os = darwin12.2.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -578,16 +281,16 @@ dvidir = ${docdir}
 exec_prefix = ${prefix}
 globusdir = 
 globusflavor = 
-host = x86_64-apple-darwin12.1.0
+host = x86_64-apple-darwin12.2.0
 host_alias = 
 host_cpu = x86_64
 host_kernel = Darwin
-host_os = darwin12.1.0
+host_os = darwin12.2.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/install-sh
+install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -600,7 +303,6 @@ prefix = /usr/local/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
-secure = false
 sharedstatedir = ${prefix}/com
 srcdir = .
 sysconfdir = ${prefix}/etc
@@ -608,113 +310,33 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-virtsecure = false
-virtual = false
 AUTOMAKE_OPTIONS = no-dependencies
-POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=g++ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
+POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=mpic++ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
 AM_CXXFLAGS = $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS)
 
 #ADD VIX and LIBVIRT flags
 #AM_CXXFLAGS = -D_LINUX $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS) $(VIX_CFLAGS) $(VIX_LIBS)
 lib_LTLIBRARIES = libparoc_common.la  libparoc_service_common.la
-
-#compile popcipher if the version include virtualization
-BUILT_SOURCES = generate.foo
-#libparoc_common_la_SOURCES = system.cc mutex.cc thread.cc string.cc od.cc event.cc buffer.cc buffer_utils.cc combox.cc  \
-#	broker.cc broker_receive.cc broker_serve.cc object.cc interface.cc allocobj.cc timer.cc accesspoint.cc memspool.cc \
-#	utils.cc debug.cc exception.cc benchmark.cc combox_factory.cc\
-#	combox.cc combox_socket.cc buffer_xdr.cc \
-#	buffer_factory.cc buffer_factory_finder.cc buffer_xdr_factory.cc\
-#	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc \
-#	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc popc_security_manager.cc nodethread.cc
-
 libparoc_common_la_SOURCES = system.cc mutex.cc thread.cc string.cc od.cc event.cc buffer.cc buffer_utils.cc combox.cc  \
 	broker.cc broker_receive.cc broker_serve.cc object.cc interface.cc allocobj.cc timer.cc accesspoint.cc memspool.cc \
 	utils.cc debug.cc exception.cc benchmark.cc combox_factory.cc \
-	combox.cc combox_socket.cc buffer_xdr.cc \
+	combox.cc combox_socket.cc popc_combox_mpi.cc buffer_xdr.cc \
 	buffer_factory.cc buffer_factory_finder.cc buffer_xdr_factory.cc \
 	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc \
 	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc popc_logger.cpp
 
-#libparoc_common_la_SOURCES = system.cc mutex.cc thread.cc string.cc od.cc event.cc buffer.cc buffer_utils.cc combox.cc  \
-#	broker.cc broker_receive.cc broker_serve.cc object.cc interface.cc allocobj.cc timer.cc accesspoint.cc memspool.cc \
-#	utils.cc debug.cc exception.cc benchmark.cc combox_factory.cc\
-#	combox.cc combox_socket.cc buffer_xdr.cc \
-#	buffer_factory.cc buffer_factory_finder.cc buffer_xdr_factory.cc\
-#	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc\
-#	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc popvm.cc\
-#	WrapperFactory.cc ESXWrapper.cc POPWrapper.cc nodethread.cc popc_security_manager.cc rijndael.cc
-
-
-#Virtual version
-#libparoc_common_la_SOURCES = system.cc mutex.cc thread.cc string.cc od.cc event.cc buffer.cc buffer_utils.cc combox.cc  \
-#	broker.cc broker_receive.cc broker_serve.cc object.cc interface.cc allocobj.cc timer.cc accesspoint.cc memspool.cc \
-#	utils.cc debug.cc exception.cc benchmark.cc combox_factory.cc\
-#	combox.cc combox_socket.cc buffer_xdr.cc \
-#	buffer_factory.cc buffer_factory_finder.cc buffer_xdr_factory.cc\
-#	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc\
-#	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc popvm.cc\
-#	WrapperFactory.cc ESXWrapper.cc POPWrapper.cc nodethread.cc rijndael.cc
-
-#libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo popc_security_manager.ph.stub_client.lo\
-#   popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo \
-#   appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo secure_popc_search_node.ph.stub_client.lo
-
 libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo popc_search_node.ph.stub_client.lo \
    codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo \
-   batchmgr.ph.stub_client.lo popfilemanager.ph.stub_client.lo
-
-#libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo popc_security_manager.ph.stub_client.lo\
-#   popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo \
-#   appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo
-
-#libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo virtual_popc_search_node.ph.stub_client.lo \
-#   popc_search_node.ph.stub_client.lo codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo \
-#   appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo popcloner.ph.stub_client.lo
+   batchmgr.ph.stub_client.lo
 
 libparoc_common_la_LDFLAGS = -static
 libparoc_common_la_CPPFLAGS = 
-
-#Secure version
-#libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc popc_search_node.cc codemgr.cc \
-#   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc \
-#   secure_jobmgr.cc secure_popc_search_node.cc popc_security_manager.cc 
-
 libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc popc_search_node.cc codemgr.cc \
-   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc popfilemanager.cc popc_logger.cpp
-
-#libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc  virtual_popc_search_node.cc popc_search_node.cc codemgr.cc \
-#   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc virtual_jobmgr.cc WrapperFactory.cc ESXWrapper.cc popcloner.cc \
-#   virtual_secure_jobmgr.cc virtual_secure_popc_search_node.cc popc_security_manager.cc POPWrapper.cc \
-#   virtual_popc_security_manager.cc secure_jobmgr.cc secure_popc_search_node.cc
-
-
-#
-# DIFFERENCE BETWEEN Virtual, Secure and Standard version
-#
-
-#Virtual version
-#libparoc_service_common_la_SOURCES = service_base.cc jobmgr.cc  virtual_popc_search_node.cc popc_search_node.cc codemgr.cc \
-#   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc virtual_jobmgr.cc WrapperFactory.cc ESXWrapper.cc popcloner.cc
-
-#libparoc_service_common_la_LIBADD = paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo \
-#   popc_search_node.ph.stub.lo codemgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
-#   appservice.ph.stub.lo batchmgr.ph.stub.lo popc_security_manager.ph.stub.lo \
-#   secure_jobmgr.ph.stub.lo secure_popc_search_node.ph.stub.lo
+   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc popc_logger.cpp
 
 libparoc_service_common_la_LIBADD = paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo \
    popc_search_node.ph.stub.lo codemgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
-   appservice.ph.stub.lo batchmgr.ph.stub.lo popfilemanager.ph.stub.lo 
-
-#libparoc_service_common_la_LIBADD = paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo virtual_popc_search_node.ph.stub.lo \
-#   popc_search_node.ph.stub.lo codemgr.ph.stub.lo virtual_jobmgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
-#   appservice.ph.stub.lo batchmgr.ph.stub.lo popcloner.ph.stub.lo popc_security_manager.ph.stub.lo \
-#   virtual_popc_security_manager.ph.stub.lo virtual_secure_jobmgr.ph.stub.lo virtual_secure_popc_search_node.ph.stub.lo \
-#   secure_jobmgr.ph.stub.lo secure_popc_search_node.ph.stub.lo
-
-#libparoc_service_common_la_LIBADD = paroc_service_base.ph.stub.lo jobmgr.ph.stub.lo virtual_popc_search_node.ph.stub.lo \
-#   popc_search_node.ph.stub.lo codemgr.ph.stub.lo virtual_jobmgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
-#   appservice.ph.stub.lo batchmgr.ph.stub.lo popcloner.ph.stub.lo 
+   appservice.ph.stub.lo batchmgr.ph.stub.lo 
 
 libparoc_service_common_la_LDFLAGS = -static -version-info 1:2:0
 main_DATA = paroc_objmain.std.o paroc_infmain.std.o
@@ -743,46 +365,18 @@ combox_test_LDFLAGS = -paroc-nolib -L./.libs/ -lparoc_common
 combox_test_LDADD = 
 #combox_test_LDADD=paroc_infmain.std.o
 combox_test_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
-
-#Secure version
-#EXTRA_DIST = paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph popc_search_node.ph codemgr.ph \
-#   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph \
-#   popc_security_manager.ph secure_jobmgr.ph secure_popc_search_node.ph
-
 EXTRA_DIST = paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph popc_search_node.ph codemgr.ph \
-   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph popfilemanager.ph
-
-#EXTRA_DIST = paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph virtual_popc_search_node.ph popc_search_node.ph codemgr.ph \
-#   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph  virtual_jobmgr.ph popcloner.ph \
-#   popc_security_manager.ph virtual_popc_security_manager.ph virtual_secure_jobmgr.ph virtual_secure_popc_search_node.ph \
-#   secure_jobmgr.ph secure_popc_search_node.ph
-
-
-#Virtual version
-#EXTRA_DIST = paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph virtual_popc_search_node.ph popc_search_node.ph codemgr.ph \
-#   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph  virtual_jobmgr.ph popcloner.ph
-
-#inst_HEADERS = paroc_service_base.ph appservice.ph popc_search_node.ph codemgr.ph remotelog.ph \
-#   objectmonitor.ph batchmgr.ph jobmgr.ph popc_security_manager.ph secure_jobmgr.ph secure_popc_search_node.ph
+   jobmgr.ph objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph 
 
 inst_HEADERS = paroc_service_base.ph appservice.ph popc_search_node.ph codemgr.ph remotelog.ph \
-   objectmonitor.ph batchmgr.ph jobmgr.ph popfilemanager.ph
-
-#inst_HEADERS = paroc_service_base.ph appservice.ph virtual_popc_search_node.ph popc_search_node.ph codemgr.ph remotelog.ph \
-#   objectmonitor.ph batchmgr.ph jobmgr.ph virtual_jobmgr.ph popcloner.ph popc_security_manager.ph \
-#   virtual_popc_security_manager.ph virtual_secure_jobmgr.ph virtual_secure_popc_search_node.ph secure_jobmgr.ph \
-#   secure_popc_search_node.ph
-
-#inst_HEADERS = paroc_service_base.ph appservice.ph virtual_popc_search_node.ph popc_search_node.ph codemgr.ph remotelog.ph \
-#   objectmonitor.ph batchmgr.ph jobmgr.ph virtual_jobmgr.ph popcloner.ph
+   objectmonitor.ph batchmgr.ph jobmgr.ph 
 
 instdir = ${prefix}/include
 CLEANFILES = _paroc_*.cc _paroc_*.ph
-all: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .cc .cpp .lo .o .obj
+.SUFFIXES: .cc .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -913,15 +507,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-.c.o:
-	$(COMPILE) -c $<
-
-.c.obj:
-	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-.c.lo:
-	$(LTCOMPILE) -c -o $@ $<
-
 .cc.o:
 	$(CXXCOMPILE) -c -o $@ $<
 
@@ -1003,6 +588,9 @@ libparoc_common_la-combox_factory.lo: combox_factory.cc
 libparoc_common_la-combox_socket.lo: combox_socket.cc
 	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-combox_socket.lo `test -f 'combox_socket.cc' || echo '$(srcdir)/'`combox_socket.cc
 
+libparoc_common_la-popc_combox_mpi.lo: popc_combox_mpi.cc
+	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-popc_combox_mpi.lo `test -f 'popc_combox_mpi.cc' || echo '$(srcdir)/'`popc_combox_mpi.cc
+
 libparoc_common_la-buffer_xdr.lo: buffer_xdr.cc
 	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-buffer_xdr.lo `test -f 'buffer_xdr.cc' || echo '$(srcdir)/'`buffer_xdr.cc
 
@@ -1039,29 +627,11 @@ libparoc_common_la-popc_search_node_info.lo: popc_search_node_info.cc
 libparoc_common_la-popwayback.lo: popwayback.cc
 	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-popwayback.lo `test -f 'popwayback.cc' || echo '$(srcdir)/'`popwayback.cc
 
-libparoc_common_la-popc_security_manager.lo: popc_security_manager.cc
-	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-popc_security_manager.lo `test -f 'popc_security_manager.cc' || echo '$(srcdir)/'`popc_security_manager.cc
-
 libparoc_common_la-nodethread.lo: nodethread.cc
 	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-nodethread.lo `test -f 'nodethread.cc' || echo '$(srcdir)/'`nodethread.cc
 
 libparoc_common_la-popc_logger.lo: popc_logger.cpp
 	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-popc_logger.lo `test -f 'popc_logger.cpp' || echo '$(srcdir)/'`popc_logger.cpp
-
-libparoc_common_la-popvm.lo: popvm.cc
-	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-popvm.lo `test -f 'popvm.cc' || echo '$(srcdir)/'`popvm.cc
-
-libparoc_common_la-WrapperFactory.lo: WrapperFactory.cc
-	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-WrapperFactory.lo `test -f 'WrapperFactory.cc' || echo '$(srcdir)/'`WrapperFactory.cc
-
-libparoc_common_la-ESXWrapper.lo: ESXWrapper.cc
-	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-ESXWrapper.lo `test -f 'ESXWrapper.cc' || echo '$(srcdir)/'`ESXWrapper.cc
-
-libparoc_common_la-POPWrapper.lo: POPWrapper.cc
-	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-POPWrapper.lo `test -f 'POPWrapper.cc' || echo '$(srcdir)/'`POPWrapper.cc
-
-libparoc_common_la-rijndael.lo: rijndael.cc
-	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-rijndael.lo `test -f 'rijndael.cc' || echo '$(srcdir)/'`rijndael.cc
 
 alloctest-alloctest.o: alloctest.cc
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(alloctest_CXXFLAGS) $(CXXFLAGS) -c -o alloctest-alloctest.o `test -f 'alloctest.cc' || echo '$(srcdir)/'`alloctest.cc
@@ -1231,8 +801,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) check-am
+check: check-am
 all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(DATA) $(HEADERS)
 install-binPROGRAMS: install-libLTLIBRARIES
 
@@ -1240,8 +809,7 @@ installdirs:
 	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(maindir)" "$(DESTDIR)$(instdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) install-am
+install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -1267,7 +835,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
@@ -1338,7 +905,7 @@ ps-am:
 uninstall-am: uninstall-binPROGRAMS uninstall-instHEADERS \
 	uninstall-libLTLIBRARIES uninstall-mainDATA
 
-.MAKE: all check install install-am install-strip
+.MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
 	clean-generic clean-libLTLIBRARIES clean-libtool ctags \
@@ -1374,15 +941,6 @@ paroc_objmain.%.o: paroc_objmain.%.cc
 
 %.ph.stub.lo : %.ph
 	$(LIBTOOL) --mode=compile --tag=CXX $(CXX) -cxxmain $(POPC_FLAGS) $(CXXFLAGS) -c $< -o $@
-
-# ViSaG : clementval
-# Custom target - Generate new sources file with a key for virtual configuration file encryption
-generate.foo: 
-	../scripts/aes_generate
-
-#Compile the cipher module for virtual configuration file
-popcipher: popcipher.cc rijndael.cc
-	g++ -I../include -o popcipher popcipher.cc rijndael.cc
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

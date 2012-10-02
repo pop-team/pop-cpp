@@ -13,6 +13,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <mpi.h>
 
 #include "paroc_exception.h"
 #include "paroc_buffer_factory_finder.h"
@@ -44,24 +45,36 @@ int main(int argc, char **argv)
 #endif
 	paroc_system app;
 
+	/**
+	 * 
+	 */
+	int required_support = MPI_THREAD_MULTIPLE; // Required multiple thread support to allow multiple connection to an object
+  int provided_support = MPI::Init_thread(required_support);	 
+	int rank = MPI::COMM_WORLD.Get_rank();
+	
+	printf("Start main of POP-C++ application: rank:%d\n", rank);
 	char **argv1=argv;
 	int i;
-	for (i=argc-1;i>=0;i--) if (paroc_utils::isEqual(argv[i],"-initparoc"))
-		{
-			char **argv1=argv+i+1;
-			int argc1=argc-i-1;
-			if (!paroc_system::Initialize(&argc1,&argv1))
-			{
-				fprintf(stderr,"Initialization of parallel objects fail...\n");
-				paroc_system::Finalize(false);
-				return -1;
-			}
-			argv[i]=NULL;
-			argc=i;
-			break;
+	for (i=argc-1;i>=0;i--) if (paroc_utils::isEqual(argv[i],"-initparoc")) {
+		char **argv1=argv+i+1;
+		int argc1=argc-i-1;
+		if (!paroc_system::Initialize(&argc1,&argv1)) {
+			fprintf(stderr,"Initialization of parallel objects fail...\n");
+			paroc_system::Finalize(false);
+			return -1;
 		}
+		argv[i]=NULL;
+		argc=i;
+		break;
+	}
+		
 
-	if (i<0) return parocmain(argc,argv);
+	 
+	 
+	/* END OF ADD */
+
+	if (i<0) 
+		return parocmain(argc,argv);
 
 	atexit(_paroc_atexit);
 
@@ -96,5 +109,6 @@ int main(int argc, char **argv)
 		fprintf(stderr,"Unknown exception\n");
 		paroc_system::Finalize(false);
 	}
+	MPI::Finalize();
 	return 1;
 }

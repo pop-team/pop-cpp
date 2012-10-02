@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 	else bf->GetBufferName(name);
 
 
-	client->Create(0,false);
+	client->Create(NULL, 0, false);
 	if (!client->Connect(argv[1]))
 	{
 		client->Destroy();

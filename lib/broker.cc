@@ -169,65 +169,60 @@ bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned 
 int paroc_broker::Run()
 {
 
-	//Create threads for each protocols for receiving requests....
+	//Create threads for each protocols for receiving requests
 
 	paroc_array<paroc_receivethread *> ptArray;
 	int comboxCount = comboxArray.GetSize();
-	if (comboxCount<=0) return -1;
+	if (comboxCount <= 0) 
+	  return -1;
 
-	state=POPC_STATE_RUNNING;
+	state = POPC_STATE_RUNNING;
 
 	ptArray.SetSize(comboxCount);
 	int i;
 
-	for (i=0; i<comboxCount; i++) {
-		ptArray[i] =new paroc_receivethread(this,comboxArray[i]);
-		int ret=ptArray[i]->create();
-		if (ret!=0) return errno;
+	for (i = 0; i < comboxCount; i++) {
+		ptArray[i] = new paroc_receivethread(this, comboxArray[i]);
+		int ret = ptArray[i]->create();
+		if (ret != 0) 
+		  return errno;
 	}
 
 
-	if (obj==NULL) alarm(TIMEOUT);
+	if (obj == NULL) 
+	  alarm(TIMEOUT);
 
-	while (state==POPC_STATE_RUNNING)
-	{
+	while (state == POPC_STATE_RUNNING) {
 		try {
 			paroc_request req;
-
-			if (!GetRequest(req)) break;
-
-			//	DEBUG("Serve request: class %s, MethodID=(%d,%d,%d)",classname,req.methodId[0],req.methodId[1],req.methodId[2]);
+			if (!GetRequest(req)) 
+			  break;
+			printf("BROKER: recieved request\n");
 			ServeRequest(req);
-			if (req.methodId[2] & INVOKE_CONSTRUCTOR)
-			{
+			if (req.methodId[2] & INVOKE_CONSTRUCTOR) {
 				alarm(0);
-				if (obj==NULL) break;
+				if (obj == NULL) 
+				  break;
 			}
-		}
-
-		catch (...)
-		{
+		} catch (...) {
 			UnhandledException();
 		}
 	}
 
-	if (obj!=NULL && state==POPC_STATE_RUNNING)
-	{
+	if (obj != NULL && state == POPC_STATE_RUNNING) {
 		paroc_mutex_locker test(execCond);
 
 		//Wait for all invocations terminated....
-		while (instanceCount>0 || !request_fifo.IsEmpty())
-		{
+		while (instanceCount > 0 || !request_fifo.IsEmpty()) {
 			execCond.wait();
 		}
 	}
 
 	state=POPC_STATE_EXIT;
-	for (i=0; i<comboxCount; i++)
-	{
-		if (WakeupReceiveThread(comboxArray[i])) delete ptArray[i];
-		else
-		{
+	for (i=0; i < comboxCount; i++) {
+		if (WakeupReceiveThread(comboxArray[i])) { 
+		  delete ptArray[i];
+		}	else {
 			ptArray[i]->cancel();
 		}
 	}
@@ -238,54 +233,62 @@ int paroc_broker::Run()
 
 bool paroc_broker::Initialize(int *argc, char ***argv)
 {
-	if (paroc_utils::checkremove(argc,argv,"-runlocal"))  paroc_od::defaultLocalJob=true;
+	if (paroc_utils::checkremove(argc, argv, "-runlocal")) {
+    paroc_od::defaultLocalJob = true;
+	}
+  
+  if(paroc_utils::checkremove(argc, argv, "-mpi")){
+    printf("MPI Connection must be initiated\n");
+  }
+		
 
-	paroc_combox_factory  *ff=paroc_combox_factory::GetInstance();
-	int comboxCount = ff->GetCount();
+	paroc_combox_factory  *comboxFactory = paroc_combox_factory::GetInstance();
+	int comboxCount = comboxFactory->GetCount();
 	comboxArray.SetSize(comboxCount);
+	
 	POPString protocolName;
 	POPString url;
 
-
 	int count=0;
-	for (int i=0;i<comboxCount;i++)
-	{
-		comboxArray[count]=ff->Create(i);
-		if (comboxArray[count]==NULL)
-		{
+	
+	for (int i=0;i<comboxCount;i++) {
+		comboxArray[count] = comboxFactory->Create(i);
+		if (comboxArray[count] == NULL) {
 			DEBUG("Fail to create combox #%d",i);
+		} else {
+			count++;
 		}
-		else count++;
 	}
-	if (comboxCount!=count)
-	{
+	
+	if (comboxCount!=count) {
 		comboxCount=count;
 		comboxArray.SetSize(comboxCount);
 	}
-	if (comboxCount<=0) return false;
+	
+	if (comboxCount<=0) 
+		return false;
 
-	for (int i=0; i<comboxCount; i++)
-	{
+	for (int i=0; i<comboxCount; i++) {
 		paroc_combox * pc = comboxArray[i];
 		pc->GetProtocol(protocolName);
+		
 		char argument[1024];
+		
 		sprintf(argument, "-%s_port=", (const char *)protocolName);
 
-		char *portstr=paroc_utils::checkremove(argc,argv,argument);
-		if (portstr!=NULL)
-		{
+		char *portstr = paroc_utils::checkremove(argc,argv,argument);
+		if (portstr!=NULL) {
 			int port;
-			if (sscanf(portstr,"%d",&port)!=1) return false;
-			if (!pc->Create(port, true))
-			{
+			
+			if (sscanf(portstr,"%d",&port)!=1) 
+				return false;
+				
+			if (!pc->Create(NULL, port, true)) {
 				paroc_system::perror("Broker");
 				return false;
 			}
-		}
-		else
-		{
-			if (!pc->Create(0, true))
-			{
+		} else {
+			if (!pc->Create(NULL, 0, true)) {
 				paroc_system::perror("Broker");
 				return false;
 			}
@@ -293,23 +296,27 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 		POPString ap;
 		pc->GetUrl(ap);
 		url+=ap;
-		if (i<comboxCount-1) url+=PROTO_DELIMIT_CHAR;
+		if (i<comboxCount-1) 
+			url+=PROTO_DELIMIT_CHAR;
 	}
+
 	accesspoint.SetAccessString(url.GetString());
 
+  printf("Broker accessstring:%s\n", accesspoint.GetAccessString());
+
+
 	char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
-	if (tmp!=NULL && classname!=NULL)
-	{
+	if (tmp!=NULL && classname!=NULL) {
 		paroc_request r;
 		paroc_buffer_raw tmp;
 		r.data=&tmp;
-		if (!FindMethodInfo(classname,r.methodId[0],r.methodId[1]) || r.methodId[1]!=10)
-		{
+		if (!FindMethodInfo(classname,r.methodId[0],r.methodId[1]) || r.methodId[1] != 10)	{
 			DEBUG("Can not find default constructor");
 			return false;
 		}
 		r.methodId[2]=INVOKE_CONSTRUCTOR;
-		if (!DoInvoke(r)) return false;
+		if (!DoInvoke(r)) 
+			return false;
 	}
 
 	paroc_object::argc=*argc;
@@ -323,7 +330,6 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 
 	signal(SIGPIPE,SIG_IGN);
 
-
 	return true;
 }
 
@@ -331,38 +337,34 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 
 bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
 {
-	paroc_combox_factory *fact=paroc_combox_factory::GetInstance();
+	paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
 	POPString url, prot;
 
-	bool ok=false;
+	bool ok = false;
 	mycombox->GetProtocol(prot);
 	mycombox->GetUrl(url);
 
 	char *str=url.GetString();
-	if (str==NULL) return false;
+	if (str == NULL) 
+	  return false;
 
 	char *ptr;
-	char *tok=strtok_r(str," \t\n\r",&ptr);
-	while (tok!=NULL && !ok)
-	{
-		paroc_combox *tmp=fact->Create(prot);
+	char *tok = strtok_r(str, " \t\n\r", &ptr);
+	while (tok != NULL && !ok) {
+		paroc_combox *tmp = fact->Create(prot);
 		tmp->SetTimeout(100000);
-		if (tmp->Create(0,false) && tmp->Connect(tok))
-		{
-			try
-			{
+		if (tmp->Create(NULL, 0, false) && tmp->Connect(tok)) {
+			try {
 				paroc_interface test(tmp, NULL);
 				test.ObjectActive();
-				ok=true;
-			}
-			catch (...)
-			{
+				ok = true;
+			} catch (...) {
 				DEBUG("Exception on waking up %s", tok);
 			}
+		} else {
+		  tmp->Destroy();
 		}
-		else tmp->Destroy();
-
-		tok=strtok_r(NULL," \t\n\r",&ptr);
+		tok = strtok_r(NULL, " \t\n\r", &ptr);
 	}
 	return ok;
 }
