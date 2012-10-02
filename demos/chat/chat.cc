@@ -19,9 +19,9 @@ void Chat::Print(POPString str1)
 	printf("%s\n",(const char *)str1);
 }
 
-Chat Chat::GetRef()
+Chat& Chat::GetRef()
 {
-	return Chat(GetAccessPoint());
+	return (*this);
 }
 
 void Chat::PrintRef(const Chat& ref)
