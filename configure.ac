@@ -12,7 +12,7 @@
 AC_PREREQ(2.61)
 
 # Define the project and its version number
-AC_INIT([popc], [2.5])
+AC_INIT([popc], [2.6 K Computer])
 AM_INIT_AUTOMAKE(no-dependencies)
 
 #
@@ -66,8 +66,6 @@ AC_SUBST(host_vendor)
 AC_SUBST(host_cpu)
 AC_SUBST(host_kernel)
 
-standard=true;
-
 
 AC_ARG_ENABLE(globus,
 [ --enable-globus=flavor  Enable Globus-support in Popc++],
@@ -107,57 +105,6 @@ esac
 AM_CONDITIONAL(LINUX, test x${linux} = xtrue)
 
 
-
-#
-# ViSaG : clementval
-# Add virtual as configure option
-#
-
-AC_ARG_ENABLE(virtual,
-[ --enable-virtual   Enable POP-C++ virtual mode],
-[
-virtual=true;
-], [ virtual=false])
-
-
-#
-# Add secure as configure option
-#
-
-AC_ARG_ENABLE(secure,
-[--enable-secure  Enable POP-C++ secure mode],
-[
-secure=true;
-], [ secure=false])
-
-virtsecure=false
-
-if test x$virtual = xtrue
-then
-   standard=false;
-   if test x$secure = xtrue
-   then
-      virtual=false;
-      secure=false;
-      virtsecure=true;
-   fi
-fi
-
-if test x$secure = xtrue
-then 
-   standard=false;
-fi
-
-AC_SUBST(virtual)
-AC_SUBST(secure)
-AC_SUBST(virtsecure)
-
-AM_CONDITIONAL(VIRTSUPPORT, test x$virtual = xtrue)
-AM_CONDITIONAL(SECURESUPPORT, test x$secure = xtrue)
-AM_CONDITIONAL(VIRTSECURESUPPORT, test x$virtsecure = xtrue)
-AM_CONDITIONAL(STANDARDSUPPORT, test x$standard = xtrue)
-
-
 AC_PROG_YACC
 AC_PROG_CXX
 #AC_PROG_CC
@@ -174,42 +121,6 @@ AC_CHECK_LIB(pthread, pthread_create)
 AC_CHECK_LIB(nsl, gethostbyname)
 AC_CHECK_LIB(socket, socket)
 AC_CHECK_LIB(dl, dlopen)
-
-PKG_CONFIG=$(which pkg-config)
-
-# ViSaG : clementval
-# if virtual enabled, check for libvirt, vix and define POPC_VIRTUAL to 1
-if test x$virtual = xtrue
-then
- #  PKG_CHECK_MODULES([LIBVIRT], [libvirt >= 0.8.5])
-   VIX_LIBS="-I/usr/include/vmware-vix"
-   AC_SUBST([VIX_LIBS])
-   VIX_CFLAGS="-lvixAllProducts -ldl"
-   AC_SUBST([VIX_CFLAGS])   
-   AC_DEFINE([POPC_VIRTUAL], [1], [Virtual version])
-fi
-
-#if secure enable, define POPC_SECURE to 1
-if test x$secure = xtrue
-then
-   AC_DEFINE([POPC_SECURE], [1], [Secure version])
-fi
-
-
-if test x$virtsecure = xtrue
-then
-  # PKG_CHECK_MODULES([LIBVIRT], [libvirt >= 0.8.5])
-   VIX_LIBS="-I/usr/include/vmware-vix"
-   AC_SUBST([VIX_LIBS])
-   VIX_CFLAGS="-lvixAllProducts -ldl"
-   AC_SUBST([VIX_CFLAGS])   
-   AC_DEFINE([POPC_SECURE_VIRTUAL], [1], [Secure Virtual Version])
-fi
-
-# ViSaG
-
-
-
 
 AC_CHECK_TYPE(socklen_t)
 
