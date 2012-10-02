@@ -15,7 +15,7 @@ DESCRIPTION: raw buffer declaration
  * @brief Raw buffer declaration, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  */
-class paroc_buffer_raw:public paroc_buffer
+class paroc_buffer_raw : public paroc_buffer
 {
 public:
 	paroc_buffer_raw();

@@ -46,9 +46,10 @@ public:
 
 	virtual ~paroc_combox_socket();
 
-	virtual bool Create(int port=0, bool server=false);
+	virtual bool Create(char* host, int port=0, bool server=false);
 
 	virtual bool Connect(const char *url);
+	virtual bool reconnect();	
 
 	virtual int Send(const char *s,int len);
 	virtual int Send(const char *s,int len, paroc_connection *conn);
@@ -59,6 +60,8 @@ public:
 	virtual paroc_connection *Wait();
 
 	virtual void Close();
+
+
 
 	/**
 	 * @brief Returns URL of object
@@ -72,6 +75,8 @@ protected:
 	virtual paroc_connection_sock *CreateConnection(int fd);
 	bool CloseSock(int fd);
 	bool Connect(const char *host,int port);
+	virtual bool disconnect();	
+	virtual bool is_server();	
 
 	int GetSockInfo(sockaddr &info,socklen_t &len);
 	int GetPort();
@@ -81,7 +86,7 @@ protected:
 
 protected:
 	int sockfd;
-	bool isServer;
+	bool _isServer;
 	bool isCanceled;
 
 	paroc_connection_sock *peer;

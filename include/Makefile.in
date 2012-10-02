@@ -35,7 +35,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = include
-DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
+DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -51,21 +51,6 @@ depcomp =
 am__depfiles_maybe =
 SOURCES =
 DIST_SOURCES =
-am__include_HEADERS_DIST = paroc_base.h paroc_array.h paroc_list.h \
-	paroc_utils.h paroc_od.h paroc_string.h debug.h paroc_sys.h \
-	paroc_system.h paroc_mutex.h paroc_thread.h paroc_buffer.h \
-	paroc_buffer_utils.h priolist.h paroc_accesspoint.h \
-	paroc_event.h paroc_memspool.h paroc_combox.h \
-	paroc_combox_socket.h paroc_combox_factory.h \
-	paroc_buffer_factory.h paroc_buffer_factory_finder.h \
-	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h \
-	paroc_buffer_raw.h paroc_buffer_raw_factory.h \
-	paroc_exception.h sysinfodef.h paroc_broker.h \
-	paroc_broker_factory.h paroc_object.h paroc_interface.h \
-	paroc_allocobj.h timer.h popwayback.h nodethread.h request.h \
-	explorationList.h response.h popc_search_node_info.h \
-	POPString.h popc_logger.h VPopCWrapper.h WrapperFactory.h \
-	ESXWrapper.h POPWrapper.h popvm.h rijndael.h
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -157,8 +142,6 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
-VIX_CFLAGS = @VIX_CFLAGS@
-VIX_LIBS = @VIX_LIBS@
 YACC = @YACC@
 YFLAGS = @YFLAGS@
 abs_builddir = @abs_builddir@
@@ -208,7 +191,6 @@ prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
-secure = @secure@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
@@ -216,52 +198,18 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-virtsecure = @virtsecure@
-virtual = @virtual@
 AUTOMAKE_OPTIONS = no-dependencies
 IDLC = @top_srcdir@/popccpp
-@SECURESUPPORT_TRUE@include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
-@SECURESUPPORT_TRUE@	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
-@SECURESUPPORT_TRUE@	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
-@SECURESUPPORT_TRUE@	paroc_combox.h paroc_combox_socket.h paroc_combox_factory.h \
-@SECURESUPPORT_TRUE@	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
-@SECURESUPPORT_TRUE@	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
-@SECURESUPPORT_TRUE@	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
-@SECURESUPPORT_TRUE@	paroc_exception.h sysinfodef.h\
-@SECURESUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h
-
-@STANDARDSUPPORT_TRUE@include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
-@STANDARDSUPPORT_TRUE@	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
-@STANDARDSUPPORT_TRUE@	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
-@STANDARDSUPPORT_TRUE@	paroc_combox.h paroc_combox_socket.h paroc_combox_factory.h \
-@STANDARDSUPPORT_TRUE@	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
-@STANDARDSUPPORT_TRUE@	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
-@STANDARDSUPPORT_TRUE@	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
-@STANDARDSUPPORT_TRUE@	paroc_exception.h sysinfodef.h\
-@STANDARDSUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-@STANDARDSUPPORT_TRUE@	popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h POPString.h popc_logger.h
-
-@VIRTSECURESUPPORT_TRUE@include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
-@VIRTSECURESUPPORT_TRUE@	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
-@VIRTSECURESUPPORT_TRUE@	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
-@VIRTSECURESUPPORT_TRUE@	paroc_combox.h paroc_combox_socket.h paroc_combox_factory.h \
-@VIRTSECURESUPPORT_TRUE@	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
-@VIRTSECURESUPPORT_TRUE@	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
-@VIRTSECURESUPPORT_TRUE@	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
-@VIRTSECURESUPPORT_TRUE@	paroc_exception.h sysinfodef.h\
-@VIRTSECURESUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-@VIRTSECURESUPPORT_TRUE@	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h request.h explorationList.h response.h popc_search_node_info.h
-
-@VIRTSUPPORT_TRUE@include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
-@VIRTSUPPORT_TRUE@	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
-@VIRTSUPPORT_TRUE@	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
-@VIRTSUPPORT_TRUE@	paroc_combox.h paroc_combox_socket.h paroc_combox_factory.h \
-@VIRTSUPPORT_TRUE@	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
-@VIRTSUPPORT_TRUE@	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
-@VIRTSUPPORT_TRUE@	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
-@VIRTSUPPORT_TRUE@	paroc_exception.h sysinfodef.h\
-@VIRTSUPPORT_TRUE@	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-@VIRTSUPPORT_TRUE@	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h request.h explorationList.h response.h popc_search_node_info.h
+include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
+	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
+	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
+	paroc_combox.h popc_combox_mpi.h paroc_combox_socket.h paroc_combox_factory.h \
+	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
+	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
+	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
+	paroc_exception.h sysinfodef.h\
+	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
+	popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h POPString.h popc_logger.h
 
 all: all-am
 
@@ -518,18 +466,6 @@ uninstall-am: uninstall-includeHEADERS
 	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
 	ps ps-am tags uninstall uninstall-am uninstall-includeHEADERS
 
-
-# paroc_DATA=	proxy.ph paroc_service_base.ph appservice.ph codemgr.ph remotelog.ph objectmonitor.ph jobmgr.ph popc_search_node.ph
-
-#instdir=@includedir@
-# popcdir=@includedir@
-
-# parocfiles= jobmgr.ph codemgr.ph remotelog.ph appservice.ph objectmonitor.ph proxy.ph paroc_service_base.ph popc_search_node.ph
-
-# $(parocfiles): %.ph : ../lib/%.ph
-#	cp $< .
-
-#CLEANFILES=$(parocfiles)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

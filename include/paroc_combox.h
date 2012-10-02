@@ -4,8 +4,8 @@ AUTHORS: Tuan Anh Nguyen
 DESCRIPTION: POP-C++ communication abstraction
  */
 
-#ifndef POPC_COMBOX_H
-#define POPC_COMBOX_H
+#ifndef INCLUDE_POPC_COMBOX_H_
+#define INCLUDE_POPC_COMBOX_H_
 
 #include "paroc_string.h"
 #include "paroc_buffer_factory_finder.h"
@@ -33,12 +33,12 @@ public:
 	virtual paroc_connection *Clone()=0;
 
 protected:
-	paroc_buffer_factory * fact;
+	paroc_buffer_factory *fact;
 	paroc_combox *combox;
 };
 
 
-enum COMBOX_EVENTS {COMBOX_NEW=0, COMBOX_CLOSE=1};
+enum COMBOX_EVENTS { COMBOX_NEW = 0, COMBOX_CLOSE = 1 };
 typedef bool (*COMBOX_CALLBACK)(void *, paroc_connection *);
 
 
@@ -56,8 +56,10 @@ protected:
 	virtual ~paroc_combox();
 
 public:
-	virtual bool Create(int port, bool server)=0;
+	virtual bool Create(char* host, int port, bool server)=0;
 	virtual bool Connect(const char *url)=0;
+	virtual bool reconnect()=0;
+	virtual bool disconnect() = 0;
 
 	virtual int Send(const char *s,int len)=0;
 	virtual int Send(const char *s,int len, paroc_connection *conn)=0;
@@ -68,14 +70,16 @@ public:
 	virtual bool RecvAck(paroc_connection *conn=0);
 
 	virtual paroc_connection *Wait()=0;
+	
+	virtual bool is_server()=0;
 
 	virtual void Close()=0;
 
 	void SetTimeout(int millisec);
 	int  GetTimeout();
 
-	virtual bool GetUrl(paroc_string & accesspoint)=0;
-	virtual bool GetProtocol(paroc_string & protocolName)=0;
+	virtual bool GetUrl(paroc_string & accesspoint) = 0;
+	virtual bool GetProtocol(paroc_string & protocolName) = 0;
 
 	virtual void Destroy();
 
@@ -97,13 +101,4 @@ protected:
 
 };
 
-
-
-#endif
-
-
-
-
-
-
-
+#endif // INCLUDE_POPC_COMBOX_H_

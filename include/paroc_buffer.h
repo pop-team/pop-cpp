@@ -103,6 +103,8 @@ protected:
 	virtual ~paroc_buffer();
 
 public:
+  static const int POPC_BUFFER_HEADER_SIZE;
+
 	virtual void Reset()=0;
 
 	virtual void SetHeader(const paroc_message_header &data);

@@ -132,12 +132,11 @@ protected:
 	paroc_object *obj;
 	paroc_request_fifo_list request_fifo;
 	paroc_condition execCond;
-	int instanceCount;
-   int addrefcount;     //Count the number of add ref on an object
-   int decrefcount;     //Count the number of dec ref on an object
-   int connclosecount;  //Count the number of connection close on an object
-	int state; // 0=Running, 1=Terminate, 2= Abort
-
+  int instanceCount;  //
+  int addrefcount;    //Count the number of add ref on an object
+  int decrefcount;    //Count the number of dec ref on an object
+  int connclosecount; //Count the number of connection close on an object
+  int state;          // 0=Running, 1=Terminate, 2= Abort
 };
 
 #define POPC_STATE_RUNNING 0

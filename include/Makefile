@@ -32,10 +32,10 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin12.1.0
-host_triplet = x86_64-apple-darwin12.1.0
+build_triplet = x86_64-apple-darwin12.2.0
+host_triplet = x86_64-apple-darwin12.2.0
 subdir = include
-DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
+DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -51,21 +51,6 @@ depcomp =
 am__depfiles_maybe =
 SOURCES =
 DIST_SOURCES =
-am__include_HEADERS_DIST = paroc_base.h paroc_array.h paroc_list.h \
-	paroc_utils.h paroc_od.h paroc_string.h debug.h paroc_sys.h \
-	paroc_system.h paroc_mutex.h paroc_thread.h paroc_buffer.h \
-	paroc_buffer_utils.h priolist.h paroc_accesspoint.h \
-	paroc_event.h paroc_memspool.h paroc_combox.h \
-	paroc_combox_socket.h paroc_combox_factory.h \
-	paroc_buffer_factory.h paroc_buffer_factory_finder.h \
-	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h \
-	paroc_buffer_raw.h paroc_buffer_raw_factory.h \
-	paroc_exception.h sysinfodef.h paroc_broker.h \
-	paroc_broker_factory.h paroc_object.h paroc_interface.h \
-	paroc_allocobj.h timer.h popwayback.h nodethread.h request.h \
-	explorationList.h response.h popc_search_node_info.h \
-	POPString.h popc_logger.h VPopCWrapper.h WrapperFactory.h \
-	ESXWrapper.h POPWrapper.h popvm.h rijndael.h
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -92,12 +77,12 @@ HEADERS = $(include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run aclocal-1.11
-AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run tar
+ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run aclocal-1.11
+AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoconf
-AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoheader
-AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run automake-1.11
+AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run autoconf
+AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run autoheader
+AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run automake-1.11
 AWK = awk
 CC = gcc
 CFLAGS = -g -O2
@@ -134,7 +119,7 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run makeinfo
+MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/missing --run makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = .././install-sh -c -d
 NM = /usr/bin/nm
@@ -146,25 +131,23 @@ OTOOL64 = :
 PACKAGE = popc
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = popc
-PACKAGE_STRING = popc 2.5
+PACKAGE_STRING = popc 2.6 K Computer
 PACKAGE_TARNAME = popc
 PACKAGE_URL = 
-PACKAGE_VERSION = 2.5
+PACKAGE_VERSION = 2.6 K Computer
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 2.5
-VIX_CFLAGS = 
-VIX_LIBS = 
+VERSION = 2.6 K Computer
 YACC = bison -y
 YFLAGS = 
-abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/include
-abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/include
-abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
-abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
+abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/include
+abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/include
+abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6
+abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -173,10 +156,10 @@ am__leading_dot = .
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin12.1.0
+build = x86_64-apple-darwin12.2.0
 build_alias = 
 build_cpu = x86_64
-build_os = darwin12.1.0
+build_os = darwin12.2.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -186,16 +169,16 @@ dvidir = ${docdir}
 exec_prefix = ${prefix}
 globusdir = 
 globusflavor = 
-host = x86_64-apple-darwin12.1.0
+host = x86_64-apple-darwin12.2.0
 host_alias = 
 host_cpu = x86_64
 host_kernel = Darwin
-host_os = darwin12.1.0
+host_os = darwin12.2.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/install-sh
+install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -208,7 +191,6 @@ prefix = /usr/local/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
-secure = false
 sharedstatedir = ${prefix}/com
 srcdir = .
 sysconfdir = ${prefix}/etc
@@ -216,52 +198,18 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-virtsecure = false
-virtual = false
 AUTOMAKE_OPTIONS = no-dependencies
 IDLC = ../popccpp
-#include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
-#	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
-#	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
-#	paroc_combox.h paroc_combox_socket.h paroc_combox_factory.h \
-#	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
-#	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
-#	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
-#	paroc_exception.h sysinfodef.h\
-#	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h
-
 include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
 	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
 	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
-	paroc_combox.h paroc_combox_socket.h paroc_combox_factory.h \
+	paroc_combox.h popc_combox_mpi.h paroc_combox_socket.h paroc_combox_factory.h \
 	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
 	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
 	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
 	paroc_exception.h sysinfodef.h\
 	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
 	popwayback.h nodethread.h request.h explorationList.h response.h popc_search_node_info.h POPString.h popc_logger.h
-
-#include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
-#	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
-#	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
-#	paroc_combox.h paroc_combox_socket.h paroc_combox_factory.h \
-#	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
-#	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
-#	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
-#	paroc_exception.h sysinfodef.h\
-#	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-#	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h request.h explorationList.h response.h popc_search_node_info.h
-
-#include_HEADERS = paroc_base.h paroc_array.h paroc_list.h paroc_utils.h paroc_od.h paroc_string.h\
-#	debug.h paroc_sys.h paroc_system.h paroc_mutex.h paroc_thread.h  paroc_buffer.h paroc_buffer_utils.h priolist.h\
-#	paroc_accesspoint.h  paroc_event.h paroc_memspool.h\
-#	paroc_combox.h paroc_combox_socket.h paroc_combox_factory.h \
-#	paroc_buffer_factory.h paroc_buffer_factory_finder.h\
-#	paroc_buffer_xdr_factory.h paroc_buffer_xdr.h\
-#	paroc_buffer_raw.h paroc_buffer_raw_factory.h\
-#	paroc_exception.h sysinfodef.h\
-#	paroc_broker.h paroc_broker_factory.h paroc_object.h paroc_interface.h paroc_allocobj.h timer.h\
-#	VPopCWrapper.h WrapperFactory.h ESXWrapper.h POPWrapper.h popwayback.h popvm.h  nodethread.h rijndael.h request.h explorationList.h response.h popc_search_node_info.h
 
 all: all-am
 
@@ -518,18 +466,6 @@ uninstall-am: uninstall-includeHEADERS
 	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
 	ps ps-am tags uninstall uninstall-am uninstall-includeHEADERS
 
-
-# paroc_DATA=	proxy.ph paroc_service_base.ph appservice.ph codemgr.ph remotelog.ph objectmonitor.ph jobmgr.ph popc_search_node.ph
-
-#instdir=${prefix}/include
-# popcdir=${prefix}/include
-
-# parocfiles= jobmgr.ph codemgr.ph remotelog.ph appservice.ph objectmonitor.ph proxy.ph paroc_service_base.ph popc_search_node.ph
-
-# $(parocfiles): %.ph : ../lib/%.ph
-#	cp $< .
-
-#CLEANFILES=$(parocfiles)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -11,13 +11,15 @@
 
 #ifndef POPC_ACCESSPOINT_H
 #define POPC_ACCESSPOINT_H
+
 #include "paroc_base.h"
+#include <mpi.h>
+
 
 class paroc_accesspoint: public paroc_base
 {
 public:
 	paroc_accesspoint();
-	//  paroc_accesspoint(const char *hostport);
 	paroc_accesspoint(const paroc_accesspoint &p);
 	~paroc_accesspoint();
 
@@ -33,7 +35,12 @@ public:
    const bool IsService() const;
    void SetAsService();
    void SetNoAddRef() ;
+   
+   void SetCommunicator(MPI::Intercomm& comm);
+   MPI::Intercomm getCommunicator();
+   
    const bool GetNoAddRef() const;
+   
 
 	virtual void Serialize(paroc_buffer &buf, bool pack);
 private:
@@ -42,6 +49,7 @@ private:
    bool _noaddref;
    int _security;
    enum security { NONSECURE, SECURE };
+   MPI::Intercomm _communicator;
 };
 
 #endif
