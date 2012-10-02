@@ -190,8 +190,8 @@ if [ ! -x ${MYAPPSERVICE} ]; then
 fi
 #Use the following line to run the interface side in valgrind
 #cmd="valgrind --log-file=/tmp/$$ $PROG $args -initparoc -appservicecode=${MYAPPSERVICE} ${MY_PROXY} -codeconf=${PATHCONF}/${FILECONF} -jobservice=${MYJOBSERVICE} ${localFlag}"
-cmd="$PROG $args -initparoc -appservicecode=${MYAPPSERVICE} ${MY_PROXY} -codeconf=${PATHCONF}/${FILECONF} -jobservice=${MYJOBSERVICE} ${localFlag}"
-
+cmd="mpiexec -np 1 $PROG $args -initparoc -appservicecode=${MYAPPSERVICE} ${MY_PROXY} -codeconf=${PATHCONF}/${FILECONF} -jobservice=${MYJOBSERVICE} ${localFlag}"
+echo $cmd
 retval=0
 if [ $drun -eq 1 ]; then
     echo Exec: $cmd

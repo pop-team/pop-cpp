@@ -1,7 +1,7 @@
 #!/bin/sh
 
-POPC_VIRTUAL=false
-POPC_SECURE_VIRTUAL=false
+POPC_VIRTUAL=@virtual@
+POPC_SECURE_VIRTUAL=@virtsecure@
 POPC_LOCATION=/usr/local/popc
 export POPC_LOCATION
 
