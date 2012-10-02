@@ -7,7 +7,7 @@ parclass Integer
 
 public:	
 	Integer(int maxhop, int timeout) @{ od.power(80,60); od.memory(500,500); od.bandwidth(50,78); od.search(maxhop, 0, timeout);};
-	Integer() @{ od.power(80,60); od.memory(10,20); od.bandwidth(50,78); od.search(10, 200,0); };
+	Integer() @{ od.url("localhost"); };
 	Integer(POPString machine) @{ od.url(machine); };
 	~Integer();
 

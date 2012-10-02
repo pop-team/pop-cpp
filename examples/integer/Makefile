@@ -2,10 +2,10 @@ all: app object
 
 app:
 
-	popcc -o main integer.ph integer.cc main.cc
+	popcc -noclean -cxx=mpic++ -o main integer.ph integer.cc main.cc
 
 object:
-	popcc -object -o integer.obj integer.cc integer.ph main.cc
+	popcc -noclean -cxx=mpic++ -object -o integer.obj integer.cc integer.ph main.cc
 	./integer.obj -listlong > obj.map
 
 clean:
