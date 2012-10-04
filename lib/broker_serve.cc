@@ -92,7 +92,7 @@ bool paroc_broker::GetRequest(paroc_request &req)
 			paroc_request &tmp=request_fifo.GetNext(pos1);
 			if (tmp.methodId[2] & INVOKE_CONC)
 			{
-				req=tmp;
+				req = tmp;
 				request_fifo.RemoveAt(old);
 				concPendings--;
 				return true;
@@ -137,7 +137,7 @@ void paroc_broker::ServeRequest(paroc_request &req)
 			paroc_mutex_locker locker(execCond);
 			execCond.broadcast();
 
-			if (req.from!=NULL)
+			if (req.from != NULL)
 			{
 
 				paroc_exception *e=paroc_exception::create(ret);
@@ -286,8 +286,8 @@ bool paroc_broker::DoInvoke(paroc_request &request)
 bool paroc_broker::Invoke(unsigned method[3], paroc_buffer &buf, paroc_connection *peer)
 {
 	paroc_request req;
-	req.from=peer;
-	memcpy(req.methodId,method, 3*sizeof(unsigned));
+	req.from = peer;
+	memcpy(req.methodId, method, 3*sizeof(unsigned));
 	req.data=&buf;
 	return ParocCall(req);
 }

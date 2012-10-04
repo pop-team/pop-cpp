@@ -10,39 +10,27 @@
  * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
  */
 
-
 #include "paroc_object.h"
 #include "paroc_mutex.h"
-
-
 #include "paroc_interface.h"
 #include "paroc_event.h"
-
 #include "objectmonitor.ph"
 
-
-int paroc_object::argc=0;
-char **paroc_object::argv=NULL;
+int paroc_object::argc = 0;
+char **paroc_object::argv = NULL;
 
 paroc_object::paroc_object()
 {
-	refcount=1;
-
-	if (!paroc_system::appservice.IsEmpty())
-	{
-      
+	refcount = 1;
+	if (!paroc_system::appservice.IsEmpty()) {
 		paroc_accesspoint myself=GetAccessPoint();
-		try
-		{
+		try {
 			ObjectMonitor tmp(paroc_system::appservice);
 			tmp.ManageObject(myself);
-		}
-		catch (...)
-		{
+		} catch (...) {
 			rprintf("Can not register %s@%s to ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
 		}
 	}
-
 }
 
 paroc_object::~paroc_object()
@@ -73,7 +61,7 @@ const paroc_accesspoint & paroc_object::GetAccessPoint() const
  */
 const paroc_accesspoint & paroc_object::GetAccessPointForThis()
 {
-   paroc_broker::accesspoint.SetNoAddRef();
+  paroc_broker::accesspoint.SetNoAddRef();
 	return paroc_broker::accesspoint;
 }
 
@@ -97,8 +85,7 @@ int paroc_object::DecRef()
 	return refcount;
 }
 
-
-bool  paroc_object::CanKill()
+bool paroc_object::CanKill()
 {
 	return  true;
 }

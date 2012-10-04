@@ -14,6 +14,7 @@
 
 #include <mpi.h>
 #include <string>
+//#include <map>
 
 #include "include/paroc_combox.h"
 
@@ -33,10 +34,14 @@ public:
   void setCommunicator(MPI::Intercomm communicator);
   MPI::Intercomm getCommunicator(); 
   bool hasCommunicator();
+  void setCommunicatorIndex(int value);
+  void reset();
+  bool is_server();
   
 private:
   MPI::Intercomm _communicator;
   bool _hasCommunicator;
+  int _comm_index;
 };
 
 
@@ -57,7 +62,10 @@ class popc_combox_mpi: public paroc_combox {
 
 	virtual bool Create(char* host, int port, bool server = false);
 	virtual bool Connect(const char *url);
-	virtual bool reconnect();	
+	
+	virtual paroc_connection* get_connection();
+	virtual paroc_connection* reconnect();	
+	
 	virtual int Send(const char *s, int len);
 	virtual int Send(const char *s, int len, paroc_connection *conn);
 	virtual int Recv(char *s, int len);
@@ -66,7 +74,7 @@ class popc_combox_mpi: public paroc_combox {
 	virtual paroc_connection *Wait();
 	virtual void Close();
 	
-	virtual bool disconnect();
+	virtual bool disconnect(paroc_connection *connection);
 	virtual bool is_server();
 
 	/**
@@ -76,15 +84,16 @@ class popc_combox_mpi: public paroc_combox {
 	 */
 	virtual bool GetUrl(paroc_string & accesspoint);
 	virtual bool GetProtocol(paroc_string & protocolName);
+  virtual void Destroy();
 	
-	bool hasCommunicator();
-	void setCommunicator(MPI::Intercomm comm);
-	MPI::Intercomm getCommunicator();
+	//bool hasCommunicator();
+	//void setCommunicator(MPI::Intercomm comm);
+	//MPI::Intercomm getCommunicator();
 
 
 
  protected:
-	// virtual popc_connection_mpi *CreateConnection(int fd);
+	virtual paroc_connection* CreateConnection(int fd);
 	bool Connect(const char *host, int port);
 	int GetPort();
 	int GetOpt(int level, int opt, char *buf, socklen_t &len);
@@ -101,9 +110,12 @@ class popc_combox_mpi: public paroc_combox {
 
  private:
    std::string _port_name;
-   MPI::Intercomm _communicator;
-   bool _hasCommunicator;
+   //MPI::Intercomm _communicator;
+   //bool _hasCommunicator;
+   bool _is_port_open;
    int _rank;
+   int _comm_counter;
+//   std::map<int, MPI::Intercomm> _communicators;
    
 
 };

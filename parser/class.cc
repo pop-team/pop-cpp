@@ -742,7 +742,6 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 	strcpy(str,"\ndefault: return false;\n}");
 	code.InsertAt(-1,str,strlen(str));
 
-
 	n=baseClass.GetSize();
 	for (i=0;i<n;i++)
 	{

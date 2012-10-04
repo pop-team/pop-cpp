@@ -1391,11 +1391,11 @@ YY_RULE_SETUP
   if (thisCodeFile->FindClass(clname)!=NULL)
     {
       while (isspace(*tmp) || *tmp==':') tmp++;
-      bool constructor=paroc_utils::isEqual(clname,tmp);
+      bool constructor = paroc_utils::isEqual(clname,tmp);
       sprintf(newyytext,"%s__parocobj%s",clname,yytext+len);
       othercodes.InsertAt(-1,newyytext,strlen(newyytext));
       //Create the string to be inserted in every paroc_object constructor
-      sprintf(thisBuf, "__POPThis_%s = new %s(GetAccessPointForThis());", clname, clname);
+      //sprintf(thisBuf, "__POPThis_%s = new %s(GetAccessPointForThis());", clname, clname);
 
       if (constructor)
 	{

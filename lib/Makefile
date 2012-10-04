@@ -299,7 +299,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(top_builddir)/./install-sh -c -d
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local/popc
+prefix = /Users/clementval/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -311,7 +311,7 @@ top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
 AUTOMAKE_OPTIONS = no-dependencies
-POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=mpic++ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
+POPC_FLAGS = -noclean -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=mpic++ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
 AM_CXXFLAGS = $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS)
 
 #ADD VIX and LIBVIRT flags

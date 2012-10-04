@@ -46,7 +46,6 @@ void paroc_broker::ReceiveThread(paroc_combox *server)
 	server->SetCallback(COMBOX_CLOSE, CloseConnection, this);
 
 	while (state==POPC_STATE_RUNNING) {
-	  server->disconnect();
 	  printf("BROKER: %s waiting for request\n", classname.GetString());
     paroc_request request;
 		request.data = NULL;
@@ -111,9 +110,16 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &request)
 void paroc_broker::RegisterRequest(paroc_request &req)
 {
   printf("BROKER: register request\n");
-	//Check if mutex is waiting/executing...
+	//　Check if mutex is waiting/executing　
 	int type = req.methodId[2];
-	req.from = (type & INVOKE_SYNC) ? req.from->Clone() : NULL;
+	
+	if(type & INVOKE_SYNC){
+  	req.from  = req.from->Clone();
+	} else {
+	  req.from->reset();
+	  req.from = NULL;
+	}
+//	req.from = (type & INVOKE_SYNC) ? req.from->Clone() : NULL;
 
 	if (type & INVOKE_CONC) {
 		mutexCond.lock();
@@ -226,6 +232,7 @@ bool paroc_broker::ParocCall(paroc_request &req)
 			  
 			  printf("BROKER: %s - ready to send paroc_call answer %s, %s\n", classname.GetString(), paroc_system::platform.GetString(), enclist.GetString());
   			buf->Send(req.from);
+  			req.from->reset();
 	  	}
 		  break;
   	case 1:
@@ -339,11 +346,6 @@ bool paroc_broker::ParocCall(paroc_request &req)
   		break;
   	}
 #endif
-    case 7:
-    {
-      printf("BROKER: POPCall Disconnect\n");
-//      server->Disconnect();
-    }
   	default:
 	  	return false;
 	}

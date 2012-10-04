@@ -265,7 +265,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(top_builddir)/./install-sh -c -d
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local/popc
+prefix = /Users/clementval/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -285,9 +285,9 @@ AM_CXXFLAGS = $(POPC_FLAGS)
 AM_LDFLAGS = -L../lib -L../lib/.libs 
 #execservices_PROGRAMS=appservice localservice_launcher
 execservices_SCRIPTS = popcobjrun popcobjrun.pbs popcobjrun.lsf popcobjrun.sge popcobjrun.smscg
-execservicesdir = /usr/local/popc/services
+execservicesdir = /Users/clementval/popc/services
 conf_DATA = jobmgr.conf.in 
-confdir = /usr/local/popc/etc
+confdir = /Users/clementval/popc/etc
 bin_SCRIPTS = popcjob.pbs popcjob.lsf popcjob.sge
 popc_search_node_SOURCES = popc_search_node_obj.cc
 popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
@@ -795,13 +795,13 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
 	$(LIBTOOL) --mode=compile --tag=CXX $(CXX) -cxxmain $(POPC_FLAGS) $(CXXFLAGS) -c $< -o $@
 
 install-data-hook:
-	@if [ ! -f /usr/local/popc/etc/popc-runtime-env.sh ]; then cp /usr/local/popc/etc/popc-runtime-env.in /usr/local/popc/etc/popc-runtime-env.sh; fi
-	@ln -sf popcc /usr/local/popc/bin/parocc
-	@ln -sf popcrun /usr/local/popc/bin/parocrun
-	@ln -sf popcobjrun /usr/local/popc/services/webrun
-	@ln -sf popc-user-env.csh /usr/local/popc/bin/paroc-user-env.csh
-	@ln -sf popc-user-env.sh /usr/local/popc/bin/paroc-user-env.sh
-	@ln -sf SXXpopc /usr/local/popc/sbin/SXXparoc
+	@if [ ! -f /Users/clementval/popc/etc/popc-runtime-env.sh ]; then cp /Users/clementval/popc/etc/popc-runtime-env.in /Users/clementval/popc/etc/popc-runtime-env.sh; fi
+	@ln -sf popcc /Users/clementval/popc/bin/parocc
+	@ln -sf popcrun /Users/clementval/popc/bin/parocrun
+	@ln -sf popcobjrun /Users/clementval/popc/services/webrun
+	@ln -sf popc-user-env.csh /Users/clementval/popc/bin/paroc-user-env.csh
+	@ln -sf popc-user-env.sh /Users/clementval/popc/bin/paroc-user-env.sh
+	@ln -sf SXXpopc /Users/clementval/popc/sbin/SXXparoc
 	@${exec_prefix}/sbin/popc_setup -ask
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

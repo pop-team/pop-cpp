@@ -13,6 +13,8 @@
 #include "paroc_combox.h"
 #include "debug.h"
 
+const int paroc_connection::POPC_CONNECTION_NULL_FD = 0;
+
 paroc_connection::paroc_connection(paroc_combox *com)
 {
 	fact = com->GetBufferFactory();
@@ -34,6 +36,10 @@ void paroc_connection::SetBufferFactory(paroc_buffer_factory *f)
 {
 	fact = f;
 	combox->SetBufferFactory(f);
+}
+
+void paroc_connection::reset()
+{
 }
 
 paroc_buffer_factory *paroc_connection::GetBufferFactory()

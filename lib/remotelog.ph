@@ -35,7 +35,7 @@ public:
 	*/
 	async seq void Log([in] const POPString &info);
 
-   async seq void LogPJ([in]const POPString &appID, [in] const POPString &info);
+  async seq void LogPJ([in]const POPString &appID, [in] const POPString &info);
 
 	classuid(3);
 };

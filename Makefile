@@ -216,7 +216,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(top_builddir)/./install-sh -c -d
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local/popc
+prefix = /Users/clementval/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
@@ -726,7 +726,7 @@ uninstall-am:
 
 
 #install-exec-hook:
-#	@if [ ! -f /usr/local/popc/etc/popc-runtime-env.sh ]; then cp /usr/local/popc/etc/popc-runtime-env.in /usr/local/popc/etc/popc-runtime-env.sh; fi
+#	@if [ ! -f /Users/clementval/popc/etc/popc-runtime-env.sh ]; then cp /Users/clementval/popc/etc/popc-runtime-env.in /Users/clementval/popc/etc/popc-runtime-env.sh; fi
 #	@${exec_prefix}/sbin/popc_setup -ask
 
 documentation:

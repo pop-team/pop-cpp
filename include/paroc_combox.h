@@ -21,12 +21,15 @@ class paroc_combox;
 class paroc_connection
 {
 public:
+  static const int POPC_CONNECTION_NULL_FD;
+  
 	paroc_connection(paroc_combox *com);
 	paroc_connection(paroc_combox *com, paroc_buffer_factory *f);
 	virtual ~paroc_connection();
 
 	virtual void SetBufferFactory(paroc_buffer_factory *fact);
 	virtual paroc_buffer_factory *GetBufferFactory();
+	virtual void reset();
 
 	paroc_combox *GetCombox();
 
@@ -56,10 +59,13 @@ protected:
 	virtual ~paroc_combox();
 
 public:
+  enum COMBOX_TYPE { POLLING, REQUESTBYREQUEST }; 
+
 	virtual bool Create(char* host, int port, bool server)=0;
 	virtual bool Connect(const char *url)=0;
-	virtual bool reconnect()=0;
-	virtual bool disconnect() = 0;
+	virtual paroc_connection* get_connection()=0; // Will be modified later
+	virtual paroc_connection* reconnect()=0;
+	virtual bool disconnect(paroc_connection *connection) = 0;
 
 	virtual int Send(const char *s,int len)=0;
 	virtual int Send(const char *s,int len, paroc_connection *conn)=0;
@@ -80,6 +86,7 @@ public:
 
 	virtual bool GetUrl(paroc_string & accesspoint) = 0;
 	virtual bool GetProtocol(paroc_string & protocolName) = 0;
+	virtual paroc_connection* CreateConnection(int fd) = 0;
 
 	virtual void Destroy();
 

@@ -43,10 +43,6 @@ int main(int argc, char **argv)
  	  // Init MPI for multithread support
   	int required_support = MPI_THREAD_MULTIPLE; // Required multiple thread support to allow multiple connection to an object
 	  int provided_support = MPI::Init_thread(required_support);
-//	  MPI::COMM_WORLD.Set_errhandler(MPI::ERRORS_THROW_EXCEPTIONS); 
-
-	  // Get the inter-communicator to communicate with the parent process (Interface)
-  	static MPI::Intercomm parent = MPI::COMM_WORLD.Get_parent();
   }
 
 
@@ -67,14 +63,14 @@ int main(int argc, char **argv)
 	paroc_combox *callback = NULL;
 	int status = 0;
 	if (addr != NULL) {
-		paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
+		paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
 
 		char *tmp = strstr(addr, "://");
 		if (tmp == NULL) {
-		  callback = fact->Create("socket");
+		  callback = combox_factory->Create("socket");
 		} else {
 			*tmp = 0;
-			callback = fact->Create(addr);
+			callback = combox_factory->Create(addr);
 			*tmp = ':';
 		}
 
@@ -102,6 +98,8 @@ int main(int argc, char **argv)
 		char url[1024];
 		int len;
 
+    // Connect to the end point
+		paroc_connection* connection = callback->get_connection();
 		
 		paroc_buffer *buf = callback->GetBufferFactory()->CreateBuffer();
 		
@@ -118,12 +116,12 @@ int main(int argc, char **argv)
 		paroc_broker::accesspoint.Serialize(*buf,true);
 		buf->Pop();
 
-		bool ret = buf->Send(*callback);
+    
+		bool ret = buf->Send((*callback), connection);
 		
 		buf->Destroy();
 		
-		
-		callback->disconnect();		
+		connection->reset();
 		callback->Destroy();
 		
 		if (!ret) {

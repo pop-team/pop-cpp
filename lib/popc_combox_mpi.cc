@@ -19,7 +19,7 @@
 
 
 
-POPC_MPIConnection::POPC_MPIConnection(paroc_combox *cb): _hasCommunicator(false), paroc_connection(cb)
+POPC_MPIConnection::POPC_MPIConnection(paroc_combox *cb): _hasCommunicator(false), paroc_connection(cb), _comm_index(0)
 {
 	signal(SIGPIPE, SIG_IGN);
 }
@@ -38,9 +38,10 @@ POPC_MPIConnection::~POPC_MPIConnection(){
 }
 
 /**
- *
+ * Return a new connection based on this connection
+ * @return A pointer to the new connection
  */
-paroc_connection *POPC_MPIConnection::Clone()
+paroc_connection* POPC_MPIConnection::Clone()
 {
 	return new POPC_MPIConnection(*this);
 }
@@ -51,10 +52,6 @@ paroc_connection *POPC_MPIConnection::Clone()
  */
 void POPC_MPIConnection::setCommunicator(MPI::Intercomm communicator)
 {
- // printf("Set comm in connection\n");
-/*  if(_hasCommunicator)
-    _communicator.Disconnect();*/
-  //printf("Set comm in connection ok\n");    
   _hasCommunicator = true;
   _communicator = communicator;
 }
@@ -77,15 +74,52 @@ bool POPC_MPIConnection::hasCommunicator()
   return _hasCommunicator;
 }
 
+/**
+ * Set the index associated with this connection inside a combox
+ * @param value Integer value representing the index of the connection in the combox
+ */
+void POPC_MPIConnection::setCommunicatorIndex(int value)
+{
+  _comm_index = value;
+}
+
+/**
+ * Reset the connection. Disconnect the communicator and free it.
+ */
+void POPC_MPIConnection::reset()
+{
+  if(_hasCommunicator){
+   // printf("MPI-COMBOX(%s): before MPI.Disconnect() %d\n", (is_server())?"Server":"Client", _comm_index);  
+    //_communicator.Disconnect();
+    //printf("MPI-COMBOX(%s): after MPI.Disconnect() %d\n", (is_server())?"Server":"Client", _comm_index);
+  } else {
+    printf("MPI-COMBOX(%s): reset() connection as no communicator\n", (is_server())?"Server":"Client");
+  }
+  _hasCommunicator = false; 
+}
+
+/**
+ * Check if the associated combox is a server or client combox
+ * @return TRUE if the associated combox is a server. FALSE if the associated combox is a client
+ */
+bool POPC_MPIConnection::is_server()
+{
+  return combox->is_server();
+}
+
 
 
 /**
+ * 
  * POPC_COMBOX_MPI IMPLEMENTATION
+ * 
  */
  
+ 
+// Constant declaration
 const char* popc_combox_mpi::POPC_COMBOX_MPI_PROTOCOL_PREFIX = "mpi://"; 
 
-popc_combox_mpi::popc_combox_mpi() : peer(NULL), index(0), nready(0), isCanceled(false), _isServer(false), _rank(-1), _hasCommunicator(false)
+popc_combox_mpi::popc_combox_mpi() : peer(NULL), index(0), nready(0), isCanceled(false), _isServer(false), _rank(-1), _comm_counter(1)
 {
 }
 
@@ -94,17 +128,13 @@ popc_combox_mpi::~popc_combox_mpi()
 	Close();
 }
 
-bool popc_combox_mpi::hasCommunicator()
+/*bool popc_combox_mpi::hasCommunicator()
 {
   return _hasCommunicator;
 }
 
 void popc_combox_mpi::setCommunicator(MPI::Intercomm comm)
-{
-  //printf("Set comm in combox\n");    
- /* if(_hasCommunicator)
-    _communicator.Disconnect();*/
-//  printf("Set comm in combox ok\n");        
+{     
   _communicator = comm;
   _hasCommunicator = true;
 }
@@ -113,24 +143,30 @@ MPI::Intercomm popc_combox_mpi::getCommunicator()
 {
   return _communicator;
 }
+*/
 
+
+/**
+ * Create a new MPI Combox. Server combox will open a MPI port to receive new connection. 
+ */
 bool popc_combox_mpi::Create(char* host, int port, bool server)
 {
-
+	
 	Close(); 
-	_isServer=server;
+	_isServer = server;
 
-	printf("MPI Combox created: %s\n", (server)?"Server":"Client");
+//	printf("MPI-COMBOX(%s): Creation\n", (server)?"Server":"Client");
 
-	if(server){
+	if(_isServer){
+	  // If MPI_Init was not called yet, we will call it now
 	  if(!MPI::Is_initialized()) {
+	  
   	  // Init MPI for multithread support
 	  	int required_support = MPI_THREAD_MULTIPLE; // Required multiple thread support to allow multiple connection to an object
 		  int provided_support = MPI::Init_thread(required_support);
 
 		  // Get the inter-communicator to communicate with the parent process (Interface)
-	  	static MPI::Intercomm parent = MPI::COMM_WORLD.Get_parent();
-      
+	  	//static MPI::Intercomm parent = MPI::COMM_WORLD.Get_parent();  
 		}
 			  
 		if(host != NULL){
@@ -139,83 +175,62 @@ bool popc_combox_mpi::Create(char* host, int port, bool server)
       // Open a port to be able to be contacted by interfaces
 		  char port_name[MPI_MAX_PORT_NAME]; 		
 		  MPI::Open_port(MPI_INFO_NULL, port_name);
+		  _is_port_open = true;
 		  _port_name.append(port_name);
 		  int length = _port_name.length();
-		  //parent.Send(&length, 1, MPI_INT, 0, 0);		
-		  //parent.Send(port_name, strlen(port_name), MPI_CHAR, 0, 0);		
-		  printf("MPI Communication enable\n"); 
+		  printf("MPI-COMBOX(Server): MPI port open\n"); 
 		}
 	}
 	
+	// Get the rank of the current process
 	_rank = MPI::COMM_WORLD.Get_rank();
-	
-	
-
-	/*protoent *ppe;
-	char prot[]="tcp";
-	int type, protocol;
-	char tmpbuf[2048];
-
-	//THESE LINES OF CODE MAKE THEM LESS PORTABLE...
-	protocol=PROTO_TCP;
-//  if ( (ppe=getprotobyname(prot))==0) return false;
-//  else protocol=ppe->p_proto;
-
-	type= SOCK_STREAM;
-
-	sockfd=socket(PF_INET,type,protocol);
-	if (sockfd<0) return false;
-	if (port>0)
-	{
-		sockaddr_in sin;
-		memset(&sin,0,sizeof(sin));
-		sin.sin_family=AF_INET;
-		sin.sin_addr.s_addr=INADDR_ANY;
-		sin.sin_port=htons(port);
-		SetOpt(SOL_SOCKET,SO_REUSEADDR,(char*)&sin,sizeof(sin)); // lwk : Added this line to allow reuse an earlier socket with the same address
-		if (bind(sockfd,(sockaddr *)&sin,sizeof(sin))!=0)
-		{
-			return false;
-		}
-	}
-	if (server)
-	{
-		pollarray.SetSize(1);
-		pollarray[0].fd=sockfd;
-		pollarray[0].events=POLLIN;
-		pollarray[0].revents=0;
-		index=1;
-		nready=0;
-		connarray.SetSize(1);
-		connarray[0]=CreateConnection(sockfd);
-		return (listen(sockfd,10)==0);
-	}
-	else peer=CreateConnection(-1);*/
-	
-	
+		
 	return true;
 }
 
 
 /**
+ * Get a connection to the port saved during the Create call
+ * @return A new MPI connection, connected to the end point through a new communicator. 
+ */
+paroc_connection* popc_combox_mpi::get_connection()
+{
+  //LOG
+  printf("MPI-COMBOX(%s): Want to get a connection to %s\n", is_server() ? "Server" : "client", _port_name.c_str());  
+  if(_port_name.length() > 0){
+    // Try to connect to the end point
+    MPI::Intercomm broker = MPI::COMM_WORLD.Connect(_port_name.c_str(), MPI_INFO_NULL, 0);
+
+    printf("MPI-COMBOX(%s): Connected to %s\n", is_server() ? "Server" : "client", _port_name.c_str());  
+    POPC_MPIConnection* new_connection = new POPC_MPIConnection(this);
+    new_connection->setCommunicator(broker);
+    
+    return new_connection;
+  } else {
+    printf("MPI-COMBOX(%s): reconnect doesn't have port name\n", is_server() ? "Server" : "client");
+    return NULL;
+  }  
+}
+/**
  * Connect with the saved port name
  * @return TRUE if the connection succeed, FALSE in any other cases
  */
-bool popc_combox_mpi::reconnect()
+paroc_connection* popc_combox_mpi::reconnect()
 {
-  printf("Want to reconnect to %s\n", _port_name.c_str());  
+  //LOG
+  printf("MPI-COMBOX(%s): Want to reconnect to %s\n", is_server() ? "Server" : "client", _port_name.c_str());  
   if(_port_name.length() > 0){
 
     MPI::Intercomm broker = MPI::COMM_WORLD.Connect(_port_name.c_str(), MPI_INFO_NULL, 0);
-    printf("Connected to %s\n", _port_name.c_str());  
-    if(peer == NULL)
-      peer = new POPC_MPIConnection(this);
-    peer->setCommunicator(broker);
-    setCommunicator(broker);
+
+    printf("MPI-COMBOX(%s): Connected to %s\n", is_server() ? "Server" : "client", _port_name.c_str());  
+    POPC_MPIConnection* new_connection = new POPC_MPIConnection(this);
+    new_connection->setCommunicator(broker);
     
-    return true;
+    return new_connection;
   } else {
-    return false;
+    printf("MPI-COMBOX(%s): reconnect doesn't have port name\n", is_server() ? "Server" : "client");
+    return NULL;
   }
 }
 
@@ -267,10 +282,13 @@ int popc_combox_mpi::Send(const char *s, int length)
   if(peer == NULL) {
     return 0;
   }
+  
+  
     
 	MPI::Intercomm communicator = peer->getCommunicator();  
   communicator.Send(s, length, MPI_CHAR, _rank, 0);	
-	printf("MPICOM: sent smth: %d\n", length, s);    
+  // LOG
+	//printf("MPI-COMBOX(%s): sent smth: %d\n", is_server() ? "Server" : "client", length);    
 	return 0;
 }
 
@@ -279,25 +297,15 @@ int popc_combox_mpi::Send(const char *s, int length, paroc_connection *conn)
   if(conn == NULL)
     return Send(s, length);
 
-	MPI::Intercomm communicator = ((POPC_MPIConnection*)conn)->getCommunicator();
-  communicator.Send(s, length, MPI_CHAR, _rank, 0);	
-	printf("MPICOM: sent smth: %d\n", length, s);  
-/*	int fd=((paroc_connection_sock *)conn)->sockfd;
-	if (fd<0) return -1;
-	int n=0;
+  //printf("MPI-COMBOX(%s) - Send conn has comm ? %s\n", is_server() ? "Server" : "client", ((POPC_MPIConnection*)conn)->hasCommunicator() ? "true" : "false");
+    
 
-	while (len>0)
-	{
-		n=write(fd,s,len);
-		if (n>0)
-		{
-			count+=n;
-			s+=n;
-			len-=n;
-		}
-		else if (errno!=EINTR) break;
-	}
-*/
+	MPI::Intercomm communicator = ((POPC_MPIConnection*)conn)->getCommunicator();
+//  communicator.Send(s, length, MPI_CHAR, _rank, 0);	
+  MPI::Request mpi_reuqest = communicator.Isend(s, length, MPI_CHAR, _rank, 0);
+  // LOG
+	//printf("MPI-COMBOX(%s): sent smth: %d\n", is_server() ? "Server" : "client", length);  
+
 	return 0;
 }
 
@@ -319,183 +327,83 @@ int popc_combox_mpi::Recv(char *s, int length, paroc_connection *&iopeer)
 	MPI::Intercomm communicator;
 	POPC_MPIConnection *connection;  
 	
-  if(iopeer == NULL && !hasCommunicator()){
-    printf("IOpeer is null will wait for a conn\n");
+	// Get a new connection from a client if connection is null or has no communicator
+  if(iopeer == NULL || !((POPC_MPIConnection*)iopeer)->hasCommunicator()){
+    // Wait for the new connection
     connection = (POPC_MPIConnection*)Wait();  
     if(connection == NULL)
       return -1;
+    // Get the MPI Communicator from the new connection. It will be used to receive the data and disconnect the connection later. 
     communicator = connection->getCommunicator();
-    iopeer = connection;
+    ((POPC_MPIConnection*)iopeer)->setCommunicator(communicator);
   } else if(iopeer != NULL) {
+    // Use the previous communicator
     communicator = ((POPC_MPIConnection*)iopeer)->getCommunicator();
-  } else {
-    communicator = getCommunicator();
   }
 	  
+	// Receiving the data
   MPI::Status status;
   communicator.Recv(s, length, MPI_CHAR, 0, 0, status);
 
 	return 0;
 }
 
-
+/**
+ * Waiting for a new connection from a client
+ * @return A paroc_connection ojbect representing the connection between the client and the server
+ */
 paroc_connection* popc_combox_mpi::Wait()
 {
+  // If the MPI port is not open already, no connection cat be accepted
   if(_port_name.length() <= 0) {
     return NULL;
   }
   
-  
-  
   // Receive interface connection to the MPI Combox
 	if(_isServer){
-	  if(hasCommunicator()){
-	    POPC_MPIConnection *oldpeer = new POPC_MPIConnection(this);
-	    oldpeer->setCommunicator(getCommunicator());
-	    printf("MPICOM-SERVER: Giving old connection instead of new connection\n");
-	    return oldpeer;
-	  }
-	    
-		printf("MPICOM-SERVER: Waiting for client connection on %s\n", _port_name.c_str());
+		printf("MPI-COMBOX(Server): Waiting for client connection on %s. Connection %d\n", _port_name.c_str(), _comm_counter);
 		
     // Wait for new connection
     MPI::Intercomm client = MPI::COMM_WORLD.Accept(_port_name.c_str(), MPI_INFO_NULL, 0);
 
-		printf("MPICOM-SERVER: New client connected\n");
+		printf("MPI-COMBOX(Server): New client connected. Connection %d\n", _comm_counter);
 
-    // Create a new connection and set its communicator    
-    POPC_MPIConnection *peer = new POPC_MPIConnection(this);
-    peer->setCommunicator(client);  
-    setCommunicator(client);
-    return peer;
+    // Create a new connection and set its communicator   
+    POPC_MPIConnection* new_conn = new POPC_MPIConnection(this);
+    new_conn->setCommunicator(client);
+    new_conn->setCommunicatorIndex(_comm_counter);    
+    _comm_counter++;
+    return new_conn;
+    
 	} else {
 	  return NULL;
 	}
-	
-	
-/*
-	if (sockfd<0 || isCanceled)
-	{
-		isCanceled=false;
-		return NULL;
-	}
-
-	if (_isServer)
-	{
-		pollfd *tmpfd;
-		while (1)
-		{
-			if (nready>0)
-			{
-				int n=pollarray.GetSize();
-				tmpfd=pollarray+index;
-				for (int i=index;i>=0;i--, tmpfd--) if (tmpfd->revents!=0)
-					{
-						nready--;
-						index=i-1;
-						tmpfd->revents=0;
-						if (i==0)
-						{
-							//Accept new connection....
-							sockaddr addr;
-							socklen_t addrlen=sizeof(addr);
-							int s;
-							while ((s=accept(sockfd,&addr,&addrlen))<0 && errno==EINTR);
-							if (s<0)
-							{
-								return NULL;
-							}
-							pollarray.SetSize(n+1);
-							pollarray[n].fd=s;
-							pollarray[n].events=POLLIN;
-							pollarray[n].revents=0;
-							connarray.SetSize(n+1);
-							connarray[n]=CreateConnection(s);
-							bool ret=OnNewConnection(connarray[n]);
-							n++;
-							if (!ret) return NULL;
-						}
-						else
-							return connarray[i];
-					}
-			}
-
-			//Poll for ready fds....
-			do
-			{
-				tmpfd=pollarray;
-				int n=pollarray.GetSize();
-				index=n-1;
-//	      DEBUG("STEP1: socket poll (addr=%p, size=%d, fd0=%d, timeout=%d)", tmpfd,n, tmpfd->fd, timeout);
-				nready=poll(tmpfd,n,timeout);
-//	      DEBUG("STEP1: socket poll returned (addr=%p, size=%d, nready=%d)", tmpfd,n, nready);
-			}  while (nready<0 && errno==EINTR && sockfd>=0);
-
-			if (nready<=0)
-			{
-
-				if (nready==0) errno=ETIMEDOUT;
-				return NULL;
-			}
-		}
-	}
-	else
-	{
-		if (timeout>=0)
-		{
-			pollfd tmpfd;
-			tmpfd.fd=sockfd;
-			tmpfd.events=POLLIN;
-			tmpfd.revents=0;
-			int t;
-			while ((t=poll(&tmpfd,1,timeout))==-1 && errno==EINTR);
-			if (t<=0)
-			{
-				if (t==0) errno=ETIMEDOUT;
-				return NULL;
-			}
-		}
-		return peer;
-	}
-	*/
 	return NULL;
 }
 
+/**
+ * Close and delete the combox
+ */
+void popc_combox_mpi::Destroy()
+{
+  Close();
+  delete this;  
+}
+
+/** 
+ * Close the MPI port and 
+ */
 void popc_combox_mpi::Close()
 {
   if(!MPI::Is_initialized() && _port_name.length() > 0) {
-    _communicator.Free();
-    printf("MPI-COM: Port is free\n");
-    MPI::Close_port(_port_name.c_str());
-  }
   
-/*
-	int fd=sockfd;
-	sockfd=-1;
-	nready=0;
-	index=-1;
-
-	if (_isServer)
-	{
-		int n=pollarray.GetSize();
-		for (int i=0;i<n;i++) if (fd!=pollarray[i].fd) OnCloseConnection(connarray[i]);
-
-		for (int i=0;i<n;i++) close(pollarray[i].fd);
-		for (int i=0;i<n;i++) delete connarray[i];
-		pollarray.RemoveAll();
-		connarray.RemoveAll();
-	}
-	else
-	{
-		if (peer!=NULL)
-		{
-			OnCloseConnection(peer);
-			delete peer;
-			peer=NULL;
-		}
-		if (fd>=0) close(fd);
-	}
-	*/
+    printf("MPI-COMBOX(%s): Port is free\n", is_server() ? "Server" : "client");
+    if(_is_port_open){
+      MPI::Close_port(_port_name.c_str());
+      _is_port_open = false;
+      _port_name.clear();
+    }
+  }
 }
 
 /**
@@ -529,71 +437,25 @@ bool popc_combox_mpi::GetUrl(POPString& accesspoint)
 	return true;
 }
 
+/**
+ * 
+ */
 bool popc_combox_mpi::Connect(const char *host, int port)
 {
-/*
-	hostent *phe;
-	sockaddr_in sin;
-	int s,type;
-	char tmpbuf[2048];
-	int herrno;
-
-	memset((char *)&sin,0,sizeof(sin));
-	sin.sin_family=AF_INET;
-	if ( (phe=gethostbyname(host)) !=NULL)
-		memcpy((char *)&sin.sin_addr,phe->h_addr,phe->h_length);
-	else if ((sin.sin_addr.s_addr=inet_addr(host))==-1) return false;
-	sin.sin_port=htons(port);
-
-	if (timeout<=0)
-	{
-		return (connect(sockfd,(sockaddr*)&sin,sizeof(sin))==0);
-	}
-	else
-	{
-		int flag=fcntl(sockfd,F_GETFL,0);
-		int newflag=flag | O_NONBLOCK;
-		fcntl(sockfd,F_SETFL,newflag);
-		int ret=connect(sockfd,(sockaddr*)&sin,sizeof(sin));
-		int err=errno;
-		if (ret==-1 && errno==EINPROGRESS)
-		{
-			struct pollfd me;
-			me.fd=sockfd;
-			me.events=POLLOUT;
-			me.revents=0;
-			int t;
-			while ((t=poll(&me,1,timeout))==-1 && errno==EINTR);
-			if (t!=1)
-			{
-				err=ETIMEDOUT;
-			}
-			else
-			{
-				socklen_t len=sizeof(int);
-				if (GetOpt(SOL_SOCKET,SO_ERROR,(char *)(&err),len)==0)
-				{
-					if (err==0) ret=0;
-				}
-				else err=errno;
-			}
-		}
-		fcntl(sockfd,F_SETFL,flag);
-		if (ret!=0) errno=err;
-		return (ret==0);
-	}
-	*/
+  
 }
 
-bool popc_combox_mpi::disconnect()
-{
-  printf("MPI-COMBOX: disconnected\n");
-  if(_isServer){
-    if(_hasCommunicator){
-      _communicator.Free();
-    }  
-    _hasCommunicator = false;
+/**
+ *
+ */
+bool popc_combox_mpi::disconnect(paroc_connection *connection)
+{ 
+  if(connection != NULL) {
+    ((POPC_MPIConnection*)connection)->reset();
+  } else if (connection == NULL && peer != NULL) {
+    peer->reset();
   }
+  //_hasCommunicator = false;
 }
 
 /**
@@ -605,18 +467,13 @@ bool popc_combox_mpi::is_server()
   return _isServer;
 }
 
-
 /**
- * TODO comment
+ * Create a new connection associated with this combox
+ * @param fd  Not used in this combox
+ * @return  A pointer to the newly created connection
  */
-/*void popc_combox_mpi::SetPortName(const char* port_name){
-	_port_name.clear();
-	_port_name.append(port_name);
-}*/
-
-/*
-popc_connection_mpi *popc_combox_mpi::CreateConnection()
+paroc_connection* popc_combox_mpi::CreateConnection(int fd)
 {
-	return new popc_connection_mpi(this);
+	return new POPC_MPIConnection(this);
 }
-*/
+

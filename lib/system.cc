@@ -371,7 +371,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
          	  
       // Creating application services 
       mgr = CreateAppCoreService(url);
-      printf("POP-C++ Application Service created ...\n");
+      printf("POP-C++ Application Service created %s\n", mgr->GetAccessPoint().GetAccessString());
       
 		} else {
 			challenge=NULL;
@@ -382,6 +382,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
    	}
 		paroc_system::appservice = mgr->GetAccessPoint();
 		paroc_system::appservice.SetAsService();
+		
 	} catch (POPException *e) {
 		printf("POP-C++ Exception occurs in paroc_system::Initialize\n");
 		POPSystem::perror(e);
@@ -403,7 +404,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
 		return false;
 	}
 
-	char *codeconf=paroc_utils::checkremove(argc,argv,"-codeconf=");
+	char *codeconf = paroc_utils::checkremove(argc,argv,"-codeconf=");
 
 	DEBUGIF(codeconf==NULL,"No code config file\n");
 
@@ -411,44 +412,53 @@ bool paroc_system::Initialize(int *argc,char ***argv)
     return false;
     else return true; */
 
-	return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
+  printf("SYSTEM: Init code service\n");
+  bool ret = !(codeconf != NULL && !paroc_utils::InitCodeService(codeconf,mgr));
+  printf("SYSTEM: Init code service done\n");
+	return ret;
 }
 
-void paroc_system::Finalize(bool normalExit)
+void paroc_system::Finalize(bool normal_exit)
 {
-   if (mgr!=NULL){
-      try{
-         if (normalExit) {
-            //Wait all object to be terminated!
-            int timeout=1;
-            int oldcount=0, count;
-            int loop=0;
-            while ((count=mgr->CheckObjects())>0){            
-               if (timeout<1800 && oldcount==count){ 
-                  timeout=timeout*4/3;
-                  loop++;
-                  if(loop%10 == 0)
-                     timeout+=1;
-               } else {
-                  loop=0;
-                  timeout=1;
-               }
-               sleep(timeout);
-               oldcount=count;
+  printf("Finalize the application %s\n", normal_exit ? "true" : "false");
+  if (mgr != NULL) {
+    try {
+      if (normal_exit) {
+        //Wait all object to be terminated!
+        int timeout = 1;
+        int oldcount = 0, count;
+        int loop = 0;
+        printf("Finalize 1\n");
+        while ((count = mgr->CheckObjects()) > 0){            
+          if (timeout < 1800 && oldcount == count){ 
+            timeout = timeout * 4/3;
+            loop++;
+            if (loop % 10 == 0) {
+              timeout += 1;
             }
-         } else {
-            mgr->KillAll();
-         }
-         mgr->Stop(challenge);
-         delete mgr;         
-      } catch (paroc_exception *e) {
-         paroc_system::perror(e->Extra());
-         delete e;
-      } catch (...) {
-         fprintf(stderr,"POP-C++ error on finalizing the application\n");
+          } else {
+            loop = 0;
+            timeout = 1;
+          }
+          sleep(timeout);
+          oldcount = count;
+        }
+      } else {
+        printf("Finalize killall\n");      
+        mgr->KillAll();
       }
-      mgr=NULL;
-   }
+      printf("Finalize stop\n");      
+      mgr->Stop(challenge);
+      delete mgr;         
+    } catch (paroc_exception *e) {
+      paroc_system::perror(e->Extra());
+      delete e;
+    } catch (...) {
+      fprintf(stderr,"POP-C++ error on finalizing the application\n");
+    }
+    mgr = NULL;
+  }
+  printf("Finalize the application end\n");
 }
 
 

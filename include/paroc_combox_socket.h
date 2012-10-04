@@ -49,7 +49,8 @@ public:
 	virtual bool Create(char* host, int port=0, bool server=false);
 
 	virtual bool Connect(const char *url);
-	virtual bool reconnect();	
+	virtual paroc_connection* reconnect();
+	virtual paroc_connection* get_connection();		
 
 	virtual int Send(const char *s,int len);
 	virtual int Send(const char *s,int len, paroc_connection *conn);
@@ -72,10 +73,10 @@ public:
 	virtual bool GetProtocol(paroc_string & protocolName);
 
 protected:
-	virtual paroc_connection_sock *CreateConnection(int fd);
+	virtual paroc_connection *CreateConnection(int fd);
 	bool CloseSock(int fd);
 	bool Connect(const char *host,int port);
-	virtual bool disconnect();	
+	virtual bool disconnect(paroc_connection *connection);	
 	virtual bool is_server();	
 
 	int GetSockInfo(sockaddr &info,socklen_t &len);

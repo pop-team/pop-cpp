@@ -104,10 +104,10 @@ bool paroc_combox_socket::Create(char* host, int port, bool server)
 		index = 1;
 		nready = 0;
 		connarray.SetSize(1);
-		connarray[0] = CreateConnection(sockfd);
+		connarray[0] = (paroc_connection_sock*)CreateConnection(sockfd);
 		return (listen(sockfd,10) == 0);
 	} else {
-	  peer = CreateConnection(-1);
+	  peer = (paroc_connection_sock*)CreateConnection(-1);
 	}
 	return true;
 }
@@ -277,7 +277,7 @@ paroc_connection* paroc_combox_socket::Wait()
 							pollarray[n].events = POLLIN;
 							pollarray[n].revents = 0;
 							connarray.SetSize(n+1);
-							connarray[n] = CreateConnection(s);
+							connarray[n] = (paroc_connection_sock*)CreateConnection(s);
 							bool ret = OnNewConnection(connarray[n]);
 							n++;
 							if (!ret) 
@@ -396,7 +396,7 @@ bool paroc_combox_socket::CloseSock(int fd)
 }
 
 
-bool paroc_combox_socket::disconnect()
+bool paroc_combox_socket::disconnect(paroc_connection *connection)
 {
 
 }
@@ -464,9 +464,14 @@ bool paroc_combox_socket::Connect(const char *host,int port)
  * Not used in socket combox
  * @return FLASE
  */
-bool paroc_combox_socket::reconnect()
+paroc_connection* paroc_combox_socket::reconnect()
 {
-  return false;
+  return NULL;
+}
+
+paroc_connection* paroc_combox_socket::get_connection()
+{
+  return NULL;
 }
 
 int paroc_combox_socket::GetSockInfo(sockaddr &info,socklen_t &len)
@@ -491,7 +496,7 @@ int paroc_combox_socket::SetOpt(int level, int opt, char *buf, socklen_t len)
 	return setsockopt(sockfd,level,opt,buf,len);
 }
 
-paroc_connection_sock *paroc_combox_socket::CreateConnection(int fd)
+paroc_connection *paroc_combox_socket::CreateConnection(int fd)
 {
-	return new paroc_connection_sock(fd, this);
+  return new paroc_connection_sock(fd, this);
 }
