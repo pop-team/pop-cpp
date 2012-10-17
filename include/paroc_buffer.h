@@ -155,12 +155,12 @@ public:
 	virtual void Pack(const signed char *data, int n)=0;
 	virtual void UnPack(signed char *data, int n)=0;
 
-	virtual bool Send(paroc_combox &s, paroc_connection *conn=0)=0;
-	virtual bool Send(paroc_connection *conn);
+	virtual bool Send(paroc_combox &s, paroc_connection *conn=0, bool unlock=false)=0;
+	virtual bool Send(paroc_connection *conn, bool unlock);
 
-	virtual bool Recv(paroc_combox &s, paroc_connection *conn=0)=0;
+	virtual bool Recv(paroc_combox &s, paroc_connection *conn=0, bool unlock=false)=0;
 
-	virtual bool Recv(paroc_connection *conn);
+	virtual bool Recv(paroc_connection *conn, bool unlock);
 
 #ifdef OD_DISCONNECT
 	virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0)=0;

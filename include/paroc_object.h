@@ -17,12 +17,12 @@
 #include "paroc_event.h"
 
 //Added by clementval
-#include <iostream>
-#include <sstream>
+//#include <iostream>
+//#include <sstream>
 
-#define cout paroc_system::_popc_cout.str(""); \
+//#define cout paroc_system::_popc_cout.str(""); \
              paroc_system::_popc_cout 
-#define popcendl std::endl; \
+//#define popcendl std::endl; \
              rprintf(paroc_system::_popc_cout.str().c_str())
 //End of add
 
@@ -62,9 +62,6 @@ private:
 
 protected:
 	paroc_mutex _paroc_omutex;
-   //Added by clementval
-   //std::ostringstream _popc_cout;
-   //End of add
 };
 
 #endif

@@ -162,23 +162,23 @@ private:
     * POP-C++ Secure version with SSH tunneling
     * The followings variables are used for SSH Tunneling between the interface and the broker.
     */
-   bool _ssh_tunneling;
-   int _ssh_local_port;
-   int _ssh_dest_port;
-   std::string _ssh_dest_ip;
-   std::string _ssh_user;
-   POPWayback wayToNode;   //Save the way to the node running the object
-   POPString popAppId;
+  bool _ssh_tunneling;
+  int _ssh_local_port;
+  int _ssh_dest_port;
+  std::string _ssh_dest_ip;
+  std::string _ssh_user;
+  POPWayback wayToNode;   //Save the way to the node running the object
+  POPString popAppId;
 
 	void NegotiateEncoding(paroc_string &enclist, paroc_string &peerplatform);
 	void Tokenize(paroc_string &s, paroc_list<char *> &tokens);
 	void ApplyCommPattern(const char *pattern, paroc_list<char *> &accesslist);
-   int CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port);
-   int KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port);
-   bool IsTunnelAlive(const char *user, const char *dest_ip, int dest_port, int local_port);
+  int CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port);
+  int KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port);
+  bool IsTunnelAlive(const char *user, const char *dest_ip, int dest_port, int local_port);
 
-   int popc_interface_log(const char *log);	//write log in file
-   char log[600];	                           //buffer for log
+  int popc_interface_log(const char *log);	//write log in file
+  char log[600];	                           //buffer for log
 
 public:
 	static int batchindex;

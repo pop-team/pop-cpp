@@ -35,9 +35,19 @@ public:
 
 	virtual paroc_connection *Clone()=0;
 
+	bool is_connection_init();
+	void set_as_connection_init();
+	bool is_wait_unlock();
+	void set_as_wait_unlock();
+
 protected:
 	paroc_buffer_factory *fact;
 	paroc_combox *combox;
+	
+	
+private: 
+  bool _is_connection_init;	
+  bool _is_wait_unlock;
 };
 
 
@@ -63,16 +73,22 @@ public:
 
 	virtual bool Create(char* host, int port, bool server)=0;
 	virtual bool Connect(const char *url)=0;
+	virtual bool connect_and_die(std::string &url)=0;
+	virtual bool unlock_wait(bool rewait)=0;	
 	virtual paroc_connection* get_connection()=0; // Will be modified later
 	virtual paroc_connection* reconnect()=0;
 	virtual bool disconnect(paroc_connection *connection) = 0;
 
 	virtual int Send(const char *s,int len)=0;
-	virtual int Send(const char *s,int len, paroc_connection *conn)=0;
+	virtual void send_data_length(int length, paroc_connection *conn) = 0;
+	virtual int Send(const char *s,int len, paroc_connection *conn, bool unlock)=0;
+	virtual int init_send(paroc_connection *conn, bool unlock)=0;
 	virtual bool SendAck(paroc_connection *conn);
 
-	virtual int Recv(char *s,int len)=0;
-	virtual int Recv(char *s,int len, paroc_connection *&peer)=0;
+
+  virtual int receive_data_length(paroc_connection *peer)=0;
+	virtual int Recv(char *s,int len, bool unlock)=0;
+	virtual int Recv(char *s,int len, paroc_connection *&peer, bool unlock)=0;
 	virtual bool RecvAck(paroc_connection *conn=0);
 
 	virtual paroc_connection *Wait()=0;
@@ -94,6 +110,8 @@ public:
 
 	void SetBufferFactory(paroc_buffer_factory *fact);
 	paroc_buffer_factory *GetBufferFactory();
+	
+
 
 protected:
 	virtual bool OnNewConnection(paroc_connection *conn);
@@ -104,8 +122,8 @@ protected:
 	COMBOX_CALLBACK cblist[2];
 	void *cbdata[2];
 
-	paroc_buffer_factory *defaultFact;
 
+	paroc_buffer_factory *defaultFact;
 };
 
 #endif // INCLUDE_POPC_COMBOX_H_

@@ -29,27 +29,23 @@ public:
 	bool IsEmpty() const;
 	bool operator ==(const paroc_accesspoint &p) const;
 	paroc_accesspoint & operator =(const paroc_accesspoint &p);
-	//bool AddProtocolAccessString(const paroc_string &as);
-   const bool IsSecure() const;
-   void SetSecure();
-   const bool IsService() const;
-   void SetAsService();
-   void SetNoAddRef() ;
-   
-   void SetCommunicator(MPI::Intercomm& comm);
-   MPI::Intercomm getCommunicator();
-   
-   const bool GetNoAddRef() const;
+  const bool IsSecure() const;
+  void SetSecure();
+  const bool IsService() const;
+  void SetAsService();
+  void SetNoAddRef() ;
+  const bool GetNoAddRef() const;
    
 
 	virtual void Serialize(paroc_buffer &buf, bool pack);
+	
 private:
-	char *endpoint;
-   bool _service;
-   bool _noaddref;
-   int _security;
-   enum security { NONSECURE, SECURE };
-   MPI::Intercomm _communicator;
+  char *endpoint;
+  bool _service;
+  bool _noaddref;
+  int _security;
+  enum security { NONSECURE, SECURE };
+  MPI::Intercomm _communicator;
 };
 
 #endif

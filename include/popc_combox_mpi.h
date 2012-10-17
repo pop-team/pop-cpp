@@ -14,7 +14,7 @@
 
 #include <mpi.h>
 #include <string>
-//#include <map>
+#include <map>
 
 #include "include/paroc_combox.h"
 
@@ -30,18 +30,33 @@ public:
   
   virtual paroc_connection *Clone();
   
+  void set_communicator(MPI::Intercomm communicator);
+  MPI::Intercomm get_communicator(); 
   
-  void setCommunicator(MPI::Intercomm communicator);
-  MPI::Intercomm getCommunicator(); 
-  bool hasCommunicator();
-  void setCommunicatorIndex(int value);
+  void set_connection_index(int value);
+  int get_connection_index();
+  
+  void set_as_asynchronous();
+  bool is_asynchronous();
+  
+  void set_current_tag(int value);
+  void unset_current_tag();
+  int get_current_tag();
+  bool is_tag_set();
+  
+  bool has_communicator();
   void reset();
   bool is_server();
   
 private:
   MPI::Intercomm _communicator;
-  bool _hasCommunicator;
-  int _comm_index;
+  bool _is_connected;
+  bool _has_communicator;
+  int _connection_index;
+  bool _is_asynchronous;
+  int _current_tag;
+  bool _tag_set;
+  
 };
 
 
@@ -59,17 +74,30 @@ class popc_combox_mpi: public paroc_combox {
 
 
   static const char* POPC_COMBOX_MPI_PROTOCOL_PREFIX;
-
+  static const char* POPC_COMBOX_MPI_PROTOCOL_PREFIX_WITH_SLASH;
+  static const char* POPC_COMBOX_MPI_ACCESSPOINT_DELIMITER;
+  static const int POPC_COMBOX_MPI_INITIAL_RSIZE;
+  static const int POPC_COMBOX_MPI_HEADER_SIZE; 
+  static const int POPC_COMBOX_MPI_NEW_CONNECTION_TAG; 
+  static const int POPC_COMBOX_MPI_KILL_TAG;    
+  static const int POPC_COMBOX_MPI_NEW_MESSAGE_TAG;   
+  
 	virtual bool Create(char* host, int port, bool server = false);
 	virtual bool Connect(const char *url);
+	virtual bool connect_and_die(std::string &url);		
+	virtual bool unlock_wait(bool rewait);
 	
 	virtual paroc_connection* get_connection();
 	virtual paroc_connection* reconnect();	
 	
 	virtual int Send(const char *s, int len);
-	virtual int Send(const char *s, int len, paroc_connection *conn);
-	virtual int Recv(char *s, int len);
-	virtual int Recv(char *s, int len, paroc_connection *&iopeer);
+	virtual int Send(const char *s, int len, paroc_connection *conn, bool unlock);
+	virtual int init_send(paroc_connection *conn, bool unlock);
+	virtual int Recv(char *s, int len, bool unlock);
+	virtual int Recv(char *s, int len, paroc_connection *&iopeer, bool unlock);
+	
+	virtual void send_data_length(int length, paroc_connection *conn);
+  virtual int receive_data_length(paroc_connection *conn);	
 
 	virtual paroc_connection *Wait();
 	virtual void Close();
@@ -99,7 +127,7 @@ class popc_combox_mpi: public paroc_combox {
 	int GetOpt(int level, int opt, char *buf, socklen_t &len);
 	int SetOpt(int level, int opt, char *buf, socklen_t len);
 
-	bool _isServer;
+	bool _is_server;
 	bool isCanceled;
 
 	POPC_MPIConnection *peer;
@@ -109,14 +137,31 @@ class popc_combox_mpi: public paroc_combox {
 	int nready;
 
  private:
-   std::string _port_name;
-   //MPI::Intercomm _communicator;
-   //bool _hasCommunicator;
-   bool _is_port_open;
-   int _rank;
-   int _comm_counter;
-//   std::map<int, MPI::Intercomm> _communicators;
-   
+  // Only useful for server combox
+  MPI::Intracomm _self;
+  MPI::Intracomm _self_for_die;
+  MPI::Intercomm _parent;
+  MPI::Intracomm _broker_intracomm;
+  std::string _broker_port_name;
+  std::string _accept_port_name;  
+  
+  int _node_id;
+  
+  int _connection_counter;
+  int _request_array_size;
+  bool _is_port_open;
+  
+  // To manage multiple connections
+  //std::map<int, MPI::Comm*> _connections;  
+  MPI::Intercomm _connections[10];
+  MPI::Request _pending_requests[10];  
+  int _pending_data[10];
+  int _current_tag;
+  bool _have_to_get_lock;
+  
+  
+  paroc_condition mpicond;
+  int data;   
 
 };
 #endif  // INCLUDE_POPC_COMBOX_MPI_H_
