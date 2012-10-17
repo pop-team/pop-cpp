@@ -17,87 +17,36 @@
 #include <map>
 
 #include "include/paroc_combox.h"
-
-
-/**
- *
- */
-class POPC_MPIConnection : public paroc_connection {
-public:
-  explicit POPC_MPIConnection(paroc_combox *cb);
-  explicit POPC_MPIConnection(POPC_MPIConnection &me);
-  ~POPC_MPIConnection();
-  
-  virtual paroc_connection *Clone();
-  
-  void set_communicator(MPI::Intercomm communicator);
-  MPI::Intercomm get_communicator(); 
-  
-  void set_connection_index(int value);
-  int get_connection_index();
-  
-  void set_as_asynchronous();
-  bool is_asynchronous();
-  
-  void set_current_tag(int value);
-  void unset_current_tag();
-  int get_current_tag();
-  bool is_tag_set();
-  
-  bool has_communicator();
-  void reset();
-  bool is_server();
-  
-private:
-  MPI::Intercomm _communicator;
-  bool _is_connected;
-  bool _has_communicator;
-  int _connection_index;
-  bool _is_asynchronous;
-  int _current_tag;
-  bool _tag_set;
-  
-};
-
-
+#include "include/popc_connection_mpi.h"
 
 /**
- * @class paroc_combox_socket
- * @brief Socket declaration of combox, used by POP-C++ runtime.
- * @author Tuan Anh Nguyen
- *
+ * @class popc_combox_mpi
+ * @brief Declaration of MPI Combox. Uses MPI calls to pass messages between POP-C++ object.
+ * @author Valentin Clement
+ * 
  */
 class popc_combox_mpi: public paroc_combox {
  public:
 	popc_combox_mpi();
 	virtual ~popc_combox_mpi();
 
-
   static const char* POPC_COMBOX_MPI_PROTOCOL_PREFIX;
   static const char* POPC_COMBOX_MPI_PROTOCOL_PREFIX_WITH_SLASH;
   static const char* POPC_COMBOX_MPI_ACCESSPOINT_DELIMITER;
   static const int POPC_COMBOX_MPI_INITIAL_RSIZE;
   static const int POPC_COMBOX_MPI_HEADER_SIZE; 
-  static const int POPC_COMBOX_MPI_NEW_CONNECTION_TAG; 
-  static const int POPC_COMBOX_MPI_KILL_TAG;    
-  static const int POPC_COMBOX_MPI_NEW_MESSAGE_TAG;   
   
 	virtual bool Create(char* host, int port, bool server = false);
 	virtual bool Connect(const char *url);
 	virtual bool connect_and_die(std::string &url);		
-	virtual bool unlock_wait(bool rewait);
 	
 	virtual paroc_connection* get_connection();
-	virtual paroc_connection* reconnect();	
 	
 	virtual int Send(const char *s, int len);
 	virtual int Send(const char *s, int len, paroc_connection *conn, bool unlock);
-	virtual int init_send(paroc_connection *conn, bool unlock);
+
 	virtual int Recv(char *s, int len, bool unlock);
 	virtual int Recv(char *s, int len, paroc_connection *&iopeer, bool unlock);
-	
-	virtual void send_data_length(int length, paroc_connection *conn);
-  virtual int receive_data_length(paroc_connection *conn);	
 
 	virtual paroc_connection *Wait();
 	virtual void Close();
@@ -164,4 +113,6 @@ class popc_combox_mpi: public paroc_combox {
   int data;   
 
 };
+
+
 #endif  // INCLUDE_POPC_COMBOX_MPI_H_

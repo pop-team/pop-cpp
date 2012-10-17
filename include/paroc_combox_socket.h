@@ -50,16 +50,12 @@ public:
 
 	virtual bool Connect(const char *url);
 	virtual bool connect_and_die(std::string &url) { return true; };	
-	virtual bool unlock_wait(bool rewait) { return true; };	
-	virtual paroc_connection* reconnect();
+
 	virtual paroc_connection* get_connection();		
 
 	virtual int Send(const char *s,int len);
 	virtual int Send(const char *s,int len, paroc_connection *conn, bool unlock);
-	virtual int init_send(paroc_connection *conn, bool unlock) {  return 0; };
 	
-	virtual void send_data_length(int length, paroc_connection *conn) {};
-  virtual int receive_data_length(paroc_connection *peer) {return 0;};
 
 	virtual int Recv(char *s,int len, bool unlock);
 	virtual int Recv(char *s,int len, paroc_connection *&iopeer, bool unlock);

@@ -66,6 +66,7 @@ public:
 	 * @param longformat Print full format or name only
 	 */
 	static void PrintBrokers(const char *abspath, bool longformat);
+	static void PrintBrokersMPI(const char *abspath);	
 
 	/**
 	 * @brief Returns true if an object is not on brokerlist

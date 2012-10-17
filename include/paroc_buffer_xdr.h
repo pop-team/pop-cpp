@@ -66,8 +66,8 @@ public:
 	virtual void Pack(const long double *data, int n);
 	virtual void UnPack(long double *data, int n);*/
 
-	virtual bool Send(paroc_combox &s, paroc_connection *conn, bool unlock);
-	virtual bool Recv(paroc_combox &s, paroc_connection *conn, bool unlock);
+	virtual bool Send(paroc_combox &s, paroc_connection *conn);
+	virtual bool Recv(paroc_combox &s, paroc_connection *conn);
 
 #ifdef OD_DISCONNECT	
 	virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0);
