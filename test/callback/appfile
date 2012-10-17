@@ -1,0 +1,4 @@
+-host localhost -np 1 /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/test/callback/main
+-host localhost -np 1 /Volumes/HDD/Users/clementval/popc/mpi/popc_resource_manager_mpi
+-host localhost -np 1 /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/test/callback/toto.obj -mpi -object=Toto
+-host localhost -np 1 /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/test/callback/titi.obj -mpi -object=Titi

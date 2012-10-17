@@ -11,4 +11,4 @@ clean:
 	rm -f *.o *.obj main obj.map _paroc*
 
 run:
-	popcrun obj.map ./main
+	mpiexec -app appfile

@@ -1,0 +1,2 @@
+-host localhost -np 1 /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/test/matrixNB/MatMul 1000 10 5 log
+-host localhost -np 10 /Volumes/HDD/Users/clementval/versioning/popc/popc2.6/test/matrixNB/MatWorker.obj -mpi -object=MatWorker

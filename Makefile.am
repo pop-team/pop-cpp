@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS=no-dependencies
 
-SUBDIRS= scripts parser include lib services modules model
+SUBDIRS= scripts parser include lib services model servicesmpi
 
 if MPISUPPORT
 SUBDIRS+= mpi

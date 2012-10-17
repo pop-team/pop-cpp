@@ -7,7 +7,7 @@ parclass Toto
 classuid(1002);
 
 public:
-	Toto() @{od.url("localhost");};
+	Toto() @{od.url("localhost"); od.executable(""); };
 	~Toto();
 
 	seq sync void SetIdent(int i);

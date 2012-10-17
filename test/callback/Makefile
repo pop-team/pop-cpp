@@ -5,7 +5,7 @@ main:
 	popcc -o main titi.stub.o toto.ph toto.cc main.cc	
 
 object:
-	popcc -object -o toto.obj titi.stub.o toto.cc toto.ph
+	popcc -noclean -object -o toto.obj titi.stub.o toto.cc toto.ph
 	popcc -parclass-nobroker -c toto.ph toto.cc
 	popcc -object -o titi.obj toto.stub.o titi.ph titi.cc 
 	./toto.obj -listlong > obj.map
@@ -18,4 +18,4 @@ clean:
 	rm -f obj.map
 	
 run:
-	popcrun obj.map ./main
+	mpiexec -app appfile

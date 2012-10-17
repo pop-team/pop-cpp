@@ -1,3 +1,4 @@
+
 #
 # Autoconf tools configure.ac file
 # Process this file with autoconf to produce a configure script.
@@ -168,10 +169,7 @@ AC_SUBST(LIBS)
 
 
 AC_CONFIG_LINKS(parser/debug.cc:lib/debug.cc parser/utils.cc:lib/utils.cc)
-
-#Updated by clementval : add include/popc_search_node.ph:lib/popc_search_node.cc
 AC_CONFIG_LINKS(include/jobmgr.ph:lib/jobmgr.ph include/popc_search_node.ph:lib/popc_search_node.cc include/codemgr.ph:lib/codemgr.ph)
-#End of update
 AC_CONFIG_LINKS(include/remotelog.ph:lib/remotelog.ph include/appservice.ph:lib/appservice.ph) 
 AC_CONFIG_LINKS(include/batchmgr.ph:lib/batchmgr.ph)
 AC_CONFIG_LINKS(include/objectmonitor.ph:lib/objectmonitor.ph)
@@ -188,7 +186,7 @@ AC_CONFIG_FILES([scripts/popc-runtime-env.in], [chmod +x scripts/popc-runtime-en
 AC_CONFIG_FILES([scripts/popc_setup], [chmod +x scripts/popc_setup])
 AC_CONFIG_FILES([globus/popc_setup_globus], [chmod +x globus/popc_setup_globus])
 AC_CONFIG_FILES([scripts/popc_script_setup], [chmod +x scripts/popc_script_setup])
-AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile)
+AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile servicesmpi/Makefile)
 AC_CONFIG_FILES(model/Makefile)
 AC_CONFIG_FILES(modules/Makefile modules/raw-zlib/Makefile  modules/xdr-zlib/Makefile)
 

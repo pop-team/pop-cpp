@@ -36,11 +36,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-apple-darwin12.2.0
 host_triplet = x86_64-apple-darwin12.2.0
-execservices_PROGRAMS = popc_search_node$(EXEEXT) jobmgr$(EXEEXT) \
-	appservice$(EXEEXT) localservice_launcher$(EXEEXT) \
-	jobmgr_launcher$(EXEEXT)
-bin_PROGRAMS = jobmgrpublish$(EXEEXT) jobmgrquery$(EXEEXT) \
-	dumpjobmgr$(EXEEXT) benchmarktest$(EXEEXT)
+execservices_PROGRAMS = appservice$(EXEEXT)
 subdir = services
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/popcobjrun.in
@@ -52,61 +48,15 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES = popcobjrun
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(execservicesdir)" \
-	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(execservicesdir)" \
-	"$(DESTDIR)$(confdir)"
-PROGRAMS = $(bin_PROGRAMS) $(execservices_PROGRAMS)
+am__installdirs = "$(DESTDIR)$(execservicesdir)" \
+	"$(DESTDIR)$(execservicesdir)" "$(DESTDIR)$(confdir)"
+PROGRAMS = $(execservices_PROGRAMS)
 am_appservice_OBJECTS = appservice_obj.$(OBJEXT)
 appservice_OBJECTS = $(am_appservice_OBJECTS)
 appservice_DEPENDENCIES =
 appservice_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(appservice_LDFLAGS) $(LDFLAGS) -o $@
-am_benchmarktest_OBJECTS = test_benchmark.$(OBJEXT)
-benchmarktest_OBJECTS = $(am_benchmarktest_OBJECTS)
-benchmarktest_LDADD = $(LDADD)
-am_dumpjobmgr_OBJECTS = dumpjobmgr.$(OBJEXT)
-dumpjobmgr_OBJECTS = $(am_dumpjobmgr_OBJECTS)
-dumpjobmgr_LDADD = $(LDADD)
-dumpjobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(dumpjobmgr_LDFLAGS) $(LDFLAGS) -o $@
-am_jobmgr_OBJECTS = jobmgr_obj.$(OBJEXT)
-jobmgr_OBJECTS = $(am_jobmgr_OBJECTS)
-jobmgr_DEPENDENCIES =
-jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(jobmgr_LDFLAGS) $(LDFLAGS) -o $@
-am_jobmgr_launcher_OBJECTS = jobmgr_launcher.$(OBJEXT)
-jobmgr_launcher_OBJECTS = $(am_jobmgr_launcher_OBJECTS)
-jobmgr_launcher_LDADD = $(LDADD)
-jobmgr_launcher_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(jobmgr_launcher_LDFLAGS) $(LDFLAGS) -o $@
-am_jobmgrpublish_OBJECTS = jobmgrpublish.$(OBJEXT)
-jobmgrpublish_OBJECTS = $(am_jobmgrpublish_OBJECTS)
-jobmgrpublish_LDADD = $(LDADD)
-jobmgrpublish_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(jobmgrpublish_LDFLAGS) $(LDFLAGS) -o $@
-am_jobmgrquery_OBJECTS = jobmgrquery.$(OBJEXT)
-jobmgrquery_OBJECTS = $(am_jobmgrquery_OBJECTS)
-jobmgrquery_LDADD = $(LDADD)
-jobmgrquery_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(jobmgrquery_LDFLAGS) $(LDFLAGS) -o $@
-am_localservice_launcher_OBJECTS = localservice_launcher.$(OBJEXT)
-localservice_launcher_OBJECTS = $(am_localservice_launcher_OBJECTS)
-localservice_launcher_LDADD = $(LDADD)
-localservice_launcher_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(localservice_launcher_LDFLAGS) $(LDFLAGS) -o $@
-am_popc_search_node_OBJECTS = popc_search_node_obj.$(OBJEXT)
-popc_search_node_OBJECTS = $(am_popc_search_node_OBJECTS)
-popc_search_node_DEPENDENCIES =
-popc_search_node_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(popc_search_node_LDFLAGS) $(LDFLAGS) -o $@
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -128,7 +78,7 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-SCRIPTS = $(bin_SCRIPTS) $(execservices_SCRIPTS)
+SCRIPTS = $(execservices_SCRIPTS)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
@@ -141,16 +91,8 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(appservice_SOURCES) $(benchmarktest_SOURCES) \
-	$(dumpjobmgr_SOURCES) $(jobmgr_SOURCES) \
-	$(jobmgr_launcher_SOURCES) $(jobmgrpublish_SOURCES) \
-	$(jobmgrquery_SOURCES) $(localservice_launcher_SOURCES) \
-	$(popc_search_node_SOURCES)
-DIST_SOURCES = $(appservice_SOURCES) $(benchmarktest_SOURCES) \
-	$(dumpjobmgr_SOURCES) $(jobmgr_SOURCES) \
-	$(jobmgr_launcher_SOURCES) $(jobmgrpublish_SOURCES) \
-	$(jobmgrquery_SOURCES) $(localservice_launcher_SOURCES) \
-	$(popc_search_node_SOURCES)
+SOURCES = $(appservice_SOURCES)
+DIST_SOURCES = $(appservice_SOURCES)
 DATA = $(conf_DATA)
 ETAGS = etags
 CTAGS = ctags
@@ -283,35 +225,44 @@ AUTOMAKE_OPTIONS = no-dependencies
 POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -I../lib -cxx=mpic++ -D_POPC_RUNTIME_
 AM_CXXFLAGS = $(POPC_FLAGS)
 AM_LDFLAGS = -L../lib -L../lib/.libs 
-#execservices_PROGRAMS=appservice localservice_launcher
 execservices_SCRIPTS = popcobjrun popcobjrun.pbs popcobjrun.lsf popcobjrun.sge popcobjrun.smscg
 execservicesdir = /Users/clementval/popc/services
 conf_DATA = jobmgr.conf.in 
 confdir = /Users/clementval/popc/etc
-bin_SCRIPTS = popcjob.pbs popcjob.lsf popcjob.sge
-popc_search_node_SOURCES = popc_search_node_obj.cc
-popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
-popc_search_node_LDFLAGS = -object
-jobmgr_SOURCES = jobmgr_obj.cc
-jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
-jobmgr_LDFLAGS = -object
+
+#bin_PROGRAMS= jobmgrpublish jobmgrquery dumpjobmgr benchmarktest
+#bin_SCRIPTS=popcjob.pbs popcjob.lsf popcjob.sge
+
+#popc_search_node_SOURCES=popc_search_node_obj.cc
+#popc_search_node_LDADD=-L../lib/.libs -lparoc_service_common
+#popc_search_node_LDFLAGS=-object
+
+#jobmgr_SOURCES=jobmgr_obj.cc
+#jobmgr_LDADD=-L../lib/.libs -lparoc_service_common
+#jobmgr_LDFLAGS=-object
 appservice_SOURCES = appservice_obj.cc
 appservice_LDADD = 
 appservice_LDFLAGS = -object -L../lib/.libs -lparoc_service_common
-localservice_launcher_SOURCES = localservice_launcher.cc
-localservice_launcher_LDFLAGS = -L../lib/.libs -lparoc_service_common
-jobmgr_launcher_SOURCES = jobmgr_launcher.cc
-jobmgr_launcher_LDFLAGS = -L../lib/.libs -lparoc_service_common
-jobmgrpublish_SOURCES = jobmgrpublish.cc
-jobmgrpublish_LDFLAGS = -L../lib/.libs -lparoc_service_common
-jobmgrpublish_DEPENDENCIES = 
-jobmgrquery_SOURCES = jobmgrquery.cc
-jobmgrquery_LDFLAGS = -L../lib/.libs -lparoc_service_common
-jobmgrquery_DEPENDENCIES = 
-dumpjobmgr_SOURCES = dumpjobmgr.cc
-dumpjobmgr_LDFLAGS = -L../lib/.libs -lparoc_service_common
-dumpjobmgr_DEPENDENCIES = 
-benchmarktest_SOURCES = test_benchmark.cc 
+
+#localservice_launcher_SOURCES=localservice_launcher.cc
+#localservice_launcher_LDFLAGS=-L../lib/.libs -lparoc_service_common
+
+#jobmgr_launcher_SOURCES=jobmgr_launcher.cc
+#jobmgr_launcher_LDFLAGS=-L../lib/.libs -lparoc_service_common
+
+#jobmgrpublish_SOURCES=jobmgrpublish.cc
+#jobmgrpublish_LDFLAGS=-L../lib/.libs -lparoc_service_common
+#jobmgrpublish_DEPENDENCIES=
+
+#jobmgrquery_SOURCES=jobmgrquery.cc
+#jobmgrquery_LDFLAGS=-L../lib/.libs -lparoc_service_common
+#jobmgrquery_DEPENDENCIES=
+
+#dumpjobmgr_SOURCES=dumpjobmgr.cc
+#dumpjobmgr_LDFLAGS=-L../lib/.libs -lparoc_service_common
+#dumpjobmgr_DEPENDENCIES=
+
+#benchmarktest_SOURCES=test_benchmark.cc 
 CLEANFILES = _paroc_*.cc _paroc_*.ph
 EXTRA_DIST = jobmgr.conf.in popcobjrun.in
 all: all-am
@@ -350,49 +301,6 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 $(am__aclocal_m4_deps):
 popcobjrun: $(top_builddir)/config.status $(srcdir)/popcobjrun.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-install-binPROGRAMS: $(bin_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	for p in $$list; do echo "$$p $$p"; done | \
-	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p || test -f $$p1; \
-	  then echo "$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
-	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
-	sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
-	    else { print "f", $$3 "/" $$4, $$1; } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	    } \
-	; done
-
-uninstall-binPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' `; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-
-clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
 install-execservicesPROGRAMS: $(execservices_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(execservicesdir)" || $(MKDIR_P) "$(DESTDIR)$(execservicesdir)"
@@ -439,64 +347,6 @@ clean-execservicesPROGRAMS:
 appservice$(EXEEXT): $(appservice_OBJECTS) $(appservice_DEPENDENCIES) 
 	@rm -f appservice$(EXEEXT)
 	$(appservice_LINK) $(appservice_OBJECTS) $(appservice_LDADD) $(LIBS)
-benchmarktest$(EXEEXT): $(benchmarktest_OBJECTS) $(benchmarktest_DEPENDENCIES) 
-	@rm -f benchmarktest$(EXEEXT)
-	$(CXXLINK) $(benchmarktest_OBJECTS) $(benchmarktest_LDADD) $(LIBS)
-dumpjobmgr$(EXEEXT): $(dumpjobmgr_OBJECTS) $(dumpjobmgr_DEPENDENCIES) 
-	@rm -f dumpjobmgr$(EXEEXT)
-	$(dumpjobmgr_LINK) $(dumpjobmgr_OBJECTS) $(dumpjobmgr_LDADD) $(LIBS)
-jobmgr$(EXEEXT): $(jobmgr_OBJECTS) $(jobmgr_DEPENDENCIES) 
-	@rm -f jobmgr$(EXEEXT)
-	$(jobmgr_LINK) $(jobmgr_OBJECTS) $(jobmgr_LDADD) $(LIBS)
-jobmgr_launcher$(EXEEXT): $(jobmgr_launcher_OBJECTS) $(jobmgr_launcher_DEPENDENCIES) 
-	@rm -f jobmgr_launcher$(EXEEXT)
-	$(jobmgr_launcher_LINK) $(jobmgr_launcher_OBJECTS) $(jobmgr_launcher_LDADD) $(LIBS)
-jobmgrpublish$(EXEEXT): $(jobmgrpublish_OBJECTS) $(jobmgrpublish_DEPENDENCIES) 
-	@rm -f jobmgrpublish$(EXEEXT)
-	$(jobmgrpublish_LINK) $(jobmgrpublish_OBJECTS) $(jobmgrpublish_LDADD) $(LIBS)
-jobmgrquery$(EXEEXT): $(jobmgrquery_OBJECTS) $(jobmgrquery_DEPENDENCIES) 
-	@rm -f jobmgrquery$(EXEEXT)
-	$(jobmgrquery_LINK) $(jobmgrquery_OBJECTS) $(jobmgrquery_LDADD) $(LIBS)
-localservice_launcher$(EXEEXT): $(localservice_launcher_OBJECTS) $(localservice_launcher_DEPENDENCIES) 
-	@rm -f localservice_launcher$(EXEEXT)
-	$(localservice_launcher_LINK) $(localservice_launcher_OBJECTS) $(localservice_launcher_LDADD) $(LIBS)
-popc_search_node$(EXEEXT): $(popc_search_node_OBJECTS) $(popc_search_node_DEPENDENCIES) 
-	@rm -f popc_search_node$(EXEEXT)
-	$(popc_search_node_LINK) $(popc_search_node_OBJECTS) $(popc_search_node_LDADD) $(LIBS)
-install-binSCRIPTS: $(bin_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-binSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(bindir)" && rm -f $$files
 install-execservicesSCRIPTS: $(execservices_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(execservicesdir)" || $(MKDIR_P) "$(DESTDIR)$(execservicesdir)"
@@ -659,7 +509,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(execservicesdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(execservicesdir)" "$(DESTDIR)$(confdir)"; do \
+	for dir in "$(DESTDIR)$(execservicesdir)" "$(DESTDIR)$(execservicesdir)" "$(DESTDIR)$(confdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -690,8 +540,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-execservicesPROGRAMS clean-generic \
-	clean-libtool mostlyclean-am
+clean-am: clean-execservicesPROGRAMS clean-generic clean-libtool \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -717,8 +567,8 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-binSCRIPTS \
-	install-execservicesPROGRAMS install-execservicesSCRIPTS
+install-exec-am: install-execservicesPROGRAMS \
+	install-execservicesSCRIPTS
 
 install-html: install-html-am
 
@@ -757,29 +607,27 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
-	uninstall-confDATA uninstall-execservicesPROGRAMS \
+uninstall-am: uninstall-confDATA uninstall-execservicesPROGRAMS \
 	uninstall-execservicesSCRIPTS
 
 .MAKE: install-am install-data-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
+.PHONY: CTAGS GTAGS all all-am check check-am clean \
 	clean-execservicesPROGRAMS clean-generic clean-libtool ctags \
 	distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-binSCRIPTS install-confDATA install-data \
-	install-data-am install-data-hook install-dvi install-dvi-am \
-	install-exec install-exec-am install-execservicesPROGRAMS \
-	install-execservicesSCRIPTS install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-binSCRIPTS uninstall-confDATA \
-	uninstall-execservicesPROGRAMS uninstall-execservicesSCRIPTS
+	html-am info info-am install install-am install-confDATA \
+	install-data install-data-am install-data-hook install-dvi \
+	install-dvi-am install-exec install-exec-am \
+	install-execservicesPROGRAMS install-execservicesSCRIPTS \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-confDATA uninstall-execservicesPROGRAMS \
+	uninstall-execservicesSCRIPTS
 
 
 %.stub_client.o : %.ph

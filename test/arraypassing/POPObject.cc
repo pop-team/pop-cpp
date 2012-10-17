@@ -1,5 +1,6 @@
 #include "POPObject.ph"
 #include <unistd.h>
+#include <iostream>
 
 /**
  * @author clementval
@@ -9,18 +10,18 @@
 
 POPObject::POPObject()
 {	
-   cout << "POPCobject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << popcendl;
+   std::cout << "POPCobject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << std::endl;
 }
 
 POPObject::~POPObject()
 {
-   cout << "POPCobject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+  std::cout << "POPCobject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << std::endl;
 }
 
 void POPObject::displayArray(int length, int array[]){
-	cout << "In parallel object" << popcendl;
+	std::cout << "In parallel object" << std::endl;
 	for(int i=0; i<length;i++){
-		cout << "item[" << i << "]=" << array[i] << popcendl;
+		std::cout << "item[" << i << "]=" << array[i] << std::endl;
 		array[i] = array[i]+1;
 	}
 }

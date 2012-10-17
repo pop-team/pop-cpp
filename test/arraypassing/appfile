@@ -1,0 +1,3 @@
+-host localhost -np 1 /Users/clementval/versioning/popc/popc2.6/test/arraypassing/main
+-host localhost -np 1 /Users/clementval/versioning/popc/popc2.6/test/arraypassing/POPObject.obj -mpi -object=POPObject
+

@@ -8,7 +8,7 @@ parclass Titi
 classuid(1001);
 
 public:
-  Titi() @{od.url("localhost");};
+  Titi() @{od.url("localhost"); od.executable("");};
         
   ~Titi();
 

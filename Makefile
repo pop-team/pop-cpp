@@ -68,8 +68,8 @@ AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
 	distdir dist dist-all distcheck
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = scripts parser include lib services modules model mpi \
-	globus
+DIST_SUBDIRS = scripts parser include lib services model servicesmpi \
+	mpi globus
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -228,7 +228,7 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = .
 AUTOMAKE_OPTIONS = no-dependencies
-SUBDIRS = scripts parser include lib services modules model \
+SUBDIRS = scripts parser include lib services model servicesmpi \
 	$(am__append_1) $(am__append_2)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

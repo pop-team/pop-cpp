@@ -21,49 +21,48 @@ AM_LDFLAGS=-L@top_srcdir@/lib -L@top_srcdir@/lib/.libs
 	$(LIBTOOL) --mode=compile --tag=CXX $(CXX) -cxxmain $(POPC_FLAGS) $(CXXFLAGS) -c $< -o $@
 
 #Standard version
-execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher
-#execservices_PROGRAMS=appservice localservice_launcher
-
+#execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher 
+execservices_PROGRAMS=appservice
 execservices_SCRIPTS= popcobjrun popcobjrun.pbs popcobjrun.lsf popcobjrun.sge popcobjrun.smscg
 execservicesdir=@prefix@/services
 
 conf_DATA=jobmgr.conf.in 
 confdir=@prefix@/etc
 
-bin_PROGRAMS= jobmgrpublish jobmgrquery dumpjobmgr benchmarktest
-bin_SCRIPTS=popcjob.pbs popcjob.lsf popcjob.sge
+#bin_PROGRAMS= jobmgrpublish jobmgrquery dumpjobmgr benchmarktest
+#bin_SCRIPTS=popcjob.pbs popcjob.lsf popcjob.sge
 
-popc_search_node_SOURCES=popc_search_node_obj.cc
-popc_search_node_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-popc_search_node_LDFLAGS=-object
+#popc_search_node_SOURCES=popc_search_node_obj.cc
+#popc_search_node_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
+#popc_search_node_LDFLAGS=-object
 
-jobmgr_SOURCES=jobmgr_obj.cc
-jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
-jobmgr_LDFLAGS=-object
+#jobmgr_SOURCES=jobmgr_obj.cc
+#jobmgr_LDADD=-L@top_srcdir@/lib/.libs -lparoc_service_common
+#jobmgr_LDFLAGS=-object
 
 appservice_SOURCES=appservice_obj.cc
 appservice_LDADD=
 appservice_LDFLAGS=-object -L@top_srcdir@/lib/.libs -lparoc_service_common
 
-localservice_launcher_SOURCES=localservice_launcher.cc
-localservice_launcher_LDFLAGS=-L@top_srcdir@/lib/.libs -lparoc_service_common
+#localservice_launcher_SOURCES=localservice_launcher.cc
+#localservice_launcher_LDFLAGS=-L@top_srcdir@/lib/.libs -lparoc_service_common
 
-jobmgr_launcher_SOURCES=jobmgr_launcher.cc
-jobmgr_launcher_LDFLAGS=-L@top_srcdir@/lib/.libs -lparoc_service_common
+#jobmgr_launcher_SOURCES=jobmgr_launcher.cc
+#jobmgr_launcher_LDFLAGS=-L@top_srcdir@/lib/.libs -lparoc_service_common
 
-jobmgrpublish_SOURCES=jobmgrpublish.cc
-jobmgrpublish_LDFLAGS=-L@top_srcdir@/lib/.libs -lparoc_service_common
-jobmgrpublish_DEPENDENCIES=
+#jobmgrpublish_SOURCES=jobmgrpublish.cc
+#jobmgrpublish_LDFLAGS=-L@top_srcdir@/lib/.libs -lparoc_service_common
+#jobmgrpublish_DEPENDENCIES=
 
-jobmgrquery_SOURCES=jobmgrquery.cc
-jobmgrquery_LDFLAGS=-L@top_srcdir@/lib/.libs -lparoc_service_common
-jobmgrquery_DEPENDENCIES=
+#jobmgrquery_SOURCES=jobmgrquery.cc
+#jobmgrquery_LDFLAGS=-L@top_srcdir@/lib/.libs -lparoc_service_common
+#jobmgrquery_DEPENDENCIES=
 
-dumpjobmgr_SOURCES=dumpjobmgr.cc
-dumpjobmgr_LDFLAGS=-L@top_srcdir@/lib/.libs -lparoc_service_common
-dumpjobmgr_DEPENDENCIES=
+#dumpjobmgr_SOURCES=dumpjobmgr.cc
+#dumpjobmgr_LDFLAGS=-L@top_srcdir@/lib/.libs -lparoc_service_common
+#dumpjobmgr_DEPENDENCIES=
 
-benchmarktest_SOURCES=test_benchmark.cc 
+#benchmarktest_SOURCES=test_benchmark.cc 
 
 
 CLEANFILES=_paroc_*.cc _paroc_*.ph

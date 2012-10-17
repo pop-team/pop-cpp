@@ -3,7 +3,7 @@
 
 Titi::Titi()
 {
-  printf("CallBack: Object Titi created on %s\n", POPGetHost());
+  printf("CallBack: Object Titi created on %s\n", GetAccessPoint().GetAccessString());
   ident = -1;
 }
 

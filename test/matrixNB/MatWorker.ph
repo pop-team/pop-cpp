@@ -11,7 +11,7 @@ parclass MatWorker
 
 public:
 	MatWorker();
-	MatWorker(int i, int nbLineA, int nbColA, int nbColB, POPString machine) @{ od.url(machine);};
+	MatWorker(int i, int nbLineA, int nbColA, int nbColB, POPString machine) @{ od.url(machine); od.executable(""); };
 	~MatWorker();
 
 	async conc void solve(Matrix2Dlc a, Matrix2Dcl b);

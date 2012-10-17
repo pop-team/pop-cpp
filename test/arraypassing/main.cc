@@ -1,5 +1,5 @@
 #include "POPObject.ph"
-
+#include <iostream>
 /** 
  * @author  clementval
  * @date    2012.07.11
@@ -8,7 +8,7 @@
 int main(int argc, char** argv)
 
 {
-  	cout << "Standard syntax array: Starting test..." << popcendl;
+  	std::cout << "Standard syntax array: Starting test..." << std::endl;
 
 	int array[5];
 	
@@ -21,11 +21,11 @@ int main(int argc, char** argv)
 	POPObject o;
 	o.displayArray(5, array);
 
-	cout << "Return of parallel object" << popcendl;	
+	std::cout << "Return of parallel object" << std::endl;	
 	for(int i=0; i<5; i++){
-		cout << "item[" << i << "]=" << array[i] << popcendl;
+		std::cout << "item[" << i << "]=" << array[i] << std::endl;
 	}
 	
-	cout << "Standard syntax array: test succeeded, destroying object..." << popcendl;		
+	std::cout << "Standard syntax array: test succeeded, destroying object..." << std::endl;		
 	return 0;
 }

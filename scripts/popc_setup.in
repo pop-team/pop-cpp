@@ -88,18 +88,7 @@ echo ""
 echo "**************************************************************************"
 echo ""
 
-answer="nothing"
-while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
-do
-	echo "DO YOU WANT TO MAKE A SIMPLE INSTALLATION ? (y/n) : "
-	read answer
-done
-if [ X${answer} = "Xy" ]
-then
-	insttype="simple"
-else
-	insttype="standard"
-fi
+insttype="standard"
 export insttype
 
 
@@ -232,9 +221,9 @@ then
 
 	while [ 1 ]
 	do
-#		echo "Enter the full qualified master host name (POPC gateway):"
 		echo "Enter the full qualified neighbour host name or IP address :"
-		read host
+		#read host
+		host=""
 		if [ "x$host" != "x" ]
 		then
 			if [ "x$host" != "xlocalhost" ] && [ "x$host" != "x127.0.0.1" ] && [ "x$host" != "x$HOSTIP" ]
@@ -289,7 +278,8 @@ then
 	while [ 1 ]
 	do
 		echo "Enter number of processors available (default:1):"
-		read nprocs
+		#read nprocs
+		nprocs=""
 
 		if [ "x$nprocs" = "x" ]
 		then
@@ -308,7 +298,8 @@ then
 	while [ 1 ]
 	do
 		echo "Enter the maximum number of POP-C++ jobs that can run concurrently (default: 100):"
-		read maxjobs
+		#read maxjobs
+		maxjobs=""
 		if [ "x$maxjobs" = "x" ]
 		then
 			maxjobs=100 
@@ -326,7 +317,8 @@ then
 	while [ 1 ]
 	do
 		echo "Enter the available RAM for job execution in MB (default: 1024) :"
-		read ram
+		#read ram
+		ram=""
 		if [ "x$ram" = "x" ]
 		then
 			ram=2048 
@@ -342,7 +334,8 @@ then
 	done
 
 	echo "Which local user you want to use for running POP-C++ jobs?"
-	read parocuser
+#	read parocuser
+  parocuser=""
 
 	if [ "x$parocuser" != "x" ]
 	then
@@ -370,7 +363,7 @@ if [ X$insttype = "Xstandard" ]
 then
 	echo "Enter the script to submit jobs to the local system:"
 	job_exec=""
-	read job_exec
+#	read job_exec
 fi
 
 echo "jobmgr ${job_exec} $POPC_LOCATION/services/popcobjrun" >> $conf 
@@ -393,7 +386,7 @@ if [ X$insttype = "Xstandard" ]
 then
 	echo "Communication pattern:"
 	comm=""
-	read comm
+#	read comm
 fi
 
 if [ -n "$comm" ]
@@ -534,7 +527,8 @@ then
 	while [ "X${env_var}" != "X" ] && [ "Y${env_val}" != "Y" ]
 	do
 		echo "Enter variable name:"
-		read env_var
+		#read env_var
+		env_var=""
 		if [ "X${env_var}" != "X" ]
 		then
 			echo "Enter variable value:"
@@ -575,7 +569,7 @@ then
 		fi
 	fi
 # following line is required because the block above is shortcuted / JFR - 06-sep-2011
-	$POPC_LOCATION/sbin/popc_script_setup
+#	$POPC_LOCATION/sbin/popc_script_setup
 	
 else
 	$POPC_LOCATION/sbin/popc_script_setup
@@ -595,5 +589,5 @@ echo "    export POPC_LOCATION=$POPC_LOCATION"
 echo "    PATH=\$PATH:\$POPC_LOCATION/bin:\$POPC_LOCATION/sbin"
 echo ""
 echo "Press <Return> to continue"
-read answer
+#read answer
 exit 0

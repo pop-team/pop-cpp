@@ -15373,11 +15373,8 @@ LDFLAGS=$LDFLAGSOLD
 
 ac_config_links="$ac_config_links parser/debug.cc:lib/debug.cc parser/utils.cc:lib/utils.cc"
 
-
-#Updated by clementval : add include/popc_search_node.ph:lib/popc_search_node.cc
 ac_config_links="$ac_config_links include/jobmgr.ph:lib/jobmgr.ph include/popc_search_node.ph:lib/popc_search_node.cc include/codemgr.ph:lib/codemgr.ph"
 
-#End of update
 ac_config_links="$ac_config_links include/remotelog.ph:lib/remotelog.ph include/appservice.ph:lib/appservice.ph"
 
 ac_config_links="$ac_config_links include/batchmgr.ph:lib/batchmgr.ph"
@@ -15408,7 +15405,7 @@ ac_config_files="$ac_config_files globus/popc_setup_globus"
 
 ac_config_files="$ac_config_files scripts/popc_script_setup"
 
-ac_config_files="$ac_config_files Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile"
+ac_config_files="$ac_config_files Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile servicesmpi/Makefile"
 
 ac_config_files="$ac_config_files model/Makefile"
 
@@ -16559,6 +16556,7 @@ do
     "services/Makefile") CONFIG_FILES="$CONFIG_FILES services/Makefile" ;;
     "globus/Makefile") CONFIG_FILES="$CONFIG_FILES globus/Makefile" ;;
     "mpi/Makefile") CONFIG_FILES="$CONFIG_FILES mpi/Makefile" ;;
+    "servicesmpi/Makefile") CONFIG_FILES="$CONFIG_FILES servicesmpi/Makefile" ;;
     "model/Makefile") CONFIG_FILES="$CONFIG_FILES model/Makefile" ;;
     "modules/Makefile") CONFIG_FILES="$CONFIG_FILES modules/Makefile" ;;
     "modules/raw-zlib/Makefile") CONFIG_FILES="$CONFIG_FILES modules/raw-zlib/Makefile" ;;
