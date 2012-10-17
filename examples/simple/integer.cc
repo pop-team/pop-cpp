@@ -25,9 +25,9 @@ int Integer::Get()
 
 void Integer::Add(Integer &other)
 {
-	printf("Add 1\n");
+//	printf("Add 1\n");
 	data += other.Get();
-	printf("Add 2 %d\n", data);
+//	printf("Add 2 %d\n", data);
 }
 
 @pack( Integer);

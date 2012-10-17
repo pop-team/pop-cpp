@@ -9,8 +9,7 @@ object:
 	./integer.obj -listlong > obj.map
 
 clean:
-	rm -f *.o *.obj main obj.map
+	rm -f *.o *.obj main obj.map _paroc*
 
 run:
-	popcrun obj.map ./main
-
+	mpiexec -app appfile

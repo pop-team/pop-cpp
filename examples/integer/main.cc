@@ -10,22 +10,24 @@ int main(int argc, char **argv)
 {
 	try
 	{
-	  printf("OOOOOOOOOO : Starting integer example application\n");
-		// Create 2 Integer objects
+	  	printf("Starting integer example application\n");
 		Integer o1;
+		o1.Set(19);
+		printf("o1 value is %d\n", o1.Get());
+		
+
 		Integer o2;
-
-		// Set values
-		/*o1.Set(1); o2.Set(2);
-
-      cout << "o1="<< o1.Get() << "; o2=" << o2.Get() << popcendl;
-
-		cout<<"Add o2 to o1"<< popcendl;
+		o2.Set(10);
+		printf("o2 value is %d\n", o2.Get());
+		printf("o1 accesspoint %s\n", o1.GetAccessPoint().GetAccessString());
+		printf("o2 accesspoint %s\n", o2.GetAccessPoint().GetAccessString());		
+		
 		o1.Add(o2);
-		cout << "o1=o1+o2; o1=" << o1.Get() << popcendl;*/
-
+		printf("get result of add\n");		
+		printf("o1 new value is %d\n", o1.Get());		
+		printf("End of program\n");
 	} catch (POPException *e) {
-		cout << "Exception occurs in application :" << popcendl;
+		cout << "Exception occurs in application :" << endl;
 		e->Print();
 		delete e;
 		return -1;

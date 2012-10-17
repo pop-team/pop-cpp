@@ -15,10 +15,9 @@ int main(int argc, char **argv)
 		o1.Set(19);
 
 		printf("o1 value is %d\n", o1.Get());
-		printf("Object created\n");
 		Integer o2;
 		o2.Set(21);
-		printf("o2 %d\n", o2.Get());
+		printf("o2 value is %d\n", o2.Get());
 		o1.Add(o2);
 		printf("o1+o2=%d\n", o1.Get());
 	} catch (POPException *e) {

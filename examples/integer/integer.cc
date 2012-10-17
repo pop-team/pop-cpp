@@ -4,13 +4,13 @@
 
 Integer::Integer()
 {
-	printf("Create remote object Integer on %s (od.search fixed)\n",POPGetHost());
+//	printf("Create remote object Integer on %s (od.search fixed)\n",POPGetHost());
 }
 
 
 Integer::~Integer()
 {
-	printf("Destroying Integer object...\n");
+//	printf("Destroying Integer object...\n");
 }
 
 void Integer::Set(int val)
@@ -25,7 +25,9 @@ int Integer::Get()
 
 void Integer::Add(Integer &other)
 {
+	printf("Add 1\n");
 	data += other.Get();
+	printf("Add 2 %d\n", data);
 }
 
 @pack( Integer);
