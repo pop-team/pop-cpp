@@ -377,7 +377,7 @@ void paroc_buffer_raw::CheckUnPack(int sz)
 	  paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
 }
 
-bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn, bool unlock)
+bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn)
 {
   // Send the header first as 20 bytes packet
   printf("RAW: Send\n");
@@ -419,7 +419,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn, bool unlock
 	char* data_header = new char[20];
 	memcpy(data_header, h, 20);
 	
-	if(s.Send(data_header, 20, conn, unlock)) {
+	if(s.Send(data_header, 20, conn, true)) {
 	  printf("Error while sending header\n");
 	  return false;
 	}
@@ -429,7 +429,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn, bool unlock
   n -= 20;
   if(n > 0){
     printf("RAW: Send message size is %d: %s\n", n, (char*)packeddata);  
-    if (s.Send(data, n, conn, unlock) < 0) {
+    if (s.Send(data, n, conn, false) < 0) {
 		  DEBUG("Fail to send a message!");
   		return false;
 	  }
@@ -440,7 +440,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn, bool unlock
 
   // Propagation of exceptions back to caller...
 
-bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn, bool unlock)
+bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn)
 {
 
   printf("RAW: Recv\n");
@@ -450,7 +450,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn, bool unlock
 	//Recv the header...
 
 	char *data_header = (char *)h;
-  int ret = s.Recv(data_header, 20, conn, unlock);
+  int ret = s.Recv(data_header, 20, conn, true);
   printf("RAW: header received\n");
 /*	n = 20;
 	do {
@@ -495,7 +495,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn, bool unlock
   if(n > 0){
   	data_header = (char *)packeddata+20;	
   	printf("RAW: ready to receive %d\n", n);
-		ret = s.Recv(data_header, n, conn, unlock);
+		ret = s.Recv(data_header, n, conn, false);
   	printf("RAW: received %d\n", n);	
 	}
 /*

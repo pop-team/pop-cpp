@@ -462,15 +462,6 @@ bool paroc_combox_socket::Connect(const char *host,int port)
 	}
 }
 
-/**
- * Not used in socket combox
- * @return FLASE
- */
-paroc_connection* paroc_combox_socket::reconnect()
-{
-  return NULL;
-}
-
 paroc_connection* paroc_combox_socket::get_connection()
 {
   return NULL;

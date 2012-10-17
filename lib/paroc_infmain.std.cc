@@ -40,6 +40,7 @@ void _paroc_atexit()
 
 int main(int argc, char **argv)
 {
+
 #ifdef UC_LINUX
 	paroc_system::processor_set(0);
 #endif
@@ -54,8 +55,9 @@ int main(int argc, char **argv)
   	int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
 	  int provided_support = MPI::Init_thread(required_support); 
   }	 
-  paroc_system::current_free_process = 1;
-  printf("Main %d\n", MPI::COMM_WORLD.Get_rank());
+  printf("ARGS %d %s\n", argc, argv[0]);
+  paroc_system::current_free_process = 2;
+//  printf("Main %d\n", MPI::COMM_WORLD.Get_rank());
 	
 	//printf("Start main of POP-C++ application: rank:%d\n", rank);
 	char **argv1 = argv;
@@ -82,6 +84,10 @@ int main(int argc, char **argv)
 
 	if (i<0) {
 		int ret = parocmain(argc,argv);
+		
+		int cmd = 2; 
+		MPI::COMM_WORLD.Send(&cmd, 1, MPI_INT, 1, 10);
+		
     if(!MPI::Is_finalized()) {     
     	MPI::Finalize();		
     }
@@ -97,7 +103,6 @@ int main(int argc, char **argv)
 
 	try {
 		int ret = parocmain(argc, argv);
-		printf("return of main %d\n", ret);
 		//app.Finalize(ret == 0);
   //  printf("Will call MPI::Finalize and exit main 1\n");		
 		// Only for MPI

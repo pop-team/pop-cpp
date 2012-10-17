@@ -253,9 +253,9 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack)
 		buf.Pop();
 		if (ref > 0) {
 		  // 
-		  printf("Will bind %s\n", accesspoint.GetAccessString());
+	//	  printf("Will bind %s\n", accesspoint.GetAccessString());
 			Bind(accesspoint);
-		  printf("binded %s\n", accesspoint.GetAccessString());			
+		//  printf("binded %s\n", accesspoint.GetAccessString());			
 			AddRef();
 			//DecRef();
 		}
@@ -292,7 +292,7 @@ void paroc_interface::Allocate()
 		od.getPlatforms(platforms);
 
 		if (platforms.Length()<=0) {
-      printf("INTERFACE(Allocate): Will contact the appservice: %s\n", paroc_system::appservice.GetAccessString());		  
+//      printf("INTERFACE(Allocate): Will contact the appservice: %s\n", paroc_system::appservice.GetAccessString());		  
 			CodeMgr mgr(paroc_system::appservice);
 			if (mgr.GetPlatform(objname, platforms)<=0) {
 				paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
@@ -472,7 +472,7 @@ void paroc_interface::Bind(const char *dest)
 		switch (status) {
   		case BIND_OK:
 	  		NegotiateEncoding(info, peerplatform);
-        printf("INTERFACE: Negotiate encoding done\n");	  		
+       // printf("INTERFACE: Negotiate encoding done\n");	  		
 		  	break;
   		case BIND_FORWARD_SESSION:
 	  	case BIND_FORWARD_PERMANENT:
@@ -518,10 +518,10 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess)
 	od.getArch(rarch);
 	od.getBatch(batch);
 
-	if (localFlag || hostname!=NULL || batch!=NULL)
-	{
-		if (hostname==NULL) 
+	if (localFlag || hostname!=NULL || batch!=NULL) {
+    if (hostname==NULL) {
 			hostname=paroc_system::GetHost();
+		}
 
 		od.getExecutable(codefile);
 		
@@ -604,7 +604,7 @@ bool paroc_interface::isBinded(){
  */
 void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info)
 {
-  printf("INTERFACE: request bindstatus\n");
+//  printf("INTERFACE: request bindstatus\n");
 	if (__paroc_combox == NULL || __paroc_buf == NULL) 
 	  return;
 	  
@@ -628,13 +628,13 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
 	__paroc_buf->Push("info", "POPString", 1);
 	__paroc_buf->UnPack(&info, 1);
 	__paroc_buf->Pop();
-  printf("INTERFACE: request bindstatus done\n");	
+//  printf("INTERFACE: request bindstatus done\n");	
 }
 
 
 int paroc_interface::AddRef()
 {
-  printf("Interface AddRef\n");
+//  printf("Interface AddRef\n");
 	if (__paroc_combox==NULL || __paroc_buf==NULL) return -1;
 	paroc_message_header h(0,1, INVOKE_SYNC,"AddRef");
 	paroc_mutex_locker lock(_paroc_imutex);
@@ -652,7 +652,7 @@ int paroc_interface::AddRef()
 
 int paroc_interface::DecRef()
 {
-  printf("Interface DecRef %s\n", accesspoint.GetAccessString());
+//  printf("Interface DecRef %s\n", accesspoint.GetAccessString());
 	if (__paroc_combox==NULL || __paroc_buf==NULL) return -1;
 	paroc_message_header h(0, 2, INVOKE_SYNC,"DecRef");
 	paroc_mutex_locker lock(_paroc_imutex);
@@ -850,7 +850,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	od.getDirectory(cwd);
 
 	int n = 0;
-	POPString myhost = paroc_system::GetHost();
+	/*POPString myhost = paroc_system::GetHost();
 	bool islocal = (isManual || hostname == NULL || *hostname == 0 || paroc_utils::SameContact(myhost, hostname) || paroc_utils::isEqual(hostname, "localhost") || paroc_utils::isEqual(hostname, "127.0.0.1"));
 	if (batch == NULL) {
 		if (!islocal) {
@@ -986,7 +986,19 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     
 
   
-  int dest = paroc_system::current_free_process;
+  // TODO constant instead of numbers
+  // Get the next free object
+  int dest; 
+  int cmd = 1; 
+  MPI::COMM_WORLD.Send(&cmd, 1, MPI_INT, 1, 10);
+  int length = strlen(classname);
+  MPI::COMM_WORLD.Send(&length, 1, MPI_INT, 1, 11);
+  MPI::COMM_WORLD.Send(classname, length, MPI_CHAR, 1, 12);  
+  MPI::COMM_WORLD.Recv(&dest, 1, MPI_INT, 1, 13);
+  
+  if(dest < 0)
+    paroc_exception::paroc_throw(ALLOCATION_EXCEPTION,"POP-C++ error: Cannot create object via POP-C++ (MPI pool of object is not big enough)");
+  
   /*printf("INTERFACE: allocate idle %d with %s %s\n", dest, codefile, executable_args.c_str());  
   paroc_system::current_free_process++;
   int length = strlen(codefile);
@@ -998,11 +1010,10 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	*/
 	// Send dummy data to the created parallel object to get its rank
   
-  MPI::COMM_WORLD.Send(&dest, 1, MPI_INT, dest, 0);
+  MPI::COMM_WORLD.Send(&dest, 1, MPI_INT, dest, 15);
 	int check_rank;
-	MPI::COMM_WORLD.Recv(&check_rank, 1, MPI_INT, dest, 0);
-	printf("Check back rank %d\n", check_rank);
-  paroc_system::current_free_process++;		
+	MPI::COMM_WORLD.Recv(&check_rank, 1, MPI_INT, dest, 16);
+
 	/**
 	 * Create the new MPI process with the code
 	 */
@@ -1063,7 +1074,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	// Saving the object accesspoint
 	objaccess->SetAccessString(tmp_accesspoint.str().c_str());
 	
-	printf("INTERFACE: objaccess %s\n", objaccess->GetAccessString());
+	//printf("INTERFACE: objaccess %s\n", objaccess->GetAccessString());
 
 	/*for (int i=0;i<n;i++) 
 		if (argv[i]!=NULL) 
@@ -1126,7 +1137,7 @@ void paroc_interface::ApplyCommPattern(const char *pattern, paroc_list<char *> &
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn)
 {
-  if (!buf->Send((*__paroc_combox), conn, true)) {
+  if (!buf->Send((*__paroc_combox), conn)) {
 	  paroc_exception::paroc_throw_errno();
 	}   
 }
@@ -1136,7 +1147,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
  */
 void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn)
 {
-	if (!buf->Recv((*__paroc_combox), conn, false)) {
+	if (!buf->Recv((*__paroc_combox), conn)) {
     paroc_exception::paroc_throw_errno();	
 	}
 	paroc_buffer::CheckAndThrow(*buf);

@@ -84,7 +84,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server)
 			break;
 		}
 	}
-	printf("Exit receive thread\n");
+	//printf("Exit receive thread\n");
 	server->Close();
 }
 
@@ -113,8 +113,8 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &request)
 		paroc_buffer_factory* bufferFactory = connection->GetBufferFactory();
 		request.data = bufferFactory->CreateBuffer();
 		
-		printf("Wait to receive request %s\n", paroc_broker::accesspoint.GetAccessString());
-		if (request.data->Recv(connection, false)) {
+		//printf("Wait to receive request %s\n", paroc_broker::accesspoint.GetAccessString());
+		if (request.data->Recv(connection)) {
 			request.from = connection;
 			const paroc_message_header &h = request.data->GetHeader();
 			request.methodId[0] = h.GetClassID();
@@ -230,7 +230,7 @@ bool paroc_broker::ParocCall(paroc_request &req)
 	switch (methodid[1]) {
   	case 0: // BindStatus call
 	  	if (methodid[2] & INVOKE_SYNC) {
-	  	  printf("BindStatus\n");
+	  	  //printf("BindStatus\n");
   			paroc_buffer_factory *bufferFactory;
         bufferFactory = req.from->GetBufferFactory();
 	  		paroc_message_header h("BindStatus");
@@ -262,8 +262,8 @@ bool paroc_broker::ParocCall(paroc_request &req)
 		  	buf->Pack(&enclist, 1);
 			  buf->Pop();
 			  
-  			buf->Send(req.from, false);
-	  	  printf("BindStatus end\n");  			
+  			buf->Send(req.from);
+	  	  //printf("BindStatus end\n");  			
 	  	}
 		  break;
   	case 1:
@@ -282,8 +282,8 @@ bool paroc_broker::ParocCall(paroc_request &req)
 	  		buf->Pack(&ret,1);
 		  	buf->Pop();
 
-			  buf->Send(req.from, false);
-  	    printf("AddRef %d\n", ret);			  
+			  buf->Send(req.from);
+  	    //printf("AddRef %d\n", ret);			  
   		}
 	  	execCond.broadcast();
   	}
@@ -303,8 +303,8 @@ bool paroc_broker::ParocCall(paroc_request &req)
 		  	buf->Pack(&ret,1);
 			  buf->Pop();
 
-  			buf->Send(req.from, false);
-        printf("DecRef %d\t %s\n", ret, paroc_broker::accesspoint.GetAccessString());		
+  			buf->Send(req.from);
+        //printf("DecRef %d\t %s\n", ret, paroc_broker::accesspoint.GetAccessString());		
 	  	}
 		  execCond.broadcast();
   		break;
@@ -332,7 +332,7 @@ bool paroc_broker::ParocCall(paroc_request &req)
 			  buf->Push("result", "bool", 1);
   			buf->Pack(&ret, 1);
 	  		buf->Pop();
-	  		buf->Send(req.from, false);
+	  		buf->Send(req.from);
 		  }
   		break;
 	  }
@@ -358,7 +358,7 @@ bool paroc_broker::ParocCall(paroc_request &req)
 			  buf->Push("result","bool",1);
 			  buf->Pack(&ret,1);
 		  	buf->Pop();
-	  		buf->Send(req.from, false);
+	  		buf->Send(req.from);
   		}
 
   		break;

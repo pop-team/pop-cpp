@@ -556,7 +556,7 @@ void paroc_buffer_xdr::CheckUnPack(int sz)
  * @param conn
  * @return
  */
-bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn, bool unlock)
+bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
 { 
   if(conn == NULL)
     printf("XDR: Connection is null !!! \n");
@@ -632,7 +632,7 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn, bool unlock
 
 //Propagation of exceptions back to caller...
 
-bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn, bool unlock)
+bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 {
   //printf("XDR: Wait to recv the request header\n");
 	//int size = s.receive_data_length(conn);
@@ -682,7 +682,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn, bool unlock
 		  header.SetMethodID(ntohl(h[3]));
   		break;
 	  default:
-      printf("XDR: header type no-type\n"); 
+      printf("XDR: header type no-type %d\n", MPI::COMM_WORLD.Get_rank()); 
 		  return false;
 	}
 

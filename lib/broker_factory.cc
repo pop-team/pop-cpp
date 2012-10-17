@@ -80,7 +80,16 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 	/**
 	 * Display the information about the parallel object executable
 	 */
-	char *tmp=paroc_utils::checkremove(argc,argv,"-list");
+	char *tmp = paroc_utils::checkremove(argc,argv,"-printmpi");
+	if (tmp != NULL){
+		char abspath[1024];
+		char *thisfile = getenv("POPC_EXE");
+		if (thisfile == NULL) thisfile = (*argv)[0];
+		paroc_utils::FindAbsolutePath(thisfile,abspath);
+		PrintBrokersMPI(abspath);
+		exit(0);
+	}
+	tmp = paroc_utils::checkremove(argc,argv,"-list");
 	if (tmp!=NULL)
 	{
 		char abspath[1024];
@@ -104,8 +113,8 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 		paroc_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
 
-
-	if ((tmp = getenv("POPC_JOBSERVICE")) != NULL) {
+  // Not used in HPC environment
+	/*if ((tmp = getenv("POPC_JOBSERVICE")) != NULL) {
 		paroc_system::jobservice.SetAccessString(tmp);
     paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	} else if ((tmp = paroc_utils::checkremove(argc, argv, "-jobservice=")) != NULL) {
@@ -117,7 +126,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 		sprintf(tmpstr, "%s:%d", (const char *)paroc_system::GetHost(), DEFAULTPORT);
 		paroc_system::jobservice.SetAccessString(tmpstr);
     paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
-	}
+	}*/
 
 	bool nostdio = (paroc_utils::checkremove(argc, argv, "-nostdio") != NULL);
 
@@ -181,4 +190,20 @@ void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat)
 		}
 	}
 	if (!longformat) printf("====\nArchitecture=%s\n",(const char *)paroc_system::platform);
+}
+
+void paroc_broker_factory::PrintBrokersMPI(const char *abspath)
+{
+	if (brokerlist!=NULL)
+	{
+		POSITION pos=brokerlist->GetHeadPosition();
+		while (pos!=NULL)
+		{
+			paroc_broker_init &t=brokerlist->GetNext(pos);
+			if (!(paroc_broker_factory::CheckIfPacked!=NULL && !paroc_broker_factory::CheckIfPacked(t.objname)))
+			{
+        printf("-host localhost -np 1 %s -mpi -object=%s\n", abspath, (const char *)t.objname);
+			}
+		}
+	}
 }

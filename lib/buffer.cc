@@ -194,20 +194,20 @@ METH_VECT_UNPACK(long)
 METH_VECT_PACK(std::string)
 METH_VECT_UNPACK(std::string)
 
-bool paroc_buffer::Send(paroc_connection *conn, bool unlock)
+bool paroc_buffer::Send(paroc_connection *conn)
 {
 	if (conn==NULL) 
 	  return false;
 	paroc_combox *combox = conn->GetCombox();
-	return Send(*combox, conn, unlock);
+	return Send(*combox, conn);
 }
 
-bool paroc_buffer::Recv(paroc_connection *conn, bool unlock)
+bool paroc_buffer::Recv(paroc_connection *conn)
 {
 	if (conn == NULL) 
 	  return false;
 	paroc_combox *combox = conn->GetCombox();
-	return Recv(*combox, conn, unlock);
+	return Recv(*combox, conn);
 }
 
 
@@ -215,7 +215,7 @@ bool paroc_buffer::Recv(paroc_connection *conn, bool unlock)
   except.Reset();\
   except.SetHeader(tmp);\
   except.Pack(&code,1);\
-  return except.Send(s, false);
+  return except.Send(s);
 
 
 
@@ -279,7 +279,7 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,char 
 	except.Pack(&len,1);
 	except.Pack(code,len);
 
-	return except.Send(s, false);
+	return except.Send(s);
 }
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,float code)
 {
@@ -299,7 +299,7 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paro
 	except.Reset();
 	except.SetHeader(tmp);
 	code.Serialize(except,true);
-	return except.Send(s, false);
+	return except.Send(s);
 }
 
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paroc_interface &code)
@@ -308,7 +308,7 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paro
 	except.Reset();
 	except.SetHeader(tmp);
 	code.Serialize(except,true);
-	return except.Send(s, false);
+	return except.Send(s);
 }
 
 void  paroc_buffer::CheckAndThrow(paroc_buffer &except)

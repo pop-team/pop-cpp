@@ -230,7 +230,7 @@ int paroc_broker::Run()
 	}
 	
   if(!MPI::Is_finalized()){
-    printf("BROKER: Exit broker\n"); 
+    //printf("BROKER: Exit broker\n"); 
     MPI::Finalize();
   }
 	return 0;
@@ -348,7 +348,7 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *server)
 	POPString url, protocol;
 	server->GetProtocol(protocol);
 	server->GetUrl(url);
-  printf("BROKER: Wake up receive thread %s\n", url.GetString());	
+  //printf("BROKER: Wake up receive thread %s\n", url.GetString());	
   std::string accesspoint(url.GetString());
 	
 	

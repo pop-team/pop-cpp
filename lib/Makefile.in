@@ -102,6 +102,7 @@ am_libparoc_common_la_OBJECTS = libparoc_common_la-system.lo \
 	libparoc_common_la-combox.lo \
 	libparoc_common_la-combox_socket.lo \
 	libparoc_common_la-popc_combox_mpi.lo \
+	libparoc_common_la-popc_connection_mpi.lo \
 	libparoc_common_la-buffer_xdr.lo \
 	libparoc_common_la-buffer_factory.lo \
 	libparoc_common_la-buffer_factory_finder.lo \
@@ -320,7 +321,7 @@ lib_LTLIBRARIES = libparoc_common.la  libparoc_service_common.la
 libparoc_common_la_SOURCES = system.cc mutex.cc thread.cc string.cc od.cc event.cc buffer.cc buffer_utils.cc combox.cc  \
 	broker.cc broker_receive.cc broker_serve.cc object.cc interface.cc allocobj.cc timer.cc accesspoint.cc memspool.cc \
 	utils.cc debug.cc exception.cc benchmark.cc combox_factory.cc \
-	combox.cc combox_socket.cc popc_combox_mpi.cc buffer_xdr.cc \
+	combox.cc combox_socket.cc popc_combox_mpi.cc popc_connection_mpi.cpp buffer_xdr.cc \
 	buffer_factory.cc buffer_factory_finder.cc buffer_xdr_factory.cc \
 	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc \
 	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc popc_logger.cpp
@@ -590,6 +591,9 @@ libparoc_common_la-combox_socket.lo: combox_socket.cc
 
 libparoc_common_la-popc_combox_mpi.lo: popc_combox_mpi.cc
 	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-popc_combox_mpi.lo `test -f 'popc_combox_mpi.cc' || echo '$(srcdir)/'`popc_combox_mpi.cc
+
+libparoc_common_la-popc_connection_mpi.lo: popc_connection_mpi.cpp
+	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-popc_connection_mpi.lo `test -f 'popc_connection_mpi.cpp' || echo '$(srcdir)/'`popc_connection_mpi.cpp
 
 libparoc_common_la-buffer_xdr.lo: buffer_xdr.cc
 	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-buffer_xdr.lo `test -f 'buffer_xdr.cc' || echo '$(srcdir)/'`buffer_xdr.cc

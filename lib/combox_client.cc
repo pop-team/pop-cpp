@@ -122,14 +122,14 @@ int main(int argc, char **argv)
 		buffer->Reset();
 		buffer->Pack(&status,1);
 		buffer->Pack(buf, MSGSIZE);
-		if (!buffer->Send(*client, false))
+		if (!buffer->Send(*client))
 		{
 			printf("POP-C++ Error: can not send the message\n");
 			client->Destroy();
 			return 1;
 		}
 		buffer->Reset();
-		if (!buffer->Recv(*client, false))
+		if (!buffer->Recv(*client))
 		{
 			printf("POP-C++  Error: can not send the message\n");
 			client->Destroy();

@@ -36,7 +36,7 @@ bin_PROGRAMS= testplugin alloctest combox_client combox_server combox_test
 libparoc_common_la_SOURCES=system.cc mutex.cc thread.cc string.cc od.cc event.cc buffer.cc buffer_utils.cc combox.cc  \
 	broker.cc broker_receive.cc broker_serve.cc object.cc interface.cc allocobj.cc timer.cc accesspoint.cc memspool.cc \
 	utils.cc debug.cc exception.cc benchmark.cc combox_factory.cc \
-	combox.cc combox_socket.cc popc_combox_mpi.cc buffer_xdr.cc \
+	combox.cc combox_socket.cc popc_combox_mpi.cc popc_connection_mpi.cpp buffer_xdr.cc \
 	buffer_factory.cc buffer_factory_finder.cc buffer_xdr_factory.cc \
 	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc \
 	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc nodethread.cc popc_logger.cpp

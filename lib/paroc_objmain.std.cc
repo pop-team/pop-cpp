@@ -44,31 +44,29 @@ int main(int argc, char **argv)
 
   // If the application is using MPI Communication support
   if(paroc_utils::checkremove(&argc, &argv, "-mpi") != NULL){
-    printf("-mpi found\n");
+   // printf("-mpi found\n");
  	  // Init MPI for multithread support
     if(!MPI::Is_initialized()){
-      printf("init\n");
+     // printf("init\n");
    	  // Init MPI for multithread support
   	  int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
 	    int provided_support = MPI::Init_thread(required_support); 
-      printf("init end\n");	    
+//      printf("init end\n");	    
     }
   	paroc_system::is_remote_object_process = true;	  
     int node_id = MPI::COMM_WORLD.Get_rank();
   	
-    printf("Broker main %d\n", node_id);
+//    printf("Broker main %d\n", node_id);
   	MPI::Status status;
   	int dummy;
-  	MPI::COMM_WORLD.Recv(&dummy, 1, MPI_INT, MPI_ANY_SOURCE, 0, status); 
+  	MPI::COMM_WORLD.Recv(&dummy, 1, MPI_INT, MPI_ANY_SOURCE, 15, status); 
   	int source = status.Get_source();
-  	printf("recv %d\n", dummy);    
+  //	printf("recv %d\n", dummy);    
     // Send my rank for confirmation
 
-    MPI::COMM_WORLD.Send(&node_id, 1, MPI_INT, source, 0); 
-  	printf("send %d rank\n", node_id);
+    MPI::COMM_WORLD.Send(&node_id, 1, MPI_INT, source, 16); 
+//  	printf("send %d rank\n", node_id);
   	
-  } else {
-    printf("no -mpi\n");
   }
   
   
@@ -118,7 +116,7 @@ int main(int argc, char **argv)
 		printf("Fail to initialize the broker for class %s\n", (const char *)paroc_broker::classname);
 		status = 1;
 	}
-	printf("broker: init\n");
+	//printf("broker: init\n");
 
 
 	// Send accesspoint via callback
