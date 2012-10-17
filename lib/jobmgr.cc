@@ -907,7 +907,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 			popc_logger(DEBUG, "[JM] Stop forwarding due to trace size (value=%d)", tracesize);
 			return ret;
 		}
-		AddTrace(iptrace, tracesize);
+		//AddTrace(iptrace, tracesize);
 	}
 
 
@@ -1446,7 +1446,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
 			paroc_accesspoint childaddr;
 			childaddr.SetAccessString(contact);
 
-			if (NodeInTrace(iptrace,tracesize,childaddr)) continue;
+//			if (NodeInTrace(iptrace,tracesize,childaddr)) continue;
 
 			//Separate the Fitness into 2 parts. Only forward the parts whose fitness<1...
 			int good=0;
@@ -2012,7 +2012,7 @@ bool JobMgr::AddRequest(int reqId[3])
 	}
 }
 
-bool JobMgr::AddTrace(int trace[MAX_HOPS], int &tracesize)
+/*bool JobMgr::AddTrace(int trace[MAX_HOPS], int &tracesize)
 {
 	if (tracesize<0 || tracesize>=MAX_HOPS) return false;
 	if (paroc_system::GetIP(trace+tracesize,1)==1)
@@ -2048,7 +2048,7 @@ bool JobMgr::NodeInTrace(int trace[MAX_HOPS], int tracesize, paroc_accesspoint &
 
 	for (int i=0;i<tracesize;i++, trace++) if (*trace==ip) return true;
 	return false;
-}
+}*/
 
 
 bool JobMgr::ObjectAlive(paroc_accesspoint &t)

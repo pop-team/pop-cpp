@@ -75,7 +75,7 @@ bool paroc_broker::GetRequest(paroc_request &req)
 	//If the queue is empty then wait for the request....
 	while (request_fifo.IsEmpty())
 	{
-		if ((obj!=NULL && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING)
+		if ((obj!=NULL && obj->GetRefCount()<=0) || state != POPC_STATE_RUNNING)
 		{
 			return false;
 		}
@@ -120,13 +120,13 @@ void paroc_broker::ServeRequest(paroc_request &req)
 	int type=req.methodId[2];
 	if (type & INVOKE_CONC)
 	{
-		paroc_invokethread *thr= new paroc_invokethread(this,req, &instanceCount,&execCond);
+		paroc_invokethread *thr= new paroc_invokethread(this, req, &instanceCount, &execCond);
 
 		int ret;
 		int t=1;
 		while ((ret=thr->create())!=0 && t<3600)
 		{
-			rprintf("WARNING: can not create a new thread. Sleep for %d seconds\n",t);
+			printf("WARNING: can not create a new thread. Sleep for %d seconds\n",t);
 			sleep(t);
 			t=t*2;
 		}
@@ -146,7 +146,7 @@ void paroc_broker::ServeRequest(paroc_request &req)
 				delete e;
 			}
 			else
-				rprintf("ERROR: fail to create a new thread for %s@%s (method:%d:%d)\n",(const char *)classname,accesspoint.GetAccessString(), req.methodId[0], req.methodId[1]);
+				printf("ERROR: fail to create a new thread for %s@%s (method:%d:%d)\n",(const char *)classname,accesspoint.GetAccessString(), req.methodId[0], req.methodId[1]);
 			delete thr;
 
 		}

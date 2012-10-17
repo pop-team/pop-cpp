@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 
 	fprintf(stdout,"NOW WAITING FOR REPLY\n");
 	while (1) {
-		int n=client->Recv(str, MSGSIZE-1);
+		int n=client->Recv(str, MSGSIZE-1, false);
 		if (n<=0) {
 			break;
 		}

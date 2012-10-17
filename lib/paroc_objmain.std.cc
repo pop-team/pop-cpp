@@ -39,11 +39,39 @@ bool CheckIfPacked(const char *objname);
 
 int main(int argc, char **argv)
 {
-  if(paroc_utils::checkremove(&argc, &argv, "-mpi") != NULL && !MPI::Is_initialized()){
+
+  
+
+  // If the application is using MPI Communication support
+  if(paroc_utils::checkremove(&argc, &argv, "-mpi") != NULL){
+    printf("-mpi found\n");
  	  // Init MPI for multithread support
-  	int required_support = MPI_THREAD_MULTIPLE; // Required multiple thread support to allow multiple connection to an object
-	  int provided_support = MPI::Init_thread(required_support);
+    if(!MPI::Is_initialized()){
+      printf("init\n");
+   	  // Init MPI for multithread support
+  	  int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
+	    int provided_support = MPI::Init_thread(required_support); 
+      printf("init end\n");	    
+    }
+  	paroc_system::is_remote_object_process = true;	  
+    int node_id = MPI::COMM_WORLD.Get_rank();
+  	
+    printf("Broker main %d\n", node_id);
+  	MPI::Status status;
+  	int dummy;
+  	MPI::COMM_WORLD.Recv(&dummy, 1, MPI_INT, MPI_ANY_SOURCE, 0, status); 
+  	int source = status.Get_source();
+  	printf("recv %d\n", dummy);    
+    // Send my rank for confirmation
+
+    MPI::COMM_WORLD.Send(&node_id, 1, MPI_INT, source, 0); 
+  	printf("send %d rank\n", node_id);
+  	
+  } else {
+    printf("no -mpi\n");
   }
+  
+  
 
 
 	char *rcore = paroc_utils::checkremove(&argc,&argv,"-core=");
@@ -57,11 +85,11 @@ int main(int argc, char **argv)
 #endif
 
 	paroc_system sys;
-
-	//Connect to callback ....
-	char *addr = paroc_utils::checkremove(&argc, &argv, "-callback=");
-	paroc_combox *callback = NULL;
 	int status = 0;
+	paroc_combox *callback = NULL;	
+	// Connect to callback
+	// No need in MPI version, connection is already active and can exchange data
+	/*char *addr = paroc_utils::checkremove(&argc, &argv, "-callback=");
 	if (addr != NULL) {
 		paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
 
@@ -78,23 +106,24 @@ int main(int argc, char **argv)
 			callback->Destroy();
 			return 1;
 		}
-	}
+	}*/
 	
 	paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
-	paroc_broker *br = paroc_broker_factory::Create(&argc,&argv);
+	paroc_broker *broker_factory = paroc_broker_factory::Create(&argc, &argv);
 
-	if (br == NULL) { 
+	if (broker_factory == NULL) { 
 	  status = 1;
-	} else if (!br->Initialize(&argc, &argv)) {
-		//Initialize broker...
+	} else if (!broker_factory->Initialize(&argc, &argv)) {
+		// Initialize broker 
 		printf("Fail to initialize the broker for class %s\n", (const char *)paroc_broker::classname);
 		status = 1;
 	}
+	printf("broker: init\n");
 
 
 	// Send accesspoint via callback
 	if (callback != NULL) {
-	  printf("BROKER: Sending status and accesspoint\n");
+	  //printf("BROKER: Sending status and accesspoint\n");
 		char url[1024];
 		int len;
 
@@ -110,7 +139,7 @@ int main(int argc, char **argv)
 		buf->Pack(&status, 1);
 		buf->Pop();
 		
-		printf("BROKER: status sent %d\n", status);
+		//printf("BROKER: status sent %d\n", status);
 
 		buf->Push("address", "paroc_accesspoint", 1);
 		paroc_broker::accesspoint.Serialize(*buf,true);
@@ -125,35 +154,33 @@ int main(int argc, char **argv)
 		callback->Destroy();
 		
 		if (!ret) {
-			rprintf("POP-C++ Error: fail to send accesspoint via callback\n");
-			delete br;
+			printf("POP-C++ Error: fail to send accesspoint via callback\n");
+			delete broker_factory;
+  	  MPI::Finalize();
 			return 1;
 		}
-	} else if (status == 0) {
-		fprintf(stdout, "%s\n", (const char *)paroc_broker::accesspoint.GetAccessString());
-	}
+	} /* else if (status == 0) {
+		//fprintf(stdout, "%s\n", (const char *)paroc_broker::accesspoint.GetAccessString());
+	}*/
 	
 	// Set the current working directory
-	char *cwd=paroc_utils::checkremove(&argc,&argv,"-cwd=");
+	char *cwd = paroc_utils::checkremove(&argc,&argv,"-cwd=");
 	if (cwd != NULL) {
 		if (chdir(cwd) != 0)
 			DEBUG("current working dir cannot be set set to %s",cwd);
 	}
 
-#ifdef OD_DISCONNECT
-	bool checkConnect = (paroc_utils::checkremove(&argc, &argv, "-checkConnection")) != NULL;
-	if (br != NULL)
-	  br->checkConnection = checkConnect;
-#endif
-
   // Start the broker
 	if (status == 0) {
-		br->Run();
-		printf("Broker started\n");
-		delete br;
-	} else if (br != NULL) {
-	  delete br;
+		broker_factory->Run();
+		//printf("Broker started\n");
+		delete broker_factory;
+	} else if (broker_factory != NULL) {
+	  delete broker_factory;
+	  MPI::Finalize();
 	}
+
+  
 
 	return status;
 }

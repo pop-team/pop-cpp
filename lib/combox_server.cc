@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 	while ((peer=server->Wait()) != NULL) {
 		paroc_buffer_factory *bf = peer->GetBufferFactory();
 		buffer = bf->CreateBuffer();
-		if (buffer->Recv(peer)) {
+		if (buffer->Recv(peer, false)) {
 			int status;
 			buffer->UnPack(&status, 1);
 			if (status <= -1) {
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 				}
 				buffer->Reset();
 				buffer->Pack(&status, 1);
-				if (!buffer->Send(peer)) {
+				if (!buffer->Send(peer, false)) {
 					printf("Can not send back encoding status (%d)\n", status);
 				}
 			} else {
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 				buffer->Pack(&status, 1);
 				buffer->Pack(&count, 1);
 				buffer->Pack(buf, status);
-				if (!buffer->Send(peer)) {
+				if (!buffer->Send(peer, false)) {
 					printf("Can not send back message\n");
 				}
 			}

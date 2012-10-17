@@ -149,6 +149,8 @@ bool paroc_combox_socket::Connect(const char *url)
 	return ret;
 }
 
+
+
 int paroc_combox_socket::Send(const char *s,int len)
 {
 	int n=0;
@@ -167,7 +169,7 @@ int paroc_combox_socket::Send(const char *s,int len)
 	return count;
 }
 
-int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn)
+int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn, bool unlock)
 {
 	if (conn==NULL) return Send(s,len);
 
@@ -189,7 +191,7 @@ int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn)
 	return count;
 }
 
-int paroc_combox_socket::Recv(char *s,int len)
+int paroc_combox_socket::Recv(char *s,int len, bool unlock)
 {
 	int fd, n;
 	isCanceled=false;
@@ -210,7 +212,7 @@ int paroc_combox_socket::Recv(char *s,int len)
 	return n;
 }
 
-int paroc_combox_socket::Recv(char *s,int len, paroc_connection *&iopeer)
+int paroc_combox_socket::Recv(char *s,int len, paroc_connection *&iopeer, bool unlock)
 {
 	int fd, n;
 	paroc_connection_sock *t;

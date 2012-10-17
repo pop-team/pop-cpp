@@ -265,8 +265,8 @@ protected:
 
 	bool AddRequest(int reqId[3]);
 
-	bool AddTrace(int trace[MAX_HOPS], int &tracesize);
-	bool NodeInTrace(int trace[MAX_HOPS], int tracesize, paroc_accesspoint &contact);
+//	bool AddTrace(int trace[MAX_HOPS], int &tracesize);
+//	bool NodeInTrace(int trace[MAX_HOPS], int tracesize, paroc_accesspoint &contact);
 
 
 	bool ObjectAlive(paroc_accesspoint &t);

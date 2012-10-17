@@ -45,20 +45,37 @@ void paroc_broker::ReceiveThread(paroc_combox *server)
 	server->SetCallback(COMBOX_NEW, NewConnection, this);
 	server->SetCallback(COMBOX_CLOSE, CloseConnection, this);
 
-	while (state==POPC_STATE_RUNNING) {
-	  printf("BROKER: %s waiting for request\n", classname.GetString());
+	while (state == POPC_STATE_RUNNING) {
     paroc_request request;
 		request.data = NULL;
 		try {
-			if (!ReceiveRequest(server, request)) 
+			if (!ReceiveRequest(server, request)) {
 			  break;
-    
+			}
+			
+			// Is it a connection initialization, then just serve a new request
+			if(request.from->is_connection_init()){
+			  if(!request.from->is_wait_unlock()){
+          if(obj != NULL)
+  			    obj->AddRef();
+			  }
+			  continue;
+			}
+			  
+/*			if(request.from->is_connection_init() || request.from->is_wait_unlock()) {
+			  if(request.from->is_connection_init())
+      	  obj->AddRef();
+			  continue;
+      }*/			
+			
+      // Is it a POP-C++ core call ? If so serve it right away
 			if (ParocCall(request)) {
-				if (request.data != NULL) 
+				if (request.data != NULL)
 				  request.data->Destroy();
 				execCond.broadcast();
 				continue;
 			}
+	    // Register the request to be served by the broker serving thread
 			RegisterRequest(request);
 		} catch (...) {
 			if (request.data != NULL) 
@@ -67,6 +84,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server)
 			break;
 		}
 	}
+	printf("Exit receive thread\n");
 	server->Close();
 }
 
@@ -75,17 +93,28 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &request)
 {
 	server->SetTimeout(-1);
 	while (1) {
+	  // Waiting for a new connection or a new request
     paroc_connection* connection = server->Wait();
-		
+
+    
+    // Message was a new connection just wait for a new one or request
+    /*if(connection->is_connection_init()) {
+      request.from = connection;
+      return true;
+    }*/
+    
+    // Trouble with the connection
 		if (connection == NULL) {
 			execCond.broadcast();
 			return false;
 		}
+		
+		// Receiving the real data
 		paroc_buffer_factory* bufferFactory = connection->GetBufferFactory();
 		request.data = bufferFactory->CreateBuffer();
 		
-		
-		if (request.data->Recv(connection)) {
+		printf("Wait to receive request %s\n", paroc_broker::accesspoint.GetAccessString());
+		if (request.data->Recv(connection, false)) {
 			request.from = connection;
 			const paroc_message_header &h = request.data->GetHeader();
 			request.methodId[0] = h.GetClassID();
@@ -109,31 +138,33 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &request)
 
 void paroc_broker::RegisterRequest(paroc_request &req)
 {
-  printf("BROKER: register request\n");
 	//　Check if mutex is waiting/executing　
 	int type = req.methodId[2];
 	
 	if(type & INVOKE_SYNC){
+	  // Method call is synchronous, a response will be send back so the connection is saved
   	req.from  = req.from->Clone();
 	} else {
+	  // Method call is asynchronous so the connection is not needed anymore
 	  req.from->reset();
 	  req.from = NULL;
 	}
-//	req.from = (type & INVOKE_SYNC) ? req.from->Clone() : NULL;
+  
 
-	if (type & INVOKE_CONC) {
+	if (type & INVOKE_CONC) {   // Method semantic is concurrent so trying to execute if there is no mutex pending
 		mutexCond.lock();
 		if (mutexCount <= 0) {
 			ServeRequest(req);
 			mutexCond.unlock();
 			return;
 		}
-	} else if (type & INVOKE_MUTEX) {
+	} else if (type & INVOKE_MUTEX) { // Method semantic is mutex, adding one to the number of mutex pending
 		mutexCond.lock();
 		mutexCount++;
 		mutexCond.unlock();
 	}
 
+  // Adding the request to the request queue
 	execCond.lock();
 	request_fifo.AddTail(req);
 	int count = request_fifo.GetCount();
@@ -141,6 +172,7 @@ void paroc_broker::RegisterRequest(paroc_request &req)
 	execCond.broadcast();
 	execCond.unlock();
 
+  
 	if (type & INVOKE_CONC) {
 		concPendings++;
 		mutexCond.unlock();
@@ -184,21 +216,21 @@ bool paroc_broker::OnCloseConnection(paroc_connection *conn)
 
 paroc_object * paroc_broker::GetObject()
 {
-	return obj;
+  return obj;
 }
 
 bool paroc_broker::ParocCall(paroc_request &req)
 {
-  printf("BROKER: Is ParocCall ? %d\n", req.methodId[1]);
+//  printf("BROKER: Is ParocCall ? %d\n", req.methodId[1]);
 	if (req.methodId[1] >= 10) 
 	  return false;
 
 	unsigned* methodid = req.methodId;
 	paroc_buffer *buf = req.data;
-  printf("BROKER: %s, PopCall %d // %d\n", classname.GetString(), methodid[1], methodid[2]);
 	switch (methodid[1]) {
   	case 0: // BindStatus call
 	  	if (methodid[2] & INVOKE_SYNC) {
+	  	  printf("BindStatus\n");
   			paroc_buffer_factory *bufferFactory;
         bufferFactory = req.from->GetBufferFactory();
 	  		paroc_message_header h("BindStatus");
@@ -230,13 +262,13 @@ bool paroc_broker::ParocCall(paroc_request &req)
 		  	buf->Pack(&enclist, 1);
 			  buf->Pop();
 			  
-			  printf("BROKER: %s - ready to send paroc_call answer %s, %s\n", classname.GetString(), paroc_system::platform.GetString(), enclist.GetString());
-  			buf->Send(req.from);
-  			req.from->reset();
+  			buf->Send(req.from, false);
+	  	  printf("BindStatus end\n");  			
 	  	}
 		  break;
   	case 1:
 	  {
+
 		  //AddRef call...
   		if (obj == NULL) 
   		  return false;
@@ -250,7 +282,8 @@ bool paroc_broker::ParocCall(paroc_request &req)
 	  		buf->Pack(&ret,1);
 		  	buf->Pop();
 
-			  buf->Send(req.from);
+			  buf->Send(req.from, false);
+  	    printf("AddRef %d\n", ret);			  
   		}
 	  	execCond.broadcast();
   	}
@@ -270,7 +303,8 @@ bool paroc_broker::ParocCall(paroc_request &req)
 		  	buf->Pack(&ret,1);
 			  buf->Pop();
 
-  			buf->Send(req.from);
+  			buf->Send(req.from, false);
+        printf("DecRef %d\t %s\n", ret, paroc_broker::accesspoint.GetAccessString());		
 	  	}
 		  execCond.broadcast();
   		break;
@@ -283,7 +317,7 @@ bool paroc_broker::ParocCall(paroc_request &req)
 		  buf->UnPack(&enc,1);
   		buf->Pop();
 	  	paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(enc);
-	  	printf("negotiate encoding ... %s\n", enc.GetString()); 
+//	  	printf("negotiate encoding ... %s\n", enc.GetString()); 
 		  bool ret;
   		if (fact != NULL) {
   			req.from->SetBufferFactory(fact);
@@ -298,7 +332,7 @@ bool paroc_broker::ParocCall(paroc_request &req)
 			  buf->Push("result", "bool", 1);
   			buf->Pack(&ret, 1);
 	  		buf->Pop();
-	  		buf->Send(req.from);
+	  		buf->Send(req.from, false);
 		  }
   		break;
 	  }
@@ -324,7 +358,7 @@ bool paroc_broker::ParocCall(paroc_request &req)
 			  buf->Push("result","bool",1);
 			  buf->Pack(&ret,1);
 		  	buf->Pop();
-	  		buf->Send(req.from);
+	  		buf->Send(req.from, false);
   		}
 
   		break;
@@ -346,6 +380,11 @@ bool paroc_broker::ParocCall(paroc_request &req)
   		break;
   	}
 #endif
+    case 7:
+    {
+      // Dummy message
+      break;
+    }
   	default:
 	  	return false;
 	}

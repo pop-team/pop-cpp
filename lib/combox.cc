@@ -15,13 +15,13 @@
 
 const int paroc_connection::POPC_CONNECTION_NULL_FD = 0;
 
-paroc_connection::paroc_connection(paroc_combox *com)
+paroc_connection::paroc_connection(paroc_combox *com) : _is_connection_init(false), _is_wait_unlock(false)
 {
 	fact = com->GetBufferFactory();
 	combox = com;
 }
 
-paroc_connection::paroc_connection(paroc_combox *com, paroc_buffer_factory *f)
+paroc_connection::paroc_connection(paroc_combox *com, paroc_buffer_factory *f) : _is_connection_init(false), _is_wait_unlock(false)
 {
 	fact = f;
 	combox = com;
@@ -30,6 +30,26 @@ paroc_connection::paroc_connection(paroc_combox *com, paroc_buffer_factory *f)
 paroc_connection::~paroc_connection()
 {
 
+}
+
+bool paroc_connection::is_connection_init()
+{
+  return _is_connection_init;
+}
+
+void paroc_connection::set_as_connection_init()
+{
+  _is_connection_init = true;
+}
+
+bool paroc_connection::is_wait_unlock()
+{
+  return _is_wait_unlock;
+}
+
+void paroc_connection::set_as_wait_unlock()
+{
+  _is_wait_unlock = true;
 }
 
 void paroc_connection::SetBufferFactory(paroc_buffer_factory *f)
@@ -71,7 +91,7 @@ paroc_combox::~paroc_combox()
 bool paroc_combox::SendAck(paroc_connection *conn)
 {
 	char buf[4] = "ACK";
-	Send(buf, 3, conn);
+	Send(buf, 3, conn, false);
 	return true;
 }
 
@@ -82,7 +102,7 @@ bool paroc_combox::RecvAck(paroc_connection *conn)
 		paroc_exception::paroc_throw(ACK_NOT_RECEIVED, "[paroc_combox_socket.cc]");
 	}
 	char buf[4];
-	int n = Recv(buf,3, connex);
+	int n = Recv(buf,3, connex, false);
 	if (n != 3 || strcmp(buf, "ACK"))
 		paroc_exception::paroc_throw(ACK_NOT_RECEIVED, "[paroc_combox_socket.cc]");
 

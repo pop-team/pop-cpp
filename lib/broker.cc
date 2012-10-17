@@ -95,7 +95,7 @@ POPString paroc_broker::classname;
 
 void broker_killed(int sig)
 {
-	rprintf("FATAL: SIGNAL %d on %s@%s\n",sig, (const char *)paroc_broker::classname,paroc_broker::accesspoint.GetAccessString());
+	printf("FATAL: SIGNAL %d on %s@%s\n",sig, (const char *)paroc_broker::classname,paroc_broker::accesspoint.GetAccessString());
 	exit(1);
 }
 
@@ -197,36 +197,42 @@ int paroc_broker::Run()
 			paroc_request req;
 			if (!GetRequest(req)) 
 			  break;
-			printf("BROKER: recieved request\n");
-			ServeRequest(req);
+			ServeRequest(req);			
 			if (req.methodId[2] & INVOKE_CONSTRUCTOR) {
 				alarm(0);
-				if (obj == NULL) 
+				if (obj == NULL) {
 				  break;
+				}
 			}
 		} catch (...) {
 			UnhandledException();
 		}
 	}
+  //printf("BROKER: Will exit broker\n");	
 
 	if (obj != NULL && state == POPC_STATE_RUNNING) {
 		paroc_mutex_locker test(execCond);
-
-		//Wait for all invocations terminated....
+    //printf("BROKER: Will exit broker2\n");	
+		// Wait for all invocations to terminiate normally
 		while (instanceCount > 0 || !request_fifo.IsEmpty()) {
+      //printf("BROKER: Will exit broker3\n");			
 			execCond.wait();
 		}
 	}
 
-	state=POPC_STATE_EXIT;
+	state = POPC_STATE_EXIT;
 	for (i=0; i < comboxCount; i++) {
-		if (WakeupReceiveThread(comboxArray[i])) { 
+		if (WakeupReceiveThread(comboxArray[i])) { 	
 		  delete ptArray[i];
-		}	else {
+		}	else {		
 			ptArray[i]->cancel();
 		}
 	}
-
+	
+  if(!MPI::Is_finalized()){
+    printf("BROKER: Exit broker\n"); 
+    MPI::Finalize();
+  }
 	return 0;
 }
 
@@ -302,7 +308,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 
 	accesspoint.SetAccessString(url.GetString());
 
-  printf("Broker accessstring:%s\n", accesspoint.GetAccessString());
+ // printf("Broker accessstring:%s\n", accesspoint.GetAccessString());
 
 
 	char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
@@ -335,22 +341,36 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 
 
 
-bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
+bool paroc_broker::WakeupReceiveThread(paroc_combox  *server)
 {
-	paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
-	POPString url, prot;
 
-	bool ok = false;
-	mycombox->GetProtocol(prot);
-	mycombox->GetUrl(url);
-
-	char *str=url.GetString();
-	if (str == NULL) 
-	  return false;
-
-	char *ptr;
-	char *tok = strtok_r(str, " \t\n\r", &ptr);
-	while (tok != NULL && !ok) {
+	paroc_combox_factory *comboxFactory = paroc_combox_factory::GetInstance();
+	POPString url, protocol;
+	server->GetProtocol(protocol);
+	server->GetUrl(url);
+  printf("BROKER: Wake up receive thread %s\n", url.GetString());	
+  std::string accesspoint(url.GetString());
+	
+	
+	
+	paroc_combox *combox = comboxFactory->Create(protocol); 
+	combox->Create(NULL, 0, false); 
+	combox->connect_and_die(accesspoint);
+	
+	//server->unlock_wait(false);
+	
+  //printf("BROKER: Will contact accept broker for termination %s\n", accesspoint.c_str());
+  //paroc_combox *accept_broker = comboxFactory->Create(protocol); 
+  //printf("BROKER: tmp combox created\n");  
+//  if(accept_broker->Create(NULL, 0, false)) {
+    //printf("BROKER: will try to connect\n");   
+//    return accept_broker->connect_and_die(accesspoint);
+//  } else {
+//    return false;
+//  }
+	
+	
+/*	while (tok != NULL && !ok) {
 		paroc_combox *tmp = fact->Create(prot);
 		tmp->SetTimeout(100000);
 		if (tmp->Create(NULL, 0, false) && tmp->Connect(tok)) {
@@ -365,7 +385,7 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
 		  tmp->Destroy();
 		}
 		tok = strtok_r(NULL, " \t\n\r", &ptr);
-	}
-	return ok;
+	}*/
+
 }
 

@@ -43,18 +43,18 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
    /* ViSaG */
 
 	if (daemon) Start();
-	LoadAddOn();
+//	LoadAddOn();
       
 }
 
 AppCoreService::~AppCoreService()
 {
-   try{   
+ /*  try{   
       JobMgr jm(paroc_system::jobservice);
       jm.ApplicationEnd(_popcAppId, true);
    } catch (...){
       
-   }
+   }*/
 
 	POSITION pos=servicelist.GetHeadPosition();
 	while (pos!=NULL)
@@ -69,18 +69,8 @@ AppCoreService::~AppCoreService()
 		}
 		delete t.service;
 	}
+
 }
-
-// bool AppCoreService::QueryService(const POPString &name)
-// {
-//   if (name==NULL) return false;
-
-//   if (paroc_utils::isEqual(name,"CodeMgr")) return true;
-//   if (paroc_utils::isEqual(name,"RemoteLog")) return true;
-//   if (paroc_utils::isEqual(name,"ObjectMonitor")) return true;
-
-//   return false;
-// }
 
 bool AppCoreService::QueryService(const POPString &name, paroc_service_base &service)
 {

@@ -147,22 +147,6 @@ void paroc_accesspoint::SetNoAddRef() {
    _noaddref = true;
 }
 
-/**
- * TODO comment
- */
-void paroc_accesspoint::SetCommunicator(MPI::Intercomm& comm){
-	_communicator = comm;
-}
-
-/**
- * TODO comment
- */
-MPI::Intercomm paroc_accesspoint::getCommunicator(){
-	return _communicator;
-}
-
-
-
 
 void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack)
 {

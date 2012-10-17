@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 
 	buffer->Pack(&status,1);
 	buffer->Pack(&name,1);
-	if (!buffer->Send(*client))
+	if (!buffer->Send(*client, false))
 	{
 		printf("POP-C++ Error: send buffer\n");
 		client->Destroy();
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 	}
 
 	buffer->Reset();
-	if (!buffer->Recv(*client))
+	if (!buffer->Recv(*client, false))
 	{
 		printf("POP-C++ Error: receive buffer\n");
 		client->Destroy();
@@ -122,14 +122,14 @@ int main(int argc, char **argv)
 		buffer->Reset();
 		buffer->Pack(&status,1);
 		buffer->Pack(buf, MSGSIZE);
-		if (!buffer->Send(*client))
+		if (!buffer->Send(*client, false))
 		{
 			printf("POP-C++ Error: can not send the message\n");
 			client->Destroy();
 			return 1;
 		}
 		buffer->Reset();
-		if (!buffer->Recv(*client))
+		if (!buffer->Recv(*client, false))
 		{
 			printf("POP-C++  Error: can not send the message\n");
 			client->Destroy();

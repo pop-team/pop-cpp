@@ -30,13 +30,25 @@
 paroc_accesspoint paroc_system::appservice;
 paroc_accesspoint paroc_system::jobservice;
 paroc_accesspoint paroc_system::popcloner;
+
+int paroc_system::current_free_process;
+
+
+bool paroc_system::is_remote_object_process;
+bool paroc_system::mpi_has_to_take_lock;
+
+
+paroc_condition paroc_system::mpi_unlock_wait_cond;
+paroc_condition paroc_system::mpi_go_wait_cond;
+
+
 POPString paroc_system::platform;
+MPI::Intracomm paroc_system::popc_self;
 std::ostringstream paroc_system::_popc_cout;
 
-//V1.3m
 POPString paroc_system::POPC_HostName;
 #define LOCALHOST "localhost"
-//End modif
+
 
 const char *paroc_system::paroc_errstr[17]=
 {
@@ -124,7 +136,7 @@ void paroc_system::perror(const paroc_exception *e)
   paroc_system::perror((const char*)e->Extra());
 }
 
-// V1.3m
+
 // Try to determine the Host Name of the machine and put it in POPC_Host_Name
 // IF env. variable POPC_HOST is defined THEN use POPC_HOST
 // ELSE IF try to use gethostname() and possibly env. variable POPC_DOMAIN
@@ -163,7 +175,6 @@ POPString paroc_system::GetHost()
 }
 
 
-// V1.3m
 // Try to determine the IP address of the machine.
 // If fail return the localhost IP = LOCALHOST
 //------------------------------------------------------
@@ -339,7 +350,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip)
  */
 bool paroc_system::Initialize(int *argc,char ***argv)
 {
-	printf("Initiliaze system\n");
+//	printf("Initiliaze system\n");
 	// Get access point address of the Job Manager
 	char *info = paroc_utils::checkremove(argc, argv, "-jobservice=");
 	if (info == NULL) 
@@ -371,7 +382,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
          	  
       // Creating application services 
       mgr = CreateAppCoreService(url);
-      printf("POP-C++ Application Service created %s\n", mgr->GetAccessPoint().GetAccessString());
+      //printf("POP-C++ Application Service created %s\n", mgr->GetAccessPoint().GetAccessString());
       
 		} else {
 			challenge=NULL;
@@ -412,23 +423,23 @@ bool paroc_system::Initialize(int *argc,char ***argv)
     return false;
     else return true; */
 
-  printf("SYSTEM: Init code service\n");
+  //printf("SYSTEM: Init code service\n");
   bool ret = !(codeconf != NULL && !paroc_utils::InitCodeService(codeconf,mgr));
-  printf("SYSTEM: Init code service done\n");
+  //printf("SYSTEM: Init code service done\n");
 	return ret;
 }
 
 void paroc_system::Finalize(bool normal_exit)
 {
-  printf("Finalize the application %s\n", normal_exit ? "true" : "false");
+  //printf("Finalize the application %s\n", normal_exit ? "true" : "false");
   if (mgr != NULL) {
+    //printf("mgr not null\n");
     try {
       if (normal_exit) {
-        //Wait all object to be terminated!
+        // Wait all object to be terminated before exiting
         int timeout = 1;
         int oldcount = 0, count;
         int loop = 0;
-        printf("Finalize 1\n");
         while ((count = mgr->CheckObjects()) > 0){            
           if (timeout < 1800 && oldcount == count){ 
             timeout = timeout * 4/3;
@@ -444,10 +455,10 @@ void paroc_system::Finalize(bool normal_exit)
           oldcount = count;
         }
       } else {
-        printf("Finalize killall\n");      
+        //printf("Finalize killall\n");      
         mgr->KillAll();
       }
-      printf("Finalize stop\n");      
+      //printf("Finalize stop\n");      
       mgr->Stop(challenge);
       delete mgr;         
     } catch (paroc_exception *e) {
@@ -458,7 +469,7 @@ void paroc_system::Finalize(bool normal_exit)
     }
     mgr = NULL;
   }
-  printf("Finalize the application end\n");
+  //printf("Finalize the application end\n");
 }
 
 

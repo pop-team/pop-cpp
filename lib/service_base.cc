@@ -61,7 +61,7 @@ void paroc_service_base::Start(const POPString &challenge)
 bool paroc_service_base::Stop(const POPString &challenge)
 {
 	if (paroc_utils::isEqual(mychallenge,challenge) || mychallenge==NULL) {
-		daemonMode=false;
+		daemonMode = false;
 		return true;
 	}
 	return false;

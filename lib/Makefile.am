@@ -101,4 +101,4 @@ inst_HEADERS=paroc_service_base.ph appservice.ph popc_search_node.ph codemgr.ph 
 
 
 instdir=@includedir@
-CLEANFILES=_paroc_*.cc _paroc_*.ph
+CLEANFILES=_paroc*

@@ -556,27 +556,26 @@ void paroc_buffer_xdr::CheckUnPack(int sz)
  * @param conn
  * @return
  */
-bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
-{
-/*  paroc_connection* out_connection;
-	if(!s.is_server()){
-    printf("XDR(client): Will reconnect!!! \n");
-    delete conn;
-    conn = s.reconnect();
-  }*/
-  
-
+bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn, bool unlock)
+{ 
   if(conn == NULL)
     printf("XDR: Connection is null !!! \n");
-    
-  bool isServer = s.is_server();
-    
+  
+  // Init message  
+  /*if(!s.is_server())  
+    s.init_send(conn, unlock);   */
+  
+  
+  
   // Pack the header (20 bytes)
-	char *data = (char*) packeddata;
+  char *data = (char*) packeddata;
 	if (data == NULL) 
 	  return false;
 	  
 	int n = packeddata.GetSize();
+  //s.send_data_length(n, conn);
+
+  
 	int h[5];
 	memset(h, 0, 5 * sizeof(int));
 
@@ -610,7 +609,7 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
 	char* data_header = new char[20];
 	memcpy(data_header, h, 20);
   //printf("XDR: %s Send header\n", (isServer) ? "server":"client", n);    	
-	if(s.Send(data_header, 20, conn)) {
+	if(s.Send(data_header, 20, conn, true)) {
 	  printf("Error while sending header\n");
 	  return false;
 	}
@@ -620,47 +619,45 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
   n -= 20;
   if(n > 0){
     //printf("XDR: %s Send message size is %d: %s\n", (isServer) ? "server":"client", n, (char*)packeddata);  
-    if (s.Send(data, n, conn) < 0) {
+    if (s.Send(data, n, conn, false) < 0) {
 		  printf("XDR: Fail to send a message!");
   		return false;
 	  }
   }
 
   
+  
 	return true;
 }
 
 //Propagation of exceptions back to caller...
 
-bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
+bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn, bool unlock)
 {
+  //printf("XDR: Wait to recv the request header\n");
+	//int size = s.receive_data_length(conn);
+
+	
 	int h[5];
 	int n, i;
 
-	// Recv the header...
-	//char *dat = (char *)h;
-	//n = 20;
+	// Recv the header
 	char *data_header = (char*)h;
 	
-	bool isServer = s.is_server();
+  
+  // Receiving the real data
 
-  // MPI mod - beg      
-  int ret = s.Recv(data_header, 20, conn);  
- // printf("XDR: %s header received\n", (isServer) ? "server":"client");
+  int ret = s.Recv(data_header, 20, conn, true);  
+  Reset();
+ /* for(int i = 0; i < 5; i++) {
+    memcpy(&h[i], data_header+(i*4), 4);
+  }*/
   
   
-/*	do {
-		if ((i = s.Recv(dat, n, conn)) <= 0) {
-      return false;
-		}
-		n -= i;
-		dat += i;
-	} while (n); */
-
-	Reset();
-
+  
 	n = ntohl(h[0]);
- // printf("XDR: %s header size = %d\n", (isServer) ? "server":"client",  n);
+
+
 	if (n < 20) {
 		printf("Bad message header(size error:%d)\n",n);
 		return false;
@@ -685,7 +682,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 		  header.SetMethodID(ntohl(h[3]));
   		break;
 	  default:
-     // printf("XDR: %s header type no-type\n", (isServer) ? "server":"client"); 
+      printf("XDR: header type no-type\n"); 
 		  return false;
 	}
 
@@ -695,9 +692,10 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 	if(n > 0){
   	data_header = (char *)packeddata+20;	
   	//printf("XDR: %s ready to receive %d\n",(isServer) ? "server":"client",  n);
-		ret = s.Recv(data_header, n, conn);
+		ret = s.Recv(data_header, n, conn, false);
   	//printf("XDR: %s received %d\n",(isServer) ? "server":"client",  n);	
 	}
+  
   
   
 	return true;

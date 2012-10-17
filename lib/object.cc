@@ -24,18 +24,18 @@ paroc_object::paroc_object()
 	refcount = 1;
 	if (!paroc_system::appservice.IsEmpty()) {
 		paroc_accesspoint myself=GetAccessPoint();
-		try {
+		/*try {
 			ObjectMonitor tmp(paroc_system::appservice);
 			tmp.ManageObject(myself);
 		} catch (...) {
-			rprintf("Can not register %s@%s to ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
-		}
+			printf("Can not register %s@%s to ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
+		}*/
 	}
 }
 
 paroc_object::~paroc_object()
 {
-	if (!paroc_system::appservice.IsEmpty())
+	/*if (!paroc_system::appservice.IsEmpty())
 	{
 		paroc_accesspoint myself=GetAccessPoint();
 		try
@@ -46,9 +46,9 @@ paroc_object::~paroc_object()
 		catch (...)
 		{
       // Did not find the object to unregister V1.3.1m: suppress error mess.
-			//rprintf("Can not unregister %s@%s from ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
+			//printf("Can not unregister %s@%s from ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
 		}
-	}
+	}*/
 }
 
 const paroc_accesspoint & paroc_object::GetAccessPoint() const

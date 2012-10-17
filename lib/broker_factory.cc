@@ -130,7 +130,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
   // Create the real Broker object
 	paroc_broker *objbroker = Create(object_classname);
 	if (objbroker == NULL) {
-		rprintf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
+		printf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
 		return NULL;
 	}
 

@@ -44,15 +44,20 @@ int main(int argc, char **argv)
 	paroc_system::processor_set(0);
 #endif
 	paroc_system app;
+	paroc_system::is_remote_object_process = false;
 
 	/**
 	 * 
 	 */
-	int required_support = MPI_THREAD_MULTIPLE; // Required multiple thread support to allow multiple connection to an object
-  int provided_support = MPI::Init_thread(required_support);	 
-	int rank = MPI::COMM_WORLD.Get_rank();
+  if(!MPI::Is_initialized()){
+ 	  // Init MPI for multithread support
+  	int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
+	  int provided_support = MPI::Init_thread(required_support); 
+  }	 
+  paroc_system::current_free_process = 1;
+  printf("Main %d\n", MPI::COMM_WORLD.Get_rank());
 	
-	printf("Start main of POP-C++ application: rank:%d\n", rank);
+	//printf("Start main of POP-C++ application: rank:%d\n", rank);
 	char **argv1 = argv;
 	int i;
 	for (i = argc - 1; i >= 0; i--) {
@@ -71,12 +76,17 @@ int main(int argc, char **argv)
 	}
 		
 
-  printf("MAIN: Ready to call real application main\n");
+  //printf("MAIN: Ready to call real application main\n");
 	 
 	/* END OF ADD */
 
-	if (i<0) 
-		return parocmain(argc,argv);
+	if (i<0) {
+		int ret = parocmain(argc,argv);
+    if(!MPI::Is_finalized()) {     
+    	MPI::Finalize();		
+    }
+		return ret; 
+	}
 
 	atexit(_paroc_atexit);
 	signal(SIGKILL, SignalTerminate);
@@ -87,43 +97,47 @@ int main(int argc, char **argv)
 
 	try {
 		int ret = parocmain(argc, argv);
-		app.Finalize(ret==0);
-    printf("Will call MPI::Finalize and exit main\n");		
+		printf("return of main %d\n", ret);
+		//app.Finalize(ret == 0);
+  //  printf("Will call MPI::Finalize and exit main 1\n");		
 		// Only for MPI
-    if(!MPI::Is_finalized())
+    if(!MPI::Is_finalized()){
+      printf("MPI::Finalize\n");	      
     	MPI::Finalize();		
+    }
+   // printf("Exit main\n");		    	
 		return ret;
 	} catch (paroc_exception *e) {
-	  printf("End of main exception caught 1\n");
+	 // printf("End of main exception caught 1\n");
 		errno = e->Code();
 		paroc_system::perror(e);
 		delete e;
 		paroc_system::Finalize(false);
-    printf("Will call MPI::Finalize and exit main\n");		
+   // printf("Will call MPI::Finalize and exit main\n");		
 		// Only for MPI
     if(!MPI::Is_finalized())
     	MPI::Finalize();		
 		return -1;
 	} catch (int e) {
-	  printf("End of main exception caught 2\n");	
+	  //printf("End of main exception caught 2\n");	
 		errno=e;
 		paroc_system::perror("Exception occured\n");
 		paroc_system::Finalize(false);
-    printf("Will call MPI::Finalize and exit main\n");		
+    //printf("Will call MPI::Finalize and exit main\n");		
 		// Only for MPI
     if(!MPI::Is_finalized())
     	MPI::Finalize();				
 		return -1;
 	} catch (...) {
-	  printf("End of main exception caught 3\n");	
+	  //printf("End of main exception caught 3\n");	
 		fprintf(stderr,"Unknown exception\n");
 		paroc_system::Finalize(false);
-    printf("Will call MPI::Finalize and exit main\n");		
+   // printf("Will call MPI::Finalize and exit main\n");		
 		// Only for MPI		
     if(!MPI::Is_finalized())
     	MPI::Finalize();				
 	}	
-  printf("Will call MPI::Finalize and exit main\n");	
+ // printf("Will call MPI::Finalize and exit main\n");	
 	// Only for MPI
   if(!MPI::Is_finalized())
    	MPI::Finalize();				  
