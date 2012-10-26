@@ -57,7 +57,7 @@
 #define PACKAGE_NAME "popc"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "popc 2.5"
+#define PACKAGE_STRING "popc 2.6.2 - K Computer"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "popc"
@@ -66,25 +66,16 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.5"
+#define PACKAGE_VERSION "2.6.2 - K Computer"
 
 /* Dynamic exec */
 #define POPC_EXTRA_LINK "-rdynamic"
-
-/* Secure version */
-/* #undef POPC_SECURE */
-
-/* Secure Virtual Version */
-/* #undef POPC_SECURE_VIRTUAL */
-
-/* Virtual version */
-/* #undef POPC_VIRTUAL */
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2.5"
+#define VERSION "2.6.2 - K Computer"
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
