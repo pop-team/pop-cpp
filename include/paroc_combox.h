@@ -4,8 +4,8 @@ AUTHORS: Tuan Anh Nguyen
 DESCRIPTION: POP-C++ communication abstraction
  */
 
-#ifndef POPC_COMBOX_H
-#define POPC_COMBOX_H
+#ifndef POPC_COMBOX_H_
+#define POPC_COMBOX_H_
 
 #include "paroc_string.h"
 #include "paroc_buffer_factory_finder.h"
@@ -22,8 +22,11 @@ class paroc_connection
 {
 public:
 	paroc_connection(paroc_combox *com);
+	paroc_connection(paroc_combox *com, bool init);
 	paroc_connection(paroc_combox *com, paroc_buffer_factory *f);
 	virtual ~paroc_connection();
+	
+	virtual bool is_initial_connection();
 
 	virtual void SetBufferFactory(paroc_buffer_factory *fact);
 	virtual paroc_buffer_factory *GetBufferFactory();
@@ -31,10 +34,14 @@ public:
 	paroc_combox *GetCombox();
 
 	virtual paroc_connection *Clone()=0;
+	virtual void reset()=0;
+	
+	
 
 protected:
 	paroc_buffer_factory * fact;
 	paroc_combox *combox;
+  bool _is_initial_connection;
 };
 
 
@@ -57,17 +64,20 @@ protected:
 
 public:
 	virtual bool Create(int port, bool server)=0;
+	virtual bool Create(const char *address, bool server)=0;
 	virtual bool Connect(const char *url)=0;
 
 	virtual int Send(const char *s,int len)=0;
-	virtual int Send(const char *s,int len, paroc_connection *conn)=0;
+	virtual int Send(const char *s,int len, paroc_connection *connection)=0;
 	virtual bool SendAck(paroc_connection *conn);
 
 	virtual int Recv(char *s,int len)=0;
-	virtual int Recv(char *s,int len, paroc_connection *&peer)=0;
+	virtual int Recv(char *s,int len, paroc_connection *connection)=0;
 	virtual bool RecvAck(paroc_connection *conn=0);
 
 	virtual paroc_connection *Wait()=0;
+	
+	virtual paroc_connection* get_connection()=0;
 
 	virtual void Close()=0;
 
@@ -99,7 +109,7 @@ protected:
 
 
 
-#endif
+#endif // POPC_COMBOX_H_
 
 
 

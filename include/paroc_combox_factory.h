@@ -1,7 +1,6 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: factory that creates a proper combox from the given name
+/**
+ * @author: Tuan Anh Nguyen
+ * @brief: factory that creates a proper combox from the given name
  */
 
 #ifndef POPC_COMBOX_FACTORY_H

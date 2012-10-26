@@ -1,7 +1,7 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: buffer abstract class used to pack/unpack data.
+/**
+ * @author Tuan Anh Nguyen
+ * @brief Buffer abstract class used to pack/unpack data.
+ *
  */
 
 #ifndef _POPC_DATAPACK_MARSHAL_H
@@ -36,7 +36,7 @@ DESCRIPTION: buffer abstract class used to pack/unpack data.
 #define EXCEPTION_POPC_STD 14
 
 
-//bit FLAGS values customized marshalling/demarshalling procedure....
+// bit FLAGS values customized marshalling/demarshalling procedure
 #define FLAG_MARSHAL  2
 #define FLAG_INPUT  1
 
@@ -59,28 +59,22 @@ public:
 	paroc_message_header(int classid, int methodid, int semantics, const char *methodname);
 	paroc_message_header(const char *methodname);
 	paroc_message_header(int exceptioncode, const char *methodname);
-
 	paroc_message_header();
+	
 	void operator =(const  paroc_message_header &dat);
 
-	inline int GetType() const { return type;};
-	inline int GetClassID() const { return id[0];};
-	inline int GetMethodID() const { return id[1];};
-	inline int GetSemantics() const { return id[2];};
-
-	inline int GetExceptionCode() const { return exception;};
-	inline const char *GetMethodName() const { return methodname;};
-
-
-
-	inline void SetType(int msgtype) { type=msgtype;};
-
-	inline void SetClassID(int classid) { id[0]=classid;};
-	inline void SetMethodID(int methodid) { id[1]=methodid;};
-	inline void SetSemantics(int semantics) { id[2]=semantics;};
-	inline void SetExceptionCode(int code) { exception=code;};
-
-	inline void SetMethodName(const char* name) { methodname=name;};
+	inline int GetType() const { return type; };
+	inline int GetClassID() const { return id[0]; };
+	inline int GetMethodID() const { return id[1]; };
+	inline int GetSemantics() const { return id[2]; };
+	inline int GetExceptionCode() const { return exception; };
+	inline const char *GetMethodName() const { return methodname; };
+	inline void SetType(int msgtype) { type = msgtype; };
+	inline void SetClassID(int classid) { id[0] = classid; };
+	inline void SetMethodID(int methodid) { id[1] = methodid; };
+	inline void SetSemantics(int semantics) { id[2] = semantics; };
+	inline void SetExceptionCode(int code) { exception = code; };
+	inline void SetMethodName(const char* name) { methodname = name; };
 
 private:
 	int type;
