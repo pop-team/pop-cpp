@@ -29,7 +29,9 @@
 
 paroc_accesspoint paroc_system::appservice;
 paroc_accesspoint paroc_system::jobservice;
-paroc_accesspoint paroc_system::popcloner;
+int paroc_system::pop_current_local_address;
+
+int paroc_system::popc_local_mpi_communicator_rank;  
 POPString paroc_system::platform;
 std::ostringstream paroc_system::_popc_cout;
 
@@ -67,15 +69,11 @@ paroc_system::paroc_system()
 {
   paroc_combox_factory::GetInstance();
   paroc_buffer_factory_finder::GetInstance();
-  char *tmp=getenv("POPC_PLATFORM");
-  if (tmp!=NULL)
-  {
-    platform=tmp;
-  }
-  else
-  {
+  char *tmp = getenv("POPC_PLATFORM");
+  if (tmp != NULL) {
+    platform = tmp;
+  } else {
     char str[128];
-
 #ifndef POPC_ARCH
     char arch[64], sysname[64];
     sysinfo(SI_SYSNAME,sysname,64);
@@ -84,9 +82,9 @@ paroc_system::paroc_system()
 #else
     strcpy(str,POPC_ARCH);
 #endif
-    platform=str;
+    platform = str;
   }
-  POPC_HostName = POPString(""); //V1.3m
+  POPC_HostName = POPString("");
 }
 
 
@@ -353,8 +351,8 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       char url[1024];
       if (proxy==NULL) strcpy(url,codeser);
       else sprintf(url,"%s -proxy=%s",codeser, proxy);
-      //rprintf("mgr=CreateAppCoreService(url=%s);\n", url);
-      mgr=CreateAppCoreService(url);
+      //printf("mgr=CreateAppCoreService(url=%s);\n", url);
+      mgr = CreateAppCoreService(url);
     }
     else
     {

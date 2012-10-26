@@ -126,7 +126,7 @@ void paroc_broker::ServeRequest(paroc_request &req)
 		int t=1;
 		while ((ret=thr->create())!=0 && t<3600)
 		{
-			rprintf("WARNING: can not create a new thread. Sleep for %d seconds\n",t);
+			printf("WARNING: can not create a new thread. Sleep for %d seconds\n",t);
 			sleep(t);
 			t=t*2;
 		}
@@ -146,7 +146,7 @@ void paroc_broker::ServeRequest(paroc_request &req)
 				delete e;
 			}
 			else
-				rprintf("ERROR: fail to create a new thread for %s@%s (method:%d:%d)\n",(const char *)classname,accesspoint.GetAccessString(), req.methodId[0], req.methodId[1]);
+				printf("ERROR: fail to create a new thread for %s@%s (method:%d:%d)\n",(const char *)classname,accesspoint.GetAccessString(), req.methodId[0], req.methodId[1]);
 			delete thr;
 
 		}

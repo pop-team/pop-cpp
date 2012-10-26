@@ -13,19 +13,30 @@
 #include "paroc_combox.h"
 #include "debug.h"
 
-paroc_connection::paroc_connection(paroc_combox *com)
+paroc_connection::paroc_connection(paroc_combox *com) : _is_initial_connection(false)
 {
 	fact=com->GetBufferFactory();
 	combox=com;
 }
 
-paroc_connection::paroc_connection(paroc_combox *com, paroc_buffer_factory *f)
+paroc_connection::paroc_connection(paroc_combox* com, bool init)
+{
+	fact = com->GetBufferFactory();
+	combox = com;
+	_is_initial_connection = init;
+}
+
+paroc_connection::paroc_connection(paroc_combox *com, paroc_buffer_factory *f) : _is_initial_connection(false)
 {
 	fact=f;
 	combox=com;
 }
 paroc_connection::~paroc_connection()
 {
+}
+
+bool paroc_connection::is_initial_connection(){
+  return _is_initial_connection;
 }
 
 void paroc_connection::SetBufferFactory(paroc_buffer_factory *f)

@@ -102,24 +102,21 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
       paroc_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
 
-
-	if ((tmp=getenv("POPC_JOBSERVICE"))!=NULL)
-	{
+/*
+	if ((tmp=getenv("POPC_JOBSERVICE"))!=NULL) {
 		paroc_system::jobservice.SetAccessString(tmp);
       paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
-	} else if ((tmp=paroc_utils::checkremove(argc,argv,"-jobservice="))!=NULL)
-	{
+	} else if ((tmp=paroc_utils::checkremove(argc,argv,"-jobservice=")) != NULL) {
 		paroc_system::jobservice.SetAccessString(tmp);
       paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
-	}
-	else
-	{
+	} else {
 		char tmpstr[256];
 		DEBUG("Jobservice is not specified. Use the default one!");
 		sprintf(tmpstr,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
 		paroc_system::jobservice.SetAccessString(tmpstr);
       paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
+*/
 
 	bool nostdio=(paroc_utils::checkremove(argc,argv,"-nostdio")!=NULL);
 
@@ -129,7 +126,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 	paroc_broker *objbroker=Create(object);
 	if (objbroker==NULL)
 	{
-		rprintf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
+		printf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
 		return NULL;
 	}
 	paroc_broker::classname=object;

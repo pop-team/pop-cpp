@@ -211,7 +211,7 @@ int paroc_combox_socket::Recv(char *s,int len)
 	return n;
 }
 
-int paroc_combox_socket::Recv(char *s,int len, paroc_connection *&iopeer)
+int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer)
 {
 	int fd, n;
 	paroc_connection_sock *t;
@@ -253,78 +253,66 @@ paroc_connection* paroc_combox_socket::Wait()
 		return NULL;
 	}
 
-	if (isServer)
-	{
+	if (isServer) {
 		pollfd *tmpfd;
-		while (1)
-		{
-			if (nready>0)
-			{
+		while (1) {
+			if (nready>0) {
 				int n=pollarray.GetSize();
 				tmpfd=pollarray+index;
-				for (int i=index;i>=0;i--, tmpfd--) if (tmpfd->revents!=0)
-					{
-						nready--;
-						index=i-1;
-						tmpfd->revents=0;
-						if (i==0)
-						{
-							//Accept new connection....
-							sockaddr addr;
-							socklen_t addrlen=sizeof(addr);
-							int s;
-							while ((s=accept(sockfd,&addr,&addrlen))<0 && errno==EINTR);
-							if (s<0)
-							{
-								return NULL;
-							}
-							pollarray.SetSize(n+1);
-							pollarray[n].fd=s;
-							pollarray[n].events=POLLIN;
-							pollarray[n].revents=0;
-							connarray.SetSize(n+1);
-							connarray[n]=CreateConnection(s);
-							bool ret=OnNewConnection(connarray[n]);
-							n++;
-							if (!ret) return NULL;
-						}
-						else
-							return connarray[i];
+				for (int i=index;i>=0;i--, tmpfd--) if (tmpfd->revents!=0) {
+  				nready--;
+					index=i-1;
+					tmpfd->revents=0;
+					if (i==0)	{
+            //Accept new connection....
+						sockaddr addr;
+						socklen_t addrlen=sizeof(addr);
+						int s;
+						while ((s=accept(sockfd,&addr,&addrlen))<0 && errno==EINTR);
+						if (s<0) {
+              return NULL;
+            }
+            pollarray.SetSize(n+1);
+            pollarray[n].fd=s;
+            pollarray[n].events=POLLIN;
+            pollarray[n].revents=0;
+            connarray.SetSize(n+1);
+            connarray[n]=CreateConnection(s);
+						bool ret=OnNewConnection(connarray[n]);
+						n++;
+						if (!ret) 
+						  return NULL;
+					} else {
+						return connarray[i];
 					}
+				}
 			}
 
 			//Poll for ready fds....
-			do
-			{
+			do {
 				tmpfd=pollarray;
 				int n=pollarray.GetSize();
 				index=n-1;
-//	      DEBUG("STEP1: socket poll (addr=%p, size=%d, fd0=%d, timeout=%d)", tmpfd,n, tmpfd->fd, timeout);
 				nready=poll(tmpfd,n,timeout);
-//	      DEBUG("STEP1: socket poll returned (addr=%p, size=%d, nready=%d)", tmpfd,n, nready);
 			}  while (nready<0 && errno==EINTR && sockfd>=0);
 
-			if (nready<=0)
-			{
-
-				if (nready==0) errno=ETIMEDOUT;
+			if (nready<=0) {
+				if (nready==0) 
+				  errno=ETIMEDOUT;
 				return NULL;
 			}
 		}
-	}
-	else
-	{
-		if (timeout>=0)
-		{
+	} else {
+		if (timeout>=0) {
 			pollfd tmpfd;
 			tmpfd.fd=sockfd;
 			tmpfd.events=POLLIN;
 			tmpfd.revents=0;
 			int t;
 			while ((t=poll(&tmpfd,1,timeout))==-1 && errno==EINTR);
-			if (t<=0)
-			{
-				if (t==0) errno=ETIMEDOUT;
+			if (t<=0) {
+				if (t==0) 
+				  errno=ETIMEDOUT;
 				return NULL;
 			}
 		}

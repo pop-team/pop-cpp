@@ -18,7 +18,7 @@
 #include <locale>
 #include "appservice.ph"
 
-#include "jobmgr.ph"
+//#include "jobmgr.ph"
 
 using namespace std;
 
@@ -49,12 +49,12 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
 
 AppCoreService::~AppCoreService()
 {
-   try{   
+   /*try{   
       JobMgr jm(paroc_system::jobservice);
       jm.ApplicationEnd(_popcAppId, true);
    } catch (...){
       
-   }
+   }*/
 
 	POSITION pos=servicelist.GetHeadPosition();
 	while (pos!=NULL)

@@ -73,19 +73,23 @@ void paroc_broker::ReceiveThread(paroc_combox *server) // Receive request and pu
 bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
 {
 	server->SetTimeout(-1);
-	while (1)
-	{
+	while (1) {
+
 		paroc_connection *conn=server->Wait();
-		if (conn==NULL)
-		{
+
+		if (conn == NULL) {
 			execCond.broadcast();
 			return false;
 		}
+  	if (conn->is_initial_connection()){
+  		if (obj != NULL) {
+  		  int i = obj->AddRef();
+  	  }
+  	}
 		paroc_buffer_factory *fact=conn->GetBufferFactory();
 		req.data=fact->CreateBuffer();
-		if (req.data->Recv(conn))
-		{
-			req.from=conn;
+		if (req.data->Recv(conn)) {
+			req.from = conn;
 			const paroc_message_header &h=req.data->GetHeader();
 			req.methodId[0]=h.GetClassID();
 			req.methodId[1]=h.GetMethodID();
@@ -194,6 +198,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 		//BindStatus call
 		if (methodid[2] & INVOKE_SYNC)
 		{
+
 			paroc_buffer_factory *fact;
          fact=req.from->GetBufferFactory();
 			paroc_message_header h("BindStatus");
@@ -247,11 +252,12 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	break;
 	case 2:
 	{
-		//DecRef call....
+    // Decrement reference
+    
 		if (obj==NULL) return false;
-		int ret=obj->DecRef();
-		if (methodid[2] & INVOKE_SYNC)
-		{
+		int ret = obj->DecRef();
+		
+		if (methodid[2] & INVOKE_SYNC) {
 			buf->Reset();
 			paroc_message_header h("DecRef");
 			buf->SetHeader(h);

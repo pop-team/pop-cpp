@@ -2,18 +2,6 @@
  * File : paroc_objmain.std.cc
  * Author : Tuan Anh Nguyen
  * Description : "main" entry for the object executable
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
- * P.Kuonen     18.9.2012       Add "POP-C++ error" in error messages (PEKA)
- */
-
-
-/**
- * File : paroc_objmain.std.cc
- * Author : Tuan Anh Nguyen
- * Description : "main" entry for the object executable
  * Initialization of parallel objects
  * The Job service can pass to a parallel object environment by:
  * 1- Specify the argument -jobservice=<code services...> when launching the object binary code (not used by the Interface)
@@ -59,94 +47,72 @@ int main(int argc, char **argv)
 
 	paroc_system sys;
 
-	//Connect to callback ....
-	char *addr=paroc_utils::checkremove(&argc,&argv,"-callback=");
-	paroc_combox *callback=NULL;
+	// Connect to callback
+	char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");
+	paroc_combox *callback = NULL;
 	int status=0;
-	if (addr!=NULL)
-	{
-		char *tmp=strstr(addr,"://");
-		paroc_combox_factory *fact=paroc_combox_factory::GetInstance();
-
-		if (tmp==NULL) callback=fact->Create("socket");
-		else
-		{
-			*tmp=0;
-			callback=fact->Create(addr);
-			*tmp=':';
-		}
-
-		if (!callback->Create(0, false) || !callback->Connect(addr))
-		{
-			callback->Destroy();
-			printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n",addr);
+	if (address != NULL) {
+	  paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
+	  callback = combox_factory->Create("uds");
+	  if(!callback->Create(address, false)) {
+  	  callback->Close();
+    	callback->Destroy();
+			printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
 			return 1;
-		}
+	  }
+	    
+    if(!callback->Connect(address)){
+  	  callback->Close();
+    	callback->Destroy();
+			printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
+			return 1;    	
+    }	  	
 	}
 
-	paroc_broker_factory::CheckIfPacked=&CheckIfPacked; // transmit the address of the check function to broker factory
-	paroc_broker *br=paroc_broker_factory::Create(&argc,&argv);
-	if (br==NULL)
-	{
-		status=1;
-	}
-	else if (!br->Initialize(&argc, &argv))
-	{
+	paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
+	paroc_broker *broker = paroc_broker_factory::Create(&argc,&argv);
+	if (broker == NULL) {
+		status = 1;
+	} else if (!broker->Initialize(&argc, &argv)) {
 		//Initialize broker...
 		printf("Fail to initialize the broker for class %s\n",(const char *)paroc_broker::classname);
-		status=1;
+		status = 1;
 	}
 
 
-	//Send accesspoint via callback
-
-	if (callback!=NULL)
-	{
-		char url[1024];
-		int len;
-		paroc_buffer *buf=callback->GetBufferFactory()->CreateBuffer();
-		paroc_message_header h("Callback");
-		buf->SetHeader(h);
-
-		buf->Push("status","int",1);
-		buf->Pack(&status,1);
-		buf->Pop();
-
-		buf->Push("address","paroc_accesspoint",1);
-		paroc_broker::accesspoint.Serialize(*buf,true);
-		buf->Pop();
-
-		bool ret=buf->Send(*callback);
-		buf->Destroy();
+	// Send ack via callback
+	if (callback != NULL) {
+	  paroc_buffer *buffer = callback->GetBufferFactory()->CreateBuffer();
+		paroc_message_header h(0, 100002, INVOKE_SYNC, "_callback");
+		buffer->SetHeader(h);
+		
+    paroc_connection* connection = callback->get_connection();	
+    bool ret = buffer->Send((*callback), connection); 
+		buffer->Destroy();
 		callback->Destroy();
-		if (!ret)
-		{
-			rprintf("POP-C++ Error: fail to send accesspoint via callback\n");
-			delete br;
+		if (!ret) {
+			printf("POP-C++ Error: fail to send accesspoint via callback\n");
+			delete broker;
 			return 1;
 		}
-	} else if (status==0)
-	{
+	} else if (status == 0) {
 		fprintf(stdout, "%s\n", (const char *)paroc_broker::accesspoint.GetAccessString());
 	}
-	char *cwd=paroc_utils::checkremove(&argc,&argv,"-cwd=");
+	
+	// set the current working directory
+	char *cwd = paroc_utils::checkremove(&argc,&argv,"-cwd=");
 	if (cwd!=NULL) {
 		if (chdir(cwd)!=0)
 			DEBUG("current working dir cannot be set set to %s",cwd);
-	}// else DEBUG("cwd not set");
-
-#ifdef OD_DISCONNECT
-	bool checkConnect=(paroc_utils::checkremove(&argc,&argv,"-checkConnection"))!=NULL;
-	if (br!=NULL)br->checkConnection = checkConnect;
-#endif
-
-	//Now ....start broker....
-	if (status==0)
-	{
-		br->Run();
-		delete br;
 	}
-	else if (br!=NULL) delete br;
+
+	// Start the broker
+	if (status==0) {
+		broker->Run();
+		delete broker;
+	} else if (broker!=NULL) { 
+	  delete broker;
+	}
 
 	return status;
 }

@@ -566,27 +566,26 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
 	h[0]=htonl(n);
 	h[1]=htonl(type);
 
-	switch (type)
-	{
-	case TYPE_REQUEST:
-		h[2]=htonl(header.GetClassID());
-		h[3]=htonl(header.GetMethodID());
-		h[4]=htonl(header.GetSemantics());
-		break;
-	case TYPE_EXCEPTION:
-		h[2]=htonl(header.GetExceptionCode());
-		break;
-	case TYPE_RESPONSE:
-		h[2]=htonl(header.GetClassID());
-		h[3]=htonl(header.GetMethodID());
-		break;
-	default:
-		return false;
+	switch (type) {
+  	case TYPE_REQUEST:
+	  	h[2]=htonl(header.GetClassID());
+		  h[3]=htonl(header.GetMethodID());
+  		h[4]=htonl(header.GetSemantics());
+	  	break;
+  	case TYPE_EXCEPTION:
+	  	h[2]=htonl(header.GetExceptionCode());
+		  break;
+  	case TYPE_RESPONSE:
+	  	h[2]=htonl(header.GetClassID());
+		  h[3]=htonl(header.GetMethodID());
+  		break;
+	  default:
+		  return false;
 	}
-	memcpy(dat,h,20);
+	memcpy(dat, h, 20);
 
-	if (s.Send(dat,n, conn)<0)
-	{
+
+	if (s.Send(dat, n, conn) < 0) {
 		DEBUG("Fail to send a message!");
 		return false;
 	}
@@ -602,19 +601,20 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 
 	//Recv the header...
 
-	char *dat=(char *)h;
+	char *dat = (char *)h;
 	n=20;
 	do
 	{
-		if ((i=s.Recv(dat,n,conn)) <=0)
-		{
+		if ((i = s.Recv(dat,n,conn)) <=0) {
 			return false;
 		}
 		n-=i;
 		dat+=i;
 	}
 	while (n);
+  
 
+  
 	Reset();
 
 	n=ntohl(h[0]);
