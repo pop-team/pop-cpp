@@ -28,7 +28,7 @@ ValueType check(int j, int k, int size,  Matrix2Dlc* a, Matrix2Dcl* b)
 
 int main(int argc, char** argv)
 {
-	if (argc<4)
+	if (argc < 4)
 	{
 		printf("Usage: popcrun obj.map %s size nbWorker nbBlocB resultFileName\n\n", argv[0]);
 		printf("  e.g. : popcrun obj.map %s 600 10 5 log\n\n", argv[0]);
@@ -51,7 +51,10 @@ int main(int argc, char** argv)
 	Alines= Acols = Bcols = atoi(argv[1]);
 	nbWorker = atoi(argv[2]);
 	nbBlocB = atoi(argv[3]);
-	if (argc>4) resultFileName=argv[4]; else resultFileName=NULL;
+	if (argc > 4) 
+		resultFileName=argv[4]; 
+	else 
+		resultFileName=NULL;
 
 // Get the available machines
 	if ( (f = fopen(MachinesList, "r"))!=NULL)

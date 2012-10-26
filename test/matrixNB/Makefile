@@ -14,4 +14,4 @@ clean:
 	rm -f *.obj MatMul *.o obj.map
 
 run:
-	popcrun obj.map ./MatMul 600 10 5 log
+	mpiexec -np 1 ../../communicator/popc_mpi_communicator -app=MatMul 600 10 5
