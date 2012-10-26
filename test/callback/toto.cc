@@ -4,7 +4,7 @@
 
 Toto::Toto()
 {
-  printf("CallBack: Object Toto on \"%s\"\n", POPGetHost());
+  printf("CallBack: Object Toto on \"%s\"\n", GetAccessPoint().GetAccessString());
   ident = 0;
 }
 
@@ -25,7 +25,10 @@ int Toto::GetIdent()
 
    Titi t;                 // create an object to call me back
    this->SetIdent(222);    // test of "this"
-   t.ComputeIdent(*this);  // t is going to call me back
+   Toto* tmp = new Toto(GetAccessPoint());
+   t.ComputeIdent((*tmp));  // t is going to call me back   
+   //t.ComputeIdent(*this);  // t is going to call me back
+   delete tmp;
    return(ident);          // ident has changed because of the call back
 }
 
