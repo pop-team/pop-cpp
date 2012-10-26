@@ -15,7 +15,7 @@ fi
 unset POPC_DEBUG
 
 if [ -z "${POPC_LOCATION}" ]; then
-POPC_LOCATION=/usr/local/popc
+POPC_LOCATION=/Users/clementval/popc
 export POPC_LOCATION
 fi
 
@@ -190,8 +190,8 @@ if [ ! -x ${MYAPPSERVICE} ]; then
 fi
 #Use the following line to run the interface side in valgrind
 #cmd="valgrind --log-file=/tmp/$$ $PROG $args -initparoc -appservicecode=${MYAPPSERVICE} ${MY_PROXY} -codeconf=${PATHCONF}/${FILECONF} -jobservice=${MYJOBSERVICE} ${localFlag}"
-cmd="$PROG $args -initparoc -appservicecode=${MYAPPSERVICE} ${MY_PROXY} -codeconf=${PATHCONF}/${FILECONF} -jobservice=${MYJOBSERVICE} ${localFlag}"
-
+cmd="$PROG $args ${localFlag}"
+echo $cmd
 retval=0
 if [ $drun -eq 1 ]; then
     echo Exec: $cmd

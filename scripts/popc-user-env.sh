@@ -1,10 +1,10 @@
 #!/bin/sh
 if [ -z "${POPC_LOCATION}" ]; then
-POPC_LOCATION=/usr/local/popc
+POPC_LOCATION=/Users/clementval/popc
 export POPC_LOCATION
 fi
 
-POPC_PLUGIN_LOCATION=/usr/local/popc/lib/plugins
+POPC_PLUGIN_LOCATION=/Users/clementval/popc/lib/plugins
 export POPC_PLUGIN_LOCATION
 
 PATH=${POPC_LOCATION}/bin:${PATH}

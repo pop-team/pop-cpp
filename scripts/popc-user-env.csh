@@ -1,6 +1,6 @@
 #!/bin/csh
 if ( ! $?POPC_LOCATION ) then
-  setenv POPC_LOCATION /usr/local/popc
+  setenv POPC_LOCATION /Users/clementval/popc
 endif
 
 setenv POPC_PLUGIN_LOCATION ${POPC_LOCATION}/lib/plugins
