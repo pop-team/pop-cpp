@@ -5,12 +5,10 @@ app:
 	popcc -o main integer.ph integer.cc main.cc
 
 object:
-	popcc -object -o integer.obj integer.cc integer.ph main.cc
-	./integer.obj -listlong > obj.map
+	popcc -noclean -object -o integer.obj integer.cc integer.ph main.cc
 
 clean:
-	rm -f *.o *.obj main obj.map
+	rm -f *.o *.obj main obj.map _paroc*
 
 run:
-	popcrun obj.map ./main
-
+	mpiexec -np 1 ../../communicator/popc_mpi_communicator -app=./main
