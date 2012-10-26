@@ -46,6 +46,11 @@ int main(int argc, char **argv)
 #endif
 
 	paroc_system sys;
+	char *local_rank = paroc_utils::checkremove(&argc, &argv, "-local_rank=");
+	if(local_rank != NULL) {
+  	paroc_system::popc_local_mpi_communicator_rank = atoi(local_rank);
+	}
+  
 
 	// Connect to callback
 	char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");
