@@ -26,7 +26,7 @@ void catch_child_exit(int signal_num) {
   char buf[256];
   bzero(buf, 256);
   nval = waitpid(0, &retval, WNOHANG);  
-  sprintf(buf,"Waited on child %d which exited with code = %d\n",nval,retval);       
+//  sprintf(buf,"Waited on child %d which exited with code = %d\n",nval,retval);       
   write(STDOUT_FILENO, buf, 256);
 }
 
@@ -71,7 +71,6 @@ int main(int argc, char* argv[])
       application_arg = application_arg.substr(pos+5);
     }
 
-    printf("Application to be launch %s\n", application_arg.c_str());
     pid_t pid = fork();
 
     if(pid ==0) {
@@ -104,7 +103,6 @@ int main(int argc, char* argv[])
   		  	  request.methodId[0] = header.GetClassID();
 	  		    request.methodId[1] = header.GetMethodID();
 			    
-		  	    printf("COMM-%d: receive request %d\n", rank, request.methodId[1]);
 		  	    if(request.methodId[1] == 100001){
 		  	      active = false;
 		  	    } else if(request.methodId[1] == 100000) {
@@ -124,7 +122,7 @@ int main(int argc, char* argv[])
               std::string receiver_address(local_address);
               receiver_address.append("_");
               receiver_address.append(tmp);
-              printf("COMM Create receiver %s\n", receiver_address.c_str());
+
               receiver.Create(receiver_address.c_str(), true);
               
               std::string _objectname("-object=");
@@ -154,7 +152,6 @@ int main(int argc, char* argv[])
               }
               paroc_request callback;
               paroc_connection* objectcallback = receiver.Wait();
-              printf("COMM: will receove comm back ready\n");
               paroc_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
     	    	  callback.data = buffer_factory->CreateBuffer();
 		          if (callback.data->Recv(receiver, objectcallback)) {
@@ -162,7 +159,7 @@ int main(int argc, char* argv[])
 	  		        const paroc_message_header &callback_header = callback.data->GetHeader();
   		  	      callback.methodId[0] = callback_header.GetClassID();
 	  		        callback.methodId[1] = callback_header.GetMethodID();
-                printf("COMM: will recieved %d\n", callback.methodId[1]);                
+	  		        
     		  	    if(callback.methodId[1] == 100002){
              		  request.data->Reset();		  
    	    	  			paroc_message_header h("_allocate");
@@ -181,15 +178,9 @@ int main(int argc, char* argv[])
             			request.data->Pop();
             			request.data->Send(request.from);
 		  	        }
-		  	        
-		  	        
 		  	      }
     	    	  callback.data->Destroy();
     	    	  receiver.Close();		  	      
-		  	      
-            	
-            	printf("COMM-%d: allocate %s from %s\n", rank, objectname.GetString(), codefile.GetString());
-            	  
 		  	    }
             request.data->Destroy();			  
           }
@@ -201,7 +192,6 @@ int main(int argc, char* argv[])
       // Wait for the program to finish
       int status;  
       waitpid(pid, &status, 0);
-      printf("Communicator main will finish %d\n", status);
     } else {
       perror("erreur");
       MPI::Finalize();    
