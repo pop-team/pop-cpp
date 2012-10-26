@@ -8,8 +8,8 @@
 #define paroc_string char*
 #endif
 
-#ifdef _PAROC_
-#define printf rprintf
-#endif
+//#ifdef _PAROC_
+//#define printf rprintf
+//#endif
 
 

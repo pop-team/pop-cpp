@@ -837,7 +837,7 @@ void Method::GenerateBroker(CArrayChar &output)
 
   // Add 'catch' to catch and print all std exceptions raised in the method
   char tempcatch[256];
-  sprintf(tempcatch,"\n}\ncatch(std::exception& e) {rprintfErr(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
+  sprintf(tempcatch,"\n}\ncatch(std::exception& e) {printf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
   strcat(methodcall,tempcatch); 
 
 
