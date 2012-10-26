@@ -17,7 +17,6 @@
 
 
 
-
 pkgdatadir = $(datadir)/popc
 pkgincludedir = $(includedir)/popc
 pkglibdir = $(libdir)/popc
@@ -34,47 +33,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin12.1.0
-host_triplet = x86_64-apple-darwin12.1.0
-##execservices_PROGRAMS = popc_search_node$(EXEEXT) \
-##	virtual_popc_search_node$(EXEEXT) \
-##	jobmgr$(EXEEXT) \
-##	virtual_jobmgr$(EXEEXT) \
-##	virtual_jobmgr$(EXEEXT) \
-##	appservice$(EXEEXT) \
-##	localservice_launcher$(EXEEXT) \
-##	jobmgr_launcher$(EXEEXT) \
-##	popcloner$(EXEEXT)
-##execservices_PROGRAMS = popc_search_node$(EXEEXT) \
-##	virtual_popc_search_node$(EXEEXT) \
-##	jobmgr$(EXEEXT) \
-##	virtual_jobmgr$(EXEEXT) \
-##	virtual_jobmgr$(EXEEXT) \
-##	appservice$(EXEEXT) \
-##	localservice_launcher$(EXEEXT) \
-##	jobmgr_launcher$(EXEEXT) \
-##	popcloner$(EXEEXT) \
-##	virtual_secure_popc_search_node$(EXEEXT) \
-##	popc_security_manager$(EXEEXT) \
-##	secure_jobmgr$(EXEEXT) \
-##	secure_popc_search_node$(EXEEXT) \
-##	virtual_secure_jobmgr$(EXEEXT) \
-##	virtual_popc_security_manager$(EXEEXT)
-execservices_PROGRAMS = popc_search_node$(EXEEXT) \
-	jobmgr$(EXEEXT) \
-	appservice$(EXEEXT) \
-	localservice_launcher$(EXEEXT) \
-	jobmgr_launcher$(EXEEXT) \
-	popfilemanager$(EXEEXT)
-#execservices_PROGRAMS = popc_search_node$(EXEEXT) \
-#	jobmgr$(EXEEXT) secure_jobmgr$(EXEEXT) \
-#	appservice$(EXEEXT) \
-#	localservice_launcher$(EXEEXT) \
-#	jobmgr_launcher$(EXEEXT) \
-#	popc_security_manager$(EXEEXT) \
-#	secure_popc_search_node$(EXEEXT)
-bin_PROGRAMS = jobmgrpublish$(EXEEXT) jobmgrquery$(EXEEXT) \
-	dumpjobmgr$(EXEEXT) benchmarktest$(EXEEXT)
+build_triplet = x86_64-apple-darwin12.2.0
+host_triplet = x86_64-apple-darwin12.2.0
 subdir = services
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/popcobjrun.in
@@ -86,154 +46,6 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES = popcobjrun
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(execservicesdir)" \
-	"$(DESTDIR)$(bindir)" "$(DESTDIR)$(execservicesdir)" \
-	"$(DESTDIR)$(confdir)"
-PROGRAMS = $(bin_PROGRAMS) $(execservices_PROGRAMS)
-am_appservice_OBJECTS = appservice_obj.$(OBJEXT)
-appservice_OBJECTS = $(am_appservice_OBJECTS)
-appservice_DEPENDENCIES =
-appservice_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(appservice_LDFLAGS) $(LDFLAGS) -o $@
-am_benchmarktest_OBJECTS = test_benchmark.$(OBJEXT)
-benchmarktest_OBJECTS = $(am_benchmarktest_OBJECTS)
-benchmarktest_LDADD = $(LDADD)
-am_dumpjobmgr_OBJECTS = dumpjobmgr.$(OBJEXT)
-dumpjobmgr_OBJECTS = $(am_dumpjobmgr_OBJECTS)
-dumpjobmgr_LDADD = $(LDADD)
-dumpjobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(dumpjobmgr_LDFLAGS) $(LDFLAGS) -o $@
-am_jobmgr_OBJECTS = jobmgr_obj.$(OBJEXT)
-jobmgr_OBJECTS = $(am_jobmgr_OBJECTS)
-jobmgr_DEPENDENCIES =
-jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(jobmgr_LDFLAGS) $(LDFLAGS) -o $@
-am_jobmgr_launcher_OBJECTS = jobmgr_launcher.$(OBJEXT)
-jobmgr_launcher_OBJECTS = $(am_jobmgr_launcher_OBJECTS)
-jobmgr_launcher_LDADD = $(LDADD)
-jobmgr_launcher_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(jobmgr_launcher_LDFLAGS) $(LDFLAGS) -o $@
-am_jobmgrpublish_OBJECTS = jobmgrpublish.$(OBJEXT)
-jobmgrpublish_OBJECTS = $(am_jobmgrpublish_OBJECTS)
-jobmgrpublish_LDADD = $(LDADD)
-jobmgrpublish_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(jobmgrpublish_LDFLAGS) $(LDFLAGS) -o $@
-am_jobmgrquery_OBJECTS = jobmgrquery.$(OBJEXT)
-jobmgrquery_OBJECTS = $(am_jobmgrquery_OBJECTS)
-jobmgrquery_LDADD = $(LDADD)
-jobmgrquery_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(jobmgrquery_LDFLAGS) $(LDFLAGS) -o $@
-am_localservice_launcher_OBJECTS = localservice_launcher.$(OBJEXT)
-localservice_launcher_OBJECTS = $(am_localservice_launcher_OBJECTS)
-localservice_launcher_LDADD = $(LDADD)
-localservice_launcher_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(localservice_launcher_LDFLAGS) $(LDFLAGS) -o $@
-am_popc_search_node_OBJECTS = popc_search_node_obj.$(OBJEXT)
-popc_search_node_OBJECTS = $(am_popc_search_node_OBJECTS)
-popc_search_node_DEPENDENCIES =
-popc_search_node_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(popc_search_node_LDFLAGS) $(LDFLAGS) -o $@
-am__popc_security_manager_SOURCES_DIST = popc_security_manager_obj.cc
-#am_popc_security_manager_OBJECTS = popc_security_manager_obj.$(OBJEXT)
-#am_popc_security_manager_OBJECTS =  \
-#	popc_security_manager_obj.$(OBJEXT)
-popc_security_manager_OBJECTS = $(am_popc_security_manager_OBJECTS)
-popc_security_manager_DEPENDENCIES =
-popc_security_manager_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(popc_security_manager_LDFLAGS) $(LDFLAGS) -o $@
-am__popcloner_SOURCES_DIST = popcloner_obj.cc
-#am_popcloner_OBJECTS = popcloner_obj.$(OBJEXT)
-#am_popcloner_OBJECTS =  \
-#	popcloner_obj.$(OBJEXT)
-popcloner_OBJECTS = $(am_popcloner_OBJECTS)
-popcloner_DEPENDENCIES =
-popcloner_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(popcloner_LDFLAGS) $(LDFLAGS) -o $@
-am_popfilemanager_OBJECTS = popfilemanager_obj.$(OBJEXT)
-popfilemanager_OBJECTS = $(am_popfilemanager_OBJECTS)
-popfilemanager_DEPENDENCIES =
-popfilemanager_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(popfilemanager_LDFLAGS) $(LDFLAGS) -o $@
-am__secure_jobmgr_SOURCES_DIST = secure_jobmgr_obj.cc
-#am_secure_jobmgr_OBJECTS = secure_jobmgr_obj.$(OBJEXT)
-#am_secure_jobmgr_OBJECTS =  \
-#	secure_jobmgr_obj.$(OBJEXT)
-secure_jobmgr_OBJECTS = $(am_secure_jobmgr_OBJECTS)
-secure_jobmgr_DEPENDENCIES =
-secure_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(secure_jobmgr_LDFLAGS) $(LDFLAGS) -o $@
-am__secure_popc_search_node_SOURCES_DIST =  \
-	secure_popc_search_node_obj.cc
-#am_secure_popc_search_node_OBJECTS = secure_popc_search_node_obj.$(OBJEXT)
-#am_secure_popc_search_node_OBJECTS =  \
-#	secure_popc_search_node_obj.$(OBJEXT)
-secure_popc_search_node_OBJECTS =  \
-	$(am_secure_popc_search_node_OBJECTS)
-secure_popc_search_node_DEPENDENCIES =
-secure_popc_search_node_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(secure_popc_search_node_LDFLAGS) $(LDFLAGS) -o \
-	$@
-am__virtual_jobmgr_SOURCES_DIST = virtual_jobmgr_obj.cc
-#am_virtual_jobmgr_OBJECTS = virtual_jobmgr_obj.$(OBJEXT)
-#am_virtual_jobmgr_OBJECTS =  \
-#	virtual_jobmgr_obj.$(OBJEXT)
-virtual_jobmgr_OBJECTS = $(am_virtual_jobmgr_OBJECTS)
-virtual_jobmgr_DEPENDENCIES =
-virtual_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(virtual_jobmgr_LDFLAGS) $(LDFLAGS) -o $@
-am__virtual_popc_search_node_SOURCES_DIST =  \
-	virtual_popc_search_node_obj.cc
-#am_virtual_popc_search_node_OBJECTS = virtual_popc_search_node_obj.$(OBJEXT)
-#am_virtual_popc_search_node_OBJECTS = virtual_popc_search_node_obj.$(OBJEXT)
-virtual_popc_search_node_OBJECTS =  \
-	$(am_virtual_popc_search_node_OBJECTS)
-virtual_popc_search_node_DEPENDENCIES =
-virtual_popc_search_node_LINK = $(LIBTOOL) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(AM_CXXFLAGS) $(CXXFLAGS) $(virtual_popc_search_node_LDFLAGS) \
-	$(LDFLAGS) -o $@
-am__virtual_popc_security_manager_SOURCES_DIST =  \
-	virtual_popc_security_manager_obj.cc
-#am_virtual_popc_security_manager_OBJECTS = virtual_popc_security_manager_obj.$(OBJEXT)
-virtual_popc_security_manager_OBJECTS =  \
-	$(am_virtual_popc_security_manager_OBJECTS)
-virtual_popc_security_manager_DEPENDENCIES =
-virtual_popc_security_manager_LINK = $(LIBTOOL) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(virtual_popc_security_manager_LDFLAGS) $(LDFLAGS) -o $@
-am__virtual_secure_jobmgr_SOURCES_DIST = virtual_secure_jobmgr_obj.cc
-#am_virtual_secure_jobmgr_OBJECTS =  \
-#	virtual_secure_jobmgr_obj.$(OBJEXT)
-virtual_secure_jobmgr_OBJECTS = $(am_virtual_secure_jobmgr_OBJECTS)
-virtual_secure_jobmgr_DEPENDENCIES =
-virtual_secure_jobmgr_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(virtual_secure_jobmgr_LDFLAGS) $(LDFLAGS) -o $@
-am__virtual_secure_popc_search_node_SOURCES_DIST =  \
-	virtual_secure_popc_search_node_obj.cc
-#am_virtual_secure_popc_search_node_OBJECTS = virtual_secure_popc_search_node_obj.$(OBJEXT)
-virtual_secure_popc_search_node_OBJECTS =  \
-	$(am_virtual_secure_popc_search_node_OBJECTS)
-virtual_secure_popc_search_node_DEPENDENCIES =
-virtual_secure_popc_search_node_LINK = $(LIBTOOL) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(virtual_secure_popc_search_node_LDFLAGS) $(LDFLAGS) -o $@
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -255,54 +67,21 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-SCRIPTS = $(bin_SCRIPTS) $(execservices_SCRIPTS)
-DEFAULT_INCLUDES = -I. -I$(top_builddir)
+am__installdirs = "$(DESTDIR)$(execservicesdir)" \
+	"$(DESTDIR)$(confdir)"
+SCRIPTS = $(execservices_SCRIPTS)
 depcomp =
 am__depfiles_maybe =
-CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-CXXLD = $(CXX)
-CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
-SOURCES = $(appservice_SOURCES) $(benchmarktest_SOURCES) \
-	$(dumpjobmgr_SOURCES) $(jobmgr_SOURCES) \
-	$(jobmgr_launcher_SOURCES) $(jobmgrpublish_SOURCES) \
-	$(jobmgrquery_SOURCES) $(localservice_launcher_SOURCES) \
-	$(popc_search_node_SOURCES) $(popc_security_manager_SOURCES) \
-	$(popcloner_SOURCES) $(popfilemanager_SOURCES) \
-	$(secure_jobmgr_SOURCES) $(secure_popc_search_node_SOURCES) \
-	$(virtual_jobmgr_SOURCES) $(virtual_popc_search_node_SOURCES) \
-	$(virtual_popc_security_manager_SOURCES) \
-	$(virtual_secure_jobmgr_SOURCES) \
-	$(virtual_secure_popc_search_node_SOURCES)
-DIST_SOURCES = $(appservice_SOURCES) $(benchmarktest_SOURCES) \
-	$(dumpjobmgr_SOURCES) $(jobmgr_SOURCES) \
-	$(jobmgr_launcher_SOURCES) $(jobmgrpublish_SOURCES) \
-	$(jobmgrquery_SOURCES) $(localservice_launcher_SOURCES) \
-	$(popc_search_node_SOURCES) \
-	$(am__popc_security_manager_SOURCES_DIST) \
-	$(am__popcloner_SOURCES_DIST) $(popfilemanager_SOURCES) \
-	$(am__secure_jobmgr_SOURCES_DIST) \
-	$(am__secure_popc_search_node_SOURCES_DIST) \
-	$(am__virtual_jobmgr_SOURCES_DIST) \
-	$(am__virtual_popc_search_node_SOURCES_DIST) \
-	$(am__virtual_popc_security_manager_SOURCES_DIST) \
-	$(am__virtual_secure_jobmgr_SOURCES_DIST) \
-	$(am__virtual_secure_popc_search_node_SOURCES_DIST)
+SOURCES =
+DIST_SOURCES =
 DATA = $(conf_DATA)
-ETAGS = etags
-CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run aclocal-1.11
-AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run tar
+ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run aclocal-1.11
+AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoconf
-AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoheader
-AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run automake-1.11
+AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run autoconf
+AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run autoheader
+AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run automake-1.11
 AWK = awk
 CC = gcc
 CFLAGS = -g -O2
@@ -339,7 +118,7 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run makeinfo
+MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = .././install-sh -c -d
 NM = /usr/bin/nm
@@ -351,25 +130,23 @@ OTOOL64 = :
 PACKAGE = popc
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = popc
-PACKAGE_STRING = popc 2.5
+PACKAGE_STRING = popc 2.6.2 - K Computer
 PACKAGE_TARNAME = popc
 PACKAGE_URL = 
-PACKAGE_VERSION = 2.5
+PACKAGE_VERSION = 2.6.2 - K Computer
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 2.5
-VIX_CFLAGS = 
-VIX_LIBS = 
+VERSION = 2.6.2 - K Computer
 YACC = bison -y
 YFLAGS = 
-abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/services
-abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/services
-abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
-abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
+abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/services
+abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/services
+abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2
+abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -378,10 +155,10 @@ am__leading_dot = .
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin12.1.0
+build = x86_64-apple-darwin12.2.0
 build_alias = 
 build_cpu = x86_64
-build_os = darwin12.1.0
+build_os = darwin12.2.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -391,16 +168,16 @@ dvidir = ${docdir}
 exec_prefix = ${prefix}
 globusdir = 
 globusflavor = 
-host = x86_64-apple-darwin12.1.0
+host = x86_64-apple-darwin12.2.0
 host_alias = 
 host_cpu = x86_64
 host_kernel = Darwin
-host_os = darwin12.1.0
+host_os = darwin12.2.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/install-sh
+install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -409,11 +186,10 @@ mandir = ${datarootdir}/man
 mkdir_p = $(top_builddir)/./install-sh -c -d
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local/popc
+prefix = /Users/clementval/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
-secure = false
 sharedstatedir = ${prefix}/com
 srcdir = .
 sysconfdir = ${prefix}/etc
@@ -421,8 +197,6 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-virtsecure = false
-virtual = false
 
 #Code added by clementval begins with #Added by clementval, ends with #End of add
 #Code modified by clementval begins with #Modified by clementval, ends with #End of modification
@@ -430,99 +204,53 @@ AUTOMAKE_OPTIONS = no-dependencies
 POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -I../lib -cxx=g++ -D_POPC_RUNTIME_
 AM_CXXFLAGS = $(POPC_FLAGS)
 AM_LDFLAGS = -L../lib -L../lib/.libs 
+
+#execservices_PROGRAMS=popc_search_node jobmgr appservice localservice_launcher jobmgr_launcher
+#execservices_PROGRAMS= appservice
 execservices_SCRIPTS = popcobjrun popcobjrun.pbs popcobjrun.lsf popcobjrun.sge popcobjrun.smscg
-execservicesdir = /usr/local/popc/services
+execservicesdir = /Users/clementval/popc/services
 conf_DATA = jobmgr.conf.in 
-confdir = /usr/local/popc/etc
-bin_SCRIPTS = popcjob.pbs popcjob.lsf popcjob.sge
-popc_search_node_SOURCES = popc_search_node_obj.cc
-popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
-popc_search_node_LDFLAGS = -object
-jobmgr_SOURCES = jobmgr_obj.cc
-jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
-jobmgr_LDFLAGS = -object
-popfilemanager_SOURCES = popfilemanager_obj.cc
-popfilemanager_LDADD = -L../lib/.libs -lparoc_service_common
-popfilemanager_LDFLAGS = -object
+confdir = /Users/clementval/popc/etc
 
-#
-# ViSaG : clementval
-# Add conditional compiling libraries for the different version of POP-C++
-#
+#bin_PROGRAMS= jobmgrpublish jobmgrquery dumpjobmgr benchmarktest
+#bin_SCRIPTS=popcjob.pbs popcjob.lsf popcjob.sge
 
-#VIRTUAL SECURE VERSION
-#virtual_popc_search_node_SOURCES = virtual_popc_search_node_obj.cc
+#popc_search_node_SOURCES=popc_search_node_obj.cc
+#popc_search_node_LDADD=-L../lib/.libs -lparoc_service_common
+#popc_search_node_LDFLAGS=-object
 
-#VIRTUAL VERSION
-#virtual_popc_search_node_SOURCES = virtual_popc_search_node_obj.cc
-#virtual_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
-#virtual_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
-#virtual_popc_search_node_LDFLAGS = -object
-#virtual_popc_search_node_LDFLAGS = -object
-#virtual_secure_popc_search_node_SOURCES = virtual_secure_popc_search_node_obj.cc
-#virtual_secure_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
-#virtual_secure_popc_search_node_LDFLAGS = -object
-#virtual_jobmgr_SOURCES = virtual_jobmgr_obj.cc
-#virtual_jobmgr_SOURCES = virtual_jobmgr_obj.cc
-#virtual_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
-#virtual_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
-#virtual_jobmgr_LDFLAGS = -object
-#virtual_jobmgr_LDFLAGS = -object
-#virtual_secure_jobmgr_SOURCES = virtual_secure_jobmgr_obj.cc
-#virtual_secure_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
-#virtual_secure_jobmgr_LDFLAGS = -object
-#popcloner_SOURCES = popcloner_obj.cc
-#popcloner_SOURCES = popcloner_obj.cc
-#popcloner_LDADD = -L../lib/.libs -lparoc_service_common
-#popcloner_LDADD = -L../lib/.libs -lparoc_service_common
-#popcloner_LDFLAGS = -object
-#popcloner_LDFLAGS = -object
+#jobmgr_SOURCES=jobmgr_obj.cc
+#jobmgr_LDADD=-L../lib/.libs -lparoc_service_common
+#jobmgr_LDFLAGS=-object
 
-#SECURE VERSION
-#popc_security_manager_SOURCES = popc_security_manager_obj.cc
-#popc_security_manager_SOURCES = popc_security_manager_obj.cc
-#popc_security_manager_LDADD = -L../lib/.libs -lparoc_service_common
-#popc_security_manager_LDADD = -L../lib/.libs -lparoc_service_common
-#popc_security_manager_LDFLAGS = -object
-#popc_security_manager_LDFLAGS = -object
-#virtual_popc_security_manager_SOURCES = virtual_popc_security_manager_obj.cc
-#virtual_popc_security_manager_LDADD = -L../lib/.libs -lparoc_service_common
-#virtual_popc_security_manager_LDFLAGS = -object
-#secure_jobmgr_SOURCES = secure_jobmgr_obj.cc
-#secure_jobmgr_SOURCES = secure_jobmgr_obj.cc
-#secure_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
-#secure_jobmgr_LDADD = -L../lib/.libs -lparoc_service_common
-#secure_jobmgr_LDFLAGS = -object
-#secure_jobmgr_LDFLAGS = -object
-#secure_popc_search_node_SOURCES = secure_popc_search_node_obj.cc
-#secure_popc_search_node_SOURCES = secure_popc_search_node_obj.cc
-#secure_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
-#secure_popc_search_node_LDADD = -L../lib/.libs -lparoc_service_common
-#secure_popc_search_node_LDFLAGS = -object
-#secure_popc_search_node_LDFLAGS = -object
-appservice_SOURCES = appservice_obj.cc
-appservice_LDADD = 
-appservice_LDFLAGS = -object -L../lib/.libs -lparoc_service_common
-localservice_launcher_SOURCES = localservice_launcher.cc
-localservice_launcher_LDFLAGS = -L../lib/.libs -lparoc_service_common
-jobmgr_launcher_SOURCES = jobmgr_launcher.cc
-jobmgr_launcher_LDFLAGS = -L../lib/.libs -lparoc_service_common
-jobmgrpublish_SOURCES = jobmgrpublish.cc
-jobmgrpublish_LDFLAGS = -L../lib/.libs -lparoc_service_common
-jobmgrpublish_DEPENDENCIES = 
-jobmgrquery_SOURCES = jobmgrquery.cc
-jobmgrquery_LDFLAGS = -L../lib/.libs -lparoc_service_common
-jobmgrquery_DEPENDENCIES = 
-dumpjobmgr_SOURCES = dumpjobmgr.cc
-dumpjobmgr_LDFLAGS = -L../lib/.libs -lparoc_service_common
-dumpjobmgr_DEPENDENCIES = 
-benchmarktest_SOURCES = test_benchmark.cc 
+#appservice_SOURCES=appservice_obj.cc
+#appservice_LDADD=
+#appservice_LDFLAGS=-object -L../lib/.libs -lparoc_service_common
+
+#localservice_launcher_SOURCES=localservice_launcher.cc
+#localservice_launcher_LDFLAGS=-L../lib/.libs -lparoc_service_common
+
+#jobmgr_launcher_SOURCES=jobmgr_launcher.cc
+#jobmgr_launcher_LDFLAGS=-L../lib/.libs -lparoc_service_common
+
+#jobmgrpublish_SOURCES=jobmgrpublish.cc
+#jobmgrpublish_LDFLAGS=-L../lib/.libs -lparoc_service_common
+#jobmgrpublish_DEPENDENCIES=
+
+#jobmgrquery_SOURCES=jobmgrquery.cc
+#jobmgrquery_LDFLAGS=-L../lib/.libs -lparoc_service_common
+#jobmgrquery_DEPENDENCIES=
+
+#dumpjobmgr_SOURCES=dumpjobmgr.cc
+#dumpjobmgr_LDFLAGS=-L../lib/.libs -lparoc_service_common
+#dumpjobmgr_DEPENDENCIES=
+
+#benchmarktest_SOURCES=test_benchmark.cc 
 CLEANFILES = _paroc_*.cc _paroc_*.ph
 EXTRA_DIST = jobmgr.conf.in  popcobjrun.in
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cc .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -555,183 +283,6 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 $(am__aclocal_m4_deps):
 popcobjrun: $(top_builddir)/config.status $(srcdir)/popcobjrun.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-install-binPROGRAMS: $(bin_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	for p in $$list; do echo "$$p $$p"; done | \
-	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p || test -f $$p1; \
-	  then echo "$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
-	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
-	sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
-	    else { print "f", $$3 "/" $$4, $$1; } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	    } \
-	; done
-
-uninstall-binPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' `; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-
-clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-install-execservicesPROGRAMS: $(execservices_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	test -z "$(execservicesdir)" || $(MKDIR_P) "$(DESTDIR)$(execservicesdir)"
-	@list='$(execservices_PROGRAMS)'; test -n "$(execservicesdir)" || list=; \
-	for p in $$list; do echo "$$p $$p"; done | \
-	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p || test -f $$p1; \
-	  then echo "$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
-	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
-	sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
-	    else { print "f", $$3 "/" $$4, $$1; } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(execservicesdir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(execservicesdir)$$dir" || exit $$?; \
-	    } \
-	; done
-
-uninstall-execservicesPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(execservices_PROGRAMS)'; test -n "$(execservicesdir)" || list=; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' `; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(execservicesdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(execservicesdir)" && rm -f $$files
-
-clean-execservicesPROGRAMS:
-	@list='$(execservices_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-appservice$(EXEEXT): $(appservice_OBJECTS) $(appservice_DEPENDENCIES) 
-	@rm -f appservice$(EXEEXT)
-	$(appservice_LINK) $(appservice_OBJECTS) $(appservice_LDADD) $(LIBS)
-benchmarktest$(EXEEXT): $(benchmarktest_OBJECTS) $(benchmarktest_DEPENDENCIES) 
-	@rm -f benchmarktest$(EXEEXT)
-	$(CXXLINK) $(benchmarktest_OBJECTS) $(benchmarktest_LDADD) $(LIBS)
-dumpjobmgr$(EXEEXT): $(dumpjobmgr_OBJECTS) $(dumpjobmgr_DEPENDENCIES) 
-	@rm -f dumpjobmgr$(EXEEXT)
-	$(dumpjobmgr_LINK) $(dumpjobmgr_OBJECTS) $(dumpjobmgr_LDADD) $(LIBS)
-jobmgr$(EXEEXT): $(jobmgr_OBJECTS) $(jobmgr_DEPENDENCIES) 
-	@rm -f jobmgr$(EXEEXT)
-	$(jobmgr_LINK) $(jobmgr_OBJECTS) $(jobmgr_LDADD) $(LIBS)
-jobmgr_launcher$(EXEEXT): $(jobmgr_launcher_OBJECTS) $(jobmgr_launcher_DEPENDENCIES) 
-	@rm -f jobmgr_launcher$(EXEEXT)
-	$(jobmgr_launcher_LINK) $(jobmgr_launcher_OBJECTS) $(jobmgr_launcher_LDADD) $(LIBS)
-jobmgrpublish$(EXEEXT): $(jobmgrpublish_OBJECTS) $(jobmgrpublish_DEPENDENCIES) 
-	@rm -f jobmgrpublish$(EXEEXT)
-	$(jobmgrpublish_LINK) $(jobmgrpublish_OBJECTS) $(jobmgrpublish_LDADD) $(LIBS)
-jobmgrquery$(EXEEXT): $(jobmgrquery_OBJECTS) $(jobmgrquery_DEPENDENCIES) 
-	@rm -f jobmgrquery$(EXEEXT)
-	$(jobmgrquery_LINK) $(jobmgrquery_OBJECTS) $(jobmgrquery_LDADD) $(LIBS)
-localservice_launcher$(EXEEXT): $(localservice_launcher_OBJECTS) $(localservice_launcher_DEPENDENCIES) 
-	@rm -f localservice_launcher$(EXEEXT)
-	$(localservice_launcher_LINK) $(localservice_launcher_OBJECTS) $(localservice_launcher_LDADD) $(LIBS)
-popc_search_node$(EXEEXT): $(popc_search_node_OBJECTS) $(popc_search_node_DEPENDENCIES) 
-	@rm -f popc_search_node$(EXEEXT)
-	$(popc_search_node_LINK) $(popc_search_node_OBJECTS) $(popc_search_node_LDADD) $(LIBS)
-popc_security_manager$(EXEEXT): $(popc_security_manager_OBJECTS) $(popc_security_manager_DEPENDENCIES) 
-	@rm -f popc_security_manager$(EXEEXT)
-	$(popc_security_manager_LINK) $(popc_security_manager_OBJECTS) $(popc_security_manager_LDADD) $(LIBS)
-popcloner$(EXEEXT): $(popcloner_OBJECTS) $(popcloner_DEPENDENCIES) 
-	@rm -f popcloner$(EXEEXT)
-	$(popcloner_LINK) $(popcloner_OBJECTS) $(popcloner_LDADD) $(LIBS)
-popfilemanager$(EXEEXT): $(popfilemanager_OBJECTS) $(popfilemanager_DEPENDENCIES) 
-	@rm -f popfilemanager$(EXEEXT)
-	$(popfilemanager_LINK) $(popfilemanager_OBJECTS) $(popfilemanager_LDADD) $(LIBS)
-secure_jobmgr$(EXEEXT): $(secure_jobmgr_OBJECTS) $(secure_jobmgr_DEPENDENCIES) 
-	@rm -f secure_jobmgr$(EXEEXT)
-	$(secure_jobmgr_LINK) $(secure_jobmgr_OBJECTS) $(secure_jobmgr_LDADD) $(LIBS)
-secure_popc_search_node$(EXEEXT): $(secure_popc_search_node_OBJECTS) $(secure_popc_search_node_DEPENDENCIES) 
-	@rm -f secure_popc_search_node$(EXEEXT)
-	$(secure_popc_search_node_LINK) $(secure_popc_search_node_OBJECTS) $(secure_popc_search_node_LDADD) $(LIBS)
-virtual_jobmgr$(EXEEXT): $(virtual_jobmgr_OBJECTS) $(virtual_jobmgr_DEPENDENCIES) 
-	@rm -f virtual_jobmgr$(EXEEXT)
-	$(virtual_jobmgr_LINK) $(virtual_jobmgr_OBJECTS) $(virtual_jobmgr_LDADD) $(LIBS)
-virtual_popc_search_node$(EXEEXT): $(virtual_popc_search_node_OBJECTS) $(virtual_popc_search_node_DEPENDENCIES) 
-	@rm -f virtual_popc_search_node$(EXEEXT)
-	$(virtual_popc_search_node_LINK) $(virtual_popc_search_node_OBJECTS) $(virtual_popc_search_node_LDADD) $(LIBS)
-virtual_popc_security_manager$(EXEEXT): $(virtual_popc_security_manager_OBJECTS) $(virtual_popc_security_manager_DEPENDENCIES) 
-	@rm -f virtual_popc_security_manager$(EXEEXT)
-	$(virtual_popc_security_manager_LINK) $(virtual_popc_security_manager_OBJECTS) $(virtual_popc_security_manager_LDADD) $(LIBS)
-virtual_secure_jobmgr$(EXEEXT): $(virtual_secure_jobmgr_OBJECTS) $(virtual_secure_jobmgr_DEPENDENCIES) 
-	@rm -f virtual_secure_jobmgr$(EXEEXT)
-	$(virtual_secure_jobmgr_LINK) $(virtual_secure_jobmgr_OBJECTS) $(virtual_secure_jobmgr_LDADD) $(LIBS)
-virtual_secure_popc_search_node$(EXEEXT): $(virtual_secure_popc_search_node_OBJECTS) $(virtual_secure_popc_search_node_DEPENDENCIES) 
-	@rm -f virtual_secure_popc_search_node$(EXEEXT)
-	$(virtual_secure_popc_search_node_LINK) $(virtual_secure_popc_search_node_OBJECTS) $(virtual_secure_popc_search_node_LDADD) $(LIBS)
-install-binSCRIPTS: $(bin_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-binSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(bindir)" && rm -f $$files
 install-execservicesSCRIPTS: $(execservices_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(execservicesdir)" || $(MKDIR_P) "$(DESTDIR)$(execservicesdir)"
@@ -767,21 +318,6 @@ uninstall-execservicesSCRIPTS:
 	echo " ( cd '$(DESTDIR)$(execservicesdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(execservicesdir)" && rm -f $$files
 
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT)
-
-distclean-compile:
-	-rm -f *.tab.c
-
-.cc.o:
-	$(CXXCOMPILE) -c -o $@ $<
-
-.cc.obj:
-	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.cc.lo:
-	$(LTCXXCOMPILE) -c -o $@ $<
-
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -807,58 +343,12 @@ uninstall-confDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(confdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(confdir)" && rm -f $$files
-
-ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
-	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
-	mkid -fID $$unique
 tags: TAGS
+TAGS:
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
-	set x; \
-	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
-	shift; \
-	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
-	  test -n "$$unique" || unique=$$empty_fix; \
-	  if test $$# -gt 0; then \
-	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
-	      "$$@" $$unique; \
-	  else \
-	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
-	      $$unique; \
-	  fi; \
-	fi
 ctags: CTAGS
-CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
-	test -z "$(CTAGS_ARGS)$$unique" \
-	  || $(CTAGS) $(CTAGSFLAGS) $(AM_CTAGSFLAGS) $(CTAGS_ARGS) \
-	     $$unique
+CTAGS:
 
-GTAGS:
-	here=`$(am__cd) $(top_builddir) && pwd` \
-	  && $(am__cd) $(top_srcdir) \
-	  && gtags -i $(GTAGS_ARGS) "$$here"
-
-distclean-tags:
-	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -892,9 +382,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(DATA)
+all-am: Makefile $(SCRIPTS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(execservicesdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(execservicesdir)" "$(DESTDIR)$(confdir)"; do \
+	for dir in "$(DESTDIR)$(execservicesdir)" "$(DESTDIR)$(confdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -925,13 +415,11 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-execservicesPROGRAMS clean-generic \
-	clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
-distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-tags
+distclean-am: clean-am distclean-generic
 
 dvi: dvi-am
 
@@ -952,8 +440,7 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-binSCRIPTS \
-	install-execservicesPROGRAMS install-execservicesSCRIPTS
+install-exec-am: install-execservicesSCRIPTS
 
 install-html: install-html-am
 
@@ -981,8 +468,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
 pdf: pdf-am
 
@@ -992,29 +478,23 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
-	uninstall-confDATA uninstall-execservicesPROGRAMS \
-	uninstall-execservicesSCRIPTS
+uninstall-am: uninstall-confDATA uninstall-execservicesSCRIPTS
 
 .MAKE: install-am install-data-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-execservicesPROGRAMS clean-generic clean-libtool ctags \
-	distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-binSCRIPTS install-confDATA install-data \
-	install-data-am install-data-hook install-dvi install-dvi-am \
-	install-exec install-exec-am install-execservicesPROGRAMS \
-	install-execservicesSCRIPTS install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
+.PHONY: all all-am check check-am clean clean-generic clean-libtool \
+	distclean distclean-generic distclean-libtool distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-confDATA install-data install-data-am \
+	install-data-hook install-dvi install-dvi-am install-exec \
+	install-exec-am install-execservicesSCRIPTS install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-binSCRIPTS uninstall-confDATA \
-	uninstall-execservicesPROGRAMS uninstall-execservicesSCRIPTS
+	uninstall uninstall-am uninstall-confDATA \
+	uninstall-execservicesSCRIPTS
 
 
 %.stub_client.o : %.ph
@@ -1030,13 +510,13 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
 	$(LIBTOOL) --mode=compile --tag=CXX $(CXX) -cxxmain $(POPC_FLAGS) $(CXXFLAGS) -c $< -o $@
 
 install-data-hook:
-	@if [ ! -f /usr/local/popc/etc/popc-runtime-env.sh ]; then cp /usr/local/popc/etc/popc-runtime-env.in /usr/local/popc/etc/popc-runtime-env.sh; fi
-	@ln -sf popcc /usr/local/popc/bin/parocc
-	@ln -sf popcrun /usr/local/popc/bin/parocrun
-	@ln -sf popcobjrun /usr/local/popc/services/webrun
-	@ln -sf popc-user-env.csh /usr/local/popc/bin/paroc-user-env.csh
-	@ln -sf popc-user-env.sh /usr/local/popc/bin/paroc-user-env.sh
-	@ln -sf SXXpopc /usr/local/popc/sbin/SXXparoc
+	@if [ ! -f /Users/clementval/popc/etc/popc-runtime-env.sh ]; then cp /Users/clementval/popc/etc/popc-runtime-env.in /Users/clementval/popc/etc/popc-runtime-env.sh; fi
+	@ln -sf popcc /Users/clementval/popc/bin/parocc
+	@ln -sf popcrun /Users/clementval/popc/bin/parocrun
+	@ln -sf popcobjrun /Users/clementval/popc/services/webrun
+	@ln -sf popc-user-env.csh /Users/clementval/popc/bin/paroc-user-env.csh
+	@ln -sf popc-user-env.sh /Users/clementval/popc/bin/paroc-user-env.sh
+	@ln -sf SXXpopc /Users/clementval/popc/sbin/SXXparoc
 	@${exec_prefix}/sbin/popc_setup -ask
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
