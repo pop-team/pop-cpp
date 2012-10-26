@@ -198,7 +198,10 @@ paroc_connection* popc_combox_uds::Wait()
 {
   if(_is_server){
     socklen_t address_length;
-    int poll_back = poll(active_connection, _active_connection_nb, _timeout);
+    int poll_back;
+    do {
+      poll_back = poll(active_connection, _active_connection_nb, _timeout);
+    } while ((poll_back == -1) && (errno == EINTR));
     if(poll_back > 0) {
       for(int i = 0; i < _active_connection_nb; i++){
         if (active_connection[i].revents & POLLIN) {  
