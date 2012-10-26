@@ -31,8 +31,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-build_triplet = x86_64-apple-darwin12.1.0
-host_triplet = x86_64-apple-darwin12.1.0
+build_triplet = x86_64-apple-darwin12.2.0
+host_triplet = x86_64-apple-darwin12.2.0
 #am__append_1 = mpi
 #am__append_2 = globus
 subdir = .
@@ -68,8 +68,8 @@ AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
 	distdir dist dist-all distcheck
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = scripts parser include lib services modules model mpi \
-	globus
+DIST_SUBDIRS = scripts parser include lib services modules model \
+	communicator mpi globus
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -106,12 +106,12 @@ DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run aclocal-1.11
-AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run tar
+ACLOCAL = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run aclocal-1.11
+AMTAR = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run tar
 AR = ar
-AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoconf
-AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run autoheader
-AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run automake-1.11
+AUTOCONF = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run autoconf
+AUTOHEADER = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run autoheader
+AUTOMAKE = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run automake-1.11
 AWK = awk
 CC = gcc
 CFLAGS = -g -O2
@@ -148,7 +148,7 @@ LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = lipo
 LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/missing --run makeinfo
+MAKEINFO = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/missing --run makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = ./install-sh -c -d
 NM = /usr/bin/nm
@@ -160,25 +160,23 @@ OTOOL64 = :
 PACKAGE = popc
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = popc
-PACKAGE_STRING = popc 2.5
+PACKAGE_STRING = popc 2.6.2 - K Computer
 PACKAGE_TARNAME = popc
 PACKAGE_URL = 
-PACKAGE_VERSION = 2.5
+PACKAGE_VERSION = 2.6.2 - K Computer
 PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /usr/bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = strip
-VERSION = 2.5
-VIX_CFLAGS = 
-VIX_LIBS = 
+VERSION = 2.6.2 - K Computer
 YACC = bison -y
 YFLAGS = 
-abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
-abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
-abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
-abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3
+abs_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2
+abs_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2
+abs_top_builddir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2
+abs_top_srcdir = /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
@@ -187,10 +185,10 @@ am__leading_dot = .
 am__tar = ${AMTAR} chof - "$$tardir"
 am__untar = ${AMTAR} xf -
 bindir = ${exec_prefix}/bin
-build = x86_64-apple-darwin12.1.0
+build = x86_64-apple-darwin12.2.0
 build_alias = 
 build_cpu = x86_64
-build_os = darwin12.1.0
+build_os = darwin12.2.0
 build_vendor = apple
 builddir = .
 datadir = ${datarootdir}
@@ -200,16 +198,16 @@ dvidir = ${docdir}
 exec_prefix = ${prefix}
 globusdir = 
 globusflavor = 
-host = x86_64-apple-darwin12.1.0
+host = x86_64-apple-darwin12.2.0
 host_alias = 
 host_cpu = x86_64
 host_kernel = Darwin
-host_os = darwin12.1.0
+host_os = darwin12.2.0
 host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.0.3/install-sh
+install_sh = ${SHELL} /Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -218,11 +216,10 @@ mandir = ${datarootdir}/man
 mkdir_p = $(top_builddir)/./install-sh -c -d
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local/popc
+prefix = /Users/clementval/popc
 program_transform_name = s,x,x,
 psdir = ${docdir}
 sbindir = ${exec_prefix}/sbin
-secure = false
 sharedstatedir = ${prefix}/com
 srcdir = .
 sysconfdir = ${prefix}/etc
@@ -230,11 +227,9 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
-virtsecure = false
-virtual = false
 AUTOMAKE_OPTIONS = no-dependencies
 SUBDIRS = scripts parser include lib services modules model \
-	$(am__append_1) $(am__append_2)
+	communicator $(am__append_1) $(am__append_2)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -731,7 +726,7 @@ uninstall-am:
 
 
 #install-exec-hook:
-#	@if [ ! -f /usr/local/popc/etc/popc-runtime-env.sh ]; then cp /usr/local/popc/etc/popc-runtime-env.in /usr/local/popc/etc/popc-runtime-env.sh; fi
+#	@if [ ! -f /Users/clementval/popc/etc/popc-runtime-env.sh ]; then cp /Users/clementval/popc/etc/popc-runtime-env.in /Users/clementval/popc/etc/popc-runtime-env.sh; fi
 #	@${exec_prefix}/sbin/popc_setup -ask
 
 documentation:
