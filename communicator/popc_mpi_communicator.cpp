@@ -15,6 +15,7 @@
 #include "paroc_broker.h"
 #include "paroc_buffer_xdr.h"
 #include "popc_combox_uds.h"
+#include "paroc_utils.h"
 
 
 
@@ -64,20 +65,33 @@ int main(int argc, char* argv[])
   int next_object_id = 1;  
   
   if(rank == 0) {
-    std::string application_arg(argv[1]);
-
+/*    std::string application_arg(argv[1]);
     std::size_t pos = application_arg.find("-app=");
     if(pos != std::string::npos){
       application_arg = application_arg.substr(pos+5);
     }
+*/
+
+    std::string application_arg;
+    char* capp = paroc_utils::checkremove(&argc, &argv, "-app=");
+    if(capp == NULL) {
+      printf("usage: %s -app=<app_exec>\n", argv[0]);      
+      MPI::Finalize();  
+      return 1;
+    } else {
+      application_arg.append(capp);
+      printf("App %s %d\n", argv[0], argc);
+    }
+    
 
     pid_t pid = fork();
 
     if(pid ==0) {
-      char* argv1[2];
-      argv1[0] = const_cast<char*>(application_arg.c_str());
-      argv1[1] = (char*)0;
-      execv(argv1[0], argv1);
+      //char* argv1[2];
+      //argv1[0] = const_cast<char*>(application_arg.c_str());
+      //argv1[1] = (char*)0;
+      argv[0] = const_cast<char*>(application_arg.c_str());
+      execv(argv[0], argv);
       perror("Execv failed");
 
     } else if(pid != -1) {
@@ -135,19 +149,20 @@ int main(int argc, char* argv[])
               POPString objectaddress(objurl.c_str());
               std::string _receiveraddress("-callback=");
               _receiveraddress.append(receiver_address);
-
-
+              char *localrank = new char[20];
+              snprintf(localrank, 20, "-local_rank=%d", rank);
               
               
               // Allocate the object      
               pid_t allocatepid = fork();
               if(allocatepid == 0){
-                char* argv1[5];
-                argv1[0] = codefile.GetString();  // Object executable
-                argv1[1] = const_cast<char*>(_objectname.c_str());   // Object name
-                argv1[2] = const_cast<char*>(_objectaddress.c_str()); // Object address
-                argv1[3] = const_cast<char*>(_receiveraddress.c_str());
-                argv1[4] = (char*)0;             
+                char* argv1[6];
+                argv1[0] = codefile.GetString();                        // Object executable
+                argv1[1] = const_cast<char*>(_objectname.c_str());      // Object name
+                argv1[2] = const_cast<char*>(_objectaddress.c_str());   // Object address
+                argv1[3] = const_cast<char*>(_receiveraddress.c_str()); // Address of ready call
+                argv1[4] = localrank;                                   // Rank of the creator process
+                argv1[5] = (char*)0;             
                 execv(argv1[0], argv1);              	
               }
               paroc_request callback;
