@@ -867,12 +867,12 @@ void Method::GenerateClient(CArrayChar &output)
 	 */
 	/* COMMENTED FOR 2.5 BUT TO BE PUT IN 2.5.1	 
 	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && !GetClass()->IsAsyncAllocationDisable()){
-		sprintf(tmpcode,"void* status;\npthread_join(_popc_async_construction_thread, &status); if(!isBinded()) {rprintf(\"Not allocated\"); return;}\n");
+		sprintf(tmpcode,"void* status;\npthread_join(_popc_async_construction_thread, &status); if(!isBinded()) {printf(\"Not allocated\"); return;}\n");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));	
 	} // End of APOA Support
 	*/
-	
-	sprintf(tmpcode,"\nparoc_mutex_locker __paroc_lock(_paroc_imutex);\n__paroc_buf->Reset();\nparoc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n__paroc_buf->SetHeader(__paroc_buf_header);\n",clname, id, invoke_code, name);
+//	sprintf(tmpcode,"\nprintf(\"INTERFACE: will call a method.\\n\");\nparoc_mutex_locker __paroc_lock(_paroc_imutex);\nparoc_connection* _popc_connection = __paroc_combox->get_connection();\n__paroc_buf->Reset();\nparoc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n__paroc_buf->SetHeader(__paroc_buf_header);\n",clname, id, invoke_code, name);	
+	sprintf(tmpcode,"\nparoc_mutex_locker __paroc_lock(_paroc_imutex);\nparoc_connection* _popc_connection = __paroc_combox->get_connection();\n__paroc_buf->Reset();\nparoc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n__paroc_buf->SetHeader(__paroc_buf_header);\n",clname, id, invoke_code, name);
 	output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
 	//Generate marshalling stub
@@ -887,7 +887,7 @@ void Method::GenerateClient(CArrayChar &output)
 
 	//Finish marshaling buffer....now transmit the buffer....
 
-	strcpy(tmpcode,"\nparoc_Dispatch(__paroc_buf);");
+	strcpy(tmpcode,"\npopc_send_request(__paroc_buf, _popc_connection);");
 	output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
 	if (waitreturn)
@@ -898,7 +898,9 @@ void Method::GenerateClient(CArrayChar &output)
 		strcpy(tmpcode,"\n\telse\n");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #endif
-		strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv(*__paroc_combox)) paroc_exception::paroc_throw_errno();\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
+    
+    
+		strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv((*__paroc_combox), _popc_connection)) paroc_exception::paroc_throw_errno();\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 		for (j=0;j<nb;j++)
 		{
@@ -916,16 +918,26 @@ void Method::GenerateClient(CArrayChar &output)
 			output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
 			returnparam.UnMarshal((char*)"(*__paroc_buf)",reformat,true, true, output);
-			strcpy(tmpcode,"\n__paroc_buf->Reset();\nreturn ");
+			strcpy(tmpcode,"\n__paroc_buf->Reset();");
+		  output.InsertAt(-1,tmpcode,strlen(tmpcode));				
+
+
+      // Added for new communication support		
+      strcpy(tmpcode,"\n_popc_connection->reset();\nreturn ");
+			
 			if (reformat) strcat(tmpcode,"&");
 			strcat(tmpcode,returnparam.name);
 			strcat(tmpcode,";\n}\n");
 			output.InsertAt(-1,tmpcode,strlen(tmpcode));
+
 		}
 		else
 		{
-			strcpy(tmpcode,"\n__paroc_buf->Reset();\n}\n");
+			strcpy(tmpcode,"\n__paroc_buf->Reset();\n");
 			output.InsertAt(-1,tmpcode,strlen(tmpcode));
+      // Added for new communication support		
+      strcpy(tmpcode,"_popc_connection->reset();\n}\n");
+		  output.InsertAt(-1,tmpcode,strlen(tmpcode));	
 		}
 	}
 	else
@@ -949,7 +961,12 @@ void Method::GenerateClient(CArrayChar &output)
 		strcpy(tmpcode,"\n\tif(time_alive > 0 && time_control > 0 ){\n\t\toldTime=__paroc_combox->GetTimeout();\n\t\t__paroc_combox->SetTimeout(time_alive);\n\t\t__paroc_combox->RecvAck();\n\t\t__paroc_combox->SetTimeout(oldTime);\n\t}");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #else
-		strcpy(tmpcode,"__paroc_buf->Reset();\n}\n");
+		
+		strcpy(tmpcode,"__paroc_buf->Reset();\n");
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+
+    // Added for new communication support		
+    strcpy(tmpcode,"_popc_connection->reset();\n}\n");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #endif
 	}
@@ -1027,6 +1044,8 @@ void Method::GenerateBroker(CArrayChar &output)
 	sprintf(str,"\nvoid %s::Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output)\n{",brokername,name, id);
 	output.InsertAt(-1,str,strlen(str));
 
+//	sprintf(str,"\nprintf(\"BROKER: Invoke_%s_%s_%d\\n\");",brokername,name, id);
+//	output.InsertAt(-1,str,strlen(str));
 	char methodcall[1024];
 	bool haveReturn=false;
 	
@@ -1097,7 +1116,7 @@ void Method::GenerateBroker(CArrayChar &output)
 		for (int i=0; i<256; i++)
             tempcatch[i]='\0';
 
-		sprintf(tempcatch,"\n}\ncatch(std::exception& e) {rprintf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
+		sprintf(tempcatch,"\n}\ncatch(std::exception& e) {printf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
 		strcat(methodcall,tempcatch); 
 		
 
@@ -1116,13 +1135,22 @@ void Method::GenerateBroker(CArrayChar &output)
 		if (haveReturn) {
 			returnparam.Marshal((char*)"__paroc_buf",false,false, output);
 		}
-		strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n}\n");
+		strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n");
+  	output.InsertAt(-1,str,strlen(str));		
+		
+		// Modification for MPI usage
+	  //sprintf(str,"\nprintf(\"BROKER: End of Invoke_%s_%s_%d\\n\");",brokername,name, id);
+//  	output.InsertAt(-1,str,strlen(str));  			
+  	strcpy(str,"\nif(__interface_output != 0)\n__interface_output->reset();\n}\n");		
+  	output.InsertAt(-1,str,strlen(str));				
+  	// End of mod
 	} else { // ADDED FOR 2.0.3
 		if(cl->IsWarningEnable())
 			printf("POP-C++ Warning: %s is an abstract parclass. Be aware that only the final class (parallel object) will keep this semantic.\n", clname);
 		strcpy(str,"}\n");	// Close the method braces
+  	output.InsertAt(-1,str,strlen(str));
 	}
-	output.InsertAt(-1,str,strlen(str));
+
 }
 
 Param *Method::AddNewParam()

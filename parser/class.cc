@@ -336,7 +336,7 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 		// TODO generate right od and be able to pass parameters
 		sprintf(tmpcode, "try{\n_this_interface->od.search(0,0,0);\n_this_interface->Allocate();\n_this_interface->_paroc_Construct();\n");
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));	
-		sprintf(tmpcode, "} catch(paroc_exception* ex) {\n rprintf(\"Async allocation: %%s\", ex->what()); }\nreturn 0;\n}\n}\n");
+		sprintf(tmpcode, "} catch(paroc_exception* ex) {\n printf(\"Async allocation: %%s\", ex->what()); }\nreturn 0;\n}\n}\n");
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));			
 		
 		
@@ -741,7 +741,6 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 
 	strcpy(str,"\ndefault: return false;\n}");
 	code.InsertAt(-1,str,strlen(str));
-
 
 	n=baseClass.GetSize();
 	for (i=0;i<n;i++)

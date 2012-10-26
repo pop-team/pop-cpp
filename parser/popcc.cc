@@ -376,7 +376,7 @@ int main(int argc, char *argv[])
   char opt_compile[]="-c";
   char opt_output[]="-o";
   
-  char parocdir[1024]="/usr/local/popc";
+  char parocdir[1024]="/Users/clementval/popc";
   char includedir[1024];
 
   char libdir[1024];
