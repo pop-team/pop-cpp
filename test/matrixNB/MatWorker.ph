@@ -11,7 +11,7 @@ parclass MatWorker
 
 public:
 	MatWorker();
-	MatWorker(int i, int nbLineA, int nbColA, int nbColB, POPString machine) @{ od.url("localhost"); od.executable("/Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/test/matrixNB/MatWorker.obj"); };
+	MatWorker(int i, int nbLineA, int nbColA, int nbColB, POPString machine) @{ od.node(0); od.executable("/Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/test/matrixNB/MatWorker.obj"); };
 	~MatWorker();
 
 	async conc void solve(Matrix2Dlc a, Matrix2Dcl b);
