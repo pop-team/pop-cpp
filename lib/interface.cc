@@ -288,6 +288,7 @@ void paroc_interface::Allocate()
 	Release();
 	POPString p;
 	od.getProtocol(p);
+	int node = od.get_node();
 //	paroc_accesspoint jobcontact, objaccess, remotejobcontact;
 	paroc_accesspoint objaccess;
 	
@@ -331,6 +332,14 @@ void paroc_interface::Allocate()
   allocating_buffer->Pack(&codefile, 1);
   allocating_buffer->Pop();
   
+  
+  if(node == -1)
+    node == paroc_system::popc_local_mpi_communicator_rank;
+    
+  allocating_buffer->Push("node", "int", 1);
+  allocating_buffer->Pack(&node, 1);
+  allocating_buffer->Pop();
+    
 	paroc_connection* connection = allocating_combox->get_connection();	
   if (!allocating_buffer->Send((*allocating_combox), connection)) {
 	  paroc_exception::paroc_throw_errno();
