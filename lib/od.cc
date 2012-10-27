@@ -27,12 +27,13 @@ paroc_od::paroc_od()
 	if (batchSystem!=NULL)hostname=batchSystem; // To avoid letting the hostname empty
 	isLocalJob=defaultLocalJob;
 	sameDirectory(true); // Set the working directory to the current one by default
-   secureSet=false;
-   searchSet=false;
-   serviceSet=false;
-	max_depth=100;
-	max_size=0;
-	wait_time=0;
+  secureSet=false;
+  searchSet=false;
+  serviceSet=false;
+	max_depth = 100;
+	max_size = 0;
+	wait_time = 0;
+	node_value = -1;
 }
 
 paroc_od::~paroc_od()
@@ -56,6 +57,16 @@ void paroc_od::service(bool serv){
  */
 bool paroc_od::isServiceSet() const {
    return serviceSet;
+}
+
+int paroc_od::get_node() const 
+{
+  return node_value;
+}
+
+void paroc_od::node(int value) 
+{
+  node_value = value; 
 }
 
 void paroc_od::power(float require, float min)
