@@ -49,11 +49,25 @@ void catch_child_exit(int signal_num) {
 void *mpireceivedthread(void *t) 
 {
   int rank = MPI::COMM_WORLD.Get_rank();  
+  char* tmp = new char[20];
+  sprintf(tmp, "uds_%d.0", rank);
+  std::string local_address(tmp);
+  delete [] tmp;
   bool active = true;
   
+  
   // Connect to main process by IPC
-  
-  
+  popc_combox_uds ipcwaker;
+  ipcwaker.Create(local_address.c_str(), false);
+  ipcwaker.Connect(local_address.c_str());
+  paroc_buffer* ipcwaker_buffer = ipcwaker.GetBufferFactory()->CreateBuffer();    
+  paroc_message_header header(20, 100003, INVOKE_SYNC, "_dummyconnection");
+	ipcwaker_buffer->Reset();
+	ipcwaker_buffer->SetHeader(header);  
+	paroc_connection* connection = ipcwaker.get_connection();	
+  if (!ipcwaker_buffer->Send(ipcwaker, connection)) {
+	  paroc_exception::paroc_throw_errno();
+	}   
   
   // Waiting for MPI calls
   while(active) {
@@ -61,10 +75,20 @@ void *mpireceivedthread(void *t)
     MPI::Status status;
     // Receive data
     MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, MPI_ANY_SOURCE, 0, status);
+    printf("Recv data on MPI %d\n", data);
     switch (data) {
       // Receive ending command from the main MPI process. 
-      case 10:
-        active = false;
+      case 10: 
+        {
+          active = false;
+          if (rank != 0) {
+            // signal the IPC process to stop
+            paroc_message_header endheader(20, 100001, INVOKE_SYNC, "_terminate");
+	          ipcwaker_buffer->Reset();
+            ipcwaker_buffer->SetHeader(endheader);  
+            ipcwaker_buffer->Send(ipcwaker, connection);
+          }
+        }
         break;
       // Unknown command ... do nothing 
       default:
@@ -183,7 +207,7 @@ int main(int argc, char* argv[])
 		  	      MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, i, tag);
 		  	    }
           }
-    	    MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, 0, tag);          
+    	    MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, 0, tag);                  
         } else if(request.methodId[1] == 100002) {  
           // Connection to this process as a router process
           
@@ -192,7 +216,11 @@ int main(int argc, char* argv[])
          	request.data->UnPack(&real_destination, 1);
         	request.data->Pop();
          	int current_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();      	
-         	
+        } else if(request.methodId[1] == 100003) {
+          // Get information from the MPI received node
+          printf("Connection from MPI thread %d\n", rank);
+          
+                   	
         } else if(request.methodId[1] == 100000) {  
           // Allocation a new parallel object
           
