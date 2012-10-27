@@ -6,7 +6,7 @@ parclass Integer
 	classuid(1000);
 
 public:	
-	Integer() @{ od.url("localhost"); od.executable("/Users/clementval/versioning/popc/popc2.6.2/examples/integer/integer.obj"); };
+	Integer() @{ od.node(0); od.executable("/Users/clementval/versioning/popc/popc2.6.2/examples/integer/integer.obj"); };
 	~Integer();
 
 	seq async void Set(int val);
