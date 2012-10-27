@@ -56,6 +56,7 @@ int main(int argc, char* argv[])
   
   // Initialize local address
   int rank = MPI::COMM_WORLD.Get_rank();
+  int world = MPI::COMM_WORLD.Get_size();
   char* tmp = new char[20];
   sprintf(tmp, "uds_%d.0", rank);
   std::string local_address(tmp);
@@ -117,16 +118,43 @@ int main(int argc, char* argv[])
   		  	  request.methodId[0] = header.GetClassID();
 	  		    request.methodId[1] = header.GetMethodID();
 			    
+			      // Killing the process, end of the higher-level application
 		  	    if(request.methodId[1] == 100001){
 		  	      active = false;
-		  	    } else if(request.methodId[1] == 100000) {
+		  	      if(world > 1) {
+		  	        for(int i = 1; i < world; i++) {
+                  int tag = 10; // TAG 10 = END OF THE APPLICATION
+                  int data = 0; 
+                  // Inform other MPI communicator to end their process. 
+		  	          MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, i, tag);
+		  	        }
+		  	      }
+		  	    } else if(request.methodId[1] == 100002) {  // Connection
+		  	      // Get the real destination
+		  	      POPString real_destination;
+		  	      request.data->Push("realdest", "POPString", 1);
+            	request.data->UnPack(&real_destination, 1);
+            	request.data->Pop();
+            	int current_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
+            	
+            	
+		  	    } else if(request.methodId[1] == 100000) {  // Allocation
 		  	      POPString objectname, codefile;
+		  	      int node;
 		  	     	request.data->Push("objectname", "POPString", 1);
             	request.data->UnPack(&objectname, 1);
             	request.data->Pop();
 		  	     	request.data->Push("codefile", "POPString", 1);
             	request.data->UnPack(&codefile, 1);
             	request.data->Pop();		  
+		  	     	request.data->Push("node", "int", 1);
+            	request.data->UnPack(&node, 1);
+            	request.data->Pop();		  
+            	
+            	
+            	if (node != rank) {
+            	  printf("Will allocate on another node %d\n", node);
+            	} 
 
               char* tmp = new char[15];
               snprintf(tmp, 15, "uds_%d.%d", rank, next_object_id);
