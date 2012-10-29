@@ -333,8 +333,9 @@ void paroc_interface::Allocate()
   allocating_buffer->Pop();
   
   
-  if(node == -1)
+  if(node == -1) {
     node == paroc_system::popc_local_mpi_communicator_rank;
+  }
     
   allocating_buffer->Push("node", "int", 1);
   allocating_buffer->Pack(&node, 1);
@@ -358,7 +359,7 @@ void paroc_interface::Allocate()
   allocating_combox->Close();
 
 	objaccess.SetAccessString(objectaddress.GetString());
-
+  printf("Bind with %s\n", objectaddress.GetString());
 	Bind(objaccess); 
 }
 
