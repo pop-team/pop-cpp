@@ -66,6 +66,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) // Receive request and pu
 
 		}
 	}
+	printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
 	server->Close();
 }
 
@@ -75,19 +76,22 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
 	server->SetTimeout(-1);
 	while (1) {
 
-		paroc_connection *conn=server->Wait();
+		paroc_connection *conn = server->Wait();
 
 		if (conn == NULL) {
 			execCond.broadcast();
 			return false;
 		}
   	if (conn->is_initial_connection()){
-  		if (obj != NULL) {
+//  	  printf("INIT Connection\n");
+  		/*if (obj != NULL) {
   		  int i = obj->AddRef();
-  	  }
+  	  }*/
+  	  continue;
   	}
 		paroc_buffer_factory *fact=conn->GetBufferFactory();
 		req.data=fact->CreateBuffer();
+  //  printf("BROKER:Will receive data\n");		
 		if (req.data->Recv(conn)) {
 			req.from = conn;
 			const paroc_message_header &h=req.data->GetHeader();
@@ -187,6 +191,8 @@ paroc_object * paroc_broker::GetObject()
 
 bool  paroc_broker::ParocCall(paroc_request &req)
 {
+
+//  printf("ParocCall\n");
 	if (req.methodId[1]>=10) return false;
 
 	unsigned *methodid=req.methodId;
@@ -198,9 +204,9 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 		//BindStatus call
 		if (methodid[2] & INVOKE_SYNC)
 		{
-
 			paroc_buffer_factory *fact;
-         fact=req.from->GetBufferFactory();
+      fact = req.from->GetBufferFactory();
+      
 			paroc_message_header h("BindStatus");
 			buf->Reset();
 			buf->SetHeader(h);
@@ -223,7 +229,6 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Push("platform","POPString",1);
 			buf->Pack(&paroc_system::platform,1);
 			buf->Pop();
-
 			buf->Push("info","POPString",1);
 			buf->Pack(&enclist,1);
 			buf->Pop();
@@ -244,7 +249,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Push("refcount","int",1);
 			buf->Pack(&ret,1);
 			buf->Pop();
-
+      //printf("AddRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret); 
 			buf->Send(req.from);
 		}
 		execCond.broadcast();
@@ -254,7 +259,9 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	{
     // Decrement reference
     
-		if (obj==NULL) return false;
+		if (obj == NULL) 
+		  return false;
+		  
 		int ret = obj->DecRef();
 		
 		if (methodid[2] & INVOKE_SYNC) {
@@ -265,7 +272,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Push("refcount","int",1);
 			buf->Pack(&ret,1);
 			buf->Pop();
-
+      //printf("DecRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret); 
 			buf->Send(req.from);
 		}
 		execCond.broadcast();
@@ -304,7 +311,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	}
 	case 4:
 	{
-		//Kill call...
+		// Kill call
 		if (obj!=NULL && obj->CanKill())
 		{
 			DEBUG("EXIT BY KILL NOW");

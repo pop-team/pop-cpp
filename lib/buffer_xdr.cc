@@ -556,7 +556,10 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
 
 	char *dat=(char *)packeddata;
 
-	if (dat==NULL) return false;
+	if (dat==NULL) { 
+	  printf("fail 1\n");
+	  return false;
+	}
 	int n=packeddata.GetSize();
 	int h[5];
 	memset(h,0, 5*sizeof(int));
@@ -601,25 +604,29 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 
 	//Recv the header...
 
+//  printf("XDR: Recv header\n");
 	char *dat = (char *)h;
 	n=20;
 	do
 	{
-		if ((i = s.Recv(dat,n,conn)) <=0) {
+	  if(conn == NULL)
+	    printf("XDR: recv connection is null\n");
+		if ((i = s.Recv(dat, n, conn)) <= 0) {
 			return false;
 		}
 		n-=i;
 		dat+=i;
 	}
 	while (n);
-  
+  //printf("XDR: Recv header done\n");  
 
   
 	Reset();
 
-	n=ntohl(h[0]);
+	n = ntohl(h[0]);
 	if (n<20)
 	{
+	  printf("Bad message header (size error:%d\n", n);
 		DEBUG("Bad message header(size error:%d)",n);
 		return false;
 	}
@@ -660,6 +667,57 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 	}
 	return true;
 }
+
+int paroc_buffer_xdr::get_size()
+{
+  return packeddata.GetSize();
+}
+
+char* paroc_buffer_xdr::get_load()
+{
+	char *dat = (char*)packeddata;
+
+	if (dat == NULL) { 
+	  return NULL;
+	}
+	int n = packeddata.GetSize();
+	int h[5];
+	memset(h,0, 5*sizeof(int));
+
+	int type=header.GetType();
+
+	h[0]=htonl(n);
+	h[1]=htonl(type);
+
+	switch (type) {
+  	case TYPE_REQUEST:
+	  	h[2]=htonl(header.GetClassID());
+		  h[3]=htonl(header.GetMethodID());
+  		h[4]=htonl(header.GetSemantics());
+	  	break;
+  	case TYPE_EXCEPTION:
+	  	h[2]=htonl(header.GetExceptionCode());
+		  break;
+  	case TYPE_RESPONSE:
+	  	h[2]=htonl(header.GetClassID());
+		  h[3]=htonl(header.GetMethodID());
+  		break;
+	  default:
+  	  printf("fail 2\n");	  
+		  return false;
+	}
+	memcpy(dat, h, 20);
+
+
+
+  return (char *)packeddata;
+}
+
+void paroc_buffer_xdr::load(char* data, int length)
+{
+  memcpy(packeddata, data, length);
+}
+
 
 #ifdef OD_DISCONNECT
 bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {

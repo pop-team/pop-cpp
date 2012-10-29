@@ -111,7 +111,7 @@ bool popc_combox_uds::Create(const char* address, bool server)
     }
   
   
-    if(listen(_socket_fd, 5) != 0) {
+    if(listen(_socket_fd, 10) != 0) {
       printf("listen() failed\n");
       return false;
     }
@@ -131,7 +131,6 @@ bool popc_combox_uds::Create(const char* address, bool server)
   }	
   return true;
 }
-
 
 bool popc_combox_uds::Connect(const char *url)
 {
@@ -180,12 +179,13 @@ int popc_combox_uds::Recv(char *s,int len)
 	
 }
 
-int popc_combox_uds::Recv(char *s,int len, paroc_connection *connection)
+int popc_combox_uds::Recv(char *s, int len, paroc_connection *connection)
 {
   int nbytes;
   int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
   //printf("Recv fd=%d\n", socket_fd);
   do {
+//    printf("UDS: Recv %d %d\n", len, socket_fd);
     nbytes = read(socket_fd, s, len);
   } while (nbytes < 0);
   
@@ -193,6 +193,15 @@ int popc_combox_uds::Recv(char *s,int len, paroc_connection *connection)
   return nbytes;	
 }
 
+/** 
+ *
+ */
+void popc_combox_uds::add_fd_to_poll(int fd){
+  active_connection[_active_connection_nb].fd = fd;
+  active_connection[_active_connection_nb].events = POLLIN;      
+  active_connection[_active_connection_nb].revents = 0;  
+  _active_connection_nb++; 
+}
 
 paroc_connection* popc_combox_uds::Wait()
 {
@@ -201,7 +210,10 @@ paroc_connection* popc_combox_uds::Wait()
     int poll_back;
     do {
       poll_back = poll(active_connection, _active_connection_nb, _timeout);
+      if(_active_connection_nb >= 99)
+        printf("TOO MANY CONNECTION\n");
     } while ((poll_back == -1) && (errno == EINTR));
+    //printf("Poll %s\n", _uds_address.c_str());
     if(poll_back > 0) {
       for(int i = 0; i < _active_connection_nb; i++){
         if (active_connection[i].revents & POLLIN) {  
@@ -209,18 +221,17 @@ paroc_connection* popc_combox_uds::Wait()
             // A new connection can be received
             int connection_fd;      
             connection_fd = accept(_socket_fd, (struct sockaddr *) &_sock_address, &address_length);        
-            //printf("Connected %d\n", connection_fd);
             active_connection[_active_connection_nb].fd = connection_fd;
         		active_connection[_active_connection_nb].events = POLLIN;      
             active_connection[_active_connection_nb].revents = 0;  
             _active_connection_nb++;
             active_connection[i].revents = 0;    
-            if(_is_first_connection){
+/*            if(_is_first_connection) {
               _is_first_connection = false;
               return new popc_connection_uds(connection_fd, this);                     
-            } else {
+            } else { */
               return new popc_connection_uds(connection_fd, this, true);       
-            }                                    
+//            }                                    
           } else {
             if(active_connection[i].revents & POLLHUP) { // POLLIN and POLLHUP
               //printf("write and disconnect\n");
@@ -237,9 +248,10 @@ paroc_connection* popc_combox_uds::Wait()
                 active_connection[i].events = active_connection[_active_connection_nb].events;
                 active_connection[i].revents = active_connection[_active_connection_nb].revents;                    
               }
+              //printf("POLLON %s %d\n", _uds_address.c_str(), active_connection[i].fd);
               return new popc_connection_uds(tmpfd, this);
             } else { // Just POLLIN
-              //printf("POLLIN\n");
+              //printf("POLLIN %s %d\n", _uds_address.c_str(), active_connection[i].fd);
               active_connection[i].revents = 0;                  
               return new popc_connection_uds(active_connection[i].fd, this);
             }

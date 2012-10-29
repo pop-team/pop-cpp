@@ -485,6 +485,21 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn)
 	return true;
 }
 
+int paroc_buffer_raw::get_size()
+{
+  return packeddata.GetSize();
+}
+
+char* paroc_buffer_raw::get_load()
+{
+  return (char *)packeddata;
+}
+
+void paroc_buffer_raw::load(char* data, int length)
+{
+  memcpy(packeddata, data, length);
+}
+
 #ifdef OD_DISCONNECT
 bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn)
 {

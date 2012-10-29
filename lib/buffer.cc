@@ -417,6 +417,3 @@ void paroc_buffer::Destroy()
 {
 	delete this;
 }
-
-
-

@@ -369,9 +369,9 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
 
 		if (tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
 			try {
-				paroc_interface test(tmp, NULL);
-				test.ObjectActive();
-				ok = true;
+				//paroc_interface test(tmp, NULL);
+				//test.ObjectActive();
+				ok = false;
 			} catch (...) {
 				DEBUG("Exception on waking up %s", tok);
 			}

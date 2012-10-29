@@ -128,19 +128,20 @@ paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
 
 //paroc_interface base class
 
-paroc_interface::paroc_interface()
+paroc_interface::paroc_interface() : destructor_times(0), __paroc_combox(NULL), __paroc_buf(NULL)
 {
 
+
  // DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
-   if(od.isSecureSet()) accesspoint.SetSecure();
-   _ssh_tunneling=false;
-	__paroc_combox=NULL;
-	__paroc_buf=NULL;
+//   if(od.isSecureSet()) accesspoint.SetSecure();
+   //_ssh_tunneling=false;
+//	__paroc_combox = NULL;
+//	__paroc_buf = NULL;
 	//_popc_async_construction_thread=NULL;
 
 }
 
-paroc_interface::paroc_interface(const paroc_accesspoint &p)
+paroc_interface::paroc_interface(const paroc_accesspoint &p) : destructor_times(0)
 {
 
 
@@ -163,8 +164,9 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p)
 
 
 
-paroc_interface::paroc_interface(const paroc_interface &inf)
+paroc_interface::paroc_interface(const paroc_interface &inf) : destructor_times(0)
 {
+
    paroc_accesspoint infAP = inf.GetAccessPoint();
    _ssh_tunneling=false;
 	__paroc_combox=NULL;
@@ -183,18 +185,19 @@ paroc_interface::paroc_interface(const paroc_interface &inf)
    
 }
 
-paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer)
+paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) : destructor_times(0)
 {
+
    _ssh_tunneling=false;
-	__paroc_combox=combox;
-	__paroc_buf=buffer;
+	__paroc_combox = combox;
+	__paroc_buf = buffer;
 	//_popc_async_construction_thread=NULL;	
-	if (combox!=NULL)
-	{
+	if (combox != NULL) {
 		POPString url;
 		combox->GetUrl(url);
 		accesspoint.SetAccessString(url);
-		if (__paroc_buf==NULL) __paroc_buf=combox->GetBufferFactory()->CreateBuffer();
+		if (__paroc_buf == NULL) 
+		  __paroc_buf=combox->GetBufferFactory()->CreateBuffer();
 	}
 }
 
@@ -275,6 +278,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack)
 		buf.Pop();
 		if (ref>0) {
 			Bind(accesspoint);
+			AddRef();
 		}
 	}
 	if (old!=NULL) {
@@ -285,6 +289,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack)
 
 void paroc_interface::Allocate()
 {
+
 	Release();
 	POPString p;
 	od.getProtocol(p);
@@ -359,7 +364,6 @@ void paroc_interface::Allocate()
   allocating_combox->Close();
 
 	objaccess.SetAccessString(objectaddress.GetString());
-  printf("Bind with %s\n", objectaddress.GetString());
 	Bind(objaccess); 
 }
 
@@ -395,7 +399,6 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 		{
 			char *addr=accesslist.GetNext(pos);
 			try {
-				DEBUG("[Interface] Try to bind %s with : %s\n", ClassName(), addr);
 				Bind(addr);
 				return;
 			}
@@ -449,46 +452,89 @@ void paroc_interface::Bind(const char *dest)
 	Release();
 	if (dest==NULL || *dest==0) return;
 
-	char protsep[]="://";
+	char protsep[] = "://";
 	char prot[256];
-	char *tmp=(char*)strstr(dest,protsep);
-	char defaultprot[]="socket";
+	char *tmp = (char*)strstr(dest,protsep);
+	char defaultprot[] = "socket";
 
-	if (tmp==NULL)
-	{
-		//Default: use socket!
-		strcpy(prot,defaultprot);
-	}
-	else
-	{
-		int sz=tmp-dest;
-		strncpy(prot,dest,sz);
-		prot[sz]=0;
+	if (tmp == NULL) {
+		// Default protocol: use TCP socket
+		strcpy(prot, defaultprot);
+	} else {
+		int sz = tmp-dest;
+		strncpy(prot, dest, sz);
+		prot[sz] = 0;
 	}
 
-	paroc_combox_factory *fact=paroc_combox_factory::GetInstance();
-	DEBUG("%s prot list:", ClassName());
+  // Create combox factory
+	paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
 	POPString p;
 	fact->GetNames(p);
-	if (fact==NULL) paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
+	if (fact == NULL) 
+	  paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
 
-
-	__paroc_combox=fact->Create(prot);
+  // Create combox 
+	__paroc_combox = fact->Create(prot);
 	if (__paroc_combox == NULL) 
 	  paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
+	  
+	// Create associated buffer
 	__paroc_buf = __paroc_combox->GetBufferFactory()->CreateBuffer();
-//	__paroc_combox->SetTimeout(paroc_bind_timeout);
+	__paroc_combox->SetTimeout(paroc_bind_timeout);
 
+  // Check if need proxy
   std::string connect_dest(dest); 
   connect_dest = connect_dest.substr(6);
+  
+  size_t pos = connect_dest.find("uds_");
 
   
-  bool create_return = __paroc_combox->Create(connect_dest.c_str(), false);
-  bool connect_return = __paroc_combox->Connect(connect_dest.c_str());
+  std::string destination_node;
+  bool need_redirection = false;
+  int dest_node, dest_id;
+  if(pos != std::string::npos) {
+    destination_node = connect_dest.substr(pos+4);
+    pos = destination_node.find(".");    
+    std::string destination_id = destination_node.substr(pos+1);
+    destination_node = destination_node.substr(0, destination_node.length()-pos);
+    dest_node = atoi(destination_node.c_str());
+    dest_id = atoi(destination_id.c_str());
+    if(dest_node != paroc_system::popc_local_mpi_communicator_rank) {
+      need_redirection = true;
+    } 
+  }
+  
+  bool create_return, connect_return;  
+  if(need_redirection) {
 
+    // Spoof address with the local MPI Communicator
+    char* local_address = new char[15];
+    snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
+    //printf("Spoof of address %s to %s\n", connect_dest.c_str(), local_address);     
+    create_return = __paroc_combox->Create(local_address, false);
+    connect_return = __paroc_combox->Connect(local_address);
+    
+    
+    paroc_message_header header(20, 100002, INVOKE_SYNC,"_connection");
+  	__paroc_buf->Reset();
+	  __paroc_buf->SetHeader(header);
+
+    __paroc_buf->Push("destnode", "int", 1);
+    __paroc_buf->Pack(&dest_node, 1);
+    __paroc_buf->Pop();
+
+    __paroc_buf->Push("destid", "int", 1);
+    __paroc_buf->Pack(&dest_id, 1);
+    __paroc_buf->Pop();
+    
+	  paroc_connection* connection = __paroc_combox->get_connection();
+	  popc_send_request(__paroc_buf, connection);    
+  } else {
+    create_return = __paroc_combox->Create(connect_dest.c_str(), false);
+    connect_return = __paroc_combox->Connect(connect_dest.c_str());        
+  }
   
 	if (create_return && connect_return) {
-
 		int status;
 		POPString info;
 		POPString peerplatform;
@@ -503,7 +549,7 @@ void paroc_interface::Bind(const char *dest)
 		  	paroc_accesspoint old(accesspoint);
 			  paroc_accesspoint newap;
   			newap.SetAccessString(info);
-	  		DEBUG("Forward current session to %s", (const char *)info);
+	  		printf("Forward current session to %s", (const char *)info);
 		  	Bind(newap);
 			  if (status==BIND_FORWARD_SESSION) accesspoint=old;
   			break;
@@ -583,7 +629,8 @@ void paroc_interface::Release()
 		__paroc_combox->Destroy();
 		__paroc_combox = NULL;
 	}
-	if (__paroc_buf!=NULL) {
+	
+	if (__paroc_buf != NULL) {
 		__paroc_buf->Destroy();
 		__paroc_buf = NULL;
 	}
@@ -628,6 +675,8 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
 	__paroc_buf->Push("info","POPString",1);
 	__paroc_buf->UnPack(&info,1);
 	__paroc_buf->Pop();
+	
+  //printf("BindStatus interface %d %s %s\n", code, platform.GetString(), info.GetString());	
 }
 
 
@@ -1012,7 +1061,6 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	}
 */		
   // TODO remove when MPI creator
-  sleep(1);
 	return 0;
 }
 
