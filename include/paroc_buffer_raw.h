@@ -70,6 +70,10 @@ public:
 
 	virtual bool Send(paroc_combox &s, paroc_connection *conn);
 	virtual bool Recv(paroc_combox &s, paroc_connection *conn);
+	
+	virtual int get_size();
+	virtual char* get_load();	
+	virtual void load(char* data, int length);		
 
 #ifdef OD_DISCONNECT	
 	virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0);

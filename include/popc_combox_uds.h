@@ -68,13 +68,15 @@ public:
 	virtual bool GetProtocol(paroc_string & protocolName);
 
   void set_timeout(int value);
+  
+  void add_fd_to_poll(int fd);
 
 private:
 	int _socket_fd;
   struct sockaddr_un _sock_address;
 	bool _is_server;
 	std::string _uds_address;
-	struct pollfd active_connection[10];
+	struct pollfd active_connection[100];
 	int _active_connection_nb;
 	int _timeout;
 	bool _connected;

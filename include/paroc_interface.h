@@ -181,9 +181,11 @@ private:
 public:
 	static int batchindex;
 	static int batchsize;
+	
 
 private:
 	static paroc_accesspoint *batchaccesspoint;
+	int destructor_times;
 };
 
 #endif

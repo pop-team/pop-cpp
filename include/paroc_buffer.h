@@ -153,6 +153,10 @@ public:
 	virtual bool Recv(paroc_combox &s, paroc_connection *conn=0)=0;
 
 	virtual bool Recv(paroc_connection *conn);
+	
+	virtual int get_size()=0;
+	virtual char* get_load()=0;
+	virtual void load(char* data, int length)=0;
 
 #ifdef OD_DISCONNECT
 	virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0)=0;
