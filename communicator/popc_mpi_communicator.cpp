@@ -42,6 +42,8 @@ void catch_child_exit(int signal_num) {
   write(STDOUT_FILENO, buf, 256);
 }
 
+pthread_mutex_t cond_mutex;
+pthread_cond_t cond_locker;
 
 /**
  * Receive new incoming MPI data and transmit them to the main thread
@@ -74,8 +76,9 @@ void *mpireceivedthread(void *t)
     int data;
     MPI::Status status;
     // Receive data
+    printf("Recveive thread %d wait for message\n", rank);
     MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, MPI_ANY_SOURCE, 0, status);
-    printf("Recv data on MPI %d\n", data);
+    printf("Recv data on MPI %d (%d)\n", rank, data);
     switch (data) {
       // Receive ending command from the main MPI process. 
       case 10: 
@@ -90,6 +93,30 @@ void *mpireceivedthread(void *t)
           }
         }
         break;
+      // Allocation of new parallel object
+      case 11:
+        {
+          // signal the IPC thread to be ready to receive data for allocation
+          paroc_message_header endheader(20, 100004, INVOKE_SYNC, "_allocation");
+	        ipcwaker_buffer->Reset();
+          ipcwaker_buffer->SetHeader(endheader);  
+          ipcwaker_buffer->Send(ipcwaker, connection);
+          
+          // Block until work finished in the main thread
+          pthread_mutex_lock(&cond_mutex);
+          pthread_cond_wait(&cond_locker, &cond_mutex);
+          pthread_mutex_unlock(&cond_mutex);          
+        }                
+        break;
+      // Wait for action to complete
+      case 12:
+        {
+          // Wait 
+          pthread_mutex_lock(&cond_mutex);
+          pthread_cond_wait(&cond_locker, &cond_mutex);
+          pthread_mutex_unlock(&cond_mutex);          
+          break;
+        }
       // Unknown command ... do nothing 
       default:
         printf("Unknown tag %d\n", rank);
@@ -170,6 +197,8 @@ int main(int argc, char* argv[])
   local.Create(local_address.c_str(), true);
   
   // Create MPI receive thread
+  pthread_mutex_init(&cond_mutex, NULL);
+  pthread_cond_init (&cond_locker, NULL);  
   pthread_attr_t attr;
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);  
@@ -199,15 +228,17 @@ int main(int argc, char* argv[])
 			  // Killing the process, end of the higher-level application
 		  	if(request.methodId[1] == 100001){
 		  	  active = false;
-          int data = 10; 		  	  
-          int tag = 0; // TAG 10 = END OF THE APPLICATION		  	  
-		  	  if(world > 1) {
-		  	    for(int i = 1; i < world; i++) {
-              // Inform other MPI communicator to end their process. 
-		  	      MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, i, tag);
-		  	    }
-          }
-    	    MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, 0, tag);                  
+		  	  if(rank == 0) {
+            int data = 10; 		  	  
+            int tag = 0; // TAG 10 = END OF THE APPLICATION		  	  
+		    	  if(world > 1) {
+		    	    for(int i = 1; i < world; i++) {
+                // Inform other MPI communicator to end their process. 
+		  	        MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, i, 0);
+  		  	    }
+            }
+      	    MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, 0, 0);                  
+      	  }
         } else if(request.methodId[1] == 100002) {  
           // Connection to this process as a router process
           
@@ -220,9 +251,80 @@ int main(int argc, char* argv[])
           // Get information from the MPI received node
           printf("Connection from MPI thread %d\n", rank);
           
-                   	
+        } else if(request.methodId[1] == 100004) {
+          // Allocation of a new parallel object from MPI
+          MPI::Status status;
+          int objectname_length, codefile_length; 
+          MPI::COMM_WORLD.Recv(&objectname_length, 1, MPI_INT, MPI_ANY_SOURCE, 10, status);
+          MPI::COMM_WORLD.Recv(&codefile_length, 1, MPI_INT, status.Get_source(), 12);
+          char* objectname = new char[objectname_length+1];
+          char* codefile = new char[codefile_length+1];                    
+          MPI::COMM_WORLD.Recv(objectname, objectname_length, MPI_CHAR, status.Get_source(), 11);
+          MPI::COMM_WORLD.Recv(codefile, codefile_length, MPI_CHAR, status.Get_source(), 13);
+          printf("Recv %s %s\n", objectname, codefile);
+          objectname[objectname_length] = '\0';
+          codefile[codefile_length] = '\0';
+          
+          
+          // Allocate on the local node
+          char* tmp = new char[15];
+          snprintf(tmp, 15, "uds_%d.%d", rank, next_object_id);
+          next_object_id++;
+              
+          popc_combox_uds receiver;
+          std::string receiver_address(local_address);
+          receiver_address.append("_");
+          receiver_address.append(tmp);
+          receiver.Create(receiver_address.c_str(), true);
+              
+          std::string _objectname("-object=");
+          _objectname.append(objectname);
+          std::string _objectaddress("-address=");
+          _objectaddress.append(tmp);
+          std::string objurl("uds://");
+          objurl.append(tmp);
+          delete [] tmp;              
+          POPString objectaddress(objurl.c_str());
+          std::string _receiveraddress("-callback=");
+          _receiveraddress.append(receiver_address);
+          char *localrank = new char[20];
+          snprintf(localrank, 20, "-local_rank=%d", rank);
+                            
+          // Allocate the object      
+          pid_t allocatepid = fork();
+          if(allocatepid == 0) {
+            char* argv1[6];
+            argv1[0] = codefile;                        // Object executable
+            argv1[1] = const_cast<char*>(_objectname.c_str());      // Object name
+            argv1[2] = const_cast<char*>(_objectaddress.c_str());   // Object address
+            argv1[3] = const_cast<char*>(_receiveraddress.c_str()); // Address of ready call
+            argv1[4] = localrank;                                   // Rank of the creator process
+            argv1[5] = (char*)0;             
+            execv(argv1[0], argv1);              	
+          }
+          paroc_request callback;
+          paroc_connection* objectcallback = receiver.Wait();
+          paroc_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
+      	  callback.data = buffer_factory->CreateBuffer();
+		      if (callback.data->Recv(receiver, objectcallback)) {
+  		  	  callback.from = connection;
+	  		    const paroc_message_header &callback_header = callback.data->GetHeader();
+    		    callback.methodId[0] = callback_header.GetClassID();
+	    		  callback.methodId[1] = callback_header.GetMethodID(); 
+  	  	  	if(callback.methodId[1] == 100002){
+  	  	  	  int length = strlen(objectaddress.GetString());
+  	  	  	  MPI::COMM_WORLD.Send(&length, 1, MPI_INT, status.Get_source(), 14);
+              MPI::COMM_WORLD.Send(objectaddress.GetString(), length, MPI_CHAR, status.Get_source(), 15);
+	  	      } else {
+  	  	  	  int length = 0;
+  	  	  	  MPI::COMM_WORLD.Send(&length, 1, MPI_INT, status.Get_source(), 14);	  	      
+  	  	    }
+	    	  }
+   	      callback.data->Destroy();
+   	      receiver.Close();            
+          pthread_cond_signal(&cond_locker);   	                               	
         } else if(request.methodId[1] == 100000) {  
-          // Allocation a new parallel object
+          // Allocation a new parallel object from IPC
           
           POPString objectname, codefile;
           int node;
@@ -236,87 +338,111 @@ int main(int argc, char* argv[])
           request.data->UnPack(&node, 1);
           request.data->Pop();		  
            	  	
-          if (node != rank) {
-            printf("Will allocate on another node %d\n", node);
+          if (node != rank && node != -1 && node < world) {
+            // Unlock local MPI receive thread
+            int data = 12;
+      	    MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, rank, 0); 
             
+
+            // Send signal to the remote node
+            data = 11; 
+            MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, node, 0);        
+                
             // Send allocation information to the destination MPI Communicator
             int objectname_length = strlen(objectname.GetString());
             int codefile_length = strlen(codefile.GetString());
             MPI::COMM_WORLD.Isend(&objectname_length, 1, MPI_INT, node, 10);
-            MPI::COMM_WORLD.Isend(objectname.GetString(), 1, MPI_INT, node, 11);
+            MPI::COMM_WORLD.Isend(objectname.GetString(), objectname_length, MPI_CHAR, node, 11);
             MPI::COMM_WORLD.Isend(&codefile_length, 1, MPI_INT, node, 12);
-            MPI::COMM_WORLD.Isend(codefile.GetString(), 1, MPI_INT, node, 13);
+            MPI::COMM_WORLD.Isend(codefile.GetString(), codefile_length, MPI_CHAR, node, 13);
             
-            
-            
-          } 
+            // Receive objaccess from the allocator node
+            int objaccess_length; 
+            MPI::COMM_WORLD.Recv(&objaccess_length, 1, MPI_INT, node, 14);
+            char* objaccess = new char[objaccess_length+1];
+            MPI::COMM_WORLD.Recv(objaccess, objaccess_length, MPI_CHAR, node, 15);
+            objaccess[objaccess_length] = '\0';
 
-          char* tmp = new char[15];
-          snprintf(tmp, 15, "uds_%d.%d", rank, next_object_id);
-          next_object_id++;
+            // Return objaccess
+            POPString objectaddress(objaccess);
+            delete [] objaccess;
+         	  request.data->Reset();		            
+   	    		paroc_message_header h("_allocate");
+         		request.data->SetHeader(h);
+            request.data->Push("objectaddress", "POPString", 1);
+            request.data->Pack(&objectaddress, 1);
+            request.data->Pop();
+            request.data->Send(request.from);            
+            
+            pthread_cond_signal(&cond_locker);
+          } else {
+            // Allocate on the local node
+            char* tmp = new char[15];
+            snprintf(tmp, 15, "uds_%d.%d", rank, next_object_id);
+            next_object_id++;
               
-          popc_combox_uds receiver;
-          std::string receiver_address(local_address);
-          receiver_address.append("_");
-          receiver_address.append(tmp);
-
-          receiver.Create(receiver_address.c_str(), true);
+            popc_combox_uds receiver;
+            std::string receiver_address(local_address);
+            receiver_address.append("_");
+            receiver_address.append(tmp);
+            receiver.Create(receiver_address.c_str(), true);
               
-          std::string _objectname("-object=");
-          _objectname.append(objectname.GetString());
-          std::string _objectaddress("-address=");
-          _objectaddress.append(tmp);
-          std::string objurl("uds://");
-          objurl.append(tmp);
-          delete [] tmp;              
-          POPString objectaddress(objurl.c_str());
-          std::string _receiveraddress("-callback=");
-          _receiveraddress.append(receiver_address);
-          char *localrank = new char[20];
-          snprintf(localrank, 20, "-local_rank=%d", rank);
+            std::string _objectname("-object=");
+            _objectname.append(objectname.GetString());
+            std::string _objectaddress("-address=");
+            _objectaddress.append(tmp);
+            std::string objurl("uds://");
+            objurl.append(tmp);
+            delete [] tmp;              
+            POPString objectaddress(objurl.c_str());
+            std::string _receiveraddress("-callback=");
+            _receiveraddress.append(receiver_address);
+            char *localrank = new char[20];
+            snprintf(localrank, 20, "-local_rank=%d", rank);
                   
-          // Allocate the object      
-          pid_t allocatepid = fork();
-          if(allocatepid == 0){
-            char* argv1[6];
-            argv1[0] = codefile.GetString();                        // Object executable
-            argv1[1] = const_cast<char*>(_objectname.c_str());      // Object name
-            argv1[2] = const_cast<char*>(_objectaddress.c_str());   // Object address
-            argv1[3] = const_cast<char*>(_receiveraddress.c_str()); // Address of ready call
-            argv1[4] = localrank;                                   // Rank of the creator process
-            argv1[5] = (char*)0;             
-            execv(argv1[0], argv1);              	
-          }
-          paroc_request callback;
-          paroc_connection* objectcallback = receiver.Wait();
-          paroc_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
-    	    callback.data = buffer_factory->CreateBuffer();
-		      if (callback.data->Recv(receiver, objectcallback)) {
-  			    callback.from = connection;
-	  		    const paroc_message_header &callback_header = callback.data->GetHeader();
-  		  	  callback.methodId[0] = callback_header.GetClassID();
-	  		    callback.methodId[1] = callback_header.GetMethodID(); 
-  		  	  if(callback.methodId[1] == 100002){
-           	  request.data->Reset();		  
-      	  		paroc_message_header h("_allocate");
-           		request.data->SetHeader(h);
-       		    request.data->Push("objectaddress", "POPString", 1);
-           		request.data->Pack(&objectaddress, 1);
-           		request.data->Pop();
-           		request.data->Send(request.from);
-	  	      } else {
-              request.data->Reset();		  
-      	  		paroc_message_header h("_allocate");
-           		request.data->SetHeader(h);
-       		    request.data->Push("objectaddress", "POPString", 1);
-       		    POPString empty;
-           		request.data->Pack(&empty, 1);
-           		request.data->Pop();
-           		request.data->Send(request.from);
-	  	      }
-	  	    }
-   	    	callback.data->Destroy();
-   	    	receiver.Close();		  	      
+            // Allocate the object      
+            pid_t allocatepid = fork();
+            if(allocatepid == 0) {
+              char* argv1[6];
+              argv1[0] = codefile.GetString();                        // Object executable
+              argv1[1] = const_cast<char*>(_objectname.c_str());      // Object name
+              argv1[2] = const_cast<char*>(_objectaddress.c_str());   // Object address
+              argv1[3] = const_cast<char*>(_receiveraddress.c_str()); // Address of ready call
+              argv1[4] = localrank;                                   // Rank of the creator process
+              argv1[5] = (char*)0;             
+              execv(argv1[0], argv1);              	
+            }
+            paroc_request callback;
+            paroc_connection* objectcallback = receiver.Wait();
+            paroc_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
+      	    callback.data = buffer_factory->CreateBuffer();
+		        if (callback.data->Recv(receiver, objectcallback)) {
+  		  	    callback.from = connection;
+	  		      const paroc_message_header &callback_header = callback.data->GetHeader();
+    		  	  callback.methodId[0] = callback_header.GetClassID();
+	    		    callback.methodId[1] = callback_header.GetMethodID(); 
+  	  	  	  if(callback.methodId[1] == 100002){
+             	  request.data->Reset();		  
+      	    		paroc_message_header h("_allocate");
+             		request.data->SetHeader(h);
+         		    request.data->Push("objectaddress", "POPString", 1);
+             		request.data->Pack(&objectaddress, 1);
+             		request.data->Pop();
+             		request.data->Send(request.from);
+	  	        } else {
+                request.data->Reset();		  
+        	  		paroc_message_header h("_allocate");
+             		request.data->SetHeader(h);
+         		    request.data->Push("objectaddress", "POPString", 1);
+       	  	    POPString empty;
+             		request.data->Pack(&empty, 1);
+           	  	request.data->Pop();
+           		  request.data->Send(request.from);
+  	  	      }
+	    	    }
+   	      	callback.data->Destroy();
+   	      	receiver.Close();		
+   	     	}  	      
 	  	  }
         request.data->Destroy();			  
       }
