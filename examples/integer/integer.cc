@@ -9,7 +9,7 @@ Integer::Integer()
 
 Integer::~Integer()
 {
-	printf("Destroying Integer object...\n");
+	printf("Destroying Integer object %s\n", GetAccessPoint().GetAccessString());
 }
 
 void Integer::Set(int val)

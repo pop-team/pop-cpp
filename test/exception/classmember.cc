@@ -997,7 +997,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 //       strcat(tmpcode,str);
 //     } else
 
-	strcat(tmpcode,"\nAllocate();");
+	strcat(tmpcode,"printf(\"interface constructor object\");\nAllocate();");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
 	//SEPARATE ALLOCATION FROM INVOCATION.....
@@ -1010,7 +1010,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		if (j<nb-1) strcat(tmpcode,", ");
 	}
 
-	strcat(tmpcode,");\n}");
+	strcat(tmpcode,");\nprintf(\"interface constructor object end\");}");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
 	sprintf(tmpcode,"\nvoid %s::_paroc_Construct",GetClass()->GetName());
