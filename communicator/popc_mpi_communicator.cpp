@@ -21,6 +21,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <pthread.h>
+#include <map>
 
 // POP-C++ library include
 #include "paroc_broker.h"
@@ -29,6 +30,7 @@
 #include "paroc_utils.h"
 
 
+using namespace std;
 
 /**
  * Catch signal of exiting child
@@ -44,6 +46,9 @@ void catch_child_exit(int signal_num) {
 
 pthread_mutex_t cond_mutex;
 pthread_cond_t cond_locker;
+map<int, int> incomingtag;
+map<int, pair<int, int> > incomingconnection;
+map<int, pair<int, int> > outgoingconnection;
 
 /**
  * Receive new incoming MPI data and transmit them to the main thread
@@ -56,6 +61,7 @@ void *mpireceivedthread(void *t)
   std::string local_address(tmp);
   delete [] tmp;
   bool active = true;
+
   
   
   // Connect to main process by IPC
@@ -76,9 +82,9 @@ void *mpireceivedthread(void *t)
     int data;
     MPI::Status status;
     // Receive data
-    printf("Recveive thread %d wait for message\n", rank);
+//    printf("Recveive thread %d wait for message\n", rank);
     MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, MPI_ANY_SOURCE, 0, status);
-    printf("Recv data on MPI %d (%d)\n", rank, data);
+//    printf("Recv data on MPI %d (%d)\n", rank, data);
     switch (data) {
       // Receive ending command from the main MPI process. 
       case 10: 
@@ -117,9 +123,35 @@ void *mpireceivedthread(void *t)
           pthread_mutex_unlock(&cond_mutex);          
           break;
         }
+      // Will receive a request from a redirection
+      case 13:
+        {
+         
+          paroc_message_header reqheader(status.Get_source(), 100005, INVOKE_SYNC, "_request");
+	        ipcwaker_buffer->Reset();
+          ipcwaker_buffer->SetHeader(reqheader);  
+          ipcwaker_buffer->Send(ipcwaker, connection);
+          
+          pthread_mutex_lock(&cond_mutex);
+          pthread_cond_wait(&cond_locker, &cond_mutex);
+          pthread_mutex_unlock(&cond_mutex);  
+          break;
+        }
+      case 14:
+        {
+          paroc_message_header reqheader(status.Get_source(), 100006, INVOKE_SYNC, "_response");
+	        ipcwaker_buffer->Reset();
+          ipcwaker_buffer->SetHeader(reqheader);  
+          ipcwaker_buffer->Send(ipcwaker, connection);
+          
+          pthread_mutex_lock(&cond_mutex);
+          pthread_cond_wait(&cond_locker, &cond_mutex);
+          pthread_mutex_unlock(&cond_mutex);  
+          break;
+        }
       // Unknown command ... do nothing 
       default:
-        printf("Unknown tag %d\n", rank);
+        printf("Unknown data received on %d = %d\n", rank, data);
     }
   }
   printf("MPI thread %d ending\n", rank);
@@ -154,6 +186,8 @@ int main(int argc, char* argv[])
   sprintf(tmp, "uds_%d.0", rank);
   std::string local_address(tmp);
   delete [] tmp;
+  
+  int next_tag = 1000;  
 
   // Init object counter
   int next_object_id = 1;  
@@ -242,11 +276,20 @@ int main(int argc, char* argv[])
         } else if(request.methodId[1] == 100002) {  
           // Connection to this process as a router process
           
-		  	  POPString real_destination;
-		      request.data->Push("realdest", "POPString", 1);
-         	request.data->UnPack(&real_destination, 1);
+		  	  int dest_node, dest_id;
+		      request.data->Push("destnode", "int", 1);
+         	request.data->UnPack(&dest_node, 1);
         	request.data->Pop();
-         	int current_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();      	
+
+		      request.data->Push("destid", "int", 1);
+         	request.data->UnPack(&dest_id, 1);
+        	request.data->Pop();
+        	
+         	int current_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();  
+         	incomingconnection.insert(pair<int, pair<int, int> >(current_fd, pair<int, int>(dest_node, dest_id)));
+         	
+         	//printf("Connection fd = %d, dest node = %d, dest id = %d\n", current_fd, dest_node, dest_id);
+         	    	
         } else if(request.methodId[1] == 100003) {
           // Get information from the MPI received node
           printf("Connection from MPI thread %d\n", rank);
@@ -261,10 +304,8 @@ int main(int argc, char* argv[])
           char* codefile = new char[codefile_length+1];                    
           MPI::COMM_WORLD.Recv(objectname, objectname_length, MPI_CHAR, status.Get_source(), 11);
           MPI::COMM_WORLD.Recv(codefile, codefile_length, MPI_CHAR, status.Get_source(), 13);
-          printf("Recv %s %s\n", objectname, codefile);
           objectname[objectname_length] = '\0';
           codefile[codefile_length] = '\0';
-          
           
           // Allocate on the local node
           char* tmp = new char[15];
@@ -443,6 +484,102 @@ int main(int argc, char* argv[])
    	      	callback.data->Destroy();
    	      	receiver.Close();		
    	     	}  	      
+	  	  } else if(request.methodId[1] == 100005) {
+          // Receive request from MPI and redirect to IPC object
+          int dest_id;
+          int source = request.methodId[0];
+          MPI::Status status; 
+          MPI::COMM_WORLD.Recv(&dest_id, 1, MPI_INT, source, MPI_ANY_TAG, status);
+          int tag = status.Get_tag();
+
+          // Receive the data length
+          int length; 
+          MPI::COMM_WORLD.Recv(&length, 1, MPI_INT, source, tag);
+          
+          // Connect to the remote object
+        	paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+        	paroc_combox* client = combox_factory->Create("uds");
+          char* address = new char[15];
+          snprintf(address, 15, "uds_%d.%d", rank, dest_id);
+          client->Create(address, false);
+          if(!client->Connect(address)) {
+            printf("Fail to connect\n");
+          }
+          char* data = new char[length];
+          
+          // Receive the data
+          MPI::COMM_WORLD.Recv(data, length, MPI_CHAR, source, tag);
+          
+        	paroc_connection* connection = client->get_connection();	
+        	int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();        	
+        	outgoingconnection[fd] = pair<int, int>(tag, source);        	
+       		if (client->Send(data, length, connection) < 0) {
+        	  printf("Can't send to final object\n");
+        	} 
+          
+          local.add_fd_to_poll(fd);
+          delete [] data;
+          pthread_cond_signal(&cond_locker);          
+	  	  } else if(request.methodId[1] == 100006) {          
+	  	    // Response from local node MPI Communicator to IPC caller
+          int source = request.methodId[0];	  	    
+	  	    MPI::Status status;
+	  	    int length;
+	  	    MPI::COMM_WORLD.Recv(&length, 1, MPI_INT, source, MPI_ANY_TAG, status);
+	  	    int tag = status.Get_tag();
+	  	    char *data = new char[length];
+	  	    MPI::COMM_WORLD.Recv(data, length, MPI_CHAR, source, tag);
+	  	    
+	  	    int fd = incomingtag[tag];
+	  	    popc_connection_uds* tmpconnection = new popc_connection_uds(fd, &local);
+	        if (local.Send(data, length, tmpconnection) < 0) {
+        	  printf("Can't send to caller\n");
+        	} 
+	  	    
+	  	    delete [] data;
+          pthread_cond_signal(&cond_locker);      	  	  
+	  	  } else {
+	  	    // Redirect request 
+	  	    int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
+	  	    
+	  	    // Redirect response to caller
+	  	    if(outgoingconnection[fd].first != 0) {
+	  	      int dest = outgoingconnection[fd].second;
+	  	      int tag = outgoingconnection[fd].first;
+  	  	    int data = 14;
+            MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, dest, 0); 	  	      
+	  	      
+	  	      // Send length of the request
+            int length = request.data->get_size();
+            MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, dest, tag);
+            char *load = request.data->get_load();
+            MPI::COMM_WORLD.Isend(load, length, MPI_CHAR, dest, tag);            
+	  	      
+	  	    
+	  	    } else { 
+	  	    // Redirect request to object
+
+	  	      int dest_node = incomingconnection[fd].first;
+	    	    int dest_id = incomingconnection[fd].second;
+
+	    	    
+  	  	    // Send the request by MPI
+	  	      int data = 13;
+            MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, dest_node, 0); 
+            // Send object id
+            MPI::COMM_WORLD.Isend(&dest_id, 1, MPI_INT, dest_node, next_tag);
+            // Send data size
+            int length = request.data->get_size();
+            MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, dest_node, next_tag);
+            // Send the actual data
+          
+            char *load = request.data->get_load();
+            MPI::COMM_WORLD.Isend(load, length, MPI_CHAR, dest_node, next_tag);            
+            incomingtag[next_tag] = fd;
+            next_tag++;
+            
+                      	  	    
+	  	    }
 	  	  }
         request.data->Destroy();			  
       }
