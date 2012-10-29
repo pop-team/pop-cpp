@@ -497,8 +497,8 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 	}
 
    //Add the declaration of the __POPThis variable for support of the "this" keyword
-   sprintf(str,"\n%s* __POPThis_%s; \n", name, name);
-   code.InsertAt(-1,str,strlen(str));
+/*   sprintf(str,"\n%s* __POPThis_%s; \n", name, name);
+   code.InsertAt(-1,str,strlen(str));*/
    
    sprintf(str,"void AllocateObject();\n");
    code.InsertAt(-1,str,strlen(str));
@@ -556,6 +556,9 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));
 		strcpy(str," { Bind(obj->GetAccessPoint());};\n");
 		code.InsertAt(-1,str,strlen(str));
+		
+  	sprintf(str,"\n~%s() {};",name);
+  	code.InsertAt(-1,str,strlen(str));
 
 	/*	if(!IsCoreCompilation()){
 			// Generate method declaration for asynchronous object creation

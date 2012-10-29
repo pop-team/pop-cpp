@@ -230,7 +230,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       sprintf(newyytext,"%s__parocobj%s",clname,yytext+len);
       othercodes.InsertAt(-1,newyytext,strlen(newyytext));
       //Create the string to be inserted in every paroc_object constructor
-      sprintf(thisBuf, "__POPThis_%s = new %s(GetAccessPointForThis());", clname, clname);
+      //sprintf(thisBuf, "__POPThis_%s = new %s(GetAccessPointForThis());", clname, clname);
 
       if (constructor)
 	{
@@ -565,22 +565,8 @@ this {
 
 	/* This part of parser is possible source of wrong "this" handling */
 	Class *cl = thisCodeFile->FindClass(classname);
-	bool insertNormalThis = true;
-	
-	if (cl!=NULL)
-	{
-      //If the class is a parclass, replace THIS keyword by the Interface pointer __POPThis_ClassName
-      if(cl->IsParClass()){
-         othercodes.InsertAt(-1,"__POPThis_", strlen("__POPThis_"));
-			othercodes.InsertAt(-1,cl->GetName(),strlen(cl->GetName()));
-			insertNormalThis = false;
-		}
-	}
-	
-	if(insertNormalThis)
-	{
-		othercodes.InsertAt(-1,yytext,strlen(yytext));
-	}
+
+	othercodes.InsertAt(-1,yytext,strlen(yytext));
 	
 	
 	/*
