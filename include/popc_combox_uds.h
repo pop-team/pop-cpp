@@ -76,7 +76,7 @@ private:
   struct sockaddr_un _sock_address;
 	bool _is_server;
 	std::string _uds_address;
-	struct pollfd active_connection[100];
+	struct pollfd active_connection[200];
 	int _active_connection_nb;
 	int _timeout;
 	bool _connected;
