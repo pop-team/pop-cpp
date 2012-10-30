@@ -145,19 +145,20 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) : destructor_times(
 {
 
 
-   
-   _ssh_tunneling=false;
-   if(p.IsService())
-      accesspoint.SetAsService();
-	__paroc_combox=NULL;
-	__paroc_buf=NULL;
-	//_popc_async_construction_thread=NULL;	
-
-   if(!p.IsEmpty());
+  _ssh_tunneling = false;  
+	__paroc_combox = NULL;
+	__paroc_buf = NULL;
+  if(p.IsService()) {
+    accesspoint.SetAsService();
+  }
+  
+  if(!p.IsEmpty()) {
    	Bind(p);
-
-   if(p.GetNoAddRef()) DecRef();
-   
+	  if(p.GetNoAddRef()) {
+	    printf("ADDREF\n");
+      AddRef();
+    }
+  }
 }
 
 
@@ -208,13 +209,16 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) : d
 paroc_interface::~paroc_interface()
 {
 	Release();
+
 }
 
 paroc_interface & paroc_interface::operator = (const paroc_interface & obj)
 {
+
 	Release();
 	const paroc_accesspoint &res=obj.GetAccessPoint();
 	Bind(res);
+	AddRef();
 	return (*this);
 }
 
@@ -302,6 +306,9 @@ void paroc_interface::Allocate()
 	od.getExecutable(codefile);
 	POPString objectname = ClassName();
 	
+	if(codefile.Length() == 0) {
+	  paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());	  
+	}
 	
 	/**
 	 * POP-C++ for the K Computer
@@ -324,7 +331,7 @@ void paroc_interface::Allocate()
   if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address))
     paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
     
-	paroc_message_header header(20, 100000, INVOKE_SYNC,"_allocate");
+	paroc_message_header header(20, 200000, INVOKE_SYNC,"_allocate");
 	allocating_buffer->Reset();
 	allocating_buffer->SetHeader(header);
 
@@ -515,7 +522,7 @@ void paroc_interface::Bind(const char *dest)
     connect_return = __paroc_combox->Connect(local_address);
     
     
-    paroc_message_header header(20, 100002, INVOKE_SYNC,"_connection");
+    paroc_message_header header(20, 200002, INVOKE_SYNC,"_connection");
   	__paroc_buf->Reset();
 	  __paroc_buf->SetHeader(header);
 
