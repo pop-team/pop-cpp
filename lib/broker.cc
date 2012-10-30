@@ -347,7 +347,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 
 bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
 {
-	paroc_combox_factory *fact=paroc_combox_factory::GetInstance();
+	paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
 	POPString url, prot;
 
 	bool ok=false;
@@ -358,28 +358,43 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
 	if (str==NULL) return false;
 
 	char *ptr;
-	char *tok=strtok_r(str," \t\n\r",&ptr);
-	while (tok!=NULL && !ok) {
-		paroc_combox *tmp = fact->Create(prot);
+	char *tok = strtok_r(str," \t\n\r",&ptr);
+	while (tok != NULL && !ok) {
+		paroc_combox *tmp = combox_factory->Create(prot);
 		tmp->SetTimeout(100000);
 		std::string address(tok);
 		if(address.find("uds://") == 0){
 		  address = address.substr(6);
 		}
-
+    paroc_buffer_factory* buffer_factory = tmp->GetBufferFactory();
+    paroc_buffer* buffer = buffer_factory->CreateBuffer();
 		if (tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
-			try {
-				//paroc_interface test(tmp, NULL);
-				//test.ObjectActive();
-				ok = false;
-			} catch (...) {
-				DEBUG("Exception on waking up %s", tok);
-			}
-		} else { 
-		  tmp->Destroy();
+		  try {
+        paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
+	      buffer->Reset();
+	      buffer->SetHeader(h);
+	      paroc_connection* connection = tmp->get_connection();
+        if (!buffer->Send((*tmp), connection)) {
+          ok = false;
+	      } else {
+          if (!buffer->Recv((*tmp), connection)) {
+            ok = false;
+	        }
+    	    bool ret;
+        	buffer->Push("result", "bool", 1);
+        	buffer->UnPack(&ret,1);
+    	    buffer->Pop();
+          ok = !ret;  
+  	    }   
+  	  } catch (...) {
+  	    ok = true;
+  	  }
 		}
-		tok=strtok_r(NULL," \t\n\r",&ptr);
+	  buffer->Destroy();
+    tmp->Destroy();
+		tok = strtok_r(NULL, " \t\n\r", &ptr);
 	}
+
 	return ok;
 }
 
