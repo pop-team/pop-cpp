@@ -22,8 +22,6 @@
 #include "appservice.ph"
 #include "paroc_thread.h"
 
-
-
 #define PROPAGATE_EXCEPTION(a)  catch (a err) { if (request.from!=NULL) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 
 class paroc_invokethread: public paroc_thread
@@ -236,14 +234,13 @@ bool paroc_broker::DoInvoke(paroc_request &request)
 			}
 			else extra=classname+"@"+accesspoint.GetAccessString()+": "+extra;
 			e.SetExtra(extra);
-			paroc_buffer::SendException(*request.data,request.from,e);
+			paroc_buffer::SendException(*request.data, request.from, e);
 		}
 		else UnhandledException();
 	}
 	catch (std::exception *e)
 	{
-		if (request.from!=NULL)
-		{
+		if (request.from != NULL) {
 			paroc_exception  *pe=paroc_exception::create(STD_EXCEPTION);
 			pe->SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
 			paroc_buffer::SendException(*request.data, request.from, *pe);
@@ -252,11 +249,9 @@ bool paroc_broker::DoInvoke(paroc_request &request)
 		}
 		else UnhandledException();
 	}
-	catch (std::exception e)
-	{
-		if (request.from!=NULL)
-		{
-			paroc_exception  *pe=paroc_exception::create(STD_EXCEPTION);
+	catch (std::exception e) {
+		if (request.from != NULL) {		
+			paroc_exception *pe = paroc_exception::create(STD_EXCEPTION);
 			pe->SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
 			paroc_buffer::SendException(*request.data, request.from, *pe);
 			delete pe;
