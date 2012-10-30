@@ -551,119 +551,105 @@ void paroc_buffer_xdr::CheckUnPack(int sz)
 
 bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
 {
+  // Pack the header (20 bytes)
+  char *dat=(char *)packeddata;
 
-//Pack the header (20 bytes)
-
-	char *dat=(char *)packeddata;
-
-	if (dat==NULL) { 
-	  printf("fail 1\n");
-	  return false;
-	}
-	int n=packeddata.GetSize();
+  if (dat == NULL) { 
+    printf("fail 1\n");
+    return false;
+  }
+  int n = packeddata.GetSize();
 	int h[5];
-	memset(h,0, 5*sizeof(int));
+	memset(h, 0, 5 * sizeof(int));
 
-	int type=header.GetType();
+	int type = header.GetType();
 
-	h[0]=htonl(n);
-	h[1]=htonl(type);
+	h[0] = htonl(n);
+	h[1] = htonl(type);
 
 	switch (type) {
   	case TYPE_REQUEST:
-	  	h[2]=htonl(header.GetClassID());
-		  h[3]=htonl(header.GetMethodID());
-  		h[4]=htonl(header.GetSemantics());
+	  	h[2] = htonl(header.GetClassID());
+		  h[3] = htonl(header.GetMethodID());
+  		h[4] = htonl(header.GetSemantics());
 	  	break;
   	case TYPE_EXCEPTION:
-	  	h[2]=htonl(header.GetExceptionCode());
+	  	h[2] = htonl(header.GetExceptionCode());
 		  break;
   	case TYPE_RESPONSE:
-	  	h[2]=htonl(header.GetClassID());
-		  h[3]=htonl(header.GetMethodID());
+	  	h[2] = htonl(header.GetClassID());
+		  h[3] = htonl(header.GetMethodID());
   		break;
 	  default:
 		  return false;
 	}
 	memcpy(dat, h, 20);
 
-
 	if (s.Send(dat, n, conn) < 0) {
-		DEBUG("Fail to send a message!");
 		return false;
 	}
 	return true;
 }
 
-//Propagation of exceptions back to caller...
-
+/**
+ *
+ */
 bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 {
 	int h[5];
 	int n, i;
 
-	//Recv the header...
-
-//  printf("XDR: Recv header\n");
+	// Recv the header
 	char *dat = (char *)h;
-	n=20;
-	do
-	{
+	n = 20;
+	do {
 	  if(conn == NULL)
 	    printf("XDR: recv connection is null\n");
 		if ((i = s.Recv(dat, n, conn)) <= 0) {
 			return false;
 		}
-		n-=i;
-		dat+=i;
-	}
-	while (n);
-  //printf("XDR: Recv header done\n");  
+		n -= i;
+		dat += i;
+	} while (n);
 
-  
 	Reset();
-
 	n = ntohl(h[0]);
-	if (n<20)
-	{
+	if (n < 20) {
 	  printf("Bad message header (size error:%d\n", n);
 		DEBUG("Bad message header(size error:%d)",n);
 		return false;
 	}
 
-	int type=ntohl(h[1]);
+	int type = ntohl(h[1]);
 	header.SetType(type);
-	switch (type)
-	{
-	case TYPE_REQUEST:
-		header.SetClassID(ntohl(h[2]));
-		header.SetMethodID(ntohl(h[3]));
-		header.SetSemantics(ntohl(h[4]));
-		break;
-	case TYPE_EXCEPTION:
-		header.SetExceptionCode(ntohl(h[2]));
-		break;
-	case TYPE_RESPONSE:
-		header.SetClassID(ntohl(h[2]));
-		header.SetMethodID(ntohl(h[3]));
-		break;
-	default:
-		return false;
+	switch (type) {
+  	case TYPE_REQUEST:
+	  	header.SetClassID(ntohl(h[2]));
+		  header.SetMethodID(ntohl(h[3]));
+  		header.SetSemantics(ntohl(h[4]));
+	  	break;
+  	case TYPE_EXCEPTION:
+	  	header.SetExceptionCode(ntohl(h[2]));
+		  break;
+  	case TYPE_RESPONSE:
+	  	header.SetClassID(ntohl(h[2]));
+		  header.SetMethodID(ntohl(h[3]));
+  		break;
+	  default:
+		  return false;
 	}
 
 	packeddata.SetSize(n);
-	dat=(char *)packeddata+20;
-	n-=20;
+	dat = (char *)packeddata+20;
+	n -= 20;
 
-	i=0;
-	while (n)
-	{
-		if ((i=s.Recv(dat,n, conn))<=0)
-		{
+	i = 0;
+	while (n) {
+		if ((i = s.Recv(dat,n, conn)) <= 0) {
 			return false;
 		}
-		dat+=i;
-		n-=i;
+		dat += i;
+		n -= i;
 	}
 	return true;
 }
