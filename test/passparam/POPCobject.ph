@@ -9,11 +9,11 @@ parclass POPCobject
   classuid(1500);
 
   public:
-    POPCobject() @{od.url("localhost");};
+    POPCobject() @{od.node(1); od.executable("./POPCObject.obj"); };
     ~POPCobject();
     
     //async void m1(POPCobject &o); // ref. parameters not allowed for async 
-    sync  void m2(POPCobject &o);   // OK
+    sync  void m2([in]POPCobject &o);   // OK
 
     //async void m100(POPCobject o);  // forbidden must be passed as &o 
     //sync  void m200(POPCobject o);  // forbidden must be passed as &o

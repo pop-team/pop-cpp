@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 		int nb_repeat=atoi(argv[2]);
 
 		// Fill the vectors with arbitrary values
-		vector <int> vect_int1(size_vect,0);
+		vector<int> vect_int1(size_vect,0);
 		for (int j =0;j<vect_int1.size();j++)vect_int1[j]=j;
 
 		vector <int> vect_int_copy(size_vect,0);
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 			}
 		}
 
-		POPCobject* myobj=new POPCobject(0,"localhost");
+		POPCobject* myobj = new POPCobject(0,"localhost");
 
 		timeval start,stop,result;
 
@@ -52,7 +52,8 @@ int main(int argc, char** argv)
 		printf("Serialize a integer vector : \n");
 		gettimeofday(&start,NULL);
 
-		for (int i=0;i<nb_repeat;i++)myobj->test1(vect_int1,i==0);
+		for (int i = 0; i < nb_repeat; i++)
+		  myobj->test1(vect_int1, i == 0);
 		gettimeofday(&stop,NULL);
 		timersub(&stop,&start,&result);
 		printf("->  Completed in %lf seconds\n\n",result.tv_sec + result.tv_usec/1000000.0);
@@ -102,7 +103,8 @@ int main(int argc, char** argv)
 		printf("->  Completed in %lf seconds\n\n",result.tv_sec + result.tv_usec/1000000.0);
 
 		/*---------------------------------------------------------------------------------------*/
-		if (vect2d_int1.size()>0)printf("Serialize a 2D vector of int : (%dx%d) \n",vect2d_int1.size(),vect2d_int1[0].size());
+		if (vect2d_int1.size()>0)
+		  printf("Serialize a 2D vector of int : (%dx%d) \n", static_cast<int>(vect2d_int1.size()), static_cast<int>(vect2d_int1[0].size()));
 		gettimeofday(&start,NULL);
 		for (int i=0;i<nb_repeat;i++)myobj->test0(vect2d_int1,i==0);
 		gettimeofday(&stop,NULL);

@@ -25,9 +25,11 @@ int Toto::GetIdent()
 
    Titi t;                 // create an object to call me back
    this->SetIdent(222);    // test of "this"
+   
+   // Should be replaced by this
    Toto* tmp = new Toto(GetAccessPoint());
+   tmp->AddRef();
    t.ComputeIdent((*tmp));  // t is going to call me back   
-   //t.ComputeIdent(*this);  // t is going to call me back
    delete tmp;
    return(ident);          // ident has changed because of the call back
 }

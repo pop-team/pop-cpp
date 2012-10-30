@@ -2,8 +2,8 @@ parclass Tree
 {
 	public:
 
-	Tree() @ { od.url("localhost");};
-    Tree(int id) @ { od.url("localhost");};
+	Tree() @ { od.node(1); od.executable("./tree.obj"); };
+  Tree(int id) @{ od.node(1); od.executable("./tree.obj");};
 	~Tree();
 
 	conc sync void Create(int w, int d, int startid);

@@ -8,7 +8,7 @@ ParObject::ParObject()
 
 ParObject::ParObject(paroc_string machine)
 {
-  printf("Structparam: Creating object ParObject on %s\n",(const char *)paroc_system::GetHost());
+  printf("Structparam: Creating object ParObject on %s\n", GetAccessPoint().GetAccessString());
 }
 
 ParObject::ParObject(float f)

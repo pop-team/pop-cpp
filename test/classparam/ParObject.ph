@@ -8,8 +8,8 @@ parclass ParObject
 classuid(1001);
 
 public:
-	 ParObject() @{od.url("localhost");};
-	 ParObject (paroc_string machine) @{od.url(machine);};
+	 ParObject() @{ od.node(1); od.executable("/Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/test/classparam/ParObject.obj"); };
+	 ParObject (paroc_string machine) @{ od.node(1); od.executable("/Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/test/classparam/ParObject.obj"); };
    ParObject(float f) @{od.power(f);};
 	~ ParObject ();
 

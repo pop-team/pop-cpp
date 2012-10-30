@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 	//cout <<  endl << "Heritage: Appel callMethod de Mother avec Mother, c"<<  endl;
 	//c.callMethod(c,6);
 
-	cout << "Heritage: test succeeded, destroying objects..." << popcendl;
+	cout << "Heritage: test succeeded, destroying objects..." << endl;
 	return 0;
 }
 

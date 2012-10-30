@@ -7,9 +7,9 @@ parclass Mother
 	classuid(1002);
 
 public:
-	Mother() @{od.url("localhost");};
+	Mother() @{ od.node(1); od.executable("./child.obj"); };
 	virtual int Method1();
-	virtual void callMethod(Mother &c, int v);
+	virtual void callMethod([in]Mother &c, int v);
 	void SetVal(int v);
 	int GetVal();
 

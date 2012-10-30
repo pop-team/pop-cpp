@@ -15,8 +15,8 @@ parclass POPCobject
 	classuid(1500);
 
 	public:
-		POPCobject(int newID, int wanted, int minp) @{od.power(wanted, minp);};
-		POPCobject(int newID, POPString machine) @{od.url(machine);};
+		POPCobject(int newID, int wanted, int minp) @{ od.node(0); od.executable("./myobj.obj"); };
+		POPCobject(int newID, POPString machine) @{ od.node(0); od.executable("./myobj.obj"); };
 		~POPCobject();
 
 		sync seq void test0(vector<vector<int>> &a, bool print);

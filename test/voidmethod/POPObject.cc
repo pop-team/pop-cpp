@@ -9,16 +9,16 @@
 
 POPObject::POPObject()
 {	
-   cout << "POPCobject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << popcendl;
+   std::cout << "POPCobject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << std::endl;
 }
 
 POPObject::~POPObject()
 {
-   cout << "POPCobject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+   std::cout << "POPCobject: on machine:" << GetAccessPoint().GetAccessString() <<" is being destroyed" << std::endl;
 }
 
 void POPObject::voidMethod(void){
-	cout << "Method with void param is called" << popcendl;
+	std::cout << "Method with void param is called" << std::endl;
 }
 
 @pack(POPObject);

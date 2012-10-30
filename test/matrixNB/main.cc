@@ -44,8 +44,6 @@ int main(int argc, char** argv)
 	char* resultFileName; //argv[4];
 
 	FILE *f;
-	POPString* machine[nbMaxMachines];
-	int nbOfMachines  = 0;
 
 	// Get the execution parameters
 	Alines= Acols = Bcols = atoi(argv[1]);
@@ -56,35 +54,12 @@ int main(int argc, char** argv)
 	else 
 		resultFileName=NULL;
 
-// Get the available machines
-	if ( (f = fopen(MachinesList, "r"))!=NULL)
-	{
-		char* s;
-		s=(char*)malloc(100);
-		while (fscanf(f, "%s", s)!=EOF)
-		{
-			machine[nbOfMachines] = new POPString(s);
-			nbOfMachines++;
-		}
-		fclose(f);
-	}
-	else
-	{
-		for (nbOfMachines=0; nbOfMachines<nbWorker; nbOfMachines++)
-			machine[nbOfMachines] = new POPString("localhost");
-		nbOfMachines=nbWorker;
-	}
-
 	printf("\nMatrix: Starting test..\n");
 
 
-	printf("Matrix: Available machines:\n");
+	printf("Matrix: Available nodes: %d\n", nbWorker);
 
-	for (int i=0; i<nbOfMachines; i++)
-		printf("Matrix  %d = %s \n", i, (const char*)(*machine[i]));
-
-	if ((Alines % nbWorker) != 0)
-	{
+	if ((Alines % nbWorker) != 0) {
 		printf("Size of the Matrix must a muliple of nb. workers\n\n");
 		return -1;
 	}
@@ -125,7 +100,7 @@ int main(int argc, char** argv)
 
 	srand(time(NULL));
 
-	int shift = rand() % nbOfMachines;
+	//int shift = rand() % nbOfMachines;
 
 	printf("\n");
 
@@ -133,7 +108,7 @@ int main(int argc, char** argv)
 	{
 		for (int i=0; i<nbWorker; i++)
 		{
-			mw[i] = new MatWorker(i, Alines/nbWorker, Acols, Bcols, *(machine[(i+shift)%nbOfMachines]));
+			mw[i] = new MatWorker(i, Alines/nbWorker, Acols, Bcols, i);
 		}
 
 		printf("\nMatrix: Start computation...\n");
@@ -147,22 +122,20 @@ int main(int argc, char** argv)
 
 
 		//Send the bloc of Matrix A and the 1st bloc of Matrix B
-
-		for (int i=0; i<nbWorker; i++)
+		for (int i=0; i<nbWorker; i++) {
 			mw[i]->solve(a.getLinesBloc(i*Alines/nbWorker,Alines/nbWorker),
 						 b.getColsBloc(0,Bcols/nbBlocB));
-
-
+		}
 
 		//Send the others blocs of Matrix B
-		for (int j=1; j<nbBlocB; j++)
-			for (int i=0; i<nbWorker; i++)
+		for (int j=1; j<nbBlocB; j++){
+			for (int i=0; i<nbWorker; i++){
 				mw[i]->putB(b.getColsBloc(j*Bcols/nbBlocB,Bcols/nbBlocB));
-
+			}
+		}
 
 
 		// Get the time necessary to send all data to workers
-
 		sendTime = timer.Elapsed() - initTime;
 
 		// Check calculation of the (checkI,checkJ) value
@@ -178,14 +151,12 @@ int main(int argc, char** argv)
 		double workerT[nbWorker];
 
 		//Get the result and put inside matrix A
-		for (int i=0; i<nbWorker; i++)
-		{
+		for (int i=0; i<nbWorker; i++) {
 			res=mw[i]->getResult(workerT[i]);
 			a.setLinesBloc(i*Alines/nbWorker, res);
 		}
-
+		
 		// Get the elapsed time since all workers have been created
-
 		totalTime = timer.Elapsed() - initTime;
 
 		timer.Stop();

@@ -5,8 +5,8 @@ parclass POP_Barrier
 {
   classuid(1001);
   public: 
-    POP_Barrier() @{od.url("localhost");};
-    POP_Barrier(int n) @{od.url("localhost");};
+    POP_Barrier() @{od.node(1); od.executable("./Barrier.obj");};
+    POP_Barrier(int n) @{od.node(1); od.executable("./Barrier.obj");};
   
     sync conc void activate();
     

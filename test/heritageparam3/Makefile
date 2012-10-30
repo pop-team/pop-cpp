@@ -11,4 +11,4 @@ clean:
 	rm -f *.o *.obj main objmap
 
 run:
-	popcrun objmap ./main
+	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=./main

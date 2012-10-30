@@ -4,44 +4,44 @@
 
 POPCobject::POPCobject()
 {
-  printf("  POPCobject created on machine \"%s\"\n",POPGetHost()); 
+  printf("  POPCobject created on machine \"%s\"\n",GetAccessPoint().GetAccessString()); 
 }
 
 POPCobject::~POPCobject()
 {
-  printf("  POPCobject on machine \"%s\" is being destroyed\n", POPGetHost()); 
+  printf("  POPCobject on machine \"%s\" is being destroyed\n", GetAccessPoint().GetAccessString()); 
 }
 
 void POPCobject::m2(POPCobject &o)
-{printf("  m2 called on \"%s\" \n",POPGetHost());}
+{printf("  m2 called on \"%s\" \n",GetAccessPoint().GetAccessString());}
 
 void POPCobject::m4(StructData &d)
 {
   d.SetMyData(2*d.GetMyData());
-  printf("  m4 called on \"%s\" \n",POPGetHost());
+  printf("  m4 called on \"%s\" \n",GetAccessPoint().GetAccessString());
 }
 
 void POPCobject::m300(StructData d)
 {
   d.SetMyData(3*d.GetMyData());
-  printf("  m300 called on \"%s\" \n",POPGetHost());
+  printf("  m300 called on \"%s\" \n",GetAccessPoint().GetAccessString());
 }
 
 void POPCobject::m400(StructData d)
-{printf("  m400 called on \"%s\" \n",POPGetHost());}
+{printf("  m400 called on \"%s\" \n",GetAccessPoint().GetAccessString());}
 
 
 void POPCobject::m5(POPCobject *o)
-{printf("  m5 called on \"%s\" \n",POPGetHost());}
+{printf("  m5 called on \"%s\" \n",GetAccessPoint().GetAccessString());}
 
 void POPCobject::m6(POPCobject *o)
-{printf("  m6 called on \"%s\" \n",POPGetHost());}
+{printf("  m6 called on \"%s\" \n",GetAccessPoint().GetAccessString());}
 
 void POPCobject::m7(StructData *d)
-{printf("  m7 called on \"%s\" \n",POPGetHost());}
+{printf("  m7 called on \"%s\" \n",GetAccessPoint().GetAccessString());}
 
 void POPCobject::m8(StructData *d)
-{printf("  m8 called on \"%s\" \n",POPGetHost());}
+{printf("  m8 called on \"%s\" \n",GetAccessPoint().GetAccessString());}
 
 
 StructData POPCobject::m12(int v)
@@ -52,10 +52,14 @@ StructData POPCobject::m12(int v)
   i.SetInternalData(d.GetMyData()-v);
   d.SetInternalData(i);
 
-  printf("  m12 called on \"%s\"\n",POPGetHost());
+  printf("  m12 called on \"%s\"\n",GetAccessPoint().GetAccessString());
   return d;
 }
 
-POPCobject& POPCobject::m20() {printf("  m20 called\n"); return *this;}
+POPCobject& POPCobject::m20() {
+  printf("m20 called\n"); 
+  POPCobject *tmp = new POPCobject(GetAccessPoint());
+  return *tmp;
+}
 
 @pack(POPCobject);

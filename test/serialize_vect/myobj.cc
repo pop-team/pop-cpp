@@ -4,19 +4,19 @@
 
 POPCobject::POPCobject(int newID, int wanted, int minp)
 {
-	printf("POPCobject with ID=%d created (by JobMgr) on machine:%s\n", newID, (const char*)POPSystem::GetHost());
+	printf("POPCobject with ID=%d created (by JobMgr) on machine:%s\n", newID, GetAccessPoint().GetAccessString());
 	iD=newID;
 }
 
 POPCobject::POPCobject(int newID, POPString machine)
 {
-	printf("POPCobject with ID=%d created on machine:%s\n", newID, (const char*)POPSystem::GetHost());
+	printf("POPCobject with ID=%d created on machine:%s\n", newID, GetAccessPoint().GetAccessString());
 	iD=newID;
 }
 
 POPCobject::~POPCobject()
 {
-	printf("POPCobject:%d on machine:%s is being destroyed\n", iD, (const char*)POPSystem::GetHost());
+	printf("POPCobject:%d on machine:%s is being destroyed\n", iD, GetAccessPoint().GetAccessString());
 	iD=-1;
 }
 
@@ -34,8 +34,11 @@ void POPCobject::test0(vector<vector<int> > &a, bool print)
 
 void POPCobject::test1(vector<int> &a, bool print)
 {
-	if (print)for (int i =0;i<a.size();i++)a[i]*=2;
-	if (print&&a.size()<20) {
+  printf("Test1\n");
+	if (print)
+	  for (int i =0;i<a.size();i++)
+	    a[i] *= 2;
+	if (print && a.size() < 20) {
 		printf("Print vector :");
 		for (int i =0;i<a.size();i++) {
 			printf("%d ", a[i]);

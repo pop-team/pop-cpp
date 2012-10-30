@@ -8,9 +8,9 @@ parclass Child : public Mother
 	classuid(1001);
 
 public:
-	Child() @{od.url("localhost");};
+	Child() @{ od.node(1); od.executable("./child.obj"); };
 	virtual int Method1();
-	virtual void callMethod(Mother &c, int v);
+	virtual void callMethod([in]Mother &c, int v);
 };
 
 #endif

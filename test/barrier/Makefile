@@ -17,4 +17,4 @@ clean:
 	rm -f main
 	rm -f obj.map
 run:
-	popcrun obj.map ./main 10
+	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=./main 10

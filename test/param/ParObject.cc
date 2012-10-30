@@ -9,7 +9,7 @@ ParObject::ParObject()
 
 ParObject::ParObject(POPString machine)
 {
-	printf("Param: Creating object ParObject on %s\n",(const char *)POPSystem::GetHost());
+	printf("Param: Creating object ParObject on %s\n", GetAccessPoint().GetAccessString());
 	theData.SetInternalData(1);
 }
 

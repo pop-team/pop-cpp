@@ -5,9 +5,9 @@ main:
 	popcc -o main titi.stub.o toto.ph toto.cc main.cc	
 
 object:
-	popcc -object -o toto.obj titi.stub.o toto.cc toto.ph
-	popcc -parclass-nobroker -c toto.ph toto.cc
-	popcc -object -o titi.obj toto.stub.o titi.ph titi.cc 
+	popcc -noclean -object -o toto.obj titi.stub.o toto.cc toto.ph
+	popcc -noclean -parclass-nobroker -c toto.ph toto.cc
+	popcc -noclean -object -o titi.obj toto.stub.o titi.ph titi.cc 
 	./toto.obj -listlong > obj.map
 	./titi.obj -listlong >> obj.map
 	
@@ -18,4 +18,4 @@ clean:
 	rm -f obj.map
 	
 run:
-	mpiexec -np 1 ../../communicator/popc_mpi_communicator -app=./main
+	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=./main

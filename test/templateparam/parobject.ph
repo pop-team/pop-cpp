@@ -10,8 +10,8 @@ parclass ParObject
 classuid(1001);
 
 public:
-	ParObject() @{od.url("localhost");};
-	ParObject(paroc_string machine) @{od.url(machine);};
+	ParObject() @{ od.node(1); od.executable("./ParObject.obj"); };
+	ParObject(paroc_string machine) @{ od.node(1); od.executable("./ParObject.obj"); };
   ~ParObject();
 
 	seq async void SetTheData(X d);

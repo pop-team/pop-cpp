@@ -7,11 +7,11 @@ POPxVector::~POPxVector() {;}
 
 void POPxVector::Serialize(POPBuffer &buf, bool pack)
 {
-	long vsize;
+	int vsize;
 	vector<X>::iterator iter;
 	if (pack)
 	{
-		vsize = size();
+		vsize = static_cast<int>(size());
 		buf.Pack(&vsize,1);
 	}
 	else

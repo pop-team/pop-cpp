@@ -9,14 +9,14 @@
 
 POPObject::POPObject()
 {	
-   cout << "POPObject is processing its construction (5 secondes delay) on machine:" <<  (const char*)POPSystem::GetHost() << popcendl;
+   std::cout << "POPObject is processing its construction (5 secondes delay) on machine:" <<  GetAccessPoint().GetAccessString() << std::endl;
 	counter = 0;
-   cout << "POPObject created (by JobMgr) on machine:" <<  (const char*)POPSystem::GetHost() << popcendl;
+   std::cout << "POPObject created (by JobMgr) on machine:" <<  GetAccessPoint().GetAccessString() << std::endl;
 }
 
 POPObject::~POPObject()
 {
-   cout << "POPObject on machine " << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+   std::cout << "POPObject on machine " << GetAccessPoint().GetAccessString() <<" is being destroyed" << std::endl;
 }
 
 int POPObject::getCounter(){

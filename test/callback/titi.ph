@@ -8,7 +8,7 @@ parclass Titi
 classuid(1001);
 
 public:
-  Titi() @{ od.url("localhost"); od.executable("/Users/clementval/versioning/popc/popc2.6.2/test/callback/titi.obj"); };
+  Titi() @{ od.node(1); od.executable("/Users/clementval/versioning/popc/popc2.6.2/test/callback/titi.obj"); };
         
   ~Titi();
 

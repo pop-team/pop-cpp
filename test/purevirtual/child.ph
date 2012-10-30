@@ -10,7 +10,7 @@ parclass Child: public Mother
 {
 public:
 	classuid(1201);
-	Child() @{ od.url("localhost"); };
+	Child() @{  od.node(1); od.executable("child.obj");  };
 	~Child();
 	sync seq void method_pv();
 };

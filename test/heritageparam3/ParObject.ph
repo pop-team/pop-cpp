@@ -8,10 +8,10 @@ parclass ParObject
 classuid(1001);
 
 public:
-	 ParObject() @{od.url("localhost");};
+	 ParObject() @{ od.node(1); od.executable("./ParObject.obj"); };
 	~ParObject ();
 
-	seq sync void SetData(HeritData data1, Data &data2);
+	seq sync void SetData(HeritData data1, Data data2);
 	seq sync HeritData GetData();
 
 private:

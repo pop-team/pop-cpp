@@ -11,7 +11,7 @@ ParObject::~ParObject()
   printf("Heritparam3: Destroying the object ParObject... %d,%d\n\n", theData.GetInternalData(), theData.GetMyData());
 }
 
-void ParObject::SetData(HeritData data1, Data &data2)
+void ParObject::SetData(HeritData data1, Data data2)
 {
   Data D;
   D.SetInternalData(23);

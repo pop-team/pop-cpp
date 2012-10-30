@@ -5,7 +5,7 @@ parclass Mother
 {
 public:
 	classuid(1200);
-	Mother() @{ od.url("localhost"); };
+	Mother() @{ od.node(1); od.executable("child.obj"); };
 	~Mother();
 	sync seq virtual void method_pv()=0; // Declare pure virtual method
 };

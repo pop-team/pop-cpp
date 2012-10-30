@@ -9,7 +9,7 @@ parclass ClassExcep
 classuid(1001);
 
 public:
-  ClassExcep() @{od.url("localhost");};
+  ClassExcep() @{ od.node(1); od.executable("./exception.obj"); };
 
   ~ClassExcep();
 

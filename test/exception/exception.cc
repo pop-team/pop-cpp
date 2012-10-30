@@ -5,7 +5,7 @@
 ClassExcep::ClassExcep()
 {
   IOException a("My Exception Constructor", "ICI");
-  printf("Exception: Object ClassExcep starting on \"%s\"\n", POPGetHost());
+  printf("Exception: Object ClassExcep starting on \"%s\"\n", GetAccessPoint().GetAccessString());
   e = -1;
 }
 
@@ -16,6 +16,7 @@ ClassExcep::~ClassExcep()
 
 void ClassExcep::SeqSync(int i)
 {
+  printf("Call SeqSync\n");
   IOException a("Object: My Exception SeqSync", "ICI");
   if (i==0) throw a; 
   else
@@ -27,6 +28,7 @@ void ClassExcep::SeqSync(int i)
 
 void ClassExcep::ConcSync(int i)
 {
+  printf("Call ConcSync\n");
   IOException b("Object: My Exception ConcSync", "ICI");
   if (i==0) throw b;
   else
@@ -39,6 +41,7 @@ void ClassExcep::ConcSync(int i)
 
 void ClassExcep::MutexSync(int i)
 {
+  printf("Call MutexSync\n");
   IOException b("Object: My Exception MutexSync", "ICI");
   if (i==0) throw b;
   else

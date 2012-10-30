@@ -5,14 +5,14 @@ Tree::Tree()
 {
 	myid=0;
 	n=0;
-	printf("Node\t%d\ton\t%s\n",myid, (const char *)POPSystem::GetHost());
+	printf("Node\t%d\ton\t%s\n",myid, GetAccessPoint().GetAccessString());
 }
 
 Tree::Tree(int id)
 {
 	myid=id;
 	n=0;
-	printf("Node\t%d\ton\t%s\n",myid, (const char *)POPSystem::GetHost());
+	printf("Node\t%d\ton\t%s\n",myid, GetAccessPoint().GetAccessString());
 }
 
 Tree::~Tree()

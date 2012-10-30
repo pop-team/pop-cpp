@@ -8,7 +8,7 @@ ParObject::ParObject()
 
 ParObject::ParObject(POPString machine)
 {
-	printf("VectorInt1: Creating object ParObject on %s\n",(const char *)POPSystem::GetHost());
+	printf("VectorInt1: Creating object ParObject on %s\n", GetAccessPoint().GetAccessString());
 }
 
 ParObject::ParObject(float f)
@@ -18,7 +18,7 @@ ParObject::ParObject(float f)
 
 ParObject::~ParObject()
 {
-	printf("VectorInt2: Destroying the object ParObject... %d, %d\n",  theData.size(), theData.GetMyData());
+	printf("VectorInt2: Destroying the object ParObject... %d, %d\n",  static_cast<int>(theData.size()), theData.GetMyData());
 }
 
 void ParObject::SetData(POPintVector data)

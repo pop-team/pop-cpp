@@ -2,16 +2,25 @@
 #include "child.ph"
 
 Mother::Mother()
-{val=0;}
+{
+	printf("Mother created %s\n", GetAccessPoint().GetAccessString());
+	val=0;
+}
 
 int Mother::Method1()
-{printf("Heritage: Executing Method1 in Mother no:%d\n", val);}
+{
+  printf("Heritage: Executing Method1 in Mother no:%d\n", val);
+}
 
 void Mother::SetVal(int v)
-{val=v;}
+{
+  val=v;
+}
 
 int Mother::GetVal()
-{return val;}
+{
+  return val;
+}
 
 void Mother::callMethod(Mother &c, int v)
 {

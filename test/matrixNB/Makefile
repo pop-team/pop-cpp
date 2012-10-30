@@ -1,3 +1,5 @@
+NODE_NUMBER=5
+
 all: fast
 
 fast:
@@ -14,4 +16,4 @@ clean:
 	rm -f *.obj MatMul *.o obj.map
 
 run:
-	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=MatMul 600 10 5
+	mpiexec -np $(NODE_NUMBER) ../../communicator/popc_mpi_communicator -app=MatMul 1200 $(NODE_NUMBER) 5

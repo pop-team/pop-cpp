@@ -12,7 +12,7 @@ objmap:
 	./child.obj -listlong > obj.map
 
 run:
-	popcrun obj.map ./main
+	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=./main
 
 clean:
 	rm -f *.o *.obj main_seq main obj.map _paroc*

@@ -10,5 +10,5 @@ object:
 clean:
 	rm -f *.o *.obj main obj.map _paroc*
 
-run:
-	popcrun obj.map ./main
+run:	
+	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=main

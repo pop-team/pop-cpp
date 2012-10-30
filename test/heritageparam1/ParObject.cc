@@ -3,12 +3,12 @@
 
 ParObject::ParObject()
 {
-	printf("Heritparam1: Creating object ParObject on localhost\n");
+	printf("Heritparam1: Creating object ParObject on %s\n", GetAccessPoint().GetAccessString());
 }
 
 ParObject::ParObject(POPString machine)
 {
-	printf("Heritparam1: Creating object ParObject on %s\n",(const char *)POPSystem::GetHost());
+	printf("Heritparam1: Creating object ParObject on %s\n", GetAccessPoint().GetAccessString());
 }
 
 ParObject::ParObject(float f)

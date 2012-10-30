@@ -7,7 +7,7 @@ POPintVector::~POPintVector() {};
 
 void POPintVector::ShowPOPintVector()
 {
-	printf("VectorInt2: Vector is of size %d: ", size());
+	printf("VectorInt2: Vector is of size %d: ", static_cast<int>(size()));
 	vector<int>::iterator iter;
 	for (iter=begin(); iter!=end(); iter++)
 		printf("%d ",*iter);
@@ -21,11 +21,11 @@ int POPintVector::GetMyData() {return myData;}
 void POPintVector::Serialize(POPBuffer &buf, bool pack)
 {
 	int a;
-	long vsize;
+	int vsize;
 	vector<int>::iterator iter;
 	if (pack)
 	{
-		vsize=size();
+		vsize=static_cast<int>(size());
 		buf.Pack(&vsize,1);
 		for (iter=begin(); iter!=end(); iter++)
 		{
@@ -38,7 +38,7 @@ void POPintVector::Serialize(POPBuffer &buf, bool pack)
 	{
 		buf.UnPack(&vsize,1);
 		clear();
-		for (long i=0; i<vsize; i++)
+		for (int i=0; i<vsize; i++)
 		{
 			buf.UnPack(&a,1);
 			push_back(a);

@@ -14,12 +14,14 @@ int main(int argc, char** argv)
 	vector<X>::iterator iter;
 	ParObject o("localhost");
 
-	for (int i=0; i<10; i++) {v.SetValue(i); b.push_back(v);}
+	for (int i=0; i<10; i++) {
+	  v.SetValue(i); b.push_back(v);
+	}
 	o.SetData(b);
 	b.clear();
 	b = o.GetData();
 
-	printf("VectorX: Vector is of size %d: ", b.size());
+	printf("VectorX: Vector is of size %d: ", static_cast<int>(b.size()));
 	for (iter=b.begin(); iter!=b.end(); iter++)
 		printf("%d ",iter->GetValue()); printf("\n");
 
@@ -29,11 +31,11 @@ int main(int argc, char** argv)
 	b.clear();
 	b = o.GetData();
 
-	printf("VectorX: Vector is of size %d: ", b.size());
+	printf("VectorX: Vector is of size %d: ", static_cast<int>(b.size()));
 	for (iter=b.begin(); iter!=b.end(); iter++)
 		printf("%d ",iter->GetValue()); printf("\n");
 
-	printf("VectorX: Current vector size =%d\n", b.size());
+	printf("VectorX: Current vector size =%d\n", static_cast<int>(b.size()));
 
 	if (b.size()==20)
     {

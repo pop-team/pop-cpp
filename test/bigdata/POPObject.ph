@@ -11,7 +11,7 @@ parclass POPObject {
 	classuid(1500);
 
 public:
-	POPObject() @{ od.url("localhost"); };
+	POPObject() @{ od.node(1); od.executable("./POPObject.obj"); };
 	~POPObject();
 
 	sync seq void displayArray(int length, char array[]);

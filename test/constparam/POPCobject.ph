@@ -9,7 +9,7 @@ parclass POPCobject
   classuid(1500);
 
   public:
-    POPCobject() @{od.url("localhost");};
+    POPCobject() @{ od.node(1); od.executable("./POPCobject.obj"); };
     ~POPCobject();
     
     sync  seq void m2(POPCobject const &o);

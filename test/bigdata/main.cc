@@ -10,7 +10,7 @@
 int main(int argc, char** argv)
 {
 	try {
-		cout << "Big data: Starting test..." << popcendl;		
+		std::cout << "Big data: Starting test..." << std::endl;		
 		int size = 60496000; // 60Mb
 		char array[size];
 	
@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 		assert(array[10495910] == 'z');	
 		assert(array[60495998] == 'w');
 	
-		cout << "big data succeed !" << popcendl;		
+		std::cout << "big data succeed !" << std::endl;		
 	} catch (POPException e) {
 		printf("big data test failed: error no.%d, destroying objects:\n", e.Code());
 		return 1;

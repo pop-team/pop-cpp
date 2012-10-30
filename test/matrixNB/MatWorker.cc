@@ -17,7 +17,7 @@ MatWorker::MatWorker()
 	nextBbloc=false;
 }
 
-MatWorker::MatWorker(int i, int nbLineA, int nbColA, int nbColB, POPString machine)
+MatWorker::MatWorker(int i, int nbLineA, int nbColA, int nbColB, int node)
 {
 	nbLinesA = nbLineA;
 	nbColsA = nbColA;
@@ -28,7 +28,7 @@ MatWorker::MatWorker(int i, int nbLineA, int nbColA, int nbColB, POPString machi
 
 	sizeB=0;
 	nextBbloc=false;
-	printf("Worker %d created with ap:%s\n",i, GetAccessPoint().GetAccessString());
+	printf("Worker %d created with ap:%s on node %d\n",i, GetAccessPoint().GetAccessString(), node);
 }
 
 MatWorker::~MatWorker()
