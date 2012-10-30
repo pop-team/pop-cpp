@@ -88,7 +88,7 @@ int main(int argc, char **argv)
 	// Send ack via callback
 	if (callback != NULL) {
 	  paroc_buffer *buffer = callback->GetBufferFactory()->CreateBuffer();
-		paroc_message_header h(0, 100002, INVOKE_SYNC, "_callback");
+		paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
 		buffer->SetHeader(h);
 		
     paroc_connection* connection = callback->get_connection();	
