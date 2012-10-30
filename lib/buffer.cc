@@ -192,8 +192,9 @@ METH_VECT_UNPACK(std::string)
 
 bool paroc_buffer::Send(paroc_connection *conn)
 {
-	if (conn==NULL) return false;
-	paroc_combox *combox=conn->GetCombox();
+	if (conn == NULL) 
+	  return false;
+	paroc_combox *combox = conn->GetCombox();
 	return Send(*combox, conn);
 }
 
@@ -264,7 +265,7 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,unsig
 
 
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,char *code)
+bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, char *code)
 {
 	except.Reset();
 	paroc_message_header tmp(EXCEPTION_STRING,except.GetHeader().GetMethodName());
