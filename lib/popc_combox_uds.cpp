@@ -43,7 +43,7 @@ popc_connection_uds::popc_connection_uds(popc_connection_uds &me): paroc_connect
 
 paroc_connection *popc_connection_uds::Clone()
 {
-	return new popc_connection_uds(*this);
+	return new popc_connection_uds(this->get_fd(), this->GetCombox());
 }
 
 
@@ -135,6 +135,7 @@ bool popc_combox_uds::Create(const char* address, bool server)
 bool popc_combox_uds::Connect(const char *url)
 {
   if(connect(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
+    printf("Connect failed: %s\n",_uds_address.c_str()); 
     perror("Connect failed");
     return false;
   }
@@ -155,22 +156,22 @@ paroc_connection* popc_combox_uds::get_connection()
 
 int popc_combox_uds::Send(const char *s,int len)
 {
+
   int wbytes = send(_socket_fd, s, len, 0); 
+
   return wbytes;
 }
 
 int popc_combox_uds::Send(const char *s,int len, paroc_connection *connection)
 {
   if(connection == NULL){
-    return -1;
+    return -1; 
   }
-
   int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
-//  printf("Send to %d\n", socket_fd);
   int wbytes = write(socket_fd, s, len); 
-//  printf("Sent  %d\n", wbytes);
   if(wbytes < 0)
     perror("Sent");
+
   return wbytes;	
 }
 
@@ -208,9 +209,10 @@ paroc_connection* popc_combox_uds::Wait()
   if(_is_server){
     socklen_t address_length;
     int poll_back;
+    _timeout = timeout;
     do {
       poll_back = poll(active_connection, _active_connection_nb, _timeout);
-      if(_active_connection_nb >= 99)
+      if(_active_connection_nb >= 199)
         printf("TOO MANY CONNECTION\n");
     } while ((poll_back == -1) && (errno == EINTR));
     //printf("Poll %s\n", _uds_address.c_str());
