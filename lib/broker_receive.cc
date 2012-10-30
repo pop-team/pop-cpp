@@ -66,7 +66,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) // Receive request and pu
 
 		}
 	}
-	printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
+	//printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
 	server->Close();
 }
 
@@ -91,7 +91,8 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
   	}
 		paroc_buffer_factory *fact=conn->GetBufferFactory();
 		req.data=fact->CreateBuffer();
-  //  printf("BROKER:Will receive data\n");		
+		
+    
 		if (req.data->Recv(conn)) {
 			req.from = conn;
 			const paroc_message_header &h=req.data->GetHeader();
