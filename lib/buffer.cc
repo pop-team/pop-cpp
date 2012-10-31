@@ -17,7 +17,7 @@
 #define METH_VECT_PACK(type) \
 void paroc_buffer::Pack( std::vector<type> *vect, int n)\
 {\
-	int s=vect->size();\
+	int s = static_cast<int>(vect->size());\
 	Pack(&s,1);\
 	Pack((type*)&(*vect)[0],s);\
 }
