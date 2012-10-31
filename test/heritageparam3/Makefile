@@ -4,11 +4,11 @@ main:
 	popcc -o main heritdata.cc data.cc ParObject.ph ParObject.cc main.cc 
 
 object:
-	popcc -object -o ParObject.obj heritdata.cc data.cc ParObject.cc ParObject.ph
+	popcc -noclean -object -o ParObject.obj heritdata.cc data.cc ParObject.cc ParObject.ph
 	./ParObject.obj -listlong > objmap
 
 clean:
-	rm -f *.o *.obj main objmap
+	rm -f *.o *.obj main objmap _paroc*
 
 run:
 	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=./main

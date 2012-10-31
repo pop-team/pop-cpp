@@ -3,20 +3,33 @@
 
 HeritData::HeritData()
 {
-  for (int i=0; i<100000; i++) toUseMemorySpace[i]=(double)i;
+  for (int i = 0; i < 100000; i++) 
+    toUseMemorySpace[i] = i;
 }
 
 HeritData::~HeritData() {}
 
-void HeritData::SetInternalData(int d) {Data::SetInternalData(d);}
+void HeritData::SetInternalData(int d) {
+  Data::SetInternalData(d);
+}
 
-int HeritData::GetInternalData() {return Data::GetInternalData();}
+int HeritData::GetInternalData() {
+  return Data::GetInternalData();
+}
 
-void HeritData::SetMyData(int d) {myData = d;}
-void HeritData::SetMyData(int d, double v) {toUseMemorySpace[d]=v;}
+void HeritData::SetMyData(int d) {
+  myData = d;
+}
+void HeritData::SetMyData(int d, double v) {
+  toUseMemorySpace[d]=v;
+}
 
-int HeritData::GetMyData() {return myData;}
-double HeritData::GetMyData(int i) {return toUseMemorySpace[i];}
+int HeritData::GetMyData() {
+  return myData;
+}
+double HeritData::GetMyData(int i) {
+  return toUseMemorySpace[i];
+}
 
 void HeritData::Serialize(POPBuffer &buf, bool pack)
 {
@@ -25,12 +38,13 @@ void HeritData::Serialize(POPBuffer &buf, bool pack)
   if (pack)
   {
     buf.Pack(&myData,1);           // Serialize my data
-    buf.Pack(toUseMemorySpace,100000);
-  }
+    buf.Pack(toUseMemorySpace, 100000);
+  }  
   else
   {
     buf.UnPack(&myData,1);          // De-serialize my data
-    buf.UnPack(toUseMemorySpace,100000);
+    buf.UnPack(toUseMemorySpace, 100000);
   }
+
 }
 

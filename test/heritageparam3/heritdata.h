@@ -19,6 +19,6 @@ class HeritData :  public Data
 
   private:
     int myData;
-    double toUseMemorySpace[100000];
+    int toUseMemorySpace[100000];
 };
 #endif    
