@@ -57,8 +57,8 @@ StructData POPCobject::m12(int v)
 }
 
 POPCobject& POPCobject::m20() {
-  printf("m20 called\n"); 
   POPCobject *tmp = new POPCobject(GetAccessPoint());
+  printf("m20 called\n");   
   return *tmp;
 }
 
