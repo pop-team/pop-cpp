@@ -4,22 +4,13 @@ RESULTS=tests_results
 NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
 
-SXXLOCATION=/usr/local/popc/sbin
-
-if [ "x" != "x$POPC_LOCATION" ]
-then
-SXXLOCATION=$POPC_LOCATION/sbin/
-fi
-
-$SXXLOCATION/SXXpopc killnstart
-
 if [ "$1" = "-all" ]
 then
 	echo ""
 	echo Starting test suite...
 	echo ""
 	rm -rf $RESULTS
-	for test in `ls -F -d * | grep -v asynccreation | grep -v runtests | grep -v runtests_short | grep -v stressallocation`
+	for test in `ls -F -d * | grep -v jobManager | grep -v asynccreation | grep -v runtests | grep -v runtests_short | grep -v stressallocation`
 	do
 		echo "---------------------------------------------------------------------------"
 		echo "*** $test test ($NUMBEROFTEST) **"
@@ -98,7 +89,5 @@ else
 		fi
 	fi
 fi
-
-$SXXLOCATION/SXXpopc kill
 
 
