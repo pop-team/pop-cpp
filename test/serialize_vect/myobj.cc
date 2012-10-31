@@ -34,7 +34,6 @@ void POPCobject::test0(vector<vector<int> > &a, bool print)
 
 void POPCobject::test1(vector<int> &a, bool print)
 {
-  printf("Test1\n");
 	if (print)
 	  for (int i =0;i<a.size();i++)
 	    a[i] *= 2;
@@ -101,11 +100,11 @@ void POPintVector1::Serialize(POPBuffer &buf, bool pack)
 {
 	if (ser==0) {
 		int a;
-		long vsize;
+    int vsize;
 		vector<int>::iterator iter;
 		if (pack)
 		{
-			vsize=size();
+			vsize = static_cast<int>(size());
 			buf.Pack(&vsize,1);
 			for (iter=begin(); iter!=end(); iter++)
 			{
@@ -165,11 +164,11 @@ void POPintVector2::Serialize(POPBuffer &buf, bool pack)
 {
 	if (ser==0) {
 		int a;
-		long vsize;
+		int vsize;
 		vector<int>::iterator iter;
 		if (pack)
 		{
-			vsize=vect.size();
+			vsize = static_cast<int>(vect.size());
 			buf.Pack(&vsize,1);
 			for (iter=vect.begin(); iter!=vect.end(); iter++)
 			{
@@ -181,7 +180,7 @@ void POPintVector2::Serialize(POPBuffer &buf, bool pack)
 		{
 			buf.UnPack(&vsize,1);
 			vect.clear();
-			for (long i=0; i<vsize; i++)
+			for (long i=0; i < vsize; i++)
 			{
 				buf.UnPack(&a,1);
 				vect.push_back(a);
