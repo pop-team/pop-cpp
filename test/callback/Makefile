@@ -16,6 +16,6 @@ clean:
 	rm -f main
 	rm -f *.obj
 	rm -f obj.map
-	
+	rm -f _paroc*	
 run:
 	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=./main
