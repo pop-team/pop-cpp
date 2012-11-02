@@ -15,7 +15,7 @@ MODIFICATIONS: PK&VC:25.2.2011 add definition of POPGetHost
 #define SSH_PORT_FIRST 49152
 #define SSH_MAX_ATTEMPT 10
 
-class AppCoreService;
+//class AppCoreService;
 
 class paroc_utils
 {
@@ -39,7 +39,7 @@ public:
    static bool isValidName(POPString value);
 	static float benchmark_power();
 
-	static int InitCodeService(char *fileconf, AppCoreService *service);
+//	static int InitCodeService(char *fileconf, AppCoreService *service);
 
 #endif
 
