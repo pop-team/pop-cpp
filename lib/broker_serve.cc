@@ -17,9 +17,9 @@
 #include "paroc_interface.h"
 #include "paroc_event.h"
 
-#include "objectmonitor.ph"
+//#include "objectmonitor.ph"
 #include "paroc_thread.h"
-#include "appservice.ph"
+//#include "appservice.ph"
 #include "paroc_thread.h"
 
 #define PROPAGATE_EXCEPTION(a)  catch (a err) { if (request.from!=NULL) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
@@ -169,12 +169,13 @@ void paroc_broker::UnhandledException()
 {
 	if (!paroc_system::appservice.IsEmpty())
 	{
-		char tmp[1024];
-		sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
-		AppCoreService app(paroc_system::appservice);
+		//char tmp[1024];
+		printf("Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
+//		sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
+/*		AppCoreService app(paroc_system::appservice);
 		app.Log(tmp);
 		app.UnManageObject(paroc_broker::accesspoint);
-		app.KillAll();
+		app.KillAll(); */
 		state=POPC_STATE_ABORT;
 	}
 }
