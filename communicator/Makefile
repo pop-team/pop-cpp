@@ -83,7 +83,9 @@ CC = gcc
 CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS = -DARCH_MAC 
-CXX = mpic++
+
+#CXX=mpic++
+CXX = mpiFCCpx
 CXXCPP = g++ -E
 CXXFLAGS = -g -O2
 CYGPATH_W = echo

@@ -1,6 +1,7 @@
 AUTOMAKE_OPTIONS=no-dependencies
 
-CXX=mpic++
+#CXX=mpic++
+CXX=mpiFCCpx
 
 bin_PROGRAMS = popc_mpi_communicator 
 bindir = @prefix@/mpi
