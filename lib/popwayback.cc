@@ -99,7 +99,7 @@ void POPWayback::deleteNextNode(){
  * Check if it's the last node in the way back or if there is no node
  * @return Return true if there is 1 or 0 node in the way back
  */
-const bool POPWayback::isLastNode() const {
+bool POPWayback::isLastNode() const {
    if(_lst_wb.size() == 1 || _lst_wb.empty())
       return true;
    return false;
@@ -110,7 +110,7 @@ const bool POPWayback::isLastNode() const {
  * Check if the way back is empty
  * @return Return true if the way back is empty
  */
-const bool POPWayback::isEmpty() const {
+bool POPWayback::isEmpty() const {
    return _lst_wb.empty();
 }
 
