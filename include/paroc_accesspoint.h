@@ -23,17 +23,16 @@ public:
 
 
 	void SetAccessString(const char *hostport);
-	const char *GetAccessString() const;
+	char *GetAccessString() const;
 	bool IsEmpty() const;
 	bool operator ==(const paroc_accesspoint &p) const;
 	paroc_accesspoint & operator =(const paroc_accesspoint &p);
-	//bool AddProtocolAccessString(const paroc_string &as);
-   const bool IsSecure() const;
-   void SetSecure();
-   const bool IsService() const;
-   void SetAsService();
-   void SetNoAddRef() ;
-   const bool GetNoAddRef() const;
+  bool IsSecure() const;
+  void SetSecure();
+  bool IsService() const;
+  void SetAsService();
+  void SetNoAddRef() ;
+  bool GetNoAddRef() const;
 
 	virtual void Serialize(paroc_buffer &buf, bool pack);
 private:
