@@ -37,12 +37,10 @@ using namespace std;
  * Catch signal of exiting child
  */
 void catch_child_exit(int signal_num) {
-  int retval, nval;
+  int retval;
   char buf[256];
   bzero(buf, 256);
-  nval = waitpid(0, &retval, WNOHANG);  
-  //sprintf(buf,"Waited on child %d which exited with code = %d\n",nval,retval);       
-  write(STDOUT_FILENO, buf, 256);
+  waitpid(0, &retval, WNOHANG);  
 }
 
 
@@ -147,10 +145,13 @@ void *mpireceivedthread(void *t)
   }
 //  printf("MPI thread %d ending\n", rank);
   pthread_exit(NULL);
+  return NULL;
 }
 
 /**
- *
+ * Main thread of the POP-C++ MPI Communicator. This thread is responsible for all IPC communication and MPI communication after
+ * received command from the MPI receive thread. 
+ * Usage: popc_mpi_communicator -app=<popc_application_main> [args]
  */
 int main(int argc, char* argv[])
 {
@@ -165,7 +166,7 @@ int main(int argc, char* argv[])
   signal(SIGCHLD, catch_child_exit);
       
   if(argc < 2) {
-    printf("usage: %s -app=<app_exec>\n", argv[0]);
+    printf("usage: %s -app=<popc_application_main> [args]\n", argv[0]);
     MPI::Finalize();    
     return 1;
   }
@@ -186,35 +187,34 @@ int main(int argc, char* argv[])
   pid_t mainpid;        // Save main pid to wait for it at the end
   pthread_t mpithread;  // MPI Receive thread
   
+  // Start main of the POP-C++ application on the MPI process with rank 0
   if(rank == 0) {
     std::string application_arg;
     char* capp = paroc_utils::checkremove(&argc, &argv, "-app=");
+    // End application if app is not provided
     if(capp == NULL) {
-      printf("usage: %s -app=<app_exec>\n", argv[0]);      
+      if(rank == 0) {
+        printf("usage: %s -app=<app_exec>\n", argv[0]);      
+      }
       MPI::Finalize();  
       return 1;
     } else {
       application_arg.append(capp);
     }
     
-
-    pid_t mainpid = fork();
+    // Create new process for the POP-C++ application main
+    mainpid = fork();
 
     if(mainpid == 0) {
-      //char* argv1[2];
-      //argv1[0] = const_cast<char*>(application_arg.c_str());
-      //argv1[1] = (char*)0;
       argv[0] = const_cast<char*>(application_arg.c_str());
       execv(argv[0], argv);
       perror("Execv failed");
-
     } else if (mainpid == -1) {
       perror("start main process");
       MPI::Finalize();
       return 1;
     }
   }
-    
 
   // Create local combox server to accept incoming request from interface
   popc_combox_uds local;
@@ -256,16 +256,15 @@ int main(int argc, char* argv[])
 		  	if(request.methodId[1] == 200001){
 		  	  active = false;
 		  	  if(rank == 0) {
-            int data = 10; 		  	  
-            int tag = 0; // TAG 10 = END OF THE APPLICATION		  	  
+            int data = 10; // DATA 10 = END OF THE APPLICATION		  	   		  	  
+            int tag = 0;   // TAG 0 = COMMAND MESSAGE
 		    	  if(world > 1) {
 		    	    for(int i = 1; i < world; i++) {
                 // Inform other MPI communicator to end their process. 
-//                printf("Send terminate to %d\n", i); 
-		  	        MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, i, 0);
+		  	        MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, i, tag);
   		  	    }
             }
-      	    MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, 0, 0);                      	    
+      	    MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, 0, tag);                      	    
       	  }
        
         } else if(request.methodId[1] == 200002) {  
@@ -530,6 +529,7 @@ int main(int argc, char* argv[])
             if(client->Connect(address)) {
             	connection = client->get_connection();	
           	  int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();        	
+              // Store 
             	outgoingconnection[fd] = pair<int, int>(tag, source);        	
               local.add_fd_to_poll(fd);
 
