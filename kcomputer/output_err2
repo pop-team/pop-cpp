@@ -1,0 +1,840 @@
+cd . && /bin/sh /home/ra000002/a03078/popcpp_2.6.2_build_20121101/missing --run autoheader
+rm -f stamp-h1
+touch config.h.in
+cd . && /bin/sh ./config.status config.h
+config.status: creating config.h
+config.status: config.h is unchanged
+make  all-recursive
+make[1]: Entering directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101'
+Making all in scripts
+make[2]: Entering directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101/scripts'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101/scripts'
+Making all in parser
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+make[2]: Entering directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101/parser'
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-parser.o `test -f 'parser.cc' || echo './'`parser.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-parser_common.o `test -f 'parser_common.cc' || echo './'`parser_common.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-codefile.o `test -f 'codefile.cc' || echo './'`codefile.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-othercode.o `test -f 'othercode.cc' || echo './'`othercode.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-classmember.o `test -f 'classmember.cc' || echo './'`classmember.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-class.o `test -f 'class.cc' || echo './'`class.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-packobject.o `test -f 'packobject.cc' || echo './'`packobject.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-parser.tab.o `test -f 'parser.tab.cc' || echo './'`parser.tab.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-parser.yy.o `test -f 'parser.yy.cc' || echo './'`parser.yy.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-typearray.o `test -f 'typearray.cc' || echo './'`typearray.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-type.o `test -f 'type.cc' || echo './'`type.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-typeequal.o `test -f 'typeequal.cc' || echo './'`typeequal.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-typeptr.o `test -f 'typeptr.cc' || echo './'`typeptr.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-typestruct.o `test -f 'typestruct.cc' || echo './'`typestruct.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-typeseqclass.o `test -f 'typeseqclass.cc' || echo './'`typeseqclass.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-typeclassstruct.o `test -f 'typeclassstruct.cc' || echo './'`typeclassstruct.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-typetemplate.o `test -f 'typetemplate.cc' || echo './'`typetemplate.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-debug.o `test -f 'debug.cc' || echo './'`debug.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -g -c -o popcpp-utils.o `test -f 'utils.cc' || echo './'`utils.cc
+/bin/sh ../libtool --tag=CXX --mode=link g++  -g   -o popcpp  popcpp-parser.o popcpp-parser_common.o popcpp-codefile.o popcpp-othercode.o popcpp-classmember.o popcpp-class.o popcpp-packobject.o popcpp-parser.tab.o popcpp-parser.yy.o popcpp-typearray.o popcpp-type.o popcpp-typeequal.o popcpp-typeptr.o popcpp-typestruct.o popcpp-typeseqclass.o popcpp-typeclassstruct.o popcpp-typetemplate.o popcpp-debug.o popcpp-utils.o -lfl -ldl -lnsl -lpthread 
+mkdir .libs
+g++ -g -o popcpp popcpp-parser.o popcpp-parser_common.o popcpp-codefile.o popcpp-othercode.o popcpp-classmember.o popcpp-class.o popcpp-packobject.o popcpp-parser.tab.o popcpp-parser.yy.o popcpp-typearray.o popcpp-type.o popcpp-typeequal.o popcpp-typeptr.o popcpp-typestruct.o popcpp-typeseqclass.o popcpp-typeclassstruct.o popcpp-typetemplate.o popcpp-debug.o popcpp-utils.o  -lfl -ldl -lnsl -lpthread  
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -DYYERROR_VERBOSE -g -c -o popcc-popcc.o `test -f 'popcc.cc' || echo './'`popcc.cc
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+g++ -DHAVE_CONFIG_H -I. -I. -I..  -DSVNREV="\"20121101.rexported\""  -I../include -DYYERROR_VERBOSE -g -c -o popcc-utils.o `test -f 'utils.cc' || echo './'`utils.cc
+/bin/sh ../libtool --tag=CXX --mode=link g++  -g   -o popcc  popcc-popcc.o popcc-utils.o  -ldl -lnsl -lpthread 
+g++ -g -o popcc popcc-popcc.o popcc-utils.o  -ldl -lnsl -lpthread  
+make[2]: Leaving directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101/parser'
+Making all in include
+make[2]: Entering directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101/include'
+Making all in lib
+make[2]: Entering directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101/lib'
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-system.lo `test -f 'system.cc' || echo './'`system.cc
+mkdir .libs
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c system.cc  -DPIC -o .libs/libparoc_common_la-system.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c system.cc -o libparoc_common_la-system.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-mutex.lo `test -f 'mutex.cc' || echo './'`mutex.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c mutex.cc  -DPIC -o .libs/libparoc_common_la-mutex.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c mutex.cc -o libparoc_common_la-mutex.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-thread.lo `test -f 'thread.cc' || echo './'`thread.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c thread.cc  -DPIC -o .libs/libparoc_common_la-thread.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c thread.cc -o libparoc_common_la-thread.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-string.lo `test -f 'string.cc' || echo './'`string.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c string.cc  -DPIC -o .libs/libparoc_common_la-string.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c string.cc -o libparoc_common_la-string.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-od.lo `test -f 'od.cc' || echo './'`od.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c od.cc  -DPIC -o .libs/libparoc_common_la-od.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"od.cc", line 138: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "od.cc") && (thisline_debug=138) && printdebug("Error in object description. user@ip(core):port");
+  			^
+
+"od.cc", line 138: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "od.cc") && (thisline_debug=138) && printdebug("Error in object description. user@ip(core):port");
+  			                             ^
+
+"od.cc", line 207: warning: use of "=" where "==" may have been intended
+  		} else (thisfile_debug= "od.cc") && (thisline_debug=207) && printdebug("getcwd returned an error!");
+  		       ^
+
+"od.cc", line 207: warning: use of "=" where "==" may have been intended
+  		} else (thisfile_debug= "od.cc") && (thisline_debug=207) && printdebug("getcwd returned an error!");
+  		                                    ^
+
+"od.cc", line 666: warning: variable "count" is used before its value is set
+  		buf.Push("attributes","paroc_list",count);
+  		                                   ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c od.cc -o libparoc_common_la-od.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-event.lo `test -f 'event.cc' || echo './'`event.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c event.cc  -DPIC -o .libs/libparoc_common_la-event.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"event.cc", line 34: warning: variable "abstimeout" was set but never used
+  	struct timespec abstimeout;
+  	                ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c event.cc -o libparoc_common_la-event.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-buffer.lo `test -f 'buffer.cc' || echo './'`buffer.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer.cc  -DPIC -o .libs/libparoc_common_la-buffer.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer.cc -o libparoc_common_la-buffer.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-buffer_utils.lo `test -f 'buffer_utils.cc' || echo './'`buffer_utils.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_utils.cc  -DPIC -o .libs/libparoc_common_la-buffer_utils.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_utils.cc -o libparoc_common_la-buffer_utils.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-combox.lo `test -f 'combox.cc' || echo './'`combox.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c combox.cc  -DPIC -o .libs/libparoc_common_la-combox.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"combox.cc", line 70: warning: use of "=" where "==" may have been intended
+  	(thisfile_debug= "combox.cc") && (thisline_debug=70) && printdebugif(defaultFact==0L,"ERROR: can not find the xdr buffer factory!");
+  	^
+
+"combox.cc", line 70: warning: use of "=" where "==" may have been intended
+  	(thisfile_debug= "combox.cc") && (thisline_debug=70) && printdebugif(defaultFact==0L,"ERROR: can not find the xdr buffer factory!");
+  	                                 ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c combox.cc -o libparoc_common_la-combox.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-broker.lo `test -f 'broker.cc' || echo './'`broker.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c broker.cc  -DPIC -o .libs/libparoc_common_la-broker.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_raw.h", line 18: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_raw"
+  class paroc_buffer_raw:public paroc_buffer
+        ^
+
+"../include/paroc_buffer_raw.h", line 18: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_raw"
+  class paroc_buffer_raw:public paroc_buffer
+        ^
+
+"broker.cc", line 324: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "broker.cc") && (thisline_debug=324) && printdebug("Can not find default constructor");
+  			^
+
+"broker.cc", line 324: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "broker.cc") && (thisline_debug=324) && printdebug("Can not find default constructor");
+  			                                 ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c broker.cc -o libparoc_common_la-broker.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-broker_receive.lo `test -f 'broker_receive.cc' || echo './'`broker_receive.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c broker_receive.cc  -DPIC -o .libs/libparoc_common_la-broker_receive.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"broker_receive.cc", line 112: warning: statement is unreachable
+  	return false;
+  	^
+
+"broker_receive.cc", line 208: warning: variable "fact" was set but never used
+  			paroc_buffer_factory *fact;
+  			                      ^
+
+"broker_receive.cc", line 318: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "broker_receive.cc") && (thisline_debug=318) && printdebug("EXIT BY KILL NOW");
+  			^
+
+"broker_receive.cc", line 318: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "broker_receive.cc") && (thisline_debug=318) && printdebug("EXIT BY KILL NOW");
+  			                                         ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c broker_receive.cc -o libparoc_common_la-broker_receive.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-broker_serve.lo `test -f 'broker_serve.cc' || echo './'`broker_serve.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c broker_serve.cc  -DPIC -o .libs/libparoc_common_la-broker_serve.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c broker_serve.cc -o libparoc_common_la-broker_serve.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-object.lo `test -f 'object.cc' || echo './'`object.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c object.cc  -DPIC -o .libs/libparoc_common_la-object.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c object.cc -o libparoc_common_la-object.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-interface.lo `test -f 'interface.cc' || echo './'`interface.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c interface.cc  -DPIC -o .libs/libparoc_common_la-interface.o
+"interface.cc", line 1056: warning: nested comment is not allowed
+  /*	tmpsock.SetTimeout(ALLOC_TIMEOUT*1000);
+  ^
+
+"interface.cc", line 1185: warning: nested comment is not allowed
+  /* ################################################################################################
+  ^
+
+"interface.cc", line 1191: warning: nested comment is not allowed
+  /**
+  ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"interface.cc", line 70: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "interface.cc") && (thisline_debug=70) && printdebug("Fork fails to execute ...");
+  		^
+
+"interface.cc", line 70: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "interface.cc") && (thisline_debug=70) && printdebug("Fork fails to execute ...");
+  		                                    ^
+
+"interface.cc", line 91: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "interface.cc") && (thisline_debug=91) && printdebug("Execution of [%s] fails\n",file);
+  		^
+
+"interface.cc", line 91: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "interface.cc") && (thisline_debug=91) && printdebug("Execution of [%s] fails\n",file);
+  		                                    ^
+
+"interface.cc", line 111: warning: variable "id" was set but never used
+  		int id;
+  		    ^
+
+"interface.cc", line 437: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "interface.cc") && (thisline_debug=437) && printdebug("[Interface] protocol wanted for object %s : %s\n",ClassName(),  myprot);
+  			^
+
+"interface.cc", line 437: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "interface.cc") && (thisline_debug=437) && printdebug("[Interface] protocol wanted for object %s : %s\n",ClassName(),  myprot);
+  			                                    ^
+
+"interface.cc", line 452: warning: use of "=" where "==" may have been intended
+  						(thisfile_debug= "interface.cc") && (thisline_debug=452) && printdebug("Can not bind to %s. Try next protocol...",addr);
+  						^
+
+"interface.cc", line 452: warning: use of "=" where "==" may have been intended
+  						(thisfile_debug= "interface.cc") && (thisline_debug=452) && printdebug("Can not bind to %s. Try next protocol...",addr);
+  						                                    ^
+
+"interface.cc", line 748: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "interface.cc") && (thisline_debug=748) && printdebug("No encoding factory for %s", (const char *)encoding);
+  		^
+
+"interface.cc", line 748: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "interface.cc") && (thisline_debug=748) && printdebug("No encoding factory for %s", (const char *)encoding);
+  		                                    ^
+
+"interface.cc", line 1266: warning: use of "=" where "==" may have been intended
+     (thisfile_debug= "interface.cc") && (thisline_debug=1266) && printdebug("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
+     ^
+
+"interface.cc", line 1266: warning: use of "=" where "==" may have been intended
+     (thisfile_debug= "interface.cc") && (thisline_debug=1266) && printdebug("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
+                                         ^
+
+"interface.cc", line 1270: warning: statement is unreachable
+     return 0;
+     ^
+
+"/opt/FJSVtclang/GM-1.2.0-09/bin/../include/c++/std/stl/_string.c", line 370: warning: type qualifier is meaningless on cast type
+        const size_type __len = __old_size + (max)(__old_size, static_cast<const size_type>(__n)) + 1;
+                                                                           ^
+          detected during instantiation of "void std::basic_string<_CharT, _Traits, _Alloc>::_M_insert(_CharT *, const _CharT *, const _CharT *, bool) [with _CharT=char, _Traits=std::char_traits<char>, _Alloc=std::allocator<char>]" at line 745 of "/opt/FJSVtclang/GM-1.2.0-09/bin/../include/c++/std/stl/_string.h"
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c interface.cc -o libparoc_common_la-interface.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-allocobj.lo `test -f 'allocobj.cc' || echo './'`allocobj.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c allocobj.cc  -DPIC -o .libs/libparoc_common_la-allocobj.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c allocobj.cc -o libparoc_common_la-allocobj.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-timer.lo `test -f 'timer.cc' || echo './'`timer.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c timer.cc  -DPIC -o .libs/libparoc_common_la-timer.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c timer.cc -o libparoc_common_la-timer.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-accesspoint.lo `test -f 'accesspoint.cc' || echo './'`accesspoint.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c accesspoint.cc  -DPIC -o .libs/libparoc_common_la-accesspoint.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c accesspoint.cc -o libparoc_common_la-accesspoint.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-memspool.lo `test -f 'memspool.cc' || echo './'`memspool.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c memspool.cc  -DPIC -o .libs/libparoc_common_la-memspool.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c memspool.cc -o libparoc_common_la-memspool.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-utils.lo `test -f 'utils.cc' || echo './'`utils.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c utils.cc  -DPIC -o .libs/libparoc_common_la-utils.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c utils.cc -o libparoc_common_la-utils.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-debug.lo `test -f 'debug.cc' || echo './'`debug.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c debug.cc  -DPIC -o .libs/libparoc_common_la-debug.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c debug.cc -o libparoc_common_la-debug.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-exception.lo `test -f 'exception.cc' || echo './'`exception.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c exception.cc  -DPIC -o .libs/libparoc_common_la-exception.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c exception.cc -o libparoc_common_la-exception.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-benchmark.lo `test -f 'benchmark.cc' || echo './'`benchmark.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c benchmark.cc  -DPIC -o .libs/libparoc_common_la-benchmark.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c benchmark.cc -o libparoc_common_la-benchmark.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-combox_factory.lo `test -f 'combox_factory.cc' || echo './'`combox_factory.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c combox_factory.cc  -DPIC -o .libs/libparoc_common_la-combox_factory.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"combox_factory.cc", line 133: warning: use of "=" where "==" may have been intended
+  				(thisfile_debug= "combox_factory.cc") && (thisline_debug=133) && printdebug("WARNING: unable to open plugin mapfile: %s",(const char *)pluginmap);
+  				^
+
+"combox_factory.cc", line 133: warning: use of "=" where "==" may have been intended
+  				(thisfile_debug= "combox_factory.cc") && (thisline_debug=133) && printdebug("WARNING: unable to open plugin mapfile: %s",(const char *)pluginmap);
+  				                                         ^
+
+"combox_factory.cc", line 192: warning: use of "=" where "==" may have been intended
+  	(thisfile_debug= "combox_factory.cc") && (thisline_debug=192) && printdebug("Create a combox : %s\n", name);
+  	^
+
+"combox_factory.cc", line 192: warning: use of "=" where "==" may have been intended
+  	(thisfile_debug= "combox_factory.cc") && (thisline_debug=192) && printdebug("Create a combox : %s\n", name);
+  	                                         ^
+
+"combox_factory.cc", line 223: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "combox_factory.cc") && (thisline_debug=223) && printdebug("%s\n", t.name);
+  		^
+
+"combox_factory.cc", line 223: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "combox_factory.cc") && (thisline_debug=223) && printdebug("%s\n", t.name);
+  		                                         ^
+
+"combox_factory.cc", line 236: warning: use of "=" where "==" may have been intended
+  	(thisfile_debug= "combox_factory.cc") && (thisline_debug=236) && printdebug("[Combox] Register %s\n", name);
+  	^
+
+"combox_factory.cc", line 236: warning: use of "=" where "==" may have been intended
+  	(thisfile_debug= "combox_factory.cc") && (thisline_debug=236) && printdebug("[Combox] Register %s\n", name);
+  	                                         ^
+
+"combox_factory.cc", line 278: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "combox_factory.cc") && (thisline_debug=278) && printdebug("ERROR:%s: %s",fname,dlerror());
+  		^
+
+"combox_factory.cc", line 278: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "combox_factory.cc") && (thisline_debug=278) && printdebug("ERROR:%s: %s",fname,dlerror());
+  		                                         ^
+
+"combox_factory.cc", line 287: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "combox_factory.cc") && (thisline_debug=287) && printdebug("Fail to create the combox from %s", fname);
+  		^
+
+"combox_factory.cc", line 287: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "combox_factory.cc") && (thisline_debug=287) && printdebug("Fail to create the combox from %s", fname);
+  		                                         ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c combox_factory.cc -o libparoc_common_la-combox_factory.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-combox_socket.lo `test -f 'combox_socket.cc' || echo './'`combox_socket.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c combox_socket.cc  -DPIC -o .libs/libparoc_common_la-combox_socket.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c combox_socket.cc -o libparoc_common_la-combox_socket.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-buffer_xdr.lo `test -f 'buffer_xdr.cc' || echo './'`buffer_xdr.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_xdr.cc  -DPIC -o .libs/libparoc_common_la-buffer_xdr.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"buffer_xdr.cc", line 227: warning: variable "t" was set but never used
+  	int t;
+  	    ^
+
+"buffer_xdr.cc", line 251: warning: variable "t" was set but never used
+  	int t;
+  	    ^
+
+"buffer_xdr.cc", line 619: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "buffer_xdr.cc") && (thisline_debug=619) && printdebug("Bad message header(size error:%d)",n);
+  		^
+
+"buffer_xdr.cc", line 619: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "buffer_xdr.cc") && (thisline_debug=619) && printdebug("Bad message header(size error:%d)",n);
+  		                                     ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_xdr.cc -o libparoc_common_la-buffer_xdr.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-popc_combox_uds.lo `test -f 'popc_combox_uds.cpp' || echo './'`popc_combox_uds.cpp
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c popc_combox_uds.cpp  -DPIC -o .libs/libparoc_common_la-popc_combox_uds.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c popc_combox_uds.cpp -o libparoc_common_la-popc_combox_uds.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-buffer_factory.lo `test -f 'buffer_factory.cc' || echo './'`buffer_factory.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_factory.cc  -DPIC -o .libs/libparoc_common_la-buffer_factory.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_factory.cc -o libparoc_common_la-buffer_factory.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-buffer_factory_finder.lo `test -f 'buffer_factory_finder.cc' || echo './'`buffer_factory_finder.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_factory_finder.cc  -DPIC -o .libs/libparoc_common_la-buffer_factory_finder.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"buffer_factory_finder.cc", line 56: warning: use of "=" where "==" may have been intended
+  						(thisfile_debug= "buffer_factory_finder.cc") && (thisline_debug=56) && printdebug("%s already loaded", mod);
+  						^
+
+"buffer_factory_finder.cc", line 56: warning: use of "=" where "==" may have been intended
+  						(thisfile_debug= "buffer_factory_finder.cc") && (thisline_debug=56) && printdebug("%s already loaded", mod);
+  						                                                ^
+
+"buffer_factory_finder.cc", line 111: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "buffer_factory_finder.cc") && (thisline_debug=111) && printdebug("WARNING: unable to open plugin mapfile: %s",(const char *)pluginmap);
+  			^
+
+"buffer_factory_finder.cc", line 111: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "buffer_factory_finder.cc") && (thisline_debug=111) && printdebug("WARNING: unable to open plugin mapfile: %s",(const char *)pluginmap);
+  			                                                ^
+
+"buffer_factory_finder.cc", line 180: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "buffer_factory_finder.cc") && (thisline_debug=180) && printdebug("Fail to create the buffer factory from %s", fname);
+  			^
+
+"buffer_factory_finder.cc", line 180: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "buffer_factory_finder.cc") && (thisline_debug=180) && printdebug("Fail to create the buffer factory from %s", fname);
+  			                                                ^
+
+"buffer_factory_finder.cc", line 187: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "buffer_factory_finder.cc") && (thisline_debug=187) && printdebug("ERROR:%s: %s",fname,dlerror());
+  		^
+
+"buffer_factory_finder.cc", line 187: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "buffer_factory_finder.cc") && (thisline_debug=187) && printdebug("ERROR:%s: %s",fname,dlerror());
+  		                                                ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_factory_finder.cc -o libparoc_common_la-buffer_factory_finder.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-buffer_xdr_factory.lo `test -f 'buffer_xdr_factory.cc' || echo './'`buffer_xdr_factory.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_xdr_factory.cc  -DPIC -o .libs/libparoc_common_la-buffer_xdr_factory.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_xdr_factory.cc -o libparoc_common_la-buffer_xdr_factory.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-buffer_raw.lo `test -f 'buffer_raw.cc' || echo './'`buffer_raw.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_raw.cc  -DPIC -o .libs/libparoc_common_la-buffer_raw.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_raw.h", line 18: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_raw"
+  class paroc_buffer_raw:public paroc_buffer
+        ^
+
+"../include/paroc_buffer_raw.h", line 18: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_raw"
+  class paroc_buffer_raw:public paroc_buffer
+        ^
+
+"buffer_raw.cc", line 46: warning: variable "t" was set but never used
+  	int t;
+  	    ^
+
+"buffer_raw.cc", line 415: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "buffer_raw.cc") && (thisline_debug=415) && printdebug("Fail to send a message!");
+  		^
+
+"buffer_raw.cc", line 415: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "buffer_raw.cc") && (thisline_debug=415) && printdebug("Fail to send a message!");
+  		                                     ^
+
+"buffer_raw.cc", line 447: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "buffer_raw.cc") && (thisline_debug=447) && printdebug("Bad message header(size error:%d)",n);
+  		^
+
+"buffer_raw.cc", line 447: warning: use of "=" where "==" may have been intended
+  		(thisfile_debug= "buffer_raw.cc") && (thisline_debug=447) && printdebug("Bad message header(size error:%d)",n);
+  		                                     ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_raw.cc -o libparoc_common_la-buffer_raw.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-buffer_raw_factory.lo `test -f 'buffer_raw_factory.cc' || echo './'`buffer_raw_factory.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_raw_factory.cc  -DPIC -o .libs/libparoc_common_la-buffer_raw_factory.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_raw.h", line 18: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_raw"
+  class paroc_buffer_raw:public paroc_buffer
+        ^
+
+"../include/paroc_buffer_raw.h", line 18: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_raw"
+  class paroc_buffer_raw:public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c buffer_raw_factory.cc -o libparoc_common_la-buffer_raw_factory.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-broker_factory.lo `test -f 'broker_factory.cc' || echo './'`broker_factory.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c broker_factory.cc  -DPIC -o .libs/libparoc_common_la-broker_factory.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"broker_factory.cc", line 39: warning: use of "=" where "==" may have been intended
+  	(thisfile_debug= "broker_factory.cc") && (thisline_debug=39) && printdebug("Create broker for %s\n", objname);
+  	^
+
+"broker_factory.cc", line 39: warning: use of "=" where "==" may have been intended
+  	(thisfile_debug= "broker_factory.cc") && (thisline_debug=39) && printdebug("Create broker for %s\n", objname);
+  	                                         ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c broker_factory.cc -o libparoc_common_la-broker_factory.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-response.lo `test -f 'response.cc' || echo './'`response.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c response.cc  -DPIC -o .libs/libparoc_common_la-response.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c response.cc -o libparoc_common_la-response.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-request.lo `test -f 'request.cc' || echo './'`request.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c request.cc  -DPIC -o .libs/libparoc_common_la-request.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c request.cc -o libparoc_common_la-request.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-explorationList.lo `test -f 'explorationList.cc' || echo './'`explorationList.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c explorationList.cc  -DPIC -o .libs/libparoc_common_la-explorationList.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c explorationList.cc -o libparoc_common_la-explorationList.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-popc_search_node_info.lo `test -f 'popc_search_node_info.cc' || echo './'`popc_search_node_info.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c popc_search_node_info.cc  -DPIC -o .libs/libparoc_common_la-popc_search_node_info.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c popc_search_node_info.cc -o libparoc_common_la-popc_search_node_info.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-popwayback.lo `test -f 'popwayback.cc' || echo './'`popwayback.cc
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c popwayback.cc  -DPIC -o .libs/libparoc_common_la-popwayback.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c popwayback.cc -o libparoc_common_la-popwayback.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=compile ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I..    -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g -c -o libparoc_common_la-popc_logger.lo `test -f 'popc_logger.cpp' || echo './'`popc_logger.cpp
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c popc_logger.cpp  -DPIC -o .libs/libparoc_common_la-popc_logger.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+ ../parser/popcc -DHAVE_CONFIG_H -I. -I. -I.. -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_ -pthread -g -c popc_logger.cpp -o libparoc_common_la-popc_logger.o >/dev/null 2>&1
+/bin/sh ../libtool --tag=CXX --mode=link ../parser/popcc -D_LINUX -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -pthread -g   -o libparoc_common.la -rpath /home/ra000002/a03078/popc/lib -static libparoc_common_la-system.lo libparoc_common_la-mutex.lo libparoc_common_la-thread.lo libparoc_common_la-string.lo libparoc_common_la-od.lo libparoc_common_la-event.lo libparoc_common_la-buffer.lo libparoc_common_la-buffer_utils.lo libparoc_common_la-combox.lo libparoc_common_la-broker.lo libparoc_common_la-broker_receive.lo libparoc_common_la-broker_serve.lo libparoc_common_la-object.lo libparoc_common_la-interface.lo libparoc_common_la-allocobj.lo libparoc_common_la-timer.lo libparoc_common_la-accesspoint.lo libparoc_common_la-memspool.lo libparoc_common_la-utils.lo libparoc_common_la-debug.lo libparoc_common_la-exception.lo libparoc_common_la-benchmark.lo libparoc_common_la-combox_factory.lo libparoc_common_la-combox.lo libparoc_common_la-combox_socket.lo libparoc_common_la-buffer_xdr.lo libparoc_common_la-popc_combox_uds.lo libparoc_common_la-buffer_factory.lo libparoc_common_la-buffer_factory_finder.lo libparoc_common_la-buffer_xdr_factory.lo libparoc_common_la-buffer_raw.lo libparoc_common_la-buffer_raw_factory.lo libparoc_common_la-broker_factory.lo libparoc_common_la-response.lo libparoc_common_la-request.lo libparoc_common_la-explorationList.lo libparoc_common_la-popc_search_node_info.lo libparoc_common_la-popwayback.lo libparoc_common_la-popc_logger.lo  -ldl -lnsl -lpthread 
+copying selected object files to avoid basename conflicts...
+rm -fr .libs/libparoc_common.lax
+mkdir .libs/libparoc_common.lax
+ln libparoc_common_la-combox.o .libs/libparoc_common.lax/lt1-libparoc_common_la-combox.o || cp libparoc_common_la-combox.o .libs/libparoc_common.lax/lt1-libparoc_common_la-combox.o
+ar cru .libs/libparoc_common.a libparoc_common_la-system.o libparoc_common_la-mutex.o libparoc_common_la-thread.o libparoc_common_la-string.o libparoc_common_la-od.o libparoc_common_la-event.o libparoc_common_la-buffer.o libparoc_common_la-buffer_utils.o libparoc_common_la-combox.o libparoc_common_la-broker.o libparoc_common_la-broker_receive.o libparoc_common_la-broker_serve.o libparoc_common_la-object.o libparoc_common_la-interface.o libparoc_common_la-allocobj.o libparoc_common_la-timer.o libparoc_common_la-accesspoint.o libparoc_common_la-memspool.o libparoc_common_la-utils.o libparoc_common_la-debug.o libparoc_common_la-exception.o libparoc_common_la-benchmark.o libparoc_common_la-combox_factory.o .libs/libparoc_common.lax/lt1-libparoc_common_la-combox.o libparoc_common_la-combox_socket.o libparoc_common_la-buffer_xdr.o libparoc_common_la-popc_combox_uds.o libparoc_common_la-buffer_factory.o libparoc_common_la-buffer_factory_finder.o libparoc_common_la-buffer_xdr_factory.o libparoc_common_la-buffer_raw.o libparoc_common_la-buffer_raw_factory.o libparoc_common_la-broker_factory.o libparoc_common_la-response.o libparoc_common_la-request.o libparoc_common_la-explorationList.o libparoc_common_la-popc_search_node_info.o libparoc_common_la-popwayback.o libparoc_common_la-popc_logger.o
+ranlib .libs/libparoc_common.a
+rm -fr .libs/libparoc_common.lax
+creating libparoc_common.la
+(cd .libs && rm -f libparoc_common.la && ln -s ../libparoc_common.la libparoc_common.la)
+../parser/popcc -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -g -DPIC -fPIC -c paroc_objmain.std.cc -o paroc_objmain.std.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"paroc_objmain.std.cc", line 111: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "paroc_objmain.std.cc") && (thisline_debug=111) && printdebug("current working dir cannot be set set to %s",cwd);
+  			^
+
+"paroc_objmain.std.cc", line 111: warning: use of "=" where "==" may have been intended
+  			(thisfile_debug= "paroc_objmain.std.cc") && (thisline_debug=111) && printdebug("current working dir cannot be set set to %s",cwd);
+  			                                            ^
+
+../parser/popcc -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=FCCpx -D_PLUGINDIR=\"/home/ra000002/a03078/popc/lib/plugins\" -D_POPC_RUNTIME_  -g -DPIC -fPIC -c paroc_infmain.std.cc -o paroc_infmain.std.o
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"paroc_infmain.std.cc", line 54: warning: variable "argv1" was declared but never referenced
+  	char **argv1 = argv;
+  	       ^
+
+make[2]: Leaving directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101/lib'
+Making all in communicator
+make[2]: Entering directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101/communicator'
+mpiFCCpx -DHAVE_CONFIG_H -I. -I. -I..    -I../include -g -c -o popc_mpi_communicator-popc_mpi_communicator.o `test -f 'popc_mpi_communicator.cpp' || echo './'`popc_mpi_communicator.cpp
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::Pack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"../include/paroc_buffer_xdr.h", line 19: warning: overloaded virtual function "paroc_buffer::UnPack" is only partially overridden in class "paroc_buffer_xdr"
+  class paroc_buffer_xdr: public paroc_buffer
+        ^
+
+"popc_mpi_communicator.cpp", line 39: warning: variable "nval" was set but never used
+    int retval, nval;
+                ^
+
+"popc_mpi_communicator.cpp", line 150: warning: missing return statement at end of non-void function "mpireceivedthread"
+  }
+  ^
+
+"popc_mpi_communicator.cpp", line 260: warning: variable "tag" was declared but never referenced
+              int tag = 0; // TAG 10 = END OF THE APPLICATION		  	  
+                  ^
+
+"popc_mpi_communicator.cpp", line 186: warning: variable "mainpid" was declared but never referenced
+    pid_t mainpid;        // Save main pid to wait for it at the end
+          ^
+
+/bin/sh ../libtool --tag=CXX --mode=link mpiFCCpx  -g   -o popc_mpi_communicator -L../lib/.libs -lparoc_common popc_mpi_communicator-popc_mpi_communicator.o  -ldl -lnsl -lpthread 
+mkdir .libs
+mpiFCCpx -g -o popc_mpi_communicator popc_mpi_communicator-popc_mpi_communicator.o  -L/home/ra000002/a03078/popcpp_2.6.2_build_20121101/lib/.libs /home/ra000002/a03078/popcpp_2.6.2_build_20121101/lib/.libs/libparoc_common.a -ldl -lnsl -lpthread  
+make[2]: Leaving directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101/communicator'
+make[2]: Entering directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101'
+make[2]: Leaving directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101'
+make[1]: Leaving directory `/volume2/home/ra000002/a03078/popcpp_2.6.2_build_20121101'
+make: *** No rule to make target `2'.  Stop.
