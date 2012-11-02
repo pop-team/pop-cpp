@@ -54,10 +54,22 @@ paroc_combox *paroc_connection::GetCombox()
 	return combox;
 }
 
+
+
+/**
+ * COMBOX Implementation
+ */
+
+const char* paroc_combox::PROTOCOL_SEPARATOR = "://";
+
+
+
 paroc_combox::paroc_combox()
 {
 	defaultFact= paroc_buffer_factory_finder::GetInstance()->FindFactory("xdr");
-	DEBUGIF(defaultFact==NULL,"ERROR: can not find the xdr buffer factory!");
+	if(defaultFact == NULL) {
+	  printf("POP-C++ Error: can not find the xdr buffer factory!\n");
+  }
 
 	timeout=-1;
 	for (int i=0;i<2;i++)
@@ -114,6 +126,7 @@ bool paroc_combox::SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg)
 	if (idx<0 || idx>=2) return false;
 	cblist[idx]=cb;
 	cbdata[idx]=arg;
+	return true;
 }
 
 void paroc_combox::SetBufferFactory(paroc_buffer_factory *fact)
