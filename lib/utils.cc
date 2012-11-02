@@ -121,14 +121,12 @@ void paroc_utils::FindAbsolutePath(const char *fname, char *abspath)
 		return;
 	}
 	char olddir[1024];
-   char *trsh;
-   trsh=getcwd(olddir,1024);
+  getcwd(olddir,1024);
 	*t=0;
-   int ret;
-	ret=chdir(fname);
+	chdir(fname);
 	*t='/';
 	if (getcwd(dir,1024)==NULL) *dir=0;
-	ret=chdir(olddir);
+	chdir(olddir);
 	sprintf(abspath,"%s/%s",dir,t+1);
 }
 
@@ -241,7 +239,7 @@ POPString paroc_utils::MakeContact(const char *host, int port)
 }
 
 
-#include "appservice.ph"
+/*#include "appservice.ph"
 int rprintf(const char *format,...)
 {
 	char str[1024];
@@ -269,8 +267,8 @@ int rprintf(const char *format,...)
 		return 0;
 	}
 	return 1;
-}
-
+}*/
+/*
 int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s)
 {
 	if (s==NULL || fileconf==NULL) return 0;
@@ -318,7 +316,7 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s)
 	fclose(f);
 	return 1;
 }
-
+*/
 /**
  * ViSaG : clementval
  * Check if the given string is a IP v4 address
