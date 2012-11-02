@@ -33,13 +33,14 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-apple-darwin12.2.0
 host_triplet = x86_64-apple-darwin12.2.0
-#am__append_1 = mpi
-#am__append_2 = globus
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/configure AUTHORS COPYING ChangeLog INSTALL NEWS \
-	config.guess config.sub install-sh ltmain.sh missing
+	$(top_srcdir)/configure $(top_srcdir)/globus/globus_header.in \
+	$(top_srcdir)/globus/popc_setup_globus.in \
+	$(top_srcdir)/services/popcobjrun.in AUTHORS COPYING ChangeLog \
+	INSTALL NEWS config.guess config.sub install-sh ltmain.sh \
+	missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -48,7 +49,8 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = services/popcobjrun globus/popc_setup_globus \
+	globus/globus_header
 CONFIG_CLEAN_VPATH_FILES =
 depcomp =
 am__depfiles_maybe =
@@ -68,8 +70,7 @@ AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
 	distdir dist dist-all distcheck
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = scripts parser include lib services modules model \
-	communicator mpi globus
+DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -117,7 +118,7 @@ CC = gcc
 CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS = -DARCH_MAC 
-CXX = g++
+CXX = FCCpx
 CXXCPP = g++ -E
 CXXFLAGS = -g -O2
 CYGPATH_W = echo
@@ -228,8 +229,7 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = .
 AUTOMAKE_OPTIONS = no-dependencies
-SUBDIRS = scripts parser include lib services modules model \
-	communicator $(am__append_1) $(am__append_2)
+SUBDIRS = scripts parser include lib communicator
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -285,6 +285,12 @@ $(srcdir)/config.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+services/popcobjrun: $(top_builddir)/config.status $(top_srcdir)/services/popcobjrun.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+globus/popc_setup_globus: $(top_builddir)/config.status $(top_srcdir)/globus/popc_setup_globus.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+globus/globus_header: $(top_builddir)/config.status $(top_srcdir)/globus/globus_header.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -724,6 +730,13 @@ uninstall-am:
 	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
 	ps ps-am tags tags-recursive uninstall uninstall-am
 
+
+#if MPISUPPORT
+#SUBDIRS+= mpi
+#endif
+#if GLOBUS
+#SUBDIRS+= globus
+#endif
 
 #install-exec-hook:
 #	@if [ ! -f /Users/clementval/popc/etc/popc-runtime-env.sh ]; then cp /Users/clementval/popc/etc/popc-runtime-env.in /Users/clementval/popc/etc/popc-runtime-env.sh; fi

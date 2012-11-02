@@ -1,13 +1,14 @@
 AUTOMAKE_OPTIONS=no-dependencies
 
-SUBDIRS= scripts parser include lib services modules model communicator
+CXX=FCCpx
+SUBDIRS= scripts parser include lib communicator
 
-if MPISUPPORT
-SUBDIRS+= mpi
-endif
-if GLOBUS
-SUBDIRS+= globus
-endif
+#if MPISUPPORT
+#SUBDIRS+= mpi
+#endif
+#if GLOBUS
+#SUBDIRS+= globus
+#endif
 
 #install-exec-hook:
 #	@if [ ! -f @prefix@/etc/popc-runtime-env.sh ]; then cp @prefix@/etc/popc-runtime-env.in @prefix@/etc/popc-runtime-env.sh; fi
