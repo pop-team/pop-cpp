@@ -1,20 +1,17 @@
 /**
- * File : combox_socket.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of the communication box for TCP/socket
- * Creation date : -
+ * File : popc_combox_uds.cpp
+ * Author : Valentin Clement (clementval)
+ * Description : Implementation of the communication box for Unix Domain Socket
+ * Creation date : 2012/10/26
  * 
  * Modifications :
- * Authors		Date			Comment
+ * Authors		  Date			  Comment
+ * clementval   2012/11/01  Version passing POP-C++ test suite
  */
-
 
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-//#include <netinet/in.h>
-//#include <arpa/inet.h>
-//#include <netdb.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -22,36 +19,67 @@
 
 #include "popc_combox_uds.h"
 
+/**
+ * Constructor
+ * @param cb    Combox which has created this connection
+ * @param init  If true, the connection will be marke as init connection
+ */
 popc_connection_uds::popc_connection_uds(paroc_combox *cb): paroc_connection(cb)
 {
 	_socket_fd = -1;
 	signal(SIGPIPE, SIG_IGN);
 }
 
-popc_connection_uds::popc_connection_uds(int fd, paroc_combox *cb): _socket_fd(fd), paroc_connection(cb)
+
+/**
+ * Constructor
+ * @param fd    The file descriptor to be associated with this connection
+ * @param cb    Combox which has created this connection
+ */
+popc_connection_uds::popc_connection_uds(int fd, paroc_combox *cb): paroc_connection(cb), _socket_fd(fd)
 {
 }
 
-popc_connection_uds::popc_connection_uds(int fd, paroc_combox *cb, bool init): _socket_fd(fd), paroc_connection(cb, init)
+/**
+ * Constructor
+ * @param fd    The file descriptor to be associated with this connection
+ * @param cb    Combox which has created this connection
+ * @param init  If true, the connection will be marke as init connection
+ */
+popc_connection_uds::popc_connection_uds(int fd, paroc_combox *cb, bool init): paroc_connection(cb, init), _socket_fd(fd)
 {
 }
 
+/**
+ * Copy constructor
+ * @param me  The connection to be copied
+ */
 popc_connection_uds::popc_connection_uds(popc_connection_uds &me): paroc_connection(me.GetCombox(), me.GetBufferFactory())
 {
   _socket_fd = me.get_fd();
 }
 
+/**
+ * Clone a connection
+ */
 paroc_connection *popc_connection_uds::Clone()
 {
 	return new popc_connection_uds(this->get_fd(), this->GetCombox());
 }
 
-
+/**
+ * Set the file descriptor associated with this connection
+ * @param fd  A file descriptor to be associated with this connection
+ */
 void popc_connection_uds::set_fd(int fd)
 {
   _socket_fd = fd;
 }
 
+/**
+ * Get the file descriptor associated with this connection
+ * @return A file descriptor
+ */
 int popc_connection_uds::get_fd()
 {
   return _socket_fd;
@@ -65,13 +93,21 @@ int popc_connection_uds::get_fd()
  */
 
 
+// Constant declaration
+const char* popc_combox_uds::UDS_PROTOCOL_NAME = "uds";
 
 
+/**
+ * UDS Combox constructor initialize internal values
+ */
 popc_combox_uds::popc_combox_uds() : _socket_fd(-1), _is_server(false), _active_connection_nb(0), 
-  _connected(false), _timeout(-1), _is_first_connection(true)
+  _timeout(-1), _connected(false), _is_first_connection(true)
 {
 }
 
+/**
+ * UDS Combox destructor: Close the connection in case this combox has been connected.
+ */
 popc_combox_uds::~popc_combox_uds()
 {
   if(_connected) {
@@ -79,11 +115,24 @@ popc_combox_uds::~popc_combox_uds()
   }
 }
 
+/**
+ * Create a combox client or server with a port number. NOT USED FOR UDS COMBOX
+ * @param port    Port number on which the combox should be create
+ * @param server  FALSE for a client combox and TRUE for a server combox
+ * @return FALSE in any cases
+ */
 bool popc_combox_uds::Create(int port, bool server)
 {
   return false;
 }
 
+/**
+ * Create a combox with a string address. In the case of UDS combox, the string represent the path of the file representing the 
+ * socket. 
+ * @param address A path to the file representing the socket
+ * @param server  FALSE for a client combox and TRUE for a server combox
+ * @return TRUE if the combox has been created successfully, FALSE in any other cases.
+ */
 bool popc_combox_uds::Create(const char* address, bool server)
 {
   //printf("UDS: create %s\n", address);
@@ -120,18 +169,17 @@ bool popc_combox_uds::Create(const char* address, bool server)
 		active_connection[0].events = POLLIN;
     active_connection[0].revents = 0;
     _active_connection_nb++;
-/*    printf("POLLIN %d\n", POLLIN);
-    printf("POLLHUP %d\n", POLLHUP);
-    printf("POLLPRI %d\n", POLLPRI);
-    printf("POLLOUT %d\n", POLLOUT);
-    printf("POLLERR %d\n", POLLERR);        
-    printf("POLLNVAL %d\n", POLLNVAL);
-    printf("POLLHUP | POLLIN %d\n", (POLLIN | POLLHUP));         */
+
     return true;
   }	
   return true;
 }
 
+/**
+ * Connect to a server combox with its path
+ * @param url Path to the file representing the socket to connect to. 
+ * @return TRUE if the connection is successful. FALSE in any other cases. 
+ */
 bool popc_combox_uds::Connect(const char *url)
 {
   if(connect(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
@@ -147,6 +195,10 @@ bool popc_combox_uds::Connect(const char *url)
   return true;
 }
 
+/**
+ * Return the connection initialized with "Connect(const char* url)"
+ * @return A pointer to the connection or NULL if this combox has no connection
+ */
 paroc_connection* popc_combox_uds::get_connection()
 {
   if(!_connected)
@@ -154,15 +206,22 @@ paroc_connection* popc_combox_uds::get_connection()
   return _connection;
 }
 
+/**
+ * Send bytes to another combox without connection. NOT USED IN UDS COMBOX
+ */
 int popc_combox_uds::Send(const char *s,int len)
 {
-
-  int wbytes = send(_socket_fd, s, len, 0); 
-
-  return wbytes;
+  return 0;
 }
 
-int popc_combox_uds::Send(const char *s,int len, paroc_connection *connection)
+/**
+ * Send bytes to another combox represented by a connection.
+ * @param s           Pointer to the bytes to be written.
+ * @param len         Number of bytes to write.
+ * @param connection  Connection representing the endpoint to write bytes. 
+ * @return Number of bytes sent
+ */
+int popc_combox_uds::Send(const char *s, int len, paroc_connection *connection)
 {
   if(connection == NULL){
     return -1; 
@@ -175,27 +234,36 @@ int popc_combox_uds::Send(const char *s,int len, paroc_connection *connection)
   return wbytes;	
 }
 
+/**
+ * Receive bytes from another combox without connection. NOT USED IN UDS COMBOX
+ */
 int popc_combox_uds::Recv(char *s,int len)
 {
-	
+  return 0;
 }
 
+/**
+ * Receive bytes from another combox represented by a connection.
+ * @param s           Pointer to the buffer where bytes must be written.
+ * @param len         Number of bytes to read.
+ * @param connection  Connection representing the endpoint from where to read bytes. 
+ * @return Number of bytes read
+ */
 int popc_combox_uds::Recv(char *s, int len, paroc_connection *connection)
 {
   int nbytes;
   int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
-  //printf("Recv fd=%d\n", socket_fd);
+
   do {
-//    printf("UDS: Recv %d %d\n", len, socket_fd);
     nbytes = read(socket_fd, s, len);
   } while (nbytes < 0);
   
-  //printf("recv %d\n", nbytes);
   return nbytes;	
 }
 
 /** 
- *
+ * Add a file descriptor to the poll fd array
+ * @param fd  File descriptor to add.
  */
 void popc_combox_uds::add_fd_to_poll(int fd){
   active_connection[_active_connection_nb].fd = fd;
@@ -204,6 +272,10 @@ void popc_combox_uds::add_fd_to_poll(int fd){
   _active_connection_nb++; 
 }
 
+/**
+ * Wait for a new connection or data from an existing connection
+ * @return A pointer to the ready connection 
+ */
 paroc_connection* popc_combox_uds::Wait()
 {
   if(_is_server){
@@ -264,13 +336,15 @@ paroc_connection* popc_combox_uds::Wait()
             _active_connection_nb = 1; 
             active_connection[i].fd = 0; 
             active_connection[i].events = 0; 
-            active_connection[i].revents = 0;           
+            active_connection[i].revents = 0;
+            return NULL;           
           } else {
             // Modify connection tab
             _active_connection_nb--;
             active_connection[i].fd = active_connection[_active_connection_nb].fd;
             active_connection[i].events = active_connection[_active_connection_nb].events;
             active_connection[i].revents = active_connection[_active_connection_nb].revents;                    
+            return NULL;            
           }
         }
       }
@@ -288,15 +362,21 @@ paroc_connection* popc_combox_uds::Wait()
         return new popc_connection_uds(active_connection[0].fd, this);
       }      
     } else if (poll_back == 0) { 
-      printf("Timeout\n");
+      perror("timeout");
       return NULL;
     } else {
       perror("poll");
       return NULL;
     }
   }
+  return NULL;
 }
 
+/**
+ * Close the combox
+ * For server: Close all open connection to this combox
+ * For client: Close its own connection
+ */
 void popc_combox_uds::Close()
 {
   if(_is_server){
@@ -310,16 +390,28 @@ void popc_combox_uds::Close()
   }
 }
 
+/**
+ * Get the protocol name for this combox
+ * @param Reference to a POPString object to store the protocol name
+ * @return TRUE in any cases. 
+ */
 bool popc_combox_uds::GetProtocol(POPString & protocolName)
 {
-	protocolName="uds";
+	protocolName = UDS_PROTOCOL_NAME;
 	return true;
 }
 
+/**
+ * Get the current url of this combox. Format of the url is uds://uds_rank.object_id
+ * @param Reference to a POPString object to store the url.
+ * @return FALSE if the combox has no url. TRUE otherwise. 
+ */
 bool popc_combox_uds::GetUrl(POPString & accesspoint)
 {
+  if(_uds_address.length() == 0)
+    return false;
 	char elem[1024];
-	sprintf(elem,"uds://%s", _uds_address.c_str());
+	sprintf(elem,"%s%s%s", UDS_PROTOCOL_NAME, paroc_combox::PROTOCOL_SEPARATOR, _uds_address.c_str());
 	accesspoint = elem;
 	return true;
 }
