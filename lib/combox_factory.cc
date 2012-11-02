@@ -127,34 +127,27 @@ paroc_combox_factory::paroc_combox_factory()
 					}
 				}
 				fclose(map);
-			}
-			else
-			{
-				DEBUG("WARNING: unable to open plugin mapfile: %s",(const char *)pluginmap);
+			} else {
 				DIR *dir=opendir(plugindir);
-				if (dir!=NULL)
-				{
+				if (dir!=NULL) {
 					dirent *t;
-					while ((t=readdir(dir))!=NULL)
-					{
+					while ((t=readdir(dir))!=NULL) {
 						if (!paroc_utils::MatchWildcard(t->d_name,"*.so")) continue;
 						char fname[1024];
 						sprintf(fname,"%s/%s", (const char *)plugindir, t->d_name);
 						void *h=LoadPlugin(fname, name, creator);
-						if (h!=NULL)
-						{
-							bool loaded=false;
-							int n=plugins.GetSize();
-							for (int j=0;j<n;j++) if (h==plugins[j])
-								{
-									loaded=true;
+						if (h!=NULL) {
+							bool loaded = false;
+							int n = plugins.GetSize();
+							for (int j = 0; j < n; j++) {
+							  if (h == plugins[j]) {
+									loaded = true;
 									break;
 								}
-
-							if (!loaded)
-							{
-								plugins.InsertAt(-1,h);
-								Register(name,metrics,creator);
+              }
+							if (!loaded) {
+								plugins.InsertAt(-1, h);
+								Register(name, metrics, creator);
 							}
 						}
 					}
@@ -189,13 +182,15 @@ void paroc_combox_factory::Destroy()
 
 paroc_combox* paroc_combox_factory::Create(const char * name)
 {
-	DEBUG("Create a combox : %s\n", name);
-	if (name==NULL) return NULL;
-	POSITION pos=list.GetHeadPosition();
-	while (pos!=NULL)
-	{
-		combox_factory_struct &t=list.GetNext(pos);
-		if (strcmp(name,t.name)==0) return t.creator();
+	if (name == NULL) { 
+	  return NULL;
+	}
+	POSITION pos = list.GetHeadPosition();
+	while (pos != NULL) {
+		combox_factory_struct &t = list.GetNext(pos);
+		if (strcmp(name, t.name) == 0) {
+		  return t.creator();
+		}
 	}
 	return NULL;
 }
@@ -215,14 +210,14 @@ paroc_combox* paroc_combox_factory::Create(int index)
 
 void paroc_combox_factory::GetNames(POPString &prots)
 {
-	prots="";
-	POSITION pos=list.GetHeadPosition();
-	while (pos!=NULL)
-	{
-		combox_factory_struct &t=list.GetNext(pos);
-		DEBUG("%s\n", t.name);
-		prots+=t.name;
-		if (pos!=NULL) prots+=" ";
+	prots = "";
+	POSITION pos = list.GetHeadPosition();
+	while (pos != NULL) {
+		combox_factory_struct &t = list.GetNext(pos);
+		prots += t.name;
+		if (pos!=NULL) {
+		  prots += " ";
+		}
 	}
 }
 
@@ -233,37 +228,34 @@ int paroc_combox_factory::GetCount()
 
 bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATOR creator)
 {
-	DEBUG("[Combox] Register %s\n", name);
-	if (name==NULL || creator==NULL) return false;
-	combox_factory_struct t;
+	if (name == NULL || creator == NULL) {
+	  return false;
+	}
 
-	POSITION pos=list.GetHeadPosition();
-	POSITION insertpos=NULL;
+	POSITION pos = list.GetHeadPosition();
+	POSITION insertpos = NULL;
 
-	while (pos!=NULL)
-	{
-		POSITION old=pos;
-		combox_factory_struct &t=list.GetNext(pos);
-		if (strcmp(t.name, name)==0) return false;
+	while (pos != NULL) {
+		POSITION old = pos;
+		combox_factory_struct& t = list.GetNext(pos);
+		if (strcmp(t.name, name) == 0) {
+		  return false;
+		}
 
-		if (metrics<t.metrics && insertpos==NULL)
-		{
-			insertpos=old;
+		if (metrics<t.metrics && insertpos == NULL) {
+			insertpos = old;
 		}
 	}
-	if (insertpos==NULL)
-	{
-		combox_factory_struct &el=list.AddTailNew();
-		el.name=strdup(name);
-		el.metrics=metrics;
-		el.creator=creator;
-	}
-	else
-	{
+	if (insertpos == NULL) {
+		combox_factory_struct &el = list.AddTailNew();
+		el.name = strdup(name);
+		el.metrics = metrics;
+		el.creator = creator;
+	} else {
 		combox_factory_struct el;
-		el.name=strdup(name);
-		el.metrics=metrics;
-		el.creator=creator;
+		el.name = strdup(name);
+		el.metrics = metrics;
+		el.creator = creator;
 		list.InsertBefore(insertpos, el);
 	}
 	return true;
@@ -272,19 +264,14 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
 void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CREATOR &f)
 {
 #ifdef HAVE_LIBDL
-	void *handle=dlopen(fname,RTLD_LAZY| RTLD_LOCAL);
-	if (handle==NULL)
-	{
-		DEBUG("ERROR:%s: %s",fname,dlerror());
+	void *handle = dlopen(fname, RTLD_LAZY| RTLD_LOCAL);
+	if (handle == NULL) {
 		return NULL;
 	}
-//  DEBUG("Module loaded: %s",fname);
 
 	LOAD_PROTOCOL func;
-	func=(LOAD_PROTOCOL)dlsym(handle,"LoadProtocol");
-	if (func==NULL || func(name,f)!=0)
-	{
-		DEBUG("Fail to create the combox from %s", fname);
+	func = (LOAD_PROTOCOL)dlsym(handle, "LoadProtocol");
+	if (func == NULL || func(name, f) != 0) {
 		dlclose(handle);
 		return NULL;
 	}
