@@ -63,7 +63,7 @@ IGNORED=" dev virtualtest autom4te.cache .svn"
 
 
 mkdir $RELDIR
-GOODDIR=$(ls . | grep -v ReleaseNotes.dev.txt | grep -v documentation | grep -v dev | grep -v popfile_install_script | grep -v virtualtest | grep -v autom4te.cache | grep -v stamp-h1 | grep -v create_release | grep -v ChangeLog | grep -v config.log | grep -v config.status)
+GOODDIR=$(ls . | grep -v ReleaseNotes.dev.txt | grep -v documentation | grep -v virtualtest | grep -v autom4te.cache | grep -v stamp-h1 | grep -v create_release | grep -v ChangeLog | grep -v config.log | grep -v config.status)
 
 echo $GOODDIR
 
