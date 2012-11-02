@@ -20,8 +20,8 @@
 ValueType check(int j, int k, int size,  Matrix2Dlc* a, Matrix2Dcl* b)
 {
 	ValueType v = 0.0;
-	for (int l=0; l<size; l++)
-		v=v+(a->get(j,l) * b->get(l,k));
+	for (int l = 0; l < size; l++)
+		v = v + (a->get(j, l) * b->get(l, k));
 	return v;
 }
 
@@ -152,7 +152,7 @@ int main(int argc, char** argv)
 
 		//Get the result and put inside matrix A
 		for (int i=0; i<nbWorker; i++) {
-			res=mw[i]->getResult(workerT[i]);
+			res = mw[i]->getResult(workerT[i]);
 			a.setLinesBloc(i*Alines/nbWorker, res);
 		}
 		
@@ -173,7 +173,11 @@ int main(int argc, char** argv)
 			printf("Matrix: Test failed (%d,%d), NON-Correct calculation !!\n",checkI,checkJ);
 
 		// Delete the workers
-		for (int i=0; i<nbWorker; i++) if (mw[i]!=NULL) delete mw[i];
+		for (int i=0; i<nbWorker; i++) { 
+			if (mw[i]!=NULL) {
+				delete mw[i];
+			}
+		}
 	} // end try
 
 	catch (POPException *e)
