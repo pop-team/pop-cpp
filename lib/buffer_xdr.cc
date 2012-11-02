@@ -222,18 +222,19 @@ void paroc_buffer_xdr::Pack(const bool *data, int n)
 }
 void paroc_buffer_xdr::UnPack(bool *data, int n)
 {
-	if (n<=0) return;
-	CheckUnPack(n);
-	int t;
-   t=packeddata.GetSize();
-
-	char *dat=((char *)packeddata)+unpackpos;
-	while (n-->0)
-	{
-		*data=(*dat!=0);
-		dat++; data++;
+	if (n <= 0) {
+	  return;
 	}
-	unpackpos+=((n-1)/4+1)*4;
+	CheckUnPack(n);
+  packeddata.GetSize();
+
+	char *dat = ((char *)packeddata) + unpackpos;
+	while (n-->0) {
+		*data = (*dat != 0);
+		dat++; 
+		data++;
+	}
+	unpackpos += ((n-1)/4+1) * 4;
 }
 
 void paroc_buffer_xdr::Pack(const char *data, int n)
@@ -248,8 +249,7 @@ void paroc_buffer_xdr::UnPack(char *data, int n)
 {
 	if (n<=0) return;
 	CheckUnPack(n);
-	int t;
-   t=packeddata.GetSize();
+  packeddata.GetSize();
 	memcpy(data, ((char *)packeddata)+unpackpos,n);
 	unpackpos+=((n-1)/4+1)*4;
 }
@@ -616,7 +616,6 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 	n = ntohl(h[0]);
 	if (n < 20) {
 	  printf("Bad message header (size error:%d\n", n);
-		DEBUG("Bad message header(size error:%d)",n);
 		return false;
 	}
 
