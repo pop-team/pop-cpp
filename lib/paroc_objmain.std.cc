@@ -26,7 +26,7 @@
 #include "paroc_broker.h"
 #include "paroc_broker_factory.h"
 
-#include "appservice.ph"
+//#include "appservice.ph"
 #include "paroc_buffer_factory_finder.h"
 
 bool CheckIfPacked(const char *objname);
@@ -107,8 +107,9 @@ int main(int argc, char **argv)
 	// set the current working directory
 	char *cwd = paroc_utils::checkremove(&argc,&argv,"-cwd=");
 	if (cwd!=NULL) {
-		if (chdir(cwd)!=0)
-			DEBUG("current working dir cannot be set set to %s",cwd);
+		if (chdir(cwd) != 0) {
+			printf("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
+		}
 	}
 
 	// Start the broker
