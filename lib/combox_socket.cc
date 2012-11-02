@@ -70,10 +70,10 @@ bool paroc_combox_socket::Create(int port, bool server)
 	Close(); 
 	isServer=server;
 
-	protoent *ppe;
-	char prot[]="tcp";
+//	protoent *ppe;
+//	char prot[]="tcp";
 	int type, protocol;
-	char tmpbuf[2048];
+//	char tmpbuf[2048];
 
 	//THESE LINES OF CODE MAKE THEM LESS PORTABLE...
 	protocol=PROTO_TCP;
@@ -125,8 +125,6 @@ bool paroc_combox_socket::Connect(const char *url)
 	char *host;
 	while (isspace(*url)) url++;
 
-	const char searchPattern[]="socket://";
-	char * searchResult;
 	if (strncmp(url,"socket://",9)==0)
 	{
 		host=strdup(url+9);
@@ -398,15 +396,12 @@ bool paroc_combox_socket::Connect(const char *host,int port)
 {
 	hostent *phe;
 	sockaddr_in sin;
-	int s,type;
-	char tmpbuf[2048];
-	int herrno;
 
 	memset((char *)&sin,0,sizeof(sin));
 	sin.sin_family=AF_INET;
 	if ( (phe=gethostbyname(host)) !=NULL)
 		memcpy((char *)&sin.sin_addr,phe->h_addr,phe->h_length);
-	else if ((sin.sin_addr.s_addr=inet_addr(host))==-1) return false;
+	else if (static_cast<int>((sin.sin_addr.s_addr=inet_addr(host)))==-1) return false;
 	sin.sin_port=htons(port);
 
 	if (timeout<=0)
