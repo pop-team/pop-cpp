@@ -83,12 +83,12 @@ AM_CONDITIONAL(GLOBUS, test x$globus = xtrue)
 test x$globus = xfalse || AC_SUBST(globusdir)
 test x$globus = xfalse || AC_SUBST(globusflavor)
 
-echo '#buffer metrics' >  modules/paroc_buffer.map
-echo "${prefix}/lib/plugins/paroc_raw-zlib.so 5 " >>  modules/paroc_buffer.map
-echo "${prefix}/lib/plugins/paroc_xdr-zlib.so 6 " >>  modules/paroc_buffer.map
+#echo '#buffer metrics' >  modules/paroc_buffer.map
+#echo "${prefix}/lib/plugins/paroc_raw-zlib.so 5 " >>  modules/paroc_buffer.map
+#echo "${prefix}/lib/plugins/paroc_xdr-zlib.so 6 " >>  modules/paroc_buffer.map
 
 
-echo '#protocol metrics' >  modules/paroc_combox.map
+#echo '#protocol metrics' >  modules/paroc_combox.map
 
 AC_ARG_ENABLE(mpi,
 [ --enable-mpi  Enable POP-C++ support for MPI],
