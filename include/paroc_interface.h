@@ -185,7 +185,6 @@ public:
 
 private:
 	static paroc_accesspoint *batchaccesspoint;
-	int destructor_times;
 };
 
 #endif
