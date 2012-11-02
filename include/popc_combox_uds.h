@@ -71,6 +71,8 @@ public:
   
   void add_fd_to_poll(int fd);
 
+  static const char* UDS_PROTOCOL_NAME;
+
 private:
 	int _socket_fd;
   struct sockaddr_un _sock_address;

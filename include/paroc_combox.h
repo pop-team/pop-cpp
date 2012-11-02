@@ -93,6 +93,8 @@ public:
 
 	void SetBufferFactory(paroc_buffer_factory *fact);
 	paroc_buffer_factory *GetBufferFactory();
+	
+  static const char* PROTOCOL_SEPARATOR;	
 
 protected:
 	virtual bool OnNewConnection(paroc_connection *conn);
