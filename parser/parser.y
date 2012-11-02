@@ -2436,8 +2436,8 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 	startPos=-1;
 	
 
-	int ret=yyparse();
-	if (ret==0) {
+	int ret = yyparse();
+	if (ret == 0) {
 		FILE *outf;
       if (outfile==NULL || *outfile=='-'){
      		

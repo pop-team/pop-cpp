@@ -1,6 +1,6 @@
 #include "type.h"
 
-TypeClassStruct::TypeClassStruct(char *name, bool classtype): TypeSeqClass(name), TypeStruct(name), DataType(name)
+TypeClassStruct::TypeClassStruct(char *name, bool classtype): DataType(name), TypeSeqClass(name), TypeStruct(name)
 {
 	isClass=classtype;
 }

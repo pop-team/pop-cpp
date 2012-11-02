@@ -261,9 +261,6 @@ bool Class::hasMethod(Method &x)
 
 bool Class::methodInBaseClass(Method &x)
 {
-	CodeFile *prog;
-   prog=GetCodeFile();
-
 	int n=baseClass.GetSize();
 	for (int i=0;i<n;i++)
 	{
@@ -279,8 +276,6 @@ bool Class::methodInBaseClass(Method &x)
 bool Class::findPureVirtual(CArrayMethod &lst)
 {
 	bool returnFlag = true;
-	CodeFile *prog;
-   prog=GetCodeFile();
 
 	int n=baseClass.GetSize();
 	for (int i=0;i<n;i++)
@@ -439,7 +434,6 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 	strcat(tmpcode," :");
 
 	int i;
-	bool defaultconstructor=false;
 
 	for (i=0;i<n;i++)
 	{
@@ -488,7 +482,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 			Method *t=(Method *)memberList[i];
 			if (t->MethodType()==METHOD_CONSTRUCTOR)
 			{
-				if ( ((Constructor *)t)->isDefault()) defaultconstructor=true;
+				//if ( ((Constructor *)t)->isDefault()) defaultconstructor=true;
 				/*PEKA Removed */ //if (interface && pureVirtual) continue;
 			}
 		}

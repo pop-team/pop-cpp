@@ -136,7 +136,7 @@ bool TypePtr::GetDeclaration(const char *varname, char *output)
 
 	for (int i=0;i<nptr;i++) {
 		strcat(output,"*");
-		if(i < constPos.size())
+		if(i < static_cast<int>(constPos.size()))
 		{
 			if(constPos[i])
 			{ 

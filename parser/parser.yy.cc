@@ -1254,7 +1254,7 @@ case 7:
 YY_RULE_SETUP
 #line 113 "parser.lex"
 {
-  char *t1, *t2;
+  //char *t1, *t2;
   sscanf(yytext+1, "%d", &linenumber);
   linenumber++;
   //  printf("LINE DIRECTIVE:line:%d in %s\n", linenumber,filename);
@@ -1329,7 +1329,7 @@ YY_RULE_SETUP
 #line 169 "parser.lex"
 {
   char clname[256];
-  char methname[256];
+  //char methname[256];
 
   int len=0;
   char *tmp=yytext;
@@ -1343,10 +1343,9 @@ YY_RULE_SETUP
   clname[len]=0;
   classname[len]=0;
   
- if (thisCodeFile->FindClass(clname)!=NULL)
-    {
-      while (isspace(*tmp) || *tmp==':') tmp++;
-      bool constructor=paroc_utils::isEqual(clname,tmp);
+  if (thisCodeFile->FindClass(clname)!=NULL) {
+    while (isspace(*tmp) || *tmp==':') tmp++;
+    //bool constructor=paroc_utils::isEqual(clname,tmp);
       
       char postfix[32]="__parocobj";
       int len=strlen(clname);
@@ -1355,21 +1354,19 @@ YY_RULE_SETUP
       othercodes.InsertAt(-1,postfix,len1);
       othercodes.InsertAt(-1,yytext+len,strlen(yytext)-len);
       othercodes.InsertAt(-1,postfix,len1);
-    }
-  else
-    {
+    } else {
       othercodes.InsertAt(-1,yytext,strlen(yytext));
     }
-  linenumber+=CountLine(tmp);
+    linenumber+=CountLine(tmp);
 };
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 205 "parser.lex"
+#line 202 "parser.lex"
 {
   char clname[256];
-  char methname[256];
+  //char methname[256];
   bool shouldreturn=true;
   char newyytext[1024];
   char thisBuf[1024];
@@ -1472,7 +1469,7 @@ YY_RULE_SETUP
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 308 "parser.lex"
+#line 305 "parser.lex"
 {
   linenumber++; 
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1480,7 +1477,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 313 "parser.lex"
+#line 310 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1499,7 +1496,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 329 "parser.lex"
+#line 326 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1509,7 +1506,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 336 "parser.lex"
+#line 333 "parser.lex"
 {
 	yylval=PutToken(yytext);
 	othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1518,7 +1515,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 342 "parser.lex"
+#line 339 "parser.lex"
 {
 	yylval=PutToken(yytext);
 	othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1527,7 +1524,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 348 "parser.lex"
+#line 345 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1543,7 +1540,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 361 "parser.lex"
+#line 358 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1552,7 +1549,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 367 "parser.lex"
+#line 364 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1561,7 +1558,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 374 "parser.lex"
+#line 371 "parser.lex"
 {
   if (!insideClass) othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PUBLIC_KEYWORD;
@@ -1569,7 +1566,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 378 "parser.lex"
+#line 375 "parser.lex"
 {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PRIVATE_KEYWORD;
@@ -1577,7 +1574,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 382 "parser.lex"
+#line 379 "parser.lex"
 {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PROTECTED_KEYWORD;
@@ -1585,7 +1582,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 388 "parser.lex"
+#line 385 "parser.lex"
 {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return VIRTUAL_KEYWORD;
@@ -1593,7 +1590,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 393 "parser.lex"
+#line 390 "parser.lex"
 {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return CONST_KEYWORD;
@@ -1601,7 +1598,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 398 "parser.lex"
+#line 395 "parser.lex"
 {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return STRUCT_KEYWORD;
@@ -1609,7 +1606,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 403 "parser.lex"
+#line 400 "parser.lex"
 {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return STATIC_KEYWORD;
@@ -1617,7 +1614,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 408 "parser.lex"
+#line 405 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1634,7 +1631,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 423 "parser.lex"
+#line 420 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1649,7 +1646,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 435 "parser.lex"
+#line 432 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1664,7 +1661,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 447 "parser.lex"
+#line 444 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1679,7 +1676,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 459 "parser.lex"
+#line 456 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1694,7 +1691,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 472 "parser.lex"
+#line 469 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1710,7 +1707,7 @@ YY_RULE_SETUP
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 484 "parser.lex"
+#line 481 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1737,7 +1734,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 508 "parser.lex"
+#line 505 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1753,7 +1750,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 521 "parser.lex"
+#line 518 "parser.lex"
 {
 
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1762,7 +1759,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 527 "parser.lex"
+#line 524 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1777,7 +1774,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 539 "parser.lex"
+#line 536 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1793,7 +1790,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 551 "parser.lex"
+#line 548 "parser.lex"
 {
   if (IsSystemHeader(filename))
     {
@@ -1809,11 +1806,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 564 "parser.lex"
+#line 561 "parser.lex"
 {
 
 	/* This part of parser is possible source of wrong "this" handling */
-	Class *cl = thisCodeFile->FindClass(classname);
+	//Class *cl = thisCodeFile->FindClass(classname);
 
 	othercodes.InsertAt(-1,yytext,strlen(yytext));
 	
@@ -1829,7 +1826,7 @@ YY_RULE_SETUP
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 580 "parser.lex"
+#line 577 "parser.lex"
 {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
@@ -1840,7 +1837,7 @@ YY_RULE_SETUP
 case 43:
 /* rule 43 can match eol */
 YY_RULE_SETUP
-#line 587 "parser.lex"
+#line 584 "parser.lex"
 {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
@@ -1851,7 +1848,7 @@ YY_RULE_SETUP
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
-#line 594 "parser.lex"
+#line 591 "parser.lex"
 {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
@@ -1862,7 +1859,7 @@ YY_RULE_SETUP
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 601 "parser.lex"
+#line 598 "parser.lex"
 {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
@@ -1873,7 +1870,7 @@ YY_RULE_SETUP
 case 46:
 /* rule 46 can match eol */
 YY_RULE_SETUP
-#line 608 "parser.lex"
+#line 605 "parser.lex"
 {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
@@ -1884,7 +1881,7 @@ YY_RULE_SETUP
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
-#line 615 "parser.lex"
+#line 612 "parser.lex"
 {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
@@ -1895,7 +1892,7 @@ YY_RULE_SETUP
 case 48:
 /* rule 48 can match eol */
 YY_RULE_SETUP
-#line 623 "parser.lex"
+#line 620 "parser.lex"
 {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
@@ -1906,7 +1903,7 @@ YY_RULE_SETUP
 case 49:
 /* rule 49 can match eol */
 YY_RULE_SETUP
-#line 630 "parser.lex"
+#line 627 "parser.lex"
 {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
@@ -1916,7 +1913,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 637 "parser.lex"
+#line 634 "parser.lex"
 {
   othercodes.InsertAt(-1,yytext,strlen(yytext));  
   return(TYPEDEF_KEYWORD);
@@ -1924,7 +1921,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 642 "parser.lex"
+#line 639 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));  
@@ -1933,7 +1930,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 648 "parser.lex"
+#line 645 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1942,7 +1939,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 654 "parser.lex"
+#line 651 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1951,20 +1948,20 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 662 "parser.lex"
+#line 659 "parser.lex"
 ;
 	YY_BREAK
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 663 "parser.lex"
+#line 660 "parser.lex"
 {
   linenumber+=CountLine(yytext);
 } ;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 667 "parser.lex"
+#line 664 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1973,7 +1970,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 673 "parser.lex"
+#line 670 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1982,7 +1979,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 679 "parser.lex"
+#line 676 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -1991,7 +1988,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 685 "parser.lex"
+#line 682 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -2000,7 +1997,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 691 "parser.lex"
+#line 688 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -2009,7 +2006,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 697 "parser.lex"
+#line 694 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -2019,7 +2016,7 @@ YY_RULE_SETUP
 case 62:
 /* rule 62 can match eol */
 YY_RULE_SETUP
-#line 703 "parser.lex"
+#line 700 "parser.lex"
 {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
@@ -2028,21 +2025,21 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 710 "parser.lex"
+#line 707 "parser.lex"
 { 
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return yytext[0]; 
 };
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 715 "parser.lex"
+#line 712 "parser.lex"
 {
 	return EOFCODE;
 };
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 718 "parser.lex"
+#line 715 "parser.lex"
 {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return yytext[0];   
@@ -2050,10 +2047,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 723 "parser.lex"
+#line 720 "parser.lex"
 ECHO;
 	YY_BREAK
-#line 2057 "parser.yy.cc"
+#line 2054 "parser.yy.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -3051,7 +3048,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 723 "parser.lex"
+#line 720 "parser.lex"
 
 
 
@@ -3148,7 +3145,7 @@ bool IsSystemHeader(char *fname)
 {
   char system_header[]="/usr/include";
   if (fname==NULL) return false;
-  int len=strlen(fname);
+  //int len=strlen(fname);
 
   //  return strcmp(fname+len-2,".h")==0;
 

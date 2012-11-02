@@ -64,8 +64,6 @@ void CodeFile::EmptyCodeData()
 
 void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker/*, bool isPOPCPPCompilation*/)
 {
-	int n;
-   n=classlist.GetSize();
 	int m=codes.GetSize();
 	for (int j=0;j<m;j++)
 	{
@@ -249,8 +247,7 @@ bool CodeFile::SameFile(char *file1, char *file2)
 	if (fn1==NULL)
 	{
 		fn1=file1;
-      char* res;
-		res=getcwd(dir1,255);
+		getcwd(dir1,255);
 	}
 	else
 	{
@@ -259,23 +256,18 @@ bool CodeFile::SameFile(char *file1, char *file2)
 		strncpy(dir1, file1,n);
 		dir1[n]=0;
 		fn1++;
-		if (*dir1!='/')
-		{
-         int _r1, _r2;
-         char* _ch1;
-         _ch1=getcwd(tmp,255);
-			_r1=chdir(dir1);
-         char* _ch2;
-			_ch2=getcwd(dir1,255);
-			_r2=chdir(tmp);
+		if (*dir1!='/') {
+      getcwd(tmp,255);
+      chdir(dir1);   
+      getcwd(dir1,255);
+			chdir(tmp);
 		}
 	}
 
 	if (fn2==NULL)
 	{
 		fn2=file2;
-      char* _ch;
-		_ch=getcwd(dir2,255);
+		getcwd(dir2,255);
 	}
 	else
 	{
@@ -286,13 +278,10 @@ bool CodeFile::SameFile(char *file1, char *file2)
 		fn2++;
 		if (*dir2!='/')
 		{
-         int _r1, _r2;
-         char* _ch1;
-			_ch1=getcwd(tmp,255);
-			_r1=chdir(dir2);
-         char* _ch2;
-			_ch2=getcwd(dir2,255);
-			_r2=chdir(tmp);
+			getcwd(tmp,255);
+			chdir(dir2);
+			getcwd(dir2,255);
+			chdir(tmp);
 		}
 	}
 

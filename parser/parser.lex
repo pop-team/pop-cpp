@@ -111,7 +111,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
 
 ^"#"[ \t]*[0-9]+[ \t]*[\n] {
-  char *t1, *t2;
+  //char *t1, *t2;
   sscanf(yytext+1, "%d", &linenumber);
   linenumber++;
   //  printf("LINE DIRECTIVE:line:%d in %s\n", linenumber,filename);
@@ -168,7 +168,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
 {id}{whitespace2}"::"{whitespace2}"~"{whitespace2}{id} {
   char clname[256];
-  char methname[256];
+  //char methname[256];
 
   int len=0;
   char *tmp=yytext;
@@ -182,10 +182,9 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   clname[len]=0;
   classname[len]=0;
   
- if (thisCodeFile->FindClass(clname)!=NULL)
-    {
-      while (isspace(*tmp) || *tmp==':') tmp++;
-      bool constructor=paroc_utils::isEqual(clname,tmp);
+  if (thisCodeFile->FindClass(clname)!=NULL) {
+    while (isspace(*tmp) || *tmp==':') tmp++;
+    //bool constructor=paroc_utils::isEqual(clname,tmp);
       
       char postfix[32]="__parocobj";
       int len=strlen(clname);
@@ -194,17 +193,15 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       othercodes.InsertAt(-1,postfix,len1);
       othercodes.InsertAt(-1,yytext+len,strlen(yytext)-len);
       othercodes.InsertAt(-1,postfix,len1);
-    }
-  else
-    {
+    } else {
       othercodes.InsertAt(-1,yytext,strlen(yytext));
     }
-  linenumber+=CountLine(tmp);
+    linenumber+=CountLine(tmp);
 };
 
 {id}{whitespace2}("::"{whitespace2}{id})+ {
   char clname[256];
-  char methname[256];
+  //char methname[256];
   bool shouldreturn=true;
   char newyytext[1024];
   char thisBuf[1024];
@@ -564,7 +561,7 @@ size {
 this {
 
 	/* This part of parser is possible source of wrong "this" handling */
-	Class *cl = thisCodeFile->FindClass(classname);
+	//Class *cl = thisCodeFile->FindClass(classname);
 
 	othercodes.InsertAt(-1,yytext,strlen(yytext));
 	
@@ -815,7 +812,7 @@ bool IsSystemHeader(char *fname)
 {
   char system_header[]="/usr/include";
   if (fname==NULL) return false;
-  int len=strlen(fname);
+  //int len=strlen(fname);
 
   //  return strcmp(fname+len-2,".h")==0;
 

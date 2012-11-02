@@ -497,6 +497,7 @@ public:
 	ObjDesc &GetOD();
 
 protected:
+	virtual void GenerateReturn(CArrayChar &output, bool header, bool interface) {  Method::GenerateReturn(output, header, interface); };
 	virtual void GenerateReturn(CArrayChar &output, bool header);
 	virtual void GeneratePostfix(CArrayChar &output, bool header);
 	virtual void GenerateClientPrefixBody(CArrayChar &output);
@@ -517,6 +518,7 @@ public:
 
 	virtual void GenerateClient(CArrayChar &output);
 protected:
+	virtual void GenerateReturn(CArrayChar &output, bool header, bool interface) {  Method::GenerateReturn(output, header, interface); };
 	virtual void GenerateReturn(CArrayChar &output, bool header);
 };
 
