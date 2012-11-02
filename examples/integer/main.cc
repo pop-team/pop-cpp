@@ -9,10 +9,10 @@ int main(int argc, char* argv[])
 	int node = atoi(argv[1]);
 	try {
 		// Create 2 Integer objects
-		Integer o1;
+		Integer o1(1);
 		o1.Set(10);
 		printf("o1=%d\n", o1.Get());
-		Integer o2;
+		Integer o2(2);
 		o2.Set(11);
 		printf("o2=%d\n", o2.Get());
 		o1.Add(o2);
