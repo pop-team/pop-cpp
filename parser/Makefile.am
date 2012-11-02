@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS=no-dependencies
 
 
-
+CXX=g++
 YACC=@YACC@
 LEX=@LEX@
 
@@ -15,7 +15,7 @@ typearray.cc  type.cc  typeequal.cc  typeptr.cc  typestruct.cc typeseqclass.cc t
 nodist_popcpp_SOURCES= debug.cc  utils.cc 
 popcpp_LDADD = @LEXLIB@
 popcpp_CCFLAGS = -I../include
-popcpp_CXXFLAGS = -I../include
+popcpp_CXXFLAGS =  -I../include
 
 nodist_popcc_SOURCES= popcc.cc utils.cc
 popcc_CCFLAGS = -I../include -DYYERROR_VERBOSE
