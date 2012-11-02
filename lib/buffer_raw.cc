@@ -43,8 +43,7 @@ void paroc_buffer_raw::UnPack(char *data, int n)
 {
 	if (n<=0) return;
 	//CheckUnPack(n); // Error with this check in 64 bits
-	int t;
-   t=packeddata.GetSize();
+  packeddata.GetSize();
 	memcpy(data, ((char *)packeddata)+unpackpos,n);
 	unpackpos+=((n-1)/4+1)*4;
 }
@@ -378,48 +377,44 @@ void paroc_buffer_raw::CheckUnPack(int sz)
 
 bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn)
 {
-//Pack the header (20 bytes)
+  // Pack the header (20 bytes)
+	char *dat = (char *)packeddata;
 
-	char *dat=(char *)packeddata;
-
-	if (dat==NULL) return false;
-	int n=packeddata.GetSize();
+	if (dat == NULL) return false;
+	int n = packeddata.GetSize();
 	int h[5];
-	memset(h,0, 5*sizeof(int));
+	memset(h,0, 5 * sizeof(int));
 
-	int type=header.GetType();
+	int type = header.GetType();
 
-	h[0]=n;
-	h[1]=type;
+	h[0] = n;
+	h[1] = type;
 
-	switch (type)
-	{
-	case TYPE_REQUEST:
-		h[2]=header.GetClassID();
-		h[3]=header.GetMethodID();
-		h[4]=header.GetSemantics();
-		break;
-	case TYPE_EXCEPTION:
-		h[2]=header.GetExceptionCode();
-		break;
-	case TYPE_RESPONSE:
-		h[2]=header.GetClassID();
-		h[3]=header.GetMethodID();
-		break;
-	default:
-		return false;
+	switch (type) {
+  	case TYPE_REQUEST:
+	  	h[2] = header.GetClassID();
+		  h[3] = header.GetMethodID();
+  		h[4] = header.GetSemantics();
+	  	break;
+  	case TYPE_EXCEPTION:
+	  	h[2] = header.GetExceptionCode();
+		  break;
+  	case TYPE_RESPONSE:
+	  	h[2] = header.GetClassID();
+		  h[3] = header.GetMethodID();
+  		break;
+	  default:
+		  return false;
 	}
-	memcpy(dat,h,20);
-	if (s.Send(dat,n, conn)<0)
-	{
-		DEBUG("Fail to send a message!");
+	memcpy(dat, h, 20);
+	if (s.Send(dat, n, conn) < 0) {
+		printf("Fail to send a message!\n");
 		return false;
 	}
 	return true;
 }
 
-//Propagation of exceptions back to caller...
-
+// Propagation of exceptions back to caller...
 bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn)
 {
 	int h[5];
@@ -444,7 +439,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn)
 	n=h[0];
 	if (n<20)
 	{
-		DEBUG("Bad message header(size error:%d)",n);
+		printf("POP-C++ Error: [CORE] - Buffer RAW - bad message header (size error:%d)", n);
 		return false;
 	}
 
