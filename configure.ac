@@ -9,7 +9,7 @@
 # Do not update the value if not needed, older user of POP-C++ will not be able to 
 # install the tool.
 
-AC_PREREQ(2.61)
+AC_PREREQ(2.59)
 
 # Define the project and its version number
 AC_INIT([popc], [2.6.2 - K Computer])
@@ -197,9 +197,10 @@ AC_CONFIG_FILES([scripts/popc-runtime-env.in], [chmod +x scripts/popc-runtime-en
 AC_CONFIG_FILES([scripts/popc_setup], [chmod +x scripts/popc_setup])
 AC_CONFIG_FILES([globus/popc_setup_globus], [chmod +x globus/popc_setup_globus])
 AC_CONFIG_FILES([scripts/popc_script_setup], [chmod +x scripts/popc_script_setup])
-AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile communicator/Makefile)
-AC_CONFIG_FILES(model/Makefile)
-AC_CONFIG_FILES(modules/Makefile modules/raw-zlib/Makefile  modules/xdr-zlib/Makefile)
+#AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile communicator/Makefile)
+AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile communicator/Makefile)
+#AC_CONFIG_FILES(model/Makefile)
+#AC_CONFIG_FILES(modules/Makefile modules/raw-zlib/Makefile  modules/xdr-zlib/Makefile)
 
 AC_CONFIG_MACRO_DIR([m4])
 
