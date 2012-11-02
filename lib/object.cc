@@ -18,7 +18,7 @@
 #include "paroc_interface.h"
 #include "paroc_event.h"
 
-#include "objectmonitor.ph"
+//#include "objectmonitor.ph"
 
 
 int paroc_object::argc=0;

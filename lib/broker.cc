@@ -19,9 +19,9 @@
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_buffer_raw.h"
 
-#include "objectmonitor.ph"
+//#include "objectmonitor.ph"
 #include "paroc_thread.h"
-#include "appservice.ph"
+//#include "appservice.ph"
 
 #define TIMEOUT 1800
 
@@ -280,8 +280,8 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 		char argument[1024];
 		sprintf(argument, "-%s_port=", (const char *)protocolName);
 
-		char *portstr=paroc_utils::checkremove(argc,argv,argument);
-		/*if (portstr!=NULL)
+		/*char *portstr=paroc_utils::checkremove(argc,argv,argument);
+		if (portstr!=NULL)
 		{
 			int port;
 			if (sscanf(portstr,"%d",&port)!=1) return false;
@@ -321,7 +321,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 		r.data=&tmp;
 		if (!FindMethodInfo(classname,r.methodId[0],r.methodId[1]) || r.methodId[1]!=10)
 		{
-			DEBUG("Can not find default constructor");
+			printf("POP-C++ Error: [CORE] Broker cannot not find default constructor\n");
 			return false;
 		}
 		r.methodId[2]=INVOKE_CONSTRUCTOR;

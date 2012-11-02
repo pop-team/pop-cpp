@@ -23,7 +23,7 @@
 #include <ctype.h>
 
 #include "paroc_system.h"
-#include <appservice.ph>
+//#include <appservice.ph>
 #include <paroc_buffer_factory_finder.h>
 #include <paroc_utils.h>
 
@@ -62,7 +62,7 @@ const char *paroc_system::paroc_errstr[17]=
 };
 
 
-AppCoreService *paroc_system::mgr=NULL;
+//AppCoreService *paroc_system::mgr=NULL;
 POPString paroc_system::challenge;
 
 paroc_system::paroc_system()
@@ -90,12 +90,12 @@ paroc_system::paroc_system()
 
 paroc_system::~paroc_system()
 {
-  if (mgr!=NULL)
+  /*if (mgr!=NULL)
   {
     Finalize(false);
     delete mgr;
   }
-  mgr=NULL;
+  mgr=NULL;*/
 
   paroc_combox_factory *pf=paroc_combox_factory::GetInstance();
   paroc_buffer_factory_finder *bf=paroc_buffer_factory_finder::GetInstance();
@@ -352,7 +352,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       if (proxy==NULL) strcpy(url,codeser);
       else sprintf(url,"%s -proxy=%s",codeser, proxy);
       //printf("mgr=CreateAppCoreService(url=%s);\n", url);
-      mgr = CreateAppCoreService(url);
+//      mgr = CreateAppCoreService(url);
     }
     else
     {
@@ -360,9 +360,9 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       paroc_accesspoint app;
       app.SetAccessString(appcontact);
       app.SetAsService();
-      mgr=new AppCoreService(app);
+//      mgr=new AppCoreService(app);
     }
-    paroc_system::appservice=mgr->GetAccessPoint();
+    //paroc_system::appservice=mgr->GetAccessPoint();
     paroc_system::appservice.SetAsService();
   }
   catch (POPException *e)
@@ -370,25 +370,25 @@ bool paroc_system::Initialize(int *argc,char ***argv)
     printf("POP-C++ Exception occurs in paroc_system::Initialize\n");
     POPSystem::perror(e);
     delete e;
-    if (mgr!=NULL)
+/*    if (mgr!=NULL)
     {
       mgr->KillAll();
       mgr->Stop(challenge);
       delete mgr;
       mgr=NULL;
-    }
+    }*/
 
     return false;
   }
   catch (...)
   {
-    if (mgr!=NULL)
+/*    if (mgr!=NULL)
     {
       mgr->KillAll();
       mgr->Stop(challenge);
       delete mgr;
       mgr=NULL;
-    }
+    }*/
     return false;
   }
 
@@ -400,12 +400,13 @@ bool paroc_system::Initialize(int *argc,char ***argv)
     return false;
   else return true; */
 
-  return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
+//  return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
+  return false;
 }
 
 void paroc_system::Finalize(bool normalExit)
 {
-   if (mgr!=NULL){
+/*   if (mgr!=NULL){
       try{
          if (normalExit) {
             //Wait all object to be terminated!
@@ -437,12 +438,12 @@ void paroc_system::Finalize(bool normalExit)
          fprintf(stderr,"POP-C++ error on finalizing the application\n");
       }
       mgr=NULL;
-   }
+   } */
 }
 
 
 
-AppCoreService *paroc_system::CreateAppCoreService(char *codelocation)
+/*AppCoreService *paroc_system::CreateAppCoreService(char *codelocation)
 {
   srand(time(NULL));
   char tmp[256];
@@ -454,11 +455,11 @@ AppCoreService *paroc_system::CreateAppCoreService(char *codelocation)
 
   return new AppCoreService(challenge, false, codelocation);
 }
-
+*/
 
 void paroc_system::processor_set(int cpu)
 {
-#ifndef __APPLE__
+/*#ifndef __APPLE__
   if (cpu < 0) {
     printf("POP-C++ Warning: Cannot set processor to %d<0", cpu);
     exit(EXIT_FAILURE);
@@ -487,5 +488,5 @@ void paroc_system::processor_set(int cpu)
     printf("POP-C++ Warning: Unable to run on cpu %d", cpu);
     exit(EXIT_FAILURE);
   }
-#endif
+#endif*/
 }
