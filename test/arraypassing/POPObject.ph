@@ -11,7 +11,7 @@ parclass POPObject {
 	classuid(1500);
 
 public:
-	POPObject() @{ od.node(1); od.executable("/Volumes/HDD/Users/clementval/versioning/popc/popc2.6.2/test/arraypassing/POPObject.obj"); };
+	POPObject() @{ od.node(1); od.executable("./POPObject.obj"); };
 	~POPObject();
 
 	sync seq void displayArray(int length, int array[]);

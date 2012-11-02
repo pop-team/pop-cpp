@@ -7,7 +7,7 @@ parclass Toto
 classuid(1002);
 
 public:
-	Toto() @{ od.node(1); od.executable("/Users/clementval/versioning/popc/popc2.6.2/test/callback/toto.obj"); };
+	Toto() @{ od.node(1); od.executable("./toto.obj"); };
 	~Toto();
 
 	seq sync void SetIdent(int i);

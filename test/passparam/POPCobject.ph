@@ -9,7 +9,7 @@ parclass POPCobject
   classuid(1500);
 
   public:
-    POPCobject() @{od.node(1); od.executable("./POPCObject.obj"); };
+    POPCobject() @{od.node(1); od.executable("./POPCobject.obj"); };
     ~POPCobject();
     
     //async void m1(POPCobject &o); // ref. parameters not allowed for async 
