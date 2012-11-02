@@ -248,7 +248,6 @@ top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
 AUTOMAKE_OPTIONS = no-dependencies
-#CXX=FCCpx
 POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=g++ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
 AM_CXXFLAGS = $(POPC_FLAGS)
 
