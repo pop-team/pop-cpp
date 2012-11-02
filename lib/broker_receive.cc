@@ -66,7 +66,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) // Receive request and pu
 
 		}
 	}
-	//printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
+//	printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
 	server->Close();
 }
 
@@ -109,7 +109,6 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
 		}
 		req.data->Destroy();
 	}
-	return false;
 }
 
 
@@ -202,26 +201,24 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	switch (methodid[1])
 	{
 	case 0:
-		//BindStatus call
+		// BindStatus call
 		if (methodid[2] & INVOKE_SYNC)
-		{
-			paroc_buffer_factory *fact;
-      fact = req.from->GetBufferFactory();
-      
+		{     
 			paroc_message_header h("BindStatus");
 			buf->Reset();
 			buf->SetHeader(h);
-			int status=0;
+			int status = 0;
 			POPString enclist;
-			paroc_buffer_factory_finder *finder=paroc_buffer_factory_finder::GetInstance();
-			int count=finder->GetFactoryCount();
-			for (int i=0;i<count;i++)
+			paroc_buffer_factory_finder *finder = paroc_buffer_factory_finder::GetInstance();
+			int count = finder->GetFactoryCount();
+			for (int i = 0; i < count; i++)
 			{
 				POPString t;
-				if (finder->GetBufferName(i,t))
+				if (finder->GetBufferName(i, t))
 				{
-					enclist+=t;
-					if (i<count-1) enclist+=" ";
+					enclist += t;
+					if (i < count-1) 
+					  enclist += " ";
 				}
 			}
 			buf->Push("code","int",1);
@@ -250,7 +247,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Push("refcount","int",1);
 			buf->Pack(&ret,1);
 			buf->Pop();
-      //printf("AddRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret); 
+//      printf("AddRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret); 
 			buf->Send(req.from);
 		}
 		execCond.broadcast();
@@ -273,7 +270,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Push("refcount","int",1);
 			buf->Pack(&ret,1);
 			buf->Pop();
-      //printf("DecRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret); 
+//      printf("DecRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret); 
 			buf->Send(req.from);
 		}
 		execCond.broadcast();
@@ -290,22 +287,19 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 		buf->Pop();
 		paroc_buffer_factory *fact=paroc_buffer_factory_finder::GetInstance()->FindFactory(enc);
 		bool ret;
-		if (fact!=NULL)
-		{
+		if (fact!=NULL) {
 			req.from->SetBufferFactory(fact);
-			ret=true;
+			ret = true;
+		} else {
+		  ret = false;
 		}
-		else ret=false;
-		//  DEBUGIF(ret,"Set data encoding: %s",(const char *)enc);
-		if (methodid[2] & INVOKE_SYNC)
-		{
+		if (methodid[2] & INVOKE_SYNC) {
 			paroc_message_header h("Encoding");
 			buf->SetHeader(h);
 			buf->Reset();
 			buf->Push("result","bool",1);
 			buf->Pack(&ret,1);
 			buf->Pop();
-
 			buf->Send(req.from);
 		}
 		break;
@@ -313,28 +307,23 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	case 4:
 	{
 		// Kill call
-		if (obj!=NULL && obj->CanKill())
-		{
-			DEBUG("EXIT BY KILL NOW");
+		if (obj != NULL && obj->CanKill()) {
 			exit(1);
-			//      paroc_mutex_locker locker(execCond);
-			//      state=POPC_STATE_ABORT;
-			//      execCond.broadcast();
 		}
 		break;
 	}
 	case 5:
 	{
-		//ObjectAlive call
-		if (obj==NULL) return false;
-		if (methodid[2] & INVOKE_SYNC)
-		{
+		// ObjectAlive call
+		if (obj == NULL) 
+		  return false;
+		if (methodid[2] & INVOKE_SYNC) {
 			buf->Reset();
 			paroc_message_header h("ObjectActive");
 			buf->SetHeader(h);
 			bool ret=(instanceCount || request_fifo.GetCount());
-			buf->Push("result","bool",1);
-			buf->Pack(&ret,1);
+			buf->Push("result", "bool", 1);
+			buf->Pack(&ret, 1);
 			buf->Pop();
 			buf->Send(req.from);
 		}
