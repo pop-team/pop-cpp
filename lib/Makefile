@@ -17,8 +17,6 @@
 
 
 
-
-
 pkgdatadir = $(datadir)/popc
 pkgincludedir = $(includedir)/popc
 pkglibdir = $(libdir)/popc
@@ -37,15 +35,13 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-apple-darwin12.2.0
 host_triplet = x86_64-apple-darwin12.2.0
-bin_PROGRAMS = testplugin$(EXEEXT) combox_client$(EXEEXT) \
-	combox_server$(EXEEXT) combox_test$(EXEEXT) popcipher$(EXEEXT)
 subdir = lib
-DIST_COMMON = $(inst_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/appservice.ph \
-	$(srcdir)/batchmgr.ph $(srcdir)/codemgr.ph $(srcdir)/debug.cc \
-	$(srcdir)/jobmgr.ph $(srcdir)/objectmonitor.ph \
-	$(srcdir)/paroc_service_base.ph $(srcdir)/popc_search_node.cc \
-	$(srcdir)/remotelog.ph $(srcdir)/utils.cc
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/appservice.ph $(srcdir)/batchmgr.ph \
+	$(srcdir)/codemgr.ph $(srcdir)/debug.cc $(srcdir)/jobmgr.ph \
+	$(srcdir)/objectmonitor.ph $(srcdir)/paroc_service_base.ph \
+	$(srcdir)/popc_search_node.cc $(srcdir)/remotelog.ph \
+	$(srcdir)/utils.cc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -75,13 +71,9 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(maindir)" "$(DESTDIR)$(instdir)"
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(maindir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libparoc_common_la_DEPENDENCIES =  \
-	paroc_service_base.ph.stub_client.lo codemgr.ph.stub_client.lo \
-	remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo \
-	appservice.ph.stub_client.lo batchmgr.ph.stub_client.lo
+libparoc_common_la_LIBADD =
 am_libparoc_common_la_OBJECTS = libparoc_common_la-system.lo \
 	libparoc_common_la-mutex.lo libparoc_common_la-thread.lo \
 	libparoc_common_la-string.lo libparoc_common_la-od.lo \
@@ -116,59 +108,9 @@ libparoc_common_la_OBJECTS = $(am_libparoc_common_la_OBJECTS)
 libparoc_common_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(libparoc_common_la_LDFLAGS) $(LDFLAGS) -o $@
-libparoc_service_common_la_DEPENDENCIES =  \
-	paroc_service_base.ph.stub.lo codemgr.ph.stub.lo \
-	remotelog.ph.stub.lo objectmonitor.ph.stub.lo \
-	appservice.ph.stub.lo batchmgr.ph.stub.lo
-am_libparoc_service_common_la_OBJECTS = service_base.lo codemgr.lo \
-	remotelog.lo objectmonitor.lo appservice.lo batchmgr.lo \
-	popc_logger.lo
-libparoc_service_common_la_OBJECTS =  \
-	$(am_libparoc_service_common_la_OBJECTS)
-libparoc_service_common_la_LINK = $(LIBTOOL) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(libparoc_service_common_la_LDFLAGS) $(LDFLAGS) -o $@
-PROGRAMS = $(bin_PROGRAMS)
-am_combox_client_OBJECTS = combox_client-combox_client.$(OBJEXT)
-combox_client_OBJECTS = $(am_combox_client_OBJECTS)
-combox_client_DEPENDENCIES =
-combox_client_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(combox_client_CXXFLAGS) \
-	$(CXXFLAGS) $(combox_client_LDFLAGS) $(LDFLAGS) -o $@
-am_combox_server_OBJECTS = combox_server-combox_server.$(OBJEXT)
-combox_server_OBJECTS = $(am_combox_server_OBJECTS)
-combox_server_DEPENDENCIES =
-combox_server_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(combox_server_CXXFLAGS) \
-	$(CXXFLAGS) $(combox_server_LDFLAGS) $(LDFLAGS) -o $@
-am_combox_test_OBJECTS = combox_test-combox_test.$(OBJEXT)
-combox_test_OBJECTS = $(am_combox_test_OBJECTS)
-combox_test_DEPENDENCIES =
-combox_test_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(combox_test_CXXFLAGS) \
-	$(CXXFLAGS) $(combox_test_LDFLAGS) $(LDFLAGS) -o $@
-popcipher_SOURCES = popcipher.c
-popcipher_OBJECTS = popcipher.$(OBJEXT)
-popcipher_LDADD = $(LDADD)
-am_testplugin_OBJECTS = testplugin-testplugin.$(OBJEXT)
-testplugin_OBJECTS = $(am_testplugin_OBJECTS)
-testplugin_DEPENDENCIES =
-testplugin_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(testplugin_CXXFLAGS) \
-	$(CXXFLAGS) $(testplugin_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -178,16 +120,9 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libparoc_common_la_SOURCES) \
-	$(libparoc_service_common_la_SOURCES) $(combox_client_SOURCES) \
-	$(combox_server_SOURCES) $(combox_test_SOURCES) popcipher.c \
-	$(testplugin_SOURCES)
-DIST_SOURCES = $(libparoc_common_la_SOURCES) \
-	$(libparoc_service_common_la_SOURCES) $(combox_client_SOURCES) \
-	$(combox_server_SOURCES) $(combox_test_SOURCES) popcipher.c \
-	$(testplugin_SOURCES)
+SOURCES = $(libparoc_common_la_SOURCES)
+DIST_SOURCES = $(libparoc_common_la_SOURCES)
 DATA = $(main_DATA)
-HEADERS = $(inst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -313,12 +248,15 @@ top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
 AUTOMAKE_OPTIONS = no-dependencies
+#CXX=FCCpx
 POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=.. -popcpp=../parser/popcpp -cxx=g++ -D_PLUGINDIR=\"$(libdir)/plugins\" -D_POPC_RUNTIME_ 
-AM_CXXFLAGS = $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS)
+AM_CXXFLAGS = $(POPC_FLAGS)
 
 #ADD VIX and LIBVIRT flags
-#AM_CXXFLAGS = -D_LINUX $(POPC_FLAGS) $(LIBVIRT_CFLAGS) $(LIBVIRT_LIBS) $(VIX_CFLAGS) $(VIX_LIBS)
-lib_LTLIBRARIES = libparoc_common.la  libparoc_service_common.la
+#AM_CXXFLAGS = -D_LINUX $(POPC_FLAGS)
+lib_LTLIBRARIES = libparoc_common.la  #libparoc_service_common.la
+
+#bin_PROGRAMS= testplugin combox_client combox_server combox_test
 libparoc_common_la_SOURCES = system.cc mutex.cc thread.cc string.cc od.cc event.cc buffer.cc buffer_utils.cc combox.cc  \
 	broker.cc broker_receive.cc broker_serve.cc object.cc interface.cc allocobj.cc timer.cc accesspoint.cc memspool.cc \
 	utils.cc debug.cc exception.cc benchmark.cc combox_factory.cc \
@@ -327,59 +265,68 @@ libparoc_common_la_SOURCES = system.cc mutex.cc thread.cc string.cc od.cc event.
 	buffer_raw.cc buffer_raw_factory.cc broker_factory.cc  \
 	response.cc request.cc explorationList.cc popc_search_node_info.cc popwayback.cc popc_logger.cpp
 
-libparoc_common_la_LIBADD = paroc_service_base.ph.stub_client.lo \
-   codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo \
-   batchmgr.ph.stub_client.lo
 
+#libparoc_common_la_LIBADD=paroc_service_base.ph.stub_client.lo \
+#   codemgr.ph.stub_client.lo remotelog.ph.stub_client.lo objectmonitor.ph.stub_client.lo appservice.ph.stub_client.lo \
+#   batchmgr.ph.stub_client.lo
 libparoc_common_la_LDFLAGS = -static
 libparoc_common_la_CPPFLAGS = 
-libparoc_service_common_la_SOURCES = service_base.cc codemgr.cc \
-   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc popc_logger.cpp
 
-libparoc_service_common_la_LIBADD = paroc_service_base.ph.stub.lo \
-   codemgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
-   appservice.ph.stub.lo batchmgr.ph.stub.lo 
+#libparoc_service_common_la_SOURCES=service_base.cc codemgr.cc \
+#   remotelog.cc objectmonitor.cc appservice.cc batchmgr.cc popc_logger.cpp
 
-libparoc_service_common_la_LDFLAGS = -static -version-info 1:2:0
+#libparoc_service_common_la_LIBADD=paroc_service_base.ph.stub.lo \
+#   codemgr.ph.stub.lo remotelog.ph.stub.lo  objectmonitor.ph.stub.lo \
+#   appservice.ph.stub.lo batchmgr.ph.stub.lo 
+
+#libparoc_service_common_la_LDFLAGS=-static -version-info 1:2:0
 main_DATA = paroc_objmain.std.o paroc_infmain.std.o
 maindir = ${exec_prefix}/lib
-testplugin_SOURCES = testplugin.cc 
-testplugin_LDFLAGS = -paroc-nolib -L./.libs/ -lparoc_common
-testplugin_LDADD = 
-testplugin_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
+
+#testplugin_SOURCES=testplugin.cc 
+#testplugin_LDFLAGS=-paroc-nolib -L./.libs/ -lparoc_common
+#testplugin_LDADD=
+#testplugin_CXXFLAGS=$(AM_CXXFLAGS) -DPIC -fPIC
 
 #alloctest_SOURCES=alloctest.cc 
 #alloctest_LDFLAGS=-paroc-nolib -L./.libs/ -lparoc_service_common -lparoc_common
 #alloctest_LDADD=paroc_infmain.std.o
 #alloctest_LDADD=
 #alloctest_CXXFLAGS=$(AM_CXXFLAGS) -DPIC -fPIC
-combox_client_SOURCES = combox_client.cc 
-combox_client_LDFLAGS = -paroc-nolib -L./.libs/ -lparoc_common 
+
+#combox_client_SOURCES=combox_client.cc 
+#combox_client_LDFLAGS=-paroc-nolib -L./.libs/ -lparoc_common 
 #combox_client_LDADD=paroc_infmain.std.o
-combox_client_LDADD = 
-combox_client_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
-combox_server_SOURCES = combox_server.cc 
-combox_server_LDFLAGS = -paroc-nolib -L./.libs/ -lparoc_common 
+#combox_client_LDADD=
+#combox_client_CXXFLAGS=$(AM_CXXFLAGS) -DPIC -fPIC
+
+#combox_server_SOURCES=combox_server.cc 
+#combox_server_LDFLAGS=-paroc-nolib -L./.libs/ -lparoc_common 
 #combox_server_LDADD=paroc_infmain.std.o
-combox_server_LDADD = 
-combox_server_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
-combox_test_SOURCES = combox_test.cc 
-combox_test_LDFLAGS = -paroc-nolib -L./.libs/ -lparoc_common 
-combox_test_LDADD = 
+#combox_server_LDADD=
+#combox_server_CXXFLAGS=$(AM_CXXFLAGS) -DPIC -fPIC
+
+#combox_test_SOURCES=combox_test.cc 
+#combox_test_LDFLAGS=-paroc-nolib -L./.libs/ -lparoc_common 
+#combox_test_LDADD=
 #combox_test_LDADD=paroc_infmain.std.o
-combox_test_CXXFLAGS = $(AM_CXXFLAGS) -DPIC -fPIC
-EXTRA_DIST = paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph codemgr.ph \
-   objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph 
+#combox_test_CXXFLAGS=$(AM_CXXFLAGS) -DPIC -fPIC
 
-inst_HEADERS = paroc_service_base.ph appservice.ph codemgr.ph remotelog.ph \
-   objectmonitor.ph batchmgr.ph
+#Compile the cipher module for virtual configuration file
+#popcipher: popcipher.cc rijndael.cc
+#	g++ -I../include -o popcipher popcipher.cc rijndael.cc
 
+#EXTRA_DIST=paroc_infmain.std.cc paroc_objmain.std.cc appservice.ph codemgr.ph \
+#   objectmonitor.ph paroc_service_base.ph remotelog.ph batchmgr.ph 
+
+#inst_HEADERS=paroc_service_base.ph appservice.ph codemgr.ph remotelog.ph \
+#   objectmonitor.ph batchmgr.ph
 instdir = ${prefix}/include
 CLEANFILES = _paroc_*.cc _paroc_*.ph
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .cc .cpp .lo .o .obj
+.SUFFIXES: .cc .cpp .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -443,78 +390,12 @@ clean-libLTLIBRARIES:
 	done
 libparoc_common.la: $(libparoc_common_la_OBJECTS) $(libparoc_common_la_DEPENDENCIES) 
 	$(libparoc_common_la_LINK) -rpath $(libdir) $(libparoc_common_la_OBJECTS) $(libparoc_common_la_LIBADD) $(LIBS)
-libparoc_service_common.la: $(libparoc_service_common_la_OBJECTS) $(libparoc_service_common_la_DEPENDENCIES) 
-	$(libparoc_service_common_la_LINK) -rpath $(libdir) $(libparoc_service_common_la_OBJECTS) $(libparoc_service_common_la_LIBADD) $(LIBS)
-install-binPROGRAMS: $(bin_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	for p in $$list; do echo "$$p $$p"; done | \
-	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p || test -f $$p1; \
-	  then echo "$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
-	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
-	sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
-	    else { print "f", $$3 "/" $$4, $$1; } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	    } \
-	; done
-
-uninstall-binPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' `; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-
-clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-combox_client$(EXEEXT): $(combox_client_OBJECTS) $(combox_client_DEPENDENCIES) 
-	@rm -f combox_client$(EXEEXT)
-	$(combox_client_LINK) $(combox_client_OBJECTS) $(combox_client_LDADD) $(LIBS)
-combox_server$(EXEEXT): $(combox_server_OBJECTS) $(combox_server_DEPENDENCIES) 
-	@rm -f combox_server$(EXEEXT)
-	$(combox_server_LINK) $(combox_server_OBJECTS) $(combox_server_LDADD) $(LIBS)
-combox_test$(EXEEXT): $(combox_test_OBJECTS) $(combox_test_DEPENDENCIES) 
-	@rm -f combox_test$(EXEEXT)
-	$(combox_test_LINK) $(combox_test_OBJECTS) $(combox_test_LDADD) $(LIBS)
-testplugin$(EXEEXT): $(testplugin_OBJECTS) $(testplugin_DEPENDENCIES) 
-	@rm -f testplugin$(EXEEXT)
-	$(testplugin_LINK) $(testplugin_OBJECTS) $(testplugin_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
-
-.c.o:
-	$(COMPILE) -c $<
-
-.c.obj:
-	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-.c.lo:
-	$(LTCOMPILE) -c -o $@ $<
 
 .cc.o:
 	$(CXXCOMPILE) -c -o $@ $<
@@ -639,30 +520,6 @@ libparoc_common_la-popwayback.lo: popwayback.cc
 libparoc_common_la-popc_logger.lo: popc_logger.cpp
 	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libparoc_common_la_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o libparoc_common_la-popc_logger.lo `test -f 'popc_logger.cpp' || echo '$(srcdir)/'`popc_logger.cpp
 
-combox_client-combox_client.o: combox_client.cc
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(combox_client_CXXFLAGS) $(CXXFLAGS) -c -o combox_client-combox_client.o `test -f 'combox_client.cc' || echo '$(srcdir)/'`combox_client.cc
-
-combox_client-combox_client.obj: combox_client.cc
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(combox_client_CXXFLAGS) $(CXXFLAGS) -c -o combox_client-combox_client.obj `if test -f 'combox_client.cc'; then $(CYGPATH_W) 'combox_client.cc'; else $(CYGPATH_W) '$(srcdir)/combox_client.cc'; fi`
-
-combox_server-combox_server.o: combox_server.cc
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(combox_server_CXXFLAGS) $(CXXFLAGS) -c -o combox_server-combox_server.o `test -f 'combox_server.cc' || echo '$(srcdir)/'`combox_server.cc
-
-combox_server-combox_server.obj: combox_server.cc
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(combox_server_CXXFLAGS) $(CXXFLAGS) -c -o combox_server-combox_server.obj `if test -f 'combox_server.cc'; then $(CYGPATH_W) 'combox_server.cc'; else $(CYGPATH_W) '$(srcdir)/combox_server.cc'; fi`
-
-combox_test-combox_test.o: combox_test.cc
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(combox_test_CXXFLAGS) $(CXXFLAGS) -c -o combox_test-combox_test.o `test -f 'combox_test.cc' || echo '$(srcdir)/'`combox_test.cc
-
-combox_test-combox_test.obj: combox_test.cc
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(combox_test_CXXFLAGS) $(CXXFLAGS) -c -o combox_test-combox_test.obj `if test -f 'combox_test.cc'; then $(CYGPATH_W) 'combox_test.cc'; else $(CYGPATH_W) '$(srcdir)/combox_test.cc'; fi`
-
-testplugin-testplugin.o: testplugin.cc
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testplugin_CXXFLAGS) $(CXXFLAGS) -c -o testplugin-testplugin.o `test -f 'testplugin.cc' || echo '$(srcdir)/'`testplugin.cc
-
-testplugin-testplugin.obj: testplugin.cc
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(testplugin_CXXFLAGS) $(CXXFLAGS) -c -o testplugin-testplugin.obj `if test -f 'testplugin.cc'; then $(CYGPATH_W) 'testplugin.cc'; else $(CYGPATH_W) '$(srcdir)/testplugin.cc'; fi`
-
 .cpp.o:
 	$(CXXCOMPILE) -c -o $@ $<
 
@@ -697,26 +554,6 @@ uninstall-mainDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(maindir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(maindir)" && rm -f $$files
-install-instHEADERS: $(inst_HEADERS)
-	@$(NORMAL_INSTALL)
-	test -z "$(instdir)" || $(MKDIR_P) "$(DESTDIR)$(instdir)"
-	@list='$(inst_HEADERS)'; test -n "$(instdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(instdir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(instdir)" || exit $$?; \
-	done
-
-uninstall-instHEADERS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(inst_HEADERS)'; test -n "$(instdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(instdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(instdir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -802,11 +639,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(DATA) $(HEADERS)
-install-binPROGRAMS: install-libLTLIBRARIES
-
+all-am: Makefile $(LTLIBRARIES) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(maindir)" "$(DESTDIR)$(instdir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(maindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -837,8 +672,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libLTLIBRARIES \
-	clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -857,13 +692,13 @@ info: info-am
 
 info-am:
 
-install-data-am: install-instHEADERS install-mainDATA
+install-data-am: install-mainDATA
 
 install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-libLTLIBRARIES
+install-exec-am: install-libLTLIBRARIES
 
 install-html: install-html-am
 
@@ -902,26 +737,23 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-instHEADERS \
-	uninstall-libLTLIBRARIES uninstall-mainDATA
+uninstall-am: uninstall-libLTLIBRARIES uninstall-mainDATA
 
 .MAKE: install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libLTLIBRARIES clean-libtool ctags \
-	distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-instHEADERS \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
+	clean-libLTLIBRARIES clean-libtool ctags distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am \
 	install-libLTLIBRARIES install-mainDATA install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip installcheck installcheck-am installdirs \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-instHEADERS \
 	uninstall-libLTLIBRARIES uninstall-mainDATA
 
 
@@ -941,10 +773,6 @@ paroc_objmain.%.o: paroc_objmain.%.cc
 
 %.ph.stub.lo : %.ph
 	$(LIBTOOL) --mode=compile --tag=CXX $(CXX) -cxxmain $(POPC_FLAGS) $(CXXFLAGS) -c $< -o $@
-
-#Compile the cipher module for virtual configuration file
-popcipher: popcipher.cc rijndael.cc
-	g++ -I../include -o popcipher popcipher.cc rijndael.cc
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
