@@ -36,38 +36,44 @@ paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name
 
 paroc_broker *paroc_broker_factory::Create(const char *objname)
 {
-	DEBUG("Create broker for %s\n", objname);
-	if (brokerlist==NULL || objname==NULL) return NULL;
+	if (brokerlist == NULL || objname == NULL) { 
+	  return NULL;
+	}
 
-	POSITION pos=brokerlist->GetHeadPosition();
-	while (pos!=NULL)
-	{
-		paroc_broker_init &t=brokerlist->GetNext(pos);
-		if (paroc_utils::isEqual(objname, t.objname)) return t.func();
+	POSITION pos = brokerlist->GetHeadPosition();
+	while (pos != NULL) {
+		paroc_broker_init &t = brokerlist->GetNext(pos);
+		if (paroc_utils::isEqual(objname, t.objname)) {
+		  return t.func();
+		}
 	}
 	return NULL;
 }
 
 void paroc_broker_factory::List(paroc_list_string &objlist)
 {
-	if (brokerlist==NULL) return;
-	POSITION pos=brokerlist->GetHeadPosition();
-	while (pos!=NULL)
-	{
-		paroc_broker_init &t=brokerlist->GetNext(pos);
-		POPString &str=objlist.AddTailNew();
-		str=t.objname;
+	if (brokerlist == NULL) {
+	  return;
+	}
+	POSITION pos = brokerlist->GetHeadPosition();
+	while (pos != NULL) {
+		paroc_broker_init &t = brokerlist->GetNext(pos);
+		POPString &str = objlist.AddTailNew();
+		str = t.objname;
 	}
 }
 
 bool paroc_broker_factory::Test(const char *objname)
 {
-	if (brokerlist==NULL) return false;
-	POSITION pos=brokerlist->GetHeadPosition();
-	while (pos!=NULL)
-	{
-		paroc_broker_init &test=brokerlist->GetNext(pos);
-		if (paroc_utils::isEqual(objname, test.objname)) return true;
+	if (brokerlist == NULL) {
+	  return false;
+	}
+	POSITION pos = brokerlist->GetHeadPosition();
+	while (pos != NULL) {
+		paroc_broker_init &test = brokerlist->GetNext(pos);
+		if (paroc_utils::isEqual(objname, test.objname)) {
+		  return true;
+		}
 	}
 	return false;
 }

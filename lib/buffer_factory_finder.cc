@@ -33,87 +33,87 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 	//Initialize the static array
 	int metrics[MAX_FACTORY];
 
-	bfArray[0]=new paroc_buffer_raw_factory();
-	bfArray[1]=new paroc_buffer_xdr_factory();
-	metrics[0]=metrics[1]=0;
-	plugins[0]=plugins[1]=NULL;
-	size=2;
+	bfArray[0] = new paroc_buffer_raw_factory();
+	bfArray[1] = new paroc_buffer_xdr_factory();
+	metrics[0] = metrics[1]=0;
+	plugins[0] = plugins[1] = NULL;
+	size = 2;
 
-	char *module=getenv("POPC_LOADABLE_MODULES");
-	if (module!=NULL)
-	{
-		char *libs=strdup(module);
-		char *mod=strtok(module,":");
-		while (mod!=NULL && size<MAX_FACTORY)
-		{
-			metrics[size]=1;
-			plugins[size]=LoadPlugin(mod,bfArray[size]);
-			if (plugins[size]!=NULL)
-			{
-				bool loaded=false;
-				for (int j=0;j<size;j++) if (plugins[size]==plugins[j])
-					{
-						DEBUG("%s already loaded", mod);
-						loaded=true;
+	char *module = getenv("POPC_LOADABLE_MODULES");
+	if (module != NULL) {
+		char *libs = strdup(module);
+		char *mod = strtok(module,":");
+		while (mod != NULL && size < MAX_FACTORY) {
+			metrics[size] = 1;
+			plugins[size] = LoadPlugin(mod, bfArray[size]);
+			if (plugins[size] != NULL) {
+				bool loaded = false;
+				for (int j = 0; j < size; j++) {
+				  if (plugins[size] == plugins[j]) {
+						loaded = true;
 						dlclose(plugins[size]);
 						break;
 					}
-
-				if (!loaded) size++;
+        }
+				if (!loaded) {
+				  size++;
+				}
 			}
-			mod=strtok(NULL,":");
+			mod = strtok(NULL, ":");
 		}
 		free(libs);
 	}
 
 	POPString plugindir;
-	plugindir=getenv("POPC_PLUGIN_LOCATION");
+	plugindir = getenv("POPC_PLUGIN_LOCATION");
 #ifdef _PLUGINDIR
-	if (plugindir==NULL) plugindir=_PLUGINDIR;
+	if (plugindir == NULL) {
+	  plugindir = _PLUGINDIR;
+	}
 #endif
 
 
-	if (plugindir!=NULL)
-	{
+	if (plugindir != NULL) {
 		POPString pluginmap(plugindir);
-		pluginmap+="/paroc_buffer.map";
-		FILE *map=fopen(pluginmap,"r");
-		if (map!=NULL)
-		{
+		pluginmap += "/paroc_buffer.map";
+		FILE *map = fopen(pluginmap, "r");
+		if (map != NULL) {
 			char line[1024];
 			char fname[1024];
 			int metric;
-			while (fgets(line,1023,map)!=NULL && size<MAX_FACTORY)
-			{
-				int t=sscanf(line, "%s %d",fname,&metric);
-				if (t<1) continue;
-				if (*fname=='#') continue;
-				if (t==1) metric=1;
-				metrics[size]=metric;
-				plugins[size]=LoadPlugin(fname, bfArray[size]);
-				if (plugins[size]!=NULL)
-				{
-					bool loaded=false;
-					for (int j=0;j<size;j++) if (plugins[size]==plugins[j])
-						{
-							loaded=true;
+			while (fgets(line,1023,map) != NULL && size < MAX_FACTORY) {
+				int t = sscanf(line, "%s %d", fname, &metric);
+				if (t<1) {
+				  continue;
+				}
+				if (*fname == '#') {
+				  continue;
+				}
+				if (t == 1) {
+				  metric = 1;
+				}
+				metrics[size] = metric;
+				plugins[size] = LoadPlugin(fname, bfArray[size]);
+				if (plugins[size] != NULL) {
+					bool loaded = false;
+					for (int j = 0; j < size; j++) {
+					  if (plugins[size] == plugins[j]) {
+							loaded = true;
 							dlclose(plugins[size]);
 							break;
 						}
-
-					if (!loaded) size++;
+					}
+					if (!loaded) {
+					  size++;
+					}
 				}
 			}
 			fclose(map);
-		}
-		else
-		{
-			DEBUG("WARNING: unable to open plugin mapfile: %s",(const char *)pluginmap);
-			DIR *dir=opendir(plugindir);
-			if (dir!=NULL)
-			{
+		} else {
+			DIR *dir = opendir(plugindir);
+			if (dir != NULL) {
 				dirent *t;
-				while ((t=readdir(dir))!=NULL && size<MAX_FACTORY)
+				while ((t = readdir(dir))!=NULL && size<MAX_FACTORY)
 				{
 					if (!paroc_utils::MatchWildcard(t->d_name,"*.so")) continue;
 					char fname[1024];
@@ -171,20 +171,15 @@ void * paroc_buffer_factory_finder::LoadPlugin(char *fname, paroc_buffer_factory
 	//  DEBUG("Module loaded: %s",fname);
 
 	paroc_buffer_factory * (*creator)();
-	creator=(paroc_buffer_factory * (*)())dlsym(handle,"ParocBufferFactory");
-	if (creator!=NULL)
-	{
-		f=creator();
-		if (f==NULL)
-		{
-			DEBUG("Fail to create the buffer factory from %s", fname);
+	creator = (paroc_buffer_factory * (*)())dlsym(handle,"ParocBufferFactory");
+	if (creator != NULL) {
+		f = creator();
+		if (f == NULL) {
 			dlclose(handle);
 			return NULL;
 		}
-	}
-	else
-	{
-		DEBUG("ERROR:%s: %s",fname,dlerror());
+	} else {
+		printf("POP-C++ Error: [CORE]:%s: %s",fname,dlerror());
 		dlclose(handle);
 		return NULL;
 	}
