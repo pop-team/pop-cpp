@@ -2,7 +2,7 @@
 #include "integer.ph"
 #include <unistd.h>
 
-Integer::Integer()
+Integer::Integer(int node)
 {
 	printf("Creation of object Integer with accesspoint %s\n", GetAccessPoint().GetAccessString());
 }

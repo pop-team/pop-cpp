@@ -6,7 +6,7 @@ parclass Integer
 	classuid(1000);
 
 public:	
-	Integer() @{ od.node(1); od.executable("./integer.obj"); };
+	Integer(int node) @{ od.node(node); od.executable("./integer.obj"); };
 	~Integer();
 
 	seq async void Set(int val);
