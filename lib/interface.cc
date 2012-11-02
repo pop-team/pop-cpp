@@ -31,11 +31,11 @@
 #include "paroc_interface.h"
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_broker.h"
-#include "codemgr.ph"
-#include "batchmgr.ph"
+//#include "codemgr.ph"
+//#include "batchmgr.ph"
 #include "paroc_combox_factory.h"
 
-#include "appservice.ph"
+//#include "appservice.ph"
 #include "config.h"
 
 #if defined POPC_SECURE || defined POPC_SECURE_VIRTUAL
@@ -67,7 +67,7 @@ int RunCmd(char **argv, char *env[], int *status)
 	if (pid==-1)
 	{
 		int err=errno;
-		DEBUG("Fork fails to execute ...");
+		printf("POP-C++ Error: [CORE] Fork fails to execute. Can't run command. errno=%d\n ", errno);
 		return err;
 	}
 	else if (pid==0)
@@ -88,7 +88,7 @@ int RunCmd(char **argv, char *env[], int *status)
 		}
 		//Child process
 		execvp(file,argv);
-		DEBUG("Execution of [%s] fails\n",file);
+		printf("POP-C++ Error: [CORE] Execution of [%s] fails\n",file);
 		_exit(-1);
 	}
 #else
@@ -96,20 +96,18 @@ int RunCmd(char **argv, char *env[], int *status)
 	if (pid==-1)
 	{
 		int err=errno;
-		DEBUG("Fork fails to execute ...");
+		printf("POP-C++ Error: [CORE] Fork fails to execute! errno=%d\n", errno);
 		return err;
 	}
 	else if (pid==0)
 	{
 		execve(file,argv,env);
-		DEBUG("Execution of [%s] fail (vfork)\n",file);
+		printf("POP-C++ Error: [CORE] Execution of [%s] fail (vfork)\n",file);
 		_exit(-1);
 	}
 #endif
-	if (status!=NULL)
-	{
-		int id;
-      id=waitpid(pid, status, 0);
+	if (status!=NULL) {
+    waitpid(pid, status, 0);
 	}
 	return 0;
 }
@@ -128,7 +126,7 @@ paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
 
 //paroc_interface base class
 
-paroc_interface::paroc_interface() : destructor_times(0), __paroc_combox(NULL), __paroc_buf(NULL)
+paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL)
 {
 
 
@@ -141,7 +139,7 @@ paroc_interface::paroc_interface() : destructor_times(0), __paroc_combox(NULL), 
 
 }
 
-paroc_interface::paroc_interface(const paroc_accesspoint &p) : destructor_times(0)
+paroc_interface::paroc_interface(const paroc_accesspoint &p)
 {
 
 
@@ -155,7 +153,6 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) : destructor_times(
   if(!p.IsEmpty()) {
    	Bind(p);
 	  if(p.GetNoAddRef()) {
-	    printf("ADDREF\n");
       AddRef();
     }
   }
@@ -165,7 +162,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) : destructor_times(
 
 
 
-paroc_interface::paroc_interface(const paroc_interface &inf) : destructor_times(0)
+paroc_interface::paroc_interface(const paroc_interface &inf)
 {
 
    paroc_accesspoint infAP = inf.GetAccessPoint();
@@ -186,7 +183,7 @@ paroc_interface::paroc_interface(const paroc_interface &inf) : destructor_times(
    
 }
 
-paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) : destructor_times(0)
+paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer)
 {
 
    _ssh_tunneling=false;
@@ -209,16 +206,26 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) : d
 paroc_interface::~paroc_interface()
 {
 	Release();
-
 }
 
 paroc_interface & paroc_interface::operator = (const paroc_interface & obj)
 {
 
-	Release();
-	const paroc_accesspoint &res=obj.GetAccessPoint();
-	Bind(res);
-	AddRef();
+    
+  accesspoint = obj.GetAccessPoint();  
+//  __paroc_combox = NULL;
+//  __paroc_buf = NULL;
+  //printf("Bind\n");
+  //Bind(accesspoint);
+  //DecRef();
+  //Bind(accesspoint);
+//  const paroc_accesspoint &res = obj.GetAccessPoint();
+
+ 	Release();  
+  if(GetAccessPoint().GetAccessString()) {
+  	Bind(accesspoint);
+  	AddRef();
+  }
 	return (*this);
 }
 
@@ -346,7 +353,7 @@ void paroc_interface::Allocate()
   
   
   if(node == -1) {
-    node == paroc_system::popc_local_mpi_communicator_rank;
+    node = paroc_system::popc_local_mpi_communicator_rank;
   }
     
   allocating_buffer->Push("node", "int", 1);
@@ -398,34 +405,27 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 
 	Tokenize(od_prots,pref);
 
-	if (pref.IsEmpty())
-	{
+	if (pref.IsEmpty()) {
 		//No preferred protocol in OD specified, try the first protocol in dest
-		POSITION pos=accesslist.GetHeadPosition();
-		while (pos!=NULL)
-		{
-			char *addr=accesslist.GetNext(pos);
+		POSITION pos = accesslist.GetHeadPosition();
+		while (pos != NULL) {
+			char *addr = accesslist.GetNext(pos);
 			try {
 				Bind(addr);
 				return;
-			}
-			catch (paroc_exception *e)
-			{
+			} catch (paroc_exception *e) {
 				//	      DEBUG("Can not bind to %s. Try next protocol...",addr);
 				delete e;
 				continue;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		//The user specify the protocol in OD, select the preference and match with the access point...
 		POSITION protpos=pref.GetHeadPosition();
 		while (protpos!=NULL)
 		{
-			char *myprot=pref.GetNext(protpos);
-			//Find access string that match myprot
-			DEBUG("[Interface] protocol wanted for object %s : %s\n",ClassName(),  myprot);
+			char *myprot = pref.GetNext(protpos);
+			// Find access string that match myprot
 			POSITION pos=accesslist.GetHeadPosition();
 			while (pos!=NULL)
 			{
@@ -437,10 +437,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 					try {
 						Bind(addr);
 						return;
-					}
-					catch (paroc_exception *e)
-					{
-						DEBUG("Can not bind to %s. Try next protocol...",addr);
+					} catch (paroc_exception *e) {
 						delete e;
 						continue;
 					}
@@ -455,7 +452,6 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 
 void paroc_interface::Bind(const char *dest)
 {
-
 	Release();
 	if (dest==NULL || *dest==0) return;
 
@@ -513,7 +509,7 @@ void paroc_interface::Bind(const char *dest)
   
   bool create_return, connect_return;  
   if(need_redirection) {
-
+    //printf("Redirection\n");
     // Spoof address with the local MPI Communicator
     char* local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
@@ -533,7 +529,7 @@ void paroc_interface::Bind(const char *dest)
     __paroc_buf->Push("destid", "int", 1);
     __paroc_buf->Pack(&dest_id, 1);
     __paroc_buf->Pop();
-    
+        
 	  paroc_connection* connection = __paroc_combox->get_connection();
 	  popc_send_request(__paroc_buf, connection);    
   } else {
@@ -541,12 +537,14 @@ void paroc_interface::Bind(const char *dest)
     connect_return = __paroc_combox->Connect(connect_dest.c_str());        
   }
   
+
 	if (create_return && connect_return) {
+   // printf("Before bindstatus\n");	
 		int status;
 		POPString info;
 		POPString peerplatform;
 		BindStatus(status, peerplatform, info);
-
+    //printf("Bindstatus got\n");
 		switch (status) {
   		case BIND_OK:
 	  		//NegotiateEncoding(info,peerplatform);
@@ -579,6 +577,7 @@ void paroc_interface::Bind(const char *dest)
 
 bool paroc_interface::TryLocal(paroc_accesspoint &objaccess)
 {
+  /*
 	POPString hostname;
 	POPString rarch;
 	POPString codefile;
@@ -619,6 +618,7 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess)
 		}
 		return (status==0);
 	}
+	*/
 	return false;
 }
 
@@ -698,7 +698,7 @@ int paroc_interface::AddRef()
 	paroc_connection* connection = __paroc_combox->get_connection();
 	popc_send_request(__paroc_buf, connection);
 	popc_get_response(__paroc_buf, connection);
-	
+
 	int ret;
 	__paroc_buf->Push("refcount","int",1);
 	__paroc_buf->UnPack(&ret,1);
@@ -718,7 +718,7 @@ int paroc_interface::DecRef()
 	popc_send_request(__paroc_buf, connection);
 	popc_get_response(__paroc_buf, connection);
 	
-	
+
 	int ret;
 	__paroc_buf->Push("refcount","int",1);
 	__paroc_buf->UnPack(&ret,1);
@@ -729,34 +729,33 @@ int paroc_interface::DecRef()
 
 bool paroc_interface::Encoding(POPString encoding)
 {
-	if (__paroc_combox==NULL || __paroc_buf==NULL) return false;
-	paroc_buffer_factory *fact=paroc_buffer_factory_finder::GetInstance()->FindFactory(encoding);
-	if (fact==NULL)
-	{
-		DEBUG("No encoding factory for %s", (const char *)encoding);
+	if (__paroc_combox == NULL || __paroc_buf == NULL) 
+	  return false;
+	paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(encoding);
+	if (fact == NULL) {
+		printf("POP-C++ Error: [CORE] No encoding factory for %s\n", (const char *)encoding);
 		return false;
 	}
 
-	paroc_message_header h(0,3, INVOKE_SYNC ,"Encoding");
+	paroc_message_header h(0, 3, INVOKE_SYNC, "Encoding");
 	paroc_mutex_locker lock(_paroc_imutex);
 	__paroc_buf->Reset();
 	__paroc_buf->SetHeader(h);
 
-	__paroc_buf->Push("encoding","POPString",1);
-	__paroc_buf->Pack(&encoding,1);
+	__paroc_buf->Push("encoding", "POPString", 1);
+	__paroc_buf->Pack(&encoding, 1);
 	__paroc_buf->Pop();
 
 	paroc_Dispatch(__paroc_buf);
 	paroc_Response(__paroc_buf);
 	bool ret;
-	__paroc_buf->Push("result","bool",1);
-	__paroc_buf->UnPack(&ret,1);
+	__paroc_buf->Push("result", "bool", 1);
+	__paroc_buf->UnPack(&ret, 1);
 	__paroc_buf->Pop();
 
-	if (ret)
-	{
+	if (ret) {
 		__paroc_buf->Destroy();
-		__paroc_buf=fact->CreateBuffer();
+		__paroc_buf = fact->CreateBuffer();
 		__paroc_combox->SetBufferFactory(fact);
 	}
 	return ret;
@@ -866,6 +865,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od)
 {  
+  /*
 	if (codefile==NULL) return ENOENT;
 	signal(SIGCHLD, SIG_IGN);
 
@@ -897,7 +897,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	int n=0;
 	//POPString myhost = paroc_system::GetHost();
 	//bool islocal=(isManual||hostname==NULL || *hostname==0 || paroc_utils::SameContact(myhost,hostname) || paroc_utils::isEqual(hostname,"localhost") || paroc_utils::isEqual(hostname,"127.0.0.1"));
-	/*if (batch == NULL) {
+	if (batch == NULL) {
 		if (!islocal) {
 			char *tmp=getenv("POPC_RSH");
 			argv[n++]=strdup((tmp==NULL)? "/usr/bin/ssh" : tmp);
@@ -925,7 +925,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 			DEBUG("%s",tmpstr);
 			argv[n++]=strdup(tmpstr);
 		}
-	}*/
+	}
 	//  if (strncmp(codefile, "http://",7)==0 || strncmp(codefile,"ftp://",6)==0)
 	//    {
 	tmp=getenv("POPC_LOCATION");
@@ -1040,7 +1040,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	}
 
 	//Now get the return paroc_accesspoint....
-/*	tmpsock.SetTimeout(ALLOC_TIMEOUT*1000);
+	tmpsock.SetTimeout(ALLOC_TIMEOUT*1000);
 
 	for (int i=0;i<howmany;i++, objaccess++)
 	{
@@ -1067,7 +1067,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	
 	}
 */		
-  // TODO remove when MPI creator
+
 	return 0;
 }
 
@@ -1252,11 +1252,9 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
    if(fp==NULL) return -1;
    if(fgets(buf, BUF_SIZE, fp) == NULL) return -2;
    int pid = atoi(buf);
-   DEBUG("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
    if(pid!=0)
       kill(pid, SIGKILL);
    return pid;
-   return 0;
 }
 
 /**
