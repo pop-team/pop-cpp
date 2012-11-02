@@ -1,0 +1,44 @@
+klogin9$ aclocal --force && libtoolize -f && autoreconf --force  --install && automake --force
+klogin9$ ./configure --prefix=/home/ra000002/a03078/popc CXX=FCCpx --host i686-pc-linux-gnu
+
+which: no git in (/usr/kerberos/bin:/opt/FJSVtclang/GM-1.2.0-09/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/bin/SU/bin:/home/ra000002/a03078/bin)
+
+
+klogin9$ FCCpx -c thread.cc -DPIC -o .libs/libparoc_common_la-thread.o -I../include
+"thread.cc", line 79: warning: missing return statement at end of non-void function "paroc_thread::_threadentry"
+  	pthread_cleanup_pop(1);
+  	^
+
+"thread.cc", line 79: error: expected a declaration
+  	pthread_cleanup_pop(1);
+  	^
+
+"thread.cc", line 79: warning: this declaration has no storage class or type specifier
+  	pthread_cleanup_pop(1);
+  	^
+
+"thread.cc", line 79: error: declaration is incompatible with "void __pthread_unregister_cancel(__pthread_unwind_buf_t *)" (declared at line 663 of "/opt/FJSVXosDevkit/sparc64fx/target/usr/include/pthread.h")
+  	pthread_cleanup_pop(1);
+  	^
+
+"thread.cc", line 79: error: identifier "__cancel_buf" is undefined
+  	pthread_cleanup_pop(1);
+  	^
+
+"thread.cc", line 79: error: expected a declaration
+  	pthread_cleanup_pop(1);
+  	^
+
+"thread.cc", line 79: error: expected a declaration
+  	pthread_cleanup_pop(1);
+  	^
+
+"thread.cc", line 80: error: expected a declaration
+  	return NULL;
+  	^
+
+"thread.cc", line 81: error: expected a declaration
+  }
+  ^
+
+At end of source: warning: parsing restarts here after previous syntax error
