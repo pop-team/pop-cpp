@@ -23,7 +23,7 @@ Modified by L.Winkler (2008-2009) for Version 1.3
 #include <sstream>
 //End of add
 
-class AppCoreService;
+//class AppCoreService;
 
 /**
  * @class paroc_system
@@ -101,8 +101,8 @@ private:
   static const char *paroc_errstr[17];
   static paroc_string POPC_HostName;  //V1.3m
 
-  static AppCoreService *CreateAppCoreService(char *codelocation);
-  static AppCoreService *mgr;
+//  static AppCoreService *CreateAppCoreService(char *codelocation);
+//  static AppCoreService *mgr;
   static paroc_string challenge;
 
 };
