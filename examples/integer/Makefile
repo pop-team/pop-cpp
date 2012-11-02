@@ -1,13 +1,20 @@
+POPCC=../../parser/popcc
+POPCPP=../../parser/popcpp
+POPCPATH=../../
+POPCLIB=-L../../lib/.libs/ -lparoc_common
+POPCINCLUDE=-I../../include/
+POPCCOMPILE=-popcdir=$(POPCPATH) -popcpp=$(POPCPP) $(POPCLIB) $(POPCINCLUDE)
 all: app object
 
 app:
-	popcc -noclean -o main integer.ph integer.cc main.cc
+	$(POPCC) $(POPCCOMPILE) -o main integer.ph integer.cc main.cc
 
 object:
-	popcc -noclean -object -o integer.obj integer.cc integer.ph main.cc
+	$(POPCC) $(POPCCOMPILE) -object -o integer.obj integer.cc integer.ph main.cc
 
 clean:
-	rm -f *.o *.obj main obj.map _paroc*
+	rm -f *.o *.obj main obj.map _paroc* popc_mpi_communicator
 
 run:
-	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=./main 1 
+	cp ../../communicator/popc_mpi_communicator ./
+	mpiexec -np 3 popc_mpi_communicator -app=./main  
