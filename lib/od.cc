@@ -124,39 +124,29 @@ void paroc_od::url(const char *str)
 		strcpy(h,tmpstr+1);
 	}
 	// Read if core specified
-	if (h!=NULL&&(tmpstr=strchr(h,'{'))!=NULL)
-	{
+	if (h != NULL && (tmpstr=strchr(h, '{')) != NULL) {
 		*tmpstr=0;
 		char * tmpstr2;
-		if ((tmpstr2=strchr(tmpstr+1,'}'))!=NULL)
-		{
-			*tmpstr2=0;
-			hostcore=tmpstr+1;
-		}
-		else
-		{
-			DEBUG("Error in object description. user@ip(core):port");
+		if ((tmpstr2 = strchr(tmpstr+1, '}')) != NULL) {
+			*tmpstr2 = 0;
+			hostcore = tmpstr+1;
+		} else {
+			printf("Error in object description. user@ip(core):port\n");
 		}
 
 	}
-	hostname=h;
-	if (!strcmp(hostname,"localhost"))runLocal(true);
+	hostname = h;
+	if (!strcmp(hostname, "localhost")) {
+	  runLocal(true);
+	}
 }
 
 void paroc_od::url(const char *h, const char *arch)
 {
-	hostarch=arch;
+	hostarch = arch;
 	url(h);
 }
 
-/*void paroc_od::url(std::string h)
-{
-	url((const char*)h.c_str());
-}*/
-/*void paroc_od::url(std::string h, std::string arch)
-{
-	url((const char*)h.c_str(),(const char*)arch.c_str());
-}*/
 void paroc_od::joburl(const char *jobservice)
 {
 	jobcontact=jobservice;
@@ -202,9 +192,9 @@ void paroc_od::sameDirectory(bool a)
 {
 	if (a) {
 		char tmp[256];
-		if (getcwd(tmp,sizeof(tmp))!=NULL) {
-			cwd=tmp;
-		} else DEBUG("getcwd returned an error!");
+		if (getcwd(tmp, sizeof(tmp)) != NULL) {
+			cwd = tmp;
+		}
 	}
 }
 
@@ -540,7 +530,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack)
 		buf.Pop();
 
 		//Pack additional attributes
-		int count=keys.GetCount();
+		int count = keys.GetCount();
 		buf.Push("attributes","paroc_list",count);
 
 		buf.Push("count","int",1);
@@ -662,10 +652,10 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack)
 		encoding(t);
 
 		//Unpack additional attributes
-		int count;
-		buf.Push("attributes","paroc_list",count);
+		int count = 0;
+		buf.Push("attributes", "paroc_list", count);
 
-		buf.Push("count","int",1);
+		buf.Push("count", "int", 1);
 		buf.UnPack(&count,1);
 		buf.Pop();
 		keys.RemoveAll();
