@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
   // Initialize the local variable of the communicator
   if(!MPI::Is_initialized()){
  	  // Init MPI for multithread support
-  	int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
+  	int required_support = MPI_THREAD_SERIALIZED; // Maximum supported by the K Computer
 	  int provided_support = MPI::Init_thread(required_support); 
   }	 
   
@@ -614,7 +614,7 @@ int main(int argc, char* argv[])
           	  	    
 	  	    }
 	  	  }
-        request.data->Destroy();		       	  
+        request.data->Destroy();
       }
     }
   }    
