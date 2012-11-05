@@ -34,7 +34,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-apple-darwin12.2.0
 host_triplet = x86_64-apple-darwin12.2.0
-bin_PROGRAMS = popc_mpi_communicator$(EXEEXT)
+bin_PROGRAMS = popc_mpi_communicator$(EXEEXT) \
+	openmpi_check_support$(EXEEXT)
 subdir = communicator
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -47,6 +48,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
+am_openmpi_check_support_OBJECTS = openmpi_check_support.$(OBJEXT)
+openmpi_check_support_OBJECTS = $(am_openmpi_check_support_OBJECTS)
+openmpi_check_support_LDADD = $(LDADD)
 am_popc_mpi_communicator_OBJECTS =  \
 	popc_mpi_communicator-popc_mpi_communicator.$(OBJEXT)
 popc_mpi_communicator_OBJECTS = $(am_popc_mpi_communicator_OBJECTS)
@@ -67,8 +71,10 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(popc_mpi_communicator_SOURCES)
-DIST_SOURCES = $(popc_mpi_communicator_SOURCES)
+SOURCES = $(openmpi_check_support_SOURCES) \
+	$(popc_mpi_communicator_SOURCES)
+DIST_SOURCES = $(openmpi_check_support_SOURCES) \
+	$(popc_mpi_communicator_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -200,6 +206,7 @@ popc_mpi_communicator_SOURCES = popc_mpi_communicator.cpp
 popc_mpi_communicator_CCFLAGS = -I../include
 popc_mpi_communicator_CXXFLAGS = -I../include
 popc_mpi_communicator_LDFLAGS = -L../lib/.libs -lparoc_common
+openmpi_check_support_SOURCES = openmpi_check_support.cpp
 all: all-am
 
 .SUFFIXES:
@@ -277,6 +284,9 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+openmpi_check_support$(EXEEXT): $(openmpi_check_support_OBJECTS) $(openmpi_check_support_DEPENDENCIES) 
+	@rm -f openmpi_check_support$(EXEEXT)
+	$(CXXLINK) $(openmpi_check_support_OBJECTS) $(openmpi_check_support_LDADD) $(LIBS)
 popc_mpi_communicator$(EXEEXT): $(popc_mpi_communicator_OBJECTS) $(popc_mpi_communicator_DEPENDENCIES) 
 	@rm -f popc_mpi_communicator$(EXEEXT)
 	$(popc_mpi_communicator_LINK) $(popc_mpi_communicator_OBJECTS) $(popc_mpi_communicator_LDADD) $(LIBS)
