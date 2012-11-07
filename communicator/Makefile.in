@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = popc_mpi_communicator$(EXEEXT) \
+bin_PROGRAMS = popc_mpi_interconnector$(EXEEXT) \
 	openmpi_check_support$(EXEEXT)
 subdir = communicator
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -51,14 +51,15 @@ PROGRAMS = $(bin_PROGRAMS)
 am_openmpi_check_support_OBJECTS = openmpi_check_support.$(OBJEXT)
 openmpi_check_support_OBJECTS = $(am_openmpi_check_support_OBJECTS)
 openmpi_check_support_LDADD = $(LDADD)
-am_popc_mpi_communicator_OBJECTS =  \
-	popc_mpi_communicator-popc_mpi_communicator.$(OBJEXT)
-popc_mpi_communicator_OBJECTS = $(am_popc_mpi_communicator_OBJECTS)
-popc_mpi_communicator_LDADD = $(LDADD)
-popc_mpi_communicator_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+am_popc_mpi_interconnector_OBJECTS =  \
+	popc_mpi_interconnector-popc_mpi_interconnector.$(OBJEXT)
+popc_mpi_interconnector_OBJECTS =  \
+	$(am_popc_mpi_interconnector_OBJECTS)
+popc_mpi_interconnector_LDADD = $(LDADD)
+popc_mpi_interconnector_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(popc_mpi_communicator_CXXFLAGS) $(CXXFLAGS) \
-	$(popc_mpi_communicator_LDFLAGS) $(LDFLAGS) -o $@
+	$(popc_mpi_interconnector_CXXFLAGS) $(CXXFLAGS) \
+	$(popc_mpi_interconnector_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
@@ -72,9 +73,9 @@ CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(openmpi_check_support_SOURCES) \
-	$(popc_mpi_communicator_SOURCES)
+	$(popc_mpi_interconnector_SOURCES)
 DIST_SOURCES = $(openmpi_check_support_SOURCES) \
-	$(popc_mpi_communicator_SOURCES)
+	$(popc_mpi_interconnector_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -202,10 +203,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = no-dependencies
-popc_mpi_communicator_SOURCES = popc_mpi_communicator.cpp
-popc_mpi_communicator_CCFLAGS = -I../include
-popc_mpi_communicator_CXXFLAGS = -I../include
-popc_mpi_communicator_LDFLAGS = -L@top_srcdir@/lib/.libs -lparoc_common
+popc_mpi_interconnector_SOURCES = popc_mpi_interconnector.cpp
+popc_mpi_interconnector_CCFLAGS = -I../include
+popc_mpi_interconnector_CXXFLAGS = -I../include
+popc_mpi_interconnector_LDFLAGS = -L@top_srcdir@/lib/.libs -lparoc_common
 openmpi_check_support_SOURCES = openmpi_check_support.cpp
 all: all-am
 
@@ -287,9 +288,9 @@ clean-binPROGRAMS:
 openmpi_check_support$(EXEEXT): $(openmpi_check_support_OBJECTS) $(openmpi_check_support_DEPENDENCIES) 
 	@rm -f openmpi_check_support$(EXEEXT)
 	$(CXXLINK) $(openmpi_check_support_OBJECTS) $(openmpi_check_support_LDADD) $(LIBS)
-popc_mpi_communicator$(EXEEXT): $(popc_mpi_communicator_OBJECTS) $(popc_mpi_communicator_DEPENDENCIES) 
-	@rm -f popc_mpi_communicator$(EXEEXT)
-	$(popc_mpi_communicator_LINK) $(popc_mpi_communicator_OBJECTS) $(popc_mpi_communicator_LDADD) $(LIBS)
+popc_mpi_interconnector$(EXEEXT): $(popc_mpi_interconnector_OBJECTS) $(popc_mpi_interconnector_DEPENDENCIES) 
+	@rm -f popc_mpi_interconnector$(EXEEXT)
+	$(popc_mpi_interconnector_LINK) $(popc_mpi_interconnector_OBJECTS) $(popc_mpi_interconnector_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -306,11 +307,11 @@ distclean-compile:
 .cpp.lo:
 	$(LTCXXCOMPILE) -c -o $@ $<
 
-popc_mpi_communicator-popc_mpi_communicator.o: popc_mpi_communicator.cpp
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(popc_mpi_communicator_CXXFLAGS) $(CXXFLAGS) -c -o popc_mpi_communicator-popc_mpi_communicator.o `test -f 'popc_mpi_communicator.cpp' || echo '$(srcdir)/'`popc_mpi_communicator.cpp
+popc_mpi_interconnector-popc_mpi_interconnector.o: popc_mpi_interconnector.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(popc_mpi_interconnector_CXXFLAGS) $(CXXFLAGS) -c -o popc_mpi_interconnector-popc_mpi_interconnector.o `test -f 'popc_mpi_interconnector.cpp' || echo '$(srcdir)/'`popc_mpi_interconnector.cpp
 
-popc_mpi_communicator-popc_mpi_communicator.obj: popc_mpi_communicator.cpp
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(popc_mpi_communicator_CXXFLAGS) $(CXXFLAGS) -c -o popc_mpi_communicator-popc_mpi_communicator.obj `if test -f 'popc_mpi_communicator.cpp'; then $(CYGPATH_W) 'popc_mpi_communicator.cpp'; else $(CYGPATH_W) '$(srcdir)/popc_mpi_communicator.cpp'; fi`
+popc_mpi_interconnector-popc_mpi_interconnector.obj: popc_mpi_interconnector.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(popc_mpi_interconnector_CXXFLAGS) $(CXXFLAGS) -c -o popc_mpi_interconnector-popc_mpi_interconnector.obj `if test -f 'popc_mpi_interconnector.cpp'; then $(CYGPATH_W) 'popc_mpi_interconnector.cpp'; else $(CYGPATH_W) '$(srcdir)/popc_mpi_interconnector.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
