@@ -15417,8 +15417,8 @@ ac_config_files="$ac_config_files globus/popc_setup_globus"
 
 ac_config_files="$ac_config_files scripts/popc_script_setup"
 
-#AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile communicator/Makefile)
-ac_config_files="$ac_config_files Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile communicator/Makefile"
+#AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile interconnector/Makefile)
+ac_config_files="$ac_config_files Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile interconnector/Makefile"
 
 #AC_CONFIG_FILES(model/Makefile)
 #AC_CONFIG_FILES(modules/Makefile modules/raw-zlib/Makefile  modules/xdr-zlib/Makefile)
@@ -16564,7 +16564,7 @@ do
     "parser/Makefile") CONFIG_FILES="$CONFIG_FILES parser/Makefile" ;;
     "include/Makefile") CONFIG_FILES="$CONFIG_FILES include/Makefile" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
-    "communicator/Makefile") CONFIG_FILES="$CONFIG_FILES communicator/Makefile" ;;
+    "interconnector/Makefile") CONFIG_FILES="$CONFIG_FILES interconnector/Makefile" ;;
     "globus/globus_header") CONFIG_FILES="$CONFIG_FILES globus/globus_header" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

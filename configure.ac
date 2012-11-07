@@ -197,8 +197,8 @@ AC_CONFIG_FILES([scripts/popc-runtime-env.in], [chmod +x scripts/popc-runtime-en
 AC_CONFIG_FILES([scripts/popc_setup], [chmod +x scripts/popc_setup])
 AC_CONFIG_FILES([globus/popc_setup_globus], [chmod +x globus/popc_setup_globus])
 AC_CONFIG_FILES([scripts/popc_script_setup], [chmod +x scripts/popc_script_setup])
-#AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile communicator/Makefile)
-AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile communicator/Makefile)
+#AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile services/Makefile globus/Makefile mpi/Makefile interconnector/Makefile)
+AC_CONFIG_FILES(Makefile scripts/Makefile parser/Makefile include/Makefile lib/Makefile interconnector/Makefile)
 #AC_CONFIG_FILES(model/Makefile)
 #AC_CONFIG_FILES(modules/Makefile modules/raw-zlib/Makefile  modules/xdr-zlib/Makefile)
 

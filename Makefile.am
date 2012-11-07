@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS=no-dependencies
 
 CXX=FCCpx
-SUBDIRS= scripts parser include lib communicator
+SUBDIRS= scripts parser include lib interconnector
 
 #if MPISUPPORT
 #SUBDIRS+= mpi
