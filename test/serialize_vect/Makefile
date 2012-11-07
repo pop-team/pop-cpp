@@ -17,4 +17,4 @@ obj.map: myobj.obj
 	./myobj.obj -listlong > obj.map
 
 run: main myobj.obj obj.map
-	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=./main 10000 100
+	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main 10000 100

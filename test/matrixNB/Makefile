@@ -16,4 +16,4 @@ clean:
 	rm -f *.obj MatMul *.o obj.map
 
 run:
-	mpiexec -np $(NODE_NUMBER) ../../communicator/popc_mpi_communicator -app=MatMul 600 $(NODE_NUMBER) 5
+	mpiexec -np $(NODE_NUMBER) ../../interconnector/popc_mpi_interconnector -app=MatMul 600 $(NODE_NUMBER) 5

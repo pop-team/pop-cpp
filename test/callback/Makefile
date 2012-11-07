@@ -18,4 +18,4 @@ clean:
 	rm -f obj.map
 	rm -f _paroc*	
 run:
-	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=./main
+	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main

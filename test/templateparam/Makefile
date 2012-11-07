@@ -10,4 +10,4 @@ clean:
 	rm -f *.o main *.obj obj.map
 
 run:
-	mpiexec -np 2 ../../communicator/popc_mpi_communicator -app=./main
+	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main
