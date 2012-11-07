@@ -229,7 +229,7 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = .
 AUTOMAKE_OPTIONS = no-dependencies
-SUBDIRS = scripts parser include lib communicator
+SUBDIRS = scripts parser include lib interconnector
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
