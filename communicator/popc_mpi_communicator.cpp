@@ -1,5 +1,5 @@
 /**
- * POP-C++ MPI Communicator: Acts as a communication layer for POP-C++ running over computer with only MPI suppport for 
+ * POP-C++ MPI Interconnector: Acts as a communication layer for POP-C++ running over computer with only MPI suppport for 
  * inter-node communication. 
  * This process is able to: 
  * - Launch the main of the POP-C++ application when it has the rank 0.
@@ -10,7 +10,7 @@
  *
  * @author Valentin Clement
  * @date 2012/10/25
- * @file popc_mpi_communicator.cpp
+ * @file popc_mpi_interconnector.cpp
  */
 
 // System include
