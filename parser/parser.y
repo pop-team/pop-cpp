@@ -2273,7 +2273,7 @@ expr_list:  expr_decl
 
 void Usage()
 {
-  fprintf(stderr,"POP-C++ preprocessor version %s\nparoccpp [-onlyclient | -onlyserver] [POP-C++ source] [C++ source]\n", VERSION);
+  fprintf(stderr,"POP-C++ preprocessor version %s\npopcpp [-onlyclient | -onlyserver] [POP-C++ source] [C++ source]\n", VERSION);
   exit(1);
 }
 
@@ -2403,20 +2403,21 @@ int base=1;
 
 int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation, bool isAsyncAllocationDisable)
 {
-	if (infile==NULL || *infile=='-'){
-		yyin=stdin;
+	if (infile == NULL || *infile == '-') {
+		
+	  yyin = stdin;
 	} else {
-      yyin=fopen(infile,"rt");
-      if (yyin==NULL) {
+    yyin = fopen(infile, "rt");
+    if (yyin == NULL) {
 	   	perror(infile);
 	   	return errno;
 		}
-      strcpy(filename,infile);
+    strcpy(filename,infile);
 	}
 	
-	linenumber=1;
-	thisCodeFile=new CodeFile(NULL);
-	if (outfile!=NULL) {
+	linenumber = 1;
+	thisCodeFile = new CodeFile(NULL);
+	if (outfile != NULL) {
 		
 		thisCodeFile->SetOutputName(outfile);	
 
@@ -2431,9 +2432,9 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 	if(isAsyncAllocationDisable)	
 		thisCodeFile->DisableAsyncAllocation();	
 		
-	insideClass=false;
+	insideClass = false;
 	othercodes.SetSize(0);
-	startPos=-1;
+	startPos = -1;
 	
 
 	int ret = yyparse();
