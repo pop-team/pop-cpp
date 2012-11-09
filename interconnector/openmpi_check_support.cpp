@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     
     printf("MPI rank=%d size=%d\n", MPI::COMM_WORLD.Get_rank(), MPI::COMM_WORLD.Get_size());
 
-    printf("MPI thread support available values:\n", required_support);
+    printf("MPI thread support available values:\n");
     printf("\tMPI_THREAD_SINGLE=%d\n", MPI_THREAD_SINGLE);
     printf("\tMPI_THREAD_FUNNELED=%d\n", MPI_THREAD_FUNNELED);
     printf("\tMPI_THREAD_SERIALIZED=%d\n", MPI_THREAD_SERIALIZED);
