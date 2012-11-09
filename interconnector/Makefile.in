@@ -91,8 +91,9 @@ CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 
-#CXX=mpic++
-CXX = mpiFCCpx
+#CXX=mpicxx
+#CXX=mpiFCCpx
+CXX = mpicxx
 CXXCPP = @CXXCPP@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@

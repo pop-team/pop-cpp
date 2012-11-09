@@ -1,7 +1,10 @@
 AUTOMAKE_OPTIONS=no-dependencies
 
-#CXX=mpic++
-CXX=mpiFCCpx
+#CXX=mpicxx
+#CXX=mpiFCCpx
+CXX=mpicxx
+#CXX=mpiicpc
+
 
 bin_PROGRAMS = popc_mpi_interconnector openmpi_check_support
 bindir = @prefix@/mpi
