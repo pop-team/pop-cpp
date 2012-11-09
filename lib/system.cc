@@ -394,7 +394,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
 
   char *codeconf=paroc_utils::checkremove(argc,argv,"-codeconf=");
 
-  DEBUGIF(codeconf==NULL,"No code config file\n");
+ // DEBUGIF(codeconf==NULL,"No code config file\n");
 
   /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
     return false;

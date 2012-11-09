@@ -28,7 +28,7 @@ paroc_mutex::paroc_mutex()
 #endif
 	if (pthread_mutex_init(&_mutex,&attr)!=0)
 	{
-		DEBUG("Multithread initialization fail\n");
+		//DEBUG("Multithread initialization fail\n");
 		pthread_mutexattr_destroy(&attr);
 		return;
 	}
