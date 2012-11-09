@@ -333,11 +333,11 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 
 	signal(SIGTERM,broker_killed);
 	signal(SIGINT,broker_killed);
-	signal(SIGQUIT,broker_killed);
-	signal(SIGILL,broker_killed);
-	signal(SIGABRT,broker_killed);
+	signal(SIGQUIT, broker_killed);
+	signal(SIGILL, broker_killed);
+	signal(SIGABRT, broker_killed);
 
-	signal(SIGPIPE,SIG_IGN);
+	signal(SIGPIPE, SIG_IGN);
 
 
 	return true;
