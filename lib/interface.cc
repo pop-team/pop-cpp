@@ -298,6 +298,9 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack)
 	}
 }
 
+/**
+ * 
+ */
 void paroc_interface::Allocate()
 {
 
@@ -1168,8 +1171,11 @@ void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* con
 
 
 /* ################################################################################################
- *                                 SSH TUNNELING FUNCTION
-/* ################################################################################################
+ * 
+ *                                SSH TUNNELING FUNCTION
+ *
+ * ################################################################################################ 
+ */
 
 
 
