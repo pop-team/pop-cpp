@@ -118,8 +118,9 @@ AC_PROG_LEX
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-LT_PREREQ([2.2.4])
-LT_INIT
+#LT_PREREQ([2.2.4])
+#LT_INIT
+AC_PROG_LIBTOOL
 
 # Checks for libraries.
 AC_CHECK_LIB(pthread, pthread_create)
@@ -144,8 +145,7 @@ AC_LINK_IFELSE(
   AC_LINK_IFELSE(
    [AC_LANG_PROGRAM([[const char hw[] = "Hello, World\n";]])],
    [AC_MSG_RESULT([yes]); AC_DEFINE([POPC_EXTRA_LINK],["-export-dynamic"],[Dynamic exec])], 
-   [AC_MSG_RESULT([no])])]
-)
+   [AC_MSG_RESULT([no])])])
 LDFLAGS=$LDFLAGSOLD
 #AC_SEARCH_LIBS(gethostbyname, -lnsl -lsocket)
 #AC_SEARCH_LIBS(socket, -lnsl -lsocket)

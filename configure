@@ -3873,7 +3873,8 @@ $as_echo "no" >&6; }
   SET_MAKE="MAKE=${MAKE-make}"
 fi
 
-
+#LT_PREREQ([2.2.4])
+#LT_INIT
 case `pwd` in
   *\ * | *\	*)
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Libtool does not cope well with whitespace in \`pwd\`" >&5
@@ -15346,7 +15347,6 @@ $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
-
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
