@@ -187,6 +187,8 @@ int main(int argc, char* argv[])
   
   // Catch signal when a child is exiting  
   signal(SIGCHLD, catch_child_exit);
+  // Ignore broken pipe signal
+	signal(SIGPIPE, SIG_IGN);  
       
   if(argc < 2) {
     printf("usage: %s -app=<popc_application_main> [args]\n", argv[0]);
