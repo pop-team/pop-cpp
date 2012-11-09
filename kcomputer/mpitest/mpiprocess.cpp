@@ -1,6 +1,8 @@
 #include <mpi.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <fcntl.h>
+#include <poll.h>
 #include <sys/un.h>
 #include <ctype.h>
 #include <string.h>
@@ -22,7 +24,7 @@ int main(int argc, char* argv[])
     struct sockaddr_un _sock_address;  
     socklen_t address_length;    
     int _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
-    int connection_fd = 0;      
+         
     if(_socket_fd < 0) {
       perror("socket() failed\n");
     } else {
@@ -41,25 +43,69 @@ int main(int argc, char* argv[])
 
     pid_t allocatepid = fork();
     if(allocatepid == 0) {
-      char* argv1[2];
+      char* argv1[3];
       argv1[0] = (char*)"forkedprocess";
-      argv1[1] = (char*)0;             
+      argv1[1] = "1";
+      argv1[2] = (char*)0;   
       execv(argv1[0], argv1);              	
       perror("Execv failed");
-    }    
-    connection_fd = accept(_socket_fd, (struct sockaddr *) &_sock_address, &address_length);        
-    if(connection_fd != 0) {
-      char* data = new char[25];
-      int nbytes = read(connection_fd, data, 25);
-      printf("Receive %d - %s\n", nbytes, data); 
+    } 
+    
+    allocatepid = fork();
+    if(allocatepid == 0) {
+      char* argv1[3];
+      argv1[0] = (char*)"forkedprocess";
+      argv1[1] = "2";
+      argv1[2] = (char*)0;             
+      execv(argv1[0], argv1);              	
+      perror("Execv failed");
+    } 
+        
+    struct pollfd active_connection[5];
+    int active_connection_number = 0; 
+    active_connection[active_connection_number].fd = _socket_fd;
+		active_connection[active_connection_number].events = POLLIN;
+    active_connection[active_connection_number].revents = 0;
+    active_connection_number++;    
+    bool active = true; 
+    int cnt = 0;
+    while(active) {
+      int poll_back = poll(active_connection, active_connection_number, -1);    
+      for(int i = 0; i < active_connection_number; i++){
+        if (active_connection[i].revents & POLLIN) { 
+          if(i == 0) {
+            int connection_fd = accept(_socket_fd, (struct sockaddr *) &_sock_address, &address_length);        
+            active_connection[active_connection_number].fd = connection_fd;
+        		active_connection[active_connection_number].events = POLLIN;      
+            active_connection[active_connection_number].revents = 0;  
+            active_connection_number++;
+            active_connection[i].revents = 0;    
+          } else {
+            int tmpfd = active_connection[i].fd; 
+            if(tmpfd != 0) {
+              char* data = new char[25];
+              int nbytes = read(tmpfd, data, 25);
+              printf("Receive %d %d - %s\n", i, nbytes, data); 
+              cnt++; 
+              if(cnt == 2) 
+                active = false;
+            }
+          }
+        }
+      } 
     }
     
+    for(int i = 0; i < active_connection_number; i++){
+      close(active_connection[i].fd); 
+    }
+    
+    
+  
     for (int i=0; i < 100; i++) {
       int data; 
       MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, 0, 0); 
     }  
     
-    close(_socket_fd);
     unlink("uds_0.0");     
   }
   

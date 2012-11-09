@@ -8,7 +8,7 @@
 
 int main(int argc, char* argv[]) 
 {
-  printf("Forked process started\n");
+  printf("Forked process started %s\n", argv[1]);
   struct sockaddr_un _sock_address;  
   int _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
   if(_socket_fd < 0) {
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
     } else {
       char* data = "message from uds client";
       int wbytes = write(_socket_fd, data, 25); 
-      printf("Write %d - %s\n", wbytes, data); 
+      printf("%s Write %d - %s\n", argv[1], wbytes, data); 
     }
   } 
   close(_socket_fd);
