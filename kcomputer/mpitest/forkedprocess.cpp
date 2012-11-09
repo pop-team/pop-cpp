@@ -26,4 +26,5 @@ int main(int argc, char* argv[])
       printf("Write %d - %s\n", wbytes, data); 
     }
   } 
+  close(_socket_fd);
 }

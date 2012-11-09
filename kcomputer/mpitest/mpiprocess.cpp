@@ -58,6 +58,9 @@ int main(int argc, char* argv[])
       int data; 
       MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, 0, 0); 
     }  
+    
+    close(_socket_fd);
+    unlink("uds_0.0");     
   }
   
   MPI::Finalize();
