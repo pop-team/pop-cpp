@@ -44,10 +44,17 @@ void catch_child_exit(int signal_num) {
 }
 
 
+int rank, world;
+
 map<int, int> incomingtag;
 map<int, pair<int, int> > incomingconnection;
 map<int, pair<int, int> > outgoingconnection;
 map<pair<int, int>, paroc_combox*> connectionmap;
+
+// Condition variable to serialize MPI Call
+pthread_mutex_t mpi_mutex;
+pthread_cond_t mpi_condition;
+
 
 
 /**
@@ -62,12 +69,15 @@ void *mpireceivedthread(void *t)
   delete [] tmp;
   bool active = true;
 
-  
-  
+  /*pthread_mutex_lock(&mpi_mutex);
+  pthread_cond_wait(&mpi_condition, &mpi_mutex);
+  pthread_mutex_unlock(&mpi_mutex);      */
   // Connect to main process by IPC
   popc_combox_uds ipcwaker;
   ipcwaker.Create(local_address.c_str(), false);
   ipcwaker.Connect(local_address.c_str());
+  
+  
   paroc_buffer* ipcwaker_buffer = ipcwaker.GetBufferFactory()->CreateBuffer();    
   paroc_message_header header(20, 200003, INVOKE_SYNC, "_dummyconnection");
 	ipcwaker_buffer->Reset();
@@ -97,19 +107,26 @@ void *mpireceivedthread(void *t)
 	          ipcwaker_buffer->Reset();
             ipcwaker_buffer->SetHeader(endheader);  
             ipcwaker_buffer->Send(ipcwaker, connection);
-            
+//            printf("%d _term\n", rank);                       
+           /* pthread_mutex_lock(&mpi_mutex);
+            pthread_cond_wait(&mpi_condition, &mpi_mutex);
+            pthread_mutex_unlock(&mpi_mutex);       */            
           }                      
         }
         break;
       // Allocation of new parallel object
       case 11:
         {
+          printf("ALLOCATE 11\n");
           // signal the IPC thread to be ready to receive data for allocation
           paroc_message_header endheader(20, 200004, INVOKE_SYNC, "_allocation");
 	        ipcwaker_buffer->Reset();
           ipcwaker_buffer->SetHeader(endheader);  
           ipcwaker_buffer->Send(ipcwaker, connection);
-
+//          printf("%d _allocation\n", rank);                     
+          pthread_mutex_lock(&mpi_mutex);
+          pthread_cond_wait(&mpi_condition, &mpi_mutex);
+          pthread_mutex_unlock(&mpi_mutex);
         }                
         break;
       // Wait for action to complete
@@ -121,12 +138,15 @@ void *mpireceivedthread(void *t)
       // Will receive a request from a redirection
       case 13:
         {
-         
+          //printf("MPI request %d %d\n", rank, status.Get_source());
           paroc_message_header reqheader(status.Get_source(), 200005, INVOKE_SYNC, "_request");
 	        ipcwaker_buffer->Reset();
           ipcwaker_buffer->SetHeader(reqheader);  
           ipcwaker_buffer->Send(ipcwaker, connection);
-          
+//          printf("%d _request\n", rank);           
+/*          pthread_mutex_lock(&mpi_mutex);
+          pthread_cond_wait(&mpi_condition, &mpi_mutex);
+          pthread_mutex_unlock(&mpi_mutex);          */
           break;
         }
       case 14:
@@ -135,7 +155,10 @@ void *mpireceivedthread(void *t)
 	        ipcwaker_buffer->Reset();
           ipcwaker_buffer->SetHeader(reqheader);  
           ipcwaker_buffer->Send(ipcwaker, connection);
-          
+//          printf("%d _response\n", rank); 
+/*          pthread_mutex_lock(&mpi_mutex);
+          pthread_cond_wait(&mpi_condition, &mpi_mutex);
+          pthread_mutex_unlock(&mpi_mutex);             */
           break;
         }
       // Unknown command ... do nothing 
@@ -172,20 +195,22 @@ int main(int argc, char* argv[])
   }
   
   // Initialize local address
-  int rank = MPI::COMM_WORLD.Get_rank();
-  int world = MPI::COMM_WORLD.Get_size();
+  rank = MPI::COMM_WORLD.Get_rank();
+  world = MPI::COMM_WORLD.Get_size();
+
+  
+  pid_t mainpid;        // Save main pid to wait for it at the end
+  pthread_t mpithread;  // MPI Receive thread
+
+
   char* tmp = new char[20];
   sprintf(tmp, "uds_%d.0", rank);
   std::string local_address(tmp);
   delete [] tmp;
-  
-  int next_tag = 1000;  
 
-  // Init object counter
-  int next_object_id = 1;  
-  
-  pid_t mainpid;        // Save main pid to wait for it at the end
-  pthread_t mpithread;  // MPI Receive thread
+  // Create local combox server to accept incoming request from interface
+  popc_combox_uds local;
+  local.Create(local_address.c_str(), true);  
   
   // Start main of the POP-C++ application on the MPI process with rank 0
   if(rank == 0) {
@@ -216,16 +241,30 @@ int main(int argc, char* argv[])
     }
   }
 
-  // Create local combox server to accept incoming request from interface
-  popc_combox_uds local;
-  local.Create(local_address.c_str(), true);
+
+
   
+  int next_tag = 1000;  
+
+  // Init object counter
+  int next_object_id = 1;  
+
+
+    
   // Create MPI receive thread
   pthread_attr_t attr;
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);  
+  pthread_mutex_init(&mpi_mutex, NULL);
+  pthread_cond_init (&mpi_condition, NULL);    
   pthread_create(&mpithread, &attr, mpireceivedthread, NULL);
+
+
+
   
+/* pthread_mutex_lock(&mpi_mutex);
+  pthread_cond_signal(&mpi_condition);
+  pthread_mutex_unlock(&mpi_mutex); */ 
   // Wait for IPC request
   bool active = true;
   while (active) {
@@ -266,6 +305,9 @@ int main(int argc, char* argv[])
             }
       	    MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, 0, tag);                      	    
       	  }
+/*          pthread_mutex_lock(&mpi_mutex);
+          pthread_cond_signal(&mpi_condition);
+          pthread_mutex_unlock(&mpi_mutex);  */
        
         } else if(request.methodId[1] == 200002) {  
           // Connection to this process as a router process
@@ -348,15 +390,18 @@ int main(int argc, char* argv[])
 	    		  callback.methodId[1] = callback_header.GetMethodID(); 
   	  	  	if(callback.methodId[1] == 200002){
   	  	  	  int length = strlen(objectaddress.GetString());
-  	  	  	  MPI::COMM_WORLD.Send(&length, 1, MPI_INT, status.Get_source(), 14);
-              MPI::COMM_WORLD.Send(objectaddress.GetString(), length, MPI_CHAR, status.Get_source(), 15);
+  	  	  	  MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, status.Get_source(), 14);
+              MPI::COMM_WORLD.Isend(objectaddress.GetString(), length, MPI_CHAR, status.Get_source(), 15);
 	  	      } else {
   	  	  	  int length = 0;
-  	  	  	  MPI::COMM_WORLD.Send(&length, 1, MPI_INT, status.Get_source(), 14);	  	      
+  	  	  	  MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, status.Get_source(), 14);	  	      
   	  	    }
 	    	  }
    	      callback.data->Destroy();
    	      receiver.Close();            
+          pthread_mutex_lock(&mpi_mutex);
+          pthread_cond_signal(&mpi_condition);
+          pthread_mutex_unlock(&mpi_mutex);
         } else if(request.methodId[1] == 200000) {  
           // Allocation a new parallel object from IPC
           
@@ -482,12 +527,18 @@ int main(int argc, char* argv[])
           int source = request.methodId[0];
           MPI::Status status; 
           MPI::COMM_WORLD.Recv(&dest_id, 1, MPI_INT, source, MPI_ANY_TAG, status);
+
+                    
           int tag = status.Get_tag();
-          
+/*          pthread_mutex_lock(&mpi_mutex);
+          pthread_cond_signal(&mpi_condition);
+          pthread_mutex_unlock(&mpi_mutex);          
+          */
           //printf("Redirect %d IPC to %d tag=%d\n", source, dest_id, tag);
 
           // Receive the data length
           int length; 
+          //printf("MPI(%d) start receive request\n", rank);
           MPI::COMM_WORLD.Recv(&length, 1, MPI_INT, source, tag);
           
           // Connect to the remote object
@@ -548,11 +599,13 @@ int main(int argc, char* argv[])
           char* data = new char[length];
           // Receive the data
           MPI::COMM_WORLD.Recv(data, length, MPI_CHAR, source, tag);          
+         	//printf("MPI(%d) - Request Recv complete\n", rank);
+
 
      	  	if (client->Send(data, length, connection) < 0) {
          	  printf("Can't send to final object\n");
          	}
-
+         	//printf("MPI(%d) - Request sent complete\n", rank);
           delete [] data;
 	  	  } else if(request.methodId[1] == 200006) {          
 	  	    // Response from local node MPI Communicator to IPC caller
@@ -560,7 +613,13 @@ int main(int argc, char* argv[])
 	  	    MPI::Status status;
 	  	    int length;
 	  	    MPI::COMM_WORLD.Recv(&length, 1, MPI_INT, source, MPI_ANY_TAG, status);
+
 	  	    int tag = status.Get_tag();
+/*	  	    pthread_mutex_lock(&mpi_mutex);
+          pthread_cond_signal(&mpi_condition);
+          pthread_mutex_unlock(&mpi_mutex);  */
+          	  	    
+
 	  	    char *data = new char[length];
 	  	    MPI::COMM_WORLD.Recv(data, length, MPI_CHAR, source, tag);
 	  	    
@@ -578,7 +637,7 @@ int main(int argc, char* argv[])
 	  	    //printf("Redirect via MPI on %d fd = %d\n", rank, fd);	  	    
 	  	    // Redirect response to caller
 	  	    if(outgoingconnection[fd].first != 0) {
-
+            //printf("IPC - Response %d %d\n", rank, request.methodId[1]);	  	  	  	    
 	  	      int dest = outgoingconnection[fd].second;
 	  	      int tag = outgoingconnection[fd].first;     
   	  	    int data = 14;
@@ -592,6 +651,7 @@ int main(int argc, char* argv[])
 	  	      
 	  	    
 	  	    } else { 
+            //printf("IPC - Request %d %d\n", rank, request.methodId[1]);	  	    
 	  	      // Redirect request to object
 	  	      int dest_node = incomingconnection[fd].first;
 	    	    int dest_id = incomingconnection[fd].second;
@@ -621,6 +681,8 @@ int main(int argc, char* argv[])
       
   local.Close();
   
+  
+  
   // Delete connection to object
   map<pair<int, int>, paroc_combox*>::iterator it;
   for (it = connectionmap.begin() ; it != connectionmap.end(); it++) {
@@ -628,7 +690,12 @@ int main(int argc, char* argv[])
     delete dynamic_cast<popc_combox_uds*>((*it).second);
   }
   
+
+
   pthread_join(mpithread, NULL);
+  pthread_attr_destroy(&attr);
+  pthread_mutex_destroy(&mpi_mutex);
+  pthread_cond_destroy(&mpi_condition);
 
   MPI::Finalize();
   return 0;
