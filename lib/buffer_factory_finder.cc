@@ -33,11 +33,17 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 	//Initialize the static array
 	int metrics[MAX_FACTORY];
 
-	bfArray[0] = new paroc_buffer_raw_factory();
+	/*bfArray[0] = new paroc_buffer_raw_factory();
 	bfArray[1] = new paroc_buffer_xdr_factory();
 	metrics[0] = metrics[1]=0;
 	plugins[0] = plugins[1] = NULL;
-	size = 2;
+	size = 2;*/
+
+
+	bfArray[0] = new paroc_buffer_xdr_factory();
+	metrics[0] = 0;
+	plugins[0] = NULL;
+	size = 1;
 
 	char *module = getenv("POPC_LOADABLE_MODULES");
 	if (module != NULL) {
