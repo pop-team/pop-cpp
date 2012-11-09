@@ -70,13 +70,11 @@ int paroc_thread::create()
 
 void *paroc_thread::_threadentry(void *param)
 {
-  // This instruction is a macro that will be change by the preprocessor. It matches with pthread_cleanup_pop();
 	pthread_cleanup_push((void (*)(void*))_cleanupentry,param);
 	pthread_mutex_lock(&objlock);
 	paroc_thread *obj = (paroc_thread *)param;
 	pthread_mutex_unlock(&objlock);
 	obj->start();
-  // This instruction is a macro that will be change by the preprocessor. It matches with pthread_clean_push();
 	pthread_cleanup_pop(1);
 	return NULL;
 }
