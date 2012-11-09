@@ -160,27 +160,27 @@ private :
    /* ViSaG */
 
 
-   // request parameters
-   POPString _nodeId;
-   bool _hasNodeIdSet;
-   POPString _operatingSystem;
-   bool _hasOperatingSystemSet;
-   int _minCpuSpeed;
-   bool _hasMinCpuSpeedSet;
-   int _expectedCpuSpeed;
-   bool _hasExpectedCpuSpeedSet;
-   float _minMemorySize;
-   bool _hasMinMemorySizeSet;
-   float _expectedMemorySize;
-   bool _hasExpectedMemorySizeSet;
-   int _minNetworkBandwidth;
-   bool _hasMinNetworkBandwidthSet;
-   int _expectedNetworkBandwidth;
-   bool _hasExpectedNetworkBandwidthSet;
-   int _minDiskSpace;
-   bool _hasMinDiskSpaceSet;
-   int _expectedDiskSpace;
-   bool _hasExpectedDiskSpaceSet;
+  // request parameters
+  POPString _nodeId;
+  bool _hasNodeIdSet;
+  POPString _operatingSystem;
+  bool _hasOperatingSystemSet;
+  int _minCpuSpeed;
+  bool _hasMinCpuSpeedSet;
+  int _expectedCpuSpeed;
+  bool _hasExpectedCpuSpeedSet;
+  float _minMemorySize;
+  bool _hasMinMemorySizeSet;
+  float _expectedMemorySize;
+  bool _hasExpectedMemorySizeSet;
+  float _minNetworkBandwidth;
+  bool _hasMinNetworkBandwidthSet;
+  float _expectedNetworkBandwidth;
+  bool _hasExpectedNetworkBandwidthSet;
+  int _minDiskSpace;
+  bool _hasMinDiskSpaceSet;
+  int _expectedDiskSpace;
+  bool _hasExpectedDiskSpaceSet;
 	float _expectedPower;
 	bool _hasExpectedPowerSet;
 	float _minPower;
