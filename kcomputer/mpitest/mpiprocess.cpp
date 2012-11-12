@@ -74,13 +74,16 @@ int main(int argc, char* argv[])
       for(int i = 0; i < active_connection_number; i++){
         if (active_connection[i].revents & POLLIN) { 
           if(i == 0) {
+            printf("Wait for connection\n"); 
             int connection_fd = accept(_socket_fd, (struct sockaddr *) &_sock_address, &address_length);        
+            printf("New connection\n");             
             active_connection[active_connection_number].fd = connection_fd;
         		active_connection[active_connection_number].events = POLLIN;      
             active_connection[active_connection_number].revents = 0;  
             active_connection_number++;
             active_connection[i].revents = 0;    
           } else {
+            printf("New data\n");             
             int tmpfd = active_connection[i].fd; 
             if(tmpfd != 0) {
               char* data = new char[25];
