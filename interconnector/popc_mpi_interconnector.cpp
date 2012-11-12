@@ -75,17 +75,29 @@ void *mpireceivedthread(void *t)
   // Connect to main process by IPC
   popc_combox_uds ipcwaker;
   ipcwaker.Create(local_address.c_str(), false);
-  ipcwaker.Connect(local_address.c_str());
+  if(!ipcwaker.Connect(local_address.c_str())) {
+    perror("MPI received thread cannot connect to MPI interconnector"); 
+    pthread_exit(NULL); 
+    return NULL; 
+  }
   
   
   paroc_buffer* ipcwaker_buffer = ipcwaker.GetBufferFactory()->CreateBuffer();    
   paroc_message_header header(20, 200003, INVOKE_SYNC, "_dummyconnection");
-	ipcwaker_buffer->Reset();
-	ipcwaker_buffer->SetHeader(header);  
-	paroc_connection* connection = ipcwaker.get_connection();	
+  ipcwaker_buffer->Reset();
+  ipcwaker_buffer->SetHeader(header);  
+  paroc_connection* connection = ipcwaker.get_connection();	
+  if(connection == NULL) {
+    printf("MPI received thread connection is NULL\n"); 
+    perror("MPI received thread connection is NULL"); 
+    pthread_exit(NULL); 
+    return NULL;
+  } 
   if (!ipcwaker_buffer->Send(ipcwaker, connection)) {
-	  paroc_exception::paroc_throw_errno();
-	}   
+    perror("MPI received thread failed to initialize"); 
+    pthread_exit(NULL); 
+    return NULL;
+  }   
   
   // Waiting for MPI calls
   while(active) {
@@ -187,9 +199,7 @@ int main(int argc, char* argv[])
   
   // Catch signal when a child is exiting  
   signal(SIGCHLD, catch_child_exit);
-  // Ignore broken pipe signal
-	signal(SIGPIPE, SIG_IGN);  
-      
+  signal(SIGPIPE, SIG_IGN);    
   if(argc < 2) {
     printf("usage: %s -app=<popc_application_main> [args]\n", argv[0]);
     MPI::Finalize();    
@@ -200,6 +210,7 @@ int main(int argc, char* argv[])
   rank = MPI::COMM_WORLD.Get_rank();
   world = MPI::COMM_WORLD.Get_size();
 
+  printf("Interconnectore started %d, world size = %d\n", rank, world); 
   
   pid_t mainpid;        // Save main pid to wait for it at the end
   pthread_t mpithread;  // MPI Receive thread
@@ -212,7 +223,11 @@ int main(int argc, char* argv[])
 
   // Create local combox server to accept incoming request from interface
   popc_combox_uds local;
-  local.Create(local_address.c_str(), true);  
+  if(!local.Create(local_address.c_str(), true)){
+    printf("POP-C++ Error: MPI Interconnector %d failed to initialize\n", rank);
+    MPI::Finalize();
+    return 1; 
+  }  
   
   // Start main of the POP-C++ application on the MPI process with rank 0
   if(rank == 0) {
@@ -228,7 +243,7 @@ int main(int argc, char* argv[])
     } else {
       application_arg.append(capp);
     }
-    
+    printf("MPI Interconnector %d - fork for main - main name = %s\n", rank, application_arg.c_str());    
     // Create new process for the POP-C++ application main
     mainpid = fork();
 
@@ -244,7 +259,7 @@ int main(int argc, char* argv[])
   }
 
 
-
+  printf("Main started\n"); 
   
   int next_tag = 1000;  
 
