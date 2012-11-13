@@ -1,5 +1,5 @@
 include_directories(${CMAKE_SOURCE_DIR}/ ${CMAKE_SOURCE_DIR}/include)
-
+set(CMAKE_CXX_OUTPUT_EXTENION ".o")
 add_library(popc_common
 accesspoint.cc
 broker.cc
@@ -40,12 +40,16 @@ SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)
 
 TARGET_LINK_LIBRARIES(popc_common ${POPCCOMMON})
 
-add_library(popc_main
-  paroc_infmain.std.cc
-  )
-  
-add_library(popc_objmain  
-  paroc_objmain.std.cc 
-  )
-
+add_custom_command(OUTPUT paroc_infmain.std.o
+                   COMMAND ${CMAKE_CXX_COMPILER} -c paroc_infmain.std.cc ${CMAKE_CXX_FLAGS} -I${CMAKE_SOURCE_DIR}/include
+                   DEPENDS paroc_infmain.std.cc
+                   COMMENT "Compile POP-C++ Master main")
+                   
+add_custom_command(OUTPUT paroc_objmain.std.o
+                   COMMAND ${CMAKE_CXX_COMPILER} -c paroc_objmain.std.cc ${CMAKE_CXX_FLAGS} -I${CMAKE_SOURCE_DIR}/include
+                   DEPENDS paroc_objmain.std.cc
+                   COMMENT "Compile POP-C++ Object main")                   
+                   
+add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o) 
+add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o) 
 
