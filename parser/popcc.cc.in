@@ -414,21 +414,21 @@ int main(int argc, char *argv[])
   char popcpp[1024];
 
 #ifndef POPC_CXX
-  char parocxx[1024]="@CXX@";
-  char parocld[1024]="@CXX@";
+  char parocxx[1024]="@CMAKE_CXX_COMPILER@";
+  char parocld[1024]="@CMAKE_CXX_COMPILER@";
 #else
   char parocxx[1024]=POPC_CXX;
   char parocld[1024]=POPC_CXX;
 #endif
 
 #ifndef POPC_CPP
-  char cpp[1024]="@CXXCPP@";
+  char cpp[1024]="@CMAKE_CXX_COMPILER@ -E";
 #else
   char cpp[1024]=POPC_CPP;
 #endif
   
   // POP-C++ installation directory
-  char parocdir[1024]="@prefix@";
+  char parocdir[1024]="@CMAKE_INSTALL_PREFIX@";
 
   char *link_cmd[1024];
 
@@ -667,15 +667,15 @@ int main(int argc, char *argv[])
     }
     
     if (!compile) {
-      if (!paroc_nolib) {
-        if (useparocmain) {
-  	      if (object) {
-   	        sprintf(buf, "%s/lib/paroc_objmain.%s.o", parocdir, objmain);
-          } else {
-   	        sprintf(buf, "%s/lib/paroc_infmain.std.o", parocdir); 
-          }
-          link_cmd[link_count++] = strdup(buf);
+      if (useparocmain) {
+  	    if (object) {
+          sprintf(buf, "%s/lib/paroc_objmain.%s.o", parocdir, objmain);
+        } else {
+   	      sprintf(buf, "%s/lib/paroc_infmain.std.o", parocdir); 
         }
+        link_cmd[link_count++] = strdup(buf);
+      }      
+      if (!paroc_nolib) {
         if (paroc_static || staticlib) {
           sprintf(buf, "%s/lib/libparoc_common.a",parocdir);
         } else {
