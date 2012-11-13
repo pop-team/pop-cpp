@@ -7,8 +7,8 @@
 #ifndef _POPC_DATAPACK_MARSHAL_H
 #define _POPC_DATAPACK_MARSHAL_H
 
-#include <paroc_string.h>
-#include <paroc_combox.h>
+#include "paroc_string.h"
+#include "paroc_combox.h"
 #include <string>
 #include <vector>
 
@@ -48,7 +48,8 @@
 
 class paroc_interface;
 class paroc_exception;
-
+class paroc_combox;
+class paroc_connection;
 /**
  * @class paroc_message_header
  * @author Tuan Anh Nguyen

@@ -6,10 +6,10 @@
 #ifndef POPC_COMBOX_FACTORY_H
 #define POPC_COMBOX_FACTORY_H
 
-#include <paroc_combox.h>
-#include <paroc_list.h>
-#include <paroc_string.h>
-
+#include "paroc_combox.h"
+#include "paroc_list.h"
+#include "paroc_string.h"
+#include "paroc_array.h"
 
 /*This abstract class declares an interface creating abstract combox*/
 

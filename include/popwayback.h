@@ -17,6 +17,7 @@ clementval  22/10/2010  Add doxygen comment
 #include <list>
 #include <string>
 #include "paroc_string.h"
+#include "paroc_base.h"
 
 /**
  * ViSaG : clementval

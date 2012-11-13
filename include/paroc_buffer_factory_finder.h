@@ -6,6 +6,8 @@
 
 #define MAX_FACTORY 10
 
+class paroc_buffer_factory;
+
 /**
  * @class paroc_buffer_factory_finder
  * @brief Finds a buffer factory corresponding to the given buffer name, used by POP-C++ runtime.

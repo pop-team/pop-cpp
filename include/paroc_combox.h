@@ -11,7 +11,7 @@ DESCRIPTION: POP-C++ communication abstraction
 #include "paroc_buffer_factory_finder.h"
 
 class paroc_combox;
-
+class paroc_buffer_factory;
 /**
  * @class paroc_connection
  * @brief POP-C++ communication abstraction, used by POP-C++ runtime.
