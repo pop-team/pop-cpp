@@ -27,7 +27,7 @@
 #endif
 
 #ifndef POPC_BUILD_ARCH
-char arch[256]= "x86_64-apple-Darwin";
+char arch[256]= "--";
 #else
 char arch[256]= POPC_BUILD_ARCH;
 #endif
@@ -414,21 +414,21 @@ int main(int argc, char *argv[])
   char popcpp[1024];
 
 #ifndef POPC_CXX
-  char parocxx[1024]="g++";
-  char parocld[1024]="g++";
+  char parocxx[1024]="/usr/bin/g++";
+  char parocld[1024]="/usr/bin/g++";
 #else
   char parocxx[1024]=POPC_CXX;
   char parocld[1024]=POPC_CXX;
 #endif
 
 #ifndef POPC_CPP
-  char cpp[1024]="g++ -E";
+  char cpp[1024]="/usr/bin/g++ -E";
 #else
   char cpp[1024]=POPC_CPP;
 #endif
   
   // POP-C++ installation directory
-  char parocdir[1024]="/Users/clementval/popc";
+  char parocdir[1024]="/usr/local";
 
   char *link_cmd[1024];
 
@@ -667,15 +667,15 @@ int main(int argc, char *argv[])
     }
     
     if (!compile) {
-      if (!paroc_nolib) {
-        if (useparocmain) {
-  	      if (object) {
-   	        sprintf(buf, "%s/lib/paroc_objmain.%s.o", parocdir, objmain);
-          } else {
-   	        sprintf(buf, "%s/lib/paroc_infmain.std.o", parocdir); 
-          }
-          link_cmd[link_count++] = strdup(buf);
+      if (useparocmain) {
+  	    if (object) {
+          sprintf(buf, "%s/lib/paroc_objmain.%s.o", parocdir, objmain);
+        } else {
+   	      sprintf(buf, "%s/lib/paroc_infmain.std.o", parocdir); 
         }
+        link_cmd[link_count++] = strdup(buf);
+      }      
+      if (!paroc_nolib) {
         if (paroc_static || staticlib) {
           sprintf(buf, "%s/lib/libparoc_common.a",parocdir);
         } else {
