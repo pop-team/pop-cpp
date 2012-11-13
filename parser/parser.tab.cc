@@ -2007,7 +2007,7 @@ yyreduce:
 		thisCodeFile->AddCodeData(dat);
 		othercodes.SetSize(0);
 	}
-}
+;}
     break;
 
   case 5:
@@ -2016,14 +2016,14 @@ yyreduce:
 	insideClass=false; 
 	othercodes.SetSize(0); 
 	startPos=-1;
-}
+;}
     break;
 
   case 11:
 #line 169 "parser.y"
     {
 	CleanStack(); 
-}
+;}
     break;
 
   case 13:
@@ -2223,14 +2223,14 @@ yyreduce:
 			}
 		}
 	}	
-}
+;}
     break;
 
   case 14:
 #line 374 "parser.y"
     {
 	othercodes.InsertAt(-1,"\n",strlen("\n"));
-}
+;}
     break;
 
   case 15:
@@ -2246,7 +2246,7 @@ yyreduce:
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
     }  
-}
+;}
     break;
 
   case 16:
@@ -2262,7 +2262,7 @@ yyreduce:
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
     }  
-}
+;}
     break;
 
   case 17:
@@ -2279,7 +2279,7 @@ yyreduce:
       othercodes.SetSize(0);
     } 
   YYACCEPT;
-}
+;}
     break;
 
   case 18:
@@ -2291,7 +2291,7 @@ yyreduce:
   	currentPack=NULL;
   	othercodes.SetSize(0);
   	startPos=-1;
-}
+;}
     break;
 
   case 19:
@@ -2308,7 +2308,7 @@ yyreduce:
 	currentPack=new PackObject(thisCodeFile);
 	currentPack->SetStartLine(linenumber-1);
 	thisCodeFile->AddCodeData(currentPack);  
-}
+;}
     break;
 
   case 20:
@@ -2317,7 +2317,7 @@ yyreduce:
   		if (currentPack!=NULL) {
 			currentPack->AddObject(GetToken((yyvsp[(1) - (2)])));
 		}
-}
+;}
     break;
 
   case 21:
@@ -2334,7 +2334,7 @@ yyreduce:
 	
 	}
 
-}
+;}
     break;
 
   case 22:
@@ -2343,26 +2343,26 @@ yyreduce:
 	
 	isNamespace = false;
 
-}
+;}
     break;
 
   case 23:
 #line 485 "parser.y"
     {
-}
+;}
     break;
 
   case 24:
 #line 488 "parser.y"
     {
-}
+;}
     break;
 
   case 25:
 #line 496 "parser.y"
     {
     CleanStack();
-}
+;}
     break;
 
   case 28:
@@ -2374,7 +2374,7 @@ yyreduce:
 	errormsg(tmp);
 	exit(1);
 
-}
+;}
     break;
 
   case 29:
@@ -2385,7 +2385,7 @@ yyreduce:
 	errormsg(tmp);
 	exit(1);
 
-}
+;}
     break;
 
   case 30:
@@ -2396,7 +2396,7 @@ yyreduce:
   	(yyval)=(yyvsp[(1) - (4)]);
   	structContainer = NULL;
   	isInStruct = false;
-}
+;}
     break;
 
   case 31:
@@ -2404,7 +2404,7 @@ yyreduce:
     {
   currentstruct=Pop();
   (yyval)=(yyvsp[(1) - (2)]);
-}
+;}
     break;
 
   case 32:
@@ -2444,7 +2444,7 @@ yyreduce:
    }
 	Push(t);
 	(yyval)=(yyvsp[(2) - (2)]);
-}
+;}
     break;
 
   case 33:
@@ -2454,7 +2454,7 @@ yyreduce:
   thisCodeFile->AddDataType(t);
   Push(t);
   (yyval)=-1;
-}
+;}
     break;
 
   case 37:
@@ -2483,7 +2483,7 @@ yyreduce:
 	TypeClassStruct *t=Peek();
 	assert(t!=NULL);
 	t->Add(type1, GetToken((yyvsp[(2) - (4)])));
-}
+;}
     break;
 
   case 40:
@@ -2528,7 +2528,7 @@ yyreduce:
     }
   type=new TypeEqual(GetToken((yyvsp[(4) - (5)])),type);
   thisCodeFile->AddDataType(type); 
-}
+;}
     break;
 
   case 41:
@@ -2561,7 +2561,7 @@ yyreduce:
     }
   type=new TypeEqual(GetToken((yyvsp[(5) - (6)])),type);
   thisCodeFile->AddDataType(type);   
-}
+;}
     break;
 
   case 42:
@@ -2588,7 +2588,7 @@ yyreduce:
     }
   type=new TypeEqual(GetToken((yyvsp[(5) - (6)])),type);
   thisCodeFile->AddDataType(type);   
-}
+;}
     break;
 
   case 43:
@@ -2617,7 +2617,7 @@ yyreduce:
     }
   type=new TypeEqual(GetToken((yyvsp[(4) - (5)])),type);
   thisCodeFile->AddDataType(type); 
-}
+;}
     break;
 
   case 44:
@@ -2625,7 +2625,7 @@ yyreduce:
     {
 	if (seqclass!=NULL) 
 		seqclass->SetTypeClass(true);
-}
+;}
     break;
 
   case 46:
@@ -2644,7 +2644,7 @@ yyreduce:
 			exit(1);
 		}
 	}
-}
+;}
     break;
 
   case 51:
@@ -2659,7 +2659,7 @@ yyreduce:
 	} else if (!t->IsStandardType()) {
       seqclass->AddBase(t);
 	}
-}
+;}
     break;
 
   case 52:
@@ -2674,7 +2674,7 @@ yyreduce:
 	} else  if (!t->IsStandardType()) {
 		seqclass->AddBase(t);
 	}
-}
+;}
     break;
 
   case 53:
@@ -2689,7 +2689,7 @@ yyreduce:
 	} else  if (!t->IsStandardType()) {
 		seqclass->AddBase(t);
 	}
-}
+;}
     break;
 
   case 54:
@@ -2704,7 +2704,7 @@ yyreduce:
 	} else  if (!t->IsStandardType()) {
       seqclass->AddBase(t);
 	}
-}
+;}
     break;
 
   case 55:
@@ -2719,7 +2719,7 @@ yyreduce:
 	} else  if (!t->IsStandardType()) {
       seqclass->AddBase(t);
 	}
-}
+;}
     break;
 
   case 56:
@@ -2737,7 +2737,7 @@ yyreduce:
 
   currentClass=NULL;
   insideClass=false;
-}
+;}
     break;
 
   case 57:
@@ -2746,7 +2746,7 @@ yyreduce:
   currentClass->SetEndLine(linenumber);
   currentClass=NULL;
   insideClass=false;
-}
+;}
     break;
 
   case 58:
@@ -2756,7 +2756,7 @@ yyreduce:
   if ((yyvsp[(2) - (3)])) currentClass->SetPureVirtual(true);
 
   thisCodeFile->AddCodeData(currentClass);
-}
+;}
     break;
 
   case 59:
@@ -2797,7 +2797,7 @@ yyreduce:
 	
 	}
 
-}
+;}
     break;
 
   case 64:
@@ -2814,7 +2814,7 @@ yyreduce:
 	  }
 	BaseClass *t=new BaseClass(cl, PUBLIC, false);
 	currentClass->baseClass.InsertAt(-1,t);
-}
+;}
     break;
 
   case 65:
@@ -2832,7 +2832,7 @@ yyreduce:
 	  }
 	BaseClass *t=new BaseClass(cl,accessmode,false);
 	currentClass->baseClass.InsertAt(-1,t);
-}
+;}
     break;
 
   case 66:
@@ -2852,7 +2852,7 @@ yyreduce:
 
 	BaseClass *t=new BaseClass(cl,accessmode,true);
 	currentClass->baseClass.InsertAt(-1,t);
-}
+;}
     break;
 
   case 67:
@@ -2872,47 +2872,47 @@ yyreduce:
 
 	BaseClass *t=new BaseClass(cl,accessmode,true);
 	currentClass->baseClass.InsertAt(-1,t);
-}
+;}
     break;
 
   case 68:
 #line 1017 "parser.y"
     {
 	(yyval)=PRIVATE;
-}
+;}
     break;
 
   case 69:
 #line 1021 "parser.y"
     {
 	(yyval)=PUBLIC;
-}
+;}
     break;
 
   case 70:
 #line 1025 "parser.y"
     {
 	(yyval)=PROTECTED;
-}
+;}
     break;
 
   case 71:
 #line 1032 "parser.y"
     {
   (yyval)=0;
-}
+;}
     break;
 
   case 72:
 #line 1036 "parser.y"
     {
   (yyval)= (paroc_utils::isEqual(GetToken((yyvsp[(2) - (2)])), "0")) ? 1 : 0;
-}
+;}
     break;
 
   case 75:
 #line 1046 "parser.y"
-    { accessmodifier=(AccessType)(yyvsp[(1) - (1)]); }
+    { accessmodifier=(AccessType)(yyvsp[(1) - (1)]); ;}
     break;
 
   case 82:
@@ -2931,7 +2931,7 @@ yyreduce:
 		exit(1);
 	}
 	currenttype=returntype=NULL;
-}
+;}
     break;
 
   case 83:
@@ -2943,7 +2943,7 @@ yyreduce:
       exit(1);
 	}
 	currenttype=returntype=NULL;  
-}
+;}
     break;
 
   case 84:
@@ -2951,14 +2951,14 @@ yyreduce:
     {
   //  Directive *t=new Directive(currentClass, GetToken($1));
   //  currentClass->AddMember(t);
-}
+;}
     break;
 
   case 85:
 #line 1085 "parser.y"
     {
   currentClass->SetClassID(GetToken((yyvsp[(3) - (5)])));
-}
+;}
     break;
 
   case 86:
@@ -2970,14 +2970,14 @@ yyreduce:
 	currentClass->AddMember(t);
 	t->setName(GetToken((yyvsp[(2) - (5)])));
 	t->setArgs(GetToken((yyvsp[(4) - (5)])));
-}
+;}
     break;
 
   case 87:
 #line 1107 "parser.y"
     {
 	(yyval) = (yyvsp[(1) - (1)]);	
-}
+;}
     break;
 
   case 88:
@@ -2985,14 +2985,14 @@ yyreduce:
     {
 	sprintf(tmp,"%s , %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
 	(yyval) = PutToken(tmp);
-}
+;}
     break;
 
   case 89:
 #line 1118 "parser.y"
     {
 	(yyval) = (yyvsp[(1) - (1)]);
-}
+;}
     break;
 
   case 90:
@@ -3000,7 +3000,7 @@ yyreduce:
     {      
 	sprintf(tmp,"%s = %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
    (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 94:
@@ -3027,21 +3027,21 @@ yyreduce:
 	}
 	tparam->isRef=(yyvsp[(2) - (4)]);
 	tparam->SetType(type);
-}
+;}
     break;
 
   case 95:
 #line 1164 "parser.y"
     {
   (yyval)=-1;
-}
+;}
     break;
 
   case 96:
 #line 1168 "parser.y"
     {
 	(yyval)=0;
-}
+;}
     break;
 
   case 97:
@@ -3054,14 +3054,14 @@ yyreduce:
       sprintf(tmp,"[%s]%s",GetToken((yyvsp[(2) - (4)])),GetToken((yyvsp[(4) - (4)])));
       (yyval)=PutToken(tmp);
 	}
-}
+;}
     break;
 
   case 98:
 #line 1184 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (2)]);
-}
+;}
     break;
 
   case 99:
@@ -3070,21 +3070,21 @@ yyreduce:
 	
 	
 	(yyval)=0;
-}
+;}
     break;
 
   case 100:
 #line 1196 "parser.y"
     {
   (yyval)=1;  
-}
+;}
     break;
 
   case 101:
 #line 1200 "parser.y"
     {
   (yyval)=2;
-}
+;}
     break;
 
   case 102:
@@ -3098,7 +3098,7 @@ yyreduce:
       thisCodeFile->AddDataType(currenttype);
    }
 	(yyval)=(YYSTYPE)currenttype;
-}
+;}
     break;
 
   case 103:
@@ -3117,7 +3117,7 @@ yyreduce:
       */
     }
   (yyval)=(YYSTYPE)currenttype;
-}
+;}
     break;
 
   case 104:
@@ -3139,7 +3139,7 @@ yyreduce:
   currenttype=type;
   (yyval)=(YYSTYPE)currenttype;
 
-}
+;}
     break;
 
   case 105:
@@ -3148,7 +3148,7 @@ yyreduce:
   assert(currenttype!=NULL);
   currenttype=currentstruct;
   (yyval)=(YYSTYPE)currenttype;
-}
+;}
     break;
 
   case 106:
@@ -3162,7 +3162,7 @@ yyreduce:
     } 
   currenttype=type;
   (yyval)=(YYSTYPE)currenttype;
-}
+;}
     break;
 
   case 107:
@@ -3172,7 +3172,7 @@ yyreduce:
   TemplateArgument *v=(TemplateArgument *)(yyvsp[(1) - (1)]);
   list->AddHead(v);
   (yyval)=(YYSTYPE)list;
-}
+;}
     break;
 
   case 108:
@@ -3182,7 +3182,7 @@ yyreduce:
   TemplateArgument *v=(TemplateArgument *)(yyvsp[(1) - (3)]);
   list->AddHead(v);
   (yyval)=(YYSTYPE)list;
-}
+;}
     break;
 
   case 109:
@@ -3202,7 +3202,7 @@ yyreduce:
   t->isRef=((yyvsp[(4) - (4)])!=0);
   (yyval)=(YYSTYPE)t;
   
-}
+;}
     break;
 
   case 110:
@@ -3210,7 +3210,7 @@ yyreduce:
     {
 	(yyval)=0;
 	constPointerPositions.clear();
-}
+;}
     break;
 
   case 111:
@@ -3218,42 +3218,42 @@ yyreduce:
     {
 	(yyval)=(yyvsp[(3) - (3)])+1; /* modivied by David (added const)*/
 	constPointerPositions.push_back(((yyvsp[(2) - (3)]) == 1 ? true : false));
-}
+;}
     break;
 
   case 112:
 #line 1372 "parser.y"
     {
   (yyval)=0;
-}
+;}
     break;
 
   case 113:
 #line 1376 "parser.y"
     {
   (yyval)=1;
-}
+;}
     break;
 
   case 114:
 #line 1382 "parser.y"
     {
   (yyval)=0;
-}
+;}
     break;
 
   case 115:
 #line 1386 "parser.y"
     {
   (yyval)=1;
-}
+;}
     break;
 
   case 120:
 #line 1402 "parser.y"
     {
   method->isPureVirtual=paroc_utils::isEqual(GetToken((yyvsp[(2) - (2)])),"0");
-}
+;}
     break;
 
   case 121:
@@ -3270,7 +3270,7 @@ yyreduce:
       od.SetCode(GetToken((yyvsp[(5) - (5)])));
     }
   currentClass->AddMember(method);
-}
+;}
     break;
 
   case 122:
@@ -3280,7 +3280,7 @@ yyreduce:
   method->SetLineInfo(linenumber-1);
 
   strcpy(method->name,GetToken((yyvsp[(1) - (1)])));
-}
+;}
     break;
 
   case 123:
@@ -3292,7 +3292,7 @@ yyreduce:
       exit(1);
     }
 	strcpy(method->name,currentClass->GetName());
-}
+;}
     break;
 
   case 124:
@@ -3306,7 +3306,7 @@ yyreduce:
 	strcpy(method->name,currentClass->GetName());
 	method->isVirtual=true;
 	
-}
+;}
     break;
 
   case 125:
@@ -3316,7 +3316,7 @@ yyreduce:
   method->SetLineInfo(linenumber-1);
   currentClass->AddMember(method);
   strcpy(method->name,GetToken((yyvsp[(1) - (1)])));
-}
+;}
     break;
 
   case 126:
@@ -3326,7 +3326,7 @@ yyreduce:
 	
 	method->isGlobalConst = ((yyvsp[(8) - (8)]) == 1 ? true : false); 
 	errorGlobalMehtode(method->isGlobalConst);
-}
+;}
     break;
 
   case 127:
@@ -3336,7 +3336,7 @@ yyreduce:
 	
 	method->isGlobalConst = ((yyvsp[(9) - (9)]) == 1 ? true : false); 
 	errorGlobalMehtode(method->isGlobalConst);
-}
+;}
     break;
 
   case 128:
@@ -3346,7 +3346,7 @@ yyreduce:
 	
 	method->isGlobalConst = ((yyvsp[(9) - (9)]) == 1 ? true : false); 
 	errorGlobalMehtode(method->isGlobalConst);
-}
+;}
     break;
 
   case 129:
@@ -3356,7 +3356,7 @@ yyreduce:
 	
 	method->isGlobalConst = ((yyvsp[(10) - (10)]) == 1 ? true : false);
 	errorGlobalMehtode(method->isGlobalConst); 
-}
+;}
     break;
 
   case 130:
@@ -3367,12 +3367,12 @@ yyreduce:
 	
 	method->isGlobalConst = ((yyvsp[(11) - (11)]) == 1 ? true : false);
 	errorGlobalMehtode(method->isGlobalConst);
-}
+;}
     break;
 
   case 131:
 #line 1620 "parser.y"
-    { UpdateMarshalParam((yyvsp[(2) - (9)]),&(method->returnparam) ); }
+    { UpdateMarshalParam((yyvsp[(2) - (9)]),&(method->returnparam) ); ;}
     break;
 
   case 132:
@@ -3382,12 +3382,12 @@ yyreduce:
 	
 	method->isGlobalConst = ((yyvsp[(13) - (14)]) == 1 ? true : false);
 	errorGlobalMehtode(method->isGlobalConst);
-}
+;}
     break;
 
   case 133:
 #line 1627 "parser.y"
-    { UpdateMarshalParam((yyvsp[(3) - (10)]),&(method->returnparam) ); }
+    { UpdateMarshalParam((yyvsp[(3) - (10)]),&(method->returnparam) ); ;}
     break;
 
   case 134:
@@ -3398,14 +3398,14 @@ yyreduce:
 	
 	method->isGlobalConst = ((yyvsp[(14) - (15)]) == 1 ? true : false);
 	errorGlobalMehtode(method->isGlobalConst);
-}
+;}
     break;
 
   case 135:
 #line 1638 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
-}
+;}
     break;
 
   case 136:
@@ -3419,112 +3419,112 @@ yyreduce:
 	}
   
 	(yyval)=(yyvsp[(1) - (2)]) | (yyvsp[(2) - (2)]);
-}
+;}
     break;
 
   case 137:
 #line 1688 "parser.y"
     {
 	(yyval)=2;
-}
+;}
     break;
 
   case 138:
 #line 1692 "parser.y"
     {
 	(yyval)=4;
-}
+;}
     break;
 
   case 139:
 #line 1696 "parser.y"
     {
 	(yyval)=8;
-}
+;}
     break;
 
   case 140:
 #line 1700 "parser.y"
     {
 	(yyval)=32;
-}
+;}
     break;
 
   case 141:
 #line 1704 "parser.y"
     {
   (yyval)=16;
-}
+;}
     break;
 
   case 142:
 #line 1708 "parser.y"
     {
   (yyval)=64;
-}
+;}
     break;
 
   case 143:
 #line 1715 "parser.y"
     {
 	(yyval)=1;
-}
+;}
     break;
 
   case 144:
 #line 1719 "parser.y"
     {
 	(yyval)=2;
-}
+;}
     break;
 
   case 145:
 #line 1723 "parser.y"
     {
 	(yyval)=3;
-}
+;}
     break;
 
   case 146:
 #line 1727 "parser.y"
     {
 	(yyval)=3;
-}
+;}
     break;
 
   case 147:
 #line 1734 "parser.y"
     {
 	(yyval)=0;
-}
+;}
     break;
 
   case 148:
 #line 1738 "parser.y"
     {
 	(yyval)=1;
-}
+;}
     break;
 
   case 149:
 #line 1742 "parser.y"
     {
 	(yyval)=2;
-}
+;}
     break;
 
   case 150:
 #line 1746 "parser.y"
     {
 	(yyval)=3;
-}
+;}
     break;
 
   case 151:
 #line 1750 "parser.y"
     {
 	(yyval)=3;
-}
+;}
     break;
 
   case 152:
@@ -3536,28 +3536,28 @@ yyreduce:
   strcpy(method->name,GetToken((yyvsp[(1) - (1)])));
   returntype=currenttype;
   currenttype=NULL;
-}
+;}
     break;
 
   case 153:
 #line 1767 "parser.y"
     {
   (yyval)=-1;
-}
+;}
     break;
 
   case 154:
 #line 1771 "parser.y"
     {
   (yyval)=(yyvsp[(3) - (4)]);
-}
+;}
     break;
 
   case 155:
 #line 1777 "parser.y"
     {
   (yyval)=-1;
-}
+;}
     break;
 
   case 156:
@@ -3576,7 +3576,7 @@ yyreduce:
   sprintf(tmp,"od.%s(%s,%s,%s);",GetToken((yyvsp[(3) - (12)])),GetToken((yyvsp[(5) - (12)])),GetToken((yyvsp[(7) - (12)])),GetToken((yyvsp[(9) - (12)])));
   if ((yyvsp[(12) - (12)])!=-1) strcat(tmp,GetToken((yyvsp[(12) - (12)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 157:
@@ -3595,7 +3595,7 @@ yyreduce:
   sprintf(tmp,"od.%s(%s,%s);",GetToken((yyvsp[(3) - (10)])),GetToken((yyvsp[(5) - (10)])),GetToken((yyvsp[(7) - (10)])));
   if ((yyvsp[(10) - (10)])!=-1) strcat(tmp,GetToken((yyvsp[(10) - (10)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 158:
@@ -3613,7 +3613,7 @@ yyreduce:
   sprintf(tmp,"od.%s(%s);",GetToken((yyvsp[(3) - (8)])),GetToken((yyvsp[(5) - (8)])));
   if ((yyvsp[(8) - (8)])!=-1) strcat(tmp,GetToken((yyvsp[(8) - (8)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 159:
@@ -3706,21 +3706,21 @@ yyreduce:
 	exit(1);
       }
     (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 160:
 #line 1922 "parser.y"
     {
     (yyval)=-1;
-}
+;}
     break;
 
   case 161:
 #line 1926 "parser.y"
     {
     (yyval)=(yyvsp[(2) - (2)]);
-}
+;}
     break;
 
   case 166:
@@ -3784,49 +3784,49 @@ yyreduce:
 	t->isConst=(((yyvsp[(2) - (9)])==1) || ((yyvsp[(4) - (9)])==1));
 	if ((yyvsp[(9) - (9)]) >= 0) 
 		t->defaultVal=strdup(GetToken((yyvsp[(9) - (9)])));
-}
+;}
     break;
 
   case 167:
 #line 2004 "parser.y"
     {
   (yyval)=0;
-}
+;}
     break;
 
   case 168:
 #line 2008 "parser.y"
     {
 	(yyval)=(yyvsp[(2) - (3)]);
-}
+;}
     break;
 
   case 169:
 #line 2014 "parser.y"
     {
 	(yyval)=(yyvsp[(1) - (1)]);
-}
+;}
     break;
 
   case 170:
 #line 2018 "parser.y"
     {
 	(yyval)=(yyvsp[(1) - (3)]) | (yyvsp[(3) - (3)]) ;
-}
+;}
     break;
 
   case 171:
 #line 2024 "parser.y"
     {
   (yyval)=PARAM_IN;
-}
+;}
     break;
 
   case 172:
 #line 2028 "parser.y"
     {
   (yyval)=PARAM_OUT;
-}
+;}
     break;
 
   case 173:
@@ -3834,7 +3834,7 @@ yyreduce:
     {
   strcpy(tmpSize,GetToken((yyvsp[(3) - (3)])));
   (yyval)=PARAMSIZE;
-}
+;}
     break;
 
   case 174:
@@ -3842,56 +3842,56 @@ yyreduce:
     {
   strcpy(tmpProc,GetToken((yyvsp[(3) - (3)])));
   (yyval)=USERPROC;
-}
+;}
     break;
 
   case 175:
 #line 2045 "parser.y"
     {
 	(yyval)=0;
-}
+;}
     break;
 
   case 176:
 #line 2049 "parser.y"
     {
 	(yyval)=1;
-}
+;}
     break;
 
   case 177:
 #line 2053 "parser.y"
     {
 	(yyval)=2;
-}
+;}
     break;
 
   case 178:
 #line 2059 "parser.y"
     {
 	(yyval)=-1;
-}
+;}
     break;
 
   case 179:
 #line 2063 "parser.y"
     {
 	(yyval)=(yyvsp[(1) - (1)]);
-}
+;}
     break;
 
   case 180:
 #line 2069 "parser.y"
     {
   (yyval)=-1;
-}
+;}
     break;
 
   case 181:
 #line 2073 "parser.y"
     {
   (yyval)=(yyvsp[(2) - (2)]);
-}
+;}
     break;
 
   case 182:
@@ -3903,21 +3903,21 @@ yyreduce:
       sprintf(tmp, "%s%s",GetToken((yyvsp[(1) - (2)])),GetToken((yyvsp[(2) - (2)])));
       (yyval)=PutToken(tmp);
     }
-}
+;}
     break;
 
   case 183:
 #line 2095 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
-}
+;}
     break;
 
   case 184:
 #line 2099 "parser.y"
     {
     (yyval)=(yyvsp[(1) - (1)]);
-}
+;}
     break;
 
   case 185:
@@ -3925,7 +3925,7 @@ yyreduce:
     {
   sprintf(tmp,"%s + %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 186:
@@ -3933,7 +3933,7 @@ yyreduce:
     {
   sprintf(tmp,"%s - %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 187:
@@ -3941,7 +3941,7 @@ yyreduce:
     {
   sprintf(tmp,"%s * %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 188:
@@ -3949,7 +3949,7 @@ yyreduce:
     {
   sprintf(tmp,"%s / %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 189:
@@ -3957,7 +3957,7 @@ yyreduce:
     {
   sprintf(tmp,"%s %% %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 190:
@@ -3965,7 +3965,7 @@ yyreduce:
     {
   sprintf(tmp,"%s & %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 191:
@@ -3973,7 +3973,7 @@ yyreduce:
     {
   sprintf(tmp,"%s | %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 192:
@@ -3981,7 +3981,7 @@ yyreduce:
     {
   sprintf(tmp,"%s ^ %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 193:
@@ -3989,7 +3989,7 @@ yyreduce:
     {
   sprintf(tmp,"%s && %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 194:
@@ -3997,7 +3997,7 @@ yyreduce:
     {
   sprintf(tmp,"%s || %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 195:
@@ -4005,7 +4005,7 @@ yyreduce:
     {
   sprintf(tmp,"%s == %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 196:
@@ -4013,7 +4013,7 @@ yyreduce:
     {
   sprintf(tmp,"%s=%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 197:
@@ -4021,7 +4021,7 @@ yyreduce:
     {
   sprintf(tmp,"%s ? %s : %s",GetToken((yyvsp[(1) - (5)])), GetToken((yyvsp[(3) - (5)])), GetToken((yyvsp[(5) - (5)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 198:
@@ -4029,7 +4029,7 @@ yyreduce:
     {
   sprintf(tmp,"%s != %s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 199:
@@ -4037,7 +4037,7 @@ yyreduce:
     {
   sprintf(tmp,"%s>%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 200:
@@ -4045,7 +4045,7 @@ yyreduce:
     {
   sprintf(tmp,"%s<%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 201:
@@ -4053,7 +4053,7 @@ yyreduce:
     {
   sprintf(tmp,"%s>=%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 202:
@@ -4061,7 +4061,7 @@ yyreduce:
     {
   sprintf(tmp,"%s<=%s",GetToken((yyvsp[(1) - (3)])), GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 203:
@@ -4069,7 +4069,7 @@ yyreduce:
     {
   sprintf(tmp,"-%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 204:
@@ -4077,7 +4077,7 @@ yyreduce:
     {
   sprintf(tmp,"(%s)",GetToken((yyvsp[(2) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 205:
@@ -4085,7 +4085,7 @@ yyreduce:
     {
   sprintf(tmp,"%s()",GetToken((yyvsp[(1) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 206:
@@ -4094,7 +4094,7 @@ yyreduce:
   sprintf(tmp,"%s(%s)",GetToken((yyvsp[(1) - (4)])),GetToken((yyvsp[(3) - (4)])));
   (yyval)=PutToken(tmp);
  
-}
+;}
     break;
 
   case 207:
@@ -4102,7 +4102,7 @@ yyreduce:
     {
   sprintf(tmp,"*%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 208:
@@ -4110,7 +4110,7 @@ yyreduce:
     {
   sprintf(tmp,"&%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 209:
@@ -4118,7 +4118,7 @@ yyreduce:
     {
   sprintf(tmp,"!%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 210:
@@ -4126,28 +4126,28 @@ yyreduce:
     {
   sprintf(tmp,"~%s",GetToken((yyvsp[(2) - (2)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
   case 211:
 #line 2236 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
-}
+;}
     break;
 
   case 212:
 #line 2240 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
-}
+;}
     break;
 
   case 213:
 #line 2246 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
-}
+;}
     break;
 
   case 214:
@@ -4155,14 +4155,14 @@ yyreduce:
     {
   sprintf(tmp,"%s::%s",GetToken((yyvsp[(1) - (3)])),GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);  
-}
+;}
     break;
 
   case 215:
 #line 2258 "parser.y"
     {
   (yyval)=(yyvsp[(1) - (1)]);
-}
+;}
     break;
 
   case 216:
@@ -4170,7 +4170,7 @@ yyreduce:
     {
   sprintf(tmp,"%s, %s", GetToken((yyvsp[(1) - (3)])),GetToken((yyvsp[(3) - (3)])));
   (yyval)=PutToken(tmp);
-}
+;}
     break;
 
 
@@ -4396,7 +4396,7 @@ yyreturn:
 
 void Usage()
 {
-  fprintf(stderr,"POP-C++ preprocessor version %s\nparoccpp [-onlyclient | -onlyserver] [POP-C++ source] [C++ source]\n", VERSION);
+  fprintf(stderr,"POP-C++ preprocessor version %s\npopcpp [-onlyclient | -onlyserver] [POP-C++ source] [C++ source]\n", VERSION);
   exit(1);
 }
 
@@ -4526,20 +4526,21 @@ int base=1;
 
 int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation, bool isAsyncAllocationDisable)
 {
-	if (infile==NULL || *infile=='-'){
-		yyin=stdin;
+	if (infile == NULL || *infile == '-') {
+		
+	  yyin = stdin;
 	} else {
-      yyin=fopen(infile,"rt");
-      if (yyin==NULL) {
+    yyin = fopen(infile, "rt");
+    if (yyin == NULL) {
 	   	perror(infile);
 	   	return errno;
 		}
-      strcpy(filename,infile);
+    strcpy(filename,infile);
 	}
 	
-	linenumber=1;
-	thisCodeFile=new CodeFile(NULL);
-	if (outfile!=NULL) {
+	linenumber = 1;
+	thisCodeFile = new CodeFile(NULL);
+	if (outfile != NULL) {
 		
 		thisCodeFile->SetOutputName(outfile);	
 
@@ -4554,9 +4555,9 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 	if(isAsyncAllocationDisable)	
 		thisCodeFile->DisableAsyncAllocation();	
 		
-	insideClass=false;
+	insideClass = false;
 	othercodes.SetSize(0);
-	startPos=-1;
+	startPos = -1;
 	
 
 	int ret = yyparse();
