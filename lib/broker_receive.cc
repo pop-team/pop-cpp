@@ -22,6 +22,7 @@
 #include "paroc_event.h"
 #include "paroc_buffer_factory.h"
 #include "paroc_buffer_factory_finder.h"
+#include "paroc_system.h"
 
 bool NewConnection(void *dat, paroc_connection *conn)
 {

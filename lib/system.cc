@@ -23,9 +23,13 @@
 #include <ctype.h>
 
 #include "paroc_system.h"
-//#include <appservice.ph>
-#include <paroc_buffer_factory_finder.h>
-#include <paroc_utils.h>
+#include "paroc_buffer_factory_finder.h"
+#include "paroc_utils.h"
+#include "paroc_buffer_factory.h"
+#include "paroc_combox_factory.h"
+#include "paroc_exception.h"
+#include "paroc_exception.h"
+#include "paroc_od.h"
 
 paroc_accesspoint paroc_system::appservice;
 paroc_accesspoint paroc_system::jobservice;
@@ -76,8 +80,8 @@ paroc_system::paroc_system()
     char str[128];
 #ifndef POPC_ARCH
     char arch[64], sysname[64];
-    sysinfo(SI_SYSNAME,sysname,64);
-    sysinfo(SI_ARCHITECTURE,arch,64);
+//    sysinfo(SI_SYSNAME,sysname,64);
+//    sysinfo(SI_ARCHITECTURE,arch,64);
     sprintf(str,"%s-%s",sysname,arch);
 #else
     strcpy(str,POPC_ARCH);
@@ -299,7 +303,7 @@ POPString paroc_system::GetDefaultInterface()
 
 bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip)
 {
-  struct ifaddrs *addrs, *iap;
+  /*struct ifaddrs *addrs, *iap;
   struct sockaddr_in *sa;
   char str_ip_local[32];
 
@@ -324,7 +328,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip)
       freeifaddrs(addrs);
       return true;
     }}
-  freeifaddrs(addrs);
+  freeifaddrs(addrs);*/
   return false;
 }
 

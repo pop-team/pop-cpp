@@ -13,6 +13,7 @@
 #include <string.h>
 #include "paroc_interface.h"
 #include "paroc_buffer_raw.h"
+#include "paroc_exception.h"
 
 paroc_buffer_raw::paroc_buffer_raw(): packeddata(0,1024)
 {

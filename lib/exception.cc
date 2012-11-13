@@ -12,6 +12,7 @@
 #include <errno.h>
 
 #include "paroc_exception.h"
+#include "paroc_system.h"
 
 paroc_exception::paroc_exception()
 {

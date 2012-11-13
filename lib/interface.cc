@@ -31,11 +31,9 @@
 #include "paroc_interface.h"
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_broker.h"
-//#include "codemgr.ph"
-//#include "batchmgr.ph"
 #include "paroc_combox_factory.h"
-
-//#include "appservice.ph"
+#include "paroc_system.h"
+#include "paroc_utils.h"
 #include "config.h"
 
 #if defined POPC_SECURE || defined POPC_SECURE_VIRTUAL

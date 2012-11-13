@@ -13,6 +13,8 @@
 #include "paroc_interface.h"
 #include "paroc_buffer.h"
 #include "paroc_array.h"
+#include "paroc_system.h"
+#include "paroc_exception.h"
 
 #define METH_VECT_PACK(type) \
 void paroc_buffer::Pack( std::vector<type> *vect, int n)\

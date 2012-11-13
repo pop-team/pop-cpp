@@ -21,6 +21,7 @@
 #include <signal.h>
 
 #include "paroc_combox_socket.h"
+#include "paroc_system.h"
 
 #define PROTO_TCP 6
 #define PROTO_UDP 17

@@ -16,11 +16,8 @@
 #include "paroc_broker.h"
 #include "paroc_interface.h"
 #include "paroc_event.h"
-
-//#include "objectmonitor.ph"
 #include "paroc_thread.h"
-//#include "appservice.ph"
-#include "paroc_thread.h"
+#include "paroc_system.h"
 
 #define PROPAGATE_EXCEPTION(a)  catch (a err) { if (request.from!=NULL) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 

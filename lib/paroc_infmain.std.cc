@@ -19,6 +19,8 @@
 #include "paroc_broker.h"
 #include "paroc_buffer_xdr.h"
 #include "popc_combox_uds.h"
+#include "paroc_system.h"
+#include "paroc_utils.h"
 
 
 // Set processor
@@ -43,6 +45,7 @@ void _paroc_atexit()
 
 int main(int argc, char **argv)
 {
+  printf("POP-C++ master main starts\n"); 
 
 #ifdef UC_LINUX
 	paroc_system::processor_set(0);

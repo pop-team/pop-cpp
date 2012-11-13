@@ -24,6 +24,7 @@
 #include "paroc_combox_factory.h"
 #include "paroc_combox_socket.h"
 #include "popc_combox_uds.h"
+#include "paroc_utils.h"
 
 paroc_combox_registration::paroc_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator)
 {

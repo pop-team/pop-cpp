@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include "paroc_string.h"
-
+#include "paroc_exception.h"
 paroc_string::paroc_string()
 {
 	data=NULL;

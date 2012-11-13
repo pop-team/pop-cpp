@@ -13,13 +13,10 @@
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_buffer_xdr_factory.h"
 #include "paroc_buffer_raw_factory.h"
-
+#include "paroc_utils.h"
 #include <sys/types.h>
 #include <dirent.h>
-
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #ifdef HAVE_LIBDL
 #include <dlfcn.h>
@@ -51,6 +48,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 		char *mod = strtok(module,":");
 		while (mod != NULL && size < MAX_FACTORY) {
 			metrics[size] = 1;
+#ifdef HAVE_LIBDL			
 			plugins[size] = LoadPlugin(mod, bfArray[size]);
 			if (plugins[size] != NULL) {
 				bool loaded = false;
@@ -65,6 +63,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 				  size++;
 				}
 			}
+#endif			
 			mod = strtok(NULL, ":");
 		}
 		free(libs);
@@ -99,6 +98,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 				  metric = 1;
 				}
 				metrics[size] = metric;
+#ifdef HAVE_LIBDL				
 				plugins[size] = LoadPlugin(fname, bfArray[size]);
 				if (plugins[size] != NULL) {
 					bool loaded = false;
@@ -113,6 +113,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 					  size++;
 					}
 				}
+#endif				
 			}
 			fclose(map);
 		} else {
@@ -125,6 +126,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 					char fname[1024];
 					sprintf(fname,"%s/%s", (const char *)plugindir, t->d_name);
 					metrics[size]=1;
+#ifdef HAVE_LIBDL					
 					plugins[size]=LoadPlugin(fname, bfArray[size]);
 					if (plugins[size]!=NULL)
 					{
@@ -138,6 +140,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 
 						if (!loaded) size++;
 					}
+#endif					
 				}
 				closedir(dir);
 			}

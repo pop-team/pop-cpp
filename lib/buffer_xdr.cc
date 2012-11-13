@@ -15,6 +15,7 @@
 #include <rpc/xdr.h>
 #include "paroc_interface.h"
 #include "paroc_buffer_xdr.h"
+#include "paroc_exception.h"
 
 paroc_buffer_xdr::paroc_buffer_xdr(): packeddata(0,1024)
 {
@@ -689,7 +690,7 @@ char* paroc_buffer_xdr::get_load()
   		break;
 	  default:
   	  printf("fail 2\n");	  
-		  return false;
+		  return NULL;
 	}
 	memcpy(dat, h, 20);
 

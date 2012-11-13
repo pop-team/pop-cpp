@@ -11,6 +11,7 @@
 #include <stdio.h>
 
 #include "paroc_combox.h"
+#include "paroc_exception.h"
 #include "debug.h"
 
 paroc_connection::paroc_connection(paroc_combox *com) : _is_initial_connection(false)

@@ -17,6 +17,7 @@
 
 #include "paroc_broker_factory.h"
 #include "paroc_utils.h"
+#include "paroc_system.h"
 
 paroc_list_broker *paroc_broker_factory::brokerlist=NULL;
 ispackedfunc paroc_broker_factory::CheckIfPacked=NULL;

@@ -11,7 +11,7 @@
  * clementval  2010/10/28  Optimize the method insertNode()
  */
 
-#include "../include/popwayback.h"
+#include "popwayback.h"
 
 using namespace std;
 

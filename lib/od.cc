@@ -11,6 +11,7 @@
  */
 
 #include "paroc_od.h"
+#include "paroc_utils.h"
 #include <unistd.h>
 
 bool paroc_od::defaultLocalJob=false;

@@ -9,6 +9,7 @@
  */
 
 #include "paroc_buffer_utils.h"
+#include "paroc_exception.h"
 
 void marshalstring ( paroc_buffer &buf, char *str, int maxsize, int flag, paroc_memspool *temp)
 {

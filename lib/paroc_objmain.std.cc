@@ -23,6 +23,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include "paroc_utils.h"
+#include "paroc_system.h"
 #include "paroc_broker.h"
 #include "paroc_broker_factory.h"
 
