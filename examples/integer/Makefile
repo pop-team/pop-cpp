@@ -1,16 +1,15 @@
 POPCC=../../parser/popcc
 POPCPP=../../parser/popcpp
-POPCPATH=../../
-POPCLIB=-L../../lib/.libs/ -lparoc_common
-POPCINCLUDE=-I../../include/
-POPCCOMPILE=-popcdir=$(POPCPATH) -popcpp=$(POPCPP) $(POPCLIB) $(POPCINCLUDE)
+POPCPATH=../..
+POPCCOMPILE=-popc-static -popcdir=$(POPCPATH) -popcpp=$(POPCPP) -verbose 
+
 all: main integer.obj
 
 main: main.cc integer.ph integer.cc
-	$(POPCC) $(POPCCOMPILE) -o main integer.ph integer.cc main.cc
+	$(POPCC) $(POPCCOMPILE) -o main integer.ph integer.cc main.cc 
 
 integer.obj: integer.ph integer.cc
-	$(POPCC) $(POPCCOMPILE) -object -o integer.obj integer.cc integer.ph
+	$(POPCC) $(POPCCOMPILE) -object -o integer.obj integer.cc integer.ph 
 
 clean:
 	rm -f *.o *.obj main obj.map _paroc* popc_mpi_interconnector
