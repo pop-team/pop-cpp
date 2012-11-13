@@ -26,15 +26,8 @@
 #include "config.h"
 #endif
 
-#ifndef POPC_BUILD_ARCH
-char arch[256]= "@host_cpu@-@host_vendor@-@host_kernel@";
-#else
-char arch[256]= POPC_BUILD_ARCH;
-#endif
 
-#ifndef SVNREV 
-#define SVNREV "(unknown)"
-#endif
+char arch[256]; 
 
 bool verbose=false;
 bool noclean=false;
@@ -45,7 +38,7 @@ bool noasyncallocation=false;
 
 void Usage()
 {
-	fprintf(stderr,"\nPOP-C++ version %s %s on %s\n", VERSION, SVNREV, arch);
+	fprintf(stderr,"\nPOP-C++ version %s on %s\n", VERSION, arch);
 	fprintf(stderr,"\npopcc [-cxxmain] [-object[=type]] [-cpp=<C++ preprocessor>] [-cxx=<compiler>] ] [-popcld=linker] [-popcdir=<path>] [-popcpp=<POP-C++ parser>] [-verbose] [-noclean] [-no-warning] [-no-implicit-pack] [other C++ options] sources...\n");
 
 	fprintf(stderr,"   -cxxmain:              Use standard C++ main (ignore POP-C++ initialization)\n");
@@ -88,7 +81,7 @@ void Usage()
 
 void DisplayVersion()
 {
-	fprintf(stderr,"\nPOP-C++ version %s %s on %s\n\n", VERSION, SVNREV, arch);
+	fprintf(stderr,"\nPOP-C++ version %s on %s\n\n", VERSION, arch);
 }
 
 void Verbose(int argc, char *argv[])
@@ -405,6 +398,14 @@ bool FindLib(char *libpaths[1024], int count, const char *libname,char libfile[1
 
 int main(int argc, char *argv[])
 {
+  
+#ifndef HOST_CPU
+  sprintf(arch, "%s", "unknown"); 
+#else 
+  sprintf(arch, "%s-%s", HOST_CPU, HOST_KERNEL); 
+#endif  
+  
+
   // If no arguments specified prints usage
 	if (argc<=1) {
 		Usage();
@@ -635,7 +636,7 @@ int main(int argc, char *argv[])
     cxx_opts[cxx_count]=NULL;
 
     if(verbose) {   
-      printf("POP-C++ Compiler - version %s %s on %s\n", VERSION, SVNREV, arch); 
+      printf("POP-C++ Compiler - version %s on %s\n", VERSION, arch); 
     }
     for (int i=1;i<argc;i++) {
       if (argv[i][0]!=0) {
@@ -677,9 +678,9 @@ int main(int argc, char *argv[])
       }      
       if (!paroc_nolib) {
         if (paroc_static || staticlib) {
-          sprintf(buf, "%s/lib/libparoc_common.a",parocdir);
+          sprintf(buf, "%s/lib/libpopc_common.a", parocdir);
         } else {
-          strcpy(buf, "-lparoc_common"); 
+          strcpy(buf, "-lpopc_common"); 
         }
         link_cmd[link_count++] = strdup(buf);
 
