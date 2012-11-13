@@ -1,1 +1,0 @@
-../../test/exception/classmember.cc

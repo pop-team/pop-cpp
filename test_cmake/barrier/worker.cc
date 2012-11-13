@@ -1,1 +1,0 @@
-../../test/barrier/worker.cc
