@@ -260,6 +260,8 @@ int popc_combox_uds::Recv(char *s, int len, paroc_connection *connection)
   printf("R socket %d\n", socket_fd); 
   do {
     nbytes = read(socket_fd, s, len);
+    if(nbytes < 0)
+      perror("Read"); 
   } while (nbytes < 0);
   
   return nbytes;	
