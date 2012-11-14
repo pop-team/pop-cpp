@@ -47,9 +47,9 @@ int main(int argc, char* argv[])
   printf("Process %d, world size = %d\n", rank, world); 
 
   if(rank == 1) {
-    for (int i=0; i < 100; i++) {
+    /*for (int i=0; i < 100; i++) {
       MPI::COMM_WORLD.Send(&i, 1, MPI_INT, 0, 0); 
-    }
+    }*/
     MPI::Finalize();
   } else if(rank == 0) {
     struct sockaddr_un _sock_address;  
@@ -143,11 +143,11 @@ int main(int argc, char* argv[])
     
     
   
-    for (int i=0; i < 100; i++) {
+/*    for (int i=0; i < 100; i++) {
       int data; 
       MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, 1, 0); 
     }  
-    
+  */  
     unlink("uds_0.0");     
     pthread_join(mpithread1, NULL);
     pthread_join(mpithread2, NULL);
