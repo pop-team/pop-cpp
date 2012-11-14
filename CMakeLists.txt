@@ -29,16 +29,60 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DI
 add_subdirectory(lib)
 add_subdirectory(interconnector)
 
-
+# Install headers files, programs, library and object files
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/paroc_infmain.std.o DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/paroc_objmain.std.o DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/libpopc_common.a DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/debug.h DESTINATION include)				
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_buffer.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_event.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_system.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/explorationList.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_buffer_factory.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_exception.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_thread.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/request.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_buffer_factory_finder.h DESTINATION include)	
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_interface.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_utils.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/response.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/nodethread.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_buffer_raw.h DESTINATION include)	
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_list.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/popc_combox_uds.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/POPString.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_buffer_raw_factory.h DESTINATION include)	
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_memspool.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/popc_logger.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/sysinfodef.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_accesspoint.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_buffer_utils.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_mutex.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/timer.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_allocobj.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_buffer_xdr.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_object.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/popc_search_node_info.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_array.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_buffer_xdr_factory.h DESTINATION include)	
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_od.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_base.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_combox.h DESTINATION include)			
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_broker.h	 DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_combox_factory.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_string.h	 DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/popwayback.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_broker_factory.h	DESTINATION include)	
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_combox_socket.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/paroc_sys.h DESTINATION include)		
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/priolist.h DESTINATION include)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/interconnector/popc_mpi_interconnector DESTINATION mpi)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/interconnector/openmpi_check_support DESTINATION mpi)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/parser/popcc DESTINATION bin)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/parser/popcpp DESTINATION bin)
 
 
+# Add target to clean the distribution of all CMake generated files
 IF (UNIX)
   ADD_CUSTOM_TARGET (distclean @echo cleaning for source distribution)
   SET(DISTCLEANED
@@ -48,9 +92,8 @@ IF (UNIX)
    CMakeFiles
    cmake.check_cache
    *.cmake
+   config.h
    Makefile
-   core core.*
-   gmon.out
    *~
   )
   
