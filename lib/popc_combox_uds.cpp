@@ -229,7 +229,7 @@ int popc_combox_uds::Send(const char *s, int len, paroc_connection *connection)
   int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
   int wbytes = write(socket_fd, s, len); 
   if(wbytes < 0)
-    perror("Sent");
+    perror("UDS Combox: Cannot write to socket");
 
   return wbytes;	
 }
@@ -382,10 +382,10 @@ void popc_combox_uds::Close()
   if(_is_server){
     // TODO close all connection fd
 
-    close(_socket_fd);
-    unlink(_uds_address.c_str());
+    //close(_socket_fd);
+    //unlink(_uds_address.c_str());
   } else {
-    close(_socket_fd);
+    //close(_socket_fd);
     _connected = false;
   }
 }
