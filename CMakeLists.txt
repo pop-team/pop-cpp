@@ -13,8 +13,13 @@ set(CMAKE_INSTALL_PREFIX "/Users/clementval/popc")
 #check_library_exists(dl dlclose "" HAVE_LIBDL)
 
 # Define variable for MPI compilation
-set(MPI_COMPILER mpic++)
-set(MPI_COMPILER_FLAGS -o)
+if(NOT DEFINED MPI_COMPILER)
+  set(MPI_COMPILER mpic++)
+endif(NOT DEFINED MPI_COMPILER)
+
+if(NOT DEFINED MPI_COMPILER_FLAGS)
+  set(MPI_COMPILER_FLAGS -o)
+endif(NOT DEFINED MPI_COMPILER_FLAGS)
 
 # Define version of POP-C++ - It will be shown on the compiler usage message and with -version option
 set(VERSION "2.6.3 - K Computer")
