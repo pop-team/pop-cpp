@@ -287,7 +287,9 @@ paroc_connection* popc_combox_uds::Wait()
     int poll_back;
     _timeout = timeout;
     do {
+      printf("POLL\n"); 
       poll_back = poll(active_connection, _active_connection_nb, _timeout);
+      printf("poll_back %d\n", poll_back); 
       if(_active_connection_nb >= 199)
         printf("TOO MANY CONNECTION\n");
     } while ((poll_back == -1) && (errno == EINTR));
