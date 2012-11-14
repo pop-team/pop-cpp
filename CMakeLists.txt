@@ -21,6 +21,9 @@ if(NOT DEFINED MPI_COMPILER_FLAGS)
   set(MPI_COMPILER_FLAGS -o)
 endif(NOT DEFINED MPI_COMPILER_FLAGS)
 
+if(NOT DEFINED POPC_MAIN_FLAGS)
+ set(POPC_MAIN_FLAGS -c)
+endif(NOT DEFINED POPC_MAIN_FLAGS)
 # Define version of POP-C++ - It will be shown on the compiler usage message and with -version option
 set(VERSION "2.6.3 - K Computer")
 execute_process(COMMAND uname -m OUTPUT_VARIABLE HOST_CPU_RAW)
