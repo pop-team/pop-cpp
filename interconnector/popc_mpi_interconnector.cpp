@@ -84,9 +84,9 @@ void *mpireceivedthread(void *t)
   
   
   paroc_buffer* ipcwaker_buffer = ipcwaker.GetBufferFactory()->CreateBuffer();    
-  paroc_message_header header(20, 200003, INVOKE_SYNC, "_dummyconnection");
+  /*paroc_message_header header(20, 200003, INVOKE_SYNC, "_dummyconnection");
   ipcwaker_buffer->Reset();
-  ipcwaker_buffer->SetHeader(header);  
+  ipcwaker_buffer->SetHeader(header);  */
   paroc_connection* connection = ipcwaker.get_connection();	
   if(connection == NULL) {
     printf("MPI received thread connection is NULL\n"); 
@@ -94,11 +94,11 @@ void *mpireceivedthread(void *t)
     pthread_exit(NULL); 
     return NULL;
   } 
-  if (!ipcwaker_buffer->Send(ipcwaker, connection)) {
+  /*if (!ipcwaker_buffer->Send(ipcwaker, connection)) {
     perror("MPI received thread failed to initialize"); 
     pthread_exit(NULL); 
     return NULL;
-  }   
+  } */  
   
   // Waiting for MPI calls
   while(active) {
@@ -295,7 +295,7 @@ int main(int argc, char* argv[])
     if(connection == NULL) {
       // Connection is null. No data will come on this connection. Wait for another one.
       printf("Connection null\n");	  
-    } else {
+    } else if(!connection->is_initial_connection()) {
       // Process incoming request
       paroc_buffer_factory *buffer_factory = connection->GetBufferFactory();
 	    request.data = buffer_factory->CreateBuffer();
