@@ -15,16 +15,17 @@ add_custom_command(OUTPUT parser.tab.h
                    
 add_custom_command(OUTPUT parser.tab.cc
                    COMMAND mv parser.tab.c parser.tab.cc
+		   DEPENDS parser.tab.h
                    COMMENT "Generate parser files")
 
 add_custom_command(OUTPUT parser.yy.cc                   
-                   COMMAND flex -o parser.yy.cc parser.lex
+                   COMMAND flex -oparser.yy.cc parser.lex
                    DEPENDS parser.lex
                    COMMENT "Running Flex")
 
 add_custom_target(parser-yacc ALL DEPENDS parser.tab.h)                    
-add_custom_target(parser-mv ALL DEPENDS parser-yacc)                    
-add_custom_target(parser-flex ALL DEPENDS parser-mv)
+add_custom_target(parser-mv ALL DEPENDS parser.tab.h)                    
+add_custom_target(parser-flex ALL DEPENDS parser.tab.cc)
 
 
 add_executable(popcpp 
