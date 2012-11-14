@@ -8,6 +8,31 @@
 #include <string.h>
 #include <unistd.h>
 
+void *mpireceivedthread(void *t) 
+{
+  printf("Forked process started\n");
+  struct sockaddr_un _sock_address;  
+  int _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
+  if(_socket_fd < 0) {
+    perror("socket() failed\n");
+  } else {
+    memset(&_sock_address, 0, sizeof(struct sockaddr_un));    
+    _sock_address.sun_family = AF_UNIX;    
+    strcpy(_sock_address.sun_path, "uds_0.0");  
+    if(connect(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
+      perror("Connect failed");
+      pthread_exit(NULL);       
+    } else {
+      char* data = "message from uds client";
+      int wbytes = write(_socket_fd, data, 25); 
+      printf("Write %d - %s\n", wbytes, data); 
+    }
+  } 
+  close(_socket_fd);
+  pthread_exit(NULL);   
+}
+
+
 int main(int argc, char* argv[])
 {
   MPI::Init();
@@ -40,8 +65,16 @@ int main(int argc, char* argv[])
         }
       }
     }
+    
+    pthread_t mpithread1, mpithread2;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);      
+    pthread_create(&mpithread1, &attr, mpireceivedthread, NULL);
+    pthread_create(&mpithread2, &attr, mpireceivedthread, NULL);
 
-    pid_t allocatepid = fork();
+
+  /*  pid_t allocatepid = fork();
     if(allocatepid == 0) {
       char* argv1[3];
       argv1[0] = (char*)"forkedprocess";
@@ -59,7 +92,7 @@ int main(int argc, char* argv[])
       argv1[2] = (char*)0;             
       execv(argv1[0], argv1);              	
       perror("Execv failed");
-    } 
+    } */
         
     struct pollfd active_connection[5];
     int active_connection_number = 0; 
@@ -110,6 +143,10 @@ int main(int argc, char* argv[])
     }  
     
     unlink("uds_0.0");     
+    pthread_join(mpithread1, NULL);
+    pthread_join(mpithread2, NULL);
+    pthread_attr_destroy(&attr);      
+    
   }
   
   MPI::Finalize();
