@@ -92,6 +92,10 @@ IF (UNIX)
    CMakeFiles
    cmake.check_cache
    *.cmake
+   interconnector/Makefile
+   interconnector/*.cmake
+   lib/Makefile
+   lib/*.cmake   
    config.h
    Makefile
    *~
