@@ -171,7 +171,8 @@ bool popc_combox_uds::Create(const char* address, bool server)
     _active_connection_nb++;
 
     return true;
-  }	
+  } else
+    printf("Will connect to %s\n", address); 
   return true;
 }
 
