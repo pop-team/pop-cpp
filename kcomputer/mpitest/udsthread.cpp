@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
     while(active) {
       paroc_request request;
       request.data = NULL;   
-    
+      local.SetTimeout(-1); 
       paroc_connection* connection = local.Wait();
       paroc_buffer_factory *buffer_factory = connection->GetBufferFactory();
 	    request.data = buffer_factory->CreateBuffer();
