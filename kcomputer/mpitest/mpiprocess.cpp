@@ -7,6 +7,8 @@
 #include <ctype.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
+#include <stdio.h>
 
 void *mpireceivedthread(void *t) 
 {
@@ -18,18 +20,21 @@ void *mpireceivedthread(void *t)
   } else {
     memset(&_sock_address, 0, sizeof(struct sockaddr_un));    
     _sock_address.sun_family = AF_UNIX;    
-    strcpy(_sock_address.sun_path, "uds_0.0");  
+    strcpy(_sock_address.sun_path, "./uds_0.0");  
     if(connect(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
       perror("Connect failed");
       pthread_exit(NULL);       
     } else {
       char* data = "message from uds client";
-      int wbytes = write(_socket_fd, data, 25); 
+      int wbytes = write(_socket_fd, data, 25);
+      if(wbytes < 0) 
+        perror("UDS Socket: Cannot write to socket"); 
       printf("Write %d - %s\n", wbytes, data); 
     }
   } 
   close(_socket_fd);
-  pthread_exit(NULL);   
+  pthread_exit(NULL);  
+  return NULL; 
 }
 
 
@@ -151,3 +156,4 @@ int main(int argc, char* argv[])
   
   MPI::Finalize();
 }
+
