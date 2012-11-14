@@ -171,8 +171,7 @@ bool popc_combox_uds::Create(const char* address, bool server)
     _active_connection_nb++;
 
     return true;
-  } else
-    printf("Will connect to %s\n", address); 
+  }
   return true;
 }
 
@@ -303,19 +302,18 @@ paroc_connection* popc_combox_uds::Wait()
           if(i == 0) {  // New connection
             // A new connection can be received
             int connection_fd;      
-            connection_fd = accept(_socket_fd, (struct sockaddr *) &_sock_address, &address_length);        
-            active_connection[_active_connection_nb].fd = connection_fd;
-        		active_connection[_active_connection_nb].events = POLLIN;      
-            active_connection[_active_connection_nb].revents = 0;  
-            _active_connection_nb++;
-            active_connection[i].revents = 0;    
-/*            if(_is_first_connection) {
-              _is_first_connection = false;
-              return new popc_connection_uds(connection_fd, this);                     
-            } else { */
-            printf("C socket %d\n", connection_fd); 
+            connection_fd = accept(_socket_fd, (struct sockaddr *) &_sock_address, &address_length);       
+            if(connection_fd < 0) {
+              perror("UDS Combox accept:"); 
+            } else {
+              active_connection[_active_connection_nb].fd = connection_fd;
+          		active_connection[_active_connection_nb].events = POLLIN;      
+              active_connection[_active_connection_nb].revents = 0;  
+              _active_connection_nb++;
+              active_connection[i].revents = 0;    
+              printf("C socket %d\n", connection_fd); 
               return new popc_connection_uds(connection_fd, this, true);       
-//            }                                    
+            }
           } else {
             if(active_connection[i].revents & POLLHUP) { // POLLIN and POLLHUP
               //printf("write and disconnect\n");
