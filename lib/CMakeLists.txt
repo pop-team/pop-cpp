@@ -41,12 +41,12 @@ SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)
 TARGET_LINK_LIBRARIES(popc_common ${POPCCOMMON})
 
 add_custom_command(OUTPUT paroc_infmain.std.o
-                   COMMAND ${CMAKE_CXX_COMPILER} -c paroc_infmain.std.cc ${CMAKE_CXX_FLAGS} -I${CMAKE_SOURCE_DIR}/include
+                   COMMAND ${CMAKE_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_infmain.std.cc -I${CMAKE_SOURCE_DIR}/include
                    DEPENDS paroc_infmain.std.cc
                    COMMENT "Compile POP-C++ Master main")
                    
 add_custom_command(OUTPUT paroc_objmain.std.o
-                   COMMAND ${CMAKE_CXX_COMPILER} -c paroc_objmain.std.cc ${CMAKE_CXX_FLAGS} -I${CMAKE_SOURCE_DIR}/include
+                   COMMAND ${CMAKE_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_objmain.std.cc -I${CMAKE_SOURCE_DIR}/include
                    DEPENDS paroc_objmain.std.cc
                    COMMENT "Compile POP-C++ Object main")                   
                    
