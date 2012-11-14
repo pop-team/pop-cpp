@@ -286,6 +286,7 @@ paroc_connection* popc_combox_uds::Wait()
 {
   if(_is_server){
     socklen_t address_length;
+    address_length = sizeof(_sock_address); 
     int poll_back;
     _timeout = timeout;
     do {
@@ -304,6 +305,7 @@ paroc_connection* popc_combox_uds::Wait()
             int connection_fd;      
             connection_fd = accept(_socket_fd, (struct sockaddr *) &_sock_address, &address_length);       
             if(connection_fd < 0) {
+              printf("server socket %d\n", _socket_fd); 
               perror("UDS Combox accept:"); 
             } else {
               active_connection[_active_connection_nb].fd = connection_fd;
