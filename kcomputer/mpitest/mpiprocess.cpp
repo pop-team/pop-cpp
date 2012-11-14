@@ -47,15 +47,13 @@ int main(int argc, char* argv[])
   printf("Process %d, world size = %d\n", rank, world); 
 
   if(rank == 1) {
-    for (int i=0; i < 100; i++) {
-      MPI::COMM_WORLD.Send(&i, 1, MPI_INT, 0, 0); 
-    }
+    int data; 
+    MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, 0, 0); 
+    printf("MPI Recv %d\n", data); 
     MPI::Finalize();
   } else if(rank == 0) {
-    for (int i=0; i < 100; i++) {
-      int data; 
-      MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, 1, 0); 
-    }  
+    int i = 10;
+    MPI::COMM_WORLD.Isend(&i, 1, MPI_INT, 1, 0); 
   
     struct sockaddr_un _sock_address;  
     socklen_t address_length;    
