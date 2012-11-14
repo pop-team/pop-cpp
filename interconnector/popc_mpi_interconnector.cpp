@@ -21,6 +21,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <pthread.h>
+#include <stdio.h>
 #include <map>
 
 
