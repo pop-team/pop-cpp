@@ -203,6 +203,7 @@ paroc_connection* popc_combox_uds::get_connection()
 {
   if(!_connected)
     return NULL;
+  printf("Get connection: fd is %d\n", _connection->get_fd());  
   return _connection;
 }
 
@@ -227,9 +228,12 @@ int popc_combox_uds::Send(const char *s, int len, paroc_connection *connection)
     return -1; 
   }
   int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
+  printf("Socket_fd is %d\n", socket_fd); 
   int wbytes = write(socket_fd, s, len); 
-  if(wbytes < 0)
+  if(wbytes < 0) {
     perror("UDS Combox: Cannot write to socket");
+
+  } 
 
   return wbytes;	
 }
