@@ -112,21 +112,22 @@ int main(int argc, char* argv[])
       request.data = NULL;   
       local.SetTimeout(-1); 
       paroc_connection* connection = local.Wait();
-      paroc_buffer_factory *buffer_factory = connection->GetBufferFactory();
-	    request.data = buffer_factory->CreateBuffer();
-		  if (request.data->Recv(connection)) {
-  		  request.from = connection;
-	  		const paroc_message_header &header = request.data->GetHeader();
-  		  request.methodId[0] = header.GetClassID();
-		  }
+      if(connection->is_initial_connection()) {
+        paroc_buffer_factory *buffer_factory = connection->GetBufferFactory();
+	      request.data = buffer_factory->CreateBuffer();
+		    if (request.data->Recv(connection)) {
+  		    request.from = connection;
+	  		  const paroc_message_header &header = request.data->GetHeader();
+    		  request.methodId[0] = header.GetClassID();
+	  	  }
       
-      printf("Recv requ %d\n", request.methodId[1]);
-      cnt++; 
-      if(cnt == 2) 
-        active = false;
-      request.data->Destroy();
-    }
-    
+        printf("Recv requ %d\n", request.methodId[1]);
+        cnt++; 
+        if(cnt == 2) 
+          active = false;
+        request.data->Destroy();
+      }
+    }  
     
 
     local.Close();
