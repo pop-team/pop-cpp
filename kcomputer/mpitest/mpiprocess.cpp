@@ -48,8 +48,9 @@ int main(int argc, char* argv[])
 
   if(rank == 1) {
     for (int i=0; i < 100; i++) {
-      MPI::COMM_WORLD.Send(&i, 1, MPI_INT, 1, 0); 
+      MPI::COMM_WORLD.Send(&i, 1, MPI_INT, 0, 0); 
     }
+    MPI::Finalize();
   } else if(rank == 0) {
     struct sockaddr_un _sock_address;  
     socklen_t address_length;    
@@ -144,16 +145,15 @@ int main(int argc, char* argv[])
   
     for (int i=0; i < 100; i++) {
       int data; 
-      MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, 0, 0); 
+      MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, 1, 0); 
     }  
     
     unlink("uds_0.0");     
     pthread_join(mpithread1, NULL);
     pthread_join(mpithread2, NULL);
     pthread_attr_destroy(&attr);      
-    
+    MPI::Finalize();    
   }
   
-  MPI::Finalize();
 }
 
