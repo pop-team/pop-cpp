@@ -257,7 +257,7 @@ int popc_combox_uds::Recv(char *s, int len, paroc_connection *connection)
 {
   int nbytes;
   int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
-
+  printf("R socket %d\n", socket_fd); 
   do {
     nbytes = read(socket_fd, s, len);
   } while (nbytes < 0);
@@ -310,6 +310,7 @@ paroc_connection* popc_combox_uds::Wait()
               _is_first_connection = false;
               return new popc_connection_uds(connection_fd, this);                     
             } else { */
+            printf("C socket %d\n", connection_fd); 
               return new popc_connection_uds(connection_fd, this, true);       
 //            }                                    
           } else {
