@@ -46,11 +46,11 @@ int main(int argc, char* argv[])
   
   printf("Process %d, world size = %d\n", rank, world); 
 
-  if(rank == 0) {
+  if(rank == 1) {
     for (int i=0; i < 100; i++) {
       MPI::COMM_WORLD.Send(&i, 1, MPI_INT, 1, 0); 
     }
-  } else if(rank == 1) {
+  } else if(rank == 0) {
     struct sockaddr_un _sock_address;  
     socklen_t address_length;    
     int _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     } else {
       memset(&_sock_address, 0, sizeof(struct sockaddr_un));    
       _sock_address.sun_family = AF_UNIX;    
-      strcpy(_sock_address.sun_path, "uds_0.0");  
+      strcpy(_sock_address.sun_path, "./uds_0.0");  
       unlink("uds_0.0"); 
       if(bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
         perror("bind() failed\n");
