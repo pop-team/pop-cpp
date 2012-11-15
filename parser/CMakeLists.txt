@@ -5,26 +5,47 @@ project(POPC_PARSER)
 include(CheckIncludeFile)
 include(CheckLibraryExists)
 
+if(NOT EXISTS "../config.h")
+  message(SEND_ERROR "You must configure POP-C++ main project first!")
+endif(NOT EXISTS "../config.h")
+
+# Locate the flex executable
+find_program(FLEX flex DOC "Path to the flex lexical analyser generator.")
+if(NOT DEFINED FLEX)
+  message(SEND_ERROR "Flex not found.")
+endif(NOT DEFINED FLEX)
+message(STATUS "Flex found at ${FLEX}")
+
+# Locate the Bison executable
+find_program(BISON bison DOC "Path to the bison parser generator.")
+if(NOT DEFINED BISON)
+  message(SEND_ERROR "Bison not found.")
+endif(NOT DEFINED BISON)
+message(STATUS "Bison found at ${BISON}")
+
 include_directories(${CMAKE_SOURCE_DIR}/../ ${CMAKE_SOURCE_DIR}/../include)
 
-add_custom_command(OUTPUT parser.tmp
-                   COMMAND bison -y -b parser -d parser.y
-                   COMMAND mv parser.tab.c parser.tab.cc
-                   COMMAND flex -oparser.yy.cc parser.lex
-                   DEPENDS parser.y
-                   COMMENT "Generating parser files")
+add_custom_target(parser.tmp
+                  COMMAND ${BISON} -y -b parser -d parser.y
+                  COMMAND mv parser.tab.c parser.tab.cc
+                  COMMAND ${FLEX} -oparser.yy.cc parser.lex
+                  DEPENDS parser.y                  
+                  COMMENT "Generating parser files")                  
 
 add_custom_target(gen DEPENDS parser.tmp)
 
 add_custom_command(OUTPUT parser.tab.cc
                    COMMAND
                    DEPENDS parser.tmp)
+                   
 add_custom_command(OUTPUT parser.yy.cc
                    COMMAND
                    DEPENDS parser.tmp)
+                   
 add_custom_command(OUTPUT parser.tab.h
                    COMMAND
                    DEPENDS parser.tmp)
+                   
 add_custom_command(OUTPUT parser.tmp
                    COMMAND bison -y -b parser -d parser.y
                    COMMAND mv parser.tab.c parser.tab.cc
