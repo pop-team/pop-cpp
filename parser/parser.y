@@ -903,7 +903,8 @@ class_head: class_key pure_class_decl base_spec
 
 class_key: PARCLASS_KEYWORD ID
 {
-	hadParclass = true; 
+
+  hadParclass = true; 
 	if (othercodes.GetSize() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);

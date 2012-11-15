@@ -70,20 +70,18 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
 ^"@"{whitespace2}"parocfile"[ \t]+\"[^\"]*\"[^\n]* {
   char *t1, *t2;
-  t1=strchr(yytext,'"');
-  if (t1!=NULL)
-    {
-      t1++;
-      t2=strrchr(t1,'"');
-      if (t2!=NULL)
-	{
-	  *t2=0;
-	  strcpy(filename,t1);
-	  thisCodeFile->SetFileName(filename); 
-	  *t2='"';
-	}
+  t1 = strchr(yytext,'"');
+  if (t1!=NULL) {
+    t1++;
+    t2=strrchr(t1,'"');
+    if (t2!=NULL) {
+      *t2=0;
+      strcpy(filename, t1);
+      printf("@parocfile %s\n", filename); 
+      thisCodeFile->SetFileName(filename); 
+      *t2='"';
     }
-  //  printf("LINE DIRECTIVE:line:%d in %s\n", linenumber,filename);
+  }
 };
 
 ^"#pragma"[ \t]*"interface"[ \t]*"="[ \t]*{id}[ \t]* {
@@ -124,22 +122,20 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   char *t1, *t2;
   sscanf(yytext+1, "%d", &linenumber);
   t1=strchr(yytext,'"');
-  if (t1!=NULL)
-    {
-      t1++;
-      t2=strchr(t1,'"');
-      if (t2!=NULL)
-	{
-	  *t2=0;
-	  strcpy(filename,t1);
-	  if (thisCodeFile->GetFileName()==NULL) thisCodeFile->SetFileName(filename); 
-	  *t2='"';
-	}
+  if (t1 != NULL) {
+    t1++;
+    t2 = strchr(t1,'"');
+    if (t2 != NULL) {
+      *t2=0;
+      strcpy(filename,t1);
+      if (thisCodeFile->GetFileName()==NULL) {
+        printf("# filename %s\n", filename);       
+        thisCodeFile->SetFileName(filename); 
+      }
+      *t2='"';
     }
-  //  printf("LINE DIRECTIVE:line:%d in %s\n", linenumber,filename);
+  }
   othercodes.InsertAt(-1,yytext,strlen(yytext));  
-  //  yylval=PutToken(yytext);
-  //  return DIRECTIVE;  
 };
 
 ^"#"[^\n]* {

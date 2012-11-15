@@ -195,7 +195,7 @@ void PrepareSource(char *src, char *dest)
   fclose(sf);
 }
 
-char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp, bool noasyncallocation){
+char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp, bool noasyncallocation, bool kcomputer){
 	char *cmd[1000];	
 	int count=0;
 	char *cmd1[1000];
@@ -268,12 +268,13 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
     *t1 = tmpfile1; t1++; count++;
 
 		// Preprocessor output
-    if (!usepipe) { 
-  		if (*output_opt != 0) {
+    if (!usepipe) {
+      printf("Kcomputer flag %s\n", kcomputer ? "true" : "false"); 
+      if (*output_opt != 0) {
         *t1 = output_opt;
-				t1++; 
-				count++;
-			}
+		  	t1++; 
+	  		count++;
+  		}
       *t1 = tmpfile2; t1++; count++;
       if(verbose) { 
         printf("C++ preprocessing: "); 
@@ -461,6 +462,7 @@ int main(int argc, char *argv[])
   bool implicitpack=false;  
   bool asyncallocation=false;
   bool staticlib=false;
+  bool kcomputer=false;
   
   bool usepipe=true;
 
@@ -533,6 +535,7 @@ int main(int argc, char *argv[])
 	broker = (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker") == NULL);
 	client = (paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface") == NULL);
   usepipe = (paroc_utils::checkremove(&argc,&argv,"-nopipe") == NULL);
+  kcomputer = (paroc_utils::checkremove(&argc,&argv,"-kcomputer") == NULL);
 
   cpp_count = 0;
   char *tok = strtok(cpp," \t");
@@ -648,7 +651,7 @@ int main(int argc, char *argv[])
     	        if(verbose) {
     	          printf("\n"); 
     	        }
-		      		char *outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack, popcppcomp, asyncallocation);
+		      		char *outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack, popcppcomp, asyncallocation, kcomputer);
         			link_cmd[link_count++] = (outf == NULL) ? argv[i] : strdup(outf);
 				      continue;
       			}
