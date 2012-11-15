@@ -103,12 +103,15 @@ void *mpireceivedthread(void *t)
     // Receive data
     //printf("Recveive thread %d wait for message\n", rank);  
     //MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, MPI_ANY_SOURCE, 0, status);
+    pthread_mutex_lock(&mpi_mutex);                
     MPI::Request mreq = MPI::COMM_WORLD.Irecv(&data, 1, MPI_INT, MPI_ANY_SOURCE, 0); 
+    pthread_mutex_unlock(&mpi_mutex);                
+    
     bool done = false; 
     while(!done) {
-//      pthread_mutex_lock(&mpi_mutex);      
+      pthread_mutex_lock(&mpi_mutex);      
       done = mreq.Test(status); 
-//      pthread_mutex_unlock(&mpi_mutex);      
+      pthread_mutex_unlock(&mpi_mutex);      
     }
     //printf("Recv data on MPI %d (%d)\n", rank, data);
     switch (data) {
@@ -293,10 +296,14 @@ int main(int argc, char* argv[])
 		    	  if(world > 1) {
 		    	    for(int i = 1; i < world; i++) {
                 // Inform other MPI communicator to end their process. 
+                pthread_mutex_lock(&mpi_mutex);            
 		  	        MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, i, tag);
+		  	        pthread_mutex_unlock(&mpi_mutex);            
   		  	    }
             }
+            pthread_mutex_lock(&mpi_mutex);            
       	    MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, 0, tag);                      	    
+      	    pthread_mutex_unlock(&mpi_mutex);            
       	  }
         } else if(request.methodId[1] == 200002) {  
           // Connection to this process as a router process
@@ -324,41 +331,53 @@ int main(int argc, char* argv[])
           MPI::Status status;
           int objectname_length, codefile_length; 
           //MPI::COMM_WORLD.Recv(&objectname_length, 1, MPI_INT, MPI_ANY_SOURCE, 10, status);
+          pthread_mutex_lock(&mpi_mutex);            
           MPI::Request mreq = MPI::COMM_WORLD.Irecv(&objectname_length, 1, MPI_INT, MPI_ANY_SOURCE, 10);
+          pthread_mutex_unlock(&mpi_mutex);                      
+          
           bool done = false; 
           while(!done) {
-//            pthread_mutex_lock(&mpi_mutex);            
+            pthread_mutex_lock(&mpi_mutex);            
             done = mreq.Test(status);           
-//            pthread_mutex_unlock(&mpi_mutex);            
+            pthread_mutex_unlock(&mpi_mutex);            
           }
           
           int source = status.Get_source(); 
           
           //MPI::COMM_WORLD.Recv(&codefile_length, 1, MPI_INT, status.Get_source(), 12);
+          pthread_mutex_lock(&mpi_mutex);                      
           mreq = MPI::COMM_WORLD.Irecv(&codefile_length, 1, MPI_INT, source, 12);
+          pthread_mutex_unlock(&mpi_mutex);            
+          
           done = false; 
           while(!done) {
-//            pthread_mutex_lock(&mpi_mutex);            
+            pthread_mutex_lock(&mpi_mutex);            
             done = mreq.Test(status);           
-//            pthread_mutex_unlock(&mpi_mutex);            
+            pthread_mutex_unlock(&mpi_mutex);            
           }          
           char* objectname = new char[objectname_length+1];
           char* codefile = new char[codefile_length+1];                    
           //MPI::COMM_WORLD.Recv(objectname, objectname_length, MPI_CHAR, status.Get_source(), 11);
+          pthread_mutex_lock(&mpi_mutex);            
           mreq = MPI::COMM_WORLD.Irecv(objectname, objectname_length, MPI_CHAR, source, 11);
+          pthread_mutex_unlock(&mpi_mutex);                      
+          
           done = false; 
           while(!done) {
-//            pthread_mutex_lock(&mpi_mutex);            
+            pthread_mutex_lock(&mpi_mutex);            
             done = mreq.Test(status);           
-//            pthread_mutex_unlock(&mpi_mutex);            
+            pthread_mutex_unlock(&mpi_mutex);            
           }          
           //MPI::COMM_WORLD.Recv(codefile, codefile_length, MPI_CHAR, status.Get_source(), 13);
+          pthread_mutex_lock(&mpi_mutex);            
           mreq = MPI::COMM_WORLD.Irecv(codefile, codefile_length, MPI_CHAR, source, 13);          
+          pthread_mutex_unlock(&mpi_mutex);            
+          
           done = false; 
           while(!done) {
-//            pthread_mutex_lock(&mpi_mutex);            
-            done = mreq.Test(status);           
-//            pthread_mutex_unlock(&mpi_mutex);            
+            pthread_mutex_lock(&mpi_mutex);            
+            done = mreq.Test(status);          
+            pthread_mutex_unlock(&mpi_mutex);            
           }          
           objectname[objectname_length] = '\0';
           codefile[codefile_length] = '\0';
@@ -410,11 +429,15 @@ int main(int argc, char* argv[])
 	    		  callback.methodId[1] = callback_header.GetMethodID(); 
   	  	  	if(callback.methodId[1] == 200002){
   	  	  	  int length = strlen(objectaddress.GetString());
+  	  	  	  pthread_mutex_lock(&mpi_mutex);            
   	  	  	  MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, status.Get_source(), 14);
               MPI::COMM_WORLD.Isend(objectaddress.GetString(), length, MPI_CHAR, status.Get_source(), 15);
+              pthread_mutex_unlock(&mpi_mutex);            
 	  	      } else {
   	  	  	  int length = 0;
+  	  	  	  pthread_mutex_lock(&mpi_mutex);            
   	  	  	  MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, status.Get_source(), 14);	  	      
+  	  	  	  pthread_mutex_unlock(&mpi_mutex);            
   	  	    }
 	    	  }
    	      callback.data->Destroy();
@@ -437,40 +460,52 @@ int main(int argc, char* argv[])
           if (node != rank && node != -1 && node < world) {
             // Unlock local MPI receive thread
             int data = 12;
+            pthread_mutex_lock(&mpi_mutex);            
       	    MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, rank, 0); 
+      	    pthread_mutex_unlock(&mpi_mutex);            
             
 
             // Send signal to the remote node
-            data = 11; 
+            data = 11;
+            int objectname_length = strlen(objectname.GetString());
+            int codefile_length = strlen(codefile.GetString());
+            
+            pthread_mutex_lock(&mpi_mutex);             
             MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, node, 0);        
                 
             // Send allocation information to the destination MPI Communicator
-            int objectname_length = strlen(objectname.GetString());
-            int codefile_length = strlen(codefile.GetString());
+
             MPI::COMM_WORLD.Isend(&objectname_length, 1, MPI_INT, node, 10);
             MPI::COMM_WORLD.Isend(objectname.GetString(), objectname_length, MPI_CHAR, node, 11);
             MPI::COMM_WORLD.Isend(&codefile_length, 1, MPI_INT, node, 12);
             MPI::COMM_WORLD.Isend(codefile.GetString(), codefile_length, MPI_CHAR, node, 13);
+            pthread_mutex_unlock(&mpi_mutex);            
             
             // Receive objaccess from the allocator node
             int objaccess_length; 
             //MPI::COMM_WORLD.Recv(&objaccess_length, 1, MPI_INT, node, 14);
             MPI::Status status; 
+            pthread_mutex_lock(&mpi_mutex);            
             MPI::Request mreq = MPI::COMM_WORLD.Irecv(&objaccess_length, 1, MPI_INT, node, 14);
+            pthread_mutex_unlock(&mpi_mutex);                        
+            
             bool done = false; 
             while(!done) {
-//              pthread_mutex_lock(&mpi_mutex);
+              pthread_mutex_lock(&mpi_mutex);
               done = mreq.Test(status); 
-//              pthread_mutex_unlock(&mpi_mutex);              
+              pthread_mutex_unlock(&mpi_mutex);              
             }
             char* objaccess = new char[objaccess_length+1];
             //MPI::COMM_WORLD.Recv(objaccess, objaccess_length, MPI_CHAR, node, 15);
+            pthread_mutex_lock(&mpi_mutex);            
             mreq = MPI::COMM_WORLD.Irecv(objaccess, objaccess_length, MPI_CHAR, node, 15);
+            pthread_mutex_unlock(&mpi_mutex);            
+            
             done = false; 
             while(!done) {
-//              pthread_mutex_lock(&mpi_mutex);
+              pthread_mutex_lock(&mpi_mutex);
               done = mreq.Test(status); 
-//              pthread_mutex_unlock(&mpi_mutex);              
+              pthread_mutex_unlock(&mpi_mutex);              
             }            
             objaccess[objaccess_length] = '\0';
 
@@ -561,12 +596,15 @@ int main(int argc, char* argv[])
           
 //          MPI::COMM_WORLD.Recv(&dest_id, 1, MPI_INT, source, MPI_ANY_TAG, status);
           
+          pthread_mutex_lock(&mpi_mutex);            
           MPI::Request mreq = MPI::COMM_WORLD.Irecv(&dest_id, 1, MPI_INT, source, MPI_ANY_TAG);
+          pthread_mutex_unlock(&mpi_mutex);
+          
           bool done = false; 
           while(!done) {
-//            pthread_mutex_lock(&mpi_mutex);
+            pthread_mutex_lock(&mpi_mutex);
             done = mreq.Test(status); 
-//            pthread_mutex_unlock(&mpi_mutex);            
+            pthread_mutex_unlock(&mpi_mutex);            
           }        
                     
           int tag = status.Get_tag();
@@ -574,12 +612,15 @@ int main(int argc, char* argv[])
           // Receive the data length
           int length; 
           //MPI::COMM_WORLD.Recv(&length, 1, MPI_INT, source, tag);
+          pthread_mutex_lock(&mpi_mutex);            
           mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, tag);
+          pthread_mutex_unlock(&mpi_mutex);            
+          
           done = false; 
           while(!done) {
-//            pthread_mutex_lock(&mpi_mutex);
+            pthread_mutex_lock(&mpi_mutex);
             done = mreq.Test(status); 
-//            pthread_mutex_unlock(&mpi_mutex);            
+            pthread_mutex_unlock(&mpi_mutex);            
           } 
           
           // Connect to the remote object
@@ -640,12 +681,15 @@ int main(int argc, char* argv[])
           char* data = new char[length];
           // Receive the data
           //MPI::COMM_WORLD.Recv(data, length, MPI_CHAR, source, tag);          
+          pthread_mutex_lock(&mpi_mutex);            
           mreq = MPI::COMM_WORLD.Irecv(data, length, MPI_CHAR, source, tag);          
+          pthread_mutex_unlock(&mpi_mutex);            
+          
           done = false; 
           while(!done) {
-//            pthread_mutex_lock(&mpi_mutex);
+            pthread_mutex_lock(&mpi_mutex);
             done = mreq.Test(status); 
-//            pthread_mutex_unlock(&mpi_mutex);            
+            pthread_mutex_unlock(&mpi_mutex);            
           } 
 
 
@@ -660,23 +704,29 @@ int main(int argc, char* argv[])
 	  	    MPI::Status status;
 	  	    int length;
 	  	    //MPI::COMM_WORLD.Recv(&length, 1, MPI_INT, source, MPI_ANY_TAG, status);
+	  	    pthread_mutex_lock(&mpi_mutex);            
           MPI::Request mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, MPI_ANY_TAG);
+          pthread_mutex_unlock(&mpi_mutex);            
+          
           bool done = false; 
           while(!done) {
-//            pthread_mutex_lock(&mpi_mutex);
+            pthread_mutex_lock(&mpi_mutex);
             done = mreq.Test(status); 
-//            pthread_mutex_unlock(&mpi_mutex);            
+            pthread_mutex_unlock(&mpi_mutex);            
           } 
 	  	    int tag = status.Get_tag();
 
 	  	    char *data = new char[length];
 	  	    //MPI::COMM_WORLD.Recv(data, length, MPI_CHAR, source, tag);
+          pthread_mutex_lock(&mpi_mutex);
 	  	    mreq = MPI::COMM_WORLD.Irecv(data, length, MPI_CHAR, source, tag);
+          pthread_mutex_unlock(&mpi_mutex);            	  	    
+	  	  
 	  	    done = false; 
           while(!done) {
-//            pthread_mutex_lock(&mpi_mutex);
+            pthread_mutex_lock(&mpi_mutex);
             done = mreq.Test(status); 
-//            pthread_mutex_unlock(&mpi_mutex);            
+            pthread_mutex_unlock(&mpi_mutex);            
           } 
 	  	    int fd = incomingtag[tag];
 	  	    //printf("Redirect to caller %d\n", fd);
@@ -696,6 +746,8 @@ int main(int argc, char* argv[])
 	  	      int dest = outgoingconnection[fd].second;
 	  	      int tag = outgoingconnection[fd].first;     
   	  	    int data = 14;
+  	  	    
+  	  	    pthread_mutex_lock(&mpi_mutex);            
             MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, dest, 0); 	  	      
 	  	      
 	  	      // Send length of the request
@@ -703,6 +755,7 @@ int main(int argc, char* argv[])
             MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, dest, tag);
             char *load = request.data->get_load();
             MPI::COMM_WORLD.Isend(load, length, MPI_CHAR, dest, tag);            
+            pthread_mutex_unlock(&mpi_mutex);            
 	  	      
 	  	    
 	  	    } else { 
@@ -714,6 +767,7 @@ int main(int argc, char* argv[])
             // printf("Redirect from %d to %d.%d tag=%d fd=%d\n", rank, dest_node, dest_id, next_tag, fd);             	    	    
   	  	    // Send the request by MPI
 	  	      int data = 13;
+	  	      pthread_mutex_lock(&mpi_mutex);            
             MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, dest_node, 0); 
             // Send object id
             MPI::COMM_WORLD.Isend(&dest_id, 1, MPI_INT, dest_node, next_tag);
@@ -722,7 +776,8 @@ int main(int argc, char* argv[])
             MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, dest_node, next_tag);
             // Send the actual data        
             char *load = request.data->get_load();
-            MPI::COMM_WORLD.Isend(load, length, MPI_CHAR, dest_node, next_tag);            
+            MPI::COMM_WORLD.Isend(load, length, MPI_CHAR, dest_node, next_tag); 
+            pthread_mutex_unlock(&mpi_mutex);                       
             incomingtag[next_tag] = fd;
             //printf("tag=%d fd=%d\n", next_tag, fd);
             next_tag++;
