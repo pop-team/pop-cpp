@@ -356,7 +356,6 @@ int main(int argc, char* argv[])
           // None to get for the moment
           
         } else if(request.methodId[1] == 200004) {
-          printf("Allocate from MPI\n"); 
           // Allocation of a new parallel object from MPI
           MPI::Status status;
           int objectname_length, codefile_length; 
@@ -370,7 +369,7 @@ int main(int argc, char* argv[])
           }
           
           int source = status.Get_source(); 
-          printf("Source %d\n", source); 
+          
           //MPI::COMM_WORLD.Recv(&codefile_length, 1, MPI_INT, status.Get_source(), 12);
           mreq = MPI::COMM_WORLD.Irecv(&codefile_length, 1, MPI_INT, source, 12);
           done = false; 
