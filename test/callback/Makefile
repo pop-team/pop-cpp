@@ -16,6 +16,6 @@ clean:
 	rm -f main
 	rm -f *.obj
 	rm -f obj.map
-	rm -f _paroc*	
+	rm -f _popc*	
 run:
 	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main

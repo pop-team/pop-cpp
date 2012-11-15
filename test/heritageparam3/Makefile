@@ -8,7 +8,7 @@ object:
 	./ParObject.obj -listlong > objmap
 
 clean:
-	rm -f *.o *.obj main objmap _paroc*
+	rm -f *.o *.obj main objmap _popc*
 
 run:
 	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main

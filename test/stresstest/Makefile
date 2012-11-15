@@ -8,7 +8,7 @@ object:
 	./POPObject.obj -listlong > obj.map
 	
 clean:
-	rm -f *.o *.obj main obj.map _paroc*
+	rm -f *.o *.obj main obj.map _popc*
 
 run:
 	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main
