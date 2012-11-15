@@ -933,7 +933,6 @@ class_key: PARCLASS_KEYWORD ID
       t->EnableWarning(); 
     } 
 	}
-	printf("Class %s filename %s\n", clname, filename); 
 	t->SetFileInfo(filename);
 	t->SetStartLine(linenumber);
 	currentClass=t;
@@ -2417,7 +2416,6 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 	   	perror(infile);
 	   	return errno;
 		}
-		printf("Filename is set to %s\n", infile); 
     strcpy(filename, infile);
 	}
 	

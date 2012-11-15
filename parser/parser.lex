@@ -77,7 +77,6 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     if (t2!=NULL) {
       *t2=0;
       strcpy(filename, t1);
-      printf("@parocfile %s\n", filename); 
       thisCodeFile->SetFileName(filename); 
       *t2='"';
     }
@@ -128,8 +127,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     if (t2 != NULL) {
       *t2=0;
       strcpy(filename,t1);
-      if (thisCodeFile->GetFileName()==NULL) {
-        printf("# filename %s\n", filename);       
+      if (thisCodeFile->GetFileName()==NULL) {  
         thisCodeFile->SetFileName(filename); 
       }
       *t2='"';
@@ -148,8 +146,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     if (t2 != NULL) {
       *t2=0;
       strcpy(filename,t1);
-      if (thisCodeFile->GetFileName()==NULL) {
-        printf("# filename %s\n", filename);       
+      if (thisCodeFile->GetFileName()==NULL) {  
         thisCodeFile->SetFileName(filename); 
       }
       *t2='"';
