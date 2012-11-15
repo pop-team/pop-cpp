@@ -202,8 +202,7 @@ bool popc_combox_uds::Connect(const char *url)
 paroc_connection* popc_combox_uds::get_connection()
 {
   if(!_connected)
-    return NULL;
-  printf("Get connection: fd is %d\n", _connection->get_fd());  
+    return NULL;  
   return _connection;
 }
 
@@ -228,11 +227,9 @@ int popc_combox_uds::Send(const char *s, int len, paroc_connection *connection)
     return -1; 
   }
   int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
-  printf("Socket_fd is %d\n", socket_fd); 
   int wbytes = write(socket_fd, s, len); 
   if(wbytes < 0) {
     perror("UDS Combox: Cannot write to socket");
-
   } 
 
   return wbytes;	
@@ -257,7 +254,6 @@ int popc_combox_uds::Recv(char *s, int len, paroc_connection *connection)
 {
   int nbytes;
   int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
-  printf("R socket %d\n", socket_fd); 
   do {
     nbytes = read(socket_fd, s, len);
     if(nbytes < 0)
@@ -290,9 +286,7 @@ paroc_connection* popc_combox_uds::Wait()
     int poll_back;
     _timeout = timeout;
     do {
-      printf("POLL\n"); 
       poll_back = poll(active_connection, _active_connection_nb, _timeout);
-      printf("poll_back %d\n", poll_back); 
       if(_active_connection_nb >= 199)
         printf("TOO MANY CONNECTION\n");
     } while ((poll_back == -1) && (errno == EINTR));
@@ -305,7 +299,6 @@ paroc_connection* popc_combox_uds::Wait()
             int connection_fd;      
             connection_fd = accept(_socket_fd, (struct sockaddr *) &_sock_address, &address_length);       
             if(connection_fd < 0) {
-              printf("server socket %d\n", _socket_fd); 
               perror("UDS Combox accept:"); 
             } else {
               active_connection[_active_connection_nb].fd = connection_fd;
@@ -313,7 +306,6 @@ paroc_connection* popc_combox_uds::Wait()
               active_connection[_active_connection_nb].revents = 0;  
               _active_connection_nb++;
               active_connection[i].revents = 0;    
-              printf("C socket %d\n", connection_fd); 
               return new popc_connection_uds(connection_fd, this, true);       
             }
           } else {
@@ -392,10 +384,10 @@ void popc_combox_uds::Close()
   if(_is_server){
     // TODO close all connection fd
 
-    //close(_socket_fd);
-    //unlink(_uds_address.c_str());
+    close(_socket_fd);
+    unlink(_uds_address.c_str());
   } else {
-    //close(_socket_fd);
+    close(_socket_fd);
     _connected = false;
   }
 }
