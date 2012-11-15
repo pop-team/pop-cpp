@@ -5,7 +5,8 @@ add_custom_command(OUTPUT popc_mpi_interconnector.tmp
                    COMMAND ${MPI_COMPILER} ${MPI_COMPILER_FLAGS}
 popc_mpi_interconnector popc_mpi_interconnector.cpp
 -I${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/lib/libpopc_common.a
-                   DEPENDS popc_mpi_interconnector.cpp
+-lpthread
+                   DEPENDS popc_mpi_interconnector.cpp 
                    COMMENT "MPI Compilation of POP-C++ MPI Interconnector")
 
 add_custom_command(OUTPUT openmpi_check_support.tmp
