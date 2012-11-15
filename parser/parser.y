@@ -146,8 +146,8 @@ startlist: handle_this startlist
 |/*empty*/
 {
 	if (othercodes.GetSize()) {
-		assert(thisCodeFile!=NULL);
-		OtherCode *dat=new OtherCode(thisCodeFile);
+		assert(thisCodeFile != NULL);
+		OtherCode *dat = new OtherCode(thisCodeFile);
 		dat->AddCode(othercodes);
 		thisCodeFile->AddCodeData(dat);
 		othercodes.SetSize(0);
@@ -333,7 +333,7 @@ handle_eof: EOFCODE
 				if(!matched_parclasses.empty()){
 					// Implict add the pack directive
 					if (othercodes.GetSize() && startPos>0) {
-						assert(thisCodeFile!=NULL);
+						assert(thisCodeFile != NULL);
 						OtherCode *dat=new OtherCode(thisCodeFile);
 						dat->AddCode((char *)othercodes,startPos);
 						thisCodeFile->AddCodeData(dat);
@@ -951,9 +951,8 @@ base_list: base_specifier
 base_specifier: ID
 {
 	assert(currentClass!=NULL);
-	Class *cl=thisCodeFile->FindClass(GetToken($1));
-	if (cl==NULL) 
-	  {
+	Class *cl = thisCodeFile->FindClass(GetToken($1));
+	if (cl == NULL) {
 	    char str[1024];
 	    sprintf(str,"base class %s not declared",GetToken($1));
 	    errormsg(str);
@@ -966,7 +965,7 @@ base_specifier: ID
 {
 	assert(currentClass!=NULL);
 	AccessType accessmode=(AccessType)$1;
-	Class *cl=thisCodeFile->FindClass(GetToken($2));
+	Class *cl = thisCodeFile->FindClass(GetToken($2));
 	if (cl==NULL) 
 	  {
 	    char str[1024];
@@ -2471,7 +2470,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 	
 	}
 	delete thisCodeFile;
-	thisCodeFile=NULL;
+	thisCodeFile = NULL;
 	
 	isParclassDeclared = false; 
 	

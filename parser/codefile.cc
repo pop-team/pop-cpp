@@ -29,7 +29,7 @@ CodeFile::CodeFile(char *fname)
 {
 	isCoreCompilation = false;				// Core compilation is disable by default.
 	isAsyncAllocationDisable = false;	// Asynchronous allocation is enable by default.
-	filename=(fname==NULL) ? NULL : strdup(fname);
+	filename = (fname == NULL) ? NULL : strdup(fname);
 	codes.SetGrowby(1024);
 	outfile=NULL;
 	DataType *std;
@@ -43,8 +43,11 @@ CodeFile::CodeFile(char *fname)
 
 CodeFile::~CodeFile()
 {
-	if (filename!=NULL) free(filename);
-	if (outfile!=NULL) free(outfile);
+	if (filename != NULL) 
+	  free(filename);
+
+	if (outfile != NULL) 
+	  free(outfile);
 
 	EmptyCodeData();
 }
@@ -120,8 +123,10 @@ char *CodeFile::GetFileName()
 
 void CodeFile::SetFileName(char *name)
 {
-	if (filename!=NULL) free(filename);
-	filename= (name==NULL) ? NULL: strdup(name);
+  printf("Set filename %s\n", name); 
+	if (filename != NULL) 
+	  free(filename);
+	filename = (name == NULL) ? NULL : strdup(name);
 }
 
 char *CodeFile::GetOutputName()
@@ -131,8 +136,8 @@ char *CodeFile::GetOutputName()
 
 void CodeFile::SetOutputName(char *name)
 {
-	if (outfile!=NULL) free(outfile);
-	outfile= (name==NULL) ? NULL: strdup(name);
+	if (outfile != NULL) free(outfile);
+	outfile = (name == NULL) ? NULL : strdup(name);
 }
 
 Class *CodeFile::FindClass(char *clname)
