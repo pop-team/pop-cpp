@@ -89,7 +89,6 @@ void *mpireceivedthread(void *t)
   ipcwaker_buffer->SetHeader(header);  */
   paroc_connection* connection = ipcwaker.get_connection();	
   if(connection == NULL) {
-    printf("MPI received thread connection is NULL\n"); 
     perror("MPI received thread connection is NULL"); 
     pthread_exit(NULL); 
     return NULL;
@@ -137,7 +136,6 @@ void *mpireceivedthread(void *t)
       // Allocation of new parallel object
       case 11:
         {
-          printf("ALLOCATE 11\n");
           // signal the IPC thread to be ready to receive data for allocation
           paroc_message_header endheader(20, 200004, INVOKE_SYNC, "_allocation");
 	        ipcwaker_buffer->Reset();
@@ -217,8 +215,6 @@ int main(int argc, char* argv[])
   // Initialize local address
   rank = MPI::COMM_WORLD.Get_rank();
   world = MPI::COMM_WORLD.Get_size();
-
-  printf("Interconnectore started %d, world size = %d\n", rank, world); 
   
   pid_t mainpid;        // Save main pid to wait for it at the end
   pthread_t mpithread;  // MPI Receive thread
@@ -251,7 +247,7 @@ int main(int argc, char* argv[])
     } else {
       application_arg.append(capp);
     }
-    printf("MPI Interconnector %d - fork for main - main name = %s\n", rank, application_arg.c_str());    
+//    printf("MPI Interconnector %d - fork for main - main name = %s\n", rank, application_arg.c_str());    
     // Create new process for the POP-C++ application main
     mainpid = fork();
 
@@ -265,9 +261,6 @@ int main(int argc, char* argv[])
       return 1;
     }
   }
-
-
-  printf("Main started\n"); 
   
   int next_tag = 1000;  
 
