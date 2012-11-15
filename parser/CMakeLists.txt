@@ -7,20 +7,30 @@ include(CheckLibraryExists)
 
 include_directories(${CMAKE_SOURCE_DIR}/../ ${CMAKE_SOURCE_DIR}/../include)
 
+add_custom_command(OUTPUT parser.tmp
+                   COMMAND bison -y -b parser -d parser.y
+                   COMMAND mv parser.tab.c parser.tab.cc
+                   COMMAND flex -oparser.yy.cc parser.lex
+                   DEPENDS parser.y
+                   COMMENT "Generating parser files")
 
-#add_custom_target(parser-yacc ALL DEPENDS parser.tab.h)        
-#add_custom_target(parser-mv ALL DEPENDS parser.tab.h)                    
-#add_custom_target(parser-flex ALL DEPENDS parser.tab.cc)
+add_custom_target(gen DEPENDS parser.tmp)
 
-
+add_custom_command(OUTPUT parser.tab.cc
+                   COMMAND
+                   DEPENDS parser.tmp)
+add_custom_command(OUTPUT parser.yy.cc
+                   COMMAND
+                   DEPENDS parser.tmp)
+add_custom_command(OUTPUT parser.tab.h
+                   COMMAND
+                   DEPENDS parser.tmp)
 add_custom_command(OUTPUT parser.tmp
                    COMMAND bison -y -b parser -d parser.y
                    COMMAND mv parser.tab.c parser.tab.cc
                    COMMAND flex -oparser.yy.cc parser.lex              
                    DEPENDS parser.y
                    COMMENT "Running Bison")
-add_custom_target(gen DEPENDS parser.tmp)
-
 
 
 
