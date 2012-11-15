@@ -53,12 +53,12 @@ int main(int argc, char **argv)
   	paroc_system::popc_local_mpi_communicator_rank = atoi(local_rank);
 	}
   
-  char tmpcwd[PATH_MAX+1];
+  /*char tmpcwd[PATH_MAX+1];
   if (getcwd(tmpcwd, PATH_MAX+1) == NULL) {
     perror("getcwd failed");
   } else {
     printf("obj cwd is %s\n", tmpcwd);
-  }  
+  } */ 
 
 	// Connect to callback
 	char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");

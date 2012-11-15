@@ -95,12 +95,12 @@ int main(int argc, char **argv)
     
     paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();  
     
-    char tmpcwd[PATH_MAX+1];
+/*    char tmpcwd[PATH_MAX+1];
     if (getcwd(tmpcwd, PATH_MAX+1) == NULL) {
       perror("getcwd failed");
     } else {
       printf("main cwd is %s\n", tmpcwd);
-    }
+    }*/
   
   
     char* local_address = new char[15];
