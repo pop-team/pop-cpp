@@ -928,6 +928,7 @@ class_key: PARCLASS_KEYWORD ID
       if(isWarningEnable)
       	t->EnableWarning();  
 	}
+	printf("Class %s filename %s\n", clname, filename); 
 	t->SetFileInfo(filename);
 	t->SetStartLine(linenumber);
 	currentClass=t;

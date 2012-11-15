@@ -128,9 +128,8 @@ Other methods...
 
 void Class::SetFileInfo(char *file)
 {
-	if (myFile!=NULL) free(myFile);
-	myFile=strdup(file);
-
+	if (myFile != NULL) free(myFile);
+	myFile = strdup(file);
 }
 
 char * Class::GetFileInfo()
