@@ -118,7 +118,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   //  return DIRECTIVE;  
 };
 
-^"#"[ \t]*[0-9]+[ \t]+\"[^\"]*\"[^\n]* {
+^"#line"[ \t]*[0-9]+[ \t]+\"[^\"]*\"[^\n]* {
   char *t1, *t2;
   sscanf(yytext+1, "%d", &linenumber);
   t1=strchr(yytext,'"');
@@ -137,6 +137,28 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   }
   othercodes.InsertAt(-1,yytext,strlen(yytext));  
 };
+
+^"#"[ \t]*[0-9]+[ \t]+\"[^\"]*\"[^\n]* {
+  char *t1, *t2;
+  sscanf(yytext+1, "%d", &linenumber);
+  t1 = strchr(yytext,'"');
+  if (t1 != NULL) {
+    t1++;
+    t2 = strchr(t1,'"');
+    if (t2 != NULL) {
+      *t2=0;
+      strcpy(filename,t1);
+      if (thisCodeFile->GetFileName()==NULL) {
+        printf("# filename %s\n", filename);       
+        thisCodeFile->SetFileName(filename); 
+      }
+      *t2='"';
+    }
+  }
+  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+};
+
+
 
 ^"#"[^\n]* {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
