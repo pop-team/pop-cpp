@@ -257,8 +257,9 @@ int main(int argc, char* argv[])
   pthread_attr_t attr;
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);  
-  pthread_mutex_init(&mpi_mutex, NULL);
-//  pthread_cond_init (&mpi_condition, NULL);    
+  if(pthread_mutex_init(&mpi_mutex, NULL) != 0) 
+    perror("Mutex init"); 
+
   pthread_create(&mpithread, &attr, mpireceivedthread, NULL);
 
   // Wait for IPC request
