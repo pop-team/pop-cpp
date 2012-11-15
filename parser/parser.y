@@ -916,17 +916,21 @@ class_key: PARCLASS_KEYWORD ID
   
 	Class *t;
 	if ((t=thisCodeFile->FindClass(clname))==NULL) {
-      t=new Class(clname, thisCodeFile);
-      thisCodeFile->AddDataType(t);
+    t=new Class(clname, thisCodeFile);
+    thisCodeFile->AddDataType(t);
       
-      // Pass compilation options to classes
-      if(thisCodeFile->IsCoreCompilation())
-      	t->SetAsCoreCompilation();
+    // Pass compilation options to classes
+    if(thisCodeFile->IsCoreCompilation()) {
+      t->SetAsCoreCompilation();
+    }
+    
 		if(thisCodeFile->IsAsyncAllocationDisable()) {
-			t->DisableAsyncAllocation();
+      t->DisableAsyncAllocation();
 		}
-      if(isWarningEnable)
-      	t->EnableWarning();  
+    
+    if(isWarningEnable) {
+      t->EnableWarning(); 
+    } 
 	}
 	printf("Class %s filename %s\n", clname, filename); 
 	t->SetFileInfo(filename);
@@ -2412,11 +2416,14 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 	   	perror(infile);
 	   	return errno;
 		}
-    strcpy(filename,infile);
+		printf("Filename is set to %s\n", infile); 
+    strcpy(filename, infile);
 	}
+	
 	
 	linenumber = 1;
 	thisCodeFile = new CodeFile(NULL);
+	
 	if (outfile != NULL) {
 		
 		thisCodeFile->SetOutputName(outfile);	
