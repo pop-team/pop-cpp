@@ -2459,7 +2459,6 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 		}
       if (outf!=NULL) {
 			CArrayChar output(0,32000);
-  		printf("Generate Code client:%s broker:%s\n", client ? "true" : "false", broker ? "true" : "false"); 			
 			thisCodeFile->GenerateCode(output, client, broker);
 			fwrite((char *)output,1, output.GetSize(),outf);
       }
