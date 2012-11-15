@@ -240,14 +240,14 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 	}
 	
 	if (paroc_extension || strcmp(str, ".cc") == 0 ||  strcmp(str, ".C") == 0 || strcmp(str, ".cpp") == 0) {
-		sprintf(tmpfile1, "%s_paroc1_%s", sdir, fname);
+		sprintf(tmpfile1, "%s_popc1_%s", sdir, fname);
 	    
     if (usepipe) {
       sprintf(tmpfile2,"-"); 
     } else {
-      sprintf(tmpfile2,"%s_paroc2_%s", sdir,fname);
+      sprintf(tmpfile2,"%s_popc2_%s", sdir,fname);
     }
-    sprintf(tmpfile3, "%s_paroc3_%s", sdir, fname);
+    sprintf(tmpfile3, "%s_popc3_%s", sdir, fname);
     if (paroc_extension) {
 			strcat(tmpfile1 ,".cc");
 			strcat(tmpfile2 ,".cc");
@@ -255,7 +255,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 		}
       
       
-    PrepareSource(source,tmpfile1);
+    PrepareSource(source, tmpfile1);
       
     // Run C++ preprocessor
     cmd[0] = preprocessor;
