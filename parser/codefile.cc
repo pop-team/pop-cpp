@@ -75,6 +75,21 @@ void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker/*, bool
 		if (codes[j]->Type() == TYPE_CLASS) {
 			Class &cl = *(Class *)(codes[j]);
 			char *clfname = cl.GetFileInfo();
+			if(filename != NULL) {
+			  printf("filename not null %s\n", filename); 
+			} else {
+			  printf("filename null\n"); 			
+			}
+			
+			if(clfname != NULL) {
+			  printf("clfname not null %s\n", clfname); 
+			} else {
+			  printf("clfname null\n"); 
+			}
+			
+			if(SameFile(clfname, filename))
+			  printf("clfname == filename\n");
+			
 			if (filename == NULL || clfname == NULL || SameFile(clfname, filename)) {
 				if (client) {
     		  printf("GenerateClient\n"); 				
