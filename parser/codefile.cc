@@ -64,22 +64,26 @@ void CodeFile::EmptyCodeData()
 
 void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker/*, bool isPOPCPPCompilation*/)
 {
-	int m=codes.GetSize();
-	for (int j=0;j<m;j++)
-	{
-		if (broker || codes[j]->Type()!=TYPE_PACKOBJECT) codes[j]->GenerateCode(output);
+	int m = codes.GetSize();
+	for (int j = 0; j < m; j++) {
+		if (broker || codes[j]->Type() != TYPE_PACKOBJECT) {
+		  codes[j]->GenerateCode(output);
+		}
 	}
 
-	for (int j=0;j<m;j++)
-	{
-		if (codes[j]->Type()==TYPE_CLASS)
-		{
-			Class &cl=*(Class *)(codes[j]);
-			char *clfname=cl.GetFileInfo();
-			if (filename==NULL || clfname==NULL || SameFile(clfname,filename))
-			{
-				if (client) cl.GenerateClient(output/*, isPOPCPPCompilation*/);
-				if (broker) cl.GenerateBroker(output/*, isPOPCPPCompilation*/);
+	for (int j=0;j<m;j++) {
+		if (codes[j]->Type() == TYPE_CLASS) {
+			Class &cl = *(Class *)(codes[j]);
+			char *clfname = cl.GetFileInfo();
+			if (filename == NULL || clfname == NULL || SameFile(clfname, filename)) {
+				if (client) {
+    		  printf("GenerateClient\n"); 				
+				  cl.GenerateClient(output/*, isPOPCPPCompilation*/);
+				}
+				if (broker) {
+    		  printf("GenerateBroker\n"); 								
+				  cl.GenerateBroker(output/*, isPOPCPPCompilation*/);
+				}
 			}
 		}
 	}

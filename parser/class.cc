@@ -308,7 +308,7 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 	char tmpcode[10240];
 
 	char *outfile=GetCodeFile()->GetOutputName();
-	if (outfile!=NULL)
+	if (outfile != NULL)
 	{
 		int lines=CountCodeLines(code);
 		sprintf(tmpcode,"\n# %d \"%s\"\n",lines+3, outfile);
