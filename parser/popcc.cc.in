@@ -79,51 +79,39 @@ void Usage()
 	exit(1);
 }
 
+/**
+ * Print the POP-C++ version information on stderr
+ */
 void DisplayVersion()
 {
 	fprintf(stderr,"\nPOP-C++ version %s on %s\n\n", VERSION, arch);
 }
 
-void Verbose(int argc, char *argv[])
-{
-	printf("\nEXEC:");
-	for (int i=0;i<argc;i++) 
-		printf("%s ", argv[i]);
-	printf("\n");
-}
-
 int RunCmd(int argc, char *argv[])
 {
-	argv[argc]=0;
-	//if (verbose) Verbose(argc,argv);
-
+	argv[argc] = 0;
 	int status;
-	int pid=vfork();
+	int pid = vfork();
 	if (pid<0) {
-		perror("ERROR");
+		perror("POP-C++ Error: popcc run command");
 		_exit(1);
-	} else if (pid==0) {
-		execvp(argv[0],argv);
-		fprintf(stderr,"POP-C++ Error: %s not found\n",argv[0]);
+	} else if (pid == 0) {
+		execvp(argv[0], argv);
+		fprintf(stderr, "POP-C++ Error: %s not found\n", argv[0]);
 		_exit(1);
 	}
 	wait(&status);
-	int ret=WEXITSTATUS(status);
+	int ret = WEXITSTATUS(status);
 	return ret;
 }
 
 int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[])
 {
-	argv1[argc1]=0;
-	argv2[argc2]=0;
-
-/*	if (verbose) {	
-		Verbose(argc1,argv1);
-		Verbose(argc2,argv2);
-	}*/
+	argv1[argc1] = 0;
+	argv2[argc2] = 0;
 
 	int p[2]; 
-	if (pipe(p)!=0) {
+	if (pipe(p) != 0) {
 		perror("Error");
 		_exit(1);
 	}
@@ -167,7 +155,9 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[])
 	return ret;
 }
 
-
+/**
+ * Prepare POP-C++ source file. Generate _popc1_ files.
+ */
 void PrepareSource(char *src, char *dest)
 {
 	FILE *sf=fopen(src,"r+t");
@@ -243,9 +233,9 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 		sprintf(tmpfile1, "%s_popc1_%s", sdir, fname);
 	    
     if (usepipe) {
-      sprintf(tmpfile2,"-"); 
+      sprintf(tmpfile2, "-"); 
     } else {
-      sprintf(tmpfile2,"%s_popc2_%s", sdir,fname);
+      sprintf(tmpfile2, "%s_popc2_%s", sdir, fname);
     }
     sprintf(tmpfile3, "%s_popc3_%s", sdir, fname);
     if (paroc_extension) {
@@ -254,7 +244,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 			strcat(tmpfile3 ,".cc");
 		}
       
-      
+    // Prepare the source and generate _popc1_ files
     PrepareSource(source, tmpfile1);
       
     // Run C++ preprocessor
@@ -350,13 +340,13 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 	*t1 = output_opt; 
 	t1++; count++;
 	
-	if (dest==NULL) {
-		strcpy(output,source);
-    str=strrchr(output,'.');
-    if (strcmp(str,".ph")==0) {
-      strcpy(str,".stub.o");
+	if (dest == NULL) {
+		strcpy(output, source);
+    str = strrchr(output, '.');
+    if (strcmp(str, ".ph") == 0) {
+      strcpy(str, ".stub.o");
     } else { 
-      strcpy(str,".o");
+      strcpy(str, ".o");
     }
     dest = output;
     *t1 = output;
@@ -387,12 +377,13 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 	return dest;
 }
 
-bool FindLib(char *libpaths[1024], int count, const char *libname,char libfile[1024])
+bool FindLib(char *libpaths[1024], int count, const char *libname, char libfile[1024])
 {
-  for (int i=0;i<count;i++) {
-		sprintf(libfile,"%s/lib%s.a", libpaths[i], libname);
-		if (access(libfile,F_OK)==0) 
+  for (int i = 0; i < count; i++) {
+		sprintf(libfile, "%s/lib%s.a", libpaths[i], libname);
+		if (access(libfile, F_OK) == 0) {
 			return true;
+		}
 	}
 	return false;
 }
@@ -408,7 +399,7 @@ int main(int argc, char *argv[])
   
 
   // If no arguments specified prints usage
-	if (argc<=1) {
+	if (argc <= 1) {
 		Usage();
 	}
 
@@ -416,21 +407,21 @@ int main(int argc, char *argv[])
   char popcpp[1024];
 
 #ifndef POPC_CXX
-  char parocxx[1024]="@CMAKE_CXX_COMPILER@";
-  char parocld[1024]="@CMAKE_CXX_COMPILER@";
+  char parocxx[1024] = "@CMAKE_CXX_COMPILER@";
+  char parocld[1024] = "@CMAKE_CXX_COMPILER@";
 #else
-  char parocxx[1024]=POPC_CXX;
-  char parocld[1024]=POPC_CXX;
+  char parocxx[1024] = POPC_CXX;
+  char parocld[1024] = POPC_CXX;
 #endif
 
 #ifndef POPC_CPP
-  char cpp[1024]="@CMAKE_CXX_COMPILER@ -E";
+  char cpp[1024] = "@CMAKE_CXX_COMPILER@ -E";
 #else
-  char cpp[1024]=POPC_CPP;
+  char cpp[1024] = POPC_CPP;
 #endif
   
   // POP-C++ installation directory
-  char parocdir[1024]="@CMAKE_INSTALL_PREFIX@";
+  char parocdir[1024] = "@CMAKE_INSTALL_PREFIX@";
 
   char *link_cmd[1024];
 
@@ -448,25 +439,24 @@ int main(int argc, char *argv[])
 
   char buf[256];
 
-  char outputfile[1024]="";
+  char outputfile[1024] = "";
 
-  bool useparocmain=true;
-  bool compile=false;
-  bool object=false;
-  bool paroc_static=false;
-  bool paroc_nolib=false;
-  bool broker=true;
-  bool client=true;
-  bool warning=false;
-  bool popcppcomp=false;  
-  bool implicitpack=false;  
-  bool asyncallocation=false;
-  bool staticlib=false;
-  bool kcomputer=false;
-  
-  bool usepipe=true;
+  bool useparocmain = true;
+  bool compile = false;
+  bool object = false;
+  bool paroc_static = false;
+  bool paroc_nolib = false;
+  bool broker = true;
+  bool client = true;
+  bool warning = false;
+  bool popcppcomp = false;  
+  bool implicitpack = false;  
+  bool asyncallocation = false;
+  bool staticlib = false;
+  bool kcomputer = false;
+  bool usepipe = true;
 
-  char objmain[256]="std";
+  char objmain[256] = "std";
 
   char *tmp;
   
@@ -485,8 +475,8 @@ int main(int argc, char *argv[])
   }
 
   
-  paroc_static = (paroc_utils::checkremove(&argc,&argv,"-popc-static") != NULL);
-  paroc_nolib = (paroc_utils::checkremove(&argc,&argv,"-popc-nolib") != NULL);
+  paroc_static = (paroc_utils::checkremove(&argc, &argv, "-popc-static") != NULL);
+  paroc_nolib = (paroc_utils::checkremove(&argc, &argv, "-popc-nolib") != NULL);
 
   // Check the option -popcpp to specify the POP-C++ preprocessor
   if ((tmp = paroc_utils::checkremove(&argc, &argv, "-popcpp=")) != NULL) {
@@ -504,7 +494,7 @@ int main(int argc, char *argv[])
   }
 
   // Check change for the C++ preprocessor
-  if ((tmp = paroc_utils::checkremove(&argc,&argv,"-cpp=")) != NULL) { 
+  if ((tmp = paroc_utils::checkremove(&argc, &argv, "-cpp=")) != NULL) { 
     strcpy(cpp, tmp);
   } else if ((tmp = getenv("POPC_CPP")) != NULL) {
     strcpy(cpp, tmp);
@@ -527,33 +517,33 @@ int main(int argc, char *argv[])
   }
 
 	// Check for POP-C++ options  
-	noclean = (paroc_utils::checkremove(&argc,&argv,"-noclean") != NULL);
-	warning = (paroc_utils::checkremove(&argc,&argv,"-no-warning") != NULL);
-	popcppcomp = (paroc_utils::checkremove(&argc,&argv,"-popcpp-compilation") != NULL);
-	implicitpack = (paroc_utils::checkremove(&argc,&argv,"-no-implicit-pack") != NULL);
-	asyncallocation = (paroc_utils::checkremove(&argc,&argv,"-no-async-allocation") != NULL);
-	broker = (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker") == NULL);
-	client = (paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface") == NULL);
-  usepipe = (paroc_utils::checkremove(&argc,&argv,"-nopipe") == NULL);
-  kcomputer = (paroc_utils::checkremove(&argc,&argv,"-kcomputer") == NULL);
+	noclean = (paroc_utils::checkremove(&argc, &argv, "-noclean") != NULL);
+	warning = (paroc_utils::checkremove(&argc, &argv, "-no-warning") != NULL);
+	popcppcomp = (paroc_utils::checkremove(&argc, &argv, "-popcpp-compilation") != NULL);
+	implicitpack = (paroc_utils::checkremove(&argc, &argv, "-no-implicit-pack") != NULL);
+	asyncallocation = (paroc_utils::checkremove(&argc, &argv, "-no-async-allocation") != NULL);
+	broker = (paroc_utils::checkremove(&argc, &argv, "-parclass-nobroker") == NULL);
+	client = (paroc_utils::checkremove(&argc, &argv, "-parclass-nointerface") == NULL);
+  usepipe = (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
+  kcomputer = (paroc_utils::checkremove(&argc, &argv, "-kcomputer") == NULL);
 
   cpp_count = 0;
-  char *tok = strtok(cpp," \t");
-  while ((tok = strtok(NULL," \t")) != NULL) {
-    cpp_opts[cpp_count++]=tok;
+  char *tok = strtok(cpp, " \t");
+  while ((tok = strtok(NULL, " \t")) != NULL) {
+    cpp_opts[cpp_count++] = tok;
   }
 
   cxx_count = 0;
-  tok = strtok(parocxx," \t");
-  while ((tok=strtok(NULL," \t"))!=NULL) { 
-    cxx_opts[cxx_count++]=tok;
+  tok = strtok(parocxx, " \t");
+  while ((tok = strtok(NULL, " \t")) != NULL) { 
+    cxx_opts[cxx_count++] = tok;
   }
 
   link_cmd[0] = parocld;
   link_count = 1;
   tok = strtok(parocld, " \t");
   while ((tok = strtok(NULL," \t")) != NULL) {
-    link_cmd[link_count++]=tok;
+    link_cmd[link_count++] = tok;
   }
 
   // Add the library path for compilation
@@ -563,8 +553,8 @@ int main(int argc, char *argv[])
 
   // Add POP-C++ library path to the lib path
   char paroclibdir[1024];
-  sprintf(paroclibdir,"%s/lib",parocdir);
-  libpaths[libpaths_count++]=paroclibdir;
+  sprintf(paroclibdir, "%s/lib", parocdir);
+  libpaths[libpaths_count++] = paroclibdir;
   
 	
 #ifdef POPC_EXTRA_LINK
@@ -576,23 +566,23 @@ int main(int argc, char *argv[])
   	  argv[i][0] = 0;
 	    compile = true;
   	} else if (strcmp(argv[i], "-o") == 0) {
-  	  if (i == argc-1) {
-	      fprintf(stderr,"POP-C++ Error: option -o is used but no output file is specified\n");
+  	  if (i == argc - 1) {
+	      fprintf(stderr, "POP-C++ Error: option -o is used but no output file is specified\n");
 	      exit(1);
 	    }
   	  if (*outputfile != 0) {
-	      fprintf(stderr,"POP-C++ Error: multiple output files specified\n");
+	      fprintf(stderr, "POP-C++ Error: multiple output files specified\n");
 	      exit(1);
 	    }
   	  argv[i][0] = 0;
-  	  strcpy(outputfile,argv[i+1]);
+  	  strcpy(outputfile, argv[i+1]);
 	    i++;
 	    argv[i][0] = 0;
   	} else if (strcmp(argv[i], "-object") == 0) {
   	  argv[i][0]=0;
 	    object=true;
     } else if (strncmp(argv[i], "-object=", 8) == 0) {
-  	  if (argv[i][8] != 0) strcpy(objmain, argv[i]+8);
+  	  if (argv[i][8] != 0) strcpy(objmain, argv[i] + 8);
 	      argv[i][0] = 0;
 	      object = true;
     	} else if (strcmp(argv[i], "-cxxmain") == 0) {
@@ -615,14 +605,14 @@ int main(int argc, char *argv[])
       }
     }
 
-    libpaths[libpaths_count++]=(char*)"/usr/lib";
-    libpaths[libpaths_count++]=(char*)"/lib";
+    libpaths[libpaths_count++] = (char*)"/usr/lib";
+    libpaths[libpaths_count++] = (char*)"/lib";
 
-    sprintf(buf,"-DPOPC_ARCH=\"%s\"",arch);
-    cpp_opts[cpp_count++]=strdup(buf);
+    sprintf(buf, "-DPOPC_ARCH=\"%s\"", arch);
+    cpp_opts[cpp_count++] = strdup(buf);
 
     if (useparocmain) {
-      cpp_opts[cpp_count++]=strdup("-Dmain=parocmain");
+      cpp_opts[cpp_count++] = strdup("-Dmain=parocmain");
     }
 
     sprintf(buf, "-I%s/include", parocdir);
@@ -635,19 +625,19 @@ int main(int argc, char *argv[])
 
     cxx_opts[cxx_count++] = strdup("-Dparclass=class");
   
-    cpp_opts[cpp_count]=NULL;
-    cxx_opts[cxx_count]=NULL;
+    cpp_opts[cpp_count] = NULL;
+    cxx_opts[cxx_count] = NULL;
 
     if(verbose) {   
       printf("POP-C++ Compiler - version %s on %s\n", VERSION, arch); 
     }
-    for (int i=1;i<argc;i++) {
-      if (argv[i][0]!=0) {
-        if (argv[i][0]!='-') {
-      	  char *str=strrchr(argv[i],'.');
-      		if (str!=NULL) {
-			      bool paroc_extension= (strcmp(str,".ph")==0 || strcmp(str,".pc")==0);
-    	      if (paroc_extension || strcmp(str,".cc")==0 ||  strcmp(str,".C")==0 || strcmp(str,".cpp")==0) {
+    for (int i = 1; i < argc; i++) {
+      if (argv[i][0] != 0) {
+        if (argv[i][0] != '-') {
+      	  char *str = strrchr(argv[i], '.');
+      		if (str != NULL) {
+			      bool paroc_extension = (strcmp(str, ".ph") == 0 || strcmp(str, ".pc") == 0);
+    	      if (paroc_extension || strcmp(str,".cc") == 0 ||  strcmp(str,".C") == 0 || strcmp(str, ".cpp")==0) {
     	        if(verbose) {
     	          printf("\n"); 
     	        }
