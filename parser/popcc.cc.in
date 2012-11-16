@@ -318,7 +318,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
      	  	printf("%s ", cmd[i]);
       	}
         printf("\n");         
-        printf("POP-C++ parsing (from pipe _paroc1): "); 
+        printf("POP-C++ parsing (from pipe %s): ", tmpfile1); 
        	for (int i = 0; i < countparoc; i++) {
      	  	printf("%s ", cmd1[i]);
       	}
