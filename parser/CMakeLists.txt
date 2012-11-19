@@ -25,14 +25,14 @@ message(STATUS "Bison found at ${BISON}")
 
 include_directories(${CMAKE_SOURCE_DIR}/../ ${CMAKE_SOURCE_DIR}/../include)             
 
-add_custom_target(parser.tmp
+add_custom_target(gen 
                   COMMAND ${BISON} -y -b parser -d parser.y
                   COMMAND mv parser.tab.c parser.tab.cc
                   COMMAND ${FLEX} -oparser.yy.cc parser.lex
                   DEPENDS parser.y                  
                   COMMENT "Generating parser files")                     
 
-add_custom_target(gen DEPENDS parser.tmp)
+#add_custom_target(gen DEPENDS parser.tmp)
 
 add_custom_command(OUTPUT parser.tab.h
                   COMMENT "Generate parser.tab.h")
