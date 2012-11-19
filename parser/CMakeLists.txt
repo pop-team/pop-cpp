@@ -35,16 +35,14 @@ add_custom_target(parser.tmp
 add_custom_target(gen DEPENDS parser.tmp)
 
 add_custom_command(OUTPUT parser.tab.h
-                   DEPENDS parser.tmp)
+                  COMMENT "Generate parser.tab.h")
 
 add_custom_command(OUTPUT parser.tab.cc
-                   DEPENDS parser.tmp)
+                  COMMENT "Generate parser.tab.cc")
 
 add_custom_command(OUTPUT parser.yy.cc
-                   DEPENDS parser.tmp)
+                  COMMENT "Generate parser.yy.cc")
                    
-
-
 
 
 add_executable(popcpp 
@@ -73,12 +71,14 @@ add_executable(popcpp
   ${CMAKE_SOURCE_DIR}/../lib/utils.cc
   ${CMAKE_SOURCE_DIR}/../lib/debug.cc
   )
-add_dependencies(popcpp "parser.tab.cc;parser-yacc;parser.yy.cc")  
+add_dependencies(popcpp gen)  
   
+  
+# Build the popcc executable 
 add_executable(popcc
-  popcc.cc 
-  ${CMAKE_SOURCE_DIR}/../lib/utils.cc
-  )
+               popcc.cc 
+               ${CMAKE_SOURCE_DIR}/../lib/utils.cc
+               )
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/popcc.cc.in ${CMAKE_CURRENT_SOURCE_DIR}/popcc.cc)
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "parser.tab.h;parser.tab.cc;parser.yy.cc;")
