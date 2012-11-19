@@ -102,7 +102,6 @@ void *mpireceivedthread(void *t)
     MPI::Status status;
     // Receive data
     //printf("Recveive thread %d wait for message\n", rank);  
-    //MPI::COMM_WORLD.Recv(&data, 1, MPI_INT, MPI_ANY_SOURCE, 0, status);
     pthread_mutex_lock(&mpi_mutex);                
     MPI::Request mreq = MPI::COMM_WORLD.Irecv(&data, 1, MPI_INT, MPI_ANY_SOURCE, 0); 
     pthread_mutex_unlock(&mpi_mutex);                
@@ -331,7 +330,6 @@ int main(int argc, char* argv[])
           // Allocation of a new parallel object from MPI
           MPI::Status status;
           int objectname_length, codefile_length; 
-          //MPI::COMM_WORLD.Recv(&objectname_length, 1, MPI_INT, MPI_ANY_SOURCE, 10, status);
           pthread_mutex_lock(&mpi_mutex);            
           MPI::Request mreq = MPI::COMM_WORLD.Irecv(&objectname_length, 1, MPI_INT, MPI_ANY_SOURCE, 10);
           pthread_mutex_unlock(&mpi_mutex);                      
@@ -345,7 +343,6 @@ int main(int argc, char* argv[])
           
           int source = status.Get_source(); 
           
-          //MPI::COMM_WORLD.Recv(&codefile_length, 1, MPI_INT, status.Get_source(), 12);
           pthread_mutex_lock(&mpi_mutex);                      
           mreq = MPI::COMM_WORLD.Irecv(&codefile_length, 1, MPI_INT, source, 12);
           pthread_mutex_unlock(&mpi_mutex);            
@@ -358,7 +355,6 @@ int main(int argc, char* argv[])
           }          
           char* objectname = new char[objectname_length+1];
           char* codefile = new char[codefile_length+1];                    
-          //MPI::COMM_WORLD.Recv(objectname, objectname_length, MPI_CHAR, status.Get_source(), 11);
           pthread_mutex_lock(&mpi_mutex);            
           mreq = MPI::COMM_WORLD.Irecv(objectname, objectname_length, MPI_CHAR, source, 11);
           pthread_mutex_unlock(&mpi_mutex);                      
@@ -369,7 +365,6 @@ int main(int argc, char* argv[])
             done = mreq.Test(status);           
             pthread_mutex_unlock(&mpi_mutex);            
           }          
-          //MPI::COMM_WORLD.Recv(codefile, codefile_length, MPI_CHAR, status.Get_source(), 13);
           pthread_mutex_lock(&mpi_mutex);            
           mreq = MPI::COMM_WORLD.Irecv(codefile, codefile_length, MPI_CHAR, source, 13);          
           pthread_mutex_unlock(&mpi_mutex);            
@@ -484,7 +479,6 @@ int main(int argc, char* argv[])
             
             // Receive objaccess from the allocator node
             int objaccess_length; 
-            //MPI::COMM_WORLD.Recv(&objaccess_length, 1, MPI_INT, node, 14);
             MPI::Status status; 
             pthread_mutex_lock(&mpi_mutex);            
             MPI::Request mreq = MPI::COMM_WORLD.Irecv(&objaccess_length, 1, MPI_INT, node, 14);
@@ -497,7 +491,6 @@ int main(int argc, char* argv[])
               pthread_mutex_unlock(&mpi_mutex);              
             }
             char* objaccess = new char[objaccess_length+1];
-            //MPI::COMM_WORLD.Recv(objaccess, objaccess_length, MPI_CHAR, node, 15);
             pthread_mutex_lock(&mpi_mutex);            
             mreq = MPI::COMM_WORLD.Irecv(objaccess, objaccess_length, MPI_CHAR, node, 15);
             pthread_mutex_unlock(&mpi_mutex);            
@@ -595,8 +588,6 @@ int main(int argc, char* argv[])
           int source = request.methodId[0];
           MPI::Status status; 
           
-//          MPI::COMM_WORLD.Recv(&dest_id, 1, MPI_INT, source, MPI_ANY_TAG, status);
-          
           pthread_mutex_lock(&mpi_mutex);            
           MPI::Request mreq = MPI::COMM_WORLD.Irecv(&dest_id, 1, MPI_INT, source, MPI_ANY_TAG);
           pthread_mutex_unlock(&mpi_mutex);
@@ -612,36 +603,20 @@ int main(int argc, char* argv[])
 
           // Receive the data length
           int length; 
-          //MPI::COMM_WORLD.Recv(&length, 1, MPI_INT, source, tag);
           pthread_mutex_lock(&mpi_mutex);            
           mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, tag);
           pthread_mutex_unlock(&mpi_mutex);            
+          
+          if(length <= 0) {
+            printf("POP-C++ Error: MPI Interconnector - request MPI-IPC redirection, length is %d\n", length); 
+          }
           
           done = false; 
           while(!done) {
             pthread_mutex_lock(&mpi_mutex);
             done = mreq.Test(status); 
             pthread_mutex_unlock(&mpi_mutex);            
-          } 
-          
-          // Connect to the remote object
-        	/*paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
-          paroc_combox* client = combox_factory->Create("uds");
-          char* address = new char[15];
-          snprintf(address, 15, "uds_%d.%d", rank, dest_id); 
-          client->Create(address, false);
-          
-          if(client->Connect(address)) {
-            connection = client->get_connection();	
-          	int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();        	
-            outgoingconnection[fd] = pair<int, int>(tag, source);        	
-            local.add_fd_to_poll(fd);
-
-          } else {
-            printf("Can't connect\n");
-          }*/
-            
-                 
+          }          
           
        	  paroc_combox* client;
          	paroc_connection* connection;
@@ -681,7 +656,6 @@ int main(int argc, char* argv[])
           
           char* data = new char[length];
           // Receive the data
-          //MPI::COMM_WORLD.Recv(data, length, MPI_CHAR, source, tag);          
           pthread_mutex_lock(&mpi_mutex);            
           mreq = MPI::COMM_WORLD.Irecv(data, length, MPI_CHAR, source, tag);          
           pthread_mutex_unlock(&mpi_mutex);            
@@ -704,7 +678,6 @@ int main(int argc, char* argv[])
           int source = request.methodId[0];	  	    
 	  	    MPI::Status status;
 	  	    int length;
-	  	    //MPI::COMM_WORLD.Recv(&length, 1, MPI_INT, source, MPI_ANY_TAG, status);
 	  	    pthread_mutex_lock(&mpi_mutex);            
           MPI::Request mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, MPI_ANY_TAG);
           pthread_mutex_unlock(&mpi_mutex);            
@@ -718,7 +691,6 @@ int main(int argc, char* argv[])
 	  	    int tag = status.Get_tag();
 
 	  	    char *data = new char[length];
-	  	    //MPI::COMM_WORLD.Recv(data, length, MPI_CHAR, source, tag);
           pthread_mutex_lock(&mpi_mutex);
 	  	    mreq = MPI::COMM_WORLD.Irecv(data, length, MPI_CHAR, source, tag);
           pthread_mutex_unlock(&mpi_mutex);            	  	    
@@ -733,7 +705,7 @@ int main(int argc, char* argv[])
 	  	    //printf("Redirect to caller %d\n", fd);
 	  	    popc_connection_uds* tmpconnection = new popc_connection_uds(fd, &local);
 	        if (local.Send(data, length, tmpconnection) < 0) {
-        	  printf("Can't send to caller\n");
+        	  printf("Can't send to caller (fd=%d, source=%d, tag=%d)\n", fd, source, tag);
         	} 
 	  	    
 	  	    delete [] data;
@@ -760,27 +732,29 @@ int main(int argc, char* argv[])
 	  	      
 	  	    
 	  	    } else { 
-            //printf("IPC - Request %d %d\n", rank, request.methodId[1]);	  	    
 	  	      // Redirect request to object
 	  	      int dest_node = incomingconnection[fd].first;
 	    	    int dest_id = incomingconnection[fd].second;
-
-            // printf("Redirect from %d to %d.%d tag=%d fd=%d\n", rank, dest_node, dest_id, next_tag, fd);             	    	    
+          	    	    
   	  	    // Send the request by MPI
 	  	      int data = 13;
 	  	      pthread_mutex_lock(&mpi_mutex);            
+	  	      // Send initiate message
             MPI::COMM_WORLD.Isend(&data, 1, MPI_INT, dest_node, 0); 
             // Send object id
             MPI::COMM_WORLD.Isend(&dest_id, 1, MPI_INT, dest_node, next_tag);
             // Send data size
             int length = request.data->get_size();
+            if(length <= 0) {
+              printf("POP-C++ Error: MPI Interconnector - request IPC-MPI redirection, length is %d\n", length); 
+            }
             MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, dest_node, next_tag);
             // Send the actual data        
             char *load = request.data->get_load();
             MPI::COMM_WORLD.Isend(load, length, MPI_CHAR, dest_node, next_tag); 
             pthread_mutex_unlock(&mpi_mutex);                       
             incomingtag[next_tag] = fd;
-            //printf("tag=%d fd=%d\n", next_tag, fd);
+            //printf("Saving fd for redirection: dest %d.%d (fd=%d, tag=%d)\n", dest_node, dest_id, fd, next_tag);
             next_tag++;
           	  	    
 	  	    }
