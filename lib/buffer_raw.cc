@@ -488,6 +488,36 @@ int paroc_buffer_raw::get_size()
 
 char* paroc_buffer_raw::get_load()
 {
+  // Pack the header (20 bytes)
+	char *dat = (char *)packeddata;
+
+	if (dat == NULL) return false;
+	int n = packeddata.GetSize();
+	int h[5];
+	memset(h,0, 5 * sizeof(int));
+
+	int type = header.GetType();
+
+	h[0] = n;
+	h[1] = type;
+
+	switch (type) {
+  	case TYPE_REQUEST:
+	  	h[2] = header.GetClassID();
+		  h[3] = header.GetMethodID();
+  		h[4] = header.GetSemantics();
+	  	break;
+  	case TYPE_EXCEPTION:
+	  	h[2] = header.GetExceptionCode();
+		  break;
+  	case TYPE_RESPONSE:
+	  	h[2] = header.GetClassID();
+		  h[3] = header.GetMethodID();
+  		break;
+	  default:
+		  return false;
+	}
+	memcpy(dat, h, 20);
   return (char *)packeddata;
 }
 
