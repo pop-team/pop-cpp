@@ -11,10 +11,11 @@ app:
 object:
 	$(POPCC) $(POPCCOMPILE) -object -o demopopc.obj demopopc.cc demopopc.ph
 clean:
-	rm -f *.o *.obj main
+	rm -f *.o *.obj main popc_mpi_interconnector
 	
 run:
-	mpiexec -np 5 ../../interconnector/popc_mpi_interconnector -app=./main 10 0 0 1 1 2 2 3 3 4 4
+  cp ../../interconnector/popc_mpi_interconnector ./ 
+	mpiexec -np 5 ./interconnector/popc_mpi_interconnector -app=./main 10 0 0 1 1 2 2 3 3 4 4
 	
 run100:
 	popcrun obj.map ./main 100 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
