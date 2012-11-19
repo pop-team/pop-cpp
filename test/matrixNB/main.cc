@@ -44,7 +44,7 @@ int main(int argc, char** argv)
         char* resultFileName;
 
 	// Get the execution parameters
-	Alines= Acols = Bcols = atoi(argv[1]);
+	Alines = Acols = Bcols = atoi(argv[1]);
 	nbWorker = atoi(argv[2]);
 	nbBlocB = atoi(argv[3]);
 	if (argc > 4) 
@@ -104,9 +104,9 @@ int main(int argc, char** argv)
 
 	try
 	{
-		for (int i=0; i<nbWorker; i++)
+		for (int i=0; i < nbWorker; i++)
 		{
-			mw[i] = new MatWorker(i, Alines/nbWorker, Acols, Bcols, i);
+			mw[i] = new MatWorker(i, Alines/nbWorker, Acols, Bcols, 0);
 		}
 
 		printf("\nMatrix: Start computation...\n");
