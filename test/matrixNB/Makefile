@@ -1,16 +1,20 @@
-NODE_NUMBER=5
+POPCC=../../parser/popcc
+POPCPP=../../parser/popcpp
+POPCPATH=../..
+CROSSCOMPILE=-cxx=FCCpx -Xg -pthread -cpp="FCCpx -E"
+POPCCOMPILE=-popc-static -popcdir=$(POPCPATH) -popcpp=$(POPCPP) $(CROSSCOMPILE) 
+
+NODE_NUMBER=2
 
 all: fast
 
 fast:
-	popcc -O1 -O2 -O3  -fforce-addr -fomit-frame-pointer -o MatMul Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc main.cc
-	popcc -object -O1 -O2 -O3 -fforce-addr -fomit-frame-pointer  -o MatWorker.obj Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc
-	./MatWorker.obj -listlong > obj.map
+	$(POPCC) $(POPCCOMPILE) -O3 -o MatMul Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc main.cc
+	$(POPCC) $(POPCCOMPILE) -object -O3 -o MatWorker.obj Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc
 
 slow:
-	popcc -o MatMul Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc main.cc
-	popcc -object -o MatWorker.obj Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc
-	./MatWorker.obj -listlong > obj.map
+	$(POPCC) $(POPCCOMPILE) -o MatMul Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc main.cc
+	$(POPCC) $(POPCCOMPILE) -object -o MatWorker.obj Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc
 
 clean:
 	rm -f *.obj MatMul *.o obj.map
