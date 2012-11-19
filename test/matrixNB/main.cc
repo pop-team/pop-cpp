@@ -41,18 +41,16 @@ int main(int argc, char** argv)
 	int nbWorker;
 	int nbBlocB;
 
-	char* resultFileName; //argv[4];
-
-	FILE *f;
+        char* resultFileName;
 
 	// Get the execution parameters
 	Alines= Acols = Bcols = atoi(argv[1]);
 	nbWorker = atoi(argv[2]);
 	nbBlocB = atoi(argv[3]);
 	if (argc > 4) 
-		resultFileName=argv[4]; 
+		resultFileName = argv[4]; 
 	else 
-		resultFileName=NULL;
+		resultFileName = NULL;
 
 	printf("\nMatrix: Starting test..\n");
 
