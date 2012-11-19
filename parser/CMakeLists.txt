@@ -34,17 +34,16 @@ add_custom_target(parser.tmp
 
 add_custom_target(gen DEPENDS parser.tmp)
 
-add_custom_command(OUTPUT parser.tab.cc
-                   COMMAND
-                   DEPENDS parser.tmp)
-                   
-add_custom_command(OUTPUT parser.yy.cc
-                   COMMAND
-                   DEPENDS parser.tmp)
-                   
 add_custom_command(OUTPUT parser.tab.h
-                   COMMAND
                    DEPENDS parser.tmp)
+
+add_custom_command(OUTPUT parser.tab.cc
+                   DEPENDS parser.tmp)
+
+add_custom_command(OUTPUT parser.yy.cc
+                   DEPENDS parser.tmp)
+                   
+
 
 
 
