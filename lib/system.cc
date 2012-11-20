@@ -22,6 +22,7 @@
 #include <arpa/inet.h>
 #include <ctype.h>
 
+
 #include "paroc_system.h"
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_utils.h"
@@ -464,6 +465,7 @@ void paroc_system::Finalize(bool normalExit)
 void paroc_system::processor_set(int cpu)
 {
 #ifndef __APPLE__
+  // Use glibc to set cpu affinity
   if (cpu < 0) {
     printf("POP-C++ Warning: Cannot set processor to %d<0", cpu);
     exit(EXIT_FAILURE);
@@ -492,5 +494,9 @@ void paroc_system::processor_set(int cpu)
     printf("POP-C++ Warning: Unable to run on cpu %d", cpu);
     exit(EXIT_FAILURE);
   }
+#else 
+  // Apple thread API
+  
+  
 #endif
 }
