@@ -700,7 +700,7 @@ int main(int argc, char* argv[])
             if(client->Connect(address)) {
             	connection = client->get_connection();	
           	  int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();    
-//          	  printf("New connection initialzed with %s, fd=%d\n", address, fd);     	
+//          	  printf("New connection initialized with %s, fd=%d\n", address, fd);     	
               // Store 
             	outgoingconnection[fd] = pair<int, int>(tag, source);        	
               local.add_fd_to_poll(fd);
@@ -730,6 +730,7 @@ int main(int argc, char* argv[])
             pthread_mutex_unlock(&mpi_mutex);            
           } 
 
+
           
      	  	if (client->Send(data, length, connection) < 0) {
          	  printf("Can't send to final object (rank= %d, tag=%d, source=%d, dest_id=%d, fd=%d)\n", rank, tag, 
@@ -753,6 +754,8 @@ int main(int argc, char* argv[])
           MPI::Request mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, tag);
           pthread_mutex_unlock(&mpi_mutex);            
           
+          
+          
           bool done = false; 
           while(!done) {
             pthread_mutex_lock(&mpi_mutex);
@@ -760,6 +763,10 @@ int main(int argc, char* argv[])
             pthread_mutex_unlock(&mpi_mutex);            
           } 
 	  	    //int tag = status.Get_tag();
+
+          if(length <= 0) {
+            printf("POP-C++ Error: MPI Interconnector - request MPI-IPC redirection, length is %d\n", length);           
+          }
 
 	  	    char *data = new char[length];
           pthread_mutex_lock(&mpi_mutex);
