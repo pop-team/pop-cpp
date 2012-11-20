@@ -46,6 +46,7 @@ void catch_child_exit(int signal_num) {
 
 
 int rank, world;
+int core; 
 
 map<int, int> incomingtag;
 map<int, pair<int, int> > incomingconnection;
@@ -186,6 +187,9 @@ int main(int argc, char* argv[])
 	  int provided_support = MPI::Init_thread(required_support); 
   }	 
   
+  core = 0; 
+
+  
   // Catch signal when a child is exiting  
   signal(SIGCHLD, catch_child_exit);
   signal(SIGPIPE, SIG_IGN);    
@@ -198,6 +202,18 @@ int main(int argc, char* argv[])
   // Initialize local address
   rank = MPI::COMM_WORLD.Get_rank();
   world = MPI::COMM_WORLD.Get_size();
+  
+#ifndef __APPLE__
+  cpu_set_t cpu_set;
+  CPU_ZERO(&cpu_set);
+  CPU_SET(core, &cpu_set);
+  if (sched_setaffinity(0, sizeof(cpu_set), &cpu_set) == -1) {
+    printf("POP-C++ Warning: Cannot set processor to %d (cpu_set %p)", core, (void *)&cpu_set);
+  }  
+  core++;
+  int cpu = sched_getcpu(); 
+  printf("MPI Interconnector %d is on cpu %d\n", rank, cpu); 
+#endif    
   
   pid_t mainpid;        // Save main pid to wait for it at the end
   pthread_t mpithread;  // MPI Receive thread
@@ -401,19 +417,28 @@ int main(int argc, char* argv[])
           _receiveraddress.append(receiver_address);
           char *localrank = new char[20];
           snprintf(localrank, 20, "-local_rank=%d", rank);
+          char *coreoption = new char[20]; 
+          snprintf(coreoption, 20, "-core=%d", core); 
+          core++; 
+          if(core == 8) core = 0; 
+          
+          
                             
           // Allocate the object      
           pid_t allocatepid = fork();
           if(allocatepid == 0) {
-            char* argv1[6];
-            argv1[0] = codefile;                        // Object executable
+            char* argv1[7];
+            argv1[0] = codefile;                                    // Object executable
             argv1[1] = const_cast<char*>(_objectname.c_str());      // Object name
             argv1[2] = const_cast<char*>(_objectaddress.c_str());   // Object address
             argv1[3] = const_cast<char*>(_receiveraddress.c_str()); // Address of ready call
             argv1[4] = localrank;                                   // Rank of the creator process
-            argv1[5] = (char*)0;             
+            argv1[5] = coreoption;                                  // Set the core to run the process
+            argv1[6] = (char*)0;             
+            printf("Exec object %s %s %s %s %s %s\n", codefile, _objectname.c_str(), _objectaddress.c_str(), _receiveraddress.c_str(), localrank, coreoption); 
             execv(argv1[0], argv1);              	
           }
+          delete localrank;
           paroc_request callback;
           paroc_connection* objectcallback = receiver.Wait();
           paroc_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
@@ -538,19 +563,27 @@ int main(int argc, char* argv[])
             _receiveraddress.append(receiver_address);
             char *localrank = new char[20];
             snprintf(localrank, 20, "-local_rank=%d", rank);
+            char *coreoption = new char[20]; 
+            snprintf(coreoption, 20, "-core=%d", core); 
+            core++; 
+            if(core == 8) core = 0;             
                   
             // Allocate the object      
             pid_t allocatepid = fork();
             if(allocatepid == 0) {
-              char* argv1[6];
+              char* argv1[7];
               argv1[0] = codefile.GetString();                        // Object executable
               argv1[1] = const_cast<char*>(_objectname.c_str());      // Object name
               argv1[2] = const_cast<char*>(_objectaddress.c_str());   // Object address
               argv1[3] = const_cast<char*>(_receiveraddress.c_str()); // Address of ready call
               argv1[4] = localrank;                                   // Rank of the creator process
-              argv1[5] = (char*)0;             
+              argv1[5] = coreoption; 
+              argv1[6] = (char*)0;         
+              printf("Exec object %s %s %s %s %s %s\n", codefile.GetString(), _objectname.c_str(), _objectaddress.c_str(), _receiveraddress.c_str(), localrank, coreoption);                   
               execv(argv1[0], argv1);              	
             }
+            delete localrank; 
+            delete coreoption; 
             paroc_request callback;
             paroc_connection* objectcallback = receiver.Wait();
             paroc_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
