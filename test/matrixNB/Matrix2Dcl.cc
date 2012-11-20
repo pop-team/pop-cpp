@@ -53,13 +53,16 @@ void Matrix2Dcl::setBloc(int noLine, int noCol, Matrix2Dcl v)
 			value[dataSize]=0;
 			shared = NULL;
 		}
-		for (int i=0; i<v.nbCol; i++)
-			memcpy(&(value[(noCol+i)*nbLine+noLine]),&(v.value[i*v.nbLine]), v.nbLine*sizeof(ValueType));
-		// memcpy replaces the following for loop
-		//for (int j=0; j<v.nbLine; j++)
-		//value[(noCol+i)*nbLine+noLine+j]=v.value[i*v.nbLine+j];
+		for (int i=0; i<v.nbCol; i++) {
+	    memcpy(&(value[(noCol+i)*nbLine+noLine]),&(v.value[i*v.nbLine]), v.nbLine*sizeof(ValueType));
+  		// memcpy replaces the following for loop
+		 /* for (int j=0; j<v.nbLine; j++){
+	  	  value[(noCol+i)*nbLine+noLine+j]=v.value[i*v.nbLine+j];
+  		}*/
+		}
+	} else {
+	  printf("Matrix ERROR: Non coherent bloc setting !!!\n");
 	}
-	else printf("Matrix ERROR: Non coherent bloc setting !!!\n");
 }
 
 void Matrix2Dcl::setColsBloc(int noCol, Matrix2Dcl v)
@@ -69,15 +72,18 @@ void Matrix2Dcl::setColsBloc(int noCol, Matrix2Dcl v)
 		if (value==NULL)
 		{
 			dataSize = nbLine*nbCol;
-			value = (ValueType*)malloc((dataSize+1)*ValueTypeSize);
-			if (value==NULL) {printf("\nMEMORY OVERFLOW !!!!\n"); exit(0);}
-			value[dataSize]=0;
+			value = (ValueType*)malloc((dataSize+1) * ValueTypeSize);
+			if (value == NULL) { 
+			  printf("\nMEMORY OVERFLOW !!!!\n"); 
+			  exit(1); 
+			}
+			value[dataSize] = 0;
 			shared = NULL;
 		}
-		memcpy (&(value[noCol*nbLine]),v.value, v.nbCol*v.nbLine*sizeof(ValueType));
+//		memcpy (&(value[noCol*nbLine]), v.value, v.nbCol*v.nbLine*sizeof(ValueType));
 		// memcpy replaces the following for loop
-		//for (int i=0; i<v.nbCol*v.nbLine; i++)
-		//value[noCol*nbLine+i]=v.value[i];
+		for (int i=0; i<v.nbCol*v.nbLine; i++)
+		  value[noCol*nbLine+i]=v.value[i];
 	}
 	else printf("Matrix ERROR: Non coherent column setting !!!\n");
 }

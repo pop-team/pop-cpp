@@ -15,7 +15,7 @@ public:
 	~MatWorker();
 
 	async conc void solve(Matrix2Dlc a, Matrix2Dcl b);
-	async seq void putB(Matrix2Dcl b);
+	async seq void putB([in]Matrix2Dcl b);
 
 	sync mutex Matrix2Dlc getResult(double &t);
 

@@ -54,13 +54,16 @@ void Matrix2Dlc::setBloc(int noLine, int noCol, Matrix2Dlc v)
 			value[dataSize]=0;
 			shared = NULL;
 		}
-		for (int i=0; i<v.nbLine; i++)
+		for (int i=0; i<v.nbLine; i++) {
 			memcpy(&(value[(noLine+i)*nbCol+noCol]),&(v.value[i*v.nbCol]), v.nbCol*sizeof(ValueType));
-		// memcpy replaces the following for loop
-		//for (int j=0; j<v.nbCol; j++)
-		//value[(noLine+i)*nbCol+noCol+j]=v.value[i*v.nbCol+j];
+  		// memcpy replaces the following for loop
+		  /*for (int j=0; j<v.nbCol; j++) {
+	  	  value[(noLine+i)*nbCol+noCol+j]=v.value[i*v.nbCol+j];
+	  	}*/
+		}
+	} else {
+	  printf("Matrix ERROR: Non coherent bloc setting !!!\n");
 	}
-	else printf("Matrix ERROR: Non coherent bloc setting !!!\n");
 }
 
 void Matrix2Dlc::setLinesBloc(int noLine, Matrix2Dlc v)
@@ -75,10 +78,10 @@ void Matrix2Dlc::setLinesBloc(int noLine, Matrix2Dlc v)
 			value[dataSize]=0;
 			shared = NULL;
 		}
-		memcpy(&(value[noLine*nbCol]), v.value, v.nbCol*v.nbLine*sizeof(ValueType));
+//		memcpy(&(value[noLine*nbCol]), v.value, v.nbCol*v.nbLine*sizeof(ValueType));
 		// memcpy replaces the following for loop
-		//for (int i=0; i<v.nbCol*v.nbLine; i++)
-		//value[noLine*nbCol+i]=v.value[i];
+		for (int i=0; i<v.nbCol*v.nbLine; i++)
+		  value[noLine*nbCol+i]=v.value[i];
 	}
 	else printf("Matrix ERROR: Non coherent line setting !!!\n");
 }

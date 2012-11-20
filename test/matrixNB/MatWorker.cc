@@ -60,9 +60,11 @@ void MatWorker::solve(Matrix2Dlc a, Matrix2Dcl b)
 
 void MatWorker::putB(Matrix2Dcl b)
 {
-	x.lock();
+
+
+  x.lock();
 	if (!nextBbloc) x.wait();
-	bMatrix->setColsBloc(0,b);
+	bMatrix->setColsBloc(0,b);	
 	nextBbloc=false;
 	x.raise();
 	x.unlock();
