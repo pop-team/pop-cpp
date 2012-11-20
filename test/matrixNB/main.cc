@@ -104,10 +104,8 @@ int main(int argc, char** argv)
 
 	try {
 	  int nodes = 0; 
-	  printf("argc %d\n", argc); 
 	  if(argc >= 5)
 	    nodes = atoi(argv[5]); 
-	  printf("nodes = %d\n", nodes); 
 	  int crtnode = 0; 
 		for (int i=0; i < nbWorker; i++) {
 			mw[i] = new MatWorker(i, Alines/nbWorker, Acols, Bcols, crtnode);
@@ -115,7 +113,7 @@ int main(int argc, char** argv)
 			if(crtnode > nodes)
 			  crtnode = 0; 
 		}
-
+    
 		printf("\nMatrix: Start computation...\n");
 
 
@@ -128,14 +126,18 @@ int main(int argc, char** argv)
 
 		//Send the bloc of Matrix A and the 1st bloc of Matrix B
 		for (int i=0; i<nbWorker; i++) {
-			mw[i]->solve(a.getLinesBloc(i*Alines/nbWorker,Alines/nbWorker),
-						 b.getColsBloc(0,Bcols/nbBlocB));
+			mw[i]->solve(a.getLinesBloc(i*Alines/nbWorker, Alines/nbWorker), b.getColsBloc(0,Bcols/nbBlocB));
 		}
+		
+
 
 		//Send the others blocs of Matrix B
-		for (int j=1; j<nbBlocB; j++){
-			for (int i=0; i<nbWorker; i++){
-				mw[i]->putB(b.getColsBloc(j*Bcols/nbBlocB,Bcols/nbBlocB));
+		int tmp2 = Bcols / nbBlocB; 
+		for (int j=1; j < nbBlocB; j++){
+		  int tmp = j * Bcols / nbBlocB; 
+			for (int i=0; i < nbWorker; i++){
+//			  printf("Sending to %s\n", mw[i]->GetAccessPoint().GetAccessString()); 			
+				mw[i]->putB(b.getColsBloc(tmp, tmp2));
 			}
 		}
 
