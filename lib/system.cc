@@ -463,7 +463,6 @@ void paroc_system::Finalize(bool normalExit)
 
 void paroc_system::processor_set(int cpu)
 {
-/*
 #ifndef __APPLE__
   if (cpu < 0) {
     printf("POP-C++ Warning: Cannot set processor to %d<0", cpu);
@@ -494,5 +493,4 @@ void paroc_system::processor_set(int cpu)
     exit(EXIT_FAILURE);
   }
 #endif
-*/
 }
