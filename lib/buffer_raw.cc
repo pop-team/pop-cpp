@@ -418,65 +418,59 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn)
 // Propagation of exceptions back to caller...
 bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn)
 {
+  printf("INT SIZE = %d\n", sizeof(int)); 
 	int h[5];
 	int n, i;
 
-	//Recv the header...
-
-	char *dat=(char *)h;
-	n=20;
-	do
-	{
-		if ((i=s.Recv(dat,n, conn)) <=0)
-		{
+	// Recv the header
+	char *dat = (char*)h;
+	n = 20;
+	do {
+		if ((i = s.Recv(dat,n, conn)) <= 0) {
 			return false;
 		}
-		n-=i;
-		dat+=i;
-	}
-	while (n);
+		n -= i;
+		dat += i;
+	}	while (n);
 
 	Reset();
-	n=h[0];
-	if (n<20)
-	{
-		printf("POP-C++ Error: [CORE] - Buffer RAW - bad message header (size error:%d)", n);
+	n = h[0];
+	if (n < 20) {
+		printf("POP-C++ Error: [CORE] - Buffer RAW - bad message header (size error:%d)\n", n);
 		return false;
 	}
 
-	int type=h[1];
+	int type = h[1];
 	header.SetType(type);
-	switch (type)
-	{
-	case TYPE_REQUEST:
-		header.SetClassID(h[2]);
-		header.SetMethodID(h[3]);
-		header.SetSemantics(h[4]);
-		break;
-	case TYPE_EXCEPTION:
-		header.SetExceptionCode(h[2]);
-		break;
-	case TYPE_RESPONSE:
-		header.SetClassID(h[2]);
-		header.SetMethodID(h[3]);
-		break;
-	default:
-		return false;
+	switch (type) {
+  	case TYPE_REQUEST:
+	  	header.SetClassID(h[2]);
+		  header.SetMethodID(h[3]);
+  		header.SetSemantics(h[4]);
+	  	break;
+  	case TYPE_EXCEPTION:
+	  	header.SetExceptionCode(h[2]);
+		  break;
+  	case TYPE_RESPONSE:
+	  	header.SetClassID(h[2]);
+		  header.SetMethodID(h[3]);
+  		break;
+	  default:
+  		return false;
 	}
 
 	packeddata.SetSize(n);
-	dat=(char *)packeddata+20;
-	n-=20;
+	dat = (char *)packeddata + 20;
+	n -= 20;
 
-	i=0;
-	while (n>0)
-	{
-		if ((i=s.Recv(dat,n, conn))<=0)
-		{
+  // Recv data if there is some
+	i = 0;
+	while (n > 0) {
+		if ((i = s.Recv(dat, n, conn)) <= 0) {
 			return false;
 		}
-		dat+=i;
-		n-=i;
+		dat += i;
+		n -= i;
 	}
 	return true;
 }
