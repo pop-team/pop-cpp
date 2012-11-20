@@ -23,19 +23,17 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#ifndef __APPLE__
+#include <sched.h>
+#endif
+
 #include "paroc_utils.h"
 #include "paroc_system.h"
 #include "paroc_broker.h"
 #include "paroc_broker_factory.h"
-
-//#include "appservice.ph"
 #include "paroc_buffer_factory_finder.h"
 
 bool CheckIfPacked(const char *objname);
-
-//extern paroc_broker *InitBroker(char *objname);
-//extern void QueryObjectList(char *str, int n);
-
 
 int main(int argc, char **argv)
 {
@@ -51,14 +49,9 @@ int main(int argc, char **argv)
 	char *local_rank = paroc_utils::checkremove(&argc, &argv, "-local_rank=");
 	if(local_rank != NULL) {
   	paroc_system::popc_local_mpi_communicator_rank = atoi(local_rank);
-	}
-  
-  /*char tmpcwd[PATH_MAX+1];
-  if (getcwd(tmpcwd, PATH_MAX+1) == NULL) {
-    perror("getcwd failed");
-  } else {
-    printf("obj cwd is %s\n", tmpcwd);
-  } */ 
+	} 
+	
+	
 
 	// Connect to callback
 	char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");
@@ -81,6 +74,11 @@ int main(int argc, char **argv)
 			return 1;    	
     }	  	
 	}
+
+#ifndef __APPLE__
+  int cpu = sched_getcpu(void); 
+  printf("Parallel object %s is on cpu %d\n", address, cpu); 
+#endif
 
 	paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
 	paroc_broker *broker = paroc_broker_factory::Create(&argc,&argv);
@@ -130,9 +128,3 @@ int main(int argc, char **argv)
 
 	return status;
 }
-
-
-
-
-
-
