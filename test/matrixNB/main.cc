@@ -102,11 +102,18 @@ int main(int argc, char** argv)
 
 	printf("\n");
 
-	try
-	{
-		for (int i=0; i < nbWorker; i++)
-		{
-			mw[i] = new MatWorker(i, Alines/nbWorker, Acols, Bcols, 0);
+	try {
+	  int nodes = 0; 
+	  printf("argc %d\n", argc); 
+	  if(argc >= 5)
+	    nodes = atoi(argv[5]); 
+	  printf("nodes = %d\n", nodes); 
+	  int crtnode = 0; 
+		for (int i=0; i < nbWorker; i++) {
+			mw[i] = new MatWorker(i, Alines/nbWorker, Acols, Bcols, crtnode);
+			crtnode++; 
+			if(crtnode > nodes)
+			  crtnode = 0; 
 		}
 
 		printf("\nMatrix: Start computation...\n");
