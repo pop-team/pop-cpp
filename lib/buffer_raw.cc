@@ -418,7 +418,6 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn)
 // Propagation of exceptions back to caller...
 bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn)
 {
-  printf("INT SIZE = %d\n", sizeof(int)); 
 	int h[5];
 	int n, i;
 
