@@ -119,10 +119,10 @@ int main(int argc, char **argv)
 	}
 
 	// Start the broker
-	if (status==0) {
+ 	if (status == 0) {
 		broker->Run();
 		delete broker;
-	} else if (broker!=NULL) { 
+	} else if (broker != NULL) { 
 	  delete broker;
 	}
 
