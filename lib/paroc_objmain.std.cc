@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 	}
 
 #ifndef __APPLE__
-  int cpu = sched_getcpu(void); 
+  int cpu = sched_getcpu(); 
   printf("Parallel object %s is on cpu %d\n", address, cpu); 
 #endif
 
