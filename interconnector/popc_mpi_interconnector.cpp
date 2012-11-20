@@ -649,7 +649,7 @@ int main(int argc, char* argv[])
           MPI::Status status; 
           
           pthread_mutex_lock(&mpi_mutex);            
-          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&dest_id, 1, MPI_INT, source, MPI_ANY_TAG);
+          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&dest_id, 1, MPI_INT, source, tag);
           pthread_mutex_unlock(&mpi_mutex);
           
           bool done = false; 
@@ -751,7 +751,7 @@ int main(int argc, char* argv[])
 	  	    MPI::Status status;
 	  	    int length;
 	  	    pthread_mutex_lock(&mpi_mutex);            
-          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, MPI_ANY_TAG);
+          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, tag);
           pthread_mutex_unlock(&mpi_mutex);            
           
           
