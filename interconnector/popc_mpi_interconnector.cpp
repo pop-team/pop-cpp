@@ -56,13 +56,16 @@ void catch_child_exit(int signal_num) {
   int retval;
   char buf[256];
   bzero(buf, 256);
-  pid_t id = waitpid(0, &retval, WNOHANG);  
+  waitpid(0, &retval, WNOHANG);  
   
+  
+  /*
   int w_exit = WEXITSTATUS(retval); 
   int w_ifexited = WIFEXITED(retval); 
   int w_ifsignal = WIFSIGNALED(retval); 
   int w_signal = WTERMSIG(retval); 
-  //printf("On %d Child %d exists signal=%d, ret=%d, WEXITSTATUS=%d, %d, %d, %d\n", rank, id, signal_num, retval, w_exit, w_ifexited, w_ifsignal, w_signal); 
+  printf("On %d Child exists signal=%d, ret=%d, WEXITSTATUS=%d, %d, %d, %d\n", rank, signal_num, retval, w_exit, w_ifexited, w_ifsignal, w_signal); 
+  */
 }
 
 
