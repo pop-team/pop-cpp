@@ -2,7 +2,7 @@ POPCC=../../parser/popcc
 POPCPP=../../parser/popcpp
 POPCPATH=../..
 CROSSCOMPILE=-cxx=FCCpx -Xg -pthread -cpp="FCCpx -E"
-POPCCOMPILE=-popc-static -popcdir=$(POPCPATH) -popcpp=$(POPCPP) $(CROSSCOMPILE) 
+POPCCOMPILE=-noclean -popc-static -popcdir=$(POPCPATH) -popcpp=$(POPCPP) $(CROSSCOMPILE) 
 
 NODE_NUMBER=2
 
@@ -20,4 +20,4 @@ clean:
 	rm -f *.obj MatMul *.o obj.map
 
 run:
-	mpiexec -np $(NODE_NUMBER) ../../interconnector/popc_mpi_interconnector -app=MatMul 600 $(NODE_NUMBER) 5
+	mpiexec -np $(NODE_NUMBER) ../../interconnector/popc_mpi_interconnector -app=MatMul 600 $(NODE_NUMBER) 5 log 1
