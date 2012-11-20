@@ -46,10 +46,8 @@ Matrix2D::~Matrix2D()
 void Matrix2D::free()
 {
 	//showState("\n\nFree:", true);
-	if (value!=NULL)
-	{
-		if (shared!=NULL)
-		{
+	if (value != NULL) {
+		if (shared != NULL) {
 			if  (shared[dataSize]<0.9) delete shared;
 			else shared[dataSize] = shared[dataSize]-(ValueType)1;
 		}
@@ -144,34 +142,46 @@ void Matrix2D::display(int n)
 {
 }
 
+int Matrix2D::get_size()
+{
+  return dataSize;
+}
+
 void Matrix2D::Serialize(POPBuffer &buf, bool pack)
 {
-	if (pack)
-	{
+	if (pack) {
 		int s;
 		//showState("\n\nSending ",false);
 		buf.Pack(&nbCol,1);
 		buf.Pack(&nbLine,1);
-		if (value==NULL) s = 0; else s = nbLine*nbCol;
-		buf.Pack(&s,1);
-		if (s>0) buf.Pack(value, s);
-	}
-	else
-	{
+		if (value==NULL) {
+		  s = 0;
+		} else {
+		  s = nbLine * nbCol;
+		}
+		buf.Pack(&s, 1);
+		//printf("Pack nbCol=%d, nbLine=%d, s=%d\n", nbCol, nbLine, s); 
+		if (s > 0) 
+		  buf.Pack(value, s);
+		
+	} else {
 		free();
 		buf.UnPack(&nbCol,1);
 		buf.UnPack(&nbLine,1);
 		buf.UnPack(&dataSize,1);
-		shared=NULL;
-		if (dataSize>0)
-		{
-			value=(ValueType*)malloc((dataSize+1)*ValueTypeSize);
-			if (value==NULL) {printf("\nMEMORY OVERFLOW !!!!\n"); exit(0);}
-			value[dataSize]=0;
+		//printf("UnPack nbCol=%d, nbLine=%d, s=%d\n", nbCol, nbLine, dataSize); 		
+		shared = NULL;
+		if (dataSize > 0) {
+			value = (ValueType*) malloc((dataSize + 1) * ValueTypeSize);
+			if (value == NULL) { 
+			  printf("\nMEMORY OVERFLOW !!!!\n"); 
+			  exit(0);
+			}
+			value[dataSize] = 0;
 			buf.UnPack(value, dataSize);
+		} else {
+		  value = NULL;
 		}
-		else value = NULL;
-		//showState("\n\nReceiving ",false);
 	}
 }
 

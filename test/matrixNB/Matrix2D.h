@@ -37,6 +37,7 @@ public:
 
 	// Serialize Matrix 2D for POP-C++ usage
 
+  int get_size();
 
 	void Serialize(POPBuffer &buf, bool pack);
 
