@@ -67,16 +67,15 @@ const char* paroc_combox::PROTOCOL_SEPARATOR = "://";
 
 paroc_combox::paroc_combox()
 {
-	defaultFact= paroc_buffer_factory_finder::GetInstance()->FindFactory("raw");
+	defaultFact = paroc_buffer_factory_finder::GetInstance()->FindFactory("xdr");
 	if(defaultFact == NULL) {
 	  printf("POP-C++ Error: can not find the xdr buffer factory!\n");
   }
 
-	timeout=-1;
-	for (int i=0;i<2;i++)
-	{
-		cblist[i]=NULL;
-		cbdata[i]=NULL;
+	timeout = -1;
+	for (int i = 0; i < 2; i++) {
+		cblist[i] = NULL;
+		cbdata[i] = NULL;
 	}
 }
 

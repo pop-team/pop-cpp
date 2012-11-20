@@ -649,7 +649,7 @@ int main(int argc, char* argv[])
           MPI::Status status; 
           
           pthread_mutex_lock(&mpi_mutex);            
-          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&dest_id, 1, MPI_INT, source, tag);
+          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&dest_id, 1, MPI_INT, source, MPI_ANY_TAG);
           pthread_mutex_unlock(&mpi_mutex);
           
           bool done = false; 
@@ -751,7 +751,7 @@ int main(int argc, char* argv[])
 	  	    MPI::Status status;
 	  	    int length;
 	  	    pthread_mutex_lock(&mpi_mutex);            
-          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, tag);
+          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, MPI_ANY_TAG);
           pthread_mutex_unlock(&mpi_mutex);            
           
           
@@ -779,6 +779,7 @@ int main(int argc, char* argv[])
             done = mreq.Test(status); 
             pthread_mutex_unlock(&mpi_mutex);            
           } 
+          
 	  	    int fd = incomingtag[tag];
 	  	    //printf("Redirect to caller %d\n", fd);
 	  	    popc_connection_uds* tmpconnection = new popc_connection_uds(fd, &local);

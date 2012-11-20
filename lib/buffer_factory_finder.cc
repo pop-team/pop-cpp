@@ -37,8 +37,8 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder()
 	size = 2;*/
 
 
-//	bfArray[0] = new paroc_buffer_xdr_factory();
-	bfArray[0] = new paroc_buffer_raw_factory();
+	bfArray[0] = new paroc_buffer_xdr_factory();
+//	bfArray[0] = new paroc_buffer_raw_factory();
 	metrics[0] = 0;
 	plugins[0] = NULL;
 	size = 1;
