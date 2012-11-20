@@ -1,16 +1,32 @@
 cmake_minimum_required(VERSION 2.6)
 
+#
+# POP-C++ project. This CMakeLists.txt file is the entry point for the compilation of the POP-C++ library and services. 
+#
+
 project(POPCPP)
+
+# Define version of POP-C++ - It will be shown on the compiler usage message and with -version option
+set(VERSION "2.6.3 - K Computer")
+execute_process(COMMAND uname -m OUTPUT_VARIABLE HOST_CPU_RAW)
+string(REGEX REPLACE "\n" "" HOST_CPU ${HOST_CPU_RAW})
+execute_process(COMMAND uname -s OUTPUT_VARIABLE HOST_KERNEL_RAW)
+string(REGEX REPLACE "\n" "" HOST_KERNEL ${HOST_KERNEL_RAW})
+
+
 
 include(CheckIncludeFile)
 include(CheckLibraryExists)
-
 find_package(Threads)
 
+# Should be remove for release
 set(CMAKE_INSTALL_PREFIX "/Users/clementval/popc")
 
+
+# Check existence of header files and library 
 #check_include_file(dlfcn.h HAVE_DLFCN_H)
 #check_library_exists(dl dlclose "" HAVE_LIBDL)
+
 
 # Define variable for MPI compilation
 if(NOT DEFINED MPI_COMPILER)
@@ -21,21 +37,19 @@ if(NOT DEFINED MPI_COMPILER_FLAGS)
   set(MPI_COMPILER_FLAGS -o)
 endif(NOT DEFINED MPI_COMPILER_FLAGS)
 
+
 if(NOT DEFINED POPC_MAIN_FLAGS)
  set(POPC_MAIN_FLAGS -c)
 endif(NOT DEFINED POPC_MAIN_FLAGS)
-# Define version of POP-C++ - It will be shown on the compiler usage message and with -version option
-set(VERSION "2.6.3 - K Computer")
-execute_process(COMMAND uname -m OUTPUT_VARIABLE HOST_CPU_RAW)
-string(REGEX REPLACE "\n" "" HOST_CPU ${HOST_CPU_RAW})
-execute_process(COMMAND uname -s OUTPUT_VARIABLE HOST_KERNEL_RAW)
-string(REGEX REPLACE "\n" "" HOST_KERNEL ${HOST_KERNEL_RAW})
 
+
+# Generate the config.h file during the configuration of the project 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
 
 # Add subdirectory which inlude a CMakeLists.text file
 add_subdirectory(lib)
 add_subdirectory(interconnector)
+
 
 # Install headers files, programs, library and object files
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lib/paroc_infmain.std.o DESTINATION lib)
