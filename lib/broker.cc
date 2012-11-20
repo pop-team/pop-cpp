@@ -99,7 +99,6 @@ void broker_killed(int sig)
 }
 
 
-
 paroc_broker::paroc_broker()
 {
 	obj=NULL;
@@ -172,21 +171,26 @@ int paroc_broker::Run()
 
 	paroc_array<paroc_receivethread *> ptArray;
 	int comboxCount = comboxArray.GetSize();
-	if (comboxCount<=0) return -1;
+	if (comboxCount <= 0) {
+	  return -1;
+	}
 
-	state=POPC_STATE_RUNNING;
+	state = POPC_STATE_RUNNING;
 
 	ptArray.SetSize(comboxCount);
 	int i;
 
-	for (i=0; i<comboxCount; i++) {
-		ptArray[i] =new paroc_receivethread(this,comboxArray[i]);
-		int ret=ptArray[i]->create();
-		if (ret!=0) return errno;
+	for (i = 0; i < comboxCount; i++) {
+		ptArray[i] = new paroc_receivethread(this, comboxArray[i]);
+		int ret = ptArray[i]->create();
+		if (ret != 0) {
+		  return errno;
+		}
 	}
 
 
-	if (obj==NULL) alarm(TIMEOUT);
+	if (obj == NULL) 
+	  alarm(TIMEOUT);
 
 	while (state == POPC_STATE_RUNNING) {
 		try {
@@ -198,7 +202,8 @@ int paroc_broker::Run()
 			if (req.methodId[2] & INVOKE_CONSTRUCTOR)
 			{
 				alarm(0);
-				if (obj==NULL) break;
+				if (obj == NULL) 
+				  break;
 			}
 		}
 
@@ -232,8 +237,6 @@ int paroc_broker::Run()
 		}
 	}
 	
-	
-
 
 	return 0;
 }
@@ -241,7 +244,7 @@ int paroc_broker::Run()
 
 bool paroc_broker::Initialize(int *argc, char ***argv)
 {
-	if (paroc_utils::checkremove(argc,argv,"-runlocal"))  paroc_od::defaultLocalJob=true;
+	if (paroc_utils::checkremove(argc, argv, "-runlocal"))  paroc_od::defaultLocalJob=true;
 	char *address = paroc_utils::checkremove(argc,argv,"-address=");
 
 	paroc_combox_factory  *ff = paroc_combox_factory::GetInstance();
@@ -253,11 +256,9 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 
 
 	int count=0;
-	for (int i=0;i < comboxCount;i++)
-	{
-		comboxArray[count]=ff->Create(i);
-		if (comboxArray[count]==NULL)
-		{
+	for (int i = 0;i < comboxCount;i++) {
+		comboxArray[count] = ff->Create(i);
+		if (comboxArray[count] == NULL) {
 			printf("Fail to create combox #%d",i);
 		}
 		else count++;
@@ -330,8 +331,8 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 	paroc_object::argc=*argc;
 	paroc_object::argv=*argv;
 
-	signal(SIGTERM,broker_killed);
-	signal(SIGINT,broker_killed);
+	signal(SIGTERM, broker_killed);
+	signal(SIGINT, broker_killed);
 	signal(SIGQUIT, broker_killed);
 	signal(SIGILL, broker_killed);
 	signal(SIGABRT, broker_killed);

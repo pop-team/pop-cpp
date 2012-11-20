@@ -33,7 +33,7 @@ bool NewConnection(void *dat, paroc_connection *conn)
 
 bool CloseConnection(void *dat, paroc_connection *conn)
 {
-  paroc_broker *br=(paroc_broker *)dat;
+  paroc_broker *br = (paroc_broker*)dat;
   return br->OnCloseConnection(conn);
 }
 
@@ -61,13 +61,14 @@ void paroc_broker::ReceiveThread(paroc_combox *server) // Receive request and pu
 		}
 		catch (...)
 		{
-			if (req.data!=NULL) req.data->Destroy();
+			if (req.data != NULL) 
+			  req.data->Destroy();
 			execCond.broadcast();
 			break;
 
 		}
 	}
-//	printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
+	//printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
 	server->Close();
 }
 
@@ -84,21 +85,17 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
 			return false;
 		}
   	if (conn->is_initial_connection()){
-//  	  printf("INIT Connection\n");
-  		/*if (obj != NULL) {
-  		  int i = obj->AddRef();
-  	  }*/
   	  continue;
   	}
-		paroc_buffer_factory *fact=conn->GetBufferFactory();
-		req.data=fact->CreateBuffer();
+		paroc_buffer_factory *fact = conn->GetBufferFactory();
+		req.data = fact->CreateBuffer();
 		
     
 		if (req.data->Recv(conn)) {
 			req.from = conn;
-			const paroc_message_header &h=req.data->GetHeader();
-			req.methodId[0]=h.GetClassID();
-			req.methodId[1]=h.GetMethodID();
+			const paroc_message_header &h = req.data->GetHeader();
+			req.methodId[0] = h.GetClassID();
+			req.methodId[1] = h.GetMethodID();
 			if ( !((req.methodId[2]=h.GetSemantics()) & INVOKE_SYNC) ) {
 #ifdef OD_DISCONNECT
 				if (checkConnection) {
@@ -309,6 +306,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	{
 		// Kill call
 		if (obj != NULL && obj->CanKill()) {
+		  printf("Object exit by killcall\n"); 
 			exit(1);
 		}
 		break;
