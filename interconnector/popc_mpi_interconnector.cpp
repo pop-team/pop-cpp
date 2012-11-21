@@ -278,40 +278,48 @@ int main(int argc, char* argv[])
     } else {
       application_arg.append(capp);
     }
-//    printf("MPI Interconnector %d - fork for main - main name = %s\n", rank, application_arg.c_str());    
+
     // Create new process for the POP-C++ application main
     mainpid = fork();
-
+    
     if(mainpid == 0) {
+      // Execute the code of the main of the application
       argv[0] = const_cast<char*>(application_arg.c_str());
       execv(argv[0], argv);
       perror("Execv failed");
     } else if (mainpid == -1) {
+      // If fork had a problem, terminate the application
       perror("start main process");
       MPI::Finalize();
       return 1;
     }
   }
   
+  // Initialize tag value to be used by this POP-C++ MPI Interconnector
   int next_tag = 1000;  
 
   // Init object counter
   int next_object_id = 1;  
-
-
     
   // Create MPI receive thread
   pthread_attr_t attr;
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);  
-  if(pthread_mutex_init(&mpi_mutex, NULL) != 0) 
+  
+  // Initialize mutex lock
+  if(pthread_mutex_init(&mpi_mutex, NULL) != 0) {
     perror("Mutex init"); 
+  }
 
+  // Create the MPI receive thread
   pthread_create(&mpithread, &attr, mpireceivedthread, NULL);
 
   // Wait for IPC request
   bool active = true;
+  
+  // Start receiving request from the IPC server
   while (active) {
+    // Create empty request object to receive request from IPC
     paroc_request request;
     request.data = NULL;      
     
@@ -473,6 +481,8 @@ int main(int argc, char* argv[])
             execv(argv1[0], argv1);              	
           }
           delete localrank;
+          delete objectname; 
+          delete codefile; 
           paroc_request callback;
           paroc_connection* objectcallback = receiver.Wait();
           paroc_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
@@ -734,7 +744,8 @@ int main(int argc, char* argv[])
             } else {
               printf("Can't connect\n");
             }
-          
+            
+            delete address; 
           } else {
             // Get old combox
             client = connectionmap[pair<int, int>(source, dest_id)]; 
