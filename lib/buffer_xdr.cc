@@ -616,7 +616,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 	Reset();
 	n = ntohl(h[0]);
 	if (n < 20) {
-	  printf("Bad message header (size error:%d\n", n);
+	  printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
 		return false;
 	}
 
