@@ -44,9 +44,16 @@ map<int, pair<int, int> > incomingconnection;
 map<int, pair<int, int> > outgoingconnection;
 map<pair<int, int>, paroc_combox*> connectionmap;
 
+
+
 // Condition variable to serialize MPI Call
 pthread_mutex_t mpi_mutex;
-//pthread_cond_t mpi_condition;
+
+
+
+// 
+
+
 
 
 /**
@@ -247,6 +254,15 @@ int main(int argc, char* argv[])
     MPI::Finalize();
     return 1; 
   }  
+  
+  bool multiple_connection_enable = false; 
+  // Check if the multiple connection option is set
+  if(paroc_utils::checkremove(&argc, &argv, "--multiple-connection") != NULL) {
+    printf("Multiple connection: enable\n"); 
+    multiple_connection_enable = true;     
+  }
+  
+  
   
   // Start main of the POP-C++ application on the MPI process with rank 0
   if(rank == 0) {
@@ -636,7 +652,12 @@ int main(int argc, char* argv[])
    	      	receiver.Close();		
    	     	}  	      
 	  	  } else if(request.methodId[1] == 200005) {
-          // Receive request from MPI and redirect to IPC object
+	  	    /**
+	  	     * 
+	  	     * Receive request from MPI and redirect to IPC object
+	  	     *
+	  	     */
+	  	     
           int dest_id;
           int source = request.methodId[0];
           
@@ -644,7 +665,6 @@ int main(int argc, char* argv[])
           request.data->Push("tag", "int", 1);
          	request.data->UnPack(&tag, 1);
         	request.data->Pop();
-          
           
           MPI::Status status; 
           
@@ -658,16 +678,12 @@ int main(int argc, char* argv[])
             done = mreq.Test(status); 
             pthread_mutex_unlock(&mpi_mutex);            
           }        
-                    
-          //int tag = status.Get_tag();
 
           // Receive the data length
           int length; 
           pthread_mutex_lock(&mpi_mutex);            
           mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, tag);
           pthread_mutex_unlock(&mpi_mutex);            
-          
-
           
           done = false; 
           while(!done) {
@@ -683,7 +699,7 @@ int main(int argc, char* argv[])
        	  paroc_combox* client;
          	paroc_connection* connection;
        	  
-          if(connectionmap[pair<int, int>(source, dest_id)] == NULL) {
+          if(multiple_connection_enable || connectionmap[pair<int, int>(source, dest_id)] == NULL) {
             // Need to establish a connection
       
             // Connect to the remote object
@@ -698,10 +714,11 @@ int main(int argc, char* argv[])
           
             client->Create(address, false);
             if(client->Connect(address)) {
+            	// Get the fd associated with the connection
             	connection = client->get_connection();	
-          	  int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();    
-//          	  printf("New connection initialized with %s, fd=%d\n", address, fd);     	
-              // Store 
+          	  int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();  
+          	      	
+              // Store the tag and source rank to be able to redirect the response
             	outgoingconnection[fd] = pair<int, int>(tag, source);        	
               local.add_fd_to_poll(fd);
 
@@ -787,6 +804,9 @@ int main(int argc, char* argv[])
         	  printf("Can't send to caller (fd=%d, source=%d, tag=%d)\n", fd, source, tag);
         	} 
 	  	    
+	  	    // Clean the entry in the map
+	  	    incomingtag.erase(tag); 
+	  	    
 	  	    delete [] data;
 	  	  } else {
 	  	    // Redirect request 
@@ -811,46 +831,81 @@ int main(int argc, char* argv[])
             MPI::COMM_WORLD.Isend(load, length, MPI_CHAR, dest, tag);            
             pthread_mutex_unlock(&mpi_mutex);            
 	  	      
+	  	      
+	  	      // Clean the entry in the outgoing map
+            outgoingconnection.erase(fd); 
 	  	    
 	  	    } else { 
-	  	      // Redirect request to object
+            /**
+             * Redirect the request to the parallel object via MPI
+             * This part of the code redirect the message from this POP-C++ MPI Interconnector to the end POP-C++ MPI 
+             * Interconnector
+             */
+             
+            // Get the destination node and parallel object identifier from the incoming connection map. 
 	  	      int dest_node = incomingconnection[fd].first;
 	    	    int dest_id = incomingconnection[fd].second;
           	    	    
-  	  	    // Send the request by MPI
+            // Prepare command message's data 
 	  	      int data[2]; 
 	  	      data[0] = 13;
 	  	      data[1] = next_tag; 
-
-            MPI::COMM_WORLD.Isend(&data, 2, MPI_INT, dest_node, 0); 
-
-            // Send object id
-            MPI::COMM_WORLD.Isend(&dest_id, 1, MPI_INT, dest_node, next_tag);
-            // Send data size
+	  	      
+            // Get the request message length
             int length = request.data->get_size();
             if(length <= 0) {
               printf("POP-C++ Error: MPI Interconnector - request IPC-MPI redirection, length is %d\n", length); 
             }
-            MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, dest_node, next_tag);
-            // Send the actual data        
-            char *load = request.data->get_load();
-            MPI::COMM_WORLD.Isend(load, length, MPI_CHAR, dest_node, next_tag); 
             
+            // Get a pointer to the data buffer
+            char *load = request.data->get_load();            
+	  	      
+	  	      // Lock and send asynchronously the information about the message. 
+            pthread_mutex_lock(&mpi_mutex);   
+            MPI::COMM_WORLD.Isend(&data, 2, MPI_INT, dest_node, 0); 
+            MPI::COMM_WORLD.Isend(&dest_id, 1, MPI_INT, dest_node, next_tag);
+            MPI::COMM_WORLD.Isend(&length, 1, MPI_INT, dest_node, next_tag);
+            MPI::COMM_WORLD.Isend(load, length, MPI_CHAR, dest_node, next_tag); 
             pthread_mutex_unlock(&mpi_mutex);                       
+            
+            // Save the fd corresponding to the tag included in the message. Will be used for redirection to the caller 
             incomingtag[next_tag] = fd;
-            //printf("Saving fd for redirection: dest %d.%d (fd=%d, tag=%d)\n", dest_node, dest_id, fd, next_tag);
-            next_tag++;
-          	  	    
+            
+            // Increment the tag to differentiate messages
+            next_tag++;  	    
 	  	    }
 	  	  }
+	  	  // Delete the buffer
         request.data->Destroy();
       }
     }
   }    
-      
+
+  /**
+   *
+   * End of the POP-C++ MPI Interconnector
+   *
+   * Clean all the allocated maps and objects
+   *
+   */
+
+  // Close the local UDS Server       
   local.Close();
+    
+  // Clean the incoming connection map
+  while(!incomingconnection.empty()) {
+    incomingconnection.erase(incomingconnection.begin());
+  }  
+    
+  // Clean the incoming tag map
+  while(!incomingtag.empty()) {
+    incomingtag.erase(incomingtag.begin());
+  }
   
-  
+  // Clean the outgoing connection map
+  while(!outgoingconnection.empty()) {
+    outgoingconnection.erase(outgoingconnection.begin()); 
+  }
   
   // Delete connection to object
   map<pair<int, int>, paroc_combox*>::iterator it;
@@ -859,13 +914,13 @@ int main(int argc, char* argv[])
     delete dynamic_cast<popc_combox_uds*>((*it).second);
   }
   
-
-
+  // Wait for the MPI receive thread and destroy attribute and mutex lock
   pthread_join(mpithread, NULL);
   pthread_attr_destroy(&attr);
   pthread_mutex_destroy(&mpi_mutex);
-//  pthread_cond_destroy(&mpi_condition);
 
+
+  // Finalize the MPI process
   MPI::Finalize();
   return 0;
 }
