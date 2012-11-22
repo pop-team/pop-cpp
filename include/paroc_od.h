@@ -72,6 +72,11 @@ public:
 	void url(const char *h);
 	
 	void node(int value);
+	void core(int value);	
+	
+	
+	
+	
 	/**
 	* @brief Specifies the address requirement for the target machine (no JobMgr used)
 	* Syntaxe : user@ip{core}:port
@@ -126,6 +131,7 @@ public:
 	void getExecutable(paroc_string &exec) const;
 	
 	int get_node() const;
+	int get_core() const;	
 
 	void getProtocol(paroc_string &proto) const;
 	void getEncoding(paroc_string &encode) const;
@@ -167,6 +173,7 @@ protected:
 	bool isManual;
 	
 	int node_value;
+	int core_value;
 	
 	paroc_string cwd;
 
