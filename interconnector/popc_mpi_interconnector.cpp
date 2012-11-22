@@ -44,16 +44,15 @@ map<int, pair<int, int> > incomingconnection;
 map<int, pair<int, int> > outgoingconnection;
 map<pair<int, int>, paroc_combox*> connectionmap;
 
+// Define the constant used in the program
+static int MPI_COMMAND_TERMINATE = 10; 
+static int MPI_COMMAND_ALLOCATE = 11; 
+static int MPI_TAG_DUMMY = 0; 
+static int MPI_TAG_COMMAND = 0; 
 
 
 // Condition variable to serialize MPI Call
 pthread_mutex_t mpi_mutex;
-
-
-
-// 
-
-
 
 
 /**
@@ -348,9 +347,9 @@ int main(int argc, char* argv[])
 		  	  active = false;
 		  	  if(rank == 0) {
             int data[2];
-            data[0] = 10; // DATA 10 = END OF THE APPLICATION		  	   		  	  
-            data[1] = 0; 
-            int tag = 0;   // TAG 0 = COMMAND MESSAGE
+            data[0] = MPI_COMMAND_TERMINATE; // DATA 10 = END OF THE APPLICATION		  	   		  	  
+            data[1] = MPI_TAG_DUMMY; 
+            int tag = MPI_TAG_COMMAND;   // TAG 0 = COMMAND MESSAGE
 		    	  if(world > 1) {
 		    	    for(int i = 1; i < world; i++) {
                 // Inform other MPI communicator to end their process. 
@@ -436,6 +435,18 @@ int main(int argc, char* argv[])
           objectname[objectname_length] = '\0';
           codefile[codefile_length] = '\0';
           
+          int usercore; 
+          pthread_mutex_lock(&mpi_mutex);            
+          mreq = MPI::COMM_WORLD.Irecv(&usercore, 1, MPI_INT, source, 16);          
+          pthread_mutex_unlock(&mpi_mutex);            
+          
+          done = false; 
+          while(!done) {
+            pthread_mutex_lock(&mpi_mutex);            
+            done = mreq.Test(status);          
+            pthread_mutex_unlock(&mpi_mutex);            
+          }  
+          
           // Allocate on the local node
           char* tmp = new char[15];
           snprintf(tmp, 15, "uds_%d.%d", rank, next_object_id);
@@ -460,11 +471,13 @@ int main(int argc, char* argv[])
           char *localrank = new char[20];
           snprintf(localrank, 20, "-local_rank=%d", rank);
           char *coreoption = new char[20]; 
-          snprintf(coreoption, 20, "-core=%d", core); 
-          core++; 
-          if(core == 8) core = 0; 
-          
-          
+          if(usercore != -1) {
+            snprintf(coreoption, 20, "-core=%d", usercore);                 
+          } else {
+            snprintf(coreoption, 20, "-core=%d", core); 
+            core++; 
+            if(core == 8) core = 0; 
+          }
                             
           // Allocate the object      
           pid_t allocatepid = fork();
@@ -477,7 +490,6 @@ int main(int argc, char* argv[])
             argv1[4] = localrank;                                   // Rank of the creator process
             argv1[5] = coreoption;                                  // Set the core to run the process
             argv1[6] = (char*)0;             
-//            printf("Exec object %s %s %s %s %s %s\n", codefile, _objectname.c_str(), _objectaddress.c_str(), _receiveraddress.c_str(), localrank, coreoption); 
             execv(argv1[0], argv1);              	
           }
           delete localrank;
@@ -520,7 +532,7 @@ int main(int argc, char* argv[])
           // Allocation a new parallel object from IPC
           
           POPString objectname, codefile;
-          int node;
+          int node, usercore;
           request.data->Push("objectname", "POPString", 1);
           request.data->UnPack(&objectname, 1);
           request.data->Pop();
@@ -530,6 +542,11 @@ int main(int argc, char* argv[])
 		  	  request.data->Push("node", "int", 1);
           request.data->UnPack(&node, 1);
           request.data->Pop();		  
+          request.data->Push("core", "int", 1);
+          request.data->UnPack(&usercore, 1);
+          request.data->Pop();		  
+           	  	
+           	  	
            	  	
           if (node != rank && node != -1 && node < world) {
             // Unlock local MPI receive thread
@@ -555,6 +572,7 @@ int main(int argc, char* argv[])
             MPI::COMM_WORLD.Issend(objectname.GetString(), objectname_length, MPI_CHAR, node, 11);
             MPI::COMM_WORLD.Issend(&codefile_length, 1, MPI_INT, node, 12);
             MPI::COMM_WORLD.Issend(codefile.GetString(), codefile_length, MPI_CHAR, node, 13);
+            MPI::COMM_WORLD.Issend(&usercore, 1, MPI_INT, node, 16);
             pthread_mutex_unlock(&mpi_mutex);            
             
             // Receive objaccess from the allocator node
@@ -595,6 +613,7 @@ int main(int argc, char* argv[])
             request.data->Send(request.from);            
             
           } else {
+
             // Allocate on the local node
             char* tmp = new char[15];
             snprintf(tmp, 15, "uds_%d.%d", rank, next_object_id);
@@ -619,9 +638,15 @@ int main(int argc, char* argv[])
             char *localrank = new char[20];
             snprintf(localrank, 20, "-local_rank=%d", rank);
             char *coreoption = new char[20]; 
-            snprintf(coreoption, 20, "-core=%d", core); 
-            core++; 
-            if(core == 8) core = 0;             
+            if(usercore != -1) {
+              // Use user defined core distribution
+              snprintf(coreoption, 20, "-core=%d", usercore); 
+            } else {
+              // Use round robin distribution on core
+              snprintf(coreoption, 20, "-core=%d", core); 
+              core++;               
+              if(core == 8) core = 0;                           
+            }  
                   
             // Allocate the object      
             pid_t allocatepid = fork();
