@@ -305,15 +305,30 @@ void paroc_interface::Allocate()
 	Release();
 	POPString p;
 	od.getProtocol(p);
-	int node = od.get_node();
-//	paroc_accesspoint jobcontact, objaccess, remotejobcontact;
+	
+	// Get object description important for this kind 
+	int node = od.get_node(); // Defined the node on which the parallel object is allocated
+	int core = od.get_core(); // Defined the core on which the parallel object is allocated
+	
+	/* 
+	 * If od local is set, the parallel object will be allocated on the local POP-C++ MPI Interconnector. If od.node is not defined,
+	 * the parallel object is also allocated on the local node 
+	 */
+	if(od.IsLocal() || node == -1) {
+	  node = paroc_system::popc_local_mpi_communicator_rank;
+	}
+	
+	// Declare object accesspoint that will be filled by the allocation process. 
 	paroc_accesspoint objaccess;
 	
-	
+	// Get the executable path name
 	POPString codefile;
 	od.getExecutable(codefile);
+	
+	// Get the name of the parallel class
 	POPString objectname = ClassName();
 	
+	// If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
 	if(codefile.Length() == 0) {
 	  paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());	  
 	}
@@ -343,7 +358,6 @@ void paroc_interface::Allocate()
 	allocating_buffer->Reset();
 	allocating_buffer->SetHeader(header);
 
-	
   allocating_buffer->Push("objectname", "POPString", 1);
   allocating_buffer->Pack(&objectname, 1);
   allocating_buffer->Pop();
@@ -351,14 +365,13 @@ void paroc_interface::Allocate()
   allocating_buffer->Push("codefile", "POPString", 1);
   allocating_buffer->Pack(&codefile, 1);
   allocating_buffer->Pop();
-  
-  
-  if(node == -1) {
-    node = paroc_system::popc_local_mpi_communicator_rank;
-  }
     
   allocating_buffer->Push("node", "int", 1);
   allocating_buffer->Pack(&node, 1);
+  allocating_buffer->Pop();
+  
+  allocating_buffer->Push("core", "int", 1);
+  allocating_buffer->Pack(&core, 1);
   allocating_buffer->Pop();
     
 	paroc_connection* connection = allocating_combox->get_connection();	
