@@ -26,7 +26,7 @@ paroc_od::paroc_od()
 	isManual=false;
 	batchSystem=getenv("POPC_BATCH");
 	if (batchSystem!=NULL)hostname=batchSystem; // To avoid letting the hostname empty
-	isLocalJob=defaultLocalJob;
+	isLocalJob = defaultLocalJob;
 	sameDirectory(true); // Set the working directory to the current one by default
   secureSet=false;
   searchSet=false;
@@ -35,6 +35,7 @@ paroc_od::paroc_od()
 	max_size = 0;
 	wait_time = 0;
 	node_value = -1;
+	core_value = -1;
 }
 
 paroc_od::~paroc_od()
@@ -60,14 +61,41 @@ bool paroc_od::isServiceSet() const {
    return serviceSet;
 }
 
+/**
+ * Get the node identifier
+ * @return Node value defined by the developer or -1 is no node value was defined
+ */
 int paroc_od::get_node() const 
 {
   return node_value;
 }
 
+
+/**
+ * Get the core identifier
+ * @return Core value defined by the developer or -1 is no core value was defined
+ */
+int paroc_od::get_core() const
+{
+  return core_value;
+}
+
+/**
+ * Define the node on which the parallel object should be allocated
+ * @param An integer value between 0 and N-1. N is the number of available nodes. 
+ */
 void paroc_od::node(int value) 
 {
   node_value = value; 
+}
+
+/**
+ * Define the core on which the parallel object should be allocated
+ * @param value An integer value between 0 and N-1. N is the number of available core. 
+ */
+void paroc_od::core(int value)
+{
+  core_value = value; 
 }
 
 void paroc_od::power(float require, float min)
