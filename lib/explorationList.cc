@@ -16,6 +16,8 @@
 #include <stdio.h>
 #include "timer.h"
 #include <stdarg.h>
+#include <string.h>
+
 
 // Default constructor
 ExplorationList::ExplorationList(){}
