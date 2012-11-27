@@ -13,7 +13,7 @@
 #undef HAVE_LIBNSL
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
-#undef HAVE_LIBPTHREAD
+#cmakedefine HAVE_LIBPTHREAD
 
 /* Define to 1 if you have the `socket' library (-lsocket). */
 #undef HAVE_LIBSOCKET
