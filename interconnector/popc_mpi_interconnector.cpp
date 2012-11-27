@@ -35,7 +35,7 @@ using namespace std;
 
 // Global variable
 int rank, world;
-int core; 
+int core, nbcore; 
 
 map<int, int> incomingtag;
 map<int, pair<int, int> > incomingconnection;
@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
   
   
   core = 0; 
-
+  nbcore = 0;
   
   // Catch signal when a child is exiting  
   signal(SIGCHLD, catch_child_exit);
@@ -234,6 +234,7 @@ int main(int argc, char* argv[])
   
   
 #ifndef __APPLE__
+  nbcore = sysconf(_SC_NPROCESSORS_ONLN);
   cpu_set_t cpu_set;
   CPU_ZERO(&cpu_set);
   CPU_SET(core, &cpu_set);
@@ -484,7 +485,7 @@ int main(int argc, char* argv[])
           } else {
             snprintf(coreoption, 20, "-core=%d", core); 
             core++; 
-            if(core == 8) core = 0; 
+            if(core == nbcore) core = 0; 
           }
                             
           // Allocate the object      
@@ -653,7 +654,7 @@ int main(int argc, char* argv[])
               // Use round robin distribution on core
               snprintf(coreoption, 20, "-core=%d", core); 
               core++;               
-              if(core == 8) core = 0;                           
+              if(core == nbcore) core = 0;                           
             }  
                   
             // Allocate the object      
