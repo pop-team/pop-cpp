@@ -14,6 +14,9 @@
 #include "paroc_exception.h"
 #include "debug.h"
 
+#include <string.h>
+
+
 paroc_connection::paroc_connection(paroc_combox *com) : _is_initial_connection(false)
 {
 	fact=com->GetBufferFactory();
