@@ -11,7 +11,7 @@ object:
 	popcc -noclean -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
 	
 clean:
-	rm -f *.o *.obj main obj.map _paroc*
+	rm -f *.o *.obj main obj.map _popc*
 
 run:
 	mpiexec -np 1 ../../interconnector/popc_mpi_interconnector -app=./main
