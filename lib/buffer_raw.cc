@@ -484,7 +484,7 @@ char* paroc_buffer_raw::get_load()
   // Pack the header (20 bytes)
 	char *dat = (char *)packeddata;
 
-	if (dat == NULL) return false;
+	if (dat == NULL) return NULL;
 	int n = packeddata.GetSize();
 	int h[5];
 	memset(h,0, 5 * sizeof(int));
@@ -508,7 +508,7 @@ char* paroc_buffer_raw::get_load()
 		  h[3] = header.GetMethodID();
   		break;
 	  default:
-		  return false;
+		  return NULL;
 	}
 	memcpy(dat, h, 20);
   return (char *)packeddata;
