@@ -2,7 +2,7 @@ POPCC=../../parser/popcc
 POPCPP=../../parser/popcpp
 POPCPATH=../..
 CROSSCOMPILE=-cxx=FCCpx -Xg -pthread -cpp="FCCpx -E"
-POPCCOMPILE=-noclean -popc-static -popcdir=$(POPCPATH) -popcpp=$(POPCPP) $(CROSSCOMPILE) -verbose
+POPCCOMPILE=-noclean -popc-static -popcdir=$(POPCPATH) -popcpp=$(POPCPP)  -verbose
 
 all: main integer.obj
 
