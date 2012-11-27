@@ -9,9 +9,9 @@
 
 POPObject::POPObject()
 {	
-   cout << "POPObject is processing its construction (5 secondes delay) on machine:" <<  (const char*)POPSystem::GetHost() << popcendl;
-	sleep(5);
-   cout << "POPObject created (by JobMgr) on machine:" <<  (const char*)POPSystem::GetHost() << popcendl;
+  std::cout << "POPObject is processing its construction (5 secondes delay) on machine:" << GetAccessPoint().GetAccessString() << std::endl;
+  sleep(5);
+  std::cout << "POPObject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << std::endl;
 }
 /*
 void POPObject::AllocateObject(){
@@ -29,15 +29,15 @@ void POPObject::AllocateObject(){
 */
 POPObject::~POPObject()
 {
-   cout << "POPObject on machine " << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+   std::cout << "POPObject on machine " << (const char*)POPSystem::GetHost() <<" is being destroyed" << std::endl;
 }
 
 void POPObject::firstMethod(){
-	cout << "First method is called on " <<  (const char*)POPSystem::GetHost() << popcendl;
+	std::cout << "First method is called on " <<  (const char*)POPSystem::GetHost() << std::endl;
 }
 
 void POPObject::secondMethod(){
-	cout << "Second method is called on " <<  (const char*)POPSystem::GetHost() <<popcendl;
+	std::cout << "Second method is called on " <<  (const char*)POPSystem::GetHost() <<std::endl;
 }
 
 @pack(POPObject);

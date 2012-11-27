@@ -40,7 +40,8 @@ int main(int argc, char** argv)
 	} catch (POPException e) {
 		printf("Method with void parameter: test failed, error no.%d, destroying objects:\n", e.Code()); return 1;
 	} catch (std::exception& e) {
-		cout << e.what() << popcendl; return 1;
+		std::cout << e.what() << std::endl; 
+		return 1;
 	}
 	return 0;
 }
