@@ -17,10 +17,15 @@ string(REGEX REPLACE "\n" "" HOST_KERNEL ${HOST_KERNEL_RAW})
 
 include(CheckIncludeFile)
 include(CheckLibraryExists)
-find_package(Threads)
+#find_package(Threads)
 
-# Should be remove for release
-set(CMAKE_INSTALL_PREFIX "/Users/clementval/popc")
+
+check_include_file(pthread.h HAVE_PTHREAD_H)
+check_library_exists(pthread pthread_create "" HAVE_LIBPTHREAD)
+
+if(DEFINED CMAKE_THREAD_LIBS_INIT)
+  set(HAVE_LIBPTHREAD)
+endif(DEFINED CMAKE_THREAD_LIBS_INIT)
 
 
 # Check existence of header files and library 
