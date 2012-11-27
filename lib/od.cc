@@ -13,6 +13,9 @@
 #include "paroc_od.h"
 #include "paroc_utils.h"
 #include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 bool paroc_od::defaultLocalJob=false;
 
