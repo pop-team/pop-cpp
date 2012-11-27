@@ -31,11 +31,9 @@
 #include "popc_combox_uds.h"
 #include "paroc_utils.h"
 
-
 using namespace std;
 
-
-
+// Global variable
 int rank, world;
 int core; 
 
@@ -50,10 +48,12 @@ static int MPI_COMMAND_ALLOCATE = 11;
 static int MPI_TAG_DUMMY = 0; 
 static int MPI_TAG_COMMAND = 0; 
 
+// Declaring MPI intra-communicator for the creation of XMP parallel object
+MPI::Intracomm comm_world_dup; 
+MPI::Intracomm comm_self;
 
 // Condition variable to serialize MPI Call
 pthread_mutex_t mpi_mutex;
-
 
 /**
  * Catch signal of exiting child
@@ -63,7 +63,6 @@ void catch_child_exit(int signal_num) {
   char buf[256];
   bzero(buf, 256);
   waitpid(0, &retval, WNOHANG);  
-  
   
   /*
   int w_exit = WEXITSTATUS(retval); 
@@ -207,7 +206,10 @@ int main(int argc, char* argv[])
  	  // Init MPI for multithread support
   	int required_support = MPI_THREAD_SERIALIZED; // Maximum supported by the K Computer
 	  int provided_support = MPI::Init_thread(required_support); 
+	  
   }	 
+  
+  
   
   core = 0; 
 
@@ -224,6 +226,12 @@ int main(int argc, char* argv[])
   // Initialize local address
   rank = MPI::COMM_WORLD.Get_rank();
   world = MPI::COMM_WORLD.Get_size();
+  
+  // Duplicate the global communicator
+  comm_world_dup = MPI::COMM_WORLD.Dup(); 
+  // Create a self containing communicator for spawn creation task
+  comm_self = comm_world_dup.Split(rank, 0);
+  
   
 #ifndef __APPLE__
   cpu_set_t cpu_set;
@@ -979,6 +987,9 @@ int main(int argc, char* argv[])
   pthread_attr_destroy(&attr);
   pthread_mutex_destroy(&mpi_mutex);
 
+  // Free communicators
+  comm_world_dup.Free();
+  comm_self.Free();
 
   // Finalize the MPI process
   MPI::Finalize();
