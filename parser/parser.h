@@ -496,6 +496,8 @@ public:
 
 	ObjDesc &GetOD();
 
+  void set_id(int value); 
+  int get_id();
 protected:
 	virtual void GenerateReturn(CArrayChar &output, bool header, bool interface) {  Method::GenerateReturn(output, header, interface); };
 	virtual void GenerateReturn(CArrayChar &output, bool header);
@@ -503,6 +505,9 @@ protected:
 	virtual void GenerateClientPrefixBody(CArrayChar &output);
 
 	ObjDesc od; //Only used for constructor method
+
+private: 
+  int identifier;
 };
 /**
  * @class Destructor
@@ -625,6 +630,9 @@ protected:
 	char *my_object_base;
 	char *my_broker_base;
 	std::string strnamespace;
+	
+private:
+  int constrcutor_id;
 };
 
 

@@ -37,6 +37,7 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
 	initDone=false;
 	endid=11;
 	myFile=NULL;
+	constrcutor_id = 0;
 
 	startline=endline=0;
 	strcpy(constructor.name,clname);
@@ -337,17 +338,26 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 
   if(!IsCoreCompilation() && IsAsyncAllocationDisable()){
 	  sprintf(tmpcode,"// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", name);
-		code.InsertAt(-1,tmpcode,strlen(tmpcode));
-		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread(void* arg);\n}\n\n", name, name, name);
-		code.InsertAt(-1,tmpcode,strlen(tmpcode));
+  	code.InsertAt(-1,tmpcode,strlen(tmpcode));
 		
 		int nb_of_methods = memberList.GetSize();
     for (int i = 0; i < nb_of_methods; i++) {
+    
+    
 		  if (memberList[i]->Type() != TYPE_METHOD || memberList[i]->GetMyAccess() != PUBLIC) 
 		    continue;
+		    
 		  Method *met = (Method *)memberList[i];
 		  if(met->MethodType() == METHOD_CONSTRUCTOR){
-	  	  sprintf(tmpcode, "typedef struct pthread_args\n{\n  POPObject* ptr_interface;\n"); 
+		  	
+		  	Constructor *cons = dynamic_cast<Constructor*>(met); 
+		  	cons->set_id(constrcutor_id++); 
+		  	
+
+    		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg);\n}\n\n", name, cons->get_id());
+		    code.InsertAt(-1,tmpcode,strlen(tmpcode));
+		    
+	  	  sprintf(tmpcode, "typedef struct pthread_args%d\n{\n  POPObject* ptr_interface;\n", cons->get_id()); 
         code.InsertAt(-1, tmpcode, strlen(tmpcode));	
         
         int nb = (*met).params.GetSize();
@@ -359,7 +369,7 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
           code.InsertAt(-1,tmpcode,strlen(tmpcode));
         }
         
-        sprintf(tmpcode, "} pthread_args_t;\n\n");
+        sprintf(tmpcode, "} pthread_args_t_%d;\n\n", cons->get_id());
         code.InsertAt(-1, tmpcode, strlen(tmpcode));	        
       }	  
     }

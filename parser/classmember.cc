@@ -1223,6 +1223,15 @@ Constructor::Constructor(Class *cl, AccessType myaccess):Method(cl, myaccess)
 	strcpy(name, cl->GetName());
 }
 
+void Constructor::set_id(int value)
+{
+  identifier = value;
+}
+int Constructor::get_id()
+{
+  return identifier; 
+}
+
 bool Constructor::isDefault()
 {
 	return (params.GetSize()==0);
@@ -1301,7 +1310,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, 1);");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		
-		sprintf(tmpcode,"\n  pthread_args_t *arguments = (pthread_args_t *) malloc(sizeof(pthread_args_t));\n  %s* ptr = static_cast<%s*>(this);\n  arguments->ptr_interface = ptr;\n", GetClass()->GetName(), GetClass()->GetName());
+		sprintf(tmpcode,"\n  pthread_args_t_%d *arguments = (pthread_args_t_%d *) malloc(sizeof(pthread_args_t_%d));\n  %s* ptr = static_cast<%s*>(this);\n  arguments->ptr_interface = ptr;\n", get_id(), get_id(), get_id(), GetClass()->GetName(), GetClass()->GetName());
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		
 		int nb = params.GetSize();
@@ -1316,7 +1325,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
       output.InsertAt(-1, tmpcode, strlen(tmpcode));       
 		}
 		
-		sprintf(tmpcode, "  int ret;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread, arguments);\n", GetClass()->GetName());	
+		sprintf(tmpcode, "  int ret;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread%d, arguments);\n", GetClass()->GetName(), get_id());	
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		strcpy(tmpcode, "  if(ret != 0) {\n    pthread_attr_destroy(&attr);\n    return;\n  }\n  pthread_attr_destroy(&attr);\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
@@ -1350,10 +1359,10 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 	if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()){
 	  sprintf(tmpcode,"\n// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", GetClass()->GetName());
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));		
-		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread(void* arg)\n  {\n", GetClass()->GetName());
+		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg)\n  {\n", GetClass()->GetName(), get_id());
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));		
 		
-		sprintf(tmpcode,"    pthread_args_t *arguments = (pthread_args_t*)arg;\n");
+		sprintf(tmpcode,"    pthread_args_t_%d *arguments = (pthread_args_t_%d*)arg;\n", get_id(), get_id());
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 		
 		sprintf(tmpcode,"    %s* _this_interface = static_cast<%s*>(arguments->ptr_interface);\n",GetClass()->GetName(), GetClass()->GetName());
