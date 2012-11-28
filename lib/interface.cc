@@ -26,7 +26,7 @@
 #include <fstream>
 #include <sstream>
 #include <errno.h>
-
+#include <pthread.h>
 
 #include "paroc_interface.h"
 #include "paroc_buffer_factory_finder.h"
@@ -296,12 +296,8 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack)
 	}
 }
 
-/**
- * 
- */
-void paroc_interface::Allocate()
+void paroc_interface::allocate_only()
 {
-
 	Release();
 	POPString p;
 	od.getProtocol(p);
@@ -318,9 +314,6 @@ void paroc_interface::Allocate()
 	  node = paroc_system::popc_local_mpi_communicator_rank;
 	}
 	
-	// Declare object accesspoint that will be filled by the allocation process. 
-	paroc_accesspoint objaccess;
-	
 	// Get the executable path name
 	POPString codefile;
 	od.getExecutable(codefile);
@@ -329,7 +322,8 @@ void paroc_interface::Allocate()
 	POPString objectname = ClassName();
 	
 	// If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
-	if(codefile.Length() == 0) {
+	if(codefile.Length() <= 0) {
+	  printf("POP-C++ Error: Code file executable path is NULL ! Abort !\n"); 	
 	  paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());	  
 	}
 	
@@ -391,21 +385,31 @@ void paroc_interface::Allocate()
 	allocating_buffer->Destroy();
   allocating_combox->Close();
 
-	objaccess.SetAccessString(objectaddress.GetString());
-	Bind(objaccess); 
+	accesspoint.SetAccessString(objectaddress.GetString());  
 }
 
+/**
+ * Allocate the remote side of the parallel object associated with this interface
+ * NOTE: This method should allow various allocation techniques
+ */
+void paroc_interface::Allocate()
+{
+  allocate_only();
+	Bind(accesspoint); 
+}
 
+/** 
+ *
+ */
 void paroc_interface::Bind(const paroc_accesspoint &dest)
 {
 
-	if (dest.IsEmpty())
-	{
+	if (dest.IsEmpty()) {
 		Release();
 		return;
 	}
 
-	accesspoint=dest;
+	accesspoint = dest;
 
 	//Choose the protocol and then bind...
 	POPString prots=dest.GetAccessString();
@@ -523,7 +527,6 @@ void paroc_interface::Bind(const char *dest)
   
   bool create_return, connect_return;  
   if(need_redirection) {
-    //printf("Redirection\n");
     // Spoof address with the local MPI Communicator
     char* local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
@@ -558,7 +561,7 @@ void paroc_interface::Bind(const char *dest)
 		POPString info;
 		POPString peerplatform;
 		BindStatus(status, peerplatform, info);
-    //printf("Bindstatus got\n");
+
 		switch (status) {
   		case BIND_OK:
 	  		//NegotiateEncoding(info,peerplatform);
@@ -664,7 +667,7 @@ void paroc_interface::Release()
 
 
 bool paroc_interface::isBinded(){
-	if (__paroc_combox==NULL || __paroc_buf==NULL) 
+	if (__paroc_combox == NULL || __paroc_buf == NULL) 
 		return false;
 	return true;
 }
