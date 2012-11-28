@@ -44,7 +44,6 @@ void _paroc_atexit()
 
 int main(int argc, char **argv)
 {
-  printf("POP-C++ master main starts\n"); 
 
 #ifdef UC_LINUX
 	paroc_system::processor_set(0);
