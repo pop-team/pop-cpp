@@ -131,7 +131,7 @@ public:
 
 
 	/**
-	 * Asynchronous Parallel Object Creation (APOC)
+	 * Asynchronous Parallel Object Allocation (APOA)
 	 * Thread used for asynchronous allocation of the parallel object. Do not change its name as it is used in the POP-C++ parser
 	 * to generate code.
 	 */
@@ -139,6 +139,7 @@ public:
 
 	//Find a resource that satisfies the Qos and allocate an object on it
 	void Allocate();
+	void allocate_only();
 
 	paroc_od od;	
 protected:
@@ -156,6 +157,7 @@ protected:
 	paroc_mutex _paroc_imutex;
 
 private:
+  
    /**
     * POP-C++ Secure version with SSH tunneling
     * The followings variables are used for SSH Tunneling between the interface and the broker.
