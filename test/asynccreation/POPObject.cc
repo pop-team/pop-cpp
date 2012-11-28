@@ -14,6 +14,13 @@ POPObject::POPObject(int node)
   std::cout << "POPObject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << std::endl;
 }
 
+POPObject::POPObject(int node, double bandwidth)
+{	
+  std::cout << "POPObject is processing its construction (5 secondes delay) on machine:" << GetAccessPoint().GetAccessString() << " node value=" << node << std::endl;
+  sleep(5);
+  std::cout << "POPObject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << std::endl;
+}
+
 POPObject::~POPObject()
 {
    std::cout << "POPObject on machine " << GetAccessPoint().GetAccessString() <<" is being destroyed" << std::endl;

@@ -12,6 +12,7 @@ parclass POPObject {
 
 public:
 	POPObject(int node) @{ od.node(1); od.executable("./POPObject.obj"); };
+	POPObject(int node, double bandwidth) @{ od.node(1); od.executable("./POPObject.obj"); };
 	~POPObject();
 	sync seq void firstMethod();
 	async seq void secondMethod();
