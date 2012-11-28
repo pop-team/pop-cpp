@@ -15,11 +15,11 @@ int main(int argc, char** argv)
     time(&t1); 
     printf("Asynchronous allocation of parallel object\n");
     printf("Before creating POPObject o1\n");
-    POPObject o1;
+    POPObject o1(0);
     printf("Before creating POPObject o2\n");
-    POPObject o2;
+    POPObject o2(2);
     printf("Before creating POPObject o3\n");		
-    POPObject o3;
+    POPObject o3(3);
     time(&t2); 
     printf("Before calling method 1 on POPObject o1\n");		
     o1.firstMethod();
