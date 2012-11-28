@@ -861,17 +861,19 @@ void Method::GenerateClient(CArrayChar &output)
 	
 	
 	/**
-	 * Asynchronous Parallel Object Creation (APOA)
+	 * Asynchronous Parallel Object Allocation (APOA)
 	 * The code below is generated to support the APOA in POP-C++ application.
 	 * Generated at the beginning of each remote method invocation (not for constructor method).
 	 */
-	/* COMMENTED FOR 2.5 BUT TO BE PUT IN 2.5.1	 
-	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && !GetClass()->IsAsyncAllocationDisable()){
-		sprintf(tmpcode,"void* status;\npthread_join(_popc_async_construction_thread, &status); if(!isBinded()) {printf(\"Not allocated\"); return;}\n");
+	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && GetClass()->IsAsyncAllocationDisable()){
+		sprintf(tmpcode, "\n  // Waiting for APOA to be done before executing any method\n");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));	
+		sprintf(tmpcode, "  void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n");
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));	
+  	sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    return;\n  }\n");
+  	output.InsertAt(-1,tmpcode,strlen(tmpcode));	  	
 	} // End of APOA Support
-	*/
-//	sprintf(tmpcode,"\nprintf(\"INTERFACE: will call a method.\\n\");\nparoc_mutex_locker __paroc_lock(_paroc_imutex);\nparoc_connection* _popc_connection = __paroc_combox->get_connection();\n__paroc_buf->Reset();\nparoc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n__paroc_buf->SetHeader(__paroc_buf_header);\n",clname, id, invoke_code, name);	
+	
 	sprintf(tmpcode,"\nparoc_mutex_locker __paroc_lock(_paroc_imutex);\nparoc_connection* _popc_connection = __paroc_combox->get_connection();\n__paroc_buf->Reset();\nparoc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n__paroc_buf->SetHeader(__paroc_buf_header);\n",clname, id, invoke_code, name);
 	output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
@@ -1287,15 +1289,18 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 	 * Asynchronous Parallel Object Creation (APOA)
 	 * The code below is generated to support the APOA in POP-C++ application. 
 	 */
-	/* COMMENTED FOR 2.5 BUT TO BE PUT IN 2.5.1
-	if(!GetClass()->IsCoreCompilation() && !GetClass()->IsAsyncAllocationDisable()){
-		strcpy(tmpcode,"\npthread_attr_t attr;\n pthread_attr_init(&attr);\npthread_attr_setdetachstate(&attr, 1);\n");
+
+	if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()){
+  	strcpy(tmpcode, "\n  ");
+		od.Generate(tmpcode);	// Generates the object description
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-		sprintf(tmpcode, "int ret;\nret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread, this);\n", GetClass()->GetName());	
+		strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, 1);\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-		strcpy(tmpcode, "if(ret != 0)\n{\npthread_attr_destroy(&attr);\nreturn;\n}\npthread_attr_destroy(&attr);\n");
+		sprintf(tmpcode, "  int ret;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread, this);\n", GetClass()->GetName());	
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-	} else { */ // End of APOA Support
+		strcpy(tmpcode, "  if(ret != 0) {\n    pthread_attr_destroy(&attr);\n    return;\n  }\n  pthread_attr_destroy(&attr);\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+	} else { // End of APOA Support
 		/**
 		 * Standard parallel object allocation
 		 */
@@ -1316,9 +1321,8 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		strcat(tmpcode,");\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode)); 
 		// End of constructor invocation
-	/* COMMENTED FOR 2.5 BUT TO BE PUT IN 2.5.1 
 	}
-	*/
+
 	
 	strcpy(tmpcode,"}\n");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
