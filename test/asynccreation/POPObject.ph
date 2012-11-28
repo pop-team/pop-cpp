@@ -11,7 +11,7 @@ parclass POPObject {
 	classuid(1500);
 
 public:
-	POPObject() @{ od.node(0); od.executable("./POPObject.obj"); };
+	POPObject() @{ od.node(1); od.executable("./POPObject.obj"); };
 	~POPObject();
 	sync seq void firstMethod();
 	async seq void secondMethod();

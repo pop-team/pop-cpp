@@ -1,4 +1,4 @@
-all: app object
+all: noasync 
 
 noasync:
 	popcc -noclean -no-async-allocation -o main POPObject.ph POPObject.cc main.cc
@@ -14,4 +14,4 @@ clean:
 	rm -f *.o *.obj main obj.map _popc*
 
 run:
-	mpiexec -np 1 ../../interconnector/popc_mpi_interconnector -app=./main
+	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main
