@@ -36,11 +36,16 @@ using namespace std;
 // Global variable
 int rank, world;
 int core, nbcore; 
+int allocation_id;
 
+
+// Declaration of various map holding routing information
 map<int, int> incomingtag;
 map<int, pair<int, int> > incomingconnection;
 map<int, pair<int, int> > outgoingconnection;
 map<pair<int, int>, paroc_combox*> connectionmap;
+map<int, paroc_connection*> allocation_return;
+
 
 // Define the constant used in the program
 static int MPI_COMMAND_TERMINATE = 10; 
@@ -54,6 +59,8 @@ MPI::Intracomm comm_self;
 
 // Condition variable to serialize MPI Call
 pthread_mutex_t mpi_mutex;
+pthread_mutex_t incoming_tag_map_mutex;	
+pthread_mutex_t allocation_return_map_mutex;
 
 /**
  * Catch signal of exiting child
@@ -128,7 +135,6 @@ void *mpireceivedthread(void *t)
       done = mreq.Test(status); 
       pthread_mutex_unlock(&mpi_mutex);      
     }
-    //printf("Recv data on MPI %d (%d)\n", rank, data);
     switch (data[0]) {
       // Receive ending command from the main MPI process. 
       case 10: 
@@ -175,15 +181,121 @@ void *mpireceivedthread(void *t)
         }
       case 14:
         {
-          paroc_message_header reqheader(status.Get_source(), 200006, INVOKE_SYNC, "_response");
-	        ipcwaker_buffer->Reset();
-          ipcwaker_buffer->SetHeader(reqheader);  
-          ipcwaker_buffer->Push("tag", "int", 1);
-          ipcwaker_buffer->Pack(&data[1], 1);
-          ipcwaker_buffer->Pop();                
-          ipcwaker_buffer->Send(ipcwaker, connection);
+          //printf("Response from MPI\n"); 
+          int source = status.Get_source();	  	    
+          int tag = data[1]; 
+
+          
+          //printf("Redirect response back to IPC %d, %d\n", source, tag); 
+	  	    MPI::Status status;
+	  	    int length;
+	  	    pthread_mutex_lock(&mpi_mutex);            
+          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, tag);
+          pthread_mutex_unlock(&mpi_mutex);            
+          
+          
+          
+          bool done = false; 
+          while(!done) {
+            pthread_mutex_lock(&mpi_mutex);
+            done = mreq.Test(status); 
+            pthread_mutex_unlock(&mpi_mutex);            
+          } 
+
+          if(length <= 0) {
+            printf("POP-C++ Error: MPI Interconnector - request MPI-IPC redirection, length is %d\n", length);           
+          }
+
+	  	    char *data = new char[length];
+          pthread_mutex_lock(&mpi_mutex);
+	  	    mreq = MPI::COMM_WORLD.Irecv(data, length, MPI_CHAR, source, tag);
+          pthread_mutex_unlock(&mpi_mutex);            	  	    
+	  	  
+	  	    done = false; 
+          while(!done) {
+            pthread_mutex_lock(&mpi_mutex);
+            done = mreq.Test(status); 
+            pthread_mutex_unlock(&mpi_mutex);            
+          } 
+          
+          pthread_mutex_lock(&incoming_tag_map_mutex);	          
+	  	    int fd = incomingtag[tag];
+	  	    pthread_mutex_unlock(&incoming_tag_map_mutex);		  	    
+          
+          //printf("Redirect response back to IPC %d, %d %d\n", source, tag, fd); 	  	    
+	  	    popc_connection_uds* tmpconnection = new popc_connection_uds(fd, &ipcwaker);
+	        if (ipcwaker.Send(data, length, tmpconnection) < 0) {
+        	  printf("Can't send to caller (fd=%d, source=%d, tag=%d)\n", fd, source, tag);
+        	} 
+	  	    
+	  	    // Clean the entry in the map
+          pthread_mutex_lock(&incoming_tag_map_mutex);	  	    
+	  	    incomingtag.erase(tag); 
+          pthread_mutex_unlock(&incoming_tag_map_mutex);	  	    
+	  	    
+	  	    delete [] data;
+
           break;
         }
+      case 15: // Allocation response from MPI
+        {
+          int node = status.Get_source();
+          int id = data[1];
+         /* paroc_message_header reqheader(status.Get_source(), 200007, INVOKE_SYNC, "_allocation_response");
+	        ipcwaker_buffer->Reset();
+          ipcwaker_buffer->SetHeader(reqheader);  
+          
+
+          ipcwaker_buffer->Push("node", "int", 1);
+          ipcwaker_buffer->Pack(&node, 1);
+          ipcwaker_buffer->Pop();                     
+
+          ipcwaker_buffer->Push("id", "int", 1);
+          ipcwaker_buffer->Pack(&data[1], 1);
+          ipcwaker_buffer->Pop();    
+  
+          ipcwaker_buffer->Send(ipcwaker, connection);*/
+          
+          int objaccess_length; 
+          pthread_mutex_lock(&mpi_mutex);            
+          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&objaccess_length, 1, MPI_INT, node, 14);
+          pthread_mutex_unlock(&mpi_mutex);                        
+          MPI::Status status; 
+          bool done = false; 
+          while(!done) {
+            pthread_mutex_lock(&mpi_mutex);
+            done = mreq.Test(status); 
+            pthread_mutex_unlock(&mpi_mutex);              
+          }
+
+          char* objaccess = new char[objaccess_length+1];
+          pthread_mutex_lock(&mpi_mutex);            
+          mreq = MPI::COMM_WORLD.Irecv(objaccess, objaccess_length, MPI_CHAR, node, 15);
+          pthread_mutex_unlock(&mpi_mutex);            
+            
+          done = false; 
+          while(!done) {
+            pthread_mutex_lock(&mpi_mutex);
+            done = mreq.Test(status); 
+            pthread_mutex_unlock(&mpi_mutex);              
+          }    
+          objaccess[objaccess_length] = '\0';
+
+          // Return objaccess
+          POPString objectaddress(objaccess);
+          delete [] objaccess;
+            
+         	ipcwaker_buffer->Reset();	          
+   	    	paroc_message_header h("_allocate");
+         	ipcwaker_buffer->SetHeader(h);
+          ipcwaker_buffer->Push("objectaddress", "POPString", 1);
+          ipcwaker_buffer->Pack(&objectaddress, 1);
+          ipcwaker_buffer->Pop();
+          ipcwaker_buffer->Send(allocation_return[id]);  
+
+          break;          
+        }  
+    
       // Unknown command ... do nothing 
       default:
         printf("Unknown data received on %d = %d\n", rank, data[0]);
@@ -213,6 +325,7 @@ int main(int argc, char* argv[])
   
   core = 0; 
   nbcore = 0;
+  allocation_id = 0; 
   
   // Catch signal when a child is exiting  
   signal(SIGCHLD, catch_child_exit);
@@ -318,6 +431,10 @@ int main(int argc, char* argv[])
   if(pthread_mutex_init(&mpi_mutex, NULL) != 0) {
     perror("Mutex init"); 
   }
+  
+  if(pthread_mutex_init(&incoming_tag_map_mutex, NULL) != 0) {
+    perror("Mutex init"); 
+  }  
 
   // Create the MPI receive thread
   pthread_create(&mpithread, &attr, mpireceivedthread, NULL);
@@ -350,7 +467,7 @@ int main(int argc, char* argv[])
         } else {
           request.methodId[1] = header.GetMethodID();
         }
-        //printf("MPI: fd %d %d\n", dynamic_cast<popc_connection_uds*>(connection)->get_fd(), request.methodId[1]);			    
+//        printf("MPI: rank=%d, fd=%d, flag=%d\n", rank, dynamic_cast<popc_connection_uds*>(connection)->get_fd(), request.methodId[1]);			    
 			  // Killing the process, end of the higher-level application
 		  	if(request.methodId[1] == 200001){
 		  	  active = false;
@@ -386,28 +503,43 @@ int main(int argc, char* argv[])
          	int current_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();  
          	incomingconnection.insert(pair<int, pair<int, int> >(current_fd, pair<int, int>(dest_node, dest_id)));
          	
-         	//printf("Connection fd = %d, dest node = %d, dest id = %d\n", current_fd, dest_node, dest_id);
+//         	printf("Connection fd = %d, dest node = %d, dest id = %d\n", current_fd, dest_node, dest_id);
          	    	
         } else if(request.methodId[1] == 200003) {
           // Get information from the MPI received node
           // None to get for the moment
           
         } else if(request.methodId[1] == 200004) {
+        
           // Allocation of a new parallel object from MPI
           MPI::Status status;
-          int objectname_length, codefile_length; 
+          int objectname_length, codefile_length, alloc_id; 
+
+
+          pthread_mutex_lock(&mpi_mutex); 
+          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&alloc_id, 1, MPI_INT, MPI_ANY_SOURCE, 17); 
+          pthread_mutex_unlock(&mpi_mutex);  
+          bool done = false; 
+          while(!done) {
+            pthread_mutex_lock(&mpi_mutex);            
+            done = mreq.Test(status);           
+            pthread_mutex_unlock(&mpi_mutex);            
+          }             
+
+          int source = status.Get_source(); 
+                    
           pthread_mutex_lock(&mpi_mutex);            
-          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&objectname_length, 1, MPI_INT, MPI_ANY_SOURCE, 10);
+          mreq = MPI::COMM_WORLD.Irecv(&objectname_length, 1, MPI_INT, source, 10);
           pthread_mutex_unlock(&mpi_mutex);                      
           
-          bool done = false; 
+          done = false; 
           while(!done) {
             pthread_mutex_lock(&mpi_mutex);            
             done = mreq.Test(status);           
             pthread_mutex_unlock(&mpi_mutex);            
           }
           
-          int source = status.Get_source(); 
+
           
           pthread_mutex_lock(&mpi_mutex);                      
           mreq = MPI::COMM_WORLD.Irecv(&codefile_length, 1, MPI_INT, source, 12);
@@ -486,8 +618,8 @@ int main(int argc, char* argv[])
             snprintf(coreoption, 20, "-core=%d", core); 
             core++; 
             if(core == nbcore) core = 0; 
-          }
-                            
+          }                      
+//          printf("Exec object %s %s %s %s %s %s\n", codefile, _objectname.c_str(), _objectaddress.c_str(), _receiveraddress.c_str(), localrank, coreoption);                             
           // Allocate the object      
           pid_t allocatepid = fork();
           if(allocatepid == 0) {
@@ -514,14 +646,19 @@ int main(int argc, char* argv[])
     		    callback.methodId[0] = callback_header.GetClassID();
 	    		  callback.methodId[1] = callback_header.GetMethodID(); 
   	  	  	if(callback.methodId[1] == 200002){
+  	  	  	  int data[2]; 
+  	  	  	  data[0] = 15;
+  	  	  	  data[1] = alloc_id;
+  	  	  	
   	  	  	  int length = strlen(objectaddress.GetString());
   	  	  	  pthread_mutex_lock(&mpi_mutex);            
+  	  	  	  MPI::COMM_WORLD.Issend(&data, 2, MPI_INT, status.Get_source(), 0);  	  	  	  
   	  	  	  MPI::COMM_WORLD.Issend(&length, 1, MPI_INT, status.Get_source(), 14);
               MPI::Request sreq = MPI::COMM_WORLD.Issend(objectaddress.GetString(), length, MPI_CHAR, status.Get_source(), 15);
               pthread_mutex_unlock(&mpi_mutex);            
               
-              MPI::Status status; 
-              bool done = false; 
+  	  	  	  MPI::Status status; 
+              bool done = false;  
               while(!done) {
     	  	  	  pthread_mutex_lock(&mpi_mutex); 
                 done = sreq.Test(status); 
@@ -555,8 +692,7 @@ int main(int argc, char* argv[])
           request.data->UnPack(&usercore, 1);
           request.data->Pop();		  
            	  	
-           	  	
-           	  	
+           	  	    	  	
           if (node != rank && node != -1 && node < world) {
             // Unlock local MPI receive thread
             int data[2]; 
@@ -572,11 +708,13 @@ int main(int argc, char* argv[])
             int objectname_length = strlen(objectname.GetString());
             int codefile_length = strlen(codefile.GetString());
             
+            MPI::Status status;             
             pthread_mutex_lock(&mpi_mutex);             
             MPI::COMM_WORLD.Issend(&data, 2, MPI_INT, node, 0);        
                 
             // Send allocation information to the destination MPI Communicator
 
+            MPI::COMM_WORLD.Issend(&allocation_id, 1, MPI_INT, node, 17); 
             MPI::COMM_WORLD.Issend(&objectname_length, 1, MPI_INT, node, 10);
             MPI::COMM_WORLD.Issend(objectname.GetString(), objectname_length, MPI_CHAR, node, 11);
             MPI::COMM_WORLD.Issend(&codefile_length, 1, MPI_INT, node, 12);
@@ -584,42 +722,13 @@ int main(int argc, char* argv[])
             MPI::COMM_WORLD.Issend(&usercore, 1, MPI_INT, node, 16);
             pthread_mutex_unlock(&mpi_mutex);            
             
-            // Receive objaccess from the allocator node
-            int objaccess_length; 
-            MPI::Status status; 
-            pthread_mutex_lock(&mpi_mutex);            
-            MPI::Request mreq = MPI::COMM_WORLD.Irecv(&objaccess_length, 1, MPI_INT, node, 14);
-            pthread_mutex_unlock(&mpi_mutex);                        
+            // Save the allocation identifier to return the object accesspoint
+            pthread_mutex_lock(&allocation_return_map_mutex); 
+            allocation_return[allocation_id] = request.from;
+            pthread_mutex_unlock(&allocation_return_map_mutex); 
             
-            bool done = false; 
-            while(!done) {
-              pthread_mutex_lock(&mpi_mutex);
-              done = mreq.Test(status); 
-              pthread_mutex_unlock(&mpi_mutex);              
-            }
-            char* objaccess = new char[objaccess_length+1];
-            pthread_mutex_lock(&mpi_mutex);            
-            mreq = MPI::COMM_WORLD.Irecv(objaccess, objaccess_length, MPI_CHAR, node, 15);
-            pthread_mutex_unlock(&mpi_mutex);            
-            
-            done = false; 
-            while(!done) {
-              pthread_mutex_lock(&mpi_mutex);
-              done = mreq.Test(status); 
-              pthread_mutex_unlock(&mpi_mutex);              
-            }            
-            objaccess[objaccess_length] = '\0';
-
-            // Return objaccess
-            POPString objectaddress(objaccess);
-            delete [] objaccess;
-         	  request.data->Reset();		            
-   	    		paroc_message_header h("_allocate");
-         		request.data->SetHeader(h);
-            request.data->Push("objectaddress", "POPString", 1);
-            request.data->Pack(&objectaddress, 1);
-            request.data->Pop();
-            request.data->Send(request.from);            
+            // Increment the allocation identifier counter
+            allocation_id++;
             
           } else {
 
@@ -633,7 +742,7 @@ int main(int argc, char* argv[])
             receiver_address.append("_");
             receiver_address.append(tmp);
             receiver.Create(receiver_address.c_str(), true);
-              
+            
             std::string _objectname("-object=");
             _objectname.append(objectname.GetString());
             std::string _objectaddress("-address=");
@@ -656,7 +765,7 @@ int main(int argc, char* argv[])
               core++;               
               if(core == nbcore) core = 0;                           
             }  
-                  
+
             // Allocate the object      
             pid_t allocatepid = fork();
             if(allocatepid == 0) {
@@ -666,9 +775,9 @@ int main(int argc, char* argv[])
               argv1[2] = const_cast<char*>(_objectaddress.c_str());   // Object address
               argv1[3] = const_cast<char*>(_receiveraddress.c_str()); // Address of ready call
               argv1[4] = localrank;                                   // Rank of the creator process
-              argv1[5] = coreoption; 
+              argv1[5] = coreoption;                                  // Specify the core on which to execute the process
               argv1[6] = (char*)0;         
-//              printf("Exec object %s %s %s %s %s %s\n", codefile.GetString(), _objectname.c_str(), _objectaddress.c_str(), _receiveraddress.c_str(), localrank, coreoption);                   
+//            printf("Exec object %s %s %s %s %s %s\n", codefile.GetString(), _objectname.c_str(), _objectaddress.c_str(), _receiveraddress.c_str(), localrank, coreoption);                   
               execv(argv1[0], argv1);              	
             }
             delete localrank; 
@@ -704,6 +813,58 @@ int main(int argc, char* argv[])
    	      	callback.data->Destroy();
    	      	receiver.Close();		
    	     	}  	      
+	  	  } else if(request.methodId[1] == 200007) {
+	  	      int id, node; 
+	          request.data->Push("node", "int", 1);
+           	request.data->UnPack(&node, 1);
+          	request.data->Pop();
+            request.data->Push("id", "int", 1);
+           	request.data->UnPack(&id, 1);
+          	request.data->Pop();
+       
+            // Receive objaccess from the allocator node
+            int objaccess_length; 
+            pthread_mutex_lock(&mpi_mutex);            
+            MPI::Request mreq = MPI::COMM_WORLD.Irecv(&objaccess_length, 1, MPI_INT, node, 14);
+            pthread_mutex_unlock(&mpi_mutex);                        
+            MPI::Status status; 
+            bool done = false; 
+            while(!done) {
+              pthread_mutex_lock(&mpi_mutex);
+              done = mreq.Test(status); 
+              pthread_mutex_unlock(&mpi_mutex);              
+            }
+
+            char* objaccess = new char[objaccess_length+1];
+            pthread_mutex_lock(&mpi_mutex);            
+            mreq = MPI::COMM_WORLD.Irecv(objaccess, objaccess_length, MPI_CHAR, node, 15);
+            pthread_mutex_unlock(&mpi_mutex);            
+            
+            done = false; 
+            while(!done) {
+              pthread_mutex_lock(&mpi_mutex);
+              done = mreq.Test(status); 
+              pthread_mutex_unlock(&mpi_mutex);              
+            }    
+            objaccess[objaccess_length] = '\0';
+
+            // Return objaccess
+            POPString objectaddress(objaccess);
+            delete [] objaccess;
+            
+         	  request.data->Reset();		            
+   	    		paroc_message_header h("_allocate");
+         		request.data->SetHeader(h);
+            request.data->Push("objectaddress", "POPString", 1);
+            request.data->Pack(&objectaddress, 1);
+            request.data->Pop();
+            request.data->Send(allocation_return[id]);  
+
+            pthread_mutex_lock(&allocation_return_map_mutex); 
+            allocation_return.erase(id); 
+            pthread_mutex_unlock(&allocation_return_map_mutex);                       
+	  	  
+	  	  
 	  	  } else if(request.methodId[1] == 200005) {
 	  	    /**
 	  	     * 
@@ -811,66 +972,16 @@ int main(int argc, char* argv[])
          	//printf("Request sent length=%d (rank= %d, tag=%d, source=%d, dest_id=%d, fd=%d)\n", length, rank, tag, 
          	  //  source, dest_id, dynamic_cast<popc_connection_uds*>(connection)->get_fd()); 
           delete [] data;
-	  	  } else if(request.methodId[1] == 200006) {          
-	  	    // Response from local node MPI Communicator to IPC caller
-          int source = request.methodId[0];	  	    
-          int tag; 
-          request.data->Push("tag", "int", 1);
-         	request.data->UnPack(&tag, 1);
-        	request.data->Pop();
-          
-	  	    MPI::Status status;
-	  	    int length;
-	  	    pthread_mutex_lock(&mpi_mutex);            
-          MPI::Request mreq = MPI::COMM_WORLD.Irecv(&length, 1, MPI_INT, source, tag);
-          pthread_mutex_unlock(&mpi_mutex);            
-          
-          
-          
-          bool done = false; 
-          while(!done) {
-            pthread_mutex_lock(&mpi_mutex);
-            done = mreq.Test(status); 
-            pthread_mutex_unlock(&mpi_mutex);            
-          } 
-	  	    //int tag = status.Get_tag();
-
-          if(length <= 0) {
-            printf("POP-C++ Error: MPI Interconnector - request MPI-IPC redirection, length is %d\n", length);           
-          }
-
-	  	    char *data = new char[length];
-          pthread_mutex_lock(&mpi_mutex);
-	  	    mreq = MPI::COMM_WORLD.Irecv(data, length, MPI_CHAR, source, tag);
-          pthread_mutex_unlock(&mpi_mutex);            	  	    
-	  	  
-	  	    done = false; 
-          while(!done) {
-            pthread_mutex_lock(&mpi_mutex);
-            done = mreq.Test(status); 
-            pthread_mutex_unlock(&mpi_mutex);            
-          } 
-          
-	  	    int fd = incomingtag[tag];
-	  	    //printf("Redirect to caller %d\n", fd);
-	  	    popc_connection_uds* tmpconnection = new popc_connection_uds(fd, &local);
-	        if (local.Send(data, length, tmpconnection) < 0) {
-        	  printf("Can't send to caller (fd=%d, source=%d, tag=%d)\n", fd, source, tag);
-        	} 
-	  	    
-	  	    // Clean the entry in the map
-	  	    incomingtag.erase(tag); 
-	  	    
-	  	    delete [] data;
 	  	  } else {
 	  	    // Redirect request 
 	  	    int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
 	  	    
 	  	    // Redirect response to caller
-	  	    if(outgoingconnection[fd].first != 0) {  	  	  	    
+	  	    if(outgoingconnection[fd].first != 0) {  
+	  	  	    
 	  	      int dest = outgoingconnection[fd].second;
 	  	      int tag = outgoingconnection[fd].first;     
-	  	      
+	  	      //printf("redirect response %d %d\n", dest, tag); 	  	      
 	  	      int data[2]; 
 	  	      data[0] = 14; 
             data[1] = tag; 
@@ -892,7 +1003,7 @@ int main(int argc, char* argv[])
 	  	        done = sreq.Test(status);
 	  	        pthread_mutex_unlock(&mpi_mutex); 
 	  	      }
-	  	      
+            //printf("redirect response done\n"); 	  	      
 	  	      // Clean the entry in the outgoing map
             outgoingconnection.erase(fd); 
 	  	    
@@ -906,6 +1017,7 @@ int main(int argc, char* argv[])
             // Get the destination node and parallel object identifier from the incoming connection map. 
 	  	      int dest_node = incomingconnection[fd].first;
 	    	    int dest_id = incomingconnection[fd].second;
+	  	      //printf("redirect request %d %d %d\n", dest_node, dest_id, next_tag); 	  	      	    	    
           	    	    
             // Prepare command message's data 
 	  	      int data[2]; 
@@ -936,9 +1048,12 @@ int main(int argc, char* argv[])
               pthread_mutex_unlock(&mpi_mutex);              
             }
                          
+            //printf("redirect request done\n"); 
             
             // Save the fd corresponding to the tag included in the message. Will be used for redirection to the caller 
+            pthread_mutex_lock(&incoming_tag_map_mutex);  
             incomingtag[next_tag] = fd;
+            pthread_mutex_unlock(&incoming_tag_map_mutex);            
             
             // Increment the tag to differentiate messages
             next_tag++;  	    
