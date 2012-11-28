@@ -323,7 +323,7 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 	 * Asynchronous Parallel Object Creation (APOA)
 	 * The code below is generated to support the APOA in POP-C++ application. 
 	 */
-	if(!IsCoreCompilation() && IsAsyncAllocationDisable()){
+	/*if(!IsCoreCompilation() && IsAsyncAllocationDisable()){
 	  sprintf(tmpcode,"// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", name);
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));
 		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread(void* arg)\n  {\n    %s* _this_interface = static_cast<%s*>(arg);\n", name, name, name);
@@ -333,19 +333,37 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));	
 		sprintf(tmpcode, "    } catch(paroc_exception* ex) {\n      printf(\"Async allocation: %%s\", ex->what()); \n    }\n    return 0;\n  }\n}\n");
 		code.InsertAt(-1,tmpcode,strlen(tmpcode));			
+	}	*/ // End of APOA Support
+
+  if(!IsCoreCompilation() && IsAsyncAllocationDisable()){
+	  sprintf(tmpcode,"// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", name);
+		code.InsertAt(-1,tmpcode,strlen(tmpcode));
+		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread(void* arg);\n}\n\n", name, name, name);
+		code.InsertAt(-1,tmpcode,strlen(tmpcode));
 		
-		
-		// Old code to be removed after testing
-	/*	sprintf(tmpcode,"%s::AllocateObject(){\n", name);
-		code.InsertAt(-1, tmpcode, strlen(tmpcode));
-		strcpy(tmpcode,"\npthread_attr_t attr;\n pthread_attr_init(&attr);\npthread_attr_setdetachstate(&attr, 1);\n");
-		code.InsertAt(-1, tmpcode, strlen(tmpcode));
-		sprintf(tmpcode, "int ret;\nret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread, this);\n", name);	
-		code.InsertAt(-1, tmpcode, strlen(tmpcode));
-		strcpy(tmpcode, "if(ret != 0)\n{\npthread_attr_destroy(&attr);\nreturn;\n}\npthread_attr_destroy(&attr);\n}\n");
-		code.InsertAt(-1, tmpcode, strlen(tmpcode));
-	*/
-	}	// End of APOA Support
+		int nb_of_methods = memberList.GetSize();
+    for (int i = 0; i < nb_of_methods; i++) {
+		  if (memberList[i]->Type() != TYPE_METHOD || memberList[i]->GetMyAccess() != PUBLIC) 
+		    continue;
+		  Method *met = (Method *)memberList[i];
+		  if(met->MethodType() == METHOD_CONSTRUCTOR){
+	  	  sprintf(tmpcode, "typedef struct pthread_args\n{\n  POPObject* ptr_interface;\n"); 
+        code.InsertAt(-1, tmpcode, strlen(tmpcode));	
+        
+        int nb = (*met).params.GetSize();
+	      for (int j=0;j<nb;j++)  {
+	        sprintf(tmpcode, "  "); 
+      		Param &p=*((*met).params[j]);
+		      p.DeclareParam(tmpcode, false);
+          strcat(tmpcode, ";\n");   
+          code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        }
+        
+        sprintf(tmpcode, "} pthread_args_t;\n\n");
+        code.InsertAt(-1, tmpcode, strlen(tmpcode));	        
+      }	  
+    }
+	}
 
 	int n=memberList.GetSize();
 	for (int i=0;i<n;i++)
@@ -357,10 +375,12 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 		if (pureVirtual && met->MethodType()==METHOD_CONSTRUCTOR && IsCoreCompilation()){
 			continue; 
 		}
+
+
 		met->GenerateClient(code);
 	}
 
-	if (noConstructor /*PEKA Removed */ && !pureVirtual)
+	if (noConstructor && !pureVirtual)
 	{
 		constructor.GenerateClient(code);
 	}

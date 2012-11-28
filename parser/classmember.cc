@@ -422,9 +422,9 @@ void ClassMember::GenerateHeader(CArrayChar &output, bool interface)
 
 }
 
-// END  ClassMember implementation....
+// END of ClassMember implementation
 
-//Implement Attribute class
+// Implement Attribute class
 Attribute::Attribute(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), attributes(0,1)
 {
 }
@@ -748,10 +748,15 @@ void Method::GeneratePostfix(CArrayChar &output, bool header)
 
 void Method::GenerateName(CArrayChar &output, bool header)
 {
-	if (header) output.InsertAt(-1,name,strlen(name));
-	else
-	{
+	if (header) {
+	  output.InsertAt(-1,name,strlen(name));
+	} else {
+	  
+	  
+	  
 		char str[256];
+		sprintf(str,"// Generated method\n");
+		output.InsertAt(-1,str,strlen(str));
 		sprintf(str,"%s::%s",GetClass()->GetName(),name);
 		output.InsertAt(-1,str,strlen(str));
 	}
@@ -1233,9 +1238,7 @@ void Constructor::GenerateHeader(CArrayChar &output, bool interface)
 {
 	Method::GenerateHeader(output,interface);
 
-	//SEPARATE allocation from invocation
-	if (interface)
-	{
+	if (interface) {
 		char str[1024];
 		strcpy(str,"\nvoid _paroc_Construct");
 		output.InsertAt(-1,str,strlen(str));
@@ -1291,12 +1294,29 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 	 */
 
 	if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()){
-  	strcpy(tmpcode, "\n  ");
+  	strcpy(tmpcode, "\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		od.Generate(tmpcode);	// Generates the object description
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-		strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, 1);\n");
+		strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, 1);");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-		sprintf(tmpcode, "  int ret;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread, this);\n", GetClass()->GetName());	
+		
+		sprintf(tmpcode,"\n  pthread_args_t *arguments = (pthread_args_t *) malloc(sizeof(pthread_args_t));\n  %s* ptr = static_cast<%s*>(this);\n  arguments->ptr_interface = ptr;\n", GetClass()->GetName(), GetClass()->GetName());
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		
+		int nb = params.GetSize();
+		for (int j = 0; j < nb; j++)
+		{
+			Param &p = *(params[j]);
+			sprintf(tmpcode, "  arguments->");
+			strcat(tmpcode, p.GetName());
+			strcat(tmpcode, " = ");
+			strcat(tmpcode, p.GetName());
+      strcat(tmpcode, ";\n");  
+      output.InsertAt(-1, tmpcode, strlen(tmpcode));       
+		}
+		
+		sprintf(tmpcode, "  int ret;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread, arguments);\n", GetClass()->GetName());	
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		strcpy(tmpcode, "  if(ret != 0) {\n    pthread_attr_destroy(&attr);\n    return;\n  }\n  pthread_attr_destroy(&attr);\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
@@ -1326,6 +1346,43 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 	
 	strcpy(tmpcode,"}\n");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
+	
+	if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()){
+	  sprintf(tmpcode,"\n// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", GetClass()->GetName());
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));		
+		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread(void* arg)\n  {\n", GetClass()->GetName());
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));		
+		
+		sprintf(tmpcode,"    pthread_args_t *arguments = (pthread_args_t*)arg;\n");
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+		
+		sprintf(tmpcode,"    %s* _this_interface = static_cast<%s*>(arguments->ptr_interface);\n",GetClass()->GetName(), GetClass()->GetName());
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+		
+		int nb = params.GetSize();
+		for (int j = 0; j < nb; j++)
+		{
+			Param &p=*(params[j]);
+		  sprintf(tmpcode, "%s %s = arguments->%s;\n", p.GetType()->GetName(), p.GetName(), p.GetName()); 
+			output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		}
+		
+		// TODO generate right od and be able to pass parameters
+		sprintf(tmpcode, "    try{\n      _this_interface->Allocate();\n      _this_interface->_paroc_Construct("); 
+
+		for (int j=0;j<nb;j++)
+		{
+			Param &p=*(params[j]);
+			strcat(tmpcode,p.GetName());
+			if (j<nb-1) strcat(tmpcode,", ");
+		}
+		
+		strcat(tmpcode, ");\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode)); 
+		
+		sprintf(tmpcode, "    } catch(paroc_exception* ex) {\n      printf(\"Async allocation: %%s\", ex->what()); \n    }\n   free(arg);\n  return 0;\n  }\n}\n");
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));			
+	}	
 
 	
 	sprintf(tmpcode,"\nvoid %s::_paroc_Construct",GetClass()->GetName());
