@@ -135,11 +135,11 @@ void *mpireceivedthread(void *t)
       done = mreq.Test(status); 
       pthread_mutex_unlock(&mpi_mutex);      
     }
+
     switch (data[0]) {
       // Receive ending command from the main MPI process. 
       case 10: 
         {
-          //printf("Recv terminate %d\n", rank);
           active = false;
           if (rank != 0) {
             // signal the IPC process to stop
@@ -485,8 +485,9 @@ int main(int argc, char* argv[])
   		  	    }
             }
             pthread_mutex_lock(&mpi_mutex);            
-      	    MPI::COMM_WORLD.Issend(&data, 2, MPI_INT, 0, tag);                      	    
+      	    MPI::COMM_WORLD.Isend(&data, 2, MPI_INT, 0, tag);                      	    
       	    pthread_mutex_unlock(&mpi_mutex);            
+
       	  }
         } else if(request.methodId[1] == 200002) {  
           // Connection to this process as a router process
@@ -972,7 +973,64 @@ int main(int argc, char* argv[])
          	//printf("Request sent length=%d (rank= %d, tag=%d, source=%d, dest_id=%d, fd=%d)\n", length, rank, tag, 
          	  //  source, dest_id, dynamic_cast<popc_connection_uds*>(connection)->get_fd()); 
           delete [] data;
+	  	  
+	  	  } else if(request.methodId[1] == 210000) { // Special allocation for XMP process parallel object
+          POPString objectname, codefile; 
+          int nb_node; 
+          
+		      request.data->Push("objectname", "POPString", 1);
+         	request.data->UnPack(&objectname, 1);
+        	request.data->Pop();
+
+		      request.data->Push("codefile", "POPString", 1);
+         	request.data->UnPack(&codefile, 1);
+        	request.data->Pop();
+
+		      request.data->Push("objectnb", "int", 1);
+         	request.data->UnPack(&nb_node, 1);
+        	request.data->Pop();
+        	
+          std::string object_option("-object="); 
+          object_option.append(objectname.GetString()); 
+          const char* argv0[] = { object_option.c_str(), (char*)0 }; 
+                  	
+          const char* commands[nb_node]; 
+          const char **aargv[nb_node]; 
+          int maxprocs[nb_node]; 
+          int errcodes[nb_node]; 
+          MPI::Info infos[2]; 
+          
+          for(int i = 0; i < nb_node; i++) {
+            commands[i] = codefile.GetString(); 
+            aargv[i] = argv0; 
+            maxprocs[i] = 1; 
+            infos[i].Create();
+          }
+
+    
+        	pthread_mutex_lock(&mpi_mutex); 
+          MPI::Intercomm comm_xmp = comm_self.Spawn_multiple(nb_node, commands, aargv, maxprocs, infos, rank);
+        	pthread_mutex_unlock(&mpi_mutex); 
+        	printf("POPINTERCONNECTOR: Spawn executed\n");         	
+        	
+        	
+        	POPString objectaddress("uds://uds_10.0 uds://uds_11.0");
+        	request.data->Reset();		            
+ 	    		paroc_message_header h("_allocate");
+       		request.data->SetHeader(h);
+          request.data->Push("objectaddress", "POPString", 1);
+          request.data->Pack(&objectaddress, 1);
+          request.data->Pop();
+          request.data->Send(request.from);  
+          
+
+
+          
+
+	  	  
 	  	  } else {
+	  	  
+	  	  
 	  	    // Redirect request 
 	  	    int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
 	  	    
@@ -1104,8 +1162,10 @@ int main(int argc, char* argv[])
   pthread_mutex_destroy(&mpi_mutex);
 
   // Free communicators
-  comm_world_dup.Free();
-  comm_self.Free();
+//  comm_world_dup.Free();
+//  comm_self.Free();
+
+
 
   // Finalize the MPI process
   MPI::Finalize();
