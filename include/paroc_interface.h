@@ -142,6 +142,8 @@ public:
 	void allocate_only();
 
 	paroc_od od;	
+	
+	paroc_od get_object_description();
 protected:
 	virtual const char *ClassName() { return "paroc_interface"; };
 	virtual void paroc_Dispatch(paroc_buffer *buf);
