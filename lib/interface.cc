@@ -296,6 +296,11 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack)
 	}
 }
 
+paroc_od paroc_interface::get_object_description()
+{
+  return od;
+}
+
 void paroc_interface::allocate_only()
 {
 	Release();
