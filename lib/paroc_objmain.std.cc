@@ -75,11 +75,6 @@ int main(int argc, char **argv)
     }	  	
 	}
 
-#ifndef __APPLE__
-  int cpu = sched_getcpu(); 
-  printf("Parallel object %s is on cpu %d\n", address, cpu); 
-#endif
-
 	paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
 	paroc_broker *broker = paroc_broker_factory::Create(&argc,&argv);
 	if (broker == NULL) {
