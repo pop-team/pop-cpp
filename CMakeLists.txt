@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.6)
 project(POPCPP)
 
 # Define version of POP-C++ - It will be shown on the compiler usage message and with -version option
-set(VERSION "2.6.3 - K Computer")
+set(VERSION "2.6.4 - K Computer")
 execute_process(COMMAND uname -m OUTPUT_VARIABLE HOST_CPU_RAW)
 string(REGEX REPLACE "\n" "" HOST_CPU ${HOST_CPU_RAW})
 execute_process(COMMAND uname -s OUTPUT_VARIABLE HOST_KERNEL_RAW)
@@ -31,6 +31,11 @@ endif(DEFINED CMAKE_THREAD_LIBS_INIT)
 # Check existence of header files and library 
 #check_include_file(dlfcn.h HAVE_DLFCN_H)
 #check_library_exists(dl dlclose "" HAVE_LIBDL)
+
+# Define user specific option. Disable by default.
+OPTION(MPI_SUPPORT "MPI Support" OFF)
+OPTION(XMP_SUPPORT "XMP Support" OFF)
+
 
 
 # Define variable for MPI compilation
@@ -109,6 +114,20 @@ install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/parser/popcc DESTINATION bin)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/parser/popcpp DESTINATION bin)
 
 
+
+# Instruction to enable the MPI support for POP-C++
+if(MPI_SUPPORT)
+  message(STATUS "MPI Support for POP-C++ is enable")
+  add_subdirectory(mpi)
+endif(MPI_SUPPORT)
+
+# Instruction to enable the XMP support for POP-C++
+if(XMP_SUPPORT)
+  message(STATUS "XMP Support for POP-C++ is enable")
+  add_subdirectory(xmp)
+endif(XMP_SUPPORT)
+
+
 # Add target to clean the distribution of all CMake generated files
 IF (UNIX)
   ADD_CUSTOM_TARGET (distclean @echo cleaning for source distribution)
@@ -121,6 +140,15 @@ IF (UNIX)
    *.cmake
    interconnector/Makefile
    interconnector/*.cmake
+   mpi/Makefile
+   mpi/*.cmake
+   mpi/CMakeFiles   
+   xmp/Makefile
+   xmp/*.cmake   
+   xmp/CMakeFiles
+   xmp/src/CMakeFiles
+   xmp/src/*.cmake
+   xmp/src/Makefile
    lib/Makefile
    lib/*.cmake   
    config.h
