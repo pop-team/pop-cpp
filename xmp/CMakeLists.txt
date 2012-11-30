@@ -13,7 +13,7 @@
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 link_directories(${CMAKE_SOURCE_DIR}/lib)
-
+add_subdirectory(src) 
 
 get_directory_property(INCLUDE_PATH INCLUDE_DIRECTORIES)
 add_custom_target(popc_objmain.xmp.o ALL
