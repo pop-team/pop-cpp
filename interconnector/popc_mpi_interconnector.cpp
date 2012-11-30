@@ -45,7 +45,8 @@ map<int, pair<int, int> > incomingconnection;
 map<int, pair<int, int> > outgoingconnection;
 map<pair<int, int>, paroc_combox*> connectionmap;
 map<int, paroc_connection*> allocation_return;
-
+map<int, MPI::Intercomm> object_group; 
+map<int, int> object_group_single;
 
 // Define the constant used in the program
 static int MPI_COMMAND_TERMINATE = 10; 
@@ -994,25 +995,26 @@ int main(int argc, char* argv[])
           object_option.append(objectname.GetString()); 
           const char* argv0[] = { object_option.c_str(), (char*)0 }; 
                   	
+          printf("SPAWN will create %d processes\n", nb_node); 
           const char* commands[nb_node]; 
           const char **aargv[nb_node]; 
           int maxprocs[nb_node]; 
           int errcodes[nb_node]; 
-          MPI::Info infos[2]; 
+          MPI::Info infos[nb_node]; 
           
           for(int i = 0; i < nb_node; i++) {
             commands[i] = codefile.GetString(); 
             aargv[i] = argv0; 
             maxprocs[i] = 1; 
-            infos[i].Create();
           }
 
     
         	pthread_mutex_lock(&mpi_mutex); 
           MPI::Intercomm comm_xmp = comm_self.Spawn_multiple(nb_node, commands, aargv, maxprocs, infos, rank);
-        	pthread_mutex_unlock(&mpi_mutex); 
-        	printf("POPINTERCONNECTOR: Spawn executed\n");         	
+        	pthread_mutex_unlock(&mpi_mutex); 	
         	
+        	int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd(); 
+        	object_group[fd] = comm_xmp; 
         	
         	POPString objectaddress("uds://uds_10.0 uds://uds_11.0");
         	request.data->Reset();		            
@@ -1065,40 +1067,88 @@ int main(int argc, char* argv[])
 	  	      // Clean the entry in the outgoing map
             outgoingconnection.erase(fd); 
 	  	    
-	  	    } else { 
-            /**
-             * Redirect the request to the parallel object via MPI
-             * This part of the code redirect the message from this POP-C++ MPI Interconnector to the end POP-C++ MPI 
-             * Interconnector
-             */
+	  	    } else { 	  	      
+	  	      if(object_group.find(fd) != object_group.end()) {
+	  	        printf("In POPMPI Interconnector for Interface group redirection: %d\n", object_group[fd].Get_remote_size()); 
+	  	        
+	  	        if(request.methodId[1] == 9) { // Set the single recipient of next call
+	  	          int rank; 
+                request.data->Push("rank", "int", 1);
+               	request.data->UnPack(&rank, 1);
+              	request.data->Pop();
+              	object_group_single[fd] = rank; 
+	  	        } else {
+  	  	        if(object_group_single.find(fd) == object_group_single.end()) {
+  	  	        
+  	  	        
+	    	          printf("COLLECTIVE CALL\n"); 
+	    	          int world_size = object_group[fd].Get_remote_size();
+	    	          
+                  int data = 13; 
+                  
+                  // Get the request message length
+                  int length = request.data->get_size();
+                  if(length <= 0) {
+                    printf("POP-C++ Error: MPI Interconnector - request IPC-MPI redirection, length is %d\n", length); 
+                  } 	 
+        
+                  // Get a pointer to the data buffer
+                  char *load = request.data->get_load();  
+                  MPI::Request sreq; 
+                  MPI::Status status;                        
+
+                  pthread_mutex_lock(&mpi_mutex);   
+                  object_group[fd].Send(&data, 1, MPI_INT, 0, 0);
+                  printf("Will send %d\n", length); 
+                  
+                  int data2 = length; 
+                  object_group[fd].Send(&data2, 1, MPI_INT, 0, 0);                   
+                  
+                  pthread_mutex_unlock(&mpi_mutex);      
              
-            // Get the destination node and parallel object identifier from the incoming connection map. 
-	  	      int dest_node = incomingconnection[fd].first;
-	    	    int dest_id = incomingconnection[fd].second;
-	  	      //printf("redirect request %d %d %d\n", dest_node, dest_id, next_tag); 	  	      	    	    
+                  printf("Wait for completion\n"); 
+	  	            
+	    	        } else {
+	  	            printf("NON-COLLECTIVE CALL TO %d\n", object_group_single[fd]); 
+	  	          
+	  	          }
+	  	        }  
+	  	        
+	  	        
+	  	        
+	  	      } else {
+              /**
+               * Redirect the request to the parallel object via MPI
+               * This part of the code redirect the message from this POP-C++ MPI Interconnector to the end POP-C++ MPI 
+               * Interconnector
+               */
+             
+              // Get the destination node and parallel object identifier from the incoming connection map. 
+  	  	      int dest_node = incomingconnection[fd].first;
+	      	    int dest_id = incomingconnection[fd].second;
           	    	    
-            // Prepare command message's data 
-	  	      int data[2]; 
-	  	      data[0] = 13;
-	  	      data[1] = next_tag; 
+              // Prepare command message's data 
+	    	      int data[2]; 
+	    	      data[0] = 13;
+	  	        data[1] = next_tag; 
 	  	      
-            // Get the request message length
-            int length = request.data->get_size();
-            if(length <= 0) {
-              printf("POP-C++ Error: MPI Interconnector - request IPC-MPI redirection, length is %d\n", length); 
-            }
-            
-            // Get a pointer to the data buffer
-            char *load = request.data->get_load();            
+              // Get the request message length
+              int length = request.data->get_size();
+              if(length <= 0) {
+                printf("POP-C++ Error: MPI Interconnector - request IPC-MPI redirection, length is %d\n", length); 
+              }
+              
+              // Get a pointer to the data buffer
+              char *load = request.data->get_load();            
 	  	      
-	  	      // Lock and send asynchronously the information about the message. 
-            pthread_mutex_lock(&mpi_mutex);   
-            MPI::COMM_WORLD.Issend(&data, 2, MPI_INT, dest_node, 0); 
-            MPI::COMM_WORLD.Issend(&dest_id, 1, MPI_INT, dest_node, next_tag);
-            MPI::COMM_WORLD.Issend(&length, 1, MPI_INT, dest_node, next_tag);
-            MPI::Request sreq = MPI::COMM_WORLD.Issend(load, length, MPI_CHAR, dest_node, next_tag); 
-            pthread_mutex_unlock(&mpi_mutex);          
-            MPI::Status status; 
+  	  	      // Lock and send asynchronously the information about the message. 
+              pthread_mutex_lock(&mpi_mutex);   
+              MPI::COMM_WORLD.Issend(&data, 2, MPI_INT, dest_node, 0); 
+              MPI::COMM_WORLD.Issend(&dest_id, 1, MPI_INT, dest_node, next_tag);
+              MPI::COMM_WORLD.Issend(&length, 1, MPI_INT, dest_node, next_tag);
+              MPI::Request sreq = MPI::COMM_WORLD.Issend(load, length, MPI_CHAR, dest_node, next_tag); 
+              pthread_mutex_unlock(&mpi_mutex);          
+              MPI::Status status; 
             bool done = false; 
             while(!done) {
               pthread_mutex_lock(&mpi_mutex);
@@ -1114,7 +1164,8 @@ int main(int argc, char* argv[])
             pthread_mutex_unlock(&incoming_tag_map_mutex);            
             
             // Increment the tag to differentiate messages
-            next_tag++;  	    
+            next_tag++;
+            }    
 	  	    }
 	  	  }
 	  	  // Delete the buffer
@@ -1155,15 +1206,23 @@ int main(int argc, char* argv[])
     ((*it).second)->Close();
     delete dynamic_cast<popc_combox_uds*>((*it).second);
   }
+
+  // Delete communicator for object group
+  while(!object_group.empty()) {
+    object_group.erase(object_group.begin()); 
+  }
+
   
   // Wait for the MPI receive thread and destroy attribute and mutex lock
   pthread_join(mpithread, NULL);
   pthread_attr_destroy(&attr);
   pthread_mutex_destroy(&mpi_mutex);
 
+
+
   // Free communicators
-//  comm_world_dup.Free();
-//  comm_self.Free();
+  comm_world_dup.Free();
+  comm_self.Free();
 
 
 
