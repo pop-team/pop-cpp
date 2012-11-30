@@ -151,11 +151,19 @@ bool POPC_GroupInterface::finalize()
     return false;
   }
   
+  // Terminate the processes
+  paroc_message_header h(0, 2, INVOKE_SYNC, "DecRef");
+	_popc_buffer->Reset();
+	_popc_buffer->SetHeader(h);
+
+	paroc_connection* connection = _popc_combox->get_connection();
+	popc_send_request(_popc_buffer, connection);  
   
  
   _popc_buffer->Destroy();
   _popc_combox->Close(); 
   _popc_is_finalized = true; 
+  return true;
 }
 
 /**

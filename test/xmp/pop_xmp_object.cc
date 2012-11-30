@@ -27,7 +27,7 @@ void POPXMPObject::execute_xmp_1()
   paroc_message_header _popc_message_header(CLASSUID_POPXMPObject, 13, 0, "execute_xmp_1"); 
   _popc_buffer->SetHeader(_popc_message_header); 
   popc_send_request(_popc_buffer, _popc_connection); 
-  popc_recv_response(_popc_buffer, _popc_connection);
+//  popc_recv_response(_popc_buffer, _popc_connection);
   _popc_buffer->Reset();
   _popc_connection->reset(); 
 }

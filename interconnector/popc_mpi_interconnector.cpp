@@ -134,7 +134,7 @@ void *mpireceivedthread(void *t)
     while(!done) {
       pthread_mutex_lock(&mpi_mutex);      
       done = mreq.Test(status); 
-      pthread_mutex_unlock(&mpi_mutex);      
+      pthread_mutex_unlock(&mpi_mutex);            
     }
 
     switch (data[0]) {
@@ -1092,19 +1092,47 @@ int main(int argc, char* argv[])
                     printf("POP-C++ Error: MPI Interconnector - request IPC-MPI redirection, length is %d\n", length); 
                   } 	 
         
-                  // Get a pointer to the data buffer
-                  char *load = request.data->get_load();  
+
                   MPI::Request sreq; 
                   MPI::Status status;                        
 
                   pthread_mutex_lock(&mpi_mutex);   
-                  object_group[fd].Send(&data, 1, MPI_INT, 0, 0);
-                  printf("Will send %d\n", length); 
+                  sreq = object_group[fd].Isend(&data, 1, MPI_INT, 0, 0);
+                  pthread_mutex_unlock(&mpi_mutex); 
+                  
+                  bool done = false; 
+                  while(!done) {
+                    pthread_mutex_lock(&mpi_mutex);                     
+                    done = sreq.Test(status); 
+                    pthread_mutex_unlock(&mpi_mutex); 
+                  }
+                  
+                  
                   
                   int data2 = length; 
-                  object_group[fd].Send(&data2, 1, MPI_INT, 0, 0);                   
+                  pthread_mutex_lock(&mpi_mutex);                   
+                  sreq = object_group[fd].Isend(&data2, 1, MPI_INT, 0, 1);                   
+                  pthread_mutex_unlock(&mpi_mutex);     
+                  done = false; 
+                  while(!done) {
+                    pthread_mutex_lock(&mpi_mutex);                     
+                    done = sreq.Test(status); 
+                    pthread_mutex_unlock(&mpi_mutex); 
+                  }
+                   
                   
-                  pthread_mutex_unlock(&mpi_mutex);      
+                  // Get a pointer to the data buffer
+                  char *load = request.data->get_load();  
+                  pthread_mutex_lock(&mpi_mutex);                   
+                  sreq = object_group[fd].Isend(load, length, MPI_CHAR, 0, 2);                   
+                  pthread_mutex_unlock(&mpi_mutex); 
+                  
+                  done = false; 
+                  while(!done) {
+                    pthread_mutex_lock(&mpi_mutex);                     
+                    done = sreq.Test(status); 
+                    pthread_mutex_unlock(&mpi_mutex); 
+                  }     
              
                   printf("Wait for completion\n"); 
 	  	            
@@ -1223,7 +1251,6 @@ int main(int argc, char* argv[])
   // Free communicators
   comm_world_dup.Free();
   comm_self.Free();
-
 
 
   // Finalize the MPI process

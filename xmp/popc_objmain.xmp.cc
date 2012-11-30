@@ -11,6 +11,7 @@
 
 #include "paroc_utils.h"
 #include "paroc_system.h"
+#include "paroc_buffer_xdr.h"
 
 
 int main(int argc, char* argv[]) 
@@ -53,31 +54,34 @@ int main(int argc, char* argv[])
   
   printf("XMP parallel object rank %d %d\n", rank, communicator.Get_remote_size());     
 
-  int length; 
+  bool active = true; 
   
-  communicator.Recv(&length, 1, MPI_INT, 0, 0); 
-  printf("%d recv %d\n", MPI::COMM_WORLD.Get_rank(), length);
-
-  int data2; 
-  communicator.Recv(&data2, 1, MPI_INT, 0, 0); 
-  printf("%d recv %d\n", MPI::COMM_WORLD.Get_rank(), data2); 
-
-//  char* load = new char[length]; 
-//  communicator.Recv(load, length, MPI_CHAR, 0, 1);
-//  int data; 
-//  communicator.Recv(&data, 1, MPI_INT, MPI_ANY_SOURCE, rank);
-//  printf("XMP parallel object received %d\n", data);     
+  while(active) {
+    int length; 
   
+    communicator.Recv(&length, 1, MPI_INT, 0, 0); 
 
+    int data_length; 
+    communicator.Recv(&data_length, 1, MPI_INT, 0, 1); 
+
+    char* load = new char[data_length];
+    communicator.Recv(load, data_length, MPI_CHAR, 0, 2); 
   
-
-
-	
-  printf("XMP Object: %d Will create object of type=%s\n", rank, objectname); 
+    paroc_buffer_xdr* buffer = new paroc_buffer_xdr();
+    buffer->load(load, data_length);
   
-  
-
-
+    const paroc_message_header &header = buffer->GetHeader();
+    
+    
+    printf("Class ID = %d, Type = %d, Method ID = %d, Semantics = %d\n", header.GetClassID(), header.GetType(), header.GetMethodID(), header.GetSemantics()); 
+    
+    
+    
+    // Receive DecRef - Means and of the process for a parallel object group.
+    if (header.GetMethodID() == 2) {
+      active = false; 
+    }
+  }
 
   if(!MPI::Is_finalized()) {
     MPI::Finalize();
