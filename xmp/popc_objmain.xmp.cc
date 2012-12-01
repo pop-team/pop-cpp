@@ -52,20 +52,36 @@ int main(int argc, char* argv[])
   
   
   
-  printf("XMP parallel object rank %d %d\n", rank, communicator.Get_remote_size());     
+  //printf("XMP parallel object rank %d %d\n", rank, communicator.Get_remote_size());     
 
   bool active = true; 
-  
+  MPI::Status status; 
   while(active) {
     int length; 
-  
-    communicator.Recv(&length, 1, MPI_INT, 0, 0); 
+      
+    MPI::Request req = communicator.Irecv(&length, 1, MPI_INT, 0, 0); 
+
+    bool done = false; 
+    while(!done) {
+      done = req.Test(status); 
+    }
+
 
     int data_length; 
-    communicator.Recv(&data_length, 1, MPI_INT, 0, 1); 
+    req = communicator.Irecv(&data_length, 1, MPI_INT, 0, 1); 
+
+    done = false; 
+    while(!done) {
+      done = req.Test(status); 
+    }    
 
     char* load = new char[data_length];
-    communicator.Recv(load, data_length, MPI_CHAR, 0, 2); 
+    req = communicator.Irecv(load, data_length, MPI_CHAR, 0, 2); 
+    
+    done = false; 
+    while(!done) {
+      done = req.Test(status); 
+    }
   
     paroc_buffer_xdr* buffer = new paroc_buffer_xdr();
     buffer->load(load, data_length);
