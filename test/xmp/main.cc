@@ -2,6 +2,7 @@
  *
  */
 
+#include <unistd.h>
 #include <stdio.h>
 #include "pop_xmp_object.h"
 
@@ -17,9 +18,9 @@ int main(int argc, char* argv[])
   xmp.initialize(1);   
 
   xmp.execute_xmp_1();
+  xmp.execute_xmp_1();
 
-//  xmp.set_value(1); 
-
+  xmp.finalize();
 
   printf("POP-C++ Test Case: XMP Support finished\n"); 
 
