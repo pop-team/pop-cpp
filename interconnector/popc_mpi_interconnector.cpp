@@ -130,6 +130,8 @@ void *mpireceivedthread(void *t)
     MPI::Request mreq = MPI::COMM_WORLD.Irecv(&data, 2, MPI_INT, MPI_ANY_SOURCE, 0); 
     pthread_mutex_unlock(&mpi_mutex);                
     
+    printf("MPI Thread\n"); 
+        
     bool done = false; 
     while(!done) {
       pthread_mutex_lock(&mpi_mutex);      
@@ -448,7 +450,7 @@ int main(int argc, char* argv[])
     // Create empty request object to receive request from IPC
     paroc_request request;
     request.data = NULL;      
-    
+    printf("Wait to recv request\n"); 
     // Wait for data on the UDS
     paroc_connection* connection = local.Wait();
 
@@ -459,6 +461,7 @@ int main(int argc, char* argv[])
       // Process incoming request
       paroc_buffer_factory *buffer_factory = connection->GetBufferFactory();
 	    request.data = buffer_factory->CreateBuffer();
+	    
 		  if (request.data->Recv(connection)) {
   		  request.from = connection;
 	  		const paroc_message_header &header = request.data->GetHeader();
@@ -1031,7 +1034,7 @@ int main(int argc, char* argv[])
 
 	  	  
 	  	  } else {
-	  	  
+
 	  	  
 	  	    // Redirect request 
 	  	    int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
@@ -1067,7 +1070,8 @@ int main(int argc, char* argv[])
 	  	      // Clean the entry in the outgoing map
             outgoingconnection.erase(fd); 
 	  	    
-	  	    } else { 	  	      
+	  	    } else { 	  
+	  	      printf("CALL\n"); 	      
 	  	      if(object_group.find(fd) != object_group.end()) {
 	  	        printf("In POPMPI Interconnector for Interface group redirection: %d\n", object_group[fd].Get_remote_size()); 
 	  	        
@@ -1133,8 +1137,15 @@ int main(int argc, char* argv[])
                     done = sreq.Test(status); 
                     pthread_mutex_unlock(&mpi_mutex); 
                   }     
-             
-                  printf("Wait for completion\n"); 
+                  
+                  
+                  // Signal finalize() that object group were signaled for termination
+                  if(request.methodId[1] == 2) {
+                 	  request.data->Reset();		  
+          	    		paroc_message_header h("_finalize");
+                 		request.data->SetHeader(h);
+                 		request.data->Send(request.from);                     
+                  }
 	  	            
 	    	        } else {
 	  	            printf("NON-COLLECTIVE CALL TO %d\n", object_group_single[fd]); 
