@@ -156,8 +156,11 @@ bool POPC_GroupInterface::finalize()
 	_popc_buffer->Reset();
 	_popc_buffer->SetHeader(h);
 
+
 	paroc_connection* connection = _popc_combox->get_connection();
+	printf("Send finalize()\n"); 
 	popc_send_request(_popc_buffer, connection);  
+	popc_recv_response(_popc_buffer, connection); 
   
  
   _popc_buffer->Destroy();
@@ -172,6 +175,7 @@ bool POPC_GroupInterface::finalize()
 void POPC_GroupInterface::popc_send_request(paroc_buffer* buffer, paroc_connection* connection)
 {
   if (!buffer->Send((*_popc_combox), connection)) {
+    printf("ERROR: Problem while sending request\n"); 
 	  paroc_exception::paroc_throw_errno();
 	}  	
 }
