@@ -12,10 +12,13 @@
 #include "paroc_utils.h"
 #include "paroc_system.h"
 #include "paroc_buffer_xdr.h"
+#include "popc_group_broker.h"
+#include "popc_group_broker_factory.h"
 
 
 int main(int argc, char* argv[]) 
 {
+  printf("Process started\n"); 
   MPI::Intercomm communicator; 
   int rank; 
   if(paroc_utils::checkremove(&argc, &argv, "-listlong") != NULL) {
@@ -52,7 +55,10 @@ int main(int argc, char* argv[])
   
   
   
-  //printf("XMP parallel object rank %d %d\n", rank, communicator.Get_remote_size());     
+  //printf("XMP parallel object rank %d %d\n", rank, communicator.Get_remote_size());    
+   
+  POPC_GroupBroker* broker = POPC_GroupBrokerFactory::create(objectname); 
+  
 
   bool active = true; 
   MPI::Status status; 
@@ -90,6 +96,8 @@ int main(int argc, char* argv[])
     
     
     printf("Class ID = %d, Type = %d, Method ID = %d, Semantics = %d\n", header.GetClassID(), header.GetType(), header.GetMethodID(), header.GetSemantics()); 
+    
+    
     
     
     
