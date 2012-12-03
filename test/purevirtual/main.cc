@@ -9,4 +9,5 @@ int main(int argc, char** argv)
 	Child c;
 	c.method_pv();
 	printf("Test finished ...\n");
+  return 0;
 }
