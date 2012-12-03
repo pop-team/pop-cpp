@@ -226,13 +226,13 @@ void *mpireceivedthread(void *t)
           //printf("Redirect response back to IPC %d, %d %d\n", source, tag, fd); 	  	    
 	  	    popc_connection_uds* tmpconnection = new popc_connection_uds(fd, &ipcwaker);
 	        if (ipcwaker.Send(data, length, tmpconnection) < 0) {
-        	  printf("Can't send to caller (fd=%d, source=%d, tag=%d)\n", fd, source, tag);
+        	  printf("Can't send response back to caller (fd=%d, source=%d, tag=%d)\n", fd, source, tag);
         	} 
 	  	    
 	  	    // Clean the entry in the map
-          pthread_mutex_lock(&incoming_tag_map_mutex);	  	    
+/*          pthread_mutex_lock(&incoming_tag_map_mutex);	  	    
 	  	    incomingtag.erase(tag); 
-          pthread_mutex_unlock(&incoming_tag_map_mutex);	  	    
+          pthread_mutex_unlock(&incoming_tag_map_mutex);	  	    */
 	  	    
 	  	    delete [] data;
 
