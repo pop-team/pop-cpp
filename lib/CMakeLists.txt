@@ -30,7 +30,6 @@ popwayback.cc
 popc_combox_uds.cpp
 string.cc
 system.cc
-testplugin.cc
 thread.cc
 timer.cc
 utils.cc
