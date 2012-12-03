@@ -68,7 +68,7 @@ public:
 	
 protected: 
 
-  POPC_Object* object;
+  POPC_Object* _popc_internal_object;
 	popc_method_map_list methodnames;
 };
 
