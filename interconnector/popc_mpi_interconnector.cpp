@@ -1068,7 +1068,6 @@ int main(int argc, char* argv[])
             outgoingconnection.erase(fd); 
 	  	    
 	  	    } else { 	  
-	  	      printf("CALL\n"); 	      
 	  	      if(object_group.find(fd) != object_group.end()) {
 	  	        printf("In POPMPI Interconnector for Interface group redirection: %d\n", object_group[fd].Get_remote_size()); 
 	  	        
