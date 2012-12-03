@@ -1327,7 +1327,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		
 		sprintf(tmpcode, "  int ret;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread%d, arguments);\n", GetClass()->GetName(), get_id());	
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-		strcpy(tmpcode, "  if(ret != 0) {\n    pthread_attr_destroy(&attr);\n    return;\n  }\n  pthread_attr_destroy(&attr);\n");
+		strcpy(tmpcode, "  if(ret != 0) {\n    printf(\"Thread creation failed\\n\");\n    perror(\"pthread_create\");\n    pthread_attr_destroy(&attr);\n    return;\n  }\n  pthread_attr_destroy(&attr);\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 	} else { // End of APOA Support
 		/**
