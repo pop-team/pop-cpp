@@ -1307,7 +1307,11 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		od.Generate(tmpcode);	// Generates the object description
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+#ifdef __APPLE__		
 		strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, 1);");
+#else
+		strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);");
+#endif		
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		
 		sprintf(tmpcode,"\n  pthread_args_t_%d *arguments = (pthread_args_t_%d *) malloc(sizeof(pthread_args_t_%d));\n  %s* ptr = static_cast<%s*>(this);\n  arguments->ptr_interface = ptr;\n", get_id(), get_id(), get_id(), GetClass()->GetName(), GetClass()->GetName());
