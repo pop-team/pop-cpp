@@ -27,6 +27,7 @@ bool POPXMPObject_popcobject_Broker::Invoke(unsigned method[3], paroc_buffer &__
 
 POPXMPObject_popcobject_Broker::POPXMPObject_popcobject_Broker()
 {
+  printf("Broker created\n"); 
   static popc_method_info _popc_minfo[3] = { {10,(char*)"POPXMPObject"}, {12,(char*)"execute_xmp_1"}, {13,(char*)"set_value"} };
   add_method_info(CLASSUID_POPXMPObject, _popc_minfo, 3);
 }
@@ -34,7 +35,7 @@ POPXMPObject_popcobject_Broker::POPXMPObject_popcobject_Broker()
 void POPXMPObject_popcobject_Broker::Invoke_POPXMPObject_10(paroc_buffer &__paroc_buf, paroc_connection *__interface_output)
 {
   try {
-    //object = new POPXMPObject_popcobject();
+    _popc_internal_object = new POPXMPObject_popcobject();
   } catch(std::exception& e) {
     printf("POP-C++ Warning: Exception '%s' raised in method 'POPXMPObject' of class 'POPXMPObject'\n",e.what()); 
     throw;
@@ -56,7 +57,7 @@ void POPXMPObject_popcobject_Broker::Invoke_POPXMPObject_10(paroc_buffer &__paro
 
 void POPXMPObject_popcobject_Broker::Invoke_execute_xmp_1_12(paroc_buffer &__paroc_buf, paroc_connection *__interface_output)
 {
-  POPXMPObject_popcobject * _popc_object = dynamic_cast<POPXMPObject_popcobject *>(object);
+  POPXMPObject_popcobject * _popc_object = dynamic_cast<POPXMPObject_popcobject *>(_popc_internal_object);
   try {
     _popc_object->execute_xmp_1();
   } catch(std::exception& e) {
@@ -85,7 +86,7 @@ void POPXMPObject_popcobject_Broker::Invoke_set_value_13(paroc_buffer &__paroc_b
   __paroc_buf.UnPack(&val,1);
   __paroc_buf.Pop();
 
-  POPXMPObject_popcobject * _popc_object = dynamic_cast<POPXMPObject_popcobject *>(object);
+  POPXMPObject_popcobject * _popc_object = dynamic_cast<POPXMPObject_popcobject *>(_popc_internal_object);
   try {
     _popc_object->set_value(val);
   }
@@ -105,4 +106,4 @@ void POPXMPObject_popcobject_Broker::Invoke_set_value_13(paroc_buffer &__paroc_b
 }
 
 POPC_GroupBroker* POPXMPObject_popcobject_Broker::_init() { return new POPXMPObject_popcobject_Broker; }
-//paroc_broker_factory POPXMPObject_popcobject_Broker::_fact(_init, "POPXMPObject");
+POPC_GroupBrokerFactory POPXMPObject_popcobject_Broker::_popc_factory(_init, "POPXMPObject");
