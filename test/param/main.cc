@@ -18,15 +18,12 @@ int main(int argc, char** argv)
 	b = o.GetData().GetInternalData();
 	printf("Param: Current internal data =%d\n", b);
 
-	if (b==10)
-    {
-      printf("Param: test succeeded, destroying objects...\n");
-      return 1;
-    }
-	else
-    {
-      printf("Param: Test failed, bad value transmission\n");
-	  return 1;
-    }
+  if (b==10) {
+    printf("Param: test succeeded, destroying objects...\n");
+    return 0;
+  } else {
+    printf("Param: Test failed, bad value transmission\n");
+    return 1;
+  }
 }
 
