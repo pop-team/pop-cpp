@@ -22,7 +22,7 @@ class POPC_GroupInterface {
 public: 
   POPC_GroupInterface();
   POPC_GroupInterface(int nb);  
-  ~POPC_GroupInterface();
+  virtual ~POPC_GroupInterface();
   
   // Group control methods
   bool initialize(int nb); 
