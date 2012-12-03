@@ -1275,6 +1275,6 @@ int main(int argc, char* argv[])
 
   // Finalize the MPI process
   MPI::Finalize();
-  return 0;
+  exit(main_return_value);
 }
 
