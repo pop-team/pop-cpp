@@ -21,8 +21,10 @@ then
 		make clean
 		make 
 		make run
-		if [ "$?" = "0" ]
+                RETURNVALUE=$?
+		if [ x$RETURNVALUE = "x0" ]
 		then 
+                        echo $RETURNVALUE
 			echo "$test succeed" >> ../$RESULTS
 			((NUMBEROFSUCCESS++))
 		else 
