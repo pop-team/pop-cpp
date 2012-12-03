@@ -357,7 +357,6 @@ int main(int argc, char* argv[])
   }  
   core++;
   int cpu = sched_getcpu(); 
-  printf("MPI Interconnector %d is on cpu %d\n", rank, cpu); 
 #endif    
   
   pid_t mainpid;        // Save main pid to wait for it at the end
