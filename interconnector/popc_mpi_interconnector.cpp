@@ -129,8 +129,6 @@ void *mpireceivedthread(void *t)
     pthread_mutex_lock(&mpi_mutex);                
     MPI::Request mreq = MPI::COMM_WORLD.Irecv(&data, 2, MPI_INT, MPI_ANY_SOURCE, 0); 
     pthread_mutex_unlock(&mpi_mutex);                
-    
-    printf("MPI Thread\n"); 
         
     bool done = false; 
     while(!done) {
@@ -450,7 +448,6 @@ int main(int argc, char* argv[])
     // Create empty request object to receive request from IPC
     paroc_request request;
     request.data = NULL;      
-    printf("Wait to recv request\n"); 
     // Wait for data on the UDS
     paroc_connection* connection = local.Wait();
 
@@ -1112,7 +1109,6 @@ int main(int argc, char* argv[])
                   }
                   
                   
-                  
                   int data2 = length; 
                   pthread_mutex_lock(&mpi_mutex);                   
                   sreq = object_group[fd].Isend(&data2, 1, MPI_INT, 0, 1);                   
@@ -1123,7 +1119,7 @@ int main(int argc, char* argv[])
                     done = sreq.Test(status); 
                     pthread_mutex_unlock(&mpi_mutex); 
                   }
-                   
+               
                   
                   // Get a pointer to the data buffer
                   char *load = request.data->get_load();  
@@ -1137,7 +1133,7 @@ int main(int argc, char* argv[])
                     done = sreq.Test(status); 
                     pthread_mutex_unlock(&mpi_mutex); 
                   }     
-                  
+                                  
                   
                   // Signal finalize() that object group were signaled for termination
                   if(request.methodId[1] == 2) {
