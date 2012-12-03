@@ -1160,6 +1160,11 @@ int main(int argc, char* argv[])
   	  	      int dest_node = incomingconnection[fd].first;
 	      	    int dest_id = incomingconnection[fd].second;
           	    	    
+              pthread_mutex_lock(&incoming_tag_map_mutex);  
+              incomingtag[next_tag] = fd;
+              printf("Insert incomingtag[%d] = %d\n", next_tag, fd); 
+              pthread_mutex_unlock(&incoming_tag_map_mutex);         
+                      	    	    
               // Prepare command message's data 
 	    	      int data[2]; 
 	    	      data[0] = 13;
@@ -1192,10 +1197,7 @@ int main(int argc, char* argv[])
             //printf("redirect request done\n"); 
             
             // Save the fd corresponding to the tag included in the message. Will be used for redirection to the caller 
-            pthread_mutex_lock(&incoming_tag_map_mutex);  
-            incomingtag[next_tag] = fd;
-            printf("Insert incomingtag[%d] = %d\n", next_tag, fd); 
-            pthread_mutex_unlock(&incoming_tag_map_mutex);            
+   
             
             // Increment the tag to differentiate messages
             next_tag++;
