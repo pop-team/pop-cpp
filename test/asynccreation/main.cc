@@ -47,7 +47,7 @@ int main(int argc, char** argv)
     printf("Elapsed time before calling method on o1: %f\n", o1_call); 
     printf("Elapsed time before calling method on o2: %f\n", o2_call); 
     printf("Elapsed time before calling method on o3: %f\n", o3_call); 
-    if(call_construct_time < 10.0 && (o2_call > 4.0 && o2_call < 6.0)) {
+    if(call_construct_time < 10.0 && (o2_call > 4.0 && o2_call < 7.0)) {
       printf("Asynchronous Parallel Object Allocation test succeed\n"); 
     } else {
       printf("Asynchronous Parallel Object Allocation test failed ... APOA is maybe not enable !\n"); 
