@@ -47,10 +47,11 @@ int main(int argc, char** argv)
     printf("Elapsed time before calling method on o1: %f\n", o1_call); 
     printf("Elapsed time before calling method on o2: %f\n", o2_call); 
     printf("Elapsed time before calling method on o3: %f\n", o3_call); 
-    if(call_construct_time < 10.0) {
+    if(call_construct_time < 10.0 && call_construct_time > 4.0) {
       printf("Asynchronous Parallel Object Allocation test succeed\n"); 
     } else {
-      printf("Asynchronous Parallel Object Allocation test failed ... APOA is maybe not enable !1\n"); 
+      printf("Asynchronous Parallel Object Allocation test failed ... APOA is maybe not enable !\n"); 
+      return 1;
     }
   } catch (POPException e) {
     printf("Method with void parameter: test failed, error no.%d, destroying objects:\n", e.Code()); return 1;
