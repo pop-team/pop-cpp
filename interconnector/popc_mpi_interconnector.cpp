@@ -63,6 +63,10 @@ pthread_mutex_t mpi_mutex;
 pthread_mutex_t incoming_tag_map_mutex;	
 pthread_mutex_t allocation_return_map_mutex;
 
+// Keep the main pid to return its return value
+pid_t popc_main_pid;
+int main_return_value;
+
 /**
  * Catch signal of exiting child
  */
@@ -70,15 +74,22 @@ void catch_child_exit(int signal_num) {
   int retval;
   char buf[256];
   bzero(buf, 256);
-  waitpid(0, &retval, WNOHANG);  
+  pid_t pid = waitpid(0, &retval, WNOHANG);  
   
-  /*
+  
   int w_exit = WEXITSTATUS(retval); 
   int w_ifexited = WIFEXITED(retval); 
   int w_ifsignal = WIFSIGNALED(retval); 
   int w_signal = WTERMSIG(retval); 
-  printf("On %d Child exists signal=%d, ret=%d, WEXITSTATUS=%d, %d, %d, %d\n", rank, signal_num, retval, w_exit, w_ifexited, w_ifsignal, w_signal); 
-  */
+  
+  // Keep the return value of the main
+  if (pid == popc_main_pid) {
+    main_return_value = w_exit;
+  }
+  
+  
+  //printf("On %d Child exists signal=%d, ret=%d, WEXITSTATUS=%d, %d, %d, %d\n", rank, signal_num, retval, w_exit, w_ifexited, w_ifsignal, w_signal); 
+  
 }
 
 
@@ -230,9 +241,9 @@ void *mpireceivedthread(void *t)
         	} 
 	  	    
 	  	    // Clean the entry in the map
-/*          pthread_mutex_lock(&incoming_tag_map_mutex);	  	    
+          pthread_mutex_lock(&incoming_tag_map_mutex);	  	    
 	  	    incomingtag.erase(tag); 
-          pthread_mutex_unlock(&incoming_tag_map_mutex);	  	    */
+          pthread_mutex_unlock(&incoming_tag_map_mutex);
 	  	    
 	  	    delete [] data;
 
@@ -414,6 +425,8 @@ int main(int argc, char* argv[])
       MPI::Finalize();
       return 1;
     }
+    
+    popc_main_pid = mainpid;
   }
   
   // Initialize tag value to be used by this POP-C++ MPI Interconnector
@@ -1162,7 +1175,6 @@ int main(int argc, char* argv[])
           	    	    
               pthread_mutex_lock(&incoming_tag_map_mutex);  
               incomingtag[next_tag] = fd;
-              printf("Insert incomingtag[%d] = %d\n", next_tag, fd); 
               pthread_mutex_unlock(&incoming_tag_map_mutex);         
                       	    	    
               // Prepare command message's data 
