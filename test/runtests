@@ -10,7 +10,7 @@ then
 	echo Starting test suite...
 	echo ""
 	rm -rf $RESULTS
-	for test in `ls -F -d * | grep -v jobManager | grep -v xmp | grep -v runtests | grep -v runtests_short | grep -v stressallocation`
+	for test in `ls -F -d * | grep -v jobManager | grep -v xmp | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v stresstest`
 	do
 		echo "---------------------------------------------------------------------------"
 		echo "*** $test test ($NUMBEROFTEST) **"
