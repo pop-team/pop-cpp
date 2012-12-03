@@ -1356,11 +1356,16 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 	strcpy(tmpcode,"}\n");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
 	
+	
+	// APOA Code generation
 	if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()){
 	  sprintf(tmpcode,"\n// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", GetClass()->GetName());
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));		
 		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg)\n  {\n", GetClass()->GetName(), get_id());
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));		
+
+		sprintf(tmpcode,"    printf(\"In the allocating thread\\n\");\n");
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 		
 		sprintf(tmpcode,"    pthread_args_t_%d *arguments = (pthread_args_t_%d*)arg;\n", get_id(), get_id());
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
@@ -1375,8 +1380,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		  sprintf(tmpcode, "%s %s = arguments->%s;\n", p.GetType()->GetName(), p.GetName(), p.GetName()); 
 			output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		}
-		
-		// TODO generate right od and be able to pass parameters
+		  
 		sprintf(tmpcode, "    try{\n      _this_interface->Allocate();\n      _this_interface->_paroc_Construct("); 
 
 		for (int j=0;j<nb;j++)
