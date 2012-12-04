@@ -19,14 +19,18 @@
 
 paroc_connection::paroc_connection(paroc_combox *com) : _is_initial_connection(false)
 {
-	fact=com->GetBufferFactory();
-	combox=com;
+  if(com != NULL) {
+  	fact = com->GetBufferFactory();
+	  combox = com;
+	}
 }
 
 paroc_connection::paroc_connection(paroc_combox* com, bool init)
 {
-	fact = com->GetBufferFactory();
-	combox = com;
+  if(com != NULL) {
+  	fact = com->GetBufferFactory();
+	  combox = com;
+	}
 	_is_initial_connection = init;
 }
 
