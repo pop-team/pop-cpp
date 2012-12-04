@@ -31,10 +31,17 @@ void POPC_GroupBroker::popc_send_response(paroc_buffer& buffer, paroc_connection
   int world_size = comm.Get_size();
   int rank = comm.Get_rank(); 
   
-  if(collective && rank == 0) {
-    printf("I'm sending a response\n"); 
+  if(collective && rank == (world_size-1)) {
+    int data[2];
+    data[0] = 16; 
+    data[1] = 0; 
+    comm.Send(&data, 2, MPI_INT, 0, 0); 
+    int length = buffer.get_size(); 
+    comm.Send(&length, 1, MPI_INT, 0, 1); 
+    char* load = buffer.get_load();
+    comm.Send(load, length, MPI_CHAR, 0, 2); 
   }
-
+  
 }
 
 
