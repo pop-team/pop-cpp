@@ -21,3 +21,6 @@ add_custom_target(popc_mpi_interconnector ALL DEPENDS popc_mpi_interconnector.tm
 add_custom_target(openmpi_check_support ALL DEPENDS openmpi_check_support.tmp)                   
                    
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "openmpi_check_support;popc_mpi_interconnector")
+
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popc_mpi_interconnector DESTINATION mpi)
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/openmpi_check_support DESTINATION mpi)
