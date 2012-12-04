@@ -702,15 +702,15 @@ char* paroc_buffer_xdr::get_load()
 void paroc_buffer_xdr::load(char* data, int length)
 {
 	int h[5];
-	memcpy(h, data, 20);   
 	
 	Reset();
+	memcpy(packeddata, data, length); 
+	memcpy(h, packeddata, 20); 
 	int n = ntohl(h[0]);
 	if (n < 20) {
 	  printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
 		return;
 	}	
-	
 	
   int type = ntohl(h[1]);
 	header.SetType(type);
@@ -730,12 +730,7 @@ void paroc_buffer_xdr::load(char* data, int length)
 	  default:
 		  return;
 	}	
-	
-	if(length >20) {
-    memcpy(packeddata, data+20, length-20); 
-	}
-  
-  printf("%d %d %d %d %d\n", ntohl(h[0]), ntohl(h[1]), ntohl(h[2]), ntohl(h[3]), ntohl(h[4])); 
+	packeddata.SetSize(length);	
 }
 
 
