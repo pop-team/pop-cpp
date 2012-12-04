@@ -22,7 +22,6 @@
 
 int main(int argc, char* argv[]) 
 {
-  printf("Process started\n"); 
   MPI::Intercomm communicator; 
   int rank; 
   if(paroc_utils::checkremove(&argc, &argv, "-listlong") != NULL) {
@@ -81,7 +80,7 @@ int main(int argc, char* argv[])
 
     int data_length; 
     req = communicator.Irecv(&data_length, 1, MPI_INT, 0, 1); 
-
+    printf("BROKER: length = %d\n", data_length); 
     done = false; 
     while(!done) {
       done = req.Test(status); 
@@ -99,26 +98,20 @@ int main(int argc, char* argv[])
     request.data = new popc_buffer_xdr_mpi();
     request.data->load(load, data_length);
   
-  
     const paroc_message_header &header = request.data->GetHeader();
 		request.methodId[0] = header.GetClassID();
   	request.methodId[1] = header.GetMethodID();  
     request.from = mpi_connection;
-    printf("Class ID = %d, Type = %d, Method ID = %d, Semantics = %d\n", header.GetClassID(), header.GetType(), header.GetMethodID(), header.GetSemantics()); 
-    // Receive DecRef - Means and of the process for a parallel object group.
+    printf("BROKER %d: Class ID = %d, Type = %d, Method ID = %d, Semantics = %d\n", rank, header.GetClassID(), header.GetType(), header.GetMethodID(), header.GetSemantics()); 
+
+    // Receive DecRef - Means end of the process for a parallel object group.
     if (header.GetMethodID() == 2) {
       active = false; 
     } else {
       broker->invoke(request.methodId, *request.data, request.from);
     }
-    
-    
-    
-    
-
   }
 
-  printf("BROKER WILL FINALIZE\n"); 
   if(!MPI::Is_finalized()) {
     MPI::Finalize();
   }
