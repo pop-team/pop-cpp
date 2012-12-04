@@ -124,17 +124,10 @@ bool POPC_GroupInterface::initialize(int nb)
   _popc_buffer->Pack(&nb, 1); 
   _popc_buffer->Pop();
 
-  paroc_connection* connection = _popc_combox->get_connection();
+  paroc_connection* _popc_connection = _popc_combox->get_connection();
   
-  if(!_popc_buffer->Send((*_popc_combox), connection)) {
-    paroc_exception::paroc_throw_errno();
-  }
-
-  // Getting information for the allocation process
-  if(!_popc_buffer->Recv((*_popc_combox), connection)) {
-    paroc_exception::paroc_throw_errno();
-  }
-  paroc_buffer::CheckAndThrow(*_popc_buffer); 
+  popc_send_request(_popc_buffer, _popc_connection); 
+  popc_recv_response(_popc_buffer, _popc_connection); 
 
   POPString objectaddress;
   _popc_buffer->Push("objectaddress", "POPString", 1);
@@ -142,8 +135,12 @@ bool POPC_GroupInterface::initialize(int nb)
   _popc_buffer->Pop();
 
   _popc_is_initialized = true;
+  
+  construct_remote_object();
+  
   return true; 
 }
+
 
 bool POPC_GroupInterface::finalize()
 {
@@ -158,11 +155,10 @@ bool POPC_GroupInterface::finalize()
 
 
 	paroc_connection* connection = _popc_combox->get_connection();
-	printf("Send finalize()\n"); 
+
 	popc_send_request(_popc_buffer, connection);  
 	popc_recv_response(_popc_buffer, connection); 
   
- 
   _popc_buffer->Destroy();
   _popc_combox->Close(); 
   _popc_is_finalized = true; 
