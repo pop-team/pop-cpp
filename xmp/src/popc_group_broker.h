@@ -62,12 +62,12 @@ public:
   
   
   void add_method_info(unsigned classuid, popc_method_info *methods, int sz);  
-	virtual bool invoke(unsigned method[3], paroc_buffer &buf, paroc_connection *peer);  
+	virtual bool invoke(unsigned method[3], paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);  
 	
 	static paroc_accesspoint accesspoint;	
 	
 protected: 
-
+	void popc_send_response(paroc_buffer& buffer, paroc_connection* connection, bool collective);
   POPC_Object* _popc_internal_object;
 	popc_method_map_list methodnames;
 };
