@@ -39,6 +39,8 @@ public:
   
 protected: 
   void allocate_multiple(int nb); // Allocate a number of parallel object that will be managed by the group interface  
+  virtual void construct_remote_object() = 0;
+  
   virtual char* get_class_name();
   
   // Object description as standard interface
