@@ -515,11 +515,8 @@ char* popc_buffer_xdr_mpi::get_load()
 }
 
 void popc_buffer_xdr_mpi::load(char* data, int length)
-{
-  
-	int h[5];
-	//memcpy(h, data, 20);   
-	
+{ 
+	int h[5];	
 	Reset();
 	memcpy(packeddata, data, length); 
 	memcpy(h, packeddata, 20); 
@@ -528,7 +525,6 @@ void popc_buffer_xdr_mpi::load(char* data, int length)
 	  printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
 		return;
 	}	
-	
 	
   int type = ntohl(h[1]);
 	header.SetType(type);
@@ -550,14 +546,6 @@ void popc_buffer_xdr_mpi::load(char* data, int length)
 	}	
 	
 	packeddata.SetSize(length);	
-	
-	if(length >20) {
-    int i;  
-    memcpy(&i, data+20, 4); 
-    printf("XDRMPI %d %d\n", ntohl(i), get_size()); 
-	}
-  
-  //printf("%d %d %d %d %d\n", ntohl(h[0]), ntohl(h[1]), ntohl(h[2]), ntohl(h[3]), ntohl(h[4])); 
 }
 
 
