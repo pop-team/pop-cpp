@@ -14,9 +14,25 @@ POPXMPObject::~POPXMPObject()
 }
 
 
+void POPXMPObject::_popc_constructor()
+{
+//paroc_mutex_locker __paroc_lock(_paroc_imutex);
+  paroc_connection* _popc_connection = _popc_combox->get_connection();
+  _popc_buffer->Reset();
+  paroc_message_header _popc_message_header(CLASSUID_POPXMPObject, 10, 21, "POPXMPObject");
+  _popc_buffer->SetHeader(_popc_message_header); 
 
+  popc_send_request(_popc_buffer, _popc_connection); 
+  popc_recv_response(_popc_buffer, _popc_connection);
+  
+  _popc_buffer->Reset();
+  _popc_connection->reset();   
+}
 
-
+void POPXMPObject::construct_remote_object()
+{
+  _popc_constructor();
+}
 
 // Collective method
 void POPXMPObject::execute_xmp_1()
@@ -27,7 +43,7 @@ void POPXMPObject::execute_xmp_1()
   paroc_message_header _popc_message_header(CLASSUID_POPXMPObject, 13, 0, "execute_xmp_1"); 
   _popc_buffer->SetHeader(_popc_message_header); 
   popc_send_request(_popc_buffer, _popc_connection); 
-//  popc_recv_response(_popc_buffer, _popc_connection);
+  popc_recv_response(_popc_buffer, _popc_connection);
   _popc_buffer->Reset();
   _popc_connection->reset(); 
 }

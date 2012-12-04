@@ -8,11 +8,11 @@ class POPXMPObject_popcobject_Broker : virtual public POPC_GroupBroker
 {
 public:
   POPXMPObject_popcobject_Broker();
-  virtual bool Invoke(unsigned method[3],  paroc_buffer &__brokerbuf, paroc_connection *peer);
+  virtual bool invoke(unsigned method[3],  paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);
 protected:
-  void Invoke_POPXMPObject_10(paroc_buffer &__paroc_buf, paroc_connection *__interface_output);
-  void Invoke_execute_xmp_1_12(paroc_buffer &__paroc_buf, paroc_connection *__interface_output);
-  void Invoke_set_value_13(paroc_buffer &__paroc_buf, paroc_connection *__interface_output);
+  void Invoke_POPXMPObject_10(paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);
+  void Invoke_execute_xmp_1_13(paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);
+  void Invoke_set_value_14(paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);
 public:
   static POPC_GroupBroker *_init();
   static POPC_GroupBrokerFactory _popc_factory;
