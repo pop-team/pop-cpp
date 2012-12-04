@@ -14,6 +14,7 @@ buffer_raw_factory.cc
 buffer_utils.cc
 buffer_xdr.cc
 buffer_xdr_factory.cc
+popc_buffer_xdr_mpi.cpp
 combox.cc
 combox_factory.cc
 combox_socket.cc
@@ -28,6 +29,7 @@ object.cc
 od.cc
 popwayback.cc
 popc_combox_uds.cpp
+popc_connection_mpi.cpp
 string.cc
 system.cc
 thread.cc
@@ -51,4 +53,8 @@ add_custom_command(OUTPUT paroc_objmain.std.o
                    
 add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o) 
 add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o) 
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.std.o DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_objmain.std.o DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common.a DESTINATION lib)
 
