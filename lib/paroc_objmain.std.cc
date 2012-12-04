@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 	}
 
 	paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
-	paroc_broker *broker = paroc_broker_factory::Create(&argc,&argv);
+	paroc_broker *broker = paroc_broker_factory::Create(&argc, &argv);
 	if (broker == NULL) {
 		status = 1;
 	} else if (!broker->Initialize(&argc, &argv)) {
