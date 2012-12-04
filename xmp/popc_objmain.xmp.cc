@@ -11,9 +11,13 @@
 
 #include "paroc_utils.h"
 #include "paroc_system.h"
-#include "paroc_buffer_xdr.h"
+#include "popc_buffer_xdr_mpi.h"
+#include "paroc_broker.h"
 #include "popc_group_broker.h"
 #include "popc_group_broker_factory.h"
+#include "popc_connection_mpi.h"
+#include "paroc_combox.h"
+
 
 
 int main(int argc, char* argv[]) 
@@ -58,6 +62,8 @@ int main(int argc, char* argv[])
   //printf("XMP parallel object rank %d %d\n", rank, communicator.Get_remote_size());    
    
   POPC_GroupBroker* broker = POPC_GroupBrokerFactory::create(objectname); 
+  POPC_MPIConnection* mpi_connection = new POPC_MPIConnection(); 
+  mpi_connection->set_communicator(communicator); 
   
 
   bool active = true; 
@@ -88,25 +94,31 @@ int main(int argc, char* argv[])
     while(!done) {
       done = req.Test(status); 
     }
-  
-    paroc_buffer_xdr* buffer = new paroc_buffer_xdr();
-    buffer->load(load, data_length);
-  
-    const paroc_message_header &header = buffer->GetHeader();
     
-    
+    paroc_request request; 
+    request.data = new popc_buffer_xdr_mpi();
+    request.data->load(load, data_length);
+  
+  
+    const paroc_message_header &header = request.data->GetHeader();
+		request.methodId[0] = header.GetClassID();
+  	request.methodId[1] = header.GetMethodID();  
+    request.from = mpi_connection;
     printf("Class ID = %d, Type = %d, Method ID = %d, Semantics = %d\n", header.GetClassID(), header.GetType(), header.GetMethodID(), header.GetSemantics()); 
-    
-    
-    
-    
-    
     // Receive DecRef - Means and of the process for a parallel object group.
     if (header.GetMethodID() == 2) {
       active = false; 
+    } else {
+      broker->invoke(request.methodId, *request.data, request.from);
     }
+    
+    
+    
+    
+
   }
 
+  printf("BROKER WILL FINALIZE\n"); 
   if(!MPI::Is_finalized()) {
     MPI::Finalize();
   }
