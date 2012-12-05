@@ -2363,7 +2363,7 @@ int main(int argc, char **argv)
 		isImplicitPackEnable=false;
 	
 	}
-	if (paroc_utils::checkremove(&argc,&argv,"-no-async-allocation")!=NULL) {
+	if (paroc_utils::checkremove(&argc,&argv,"-async-allocation")!=NULL) {
 		isAsyncAllocationDisable=true;
 	
 	}	
@@ -2371,6 +2371,7 @@ int main(int argc, char **argv)
 	int ret;
 	indexsource=-1;
 	errorcode=0;
+	
 	if (argc<2){
 		
 		Usage();

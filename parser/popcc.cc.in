@@ -60,7 +60,7 @@ void Usage()
 	fprintf(stderr,"   -no-warning:          	Do not print warning on stdout\n");	
 	//fprintf(stderr,"   -no-implicit-pack:   	Do not pack parclass implicitly if no @pack directive is present\n");
 	
-	fprintf(stderr,"   -no-async-allocation:	Do not use asynchronous mechanism to allocate a parallel object\n");			
+	fprintf(stderr,"   -async-allocation:		Use asynchronous mechanism to allocate a parallel object\n");			
 	fprintf(stderr,"   -verbose:            	Print out additional information\n");
 	fprintf(stderr,"   -nopipe:             	Do not use pipe during compilation phases ( create _paroc2_ files )\n");
 	fprintf(stderr,"   -version:			Display the installed version of POP-C++\n");
@@ -202,7 +202,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 	char nowarning[] = "-no-warning";  
 	char popccpcompilationtab[] = "-popcpp-compilation";    
 	char noimplicitpack[] = "-no-implicit-pack";    
-	char noasyncallocationtab[] = "-no-async-allocation";
+	char noasyncallocationtab[] = "-async-allocation";
 	char xmpoption[] = "-xmp";
 
 	bool paroc = false;
@@ -525,7 +525,7 @@ int main(int argc, char *argv[])
 	warning = (paroc_utils::checkremove(&argc, &argv, "-no-warning") != NULL);
 	popcppcomp = (paroc_utils::checkremove(&argc, &argv, "-popcpp-compilation") != NULL);
 	implicitpack = (paroc_utils::checkremove(&argc, &argv, "-no-implicit-pack") != NULL);
-	asyncallocation = (paroc_utils::checkremove(&argc, &argv, "-no-async-allocation") != NULL);
+	asyncallocation = (paroc_utils::checkremove(&argc, &argv, "-async-allocation") != NULL);
 	broker = (paroc_utils::checkremove(&argc, &argv, "-parclass-nobroker") == NULL);
 	client = (paroc_utils::checkremove(&argc, &argv, "-parclass-nointerface") == NULL);
   usepipe = (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
