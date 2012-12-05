@@ -471,11 +471,19 @@ bool popc_buffer_xdr_mpi::Recv(paroc_combox &s, paroc_connection *conn)
 	return true;
 }
 
+/**
+ * Get the size of packed data in this buffer
+ * @return Size of the actual packed data
+ */
 int popc_buffer_xdr_mpi::get_size()
 {
   return packeddata.GetSize();
 }
 
+/**
+ * Get a pointer to the current data in the buffer. Set the header back into the packed data. 
+ * @return Pointer to the actual data in this buffer
+ */
 char* popc_buffer_xdr_mpi::get_load()
 {
 	char *dat = (char*)packeddata;
@@ -516,6 +524,12 @@ char* popc_buffer_xdr_mpi::get_load()
   return (char *)packeddata;
 }
 
+
+/**
+ * Load the buffer with data by copy. 
+ * @param data    Pointer to the data to be loaded
+ * @param length  Size of the data to be loaded
+ */
 void popc_buffer_xdr_mpi::load(char* data, int length)
 { 
 	int h[5];	
