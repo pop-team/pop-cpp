@@ -1,16 +1,23 @@
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Valentin Clement
+ * @date 2012/10/15
+ * @brief Declaration of MPI Connection (POP-C++ abstraction of connection). 
+ *        Just hold the destination rank of the MPI communicator.
+ *
+ *
+ */
+
+
 #ifndef INCLUDE_POPC_CONNECTION_MPI_H_
 #define INCLUDE_POPC_CONNECTION_MPI_H_
 
 #include "paroc_combox.h"
 #include <mpi.h>
 
-
-/**
- * @class POPC_MPIConnection
- * @breif Declaration of MPI Connection (POP-C++ abstraction of connection). Just hold the destination rank of the communication.
- * @author Valentin Clément
- * 
- */
 class POPC_MPIConnection : public paroc_connection {
 public:
   POPC_MPIConnection();
