@@ -11,7 +11,6 @@
 
 bool POPXMPObject_popcobject_Broker::invoke(unsigned method[3], paroc_buffer &_popc_broker, paroc_connection *_popc_connection)
 {
-  printf("Invoke in broker %d\n", method[1]); 
   if (*method == CLASSUID_POPXMPObject) {
     switch(method[1]) {
       case 10: Invoke_POPXMPObject_10(_popc_broker, _popc_connection); 
@@ -79,14 +78,10 @@ void POPXMPObject_popcobject_Broker::Invoke_execute_xmp_1_13(paroc_buffer &_popc
 // Generate method set_value
 void POPXMPObject_popcobject_Broker::Invoke_set_value_14(paroc_buffer &_popc_buffer, paroc_connection *_popc_connection)
 {
-  
-  
   int val;
-  printf("SPECIFIC BROKER Val = %d\n", val);   
   _popc_buffer.Push("val","int", 1);
   _popc_buffer.UnPack(&val,1);
   _popc_buffer.Pop();
-
 
   POPXMPObject_popcobject * _popc_object = dynamic_cast<POPXMPObject_popcobject *>(_popc_internal_object);
   try {

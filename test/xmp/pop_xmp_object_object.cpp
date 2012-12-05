@@ -9,9 +9,8 @@ POPXMPObject_popcobject::POPXMPObject_popcobject()
 
 POPXMPObject_popcobject::~POPXMPObject_popcobject()
 {
-
+  printf("REMOTE OBJECT: Destructor\n"); 
 }
-
 
 void POPXMPObject_popcobject::execute_xmp_1()
 {
