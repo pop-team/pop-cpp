@@ -61,7 +61,7 @@ public:
   virtual ~POPC_GroupBroker();
   
   
-  void add_method_info(unsigned classuid, popc_method_info *methods, int sz);  
+  void add_method_info(unsigned classuid, popc_method_info *methods, int size);  
 	virtual bool invoke(unsigned method[3], paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);  
 	
 	static paroc_accesspoint accesspoint;	

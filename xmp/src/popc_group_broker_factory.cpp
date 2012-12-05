@@ -24,14 +24,15 @@ popc_broker_map* POPC_GroupBrokerFactory::_internal_broker_map = NULL;
 ispackedfunc POPC_GroupBrokerFactory::check_if_packed = NULL;
 
 /**
- *
+ * Create a broker factory
+ * @param Function to be called to create a broker
+ * @param Name associated with the broker factory
  */
 POPC_GroupBrokerFactory::POPC_GroupBrokerFactory(initbrokerfunc func, const char *name)
 { 
   if(_internal_broker_map == NULL) {
     _internal_broker_map = new popc_broker_map();
   }
-
 
 	if (name == NULL || func == NULL) {
 	  return;
@@ -42,7 +43,9 @@ POPC_GroupBrokerFactory::POPC_GroupBrokerFactory(initbrokerfunc func, const char
 }
 
 /**
- *
+ * Create a broker of the given name
+ * @param objname Name of the class of which the object will be instantiated
+ * @return A pointer to the created broker
  */
 POPC_GroupBroker* POPC_GroupBrokerFactory::create(const char *objname)
 {
@@ -55,7 +58,8 @@ POPC_GroupBroker* POPC_GroupBrokerFactory::create(const char *objname)
 }
 
 /**
- *
+ * List all the broker factory available.
+ * @param objlist Output parameter containing the list of all broker factory available. 
  */
 void POPC_GroupBrokerFactory::list_all(popc_list_string &objlist)
 {
@@ -72,7 +76,9 @@ void POPC_GroupBrokerFactory::list_all(popc_list_string &objlist)
 }
 
 /**
- *
+ * Test if a given class can be created by an available broker factory. 
+ * @param objname Name of the class to be tested
+ * @return TRUE if there is a broker factory for this class. FALSE in any other cases.
  */
 bool POPC_GroupBrokerFactory::test(const char *objname)
 {
