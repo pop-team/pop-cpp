@@ -1132,17 +1132,16 @@ int main(int argc, char* argv[])
   	  	        
 	    	          //printf("COLLECTIVE CALL\n"); 
 	    	          int world_size = object_group[fd].first.Get_remote_size();
-	    	          
-
-                  
-                  int data = 13;
+                  int data[2]; 
+                  data[0] = 13;
                   
                   // Get the request message length
                   int length = request.data->get_size();
                   if(length <= 0) {
                     printf("POP-C++ Error: MPI Interconnector - request IPC-MPI redirection, length is %d\n", length); 
                   } 	 
-
+                  data[1] = length; 
+                  
                   // Get a pointer to the data buffer
                   char *load = request.data->get_load();          
 
@@ -1153,8 +1152,7 @@ int main(int argc, char* argv[])
                     MPI::Status status;                        
 
                     pthread_mutex_lock(&mpi_mutex);   
-                    sreq = object_group[fd].first.Isend(&data, 1, MPI_INT, i, 0);
-                    sreq = object_group[fd].first.Isend(&length, 1, MPI_INT, i, 1);       
+                    sreq = object_group[fd].first.Isend(&data, 2, MPI_INT, i, 0);  
                     sreq = object_group[fd].first.Isend(load, length, MPI_CHAR, i, 2);  
                     pthread_mutex_unlock(&mpi_mutex); 
                   
@@ -1176,16 +1174,17 @@ int main(int argc, char* argv[])
                   }  
 	  	            
 	    	        } else {
-	  	            printf("NON-COLLECTIVE CALL TO %d\n", object_group_single[fd]); 
-
-                  
-                  int data = 13;
+	  	            //printf("NON-COLLECTIVE CALL TO %d\n", object_group_single[fd]); 
+	  	            int data[2]; 
+                  data[0] = 13;
                   
                   // Get the request message length
                   int length = request.data->get_size();
                   if(length <= 0) {
                     printf("POP-C++ Error: MPI Interconnector - request IPC-MPI redirection, length is %d\n", length); 
                   } 	 
+    
+                  data[1] = length; 
 
                   // Get a pointer to the data buffer
                   char *load = request.data->get_load();          
@@ -1194,8 +1193,7 @@ int main(int argc, char* argv[])
                   MPI::Status status;                        
 
                   pthread_mutex_lock(&mpi_mutex);   
-                  sreq = object_group[fd].first.Isend(&data, 1, MPI_INT, object_group_single[fd], 0);
-                  sreq = object_group[fd].first.Isend(&length, 1, MPI_INT, object_group_single[fd], 1);       
+                  sreq = object_group[fd].first.Isend(&data, 2, MPI_INT, object_group_single[fd], 0);      
                   sreq = object_group[fd].first.Isend(load, length, MPI_CHAR, object_group_single[fd], 2);  
                   pthread_mutex_unlock(&mpi_mutex); 
                   
@@ -1209,9 +1207,6 @@ int main(int argc, char* argv[])
                   object_group_single.erase(fd); 
 	  	          }
 	  	        }  
-	  	        
-	  	        
-	  	        
 	  	      } else {
               /**
                * Redirect the request to the parallel object via MPI
