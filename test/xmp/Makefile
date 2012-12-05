@@ -1,4 +1,4 @@
-POPC_PATH=/home/clementval/popc
+POPC_PATH=$(POPC_LOCATION)
 
 all: main pop_xmp_object.obj
 object: pop_xmp_object.obj
