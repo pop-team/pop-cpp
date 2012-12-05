@@ -1,3 +1,16 @@
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Valentin Clement
+ * @date 2012/10/15
+ * @brief Implementation of MPI Connection (POP-C++ abstraction of connection). 
+ *        Just hold the destination rank of the MPI communicator.
+ *
+ *
+ */
+
 #include "popc_connection_mpi.h"
 
 POPC_MPIConnection::POPC_MPIConnection() : _has_communicator(false), _is_connected(false), paroc_connection(NULL), _connection_index(0), _is_asynchronous(false), _tag_set(false)

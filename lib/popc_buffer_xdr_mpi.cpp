@@ -1,11 +1,13 @@
 /**
- * @file buffer_xdr_factory.cc
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
  * @author Valentin Clement
- * Description : Implementation of SUN-XDR message buffer
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ * @date 2012/12/04
+ * @brief Implementation of a XDR buffer aware of MPI receive and send process. 
+ *
+ *
  */
 
 
