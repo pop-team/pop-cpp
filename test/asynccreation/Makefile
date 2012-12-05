@@ -1,10 +1,10 @@
-all: noasync 
+all: async 
 
 sync: app object
 
-noasync:
-	popcc -noclean -no-async-allocation -o main POPObject.ph POPObject.cc main.cc
-	popcc -noclean -no-async-allocation -object -o POPObject.obj POPObject.cc POPObject.ph main.cc 
+async:
+	popcc -noclean -async-allocation -o main POPObject.ph POPObject.cc main.cc
+	popcc -noclean -async-allocation -object -o POPObject.obj POPObject.cc POPObject.ph main.cc 
 
 app:
 	popcc -noclean -o main POPObject.ph POPObject.cc main.cc
