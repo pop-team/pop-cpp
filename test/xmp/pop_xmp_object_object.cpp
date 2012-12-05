@@ -25,7 +25,7 @@ static int _XMP_GTOL_temp0_a_0;
 
 POPXMPObject_popcobject::POPXMPObject_popcobject()
 {
-  printf("REMOTE OBJECT: Created successfully\n"); 
+  printf("REMOTE OBJECT: Created successfully (rank=%d)\n", get_rank()); 
 }
 
 POPXMPObject_popcobject::~POPXMPObject_popcobject()
