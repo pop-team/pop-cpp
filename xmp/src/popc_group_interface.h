@@ -32,7 +32,7 @@ public:
   int get_default_rank();
     
   // Utility method to access useful information
-  int get_nb_objects(); 
+  int get_group_size(); 
   bool is_initialized();
   bool is_finalized();  
   

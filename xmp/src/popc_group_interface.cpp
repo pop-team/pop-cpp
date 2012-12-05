@@ -22,7 +22,7 @@
 #include "paroc_system.h"
 
 /**
- *
+ * Base constructor
  */
 POPC_GroupInterface::POPC_GroupInterface() : _popc_is_initialized(false), _popc_is_finalized(false), _popc_nb_parallel_object(0), 
   _popc_default_rank_for_single_call(0)
@@ -30,7 +30,8 @@ POPC_GroupInterface::POPC_GroupInterface() : _popc_is_initialized(false), _popc_
 }
 
 /**
- *
+ * Constructor with initialization 
+ * @param nb  Number of parallel object to be managed by this interface
  */
 POPC_GroupInterface::POPC_GroupInterface(int nb) : _popc_is_initialized(false), _popc_is_finalized(false), 
   _popc_nb_parallel_object(nb), _popc_default_rank_for_single_call(0)
@@ -44,7 +45,7 @@ POPC_GroupInterface::POPC_GroupInterface(int nb) : _popc_is_initialized(false), 
 }
 
 /**
- *
+ * Base destructor. Will finalized the object if finalize() was not called before.
  */
 POPC_GroupInterface::~POPC_GroupInterface()
 {
@@ -54,7 +55,9 @@ POPC_GroupInterface::~POPC_GroupInterface()
 }
   
 /**
- * 
+ * Initialized the parallel object managed by this interface
+ * @param nb  Number of parallel object to be managed by this interface
+ * @return TRUE if the initialization is done successfully. FALSE if already initialized or in any other cases.
  */
 bool POPC_GroupInterface::initialize(int nb)
 {
@@ -66,7 +69,6 @@ bool POPC_GroupInterface::initialize(int nb)
     return false;
   }
 
-  
   std::string class_name = get_class_name();
   
   POPString codefile; 
@@ -141,7 +143,10 @@ bool POPC_GroupInterface::initialize(int nb)
   return true; 
 }
 
-
+/**
+ * Finalize the parallel object managed by this interface
+ * @return TRUE if the finalization is done successfully. FALSE if already finalized or in any other cases.
+ */
 bool POPC_GroupInterface::finalize()
 {
   if(is_finalized()) {
@@ -166,7 +171,9 @@ bool POPC_GroupInterface::finalize()
 }
 
 /**
- *
+ * Send a request to the end point
+ * @param buffer      Buffer filled with the request header and data load
+ * @param connection  Connection used to send the request. 
  */
 void POPC_GroupInterface::popc_send_request(paroc_buffer* buffer, paroc_connection* connection)
 {
@@ -177,7 +184,9 @@ void POPC_GroupInterface::popc_send_request(paroc_buffer* buffer, paroc_connecti
 }
 
 /**
- *
+ * Receive a response from the end point
+ * @param buffer      Empty buffer to receive the request header and its data load
+ * @param connection  Connection used to receive the response. 
  */
 void POPC_GroupInterface::popc_recv_response(paroc_buffer* buffer, paroc_connection* connection)
 {
@@ -189,7 +198,8 @@ void POPC_GroupInterface::popc_recv_response(paroc_buffer* buffer, paroc_connect
 	  
 
 /**
- *
+ * Set the default rank for non-collective call. This rank is used for all non-collective calls and can be changed at any time. 
+ * @param rank  Rank between 0 and (group size - 1)
  */
 void POPC_GroupInterface::set_default_rank(int rank)
 {
@@ -197,7 +207,8 @@ void POPC_GroupInterface::set_default_rank(int rank)
 }
 
 /**
- *
+ * Get the current default rank for non-collective calls
+ * @return Integer value representing the rank between 0 and (group size - 1)
  */
 int POPC_GroupInterface::get_default_rank()
 {
@@ -205,7 +216,8 @@ int POPC_GroupInterface::get_default_rank()
 }
 
 /**
- *
+ * Return the class name of the current interface. Overloaded by child class. 
+ * @return Pointer to a string containing the class name.
  */
 char* POPC_GroupInterface::get_class_name() 
 {
@@ -213,15 +225,17 @@ char* POPC_GroupInterface::get_class_name()
 }
   
 /**
- *
+ * Get the number of parallel object managed by this interface. 
+ * @return Integer value representing the number of parallel object managed by this interface. 
  */
-int POPC_GroupInterface::get_nb_objects()
+int POPC_GroupInterface::get_group_size()
 {
   return _popc_nb_parallel_object;
 }
 
 /**
- *
+ * Check if the parallel objects managed by this interface have been initialized. 
+ * @return TRUE if the initialization was done. FALSE if not initialized. 
  */
 bool POPC_GroupInterface::is_initialized()
 {
@@ -229,7 +243,8 @@ bool POPC_GroupInterface::is_initialized()
 }
 
 /**
- *
+ * Check if the parallel objects managed by this interface have been finalized. 
+ * @return TRUE if the finalization was done. FALSE if not finalized. 
  */
 bool POPC_GroupInterface::is_finalized()
 {
