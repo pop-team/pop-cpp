@@ -29,20 +29,6 @@ POPC_GroupInterface::POPC_GroupInterface() : _popc_is_initialized(false), _popc_
 {
 }
 
-/**
- * Constructor with initialization 
- * @param nb  Number of parallel object to be managed by this interface
- */
-POPC_GroupInterface::POPC_GroupInterface(int nb) : _popc_is_initialized(false), _popc_is_finalized(false), 
-  _popc_nb_parallel_object(nb), _popc_default_rank_for_single_call(0)
-{
-  // Initialize the group of object
-  if(initialize(_popc_nb_parallel_object)) {
-    printf("POPXMP: initialization done with success\n"); 
-  } else {
-    printf("POPXMP: initialzation failed\n"); 
-  }
-}
 
 /**
  * Base destructor. Will finalized the object if finalize() was not called before.
@@ -143,6 +129,11 @@ bool POPC_GroupInterface::initialize(int nb)
   return true; 
 }
 
+POPC_GroupInterface& POPC_GroupInterface::merge(POPC_GroupInterface& other)
+{
+  printf("POP-C++ Error: GROUP MERGING IS NOT IMPLEMENTED YET\n"); 
+}
+
 /**
  * Finalize the parallel object managed by this interface
  * @return TRUE if the finalization is done successfully. FALSE if already finalized or in any other cases.
@@ -195,7 +186,14 @@ void POPC_GroupInterface::popc_recv_response(paroc_buffer* buffer, paroc_connect
 	}
 	paroc_buffer::CheckAndThrow(*buffer);  
 }
-	  
+	 
+	 
+
+POPC_GroupInterface& POPC_GroupInterface::operator[] (const int index)
+{
+  _popc_default_rank_for_single_call = index;
+  return (*this); 
+}	  
 
 /**
  * Set the default rank for non-collective call. This rank is used for all non-collective calls and can be changed at any time. 

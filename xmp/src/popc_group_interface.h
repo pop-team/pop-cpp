@@ -21,7 +21,6 @@
 class POPC_GroupInterface {
 public: 
   POPC_GroupInterface();
-  POPC_GroupInterface(int nb);  
   virtual ~POPC_GroupInterface();
   
   // Group control methods
@@ -36,6 +35,12 @@ public:
   bool is_initialized();
   bool is_finalized();  
   
+  
+  POPC_GroupInterface& merge(POPC_GroupInterface& other); 
+  
+  
+  // 
+  virtual POPC_GroupInterface& operator[] (const int index);
   
 protected: 
   void allocate_multiple(int nb); // Allocate a number of parallel object that will be managed by the group interface  
