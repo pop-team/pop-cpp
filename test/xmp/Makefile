@@ -20,5 +20,9 @@ xmp_object:
 run: main pop_xmp_object.obj
 	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main
 
+runsafe: main pop_xmp_object.obj
+	mpiexec -mca oob_tcp_if_exclude en1 -mca btl_tcp_if_exclude en1 -np 2 ../../interconnector/popc_mpi_interconnector -app=./main
+	
+
 clean: 
 	rm -rf *.o main pop_xmp_object.obj
