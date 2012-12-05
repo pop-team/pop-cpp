@@ -18,12 +18,10 @@ int main(int argc, char* argv[])
   xmp.initialize(2);   
 
   xmp.execute_xmp_1();
-//  xmp.execute_xmp_1();
 
+  xmp[0].set_value(20); 
+  xmp[1].set_value(19);
 
-  xmp.set_value(20); 
-  xmp.set_default_rank(1); 
-  xmp.set_value(19);
   xmp.finalize();
 
   printf("POP-C++ Test Case: XMP Support finished\n"); 
