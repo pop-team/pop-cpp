@@ -52,14 +52,7 @@ int main(int argc, char* argv[])
     return 1;	   
   }
   
-
-
-  
-  
-  
-  
-  //printf("XMP parallel object rank %d %d\n", rank, communicator.Get_remote_size());    
-   
+  // Create a broker with the specified Object
   POPC_GroupBroker* broker = POPC_GroupBrokerFactory::create(objectname); 
   POPC_MPIConnection* mpi_connection = new POPC_MPIConnection(); 
   mpi_connection->set_communicator(communicator); 
@@ -68,36 +61,29 @@ int main(int argc, char* argv[])
   bool active = true; 
   MPI::Status status; 
   while(active) {
-    int length; 
-      
-    MPI::Request req = communicator.Irecv(&length, 1, MPI_INT, 0, 0); 
-
+  
+    // Receive command and data length  
+    int data[2];     
+    MPI::Request req = communicator.Irecv(&data, 2, MPI_INT, 0, 0); 
     bool done = false; 
     while(!done) {
       done = req.Test(status); 
     }
-
-
-    int data_length; 
-    req = communicator.Irecv(&data_length, 1, MPI_INT, 0, 1); 
-    printf("BROKER: length = %d\n", data_length); 
-    done = false; 
-    while(!done) {
-      done = req.Test(status); 
-    }    
-
-    char* load = new char[data_length];
-    req = communicator.Irecv(load, data_length, MPI_CHAR, 0, 2); 
     
+    // Receive data 
+    char* load = new char[data[1]];
+    req = communicator.Irecv(load, data[1], MPI_CHAR, 0, 2); 
     done = false; 
     while(!done) {
       done = req.Test(status); 
     }
     
+    // Load data into a popc_buffer to be able to process them 
     paroc_request request; 
     request.data = new popc_buffer_xdr_mpi();
-    request.data->load(load, data_length);
+    request.data->load(load, data[1]);
   
+    // Get information about the header
     const paroc_message_header &header = request.data->GetHeader();
 		request.methodId[0] = header.GetClassID();
   	request.methodId[1] = header.GetMethodID();  
@@ -108,10 +94,19 @@ int main(int argc, char* argv[])
     if (header.GetMethodID() == 2) {
       active = false; 
     } else {
+      // Invoke the method
       broker->invoke(request.methodId, *request.data, request.from);
     }
+    
+    // Delete the buffer
+    request.data->Destroy();
   }
+  
+  // Delete created object
+  delete mpi_connection; 
+  delete broker; 
 
+  
   if(!MPI::Is_finalized()) {
     MPI::Finalize();
   }
