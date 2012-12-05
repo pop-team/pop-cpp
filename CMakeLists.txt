@@ -13,13 +13,10 @@ string(REGEX REPLACE "\n" "" HOST_CPU ${HOST_CPU_RAW})
 execute_process(COMMAND uname -s OUTPUT_VARIABLE HOST_KERNEL_RAW)
 string(REGEX REPLACE "\n" "" HOST_KERNEL ${HOST_KERNEL_RAW})
 
-
-
 include(CheckIncludeFile)
 include(CheckLibraryExists)
-#find_package(Threads)
 
-
+# Check availability of pthread
 check_include_file(pthread.h HAVE_PTHREAD_H)
 check_library_exists(pthread pthread_create "" HAVE_LIBPTHREAD)
 
@@ -33,10 +30,11 @@ endif(DEFINED CMAKE_THREAD_LIBS_INIT)
 #check_library_exists(dl dlclose "" HAVE_LIBDL)
 
 # Define user specific option. Disable by default.
-OPTION(MPI_SUPPORT "MPI Support" OFF)
-OPTION(XMP_SUPPORT "XMP Support" OFF)
+option(MPI_SUPPORT "MPI Support" OFF)
+option(XMP_SUPPORT "XMP Support" OFF)
 
-
+# Set to OFF to configure and compile the POP-C++ compiler/parser separately
+option(POPCPP_COMPILER "POP-C++ Compiler compilation" ON)
 
 # Define variable for MPI compilation
 if(NOT DEFINED MPI_COMPILER)
@@ -46,7 +44,6 @@ endif(NOT DEFINED MPI_COMPILER)
 if(NOT DEFINED MPI_COMPILER_FLAGS)
   set(MPI_COMPILER_FLAGS -o)
 endif(NOT DEFINED MPI_COMPILER_FLAGS)
-
 
 if(NOT DEFINED POPC_MAIN_FLAGS)
  set(POPC_MAIN_FLAGS -c)
@@ -61,13 +58,11 @@ add_subdirectory(lib)
 add_subdirectory(interconnector)
 add_subdirectory(include)
 
-# Install headers files, programs, library and object files
-
-
-
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/parser/popcc DESTINATION bin)
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/parser/popcpp DESTINATION bin)
-
+# If the POP-C++ Compilation option is on, add the parser directory as a sub folder
+if(POPCPP_COMPILER)
+  message(STATUS "POP-C++ Compiler will be build with the same configuration as the library")
+  add_subdirectory(parser)
+endif(POPCPP_COMPILER)
 
 
 # Instruction to enable the MPI support for POP-C++
@@ -84,9 +79,9 @@ endif(XMP_SUPPORT)
 
 
 # Add target to clean the distribution of all CMake generated files
-IF (UNIX)
-  ADD_CUSTOM_TARGET (distclean @echo cleaning for source distribution)
-  SET(DISTCLEANED
+if(UNIX)
+  add_custom_target (distclean @echo cleaning for source distribution)
+  set(DISTCLEANED
    cmake.depends
    cmake.check_depends
    CMakeCache.txt
@@ -114,11 +109,22 @@ IF (UNIX)
    *~
   )
   
-  ADD_CUSTOM_COMMAND(
+  if(POPCPP_COMPILER)
+    set(EXTRACLEANED
+      parser/*.cmake
+      parser/CMakeFiles
+      parser/Makefile 
+      parser/popcc.cc      
+    )
+  else(POPCPP_COMPILER)
+    set(EXTRACLEANED "")
+  endif(POPCPP_COMPILER) 
+  
+  add_custom_command(
     DEPENDS clean
     COMMENT "distribution clean"
     COMMAND rm
-    ARGS    -Rf CMakeTmp ${DISTCLEANED}
+    ARGS    -Rf CMakeTmp ${DISTCLEANED} ${EXTRACLEANED}
     TARGET  distclean
   )
-ENDIF(UNIX)
+endif(UNIX)
