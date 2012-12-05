@@ -1,10 +1,14 @@
 /**
- * Entry point of POP-C++ parallel object integrating XMP support
- * 
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
  * @author Valentin Clement
  * @date 2012/11/29
+ * @brief Entry point of POP-C++ parallel object integrating XMP support.
  *
- */
+ *
+ */ 
 
 #include <mpi.h>
 #include <stdlib.h>
