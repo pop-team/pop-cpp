@@ -75,3 +75,9 @@ void POPXMPObject::set_value(int val)
 
 }
 
+
+POPXMPObject& POPXMPObject::operator[] (const int index)
+{
+  set_default_rank(index);
+  return (*this); 
+}	  

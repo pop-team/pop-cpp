@@ -13,7 +13,8 @@ public:
   POPXMPObject(); 
   ~POPXMPObject();
 
-
+  // 
+  POPXMPObject& operator[] (const int index);
 
   // Declared in .ph as sync collective void execute_xmp_1();
   void execute_xmp_1();
