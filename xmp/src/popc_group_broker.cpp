@@ -22,7 +22,7 @@ POPC_GroupBroker::POPC_GroupBroker()
  
 POPC_GroupBroker::~POPC_GroupBroker()
 {
-
+  delete _popc_internal_object;
 }
 
 void POPC_GroupBroker::popc_send_response(paroc_buffer& buffer, paroc_connection* connection, bool collective)
