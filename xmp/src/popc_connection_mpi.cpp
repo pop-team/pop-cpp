@@ -13,6 +13,8 @@
 
 #include "popc_connection_mpi.h"
 
+#include <signal.h> 
+
 POPC_MPIConnection::POPC_MPIConnection() : _has_communicator(false), _is_connected(false), paroc_connection(NULL), _connection_index(0), _is_asynchronous(false), _tag_set(false)
 {
   
