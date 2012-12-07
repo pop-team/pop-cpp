@@ -71,7 +71,7 @@ public:
 	 * @brief Returns true if an object is not on brokerlist
 	 * @param objname Name
 	 */
-	bool Test(const char *objname);
+	bool test(const char *objname);
 
 	static ispackedfunc CheckIfPacked; // Since this method is created by the parser, we have to declare a fct pointer for it
 
