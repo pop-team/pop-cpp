@@ -186,14 +186,6 @@ void POPC_GroupInterface::popc_recv_response(paroc_buffer* buffer, paroc_connect
 	}
 	paroc_buffer::CheckAndThrow(*buffer);  
 }
-	 
-	 
-
-POPC_GroupInterface& POPC_GroupInterface::operator[] (const int index)
-{
-  _popc_default_rank_for_single_call = index;
-  return (*this); 
-}	  
 
 /**
  * Set the default rank for non-collective call. This rank is used for all non-collective calls and can be changed at any time. 

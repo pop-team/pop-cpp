@@ -40,7 +40,7 @@ public:
   
   
   // 
-  virtual POPC_GroupInterface& operator[] (const int index);
+  virtual POPC_GroupInterface& operator[] (const int index)=0;
   
 protected: 
   void allocate_multiple(int nb); // Allocate a number of parallel object that will be managed by the group interface  
