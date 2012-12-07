@@ -29,7 +29,6 @@ object.cc
 od.cc
 popwayback.cc
 popc_combox_uds.cpp
-popc_connection_mpi.cpp
 string.cc
 system.cc
 thread.cc
