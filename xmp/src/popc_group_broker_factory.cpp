@@ -28,7 +28,7 @@ ispackedfunc POPC_GroupBrokerFactory::check_if_packed = NULL;
  * @param Function to be called to create a broker
  * @param Name associated with the broker factory
  */
-POPC_GroupBrokerFactory::POPC_GroupBrokerFactory(initbrokerfunc func, const char *name)
+POPC_GroupBrokerFactory::POPC_GroupBrokerFactory(initbrokerfunc_group func, const char *name)
 { 
   if(_internal_broker_map == NULL) {
     _internal_broker_map = new popc_broker_map();

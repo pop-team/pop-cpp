@@ -18,9 +18,9 @@
 
 #include <map>
 
-typedef POPC_GroupBroker* (*initbrokerfunc)();
+typedef POPC_GroupBroker* (*initbrokerfunc_group)();
 typedef bool (*ispackedfunc)(const char *objname);
-typedef std::map<std::string, initbrokerfunc> popc_broker_map; 
+typedef std::map<std::string, initbrokerfunc_group> popc_broker_map; 
 
 // Obsolete to be remove
 typedef paroc_list<paroc_string> popc_list_string;
@@ -28,7 +28,7 @@ typedef paroc_list<paroc_string> popc_list_string;
 class POPC_GroupBrokerFactory
 {
 public:
-	POPC_GroupBrokerFactory(initbrokerfunc func, const char *name);
+	POPC_GroupBrokerFactory(initbrokerfunc_group func, const char *name);
 	static POPC_GroupBroker *create(const char *objname);
 	static void list_all(popc_list_string &objlist);
 	//static POPC_GroupBroker *Create(int *argc, char ***argv);
