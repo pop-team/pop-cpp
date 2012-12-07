@@ -42,7 +42,7 @@ void POPC_GroupBroker::popc_send_response(paroc_buffer& buffer, paroc_connection
   int world_size = comm.Get_size();
   int rank = comm.Get_rank(); 
   
-  if((collective && rank == (world_size-1)) || !collective) {
+  if((collective && rank == (world_size-1)) || !collective) {
     int data[2];
     data[0] = 16; 
     data[1] = 0; 
