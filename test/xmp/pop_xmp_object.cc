@@ -68,6 +68,7 @@ void POPXMPObject::set_value(int val)
   _popc_buffer->Pack(&val, 1); 
   _popc_buffer->Pop(); 
   popc_send_request(_popc_buffer, _popc_connection); 
+  popc_recv_response(_popc_buffer, _popc_connection);  
   _popc_buffer->Reset();
   
   _popc_connection->reset(); 
