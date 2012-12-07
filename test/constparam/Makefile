@@ -1,10 +1,10 @@
 all: main object
 
 main:
-	popcc -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
+	popcc -noclean -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
 
 object:
-	popcc -object -o POPCobject.obj  data.cc structdata.cc POPCobject.ph POPCobject.cc
+	popcc -noclean -object -o POPCobject.obj  data.cc structdata.cc POPCobject.ph POPCobject.cc
 	./POPCobject.obj -listlong > obj.map
 
 run:
@@ -15,7 +15,7 @@ clean:
 	rm -f *.obj
 	rm -f main
 	rm -f ob*
-	rm -f _paroc*
+	rm -f _popc*
 	
 debug: 
 	../../parser/popcc -noclean -no-pipe -verbose -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
