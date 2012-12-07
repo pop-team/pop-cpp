@@ -1571,9 +1571,6 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));		
 		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg)\n  {\n", GetClass()->GetName(), get_id());
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));		
-
-		sprintf(tmpcode,"    printf(\"In the allocating thread\\n\");\n");
-		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 		
 		sprintf(tmpcode,"    pthread_args_t_%d *arguments = (pthread_args_t_%d*)arg;\n", get_id(), get_id());
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
