@@ -1130,7 +1130,7 @@ int main(int argc, char* argv[])
   	  	        if(object_group_single.find(fd) == object_group_single.end()) {
   	  	        
   	  	        
-	    	          //printf("COLLECTIVE CALL\n"); 
+//	    	          printf("COLLECTIVE CALL %d\n", request.methodId[1]); 
 	    	          int world_size = object_group[fd].first.Get_remote_size();
                   int data[2]; 
                   data[0] = 13;
