@@ -31,7 +31,8 @@ typedef long YYSTYPE; // We force the declaration as long to avoid compilation p
 #define CONC    16
 #define USERPROC 32
 #define PARAMSIZE  64
-#define OBJ_POSTFIX "__parocobj"
+//#define OBJ_POSTFIX "__parocobj"
+#define OBJ_POSTFIX "_popcobject"
 #define TMP_CODE_PREFIX "_paroc_"
 
 //Invocation semantics codes...
@@ -110,7 +111,7 @@ class OtherCode: public CodeData
 {
 public:
 	OtherCode(CodeFile *file);
-	virtual int Type() { return TYPE_OTHERCODE;};
+	virtual int Type() { return TYPE_OTHERCODE; };
 
 	virtual void GenerateCode(CArrayChar &output);
 
@@ -132,7 +133,7 @@ class PackObject: public CodeData
 {
 public:
 	PackObject(CodeFile *file);
-	virtual int Type() { return TYPE_PACKOBJECT;};
+	virtual int Type() { return TYPE_PACKOBJECT; };
 	virtual void GenerateCode(CArrayChar &output);
 	void AddObject(string64 objname);
 	int GetNumObject();
@@ -306,7 +307,8 @@ public:
 
 	virtual void GenerateClient(CArrayChar &output);
 	virtual void GenerateHeader(CArrayChar &output, bool interface);
-
+	virtual void generate_header_pog(CArrayChar &output, bool interface);
+	
 	void SetLineInfo(int linenum);
 
 	AccessType GetMyAccess();
@@ -432,13 +434,20 @@ class Method: public ClassMember
 public:
 	Method(Class *cl, AccessType myaccess);
 	~Method();
+	
+	static const int POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID; 
+	static const int POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE;
+	static const char* POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME; 
+		
 	virtual int Type() { return TYPE_METHOD; };
 
 	int CheckMarshal();
 
 	virtual void GenerateClient(CArrayChar &output);
 	virtual void GenerateHeader(CArrayChar &output, bool interface);
+	virtual void generate_header_pog(CArrayChar &output, bool interface);	
 	virtual void GenerateBrokerHeader(CArrayChar &output);
+	virtual void generate_broker_header_pog(CArrayChar &output);	
 	virtual void GenerateBroker(CArrayChar &output);
 
 	virtual int MethodType() { return METHOD_NORMAL; };
@@ -456,6 +465,11 @@ public:
 	bool isVirtual;
 	bool isPureVirtual;
 	bool isGlobalConst; // add by david
+	
+
+	enum CollectiveType { POPC_COLLECTIVE_BROADCAST, POPC_COLLECTIVE_GATHER, POPC_COLLECTIVE_SCATTER, POPC_COLLECTIVE_REDUCE }; 
+  void set_collective(CollectiveType type); 
+  bool is_collective(); 
 
 	bool isConcurrent;
 	bool isMutex;
@@ -478,6 +492,14 @@ protected:
 	virtual void GenerateArguments(CArrayChar &output, bool header);
 
 	virtual void GenerateClientPrefixBody(CArrayChar &output);
+
+private: 	
+	bool _is_collective;
+	bool _is_broadcast;
+	bool _is_scatter;
+	bool _is_gather;
+	bool _is_reduce;
+		
 };
 /**
  * @class Constructor
@@ -492,6 +514,8 @@ public:
 	virtual int MethodType() { return METHOD_CONSTRUCTOR; };
 
 	virtual void GenerateHeader(CArrayChar &output, bool interface);
+	virtual void generate_header_pog(CArrayChar &output, bool interface);
+	
 	bool isDefault();
 
 	ObjDesc &GetOD();
@@ -586,11 +610,14 @@ public:
 	//void findPureVirtual(CArrayMethod &lst);
 
 
-	bool GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/);
-	bool GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPCompilation*/);
-	bool GenerateBrokerHeader(CArrayChar & code/*, bool isPOPCPPCompilation*/);
-	bool GenerateBroker(CArrayChar & code/*, bool isPOPCPPCompilation*/);
+	bool GenerateClient(CArrayChar &code);
+	bool GenerateHeader(CArrayChar &code, bool interface);
+	bool GenerateBrokerHeader(CArrayChar & code);
+	bool GenerateBroker(CArrayChar & code);
 
+  bool generate_header_pog(CArrayChar &code, bool interface); 
+  bool generate_broker_header_pog(CArrayChar &code); 
+  
 	char classid[64];
 
 	CArrayBaseClass baseClass;
@@ -605,6 +632,15 @@ public:
 	bool IsWarningEnable();
 	void DisableAsyncAllocation();
 	bool IsAsyncAllocationDisable();	
+	void set_as_collective(); 
+	bool is_collective(); 
+	
+	
+  static const char* POG_BASE_INTERFACE_NAME;	
+  static const char* POG_BASE_OBJECT_NAME;
+  static const char* POG_OBJECT_POSTFIX;
+  static const char* POG_BASE_BROKER_NAME;
+  static const char* POG_BROKER_POSTFIX;
 
 public:
 	static char interface_base[1024];
@@ -625,6 +661,7 @@ protected:
 	bool isCoreCompilation;
 	bool hasWarningEnable;
 	bool isAsyncAllocationDisable;
+	bool _is_collective;
 	
 	char *my_interface_base;
 	char *my_object_base;

@@ -128,7 +128,7 @@ struct TemplateArgument
 %token SYNC_INVOKE ASYNC_INVOKE INPUT OUTPUT  CONCURRENT SEQUENTIAL MUTEX HIDDEN PROC SIZE THIS_KEYWORD
 %token INCLUDE DIRECTIVE OD AUTO_KEYWORD REGISTER_KEYWORD VOLATILE_KEYWORD PACK_KEYWORD 
 %token AND_OP OR_OP EQUAL_OP NOTEQUAL_OP GREATEREQUAL_OP LESSEQUAL_OP NONSTRICT_OD_OP EOFCODE
-%token SCOPE ENUM CLASS NAMESPACE STATIC_KEYWORD
+%token SCOPE ENUM CLASS NAMESPACE STATIC_KEYWORD BROADCAST
 
 %left '+' '-' '*' '/' '%'
 %left '&' '|' '^' '~' '!' '='
@@ -1056,24 +1056,23 @@ member_declaration:  enum_declaration ';'
 | function_definition ';'
 | innerclass_definition ';' | innerclass_static ';' | typedef_definition ';'
 {
-	assert(method!=NULL);
-	int t=method->CheckMarshal();
+	assert(method != NULL);
+	int t = method->CheckMarshal();
 	if (t!=0) {      
 		if (t==-1) {
 			sprintf(tmp,"In method %s::%s: unable to marshal the return argument.\n", currentClass->GetName(), method->name);
-      } else {
-      	
+    } else {
 			sprintf(tmp,"In method %s::%s: unable to marshal argument %d.\n", currentClass->GetName(), method->name, t);
 		}
-      errormsg(tmp);
+    errormsg(tmp);
 		exit(1);
 	}
-	currenttype=returntype=NULL;
+	currenttype = returntype = NULL;
 }
  
 | attribute_definition ';'
 {
-	if (accessmodifier==PUBLIC) {
+	if (accessmodifier == PUBLIC) {
       sprintf(tmp,"%s:%d: attributes of a parallel class must be private or protected.\n",thisCodeFile->GetFileName(), linenumber);
       errormsg(tmp);
       exit(1);
@@ -1457,10 +1456,10 @@ destructor_definition: '~' destructor_name '('  ')'
 
 destructor_name: ID
 {
-  method=new Destructor(currentClass,accessmodifier);
-  method->SetLineInfo(linenumber-1);
+  method = new Destructor(currentClass, accessmodifier);
+  method->SetLineInfo(linenumber - 1);
   currentClass->AddMember(method);
-  strcpy(method->name,GetToken($1));
+  strcpy(method->name, GetToken($1));
 }
 ;
 
@@ -1471,46 +1470,42 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
   strcpy(method->returnparam.name,"_RemoteRet");
 
   DataType *type=returntype;
-  if ($2>0)
-    {
-      type=new TypePtr(NULL, $2 , type);
-      thisCodeFile->AddDataType(type);
-    }
+  if ($2>0) {
+    type = new TypePtr(NULL, $2 , type);
+    thisCodeFile->AddDataType(type);
+  }
 
-  if ($3)
-    {
-      method->returnparam.isRef=true;
-    }
+  if ($3) {
+    method->returnparam.isRef=true;
+  }
   method->returnparam.SetType(type);
-
 }
 |  fct_specifier decl_specifier  pointer_specifier ref_specifier function_name '(' argument_declaration ')'
 {
-  strcpy(method->returnparam.name,"_RemoteRet");
+  strcpy(method->returnparam.name, "_RemoteRet");
 
-  DataType *type=returntype;
-  if ($3>0)
-    {
-      type=new TypePtr(NULL, $3 , type);
-      thisCodeFile->AddDataType(type);
-    }
+  DataType *type = returntype;
+  if ($3 > 0) {
+    type = new TypePtr(NULL, $3 , type);
+    thisCodeFile->AddDataType(type);
+  }
   
-  if ($4)
-    {
-      method->returnparam.isRef=true;
-    }
+  if ($4) {
+    method->returnparam.isRef=true;
+  }
 
   method->returnparam.SetType(type);
 
   method->isVirtual=(($1 & 1)!=0);
-  if (($1 & 8)!=0) method->isConcurrent=true;
+      
+  if (($1 & 8) != 0) method->isConcurrent = true;
   else if (($1 & 32)!=0) method->isConcurrent=false;
 
   method->isHidden=(($1 & 64)!=0);
   method->isMutex=(($1 & 16)!=0);
 
-  if (($1 & 6)==2) method->invoketype=invokesync;
-  else if (($1 & 6)==4) method->invoketype=invokeasync;
+  if (($1 & 6)==2) method->invoketype = invokesync;
+  else if (($1 & 6)==4) method->invoketype = invokeasync;
   //else method->invoketype=autoselect;
 }
 | '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')'
@@ -1617,7 +1612,7 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
 {
 	setReturnParam($5,$6, ($2|$4));
 	setPOPCMethodeModifier($1);
-	
+    	
 	method->isGlobalConst = ($11 == 1 ? true : false);
 	errorGlobalMehtode(method->isGlobalConst);
 }
@@ -1656,7 +1651,8 @@ fct_specifier:  fct_spec
 ;
 
 /*
-fct_spec: VIRTUAL_KEYWORD
+fct_spec: 
+VIRTUAL_KEYWORD
 {
 	$$=1;
 } 
@@ -1684,11 +1680,15 @@ fct_spec: VIRTUAL_KEYWORD
 {
   $$=64;
 }
+| BROADCAST
+{
+  $$=128;
+}
 ;
 */
 
-/* remove C++ Virtual - david  */
-fct_spec: SYNC_INVOKE
+fct_spec: 
+SYNC_INVOKE
 {
 	$$=2;
 }
@@ -1711,6 +1711,10 @@ fct_spec: SYNC_INVOKE
 | HIDDEN
 {
   $$=64;
+}
+| BROADCAST
+{
+  $$=128;
 }
 ;
 
@@ -1738,7 +1742,7 @@ const_virutal_empty_specifier: /* empty */
 {
 	$$=0;
 }
-|VIRTUAL_KEYWORD
+| VIRTUAL_KEYWORD
 {
 	$$=1;
 } 
@@ -1832,23 +1836,18 @@ od_exprlist: /*empty*/
 }
 | ID '=' expr_decl od_expr_nonstrict ';' od_exprlist
 {
-    char *odtmp=GetToken($1);
-    if (paroc_utils::isEqual(odtmp,"host"))
-      {
-	sprintf(tmp,"od.url(%s);",GetToken($3));
-	if ($6!=-1) strcat(tmp,GetToken($6));
-	if ($4!=-1)
-	  {
-	    errormsg("OD: host should be a string expression. Non-strict description is not allowed");
+  char *odtmp=GetToken($1);
+  if (paroc_utils::isEqual(odtmp,"host")) {
+    sprintf(tmp,"od.url(%s);",GetToken($3));
+    if ($6!=-1) strcat(tmp,GetToken($6));
+	  if ($4!=-1) {
+      errormsg("OD: host should be a string expression. Non-strict description is not allowed");
 	    exit(1);
 	  }
-      } 
-    else if (paroc_utils::isEqual(odtmp,"jobcontact"))
-      {
-	sprintf(tmp,"od.joburl(%s);",GetToken($3));
-	if ($6!=-1) strcat(tmp,GetToken($6));
-	if ($4!=-1)
-	  {
+  } else if (paroc_utils::isEqual(odtmp,"jobcontact")) {
+  	sprintf(tmp,"od.joburl(%s);",GetToken($3));
+	  if ($6 != -1) strcat(tmp,GetToken($6));
+  	if ($4 != -1) {
 	    errormsg("OD: jobcontact should be a string expression. Non-strict description is not allowed");
 	    exit(1);
 	  }
@@ -2458,12 +2457,12 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarn
 		      perror(outfile);
 	   	}
 		}
-      if (outf!=NULL) {
-			CArrayChar output(0,32000);
+    if (outf!=NULL) {
+			CArrayChar output(0, 32000);
 			thisCodeFile->GenerateCode(output, client, broker);
 			fwrite((char *)output,1, output.GetSize(),outf);
-      }
-      if (outf!=stdout) {
+    }
+    if (outf != stdout) {
 			fclose(outf);
       
 		}
@@ -2517,32 +2516,46 @@ void setReturnParam(int pointer, int ref, int const_virtual)
 /* ---- POPC methode attributes ---- */
 void setPOPCMethodeModifier(int settings)
 {
+
+  //printf("Setting 1 is %d (%d) %s\n", (settings & 128), settings, method->name); 
 	
-	// TEST Mutex, prallel, seq or CONC (hinden ??)
-	if ((settings & 56)==8) 
-		method->isConcurrent=true;
-	else if ((settings & 56)==32) 
-		method->isConcurrent=false;
-	else if ((settings & 56)==16)
-		method->isMutex= true;
-	else if ((settings & 56)!=0)
-	{
+	// TEST Mutex, prallel, seq or CONC (hidden ??)
+	if ((settings & 56) == 8) { 
+		method->isConcurrent = true;
+  } else if ((settings & 56) == 32) {
+		method->isConcurrent = false;
+	} else if ((settings & 56) == 16) {
+		method->isMutex = true;
+	} else if ((settings & 56) != 0) {
 		errormsg("Multiple seq, conc or mutex keyword");
 		exit(1);
 	}
+
+  /**
+   * Find a collective method declaration
+   * Set the class as collective and set the collective type of the method
+   * WARNING: Only broadcast is implemented in this version 
+   */	
+	if((settings & 128) != 0) {
+	  currentClass->set_as_collective(); 
+	  method->set_collective(Method::POPC_COLLECTIVE_BROADCAST);
+	}
 	
-	if ((settings & 64)!=0)
-		method->isHidden=true;
+	if ((settings & 64) != 0) {
+		method->isHidden = true;
+	}
+	
+	//printf("Setting 2 is %d %d\n", (settings & 6), settings); 	
 	
 	// TEST SYNC or ASYNC
-	if ((settings & 6)==6) 
-	{
+	if ((settings & 6) == 6) {
 		errormsg("Multiple sync, async keyword");
 		exit(1);
+	} else if ((settings & 6) == 4) {
+	  method->invoketype = invokeasync;
+	} else if ((settings & 6) == 2) { 
+	  method->invoketype = invokesync;
 	}
-	else if ((settings & 6)==4) method->invoketype=invokeasync;
-	else if ((settings & 6)==2) method->invoketype=invokesync;
-	//else method->invoketype=autoselect;
 }
 
 void errorGlobalMehtode(bool isGlobal)

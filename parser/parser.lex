@@ -197,11 +197,11 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   clname[len]=0;
   classname[len]=0;
   
-  if (thisCodeFile->FindClass(clname)!=NULL) {
+  if (thisCodeFile->FindClass(clname) != NULL) {
     while (isspace(*tmp) || *tmp==':') tmp++;
     //bool constructor=paroc_utils::isEqual(clname,tmp);
       
-      char postfix[32]="__parocobj";
+      char postfix[32]="_popcobject";
       int len=strlen(clname);
       int len1=strlen(postfix);
       othercodes.InsertAt(-1,clname,len);
@@ -216,104 +216,95 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
 {id}{whitespace2}("::"{whitespace2}{id})+ {
   char clname[256];
-  //char methname[256];
-  bool shouldreturn=true;
+  bool shouldreturn = true;
   char newyytext[1024];
   char thisBuf[1024];
-
-  int len=0;
-  char *tmp=yytext;
-  while (!isspace(*tmp) && *tmp!=':') 
-    {
-      clname[len]=*tmp;
-      classname[len]=*tmp;
-      tmp++;
-      len++;
-    }
-  clname[len]=0;
-  classname[len]=0;
+  int len = 0;
+  char *tmp = yytext;
   
-  //  printf("Method of class [%s]\n",clname);
+  while (!isspace(*tmp) && *tmp!=':') {
+    clname[len]=*tmp;
+    classname[len]=*tmp;
+    tmp++;
+    len++;
+  }
+  clname[len] = 0;
+  classname[len] = 0;
 
-  if (thisCodeFile->FindClass(clname)!=NULL)
-    {
-      while (isspace(*tmp) || *tmp==':') tmp++;
-      bool constructor=paroc_utils::isEqual(clname,tmp);
-      sprintf(newyytext,"%s__parocobj%s",clname,yytext+len);
-      othercodes.InsertAt(-1,newyytext,strlen(newyytext));
-      //Create the string to be inserted in every paroc_object constructor
-      //sprintf(thisBuf, "__POPThis_%s = new %s(GetAccessPointForThis());", clname, clname);
-
-      if (constructor)
-	{
-	  shouldreturn=false;
-	  char postfix[]="__parocobj";
-	  int len1=strlen(postfix);
-	  othercodes.InsertAt(-1,postfix,len1);
-
-	  char buf[10240];
-	  int n=ReadUntil((char*)");{", buf, 10240);
-	  othercodes.InsertAt(-1,buf,n);
+  if (thisCodeFile->FindClass(clname) != NULL) {
+    while (isspace(*tmp) || *tmp == ':') {
+      tmp++;
+    }
+    bool constructor = paroc_utils::isEqual(clname,tmp);
+    sprintf(newyytext,"%s_popcobject%s", clname, yytext+len);
+    othercodes.InsertAt(-1,newyytext,strlen(newyytext));
     
 
+  if (constructor) {
+	  shouldreturn = false;
+	  char postfix[] = "_popcobject";
+	  int len1 = strlen(postfix);
+	  othercodes.InsertAt(-1, postfix, len1);
+
+	  char buf[10240];
+	  int n = ReadUntil((char*)");{", buf, 10240);
+	  othercodes.InsertAt(-1,buf,n);
+    
 	  linenumber+=CountLine(buf);
 	  if (n && buf[n-1]==')'){
-	     n=ReadUntil((char*)":;{", buf, 10240);
-	     othercodes.InsertAt(-1,buf,n);
-	     linenumber+=CountLine(buf);
-     }
-	  if (n && buf[n-1]==':'){
-	      while (1)
-		{
-		  //extract base class name
-		  n=ReadUntil((char*)"({;",buf,10240);
-		  if (!n) break;
+      n=ReadUntil((char*)":;{", buf, 10240);
+	    othercodes.InsertAt(-1,buf,n);
+	    linenumber+=CountLine(buf);
+    }
+	  if (n && buf[n-1]==':') {
+      while (1) {
+  		  //extract base class name
+	  	  n=ReadUntil((char*)"({;",buf,10240);
+		    if (!n) break;
 
-		  linenumber+=CountLine(buf);
-		  if (buf[n-1]!='(')
-		    {
+		    linenumber+=CountLine(buf);
+  		  if (buf[n-1]!='(') {
 		      fprintf(stderr, "ERROR: %s:%d: Bad base class initialization\n",filename, linenumber);
 		      exit(1);
 		    }
-		  sscanf(buf," %[_a-zA-Z0-9]",clname);
+  		  sscanf(buf," %[_a-zA-Z0-9]",clname);
 
-		  if (thisCodeFile->FindClass(clname)!=NULL)
-		    {
+	  	  if (thisCodeFile->FindClass(clname)!=NULL) {
 		      char *t=strstr(buf,clname)+ strlen(clname);
 		      othercodes.InsertAt(-1,buf,t-buf);
 		      othercodes.InsertAt(-1,postfix,len1);
 		      othercodes.InsertAt(-1,t,strlen(t));
+		    } else {
+		      othercodes.InsertAt(-1,buf,n);
 		    }
-		  else othercodes.InsertAt(-1,buf,n);
-		  //Extract parametters...
+  		  // Extract parametters...
 		  
-		  n=ReadUntil((char*)"){;",buf,10240);
-		  othercodes.InsertAt(-1,buf,n);
-		  if (!n || buf[n-1]!=')') break;
+		    n = ReadUntil((char*)"){;",buf,10240);
+		    othercodes.InsertAt(-1,buf,n);
+        if (!n || buf[n-1]!=')') 
+		      break;
 
-		  //Extract separators...
-		  n=ReadUntil((char*)",{;",buf,10240);
-		  othercodes.InsertAt(-1,buf,n);
-		  if (!n || buf[n-1]!=',') break;
-		}
-	    }
-     //Print the THIS handling string line
-     othercodes.InsertAt(-1, thisBuf, strlen(thisBuf));
-     
-	}
-    }
-  else
-    {
-      strcpy(newyytext,yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
-    }
-  linenumber+=CountLine(tmp);
+		    // Extract separators
+    		n=ReadUntil((char*)",{;",buf,10240);
+		      othercodes.InsertAt(-1,buf,n);
+  		    if (!n || buf[n-1]!=',') 
+	  	      break;
+        }
+      }
+      // Print the THIS handling string line
+      othercodes.InsertAt(-1, thisBuf, strlen(thisBuf));
+	  }
+  } else {
+    strcpy(newyytext,yytext);
+    othercodes.InsertAt(-1,yytext,strlen(yytext));
+  }
+  
+  linenumber += CountLine(tmp);
 
-  if (shouldreturn)
-    {
-      yylval=PutToken(newyytext);
-      return ID;
-    }
+  if (shouldreturn) {
+    yylval=PutToken(newyytext);
+    return ID;
+  }
 };
 
 
@@ -355,6 +346,12 @@ namespace {
 	yylval=PutToken(yytext);
 	othercodes.InsertAt(-1,yytext,strlen(yytext));
 	return NAMESPACE;
+};
+
+broadcast {
+	yylval=PutToken(yytext);
+	othercodes.InsertAt(-1,yytext,strlen(yytext));
+	return BROADCAST;  
 };
  
 classuid {

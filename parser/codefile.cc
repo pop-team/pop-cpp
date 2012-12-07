@@ -65,7 +65,7 @@ void CodeFile::EmptyCodeData()
 	codes.SetSize(0);
 }
 
-void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker/*, bool isPOPCPPCompilation*/)
+void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker)
 {
 	int m = codes.GetSize();
 	for (int j = 0; j < m; j++) {
@@ -74,17 +74,16 @@ void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker/*, bool
 		}
 	}
 
-	for (int j=0;j<m;j++) {
+	for (int j = 0; j < m; j++) {
 		if (codes[j]->Type() == TYPE_CLASS) {
 			Class &cl = *(Class *)(codes[j]);
 			char *clfname = cl.GetFileInfo();
-			
 			if (filename == NULL || clfname == NULL || SameFile(clfname, filename)) {
 				if (client) {
-				  cl.GenerateClient(output/*, isPOPCPPCompilation*/);
+				  cl.GenerateClient(output);
 				}
 				if (broker) {							
-				  cl.GenerateBroker(output/*, isPOPCPPCompilation*/);
+				  cl.GenerateBroker(output);
 				}
 			}
 		}

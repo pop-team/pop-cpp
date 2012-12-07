@@ -131,13 +131,13 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[])
       _exit(1);
 	}
 
-	int pid2=fork();
+	int pid2 = fork();
 	if (pid2<0) {
 		perror("ERROR");
 		_exit(1);
 	}
 
-	if (pid2==0) {
+	if (pid2 == 0) {
 		close(p[1]);
 		dup2(p[0],0);
 		execvp(argv2[0],argv2);
@@ -148,46 +148,51 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[])
 	close(p[1]);
 
 	wait(&status);
-	int ret=WEXITSTATUS(status);
-	if (ret!=0) 
+	int ret = WEXITSTATUS(status);
+	if (ret != 0) 
 		return ret;
 
 	wait(&status);
-	ret=WEXITSTATUS(status);
+	ret = WEXITSTATUS(status);
 	return ret;
 }
 
 /**
  * Prepare POP-C++ source file. Generate _popc1_ files.
  */
-void PrepareSource(char *src, char *dest)
+void PrepareSource(char *src, char *dest, bool collective)
 {
-	FILE *sf=fopen(src,"r+t");
-	if (sf==NULL) {
+	FILE *sf = fopen(src, "r+t");
+	if (sf == NULL) {
 		perror(src);
 		exit(1);
 	}
-  FILE *df=fopen(dest,"w+t");
-  if (df==NULL)
-    {
-      perror("Temporary file:");
-      exit(1);
-    }
+  FILE *df = fopen(dest, "w+t");
+  if (df == NULL) {
+    perror("Temporary file:");
+    exit(1);
+  }
+  
   char buf[1024];
-  fprintf(df,"\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n",src,src);
-  buf[1023]=0;
-  while (fgets(buf,1023,sf)!=NULL) {
-    if (fputs(buf,df)==EOF) {
+  if(collective) {
+    fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n#include \"popc_advanced_header.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);  
+  } else {
+    fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);  
+  }
+  
+  buf[1023] = 0;
+  while (fgets(buf, 1023, sf) != NULL) {
+    if (fputs(buf,df) == EOF) {
       perror("Writing temporary file");
 	    exit(1);
     }
   }
-  fputs("\n",df);
+  fputs("\n", df);
   fclose(df);
   fclose(sf);
 }
 
-char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp, bool noasyncallocation, bool kcomputer){
+char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp, bool noasyncallocation, bool kcomputer, bool collective){
 	char *cmd[1000];	
 	int count=0;
 	char *cmd1[1000];
@@ -248,7 +253,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 		}
       
     // Prepare the source and generate _popc1_ files
-    PrepareSource(source, tmpfile1);
+    PrepareSource(source, tmpfile1, collective);
       
     // Run C++ preprocessor
     cmd[0] = preprocessor;
@@ -289,7 +294,8 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
     if (warning) cmd1[countparoc++] = nowarning;
     if (popcppcomp) cmd1[countparoc++] = popccpcompilationtab;      
     if (noasyncallocation) cmd1[countparoc++] = noasyncallocationtab;      
-    if (implicitpack) cmd1[countparoc++] = noimplicitpack;      
+    if (implicitpack) cmd1[countparoc++] = noimplicitpack;     
+    if (collective) cmd1[countparoc++] = xmpoption;  
       
 
     if (!usepipe) {
@@ -649,7 +655,7 @@ int main(int argc, char *argv[])
     	        if(enablexmp) {
     	          printf("XMP compilation is enable\n"); 
     	        }
-		      		char *outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack, popcppcomp, asyncallocation, kcomputer);
+		      		char *outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack, popcppcomp, asyncallocation, kcomputer, enablexmp);
         			link_cmd[link_count++] = (outf == NULL) ? argv[i] : strdup(outf);
 				      continue;
       			}
@@ -670,7 +676,9 @@ int main(int argc, char *argv[])
     
     if (!compile) {
       if (useparocmain) {
-  	    if (object) {
+        if(enablexmp && object) {
+          sprintf(buf, "%s/lib/popc_objmain.%s.o", parocdir, "xmp");
+  	    } else if (object) {
           sprintf(buf, "%s/lib/paroc_objmain.%s.o", parocdir, objmain);
         } else {
    	      sprintf(buf, "%s/lib/paroc_infmain.std.o", parocdir); 
@@ -702,6 +710,16 @@ int main(int argc, char *argv[])
 #ifdef HAVE_LIBDL
        link_cmd[link_count++] = (staticlib && FindLib(libpaths, libpaths_count, "dl", tmplibfile)) ? strdup(tmplibfile) : strdup("-ldl");
 #endif
+
+      // Link with advanced POP-C++ library
+      if(enablexmp) {
+        if (paroc_static || staticlib) {
+          sprintf(buf, "%s/lib/libpopc_advanced.a", parocdir);
+        } else {
+          strcpy(buf, "-lpopc_advanced"); 
+        }
+        link_cmd[link_count++] = strdup(buf);        
+      }
     }
     link_cmd[link_count] = NULL;
     if(verbose) {
