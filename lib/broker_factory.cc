@@ -29,7 +29,7 @@ paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name
 		brokerlist= new paroc_list_broker;
 	}
 	if (name==NULL || func==NULL) return;
-	if (Test(name)) return;
+	if (test(name)) return;
 	paroc_broker_init &t=brokerlist->AddTailNew();
 	t.func=func;
 	t.objname=name;
@@ -64,7 +64,7 @@ void paroc_broker_factory::List(paroc_list_string &objlist)
 	}
 }
 
-bool paroc_broker_factory::Test(const char *objname)
+bool paroc_broker_factory::test(const char *objname)
 {
 	if (brokerlist == NULL) {
 	  return false;
