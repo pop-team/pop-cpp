@@ -7,7 +7,7 @@ add_library(popc_advanced
   popc_object.cpp
 )
 
-
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_advanced_header.h DESTINATION include)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_group_interface.h DESTINATION include)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_group_broker.h DESTINATION include)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_group_broker_factory.h DESTINATION include)
