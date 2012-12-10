@@ -35,8 +35,12 @@ public:
   bool is_initialized();
   bool is_finalized();  
   
-  
+
+  // Group management operations  
   POPC_GroupInterface& merge(POPC_GroupInterface& other); 
+  POPC_GroupInterface& split(const int rank); 
+  POPC_GroupInterface& split(const int group1[], const int group2[]);
+  bool remove(const int rank); 
   
   
   // 

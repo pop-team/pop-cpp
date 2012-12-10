@@ -23,6 +23,7 @@
 
 /**
  * Base constructor
+ * A POPC_GroupInterface object is always created empty. 
  */
 POPC_GroupInterface::POPC_GroupInterface() : _popc_is_initialized(false), _popc_is_finalized(false), _popc_nb_parallel_object(0), 
   _popc_default_rank_for_single_call(0)
@@ -129,18 +130,57 @@ bool POPC_GroupInterface::initialize(int nb)
   return true; 
 }
 
+/**
+ * Merge two parallel object group. This group and the other group will be similar after merging. 
+ * @param other Reference to another parallel object group of the same type. 
+ * @return Reference to the merged group. 
+ */
 POPC_GroupInterface& POPC_GroupInterface::merge(POPC_GroupInterface& other)
 {
-  printf("POP-C++ Error: GROUP MERGING IS NOT IMPLEMENTED YET\n"); 
+  std::cerr << "POP-C++ Error: GROUP MERGING IS NOT IMPLEMENTED YET\n" << std::endl; 
+}
+
+/**
+ * Split this group in two separate group by indicating the rank that split group in two. All members with rank below the given
+ * parameter are placed in group 1. All remaining members are place in group 2. 
+ * @param rank  Rank of the object that split the group in two.
+ * @return Reference to the parallel object group 2
+ */
+POPC_GroupInterface& split(const int rank) 
+{
+  std::cerr << "POP-C++ Error: GROUP SPLITTING IS NOT IMPLEMENTED YET\n" << std::endl; 
+}
+
+/**
+ * Split this group in two separate group by indicating members of each group. This group will be group 1. 
+ * @param group1  Rank of the members to be placed in group 1.
+ * @param group2  Rank of the members to be placed in group 2.
+ * @return Reference to the parallel object group 2.
+ */
+POPC_GroupInterface& split(const int group1[], const int group2[]) 
+{
+  std::cerr << "POP-C++ Error: GROUP SPLITTING IS NOT IMPLEMENTED YET\n" << std::endl; 
+}
+
+/**
+ * Remove a single object from this parallel object group
+ * @param rank  Rank of the object to be removed
+ * @return TRUE if the object has been successfully removed. FALSE in any other cases. 
+ */
+bool remove(const int rank) 
+{
+  std::cerr << "POP-C++ Error: GROUP REMOVING IS NOT IMPLEMENTED YET\n" << std::endl;   
+  return false; 
 }
 
 /**
  * Finalize the parallel object managed by this interface
- * @return TRUE if the finalization is done successfully. FALSE if already finalized or in any other cases.
+ * @return TRUE if the finalization is done successfully. FALSE if already finalized, not initialized or in any other cases.
  */
 bool POPC_GroupInterface::finalize()
 {
-  if(is_finalized()) {
+  // Finalize only of not finalized yet and 
+  if(is_finalized() || !is_initialized()) {
     return false;
   }
   
@@ -148,13 +188,16 @@ bool POPC_GroupInterface::finalize()
   paroc_message_header h(0, 2, INVOKE_SYNC, "DecRef");
 	_popc_buffer->Reset();
 	_popc_buffer->SetHeader(h);
-
-
+  
+  // Get the connection to the communication layer
 	paroc_connection* connection = _popc_combox->get_connection();
 
+  // Send the request for finalization
 	popc_send_request(_popc_buffer, connection);  
+	// Wait for finalization to be performed
 	popc_recv_response(_popc_buffer, connection); 
   
+  // Clean buffer and combox
   _popc_buffer->Destroy();
   _popc_combox->Close(); 
   _popc_is_finalized = true; 
