@@ -20,7 +20,6 @@ OtherCode::OtherCode(CodeFile *file): CodeData(file), code(0, 8096)
 
 void OtherCode::GenerateCode(CArrayChar &output)
 {
-  output.InsertAt(-1, (char *)"\n// Generate other code\n", strlen("\n// Generate other code\n"));
 	int n = code.GetSize();
 	if (n) {
 	  output.InsertAt(-1, (char *)code, n);
