@@ -68,6 +68,7 @@ void Usage()
 	fprintf(stderr,"\n"); 
 	
 	fprintf(stderr,"   -xmp:			Enable XMP compilation in collective parallel class\n"); 
+	fprintf(stderr,"   -advanced:		Link with the POP-C++ Advanced Library\n"); 	
 	
   fprintf(stderr,"\n"); 
 	
@@ -160,7 +161,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[])
 /**
  * Prepare POP-C++ source file. Generate _popc1_ files.
  */
-void PrepareSource(char *src, char *dest, bool collective)
+void PrepareSource(char *src, char *dest, bool advanced)
 {
 	FILE *sf = fopen(src, "r+t");
 	if (sf == NULL) {
@@ -174,7 +175,7 @@ void PrepareSource(char *src, char *dest, bool collective)
   }
   
   char buf[1024];
-  if(collective) {
+  if(advanced) {
     fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n#include \"popc_advanced_header.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);  
   } else {
     fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);  
@@ -192,7 +193,7 @@ void PrepareSource(char *src, char *dest, bool collective)
   fclose(sf);
 }
 
-char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp, bool noasyncallocation, bool kcomputer, bool collective){
+char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp, bool noasyncallocation, bool kcomputer, bool collective, bool advanced){
 	char *cmd[1000];	
 	int count=0;
 	char *cmd1[1000];
@@ -209,6 +210,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 	char noimplicitpack[] = "-no-implicit-pack";    
 	char noasyncallocationtab[] = "-async-allocation";
 	char xmpoption[] = "-xmp";
+	char advancedoption[] = "-advanced"; 
 
 	bool paroc = false;
 	static char output[1024];
@@ -253,7 +255,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 		}
       
     // Prepare the source and generate _popc1_ files
-    PrepareSource(source, tmpfile1, collective);
+    PrepareSource(source, tmpfile1, advanced);
       
     // Run C++ preprocessor
     cmd[0] = preprocessor;
@@ -296,7 +298,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
     if (noasyncallocation) cmd1[countparoc++] = noasyncallocationtab;      
     if (implicitpack) cmd1[countparoc++] = noimplicitpack;     
     if (collective) cmd1[countparoc++] = xmpoption;  
-      
+//    if (advanced) cmd1[countparoc++] = advancedoption;
 
     if (!usepipe) {
       if(verbose) { 
@@ -465,6 +467,7 @@ int main(int argc, char *argv[])
   bool kcomputer = false;
   bool usepipe = true;
   bool enablexmp = false;
+  bool enableadvanced = false; 
 
   char objmain[256] = "std";
 
@@ -537,6 +540,11 @@ int main(int argc, char *argv[])
   usepipe = (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
   kcomputer = (paroc_utils::checkremove(&argc, &argv, "-kcomputer") == NULL);
   enablexmp = (paroc_utils::checkremove(&argc, &argv, "-xmp") != NULL);
+  enableadvanced = (paroc_utils::checkremove(&argc, &argv, "-advanced") != NULL);
+  
+  if(enablexmp) {
+    enableadvanced = true; 
+  }
 
   cpp_count = 0;
   char *tok = strtok(cpp, " \t");
@@ -652,10 +660,7 @@ int main(int argc, char *argv[])
     	        if(verbose) {
     	          printf("\n"); 
     	        }
-    	        if(enablexmp) {
-    	          printf("XMP compilation is enable\n"); 
-    	        }
-		      		char *outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack, popcppcomp, asyncallocation, kcomputer, enablexmp);
+		      		char *outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile) ) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack, popcppcomp, asyncallocation, kcomputer, enablexmp, enableadvanced);
         			link_cmd[link_count++] = (outf == NULL) ? argv[i] : strdup(outf);
 				      continue;
       			}
@@ -712,7 +717,7 @@ int main(int argc, char *argv[])
 #endif
 
       // Link with advanced POP-C++ library
-      if(enablexmp) {
+      if(enablexmp || enableadvanced) {
         if (paroc_static || staticlib) {
           sprintf(buf, "%s/lib/libpopc_advanced.a", parocdir);
         } else {
