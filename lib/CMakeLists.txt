@@ -34,6 +34,8 @@ system.cc
 thread.cc
 timer.cc
 utils.cc
+popc_allocator_factory.cpp
+popc_allocator_uds_interconnector.cpp
 )
 
 SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)
