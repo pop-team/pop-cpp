@@ -17,6 +17,7 @@
 #include "paroc_od.h"
 #include "paroc_combox.h"
 #include "paroc_buffer.h"
+
  
 class POPC_GroupInterface {
 public: 
@@ -39,7 +40,7 @@ public:
   // Group management operations  
   POPC_GroupInterface& merge(POPC_GroupInterface& other); 
   POPC_GroupInterface& split(const int rank); 
-  POPC_GroupInterface& split(const int group1[], const int group2[]);
+  POPC_GroupInterface& split(const int group1[], const int group1_size, const int group2[], const int group2_size);
   bool remove(const int rank); 
   
   

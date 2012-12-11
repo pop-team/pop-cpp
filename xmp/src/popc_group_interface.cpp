@@ -20,6 +20,8 @@
 #include "paroc_broker.h"
 #include "popc_combox_uds.h"
 #include "paroc_system.h"
+#include "popc_group_exception.h"
+#include "popc_allocator_factory.h"
 
 /**
  * Base constructor
@@ -56,73 +58,17 @@ bool POPC_GroupInterface::initialize(int nb)
     return false;
   }
 
-  std::string class_name = get_class_name();
+  POPString objectname = get_class_name(); 
   
-  POPString codefile; 
-  od.getExecutable(codefile); 
-  
-  if(codefile.Length() <= 0) {
-    printf("POP-C++ Error: Cannot allocate group of objects because executbale is not specified\n"); 
-    return false;
+	POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance(); 
+  POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR); 
+  if(allocator == NULL) {
+    std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
   }
 
-  // Contact the local POP-C++ MPI Interconnector to create XMP process
-  int rank = paroc_system::popc_local_mpi_communicator_rank;
-
-  char* local_interconnector_address = new char[15];
-  snprintf(local_interconnector_address, 15, "uds_%d.0", rank);  
-
-  paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
-  if(combox_factory == NULL) {
-    paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "ComboxFactory NULL"); 
-  }
-
-  _popc_combox = combox_factory->Create("uds"); 
-  if(_popc_combox == NULL) {
-    paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "Combox NULL"); 
-  }
-
+  _popc_combox = allocator->allocate_group(objectname, od, nb); 
   _popc_buffer = _popc_combox->GetBufferFactory()->CreateBuffer();
   
-  if(!_popc_combox->Create(local_interconnector_address, false)) {
-    paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "Can't connect to local interconnector"); 
-  }
-
-  if(!_popc_combox->Connect(local_interconnector_address)) {
-    paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "Can't connect to local interconnector"); 
-  }
-
-  delete local_interconnector_address; 
-
-  paroc_message_header header(0, 210000, INVOKE_SYNC, "_allocation"); 
-  _popc_buffer->Reset();
-  _popc_buffer->SetHeader(header); 
-
-  // Prepare information for the allocation
-  POPString objectname(class_name); 
-  _popc_buffer->Push("objectname", "POPString", 1);
-  _popc_buffer->Pack(&objectname, 1); 
-  _popc_buffer->Pop();
-
-  POPString ps_codefile(codefile.c_str()); 
-  _popc_buffer->Push("codefile", "POPString", 1);
-  _popc_buffer->Pack(&ps_codefile, 1); 
-  _popc_buffer->Pop();
-
-  _popc_buffer->Push("objectnb", "int", 1);
-  _popc_buffer->Pack(&nb, 1); 
-  _popc_buffer->Pop();
-
-  paroc_connection* _popc_connection = _popc_combox->get_connection();
-  
-  popc_send_request(_popc_buffer, _popc_connection); 
-  popc_recv_response(_popc_buffer, _popc_connection); 
-
-  POPString objectaddress;
-  _popc_buffer->Push("objectaddress", "POPString", 1);
-  _popc_buffer->UnPack(&objectaddress, 1); 
-  _popc_buffer->Pop();
-
   _popc_is_initialized = true;
   
   construct_remote_object();
@@ -137,7 +83,12 @@ bool POPC_GroupInterface::initialize(int nb)
  */
 POPC_GroupInterface& POPC_GroupInterface::merge(POPC_GroupInterface& other)
 {
-  std::cerr << "POP-C++ Error: GROUP MERGING IS NOT IMPLEMENTED YET\n" << std::endl; 
+  if(!is_initialized() || !other.is_initialized()) {
+    throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
+  }
+
+  // To be removed when implemented  
+  throw new POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);  
 }
 
 /**
@@ -146,20 +97,48 @@ POPC_GroupInterface& POPC_GroupInterface::merge(POPC_GroupInterface& other)
  * @param rank  Rank of the object that split the group in two.
  * @return Reference to the parallel object group 2
  */
-POPC_GroupInterface& split(const int rank) 
+POPC_GroupInterface& POPC_GroupInterface::split(const int rank) 
 {
-  std::cerr << "POP-C++ Error: GROUP SPLITTING IS NOT IMPLEMENTED YET\n" << std::endl; 
+  if(!is_initialized()) {
+    throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
+  }
+  
+  if(rank >= get_group_size()) {
+    throw new POPC_GroupException(POPC_GroupException::OUTOFGROUP);  
+  }
+  
+  // To be removed when implemented
+  throw new POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);  
 }
 
 /**
  * Split this group in two separate group by indicating members of each group. This group will be group 1. 
- * @param group1  Rank of the members to be placed in group 1.
- * @param group2  Rank of the members to be placed in group 2.
+ * @param group1      Rank of the members to be placed in group 1.
+ * @param group1_size Size of the array group1.
+ * @param group2      Rank of the members to be placed in group 2.
+ * @param group2_size Size of the array group2.
  * @return Reference to the parallel object group 2.
  */
-POPC_GroupInterface& split(const int group1[], const int group2[]) 
+POPC_GroupInterface& POPC_GroupInterface::split(const int group1[], const int group1_size, const int group2[], const int group2_size) 
 {
-  std::cerr << "POP-C++ Error: GROUP SPLITTING IS NOT IMPLEMENTED YET\n" << std::endl; 
+  if(!is_initialized()) {
+    throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
+  }
+
+  // Check if group1 and group2 are members of this group
+  for (int i = 0; i < group1_size; i++) {
+    if(group1[i] >= get_group_size()) {
+      throw new POPC_GroupException(POPC_GroupException::OUTOFGROUP);        
+    }
+  }
+  
+  for (int i = 0; i < group2_size; i++) {
+    if(group2[i] >= get_group_size()) {
+      throw new POPC_GroupException(POPC_GroupException::OUTOFGROUP);        
+    }
+  }  
+  
+  throw new POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);  
 }
 
 /**
@@ -167,9 +146,19 @@ POPC_GroupInterface& split(const int group1[], const int group2[])
  * @param rank  Rank of the object to be removed
  * @return TRUE if the object has been successfully removed. FALSE in any other cases. 
  */
-bool remove(const int rank) 
+bool POPC_GroupInterface::remove(const int rank) 
 {
-  std::cerr << "POP-C++ Error: GROUP REMOVING IS NOT IMPLEMENTED YET\n" << std::endl;   
+  if(!is_initialized()) {
+    throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
+  }
+  
+  if(rank >= get_group_size()) {
+    throw new POPC_GroupException(POPC_GroupException::OUTOFGROUP);  
+  }
+  
+  // To be removed when implemented
+  throw new POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);  
+  
   return false; 
 }
 
@@ -180,7 +169,7 @@ bool remove(const int rank)
 bool POPC_GroupInterface::finalize()
 {
   // Finalize only of not finalized yet and 
-  if(is_finalized() || !is_initialized()) {
+  if(is_finalized() || !is_initialized()) {
     return false;
   }
   
@@ -201,6 +190,7 @@ bool POPC_GroupInterface::finalize()
   _popc_buffer->Destroy();
   _popc_combox->Close(); 
   _popc_is_finalized = true; 
+  
   return true;
 }
 
