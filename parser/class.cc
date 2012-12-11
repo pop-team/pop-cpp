@@ -396,6 +396,36 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 	}
 	
 
+  if(is_collective()) {
+    sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  switch(_popc_selected_constructor_id) {", GetName());
+	  code.InsertAt(-1, tmpcode, strlen(tmpcode));   
+    int n = memberList.GetSize();
+	  for (int i=0;i<n;i++) {
+		  if (memberList[i]->Type() == TYPE_METHOD) {
+		    Method* m = dynamic_cast<Method*>(memberList[i]); 
+		    if(m->MethodType() == METHOD_CONSTRUCTOR) {
+		      Constructor* c = dynamic_cast<Constructor*>(memberList[i]); 
+          sprintf(tmpcode, "\n  case %d:", c->get_id());
+      	  code.InsertAt(-1, tmpcode, strlen(tmpcode));   
+          strcpy(tmpcode, "\n    _popc_constructor(");
+      	  code.InsertAt(-1, tmpcode, strlen(tmpcode));         
+      	  int nb = (*c).params.GetSize();
+	        for (int j=0;j<nb;j++)  {
+      		  Param &p = *((*c).params[j]);
+            sprintf(tmpcode, "_popc_constructor_%d_%s", c->get_id(), p.GetName());   
+            if(j < nb-1) {
+              strcat(tmpcode, ", "); 
+            }
+            code.InsertAt(-1, tmpcode, strlen(tmpcode));
+          }	  
+          strcpy(tmpcode, ");\n    break;");
+      	  code.InsertAt(-1, tmpcode, strlen(tmpcode)); 
+		    }
+		  }
+		}
+		strcpy(tmpcode, "\n  }\n}");
+	  code.InsertAt(-1, tmpcode, strlen(tmpcode)); 
+  }
 
 	char *fname = GetCodeFile()->GetFileName();
 	if (endline > 0 && fname != NULL) {
@@ -579,13 +609,12 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface)
 	*tmpcode=0;
 
 	//Generate members
-	const char *accessstr[3]={"\npublic:","\nprotected:","\nprivate:"};
-	AccessType currentaccess=PUBLIC;
+	const char *accessstr[3] = {"\npublic:", "\nprotected:", "\nprivate:"};
+	AccessType currentaccess = PUBLIC;
 	n = memberList.GetSize();
 
-	for (i=0;i<n;i++)
-	{
-		if (interface && memberList[i]->GetMyAccess()!=PUBLIC) 
+	for (i = 0; i < n; i++) {
+		if (interface && memberList[i]->GetMyAccess() != PUBLIC) 
 		  continue;
 
 		if (memberList[i]->GetMyAccess() != currentaccess) {
@@ -604,8 +633,8 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface)
 		sprintf(str,"\npublic:\n  virtual void construct_remote_object();",name);
 		code.InsertAt(-1, str, strlen(str));
 
-		sprintf(str,"\n  void _popc_constructor();",name);
-		code.InsertAt(-1, str, strlen(str));
+		//sprintf(str,"\n  void _popc_constructor();", name);
+		//code.InsertAt(-1, str, strlen(str));
 				
     sprintf(str, "\n  virtual char* get_class_name() { return (char*)\"%s\"; };\n", name); 
  		code.InsertAt(-1, str, strlen(str));
@@ -655,7 +684,23 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface)
 		code.InsertAt(-1,str,strlen(str));*/
 		
   	sprintf(str,"\n  ~%s() {};",name);
-  	code.InsertAt(-1,str,strlen(str));
+  	code.InsertAt(-1, str, strlen(str));
+  	
+  	n = memberList.GetSize();
+  	for (i = 0; i < n; i++) {
+  	  if(memberList[i]->Type() == TYPE_METHOD) {
+  	    Method* m = dynamic_cast<Method*>(memberList[i]);
+  	    if(m->MethodType() == METHOD_CONSTRUCTOR) {
+    	    Constructor* t = dynamic_cast<Constructor*>(memberList[i]);
+          int nb = (*t).params.GetSize();		
+          for (int j = 0; j < nb; j++) {
+    	  		Param &p = *((*t).params[j]);
+		      	sprintf(str, "\n  %s _popc_constructor_%d_%s;\n", p.GetType()->GetName(), (*t).get_id(), p.GetName()); 
+    			  code.InsertAt(-1, str, strlen(str));       
+  		    }
+  		  }
+  	  }
+  	}
 	}
 	
 	strcpy(str,"\n};\n");

@@ -138,9 +138,9 @@ bool Param::CanMarshal()
 
 bool Param::DeclareParam(char *output, bool header)
 {
-	if (mytype==NULL) return false;
-	if (isConst)
-	{
+	if (mytype == NULL) 
+	  return false;
+	if (isConst) {
 		strcpy(output,"const ");
 		output+=strlen(output);
 	}
@@ -366,8 +366,10 @@ ObjDesc::~ObjDesc()
 void ObjDesc::Generate(char *code)
 {
 	code[0]=0;
-	if (odstr==NULL) return;
-	strcpy(code,odstr);
+	if (odstr == NULL) 
+	  return;
+	strcpy(code, "\n  ");   
+	strcat(code, odstr);
 }
 
 void ObjDesc::SetCode(char *code)
@@ -1431,13 +1433,15 @@ void Constructor::generate_header_pog(CArrayChar &output, bool interface)
 {
 	Method::generate_header_pog(output, interface);
 
-/*	if (interface) {
+  
+
+	if (interface) {
 		char str[1024];
-		strcpy(str,"\nvoid _paroc_Construct");
+		strcpy(str,"\nvoid _popc_constructor");
 		output.InsertAt(-1,str,strlen(str));
 		GenerateArguments(output, true);
 		GeneratePostfix(output,true);
-	}  */
+	} 
 }
 
 void Constructor::GenerateHeader(CArrayChar &output, bool interface)
@@ -1553,11 +1557,21 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		// End of constructor invocation
 	} else {
 	  // Generate the object description in the interface constructor
+	  sprintf(tmpcode, "\n  _popc_selected_constructor_id = %d;", get_id()); 
+		output.InsertAt(-1, tmpcode, strlen(tmpcode)); 
+			  
 		strcpy(tmpcode, "\n  ");
 		od.Generate(tmpcode);
 		strcat(tmpcode, "\n"); 
 		output.InsertAt(-1, tmpcode, strlen(tmpcode)); 
 		
+		// Save constructor parameters for group initialization
+		int nb = params.GetSize();		
+		for (int j=0;j<nb;j++) {
+			Param &p = *(params[j]);
+			sprintf(tmpcode, "  _popc_constructor_%d_%s = %s;\n", get_id(), p.GetName(), p.GetName()); 
+			output.InsertAt(-1, tmpcode, strlen(tmpcode));       
+		}
 	}
 
 	
@@ -1588,9 +1602,8 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		  
 		sprintf(tmpcode, "    try{\n      _this_interface->Allocate();\n      _this_interface->_paroc_Construct("); 
 
-		for (int j=0;j<nb;j++)
-		{
-			Param &p=*(params[j]);
+		for (int j=0;j<nb;j++) {
+			Param &p = *(params[j]);
 			strcat(tmpcode,p.GetName());
 			if (j<nb-1) strcat(tmpcode,", ");
 		}
@@ -1605,22 +1618,43 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 	
 
   if(!GetClass()->is_collective()) {	
-  	sprintf(tmpcode,"\nvoid %s::_paroc_Construct",GetClass()->GetName());
+  	sprintf(tmpcode, "\nvoid %s::_paroc_Construct", GetClass()->GetName());
 	  output.InsertAt(-1, tmpcode, strlen(tmpcode));
   } else {
-    sprintf(tmpcode,"\%s& %s::operator[] (const int index) {\n  set_default_rank(index);\n  return (*this);\n}\n", GetClass()->GetName(), GetClass()->GetName());
+    sprintf(tmpcode, "\%s& %s::operator[] (const int index) {\n  set_default_rank(index);\n  return (*this);\n}\n", GetClass()->GetName(), GetClass()->GetName());
 	  output.InsertAt(-1, tmpcode, strlen(tmpcode));    
   
-   	sprintf(tmpcode,"\nvoid %s::construct_remote_object() {\n  _popc_constructor();\n}\n", GetClass()->GetName());
-	  output.InsertAt(-1, tmpcode, strlen(tmpcode));    
+   	//sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  _popc_constructor(", GetClass()->GetName());
+	  //output.InsertAt(-1, tmpcode, strlen(tmpcode));    
+	  
+	  
+	  
+	  // Place saved constructor arguments
+/*		int nb = params.GetSize();		
+		for (int j = 0; j < nb; j++) {
+			Param &p = *(params[j]);
+			sprintf(tmpcode, "_popc_constructor_%d_%s", get_id(), p.GetName()); 
+			output.InsertAt(-1, tmpcode, strlen(tmpcode));       
+			if (j < nb-1) {
+  			strcpy(tmpcode, ", ");
+  			output.InsertAt(-1, tmpcode, strlen(tmpcode));
+  		}
+		}
+	  
+	  
+	  strcpy(tmpcode, ");\n}\n");
+	  output.InsertAt(-1, tmpcode, strlen(tmpcode)); 	 */ 
   
   	sprintf(tmpcode,"\nvoid %s::_popc_constructor",GetClass()->GetName());
 	  output.InsertAt(-1, tmpcode, strlen(tmpcode));    
   }    	  
-  	GenerateArguments(output,false);
+  
+  GenerateArguments(output,false);
+  
 
-	  strcpy(tmpcode,"\n{");
-  	output.InsertAt(-1, tmpcode, strlen(tmpcode));
+  
+  strcpy(tmpcode,"\n{");
+  output.InsertAt(-1, tmpcode, strlen(tmpcode));
 }
 
 //Implement Destructor class
