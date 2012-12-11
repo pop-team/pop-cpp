@@ -3,7 +3,7 @@
 parclass POPGroup {
 public: 
   classuid(3001); 
-  POPGroup(); 
+  POPGroup(int node) @{ od.node(node); od.executable("./popgroup.obj"); }; 
   ~POPGroup(); 
 
   sync broadcast void collective(); 

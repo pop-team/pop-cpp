@@ -1,6 +1,6 @@
 #include "popgroup.ph"
 
-POPGroup::POPGroup() 
+POPGroup::POPGroup(int node) 
 {
 
 }
