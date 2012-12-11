@@ -29,6 +29,8 @@
 #include <pthread.h>
 
 #include "paroc_interface.h"
+
+#include "popc_allocator_factory.h"
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_broker.h"
 #include "paroc_combox_factory.h"
@@ -304,92 +306,17 @@ paroc_od paroc_interface::get_object_description()
 void paroc_interface::allocate_only()
 {
 	Release();
-	POPString p;
-	od.getProtocol(p);
-	
-	// Get object description important for this kind 
-	int node = od.get_node(); // Defined the node on which the parallel object is allocated
-	int core = od.get_core(); // Defined the core on which the parallel object is allocated
-	
-	/* 
-	 * If od local is set, the parallel object will be allocated on the local POP-C++ MPI Interconnector. If od.node is not defined,
-	 * the parallel object is also allocated on the local node 
-	 */
-	if(od.IsLocal() || node == -1) {
-	  node = paroc_system::popc_local_mpi_communicator_rank;
-	}
-	
-	// Get the executable path name
-	POPString codefile;
-	od.getExecutable(codefile);
-	
-	// Get the name of the parallel class
 	POPString objectname = ClassName();
+	POPString objectaddress; 
 	
-	// If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
-	if(codefile.Length() <= 0) {
-	  printf("POP-C++ Error: Code file executable path is NULL ! Abort !\n"); 	
-	  paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());	  
-	}
-	
-	/**
-	 * POP-C++ for the K Computer
-	 * Create a combox to contact the MPI Communicator process to allocate the new parallel object.
-	 */
-	paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
-	if (combox_factory == NULL) 
-	  paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
-	
-	paroc_combox* allocating_combox = combox_factory->Create("uds");
-	
-  if(allocating_combox == NULL)
-    paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
+	// Get the right allocator
+	POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance(); 
+  POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR); 
+  if(allocator == NULL) {
+    std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
+  }
   
-  paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();  
-  
-  char* local_address = new char[15];
-  snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
-  
-  if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address))
-    paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
-    
-	paroc_message_header header(20, 200000, INVOKE_SYNC,"_allocate");
-	allocating_buffer->Reset();
-	allocating_buffer->SetHeader(header);
-
-  allocating_buffer->Push("objectname", "POPString", 1);
-  allocating_buffer->Pack(&objectname, 1);
-  allocating_buffer->Pop();
-
-  allocating_buffer->Push("codefile", "POPString", 1);
-  allocating_buffer->Pack(&codefile, 1);
-  allocating_buffer->Pop();
-    
-  allocating_buffer->Push("node", "int", 1);
-  allocating_buffer->Pack(&node, 1);
-  allocating_buffer->Pop();
-  
-  allocating_buffer->Push("core", "int", 1);
-  allocating_buffer->Pack(&core, 1);
-  allocating_buffer->Pop();
-    
-	paroc_connection* connection = allocating_combox->get_connection();	
-  if (!allocating_buffer->Send((*allocating_combox), connection)) {
-	  paroc_exception::paroc_throw_errno();
-	}   
-	
-	if (!allocating_buffer->Recv((*allocating_combox), connection)) {
-    paroc_exception::paroc_throw_errno();	
-	}
-	paroc_buffer::CheckAndThrow(*allocating_buffer);
-	
-  POPString objectaddress;        		
-	allocating_buffer->Push("objectaddress", "POPString", 1);
-	allocating_buffer->UnPack(&objectaddress, 1);
-	allocating_buffer->Pop();
-	allocating_buffer->Destroy();
-  allocating_combox->Close();
-
+  objectaddress = allocator->allocate(objectname, od); 
 	accesspoint.SetAccessString(objectaddress.GetString());  
 }
 
