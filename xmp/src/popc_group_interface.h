@@ -67,6 +67,9 @@ protected:
   // Default object for single call
   int _popc_default_rank_for_single_call;	
   
+  // Save the constructor to be used to initialize the group
+  int _popc_selected_constructor_id;  
+  
 private: 
   // Internal variable to manage the group parallel objects
   bool _popc_is_initialized;
@@ -75,7 +78,7 @@ private:
   // Number of parallel object belonging to this group
   int _popc_nb_parallel_object;
   
-
+ 
 
   // Internal method controlling the live of XMP parallel object
   bool _popc_allocate_parallel_object(int nb);
