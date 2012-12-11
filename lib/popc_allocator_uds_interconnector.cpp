@@ -127,7 +127,7 @@ paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(POPString& objec
   
   if(codefile.Length() <= 0) {
     std::cerr << "POP-C++ Error [Core]" << "Cannot allocate group of objects because executbale is not specified" << std::endl; 
-    return false;
+    return NULL;
   }
 
   // Contact the local POP-C++ MPI Interconnector to create XMP process
