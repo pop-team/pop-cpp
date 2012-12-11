@@ -43,3 +43,6 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_broker_factory.h	DESTINATION inc
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_combox_socket.h DESTINATION include)		
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_sys.h DESTINATION include)		
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/priolist.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_allocator.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_allocator_factory.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_allocator_uds_interconnector.h DESTINATION include)
