@@ -405,14 +405,14 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 		    Method* m = dynamic_cast<Method*>(memberList[i]); 
 		    if(m->MethodType() == METHOD_CONSTRUCTOR) {
 		      Constructor* c = dynamic_cast<Constructor*>(memberList[i]); 
-          sprintf(tmpcode, "\n  case %d:", c->get_id());
+          sprintf(tmpcode, "\n  case %d:", (*c).id);
       	  code.InsertAt(-1, tmpcode, strlen(tmpcode));   
           strcpy(tmpcode, "\n    _popc_constructor(");
       	  code.InsertAt(-1, tmpcode, strlen(tmpcode));         
       	  int nb = (*c).params.GetSize();
 	        for (int j=0;j<nb;j++)  {
       		  Param &p = *((*c).params[j]);
-            sprintf(tmpcode, "_popc_constructor_%d_%s", c->get_id(), p.GetName());   
+            sprintf(tmpcode, "_popc_constructor_%d_%s", (*c).id, p.GetName());   
             if(j < nb-1) {
               strcat(tmpcode, ", "); 
             }
@@ -425,6 +425,9 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 		}
 		strcpy(tmpcode, "\n  }\n}");
 	  code.InsertAt(-1, tmpcode, strlen(tmpcode)); 
+	  
+    sprintf(tmpcode, "\%s& %s::operator[] (const int index) {\n  set_default_rank(index);\n  return (*this);\n}\n", GetName(), GetName());
+	  code.InsertAt(-1, tmpcode, strlen(tmpcode));   
   }
 
 	char *fname = GetCodeFile()->GetFileName();
@@ -695,7 +698,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface)
           int nb = (*t).params.GetSize();		
           for (int j = 0; j < nb; j++) {
     	  		Param &p = *((*t).params[j]);
-		      	sprintf(str, "\n  %s _popc_constructor_%d_%s;\n", p.GetType()->GetName(), (*t).get_id(), p.GetName()); 
+		      	sprintf(str, "\n  %s _popc_constructor_%d_%s;\n", p.GetType()->GetName(), (*t).id, p.GetName()); 
     			  code.InsertAt(-1, str, strlen(str));       
   		    }
   		  }
@@ -1016,9 +1019,9 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 		if (t==METHOD_DESTRUCTOR  || met.isHidden /* LAST MODIFICATION */|| (pureVirtual && t==METHOD_CONSTRUCTOR && IsCoreCompilation()) || (met.isVirtual && methodInBaseClass(met))) 
 			continue;
 		if(is_collective()) {
-  		sprintf(str,"\n      case %d: Invoke_%s_%d(_popc_buffer, _popc_connection);\n        return true;",met.id,met.name,met.id);
+  		sprintf(str,"\n      case %d: Invoke_%s_%d(_popc_buffer, _popc_connection);\n        return true;", met.id, met.name, met.id);
   	} else {
-  		sprintf(str,"\n    case %d: Invoke_%s_%d(__brokerbuf, peer); return true;",met.id,met.name,met.id);
+  		sprintf(str,"\n    case %d: Invoke_%s_%d(__brokerbuf, peer); return true;", met.id, met.name, met.id);
   	}
 		code.InsertAt(-1,str,strlen(str));
 
