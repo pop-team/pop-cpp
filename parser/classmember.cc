@@ -993,11 +993,13 @@ void Method::GenerateClient(CArrayChar &output)
 			returnparam.DeclareVariable(tmpcode,reformat,false);
 			output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-			returnparam.UnMarshal((char*)"(*__paroc_buf)",reformat,true, true, output);
+
 			
     	if(!GetClass()->is_collective()) {   			
+  			returnparam.UnMarshal((char*)"(*__paroc_buf)", reformat, true, true, output);    	
   			strcpy(tmpcode,"\n  __paroc_buf->Reset();");
       } else {
+  			returnparam.UnMarshal((char*)"(*_popc_buffer)", reformat, true, true, output);      
   			strcpy(tmpcode,"\n  _popc_buffer->Reset();");      
       }
 		  output.InsertAt(-1,tmpcode,strlen(tmpcode));				
@@ -1557,7 +1559,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		// End of constructor invocation
 	} else {
 	  // Generate the object description in the interface constructor
-	  sprintf(tmpcode, "\n  _popc_selected_constructor_id = %d;", get_id()); 
+	  sprintf(tmpcode, "\n  _popc_selected_constructor_id = %d;", id); 
 		output.InsertAt(-1, tmpcode, strlen(tmpcode)); 
 			  
 		strcpy(tmpcode, "\n  ");
@@ -1569,7 +1571,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		int nb = params.GetSize();		
 		for (int j=0;j<nb;j++) {
 			Param &p = *(params[j]);
-			sprintf(tmpcode, "  _popc_constructor_%d_%s = %s;\n", get_id(), p.GetName(), p.GetName()); 
+			sprintf(tmpcode, "  _popc_constructor_%d_%s = %s;\n", id, p.GetName(), p.GetName()); 
 			output.InsertAt(-1, tmpcode, strlen(tmpcode));       
 		}
 	}
@@ -1620,10 +1622,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
   if(!GetClass()->is_collective()) {	
   	sprintf(tmpcode, "\nvoid %s::_paroc_Construct", GetClass()->GetName());
 	  output.InsertAt(-1, tmpcode, strlen(tmpcode));
-  } else {
-    sprintf(tmpcode, "\%s& %s::operator[] (const int index) {\n  set_default_rank(index);\n  return (*this);\n}\n", GetClass()->GetName(), GetClass()->GetName());
-	  output.InsertAt(-1, tmpcode, strlen(tmpcode));    
-  
+  } else { 
    	//sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  _popc_constructor(", GetClass()->GetName());
 	  //output.InsertAt(-1, tmpcode, strlen(tmpcode));    
 	  
