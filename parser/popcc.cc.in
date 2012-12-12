@@ -297,7 +297,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
     if (popcppcomp) cmd1[countparoc++] = popccpcompilationtab;      
     if (noasyncallocation) cmd1[countparoc++] = noasyncallocationtab;      
     if (implicitpack) cmd1[countparoc++] = noimplicitpack;     
-    if (collective) cmd1[countparoc++] = xmpoption;  
+//    if (collective) cmd1[countparoc++] = xmpoption;  
 //    if (advanced) cmd1[countparoc++] = advancedoption;
 
     if (!usepipe) {
