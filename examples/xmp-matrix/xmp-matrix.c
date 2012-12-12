@@ -10,23 +10,32 @@
 #define NUM_COLUMNS_B 12 //columns of input [B]
 
 #pragma xmp nodes p(*)
-double mat_a[NUM_ROWS_A][NUM_COLUMNS_A]; //declare input [A]
-
-#pragma xmp template t(0:12)
+#pragma xmp template t(0:11) 
 #pragma xmp distribute t(block) onto p
-#pragma xmp align mat_a[*][i] with t(i)
 
-//double mat_b[NUM_ROWS_B][NUM_COLUMNS_B]; //declare input [B]
-//double mat_result[NUM_ROWS_A][NUM_COLUMNS_B]; //declare output [C]
 
-#pragma xmp align mat_a[i] with t(i)
+double a[NUM_ROWS_A][NUM_COLUMNS_A]; //declare input [A]
+double b[NUM_ROWS_B][NUM_COLUMNS_B];
+double c[NUM_ROWS_A][NUM_COLUMNS_B]; 
+
+#pragma xmp align b[i][*] with t(i)
+#pragma xmp align c[i][*] with t(i)
+
 
 int main(void){
   int i;
 
-#pragma xmp loop on t(i)
-  for(i = 0; i < NUM_ROWS_A; i++)
-    printf("%d %d\n", xmp_node_num(), mat_a[i][0]);
+#pragma xmp loop on t(j)
+  for (int j = 0; j < NUM_COLUMNS_B; j++) {
+    for(int i= 0; i < NUM_ROWS_A; i++) {
+      for(int k = 0; k < NUM_COLUMNS_A; k++) {
+        c[j][i] = c[j][i] + a[k][i] * b[j][k];
+        
+        printf("Process %d is computing c[%d][%d]\n", xmp_node_num(), j, i); 
+
+      } 
+    }
+  }
 
   return 0;
 }
