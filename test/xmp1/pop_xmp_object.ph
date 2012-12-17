@@ -6,6 +6,7 @@
 
 parclass POPXMPObject {
 public:
+  classuid(2000); 
   POPXMPObject() @{ od.executable("./pop_xmp_object.obj"); }; 
   ~POPXMPObject();
 
