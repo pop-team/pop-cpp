@@ -1147,6 +1147,8 @@ int main(int argc, char* argv[])
 
                   // Forward the request to all process
                   // Improvements with MPI-3: Use Ibroadcast instead of a loop
+                  // Send a command to tell the broker side to call a broadcast
+                  // sreq = object_group[fd].first.Ibroadcast(); 
                   for(int i = 0; i < world_size; i++) {
                     MPI::Request sreq; 
                     MPI::Status status;                        
