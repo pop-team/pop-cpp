@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 		request.methodId[0] = header.GetClassID();
   	request.methodId[1] = header.GetMethodID();  
     request.from = mpi_connection;
-    printf("BROKER %d: Class ID = %d, Type = %d, Method ID = %d, Semantics = %d\n", rank, header.GetClassID(), header.GetType(), header.GetMethodID(), header.GetSemantics()); 
+    //printf("BROKER %d: Class ID = %d, Type = %d, Method ID = %d, Semantics = %d\n", rank, header.GetClassID(), header.GetType(), header.GetMethodID(), header.GetSemantics()); 
 
     // Receive DecRef - Means end of the process for a parallel object group.
     if (header.GetMethodID() == 2) {
