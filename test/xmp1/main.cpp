@@ -22,6 +22,8 @@ int main(int argc, char* argv[])
   xmp[0].set_value(20); 
   xmp[1].set_value(19);
 
+  xmp.propagate_value(21); 
+
   xmp.finalize();
 
   printf("POP-C++ Test Case: XMP Support finished\n"); 
