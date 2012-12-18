@@ -57,5 +57,10 @@ void POPXMPObject::execute_xmp_1()
 
 void POPXMPObject::set_value(int val)
 {
-  printf("REMOTE OBJECT: Set Value %d\n", val); 
+  printf("REMOTE OBJECT(%d): Set Value %d\n", get_rank(), val); 
+}
+
+void POPXMPObject::propagate_value(int val)
+{
+  printf("REMOTE OBJECT(%d): Propagate Value %d\n", get_rank(), val); 
 }

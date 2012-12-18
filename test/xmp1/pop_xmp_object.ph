@@ -12,5 +12,5 @@ public:
 
   sync broadcast void execute_xmp_1();
   sync seq void set_value(int val);  
-
+  async broadcast void propagate_value(int val); 
 };
