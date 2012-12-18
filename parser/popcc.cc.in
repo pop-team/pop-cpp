@@ -543,7 +543,7 @@ char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";
   // Check change for the C++ compiler
   if ((tmp = paroc_utils::checkremove(&argc, &argv, "-cxx=")) != NULL) {
     strcpy(parocxx, tmp);
-  } else if (enablexmp || enablempi) {
+  } else if (enablexmp || enablempi) {
     strcpy(parocxx, mpicxx);     
   } else if ((tmp = getenv("POPC_CXX")) != NULL) {
     strcpy(parocxx, tmp);
@@ -699,7 +699,7 @@ char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";
     
     if (!compile) {
       if (useparocmain) {
-        if((enablexmp || enablempi) && object) {
+        if((enablexmp || enablempi) && object) {
           sprintf(buf, "%s/lib/popc_objmain.%s.o", parocdir, "xmp");
   	    } else if (object) {
           sprintf(buf, "%s/lib/paroc_objmain.%s.o", parocdir, objmain);
@@ -735,7 +735,7 @@ char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";
 #endif
 
       // Link with advanced POP-C++ library
-      if(enablexmp || enableadvanced || enablempi) {
+      if(enablexmp || enableadvanced || enablempi) {
         if (paroc_static || staticlib) {
           sprintf(buf, "%s/lib/libpopc_advanced.a", parocdir);
         } else {
