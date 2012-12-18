@@ -73,6 +73,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* MPI C++ compiler */
+#cmakedefine MPI_CXX_COMPILER "@MPI_CXX_COMPILER@"
+
 /* Version number of package */
 #cmakedefine VERSION "@VERSION@"
 
