@@ -425,6 +425,10 @@ int main(int argc, char *argv[])
   char parocld[1024] = POPC_CXX;
 #endif
 
+// For MPI and XMP support
+char mpicxx[1024] = "@MPI_CXX_COMPILER@";
+char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";  
+
 #ifndef POPC_CPP
   char cpp[1024] = "@CMAKE_CXX_COMPILER@ -E";
 #else
@@ -467,6 +471,7 @@ int main(int argc, char *argv[])
   bool kcomputer = false;
   bool usepipe = true;
   bool enablexmp = false;
+  bool enablempi = false; 
   bool enableadvanced = false; 
 
   char objmain[256] = "std";
@@ -474,11 +479,30 @@ int main(int argc, char *argv[])
   char *tmp;
   
   
+  
+  
   // Display version if option "-version" is found on the command
   if ((tmp = paroc_utils::checkremove(&argc, &argv, "-version")) != NULL) {
     DisplayVersion();
     return 0;
   }
+  
+  
+
+	// Check for POP-C++ options  
+	noclean = (paroc_utils::checkremove(&argc, &argv, "-noclean") != NULL);
+	warning = (paroc_utils::checkremove(&argc, &argv, "-no-warning") != NULL);
+	popcppcomp = (paroc_utils::checkremove(&argc, &argv, "-popcpp-compilation") != NULL);
+	implicitpack = (paroc_utils::checkremove(&argc, &argv, "-no-implicit-pack") != NULL);
+	asyncallocation = (paroc_utils::checkremove(&argc, &argv, "-async-allocation") != NULL);
+	broker = (paroc_utils::checkremove(&argc, &argv, "-parclass-nobroker") == NULL);
+	client = (paroc_utils::checkremove(&argc, &argv, "-parclass-nointerface") == NULL);
+  usepipe = (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
+  kcomputer = (paroc_utils::checkremove(&argc, &argv, "-kcomputer") == NULL);
+  enablexmp = (paroc_utils::checkremove(&argc, &argv, "-xmp") != NULL);
+  enablempi = (paroc_utils::checkremove(&argc, &argv, "-mpi") != NULL);  
+  enableadvanced = (paroc_utils::checkremove(&argc, &argv, "-advanced") != NULL);  
+  
 	
   // Check for POP-C++ installation directory
   if ((tmp = paroc_utils::checkremove(&argc, &argv, "-popcdir=")) != NULL) {
@@ -509,6 +533,8 @@ int main(int argc, char *argv[])
   // Check change for the C++ preprocessor
   if ((tmp = paroc_utils::checkremove(&argc, &argv, "-cpp=")) != NULL) { 
     strcpy(cpp, tmp);
+  } else if (enablexmp || enablempi) {
+    strcpy(cpp, mpicpp); 
   } else if ((tmp = getenv("POPC_CPP")) != NULL) {
     strcpy(cpp, tmp);
   }
@@ -516,6 +542,8 @@ int main(int argc, char *argv[])
   // Check change for the C++ compiler
   if ((tmp = paroc_utils::checkremove(&argc, &argv, "-cxx=")) != NULL) {
     strcpy(parocxx, tmp);
+  } else if (enablexmp || enablempi) {
+    strcpy(parocxx, mpicxx);     
   } else if ((tmp = getenv("POPC_CXX")) != NULL) {
     strcpy(parocxx, tmp);
   }
@@ -523,26 +551,15 @@ int main(int argc, char *argv[])
   // Check change for the C++ linker
   if ((tmp = paroc_utils::checkremove(&argc, &argv, "-popcld=")) != NULL) {
     strcpy(parocld,tmp);
+  } else if (enablexmp || enablempi) {
+    strcpy(parocld, mpicxx);        
   } else if ((tmp = getenv("POPC_LD")) != NULL) {
     strcpy(parocld, tmp);
   } else {
     strcpy(parocld, parocxx);
   }
-
-	// Check for POP-C++ options  
-	noclean = (paroc_utils::checkremove(&argc, &argv, "-noclean") != NULL);
-	warning = (paroc_utils::checkremove(&argc, &argv, "-no-warning") != NULL);
-	popcppcomp = (paroc_utils::checkremove(&argc, &argv, "-popcpp-compilation") != NULL);
-	implicitpack = (paroc_utils::checkremove(&argc, &argv, "-no-implicit-pack") != NULL);
-	asyncallocation = (paroc_utils::checkremove(&argc, &argv, "-async-allocation") != NULL);
-	broker = (paroc_utils::checkremove(&argc, &argv, "-parclass-nobroker") == NULL);
-	client = (paroc_utils::checkremove(&argc, &argv, "-parclass-nointerface") == NULL);
-  usepipe = (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
-  kcomputer = (paroc_utils::checkremove(&argc, &argv, "-kcomputer") == NULL);
-  enablexmp = (paroc_utils::checkremove(&argc, &argv, "-xmp") != NULL);
-  enableadvanced = (paroc_utils::checkremove(&argc, &argv, "-advanced") != NULL);
   
-  if(enablexmp) {
+  if(enablexmp || enablempi) {
     enableadvanced = true; 
   }
 
@@ -681,7 +698,7 @@ int main(int argc, char *argv[])
     
     if (!compile) {
       if (useparocmain) {
-        if(enablexmp && object) {
+        if((enablexmp || enablempi) && object) {
           sprintf(buf, "%s/lib/popc_objmain.%s.o", parocdir, "xmp");
   	    } else if (object) {
           sprintf(buf, "%s/lib/paroc_objmain.%s.o", parocdir, objmain);
@@ -717,7 +734,7 @@ int main(int argc, char *argv[])
 #endif
 
       // Link with advanced POP-C++ library
-      if(enablexmp || enableadvanced) {
+      if(enablexmp || enableadvanced || enablempi) {
         if (paroc_static || staticlib) {
           sprintf(buf, "%s/lib/libpopc_advanced.a", parocdir);
         } else {
