@@ -66,7 +66,8 @@ void Usage()
 	fprintf(stderr,"   -version:			Display the installed version of POP-C++\n");
 	
 	fprintf(stderr,"\n"); 
-	
+
+	fprintf(stderr,"   -mpi:			Enable MPI compilation in collective parallel class\n"); 	
 	fprintf(stderr,"   -xmp:			Enable XMP compilation in collective parallel class\n"); 
 	fprintf(stderr,"   -advanced:		Link with the POP-C++ Advanced Library\n"); 	
 	
