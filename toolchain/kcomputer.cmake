@@ -1,6 +1,7 @@
 include(CMakeForceCompiler)
 
 set(CMAKE_SYSTEM_NAME KComputer)
+set(POPCPP_COMPILER OFF)
 
 cmake_force_c_compiler(fccpx GNU)
 cmake_force_cxx_compiler(FCCpx GNU)
