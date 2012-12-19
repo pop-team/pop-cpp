@@ -1,7 +1,12 @@
-POP-C++ 2.5
+POP-C++ 2.6.4
 
-These REALEASE_NOTES include the changes made from the previous version 2.0
-to version 2.5 of POP-C++. The complete changes is listed in the CHANGLOG.
+- New build process with cmake
+- Added feature: Parallel Object Group
+- New compiler flag -mpi to enable MPI support during compilation
+- New compiler flag -xmp to enable XMP support during compilation
+- New compiler flag -advanced to enable link to the POP-C++ Advanced Library
+
+POP-C++ 2.5
 
 - Improve the termination time of a parallel application
 - Fix slowness of POP-C++ application on MAC OS X
