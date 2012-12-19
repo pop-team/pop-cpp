@@ -1,7 +1,18 @@
 cmake_minimum_required(VERSION 2.6)
 
 #
-# POP-C++ project. This CMakeLists.txt file is the entry point for the compilation of the POP-C++ library and services. 
+# POP-C++ 
+# Entry point of the build process of POP-C++. 
+# 
+# Options: 
+#  - use -DCMAKE_INSTALL_PREFIX=<install-path> to specify the installation prefix
+#  - use -DPOPCPP_COMPILER=OFF to disable the POP-C++ compiler build
+#  - use -DMPI_SUPPORT=ON to enable MPI support in POP-C++
+#  - use -DXMP_SUPPORT=ON to enable XMP support in POP-C++
+#
+#
+# AUTHOR: Valentin Clement
+# DATE: 2012/11/14
 #
 
 project(POPCPP)

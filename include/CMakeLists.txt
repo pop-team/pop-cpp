@@ -1,3 +1,10 @@
+#
+# POP-C++ 
+# Header installation process
+# 
+# AUTHOR: Valentin Clement
+# DATE: 2012/11/14
+#
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_buffer_xdr_mpi.h DESTINATION include)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/debug.h DESTINATION include)				

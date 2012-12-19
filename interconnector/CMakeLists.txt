@@ -1,3 +1,11 @@
+#
+# POP-C++ 
+# MPI Communication layer components
+# 
+# AUTHOR: Valentin Clement
+# DATE: 2012/11/14
+#
+
 include_directories(${CMAKE_SOURCE_DIR}/ ${CMAKE_SOURCE_DIR}/include)
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 

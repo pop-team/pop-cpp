@@ -1,8 +1,20 @@
-include(CMakeForceCompiler)
+#
+# POP-C++ on the K Computer
+# Cross-compilation file for the K Computer
+# This file set some variable to be able to compile the POP-C++ library and tools on the K Computer front end. 
+#
+#
+# author: Valentin Clement
+# date: 2012/11/14
+#
 
+include(CMakeForceCompiler)
 set(CMAKE_SYSTEM_NAME KComputer)
+
+# Disable the compilation of the POP-C++ compiler. The POP-C++ compiler should be compiled normally on the front-end. 
 set(POPCPP_COMPILER OFF)
 
+# Set the compiler for the K Computer
 cmake_force_c_compiler(fccpx GNU)
 cmake_force_cxx_compiler(FCCpx GNU)
 set(CMAKE_FIND_ROOT_PATH /opt/FJSVtclang/GM-1.2.0-09)
@@ -13,9 +25,10 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
 set(CMAKE_C_OUTPUT_EXTENSION ".o")
 set(CMAKE_CXX_FLAGS "-Xg -pthread")
-MESSAGE(STATUS "COMPILER COMMAND - ${CMAKE_CXX_COMPILE_OBJECT}")
+message(STATUS "COMPILER COMMAND - ${CMAKE_CXX_COMPILE_OBJECT}")
 set(CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> <FLAGS> -o <OBJECT>  -c  <SOURCE>")
 
+# Set compiler to compile MPI components
 set(MPI_CXX_COMPILER mpiFCCpx)
 set(POPCPP_MPI_COMPILER_FLAGS -Xg -pthread -o)
 set(POPC_MAIN_FLAGS -Xg -pthread -c)

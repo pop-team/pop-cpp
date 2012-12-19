@@ -1,15 +1,11 @@
+#
+# POP-C++ 
+# XMP support component and POP-C++ advanced library
 # 
 # AUTHOR: Valentin Clement
 # DATE: 2012/11/29
 #
-# Copyright (c) 2005-2012 POP-C++ project - GRID and Cloud Computing Group, University of applied Science of western Switzerland  
-#
-#
-# Specific compilation and install instrcution for XMP support for POP-C++
-#
-# To enable XMP support in the compilation process use -DXMP_SUPPORT=ON with the cmake command
-#
-#
+
 
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src)
 link_directories(${CMAKE_SOURCE_DIR}/lib)

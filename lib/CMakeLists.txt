@@ -1,5 +1,15 @@
+#
+# POP-C++ 
+# Common library build process
+# 
+# AUTHOR: Valentin Clement
+# DATE: 2012/11/14
+#
+
 include_directories(${CMAKE_SOURCE_DIR}/ ${CMAKE_SOURCE_DIR}/include)
+
 set(CMAKE_CXX_OUTPUT_EXTENION ".o")
+
 add_library(popc_common
 accesspoint.cc
 broker.cc
