@@ -39,6 +39,7 @@ object.cc
 od.cc
 popwayback.cc
 popc_combox_uds.cpp
+popc_connection_uds.cpp
 string.cc
 system.cc
 thread.cc
