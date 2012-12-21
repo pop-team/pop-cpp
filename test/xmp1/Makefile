@@ -12,7 +12,7 @@ pop_xmp_object.obj: pop_xmp_object.ph pop_xmp_object.cpp
 	popcc -xmp -popc-static -object -o pop_xmp_object.obj pop_xmp_object.ph pop_xmp_object.cpp
 
 xmp_object:
-	mpic++ -I${POPC_PATH}/include -I/home/clementval/xmp/include -D_XCALABLEMP -L/home/clementval/xmp/lib -o pop_xmp_object.obj pop_xmp_object_object.cpp pop_xmp_object_broker.cpp $(POPC_PATH)/lib/popc_objmain.xmp.o $(POPC_PATH)/lib/libpopc_common.a $(POPC_PATH)/lib/libpopc_advanced.a -lxmp
+	popcc -I/home/clementval/xmp/include -D_XCALABLEMP -L/home/clementval/xmp/lib -xmp -popc-static -object -o pop_xmp_object.obj pop_xmp_object.ph pop_xmp_object.cpp -lxmp
 
 run: main pop_xmp_object.obj
 	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main
