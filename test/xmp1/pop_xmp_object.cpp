@@ -19,7 +19,7 @@ void POPXMPObject::execute_xmp_1()
   printf("REMOTE OBJECT: Execute XMP 1\n"); 
 
 #ifdef _XCALABLEMP
-  _XMP_init(NULL, NULL);
+  _XMP_init(0, NULL);
   _XMP_init_nodes_DYNAMIC_GLOBAL(&(_XMP_DESC_p), 1, (int * )(&(_XMP_NODES_SIZE_p)), (int * )(&(_XMP_NODES_RANK_p_0)));
   _XMP_init_template_FIXED(&(_XMP_DESC_t), 1, (long long)(0), (long long)(9));
   _XMP_init_template_chunk(_XMP_DESC_t, _XMP_DESC_p);
