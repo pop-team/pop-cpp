@@ -1,6 +1,18 @@
 #include "pop_xmp_object.ph"
 #include <stdio.h>
 
+
+#ifdef _XCALABLEMP
+typedef int _Bool;
+extern "C" {
+#include <xmp.h>
+#include "xmp_comm_macro.h"
+#include "xmp_index_macro.h"
+#include "xmp_func_decl.h"
+
+}
+#endif
+
 POPXMPObject::POPXMPObject()
 {
   printf("REMOTE OBJECT: Created successfully (rank=%d)\n", get_rank()); 
