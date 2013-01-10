@@ -19,7 +19,7 @@ class POPC_GroupException: public std::exception
 public:
   POPC_GroupException(); 
   
-  enum Cause { NOTINITIALIZED, NOTIMPLEMENTED, OUTOFGROUP }; 
+  enum Cause { NOTINITIALIZED, NOTIMPLEMENTED, OUTOFGROUP, EMPTYGROUP }; 
   POPC_GroupException(Cause c) { _cause = c; }; 
   
   virtual const char* what() const throw() {
@@ -34,6 +34,9 @@ public:
       case OUTOFGROUP:
         err_msg.append("Rank is out of the group"); 
         break;        
+      case EMPTYGROUP:
+        err_msg.append("Operation produced an empty group"); 
+        break;                
     }
     return err_msg.c_str();
   }
