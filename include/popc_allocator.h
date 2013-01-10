@@ -22,7 +22,7 @@
 class POPC_Allocator {
 public: 
   enum POPC_Protocol { UDS, TCPIP, MPI, SHM }; 
-  enum POPC_AllocationMechanism { LOCALEXEC, SSHEXEC, INTERCONNECTOR, INTERCONNECTORGROUP };   
+  enum POPC_AllocationMechanism { LOCAL, SSH, INTERCONNECTOR, PSEUDODYNAMIC };   
   
   POPC_Allocator() {} ; 
   virtual ~POPC_Allocator() {} ;        
