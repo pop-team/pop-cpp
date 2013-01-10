@@ -34,8 +34,7 @@ int main(int argc, char* argv[]){
   // Test not initialized exception on split
   try {
     int g1[2] = { 1, 3 }; 
-    int g2[2] = { 0, 2 }; 
-    group1.split(g1, 2, g2, 2); 
+    group1.split(g1, 2); 
   } catch (POPC_GroupException* e) {
     testret[2] = 0; 
     std::cout << "Exception occurred: " << e->what() << std::endl;
@@ -81,8 +80,7 @@ int main(int argc, char* argv[]){
   // Test not implemented exception on split
   try {
     int g1[1] = { 0 }; 
-    int g2[1] = { 1 }; 
-    group1.split(g1, 1, g2, 1); 
+    group1.split(g1, 1); 
   } catch (POPC_GroupException* e) {
     testret[7] = 0; 
     std::cout << "Exception occurred: " << e->what() << std::endl;
@@ -116,8 +114,7 @@ int main(int argc, char* argv[]){
   // Test out of group exception on split 2
   try {
     int g1[1] = { 10 }; 
-    int g2[1] = { 11 }; 
-    group1.split(g1, 1, g2, 1); 
+    group1.split(g1, 1); 
   } catch (POPC_GroupException* e) {
     testret[10] = 0; 
     std::cout << "Exception occurred: " << e->what() << std::endl;
