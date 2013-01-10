@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 2.6)
 project(POPCPP)
 
 # Define version of POP-C++ - It will be shown on the compiler usage message and with -version option
-set(VERSION "2.6.4 - K Computer")
+set(VERSION "2.6.5 - K Computer")
 execute_process(COMMAND uname -m OUTPUT_VARIABLE HOST_CPU_RAW)
 string(REGEX REPLACE "\n" "" HOST_CPU ${HOST_CPU_RAW})
 execute_process(COMMAND uname -s OUTPUT_VARIABLE HOST_KERNEL_RAW)
