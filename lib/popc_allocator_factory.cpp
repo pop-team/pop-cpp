@@ -13,6 +13,7 @@
  
 #include "popc_allocator_factory.h"
 #include "popc_allocator_uds_interconnector.h"
+#include "popc_allocator_tcpip.h"
 
 POPC_AllocatorFactory* POPC_AllocatorFactory::instance = NULL;
 
@@ -47,6 +48,15 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
         switch(alloc_mechanism) {
           case POPC_Allocator::INTERCONNECTOR : 
             return new POPC_Allocator_uds_interconnector();            
+          default: 
+            return NULL; 
+        }
+      }
+    case POPC_Allocator::TCPIP : 
+      {
+        switch(alloc_mechanism) {
+          case POPC_Allocator::LOCAL : 
+            return new POPC_Allocator_tcpip_local();            
           default: 
             return NULL; 
         }
