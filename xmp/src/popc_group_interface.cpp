@@ -115,31 +115,43 @@ POPC_GroupInterface& POPC_GroupInterface::split(const int rank)
  * Split this group in two separate group by indicating members of each group. This group will be group 1. 
  * @param group1      Rank of the members to be placed in group 1.
  * @param group1_size Size of the array group1.
- * @param group2      Rank of the members to be placed in group 2.
- * @param group2_size Size of the array group2.
  * @return Reference to the parallel object group 2.
  */
-POPC_GroupInterface& POPC_GroupInterface::split(const int group1[], const int group1_size, const int group2[], const int group2_size) 
+POPC_GroupInterface& POPC_GroupInterface::split(const int group1[], const int group1_size) 
 {
   if(!is_initialized()) {
     throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
   }
 
-  // Check if group1 and group2 are members of this group
+  // Check if group1 are members of this group
   for (int i = 0; i < group1_size; i++) {
     if(group1[i] >= get_group_size()) {
       throw new POPC_GroupException(POPC_GroupException::OUTOFGROUP);        
     }
   }
   
-  for (int i = 0; i < group2_size; i++) {
-    if(group2[i] >= get_group_size()) {
-      throw new POPC_GroupException(POPC_GroupException::OUTOFGROUP);        
-    }
-  }  
+  throw new POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);  
+}
+
+/**
+ * Split this group in two separate group by indicating members left in the original group (group1).
+ * @param group1      vector holding the object rank to be left in the original group
+ * @return Reference to the parallel object group 2.
+ */
+POPC_GroupInterface& POPC_GroupInterface::split(const std::vector<int> group1) 
+{
+  if(!is_initialized()) {
+    throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
+  }
+
+  // Check if group1 
+  if(group1.empty())
+    throw new POPC_GroupException(POPC_GroupException::EMPTYGROUP);  
   
   throw new POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);  
 }
+
+
 
 /**
  * Remove a single object from this parallel object group

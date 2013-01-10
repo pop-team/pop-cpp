@@ -17,6 +17,7 @@
 #include "paroc_od.h"
 #include "paroc_combox.h"
 #include "paroc_buffer.h"
+#include <vector>
 
  
 class POPC_GroupInterface {
@@ -40,7 +41,8 @@ public:
   // Group management operations  
   POPC_GroupInterface& merge(POPC_GroupInterface& other); 
   POPC_GroupInterface& split(const int rank); 
-  POPC_GroupInterface& split(const int group1[], const int group1_size, const int group2[], const int group2_size);
+  POPC_GroupInterface& split(const int group1[], const int group1_size);
+  POPC_GroupInterface& split(const std::vector<int> group1); 
   bool remove(const int rank); 
   
   
