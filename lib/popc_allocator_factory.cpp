@@ -14,6 +14,7 @@
 #include "popc_allocator_factory.h"
 #include "popc_allocator_uds_interconnector.h"
 #include "popc_allocator_tcpip.h"
+#include "popc_allocator_mpi_pseudo.h"
 
 POPC_AllocatorFactory* POPC_AllocatorFactory::instance = NULL;
 
@@ -61,6 +62,16 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
             return NULL; 
         }
       } 
+    case POPC_Allocator::MPI : 
+      {
+        switch(alloc_mechanism) {
+          case POPC_Allocator::PSEUDODYNAMIC : 
+//            return new POPC_Allocator_mpi_pseudo();            
+
+          default: 
+            return NULL; 
+        }
+      }       
     default:
       return NULL;  
   }

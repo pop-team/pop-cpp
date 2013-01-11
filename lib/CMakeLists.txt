@@ -48,6 +48,7 @@ utils.cc
 popc_allocator_factory.cpp
 popc_allocator_uds_interconnector.cpp
 popc_allocator_tcpip.cpp
+popc_allocator_mpi_pseudo.cpp
 )
 
 SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)
