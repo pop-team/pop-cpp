@@ -78,6 +78,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DI
 # Add subdirectory which inlude a CMakeLists.text file
 add_subdirectory(lib)
 add_subdirectory(include)
+add_subdirectory(lib/pseudodynamic)
+add_subdirectory(include/pseudodynamic)
 
 # If the POP-C++ Compilation option is on, add the parser directory as a sub folder
 if(POPCPP_COMPILER)
@@ -122,9 +124,16 @@ if(UNIX)
    xmp/src/Makefile
    lib/Makefile
    lib/*.cmake 
+   lib/CMakeFiles    
+   lib/pseudodynamic/Makefile
+   lib/pseudodynamic/*.cmake    
+   lib/pseudodynamic/CMakeFiles
    include/Makefile
    include/*.cmake
    include/CMakeFiles  
+   include/pseudodynamic/Makefile
+   include/pseudodynamic/*.cmake
+   include/pseudodynamic/CMakeFiles     
    config.h
    Makefile
    *~
