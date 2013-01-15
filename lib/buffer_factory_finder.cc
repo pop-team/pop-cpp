@@ -14,10 +14,10 @@
 #include "paroc_buffer_xdr_factory.h"
 #include "paroc_buffer_raw_factory.h"
 #include "paroc_utils.h"
-#include <sys/types.h>
-#include <dirent.h>
 #include "config.h"
 
+#include <sys/types.h>
+#include <dirent.h>
 
 #include <string.h>
 #include <stdlib.h>

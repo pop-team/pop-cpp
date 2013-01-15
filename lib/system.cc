@@ -29,7 +29,6 @@
 #include "paroc_buffer_factory.h"
 #include "paroc_combox_factory.h"
 #include "paroc_exception.h"
-#include "paroc_exception.h"
 #include "paroc_od.h"
 
 paroc_accesspoint paroc_system::appservice;
