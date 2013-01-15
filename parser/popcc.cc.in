@@ -70,6 +70,7 @@ void Usage()
 	fprintf(stderr,"   -mpi:			Enable MPI compilation in collective parallel class\n"); 	
 	fprintf(stderr,"   -xmp:			Enable XMP compilation in collective parallel class\n"); 
 	fprintf(stderr,"   -advanced:		Link with the POP-C++ Advanced Library\n"); 	
+  fprintf(stderr,"   -pseudo-dynamic:		Use the pseudo-dynamic communication model of POP-C++\n"); 		
 	
   fprintf(stderr,"\n"); 
 	
@@ -212,7 +213,8 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 	char noasyncallocationtab[] = "-async-allocation";
 	char xmpoption[] = "-xmp";
 	char advancedoption[] = "-advanced"; 
-
+	char pseudodynamic[] = "-pseudo-dynamic"; 
+	
 	bool paroc = false;
 	static char output[1024];
 	int ret = 0;
@@ -474,6 +476,7 @@ char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";
   bool enablexmp = false;
   bool enablempi = false; 
   bool enableadvanced = false; 
+  bool enablepsdyn = false; 
 
   char objmain[256] = "std";
 
@@ -503,6 +506,7 @@ char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";
   enablexmp = (paroc_utils::checkremove(&argc, &argv, "-xmp") != NULL);
   enablempi = (paroc_utils::checkremove(&argc, &argv, "-mpi") != NULL);  
   enableadvanced = (paroc_utils::checkremove(&argc, &argv, "-advanced") != NULL);  
+  enablepsdyn = (paroc_utils::checkremove(&argc, &argv, "-pseudo-dynamic") != NULL);  
   
 	
   // Check for POP-C++ installation directory
@@ -652,7 +656,12 @@ char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";
       cpp_opts[cpp_count++] = strdup("-Dmain=parocmain");
     }
 
-    sprintf(buf, "-I%s/include", parocdir);
+    if(enablepsdyn) {
+      sprintf(buf, "-I%s/include/static", parocdir);    
+    } else {
+      sprintf(buf, "-I%s/include", parocdir);
+    }  
+    
     cpp_opts[cpp_count++] = strdup(buf);
 
     if (*outputfile != 0) {
@@ -699,7 +708,11 @@ char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";
     
     if (!compile) {
       if (useparocmain) {
-        if((enablexmp || enablempi) && object) {
+        if(enablepsdyn && object) {
+          sprintf(buf, "%s/lib/popc_objmain.%s.o", parocdir, "psdyn");
+        } else if (enablepsdyn) {
+          sprintf(buf, "%s/lib/paroc_infmain.%s.o", parocdir, "psdyn");                
+        } else if((enablexmp || enablempi) && object) {
           sprintf(buf, "%s/lib/popc_objmain.%s.o", parocdir, "xmp");
   	    } else if (object) {
           sprintf(buf, "%s/lib/paroc_objmain.%s.o", parocdir, objmain);
@@ -709,7 +722,11 @@ char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";
         link_cmd[link_count++] = strdup(buf);
       }      
       if (!paroc_nolib) {
-        if (paroc_static || staticlib) {
+        if(enablepsdyn && (paroc_static || staticlib)) {
+          sprintf(buf, "%s/lib/libpopc_common_psdyn.a", parocdir);
+        } else if(enablepsdyn) {
+          strcpy(buf, "-lpopc_common_psdyn");           
+        } else if (paroc_static || staticlib) {
           sprintf(buf, "%s/lib/libpopc_common.a", parocdir);
         } else {
           strcpy(buf, "-lpopc_common"); 
