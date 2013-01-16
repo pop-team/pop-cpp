@@ -13,6 +13,8 @@
 
 #include "popwayback.h"
 
+#include <string.h>
+
 using namespace std;
 
 /**
