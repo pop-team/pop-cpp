@@ -1,3 +1,3 @@
--host localhost -np 1 ./MatMul 600 4 1 log
--host localhost -np 1 ../../interconnector/popc_resource_manager_mpi
--host localhost -np 4 ./MatWorker.obj -mpi -object=MatWorker
+-np 1 ./MatMul 600 4 1 log
+-np 1 ../../interconnector/popc_resource_manager_mpi 
+-np 4 ./MatWorker.obj -mpi -object=MatWorker
