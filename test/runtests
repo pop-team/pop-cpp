@@ -4,6 +4,14 @@ RESULTS=tests_results
 NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
 
+
+if [ "x$POPC_INTERCONNECTOR" = "x" ]
+then 
+  POPC_INTERCONNECTOR=$POPC_LOCATION/mpi/popc_mpi_interconnector
+  export POPC_INTERCONNECTOR
+fi
+
+
 if [ "$1" = "-all" ]
 then
   echo ""
