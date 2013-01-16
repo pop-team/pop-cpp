@@ -713,9 +713,9 @@ char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";
     if (!compile) {
       if (useparocmain) {
         if(enablepsdyn && object) {
-          sprintf(buf, "%s/lib/psuedodynamic/popc_objmain.%s.o", parocdir, "psdyn");
+          sprintf(buf, "%s/lib/pseudodynamic/popc_objmain.%s.o", parocdir, "psdyn");
         } else if (enablepsdyn) {
-          sprintf(buf, "%s/lib/psuedodynamic/paroc_infmain.%s.o", parocdir, "psdyn");                
+          sprintf(buf, "%s/lib/pseudodynamic/paroc_infmain.%s.o", parocdir, "psdyn");                
         } else if((enablexmp || enablempi) && object) {
           sprintf(buf, "%s/lib/dynamic/popc_objmain.%s.o", parocdir, "xmp");
   	    } else if (object) {
