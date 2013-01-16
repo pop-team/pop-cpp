@@ -12,8 +12,8 @@ clementval	2010/04/22	Modified the method IsIn. This method was not correctly im
 #include <list>
 #include <iterator>
 #include <utility>
-#include "../include/paroc_string.h"
-#include "../include/paroc_base.h"
+#include "paroc_string.h"
+#include "paroc_base.h"
 #define NEIGHBORSPATH 5
 
 using namespace std;
