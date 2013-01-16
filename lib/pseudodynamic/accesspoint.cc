@@ -11,6 +11,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
 #include "paroc_accesspoint.h"
 #include "paroc_utils.h"
 
