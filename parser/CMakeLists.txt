@@ -31,9 +31,9 @@ endif(NOT DEFINED BISON)
 message(STATUS "Bison found at ${BISON}")
 
 if(POPCPP_COMPILER)
-  include_directories(${CMAKE_SOURCE_DIR}/parser/ ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/)             
+  include_directories(${CMAKE_SOURCE_DIR}/parser/ ${CMAKE_SOURCE_DIR}/include/dynamic ${CMAKE_SOURCE_DIR}/)             
 else(POPCPP_COMPILER)
-  include_directories(${CMAKE_SOURCE_DIR}/../ ${CMAKE_SOURCE_DIR}/../include)             
+  include_directories(${CMAKE_SOURCE_DIR}/../ ${CMAKE_SOURCE_DIR}/../include/dynamic)             
 endif(POPCPP_COMPILER)  
 
 add_custom_target(gen 
@@ -54,9 +54,9 @@ add_custom_command(OUTPUT parser.yy.cc
                    
 
 if(POPCPP_COMPILER)
-  set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib)
+  set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/dynamic)
 else(POPCPP_COMPILER)
-  set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/../lib)
+  set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/../lib/dynamic)
 endif(POPCPP_COMPILER)  
 
 
