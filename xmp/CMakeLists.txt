@@ -7,13 +7,12 @@
 #
 
 
-include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src)
-link_directories(${CMAKE_SOURCE_DIR}/lib)
 add_subdirectory(src) 
 
-get_directory_property(INCLUDE_PATH INCLUDE_DIRECTORIES)
+set(POPCPP_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include/dynamic)
+
 add_custom_target(popc_objmain.xmp.o ALL
-                  COMMAND ${MPI_CXX_COMPILER} -I${CMAKE_SOURCE_DIR}/include -I${CMAKE_CURRENT_SOURCE_DIR}/src -c popc_objmain.xmp.cc -o popc_objmain.xmp.o
+                  COMMAND ${MPI_CXX_COMPILER} -I${POPCPP_INCLUDE_PATH} -I${CMAKE_CURRENT_SOURCE_DIR}/src -c popc_objmain.xmp.cc -o popc_objmain.xmp.o
                   DEPENDS popc_objmain.xmp.cc
                   COMMENT "Compile object main for XMP support")
 
@@ -21,7 +20,7 @@ add_custom_target(popc_objmain.xmp.o ALL
 
 
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_xmp.h DESTINATION include)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_objmain.xmp.o DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_xmp.h DESTINATION include/dynamic)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_objmain.xmp.o DESTINATION lib/dynamic)
 
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "popc_objmain.xmp.o")
