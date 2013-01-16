@@ -3,14 +3,14 @@ all: async
 sync: app object
 
 async:
-	popcc -noclean -async-allocation -o main POPObject.ph POPObject.cc main.cc
-	popcc -noclean -async-allocation -object -o POPObject.obj POPObject.cc POPObject.ph main.cc 
+	popcc -async-allocation -o main POPObject.ph POPObject.cc main.cc
+	popcc -async-allocation -object -o POPObject.obj POPObject.cc POPObject.ph main.cc 
 
 app:
-	popcc -noclean -o main POPObject.ph POPObject.cc main.cc
+	popcc -o main POPObject.ph POPObject.cc main.cc
 
 object:
-	popcc -noclean -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
+	popcc -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
 	
 clean:
 	rm -f *.o *.obj main obj.map _popc*
