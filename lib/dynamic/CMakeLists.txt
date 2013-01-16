@@ -6,7 +6,9 @@
 # DATE: 2012/11/14
 #
 
-include_directories(${CMAKE_SOURCE_DIR}/ ${CMAKE_SOURCE_DIR}/include)
+set(POPCPP_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include/dynamic)
+
+include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_INCLUDE_PATH})
 
 set(CMAKE_CXX_OUTPUT_EXTENION ".o")
 
@@ -53,22 +55,23 @@ popc_allocator_mpi_pseudo.cpp
 
 SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)
 
+
 TARGET_LINK_LIBRARIES(popc_common ${POPCCOMMON})
 
 add_custom_command(OUTPUT paroc_infmain.std.o
-                   COMMAND ${CMAKE_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_infmain.std.cc -I${CMAKE_SOURCE_DIR}/include
+                   COMMAND ${CMAKE_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_infmain.std.cc -I${POPCPP_INCLUDE_PATH}
                    DEPENDS paroc_infmain.std.cc
                    COMMENT "Compile POP-C++ Master main")
                    
 add_custom_command(OUTPUT paroc_objmain.std.o
-                   COMMAND ${CMAKE_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_objmain.std.cc -I${CMAKE_SOURCE_DIR}/include
+                   COMMAND ${CMAKE_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_objmain.std.cc -I${POPCPP_INCLUDE_PATH}
                    DEPENDS paroc_objmain.std.cc
                    COMMENT "Compile POP-C++ Object main")                   
                    
 add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o) 
 add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o) 
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.std.o DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_objmain.std.o DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common.a DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.std.o DESTINATION lib/dynamic)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_objmain.std.o DESTINATION lib/dynamic)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common.a DESTINATION lib/dynamic)
 

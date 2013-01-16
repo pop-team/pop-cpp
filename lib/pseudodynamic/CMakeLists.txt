@@ -67,8 +67,8 @@ add_custom_command(OUTPUT popc_objmain.psdyn.o
 add_custom_target(popcpp_object_psdyn_main ALL DEPENDS popc_objmain.psdyn.o) 
 add_custom_target(popcpp_master_psdyn_main ALL DEPENDS paroc_infmain.psdyn.o) 
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.psdyn.o DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_objmain.psdyn.o DESTINATION lib)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common_psdyn.a DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.psdyn.o DESTINATION lib/pseudodynamic)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_objmain.psdyn.o DESTINATION lib/pseudodynamic)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common_psdyn.a DESTINATION lib/pseudodynamic)
 
 
