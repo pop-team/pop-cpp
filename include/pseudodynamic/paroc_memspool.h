@@ -7,6 +7,8 @@ DESCRIPTION: POP-C++ memory management
 #ifndef POPC_MEMSPOOL_H
 #define POPC_MEMSPOOL_H
 
+#include <stdlib.h>
+
 #include "paroc_list.h"
 #include "paroc_interface.h"
 
