@@ -15,11 +15,13 @@ the K Computer and cluster environment.
 
 New features:
 - MPI Communication layer
+- MPI/UDS Hybrid Communication layer
+- MPI Interconnector
 - New MPI support
 - XMP support
 - Parallel Object Group
 
-Disable features: 
+Disabled features: 
 - Socket communications
 - Global and application services
 
