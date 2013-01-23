@@ -16,4 +16,5 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_group_interface.h DESTINATION inc
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_group_broker.h DESTINATION include/dynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_group_broker_factory.h DESTINATION include/dynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_object.h DESTINATION include/dynamic)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc-xmp.h DESTINATION include/dynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_advanced.a DESTINATION lib/dynamic)
