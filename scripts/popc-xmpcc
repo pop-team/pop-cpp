@@ -13,7 +13,7 @@ XMP_BIN="\/bin\/xmpcc"
 XMP_DUMMY=""
 XMP_PATH=$(echo $XMPCC | sed "s/$XMP_BIN/$XMP_DUMMY/g")
 XMP_TMP_PREFIX=__omni_tmp_
-echo $XMP_PATH
+
 # XMP_PATH="/home/clementval/xmp"
 
 XMP_CONSTRUCTOR_OLD="static void _XMP_constructor"
@@ -29,13 +29,13 @@ then
   exit
 fi
 
-$XMPCC -I$POPC_LOCATION/include/dynamic -c -tmp $FILENAME
+$XMPCC -I$POPC_LOCATION/include/dynamic -c -tmp $FILENAME > /dev/null 2>&1
 
 sed -i "s/$XMP_CONSTRUCTOR_OLD/$XMP_CONSTRUCTOR_NEW/g" $XMP_TMP_PREFIX$FILENAME
 sed -i "s/$XMP_DESTRUCTOR_OLD/$XMP_DESTRUCTOR_NEW/g" $XMP_TMP_PREFIX$FILENAME
 
 FILEOUTPUT=$(echo $FILENAME | sed "s/.c/.o/g")
 
-mpicc -std=gnu99 -Wno-implicit -I$XMP_PATH/include -D_XCALABLEMP -c $XMP_TMP_PREFIX$FILENAME -o $FILEOUTPUT
+mpicc -std=gnu99 -Wno-implicit -I$XMP_PATH/include -D_XCALABLEMP -c $XMP_TMP_PREFIX$FILENAME -o $FILEOUTPUT > /dev/null 2>&1
 
 rm -f $XMP_TMP_PREFIX*
