@@ -9,11 +9,11 @@ then
   exit
 fi
 
-XMP_BIN="/bin/xmpcc"
+XMP_BIN="\/bin\/xmpcc"
 XMP_DUMMY=""
 XMP_PATH=$(echo $XMPCC | sed "s/$XMP_BIN/$XMP_DUMMY/g")
 XMP_TMP_PREFIX=__omni_tmp_
-
+echo $XMP_PATH
 # XMP_PATH="/home/clementval/xmp"
 
 XMP_CONSTRUCTOR_OLD="static void _XMP_constructor"
