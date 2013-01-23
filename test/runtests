@@ -18,7 +18,7 @@ then
   echo Starting test suite...
   echo ""
   rm -rf $RESULTS
-  for test in `ls -F -d * | grep -v Makefile | grep -v jobManager | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v stresstest | grep -v bigdata`
+  for test in `ls -F -d * | grep -v Makefile | grep -v jobManager | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v stresstest | grep -v bigdata | grep -v xmp4`
   do
     echo "---------------------------------------------------------------------------"
     echo "*** $test test ($NUMBEROFTEST) **"
