@@ -1,0 +1,22 @@
+#!/bin/bash
+
+XMP_PATH="/home/clementval/xmp"
+XMP_TMP_PREFIX=__omni_tmp_
+
+XMP_CONSTRUCTOR_OLD="static void _XMP_constructor"
+XMP_CONSTRUCTOR_NEW="void _XMP_constructor"
+XMP_DESTRUCTOR_OLD="static void _XMP_destructor"
+XMP_DESTRUCTOR_NEW="void _XMP_destructor"
+
+FILENAME=$1
+
+xmpcc -c -tmp $FILENAME
+
+sed -i "s/$XMP_CONSTRUCTOR_OLD/$XMP_CONSTRUCTOR_NEW/g" $XMP_TMP_PREFIX$FILENAME
+sed -i "s/$XMP_DESTRUCTOR_OLD/$XMP_DESTRUCTOR_NEW/g" $XMP_TMP_PREFIX$FILENAME
+
+FILEOUTPUT=$(echo $FILENAME | sed "s/.c/.o/g")
+
+mpicc -std=gnu99 -Wno-implicit -I$XMP_PATH/include -D_XCALABLEMP -c $XMP_TMP_PREFIX$FILENAME -o $FILEOUTPUT
+
+rm -f $XMP_TMP_PREFIX*
