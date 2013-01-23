@@ -1,0 +1,4 @@
+
+
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popc-xmpcc DESTINATION bin)
+
