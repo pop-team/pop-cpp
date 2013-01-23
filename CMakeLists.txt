@@ -96,6 +96,7 @@ endif(MPI_SUPPORT)
 if(XMP_SUPPORT)
   message(STATUS "XMP Support for POP-C++ is enable")
   add_subdirectory(xmp)
+  add_subdirectory(scripts)
 endif(XMP_SUPPORT)
 
 
@@ -138,6 +139,9 @@ if(UNIX)
    include/pseudodynamic/Makefile
    include/pseudodynamic/*.cmake
    include/pseudodynamic/CMakeFiles     
+   scripts/Makefile
+   scripts/*.cmake
+   scripts/CMakeFiles  
    config.h
    Makefile
    *~
