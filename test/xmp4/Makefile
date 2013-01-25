@@ -17,7 +17,7 @@ test.o: test.h test.c
 	popc-xmpcc test.c
 
 run: main pop_xmp_object.obj
-	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main
+	mpiexec -np 2 $(POPC_INTERCONNECTOR) -app=./main
 
 clean: 
 	rm -rf *.o main pop_xmp_object.obj _popc* 
