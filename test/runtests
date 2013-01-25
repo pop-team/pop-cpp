@@ -1,5 +1,22 @@
 #!/bin/bash 
 
+UNAMESTR=$(uname)
+LINUXSTR="Linux"
+MACOSXSTR="Darwin"
+
+TESTLIST_LINUX=i$(ls -F -d * | grep -v Makefile | grep -v jobManager | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v stresstest | grep -v bigdata)
+TESTLIST_MAC=$(ls -F -d * | grep -v Makefile | grep -v jobManager | grep -w -v heritage | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v stresstest | grep -v bigdata | grep -v xmp4)
+
+if [ $UNAMESTR == $LINUXSTR ]
+then 
+  echo "Platform: Linux"
+  TESTLIST=$TESTLIST_LINUX
+elif [ $UNAMESTR == $MACOSXSTR ]
+then 
+  echo "Platform: Mac OS X"
+  TESTLIST="$TESTLIST_MAC"
+fi
+
 RESULTS=tests_results
 NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
@@ -18,12 +35,12 @@ then
   echo Starting test suite...
   echo ""
   rm -rf $RESULTS
-  for test in `ls -F -d * | grep -v Makefile | grep -v jobManager | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v stresstest | grep -v bigdata | grep -v xmp4`
+  for TEST in $TESTLIST 
   do
     echo "---------------------------------------------------------------------------"
-    echo "*** $test test ($NUMBEROFTEST) **"
+    echo "*** $TEST test ($NUMBEROFTEST) **"
     echo "---------------------------------------------------------------------------"
-    cd $test
+    cd $TEST
     rm -rf $RESULTS
     ((NUMBEROFTEST++))
     make clean
@@ -32,10 +49,10 @@ then
     RETURNVALUE=$?
     if [ x$RETURNVALUE = "x0" ]
     then 
-      echo "$NUMBEROFTEST:  $test succeed" >> ../$RESULTS
+      echo "$NUMBEROFTEST:  $TEST succeed" >> ../$RESULTS
       ((NUMBEROFSUCCESS++))
     else 
-      echo "$NUMBEROFTEST:  $test failed" >> ../$RESULTS			
+      echo "$NUMBEROFTEST:  $TEST failed" >> ../$RESULTS			
     fi
     make clean
     cd ..
