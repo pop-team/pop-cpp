@@ -4,7 +4,7 @@ UNAMESTR=$(uname)
 LINUXSTR="Linux"
 MACOSXSTR="Darwin"
 
-TESTLIST_LINUX=i$(ls -F -d * | grep -v Makefile | grep -v jobManager | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v stresstest | grep -v bigdata)
+TESTLIST_LINUX=$(ls -F -d * | grep -v tests_results | grep -v Makefile | grep -v jobManager | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v stresstest | grep -v bigdata)
 TESTLIST_MAC=$(ls -F -d * | grep -v Makefile | grep -v jobManager | grep -w -v heritage | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v stresstest | grep -v bigdata | grep -v xmp4)
 
 if [ $UNAMESTR == $LINUXSTR ]
