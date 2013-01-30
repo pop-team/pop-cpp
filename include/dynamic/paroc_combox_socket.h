@@ -1,7 +1,12 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: socket declaration of combox
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief socket declaration of combox
+ *
  */
 
 #ifndef POPC_COMBOX_SOCKET_H

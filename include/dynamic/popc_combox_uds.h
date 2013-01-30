@@ -1,6 +1,12 @@
-/**
+ /**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
  * @author Valentin Clement
+ * @date 2012/11/28
  * @Brief Unix Domain Socket combox declaration
+ * 
  */
 
 #ifndef POPC_COMBOX_UNIX_DOMAIN_SOCKET_H

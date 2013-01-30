@@ -1,11 +1,14 @@
 /**
- * File : accesspoint.h
- * Author : Tuan Anh Nguyen
- * Description : abstract network access point for parallel objects, used by POP-C++ runtime.
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief abstract network access point for parallel objects, used by POP-C++ runtime.
+ *
+ * UPDATES:
+ * Authors		Date			   Comment
  * clementval  2011/9/13   Add the method GetNoAddRef() and the variable _noaddref to be able to handle the THIS keyword correctly
  */
 

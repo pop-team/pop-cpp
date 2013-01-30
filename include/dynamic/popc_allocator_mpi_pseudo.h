@@ -5,7 +5,7 @@
  *
  * @author Valentin Clement
  * @date 2012/12/04
- * @brief  
+ * @brief Declaration of the allocator over MPI with pseudo-dynamic allocation
  *
  *
  */

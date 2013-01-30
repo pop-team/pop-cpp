@@ -1,9 +1,15 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: raw buffer declaration
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief raw buffer declaration
+ *
+ *
  */
-
+ 
 #ifndef _POPC_BUFFER_RAW_H
 #define _POPC_BUFFER_RAW_H
 

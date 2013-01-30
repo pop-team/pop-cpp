@@ -1,7 +1,12 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: event queue that store/wait/retrieve an event
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief event queue that store/wait/retrieve an event
+ *
  */
 
 #ifndef POPC_EVENT_H_

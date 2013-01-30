@@ -1,7 +1,13 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: factory for xdr formatted buffers
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief factory for xdr formatted buffers
+ *
+ *
  */
 
 #ifndef POPC_BUFFER_XDR_FACTORY_H

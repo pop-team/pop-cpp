@@ -1,13 +1,17 @@
 /**
- * File : paroc_object.ph
- * Author : Tuan Anh Nguyen
- * Description : base class for parallel object implementation
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief base class for parallel object implementation
+ *
+ * UPDATES : 
+ * Authors		Date			  Comment
  * clementval	2011/01/17	Add COUT support
- * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
+ * clementval 2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
+ *
  */
 
 #ifndef _POPC_OBJECTBASE_H

@@ -1,13 +1,19 @@
 /**
- * File : popvm.h
- * Author : Valentin Clement (clementval)
- * Description : Declaration of the POPvm object (This object holds information about the Virtual Machine)
- * Creation date : 2010/11/09
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
  * 
- * Modifications :
- * Authors		Date			Comment
- * clementval	2010/11/09	Creation of this file
- * clementval  2010/12/02  Add POPBase function to this object
+ * 
+ * @author Valentin Clement
+ * @date 2010/11/09
+ * @brief Declaration of the POPvm object (This object holds information about the Virtual Machine)
+ * 
+ * 
+ * UPDATES:
+ * Authors		Date			  Comment
+ * clementval 2010/11/09  First declaration of this object 
+ * clementval 2010/12/02  Add POPBase function to this object
+ * 
  */
 
 #ifndef _POPC_POPVM_H

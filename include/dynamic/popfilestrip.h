@@ -1,12 +1,13 @@
 /**
- * File : popfilestrip.h
- * Author : Valentin Clement (clementval)
- * Description : Declaration of the POPFileStrip class
- * Creation date : 2012/04/13
- * 
- * Modifications : 
- * Authors		Date			Comment
- * clementval  2012/04/13  First declaration of this class
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Valentin Clement
+ * @date 2012/04/13
+ * @brief Declaration of the POPFileStrip class
+ *
+ *
  */
 
 #ifndef _POPFILESTRIP_H

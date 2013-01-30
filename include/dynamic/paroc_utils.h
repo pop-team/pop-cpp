@@ -1,10 +1,17 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: utilities used by the runtime
-MODIFICATIONS: PK&VC:25.2.2011 add definition of POPGetHost
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief utilities used by the runtime
+ *
+ *
+ * UPDATES:
+ * Author Date        Description
+ * PK     2011/02/25  Add definition of POPGetHost
  */
-
 
 #ifndef POPC_UTILS_H
 #define POPC_UTILS_H

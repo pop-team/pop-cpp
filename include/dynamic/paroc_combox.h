@@ -1,7 +1,12 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: POP-C++ communication abstraction
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief POP-C++ communication abstraction
+ *
  */
 
 #ifndef POPC_COMBOX_H_

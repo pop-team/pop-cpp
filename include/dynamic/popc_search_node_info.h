@@ -1,10 +1,14 @@
-/* 
-UPDATES : 
-Authors		Date			Comment
-clementval	2010/04/19	All code added for the semester project begins with this comment //Added by clementval, ends with //End of add
-clementval	2010/04/19	All code modified during the semester project begins with //Modified by clementval, ends with //End of modification
-clementval	2010/05/19	Rename NodeInfo in POPCSearchNodeInfo and NodeInfos in POPCSearchNodeInfos
-*/
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author -
+ * @date 2012/04/19
+ * @brief POPCSearchNodeInfo declaration. Holds information about a node for resource discovery algorithm. 
+ *
+ *
+ */
 
 
 #ifndef _NODEINFO_H

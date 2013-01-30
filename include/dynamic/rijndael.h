@@ -1,3 +1,15 @@
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Valentin Clement
+ * @date 09/20/2010
+ * @brief AES cipher function declaration
+ *
+ *
+ */
+
 #ifndef H__RIJNDAEL
 #define H__RIJNDAEL
 

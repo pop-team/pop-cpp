@@ -1,13 +1,16 @@
 /**
- * File : paroc_interface.h
- * Author : Tuan Anh Nguyen
- * Description : interface base declaration for parclass objects
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
- * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
- * clementval 	2012/8/22	Add thread variable for asynchronous parallel object allocation
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief interface base declaration for parclass objects
+ *
+ * UPDATES:
+ * Authors		Date			  Comment
+ * clementval 2011/09/13  Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
+ * clementval 2012/08/22  Add thread variable for asynchronous parallel object allocation
  */
 
 #ifndef _POPC_INTERFACE_CORE_H
