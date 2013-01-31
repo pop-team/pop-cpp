@@ -34,14 +34,11 @@ check_library_exists(pthread pthread_create "" HAVE_LIBPTHREAD)
 #check_include_file(dlfcn.h HAVE_DLFCN_H)
 #check_library_exists(dl dlclose "" HAVE_LIBDL)
 
-
-
-
 # Define user specific option. Disable by default.
 option(MPI_SUPPORT "MPI Support" OFF)
 option(XMP_SUPPORT "XMP Support" OFF)
 
-# Set MPI suppoort implicitly if XMP support is required
+# Set MPI support implicitly if XMP support is required
 if(XMP_SUPPORT)
   set(MPI_SUPPORT ON)
 endif(XMP_SUPPORT)

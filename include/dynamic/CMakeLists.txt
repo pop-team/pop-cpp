@@ -1,6 +1,6 @@
 #
 # POP-C++ 
-# Header installation process
+# Header installation process for dynamic communication model 
 # 
 # AUTHOR: Valentin Clement
 # DATE: 2012/11/14

@@ -1,11 +1,9 @@
 #
-# POP-C++ on the K Computer
+# POP-C++ 
 # Cross-compilation file for the K Computer
-# This file set some variable to be able to compile the POP-C++ library and tools on the K Computer front end. 
-#
-#
-# author: Valentin Clement
-# date: 2012/11/14
+# Must be used with the CMake option -DCMAKE_TOOLCHAIN_FILE=<path_of_this_file>
+# AUTHOR: Valentin Clement
+# DATE: 2012/11/14
 #
 
 include(CMakeForceCompiler)

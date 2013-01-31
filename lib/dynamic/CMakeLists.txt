@@ -1,6 +1,6 @@
 #
 # POP-C++ 
-# Common library build process
+# Common (dynamic) library build process
 # 
 # AUTHOR: Valentin Clement
 # DATE: 2012/11/14

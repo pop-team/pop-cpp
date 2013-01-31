@@ -1,10 +1,11 @@
 #
 # POP-C++ 
-# Common "pseudo dynamic" (psdyn) library build process 
+# Common (pseudo-dynamic) library build process
 # 
 # AUTHOR: Valentin Clement
 # DATE: 2012/11/14
 #
+
 
 include_directories(${CMAKE_SOURCE_DIR}/ ${CMAKE_SOURCE_DIR}/include/pseudodynamic ${MPI_INCLUDE_PATH})
 
