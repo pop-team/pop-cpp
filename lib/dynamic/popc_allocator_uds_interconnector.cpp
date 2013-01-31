@@ -19,17 +19,26 @@
 #include "paroc_combox_factory.h"
 #include "paroc_broker.h"
 
+
+/**
+ * Allocator constructor
+ */
 POPC_Allocator_uds_interconnector::POPC_Allocator_uds_interconnector()
 {
 }
 
+/**
+ * Allocator destructor
+ */
 POPC_Allocator_uds_interconnector::~POPC_Allocator_uds_interconnector()
 {
-
 }
 
 /**
- *
+ * Allocate a single object by using the UDS protocol with the POP-C++ MPI Interconnector
+ * @param objectname  Name of the object to be allocated
+ * @param od          Object description used for allocation
+ * @return A string representation of the access-point
  */
 POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, paroc_od& od)
 {
@@ -119,6 +128,13 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
   return objectaddress; 
 }
 
+/**
+ * Allocate a group of objects by using the UDS protocol with the POP-C++ MPI Interconnector
+ * @param objectname  Name of the object to be allocated
+ * @param od          Object description used for allocation
+ * @param nb          The number of object to allocate in the group
+ * @return A pointer to a single combox connected with the group
+ */
 paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(POPString& objectname, paroc_od& od, int nb)
 {
   
