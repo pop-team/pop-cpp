@@ -1,3 +1,15 @@
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Valentin Clement
+ * @date 2012/12/04
+ * @brief Implementation of the connection abstraction for a UDS communication
+ *
+ *
+ */
+
 #include <signal.h>
 
 #include "popc_connection_uds.h"

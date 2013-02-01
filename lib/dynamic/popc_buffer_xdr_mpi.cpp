@@ -19,16 +19,24 @@
 #include "popc_buffer_xdr_mpi.h"
 #include "paroc_exception.h"
 
-
+/**
+ * Buffer constructor. Start with a stable state. 
+ */
 popc_buffer_xdr_mpi::popc_buffer_xdr_mpi(): packeddata(0,1024)
 {
 	Reset();
 }
 
+/**
+ * Buffer destrcutor
+ */
 popc_buffer_xdr_mpi::~popc_buffer_xdr_mpi()
 {
 }
 
+/**
+ * Reset the entire buffer. Erase all its content. 
+ */
 void popc_buffer_xdr_mpi::Reset()
 {
 	unpackpos=20;
@@ -36,6 +44,11 @@ void popc_buffer_xdr_mpi::Reset()
 	packeddata.SetSize(unpackpos);
 }
 
+/**
+ * Pack an array of integer inside the buffer
+ * @param data  pointer to the first element of the array
+ * @param n     number of element in the array
+ */
 void popc_buffer_xdr_mpi::Pack(const int *data, int n)
 {
 	if (n<=0) return;
@@ -47,23 +60,26 @@ void popc_buffer_xdr_mpi::Pack(const int *data, int n)
 	xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
 	xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int);
 	xdr_destroy(&xdr);
-
 }
+
+/**
+ * UnPack an array of integer inside the buffer
+ * @param data  pointer to the array
+ * @param n     number of element to unpack
+ */
 void popc_buffer_xdr_mpi::UnPack(int *data, int n)
 {
-	if (n<=0) return;
-	char *dest=packeddata+unpackpos;
+	if (n<=0) 
+	  return;
 
-	int sz=4*n;
-
+	char *dest = packeddata + unpackpos;
+	int sz = 4 * n;
 	CheckUnPack(sz);
-
 	XDR xdr;
-	xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-	xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int);
+	xdrmem_create(&xdr, dest, sz, XDR_DECODE);
+	xdr_vector(&xdr, (char *)data, n, sizeof(int), (xdrproc_t)xdr_int);
 	xdr_destroy(&xdr);
-
-	unpackpos+=sz;
+	unpackpos += sz;
 }
 
 void popc_buffer_xdr_mpi::Pack(const unsigned *data, int n)
@@ -392,43 +408,8 @@ bool popc_buffer_xdr_mpi::Recv(paroc_combox &s, paroc_connection *conn)
 	int h[5];
 	int n, i;
 
-
- /* MPI::Request req = communicator.Irecv(&length, 1, MPI_INT, 0, 0); 
-
-  bool done = false; 
-  while(!done) {
-    done = req.Test(status); 
-  }
-  
-  int data_length; 
-  req = communicator.Irecv(&data_length, 1, MPI_INT, 0, 1); 
-
-  done = false; 
-  while(!done) {
-    done = req.Test(status); 
-  }    
-
-//    char* load = new char[data_length];
-  req = communicator.Irecv(packeddata, data_length, MPI_CHAR, 0, 2); 
-    
-  done = false; 
-  while(!done) {
-    done = req.Test(status); 
-  }*/
-
 	// Recv the header
 	char *dat = (char *)h;
-//	n = 20;
-/*	do {
-	  if(conn == NULL)
-	    printf("XDR: recv connection is null\n");
-		if ((i = s.Recv(dat, n, conn)) <= 0) {
-			return false;
-		}
-		n -= i;
-		dat += i;
-	} while (n);
-*/
 
 	Reset();
 	n = ntohl(h[0]);

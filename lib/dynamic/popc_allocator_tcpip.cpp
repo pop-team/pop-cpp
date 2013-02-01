@@ -19,17 +19,25 @@
 #include "paroc_combox_factory.h"
 #include "paroc_broker.h"
 
+/**
+ * Allocator over TCP/IP with local mechanism constructor
+ */ 
 POPC_Allocator_tcpip_local::POPC_Allocator_tcpip_local()
 {
 }
 
+/**
+ * Allocator over TCP/IP with local mechanism destrcutor
+ */ 
 POPC_Allocator_tcpip_local::~POPC_Allocator_tcpip_local()
 {
-
 }
 
 /**
- *
+ * Allocate a single object by using the TCP/IP protocol with a local allocation mechanism
+ * @param objectname  Name of the object to be allocated
+ * @param od          Object description used for allocation
+ * @return A string representation of the access-point
  */
 POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& od)
 {
@@ -41,7 +49,11 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 }
 
 /**
- *
+ * Allocate a single object by using the TCP/IP protocol with a local allocation mechanism
+ * @param objectname  Name of the object to be allocated
+ * @param od          Object description used for allocation
+ * @param nb          The number of object to allocate in the group
+ * @return A pointer to a single combox connected with the group
  */
 paroc_combox* POPC_Allocator_tcpip_local::allocate_group(POPString& objectname, paroc_od& od, int nb)
 {

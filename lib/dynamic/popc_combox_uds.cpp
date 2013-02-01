@@ -1,12 +1,13 @@
 /**
- * File : popc_combox_uds.cpp
- * Author : Valentin Clement (clementval)
- * Description : Implementation of the communication box for Unix Domain Socket
- * Creation date : 2012/10/26
- * 
- * Modifications :
- * Authors		  Date			  Comment
- * clementval   2012/11/01  Version passing POP-C++ test suite
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Valentin Clement
+ * @date 2012/12/04
+ * @brief Implementation of the abstraction of a UDS communication 
+ *
+ *
  */
 
 #include <unistd.h>
@@ -18,16 +19,6 @@
 #include <signal.h>
 
 #include "popc_combox_uds.h"
-
-
-
-
-
-
-/**
- * Unix Domain Socket combox implementation starts here
- */
-
 
 // Constant declaration
 const char* popc_combox_uds::UDS_PROTOCOL_NAME = "uds";
