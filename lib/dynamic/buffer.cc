@@ -1,13 +1,21 @@
 /**
- * File : buffer.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of message buffer base class
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of message buffer base class.
+ *
+ *
  */
-
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_Buffer instead of paroc_buffer
+    POPC_MessageHeader instead of paroc_message_header (put implementation in a separate file)
+ */
+ 
 #include <string.h>
 #include <stdlib.h>
 #include "paroc_interface.h"

@@ -1,12 +1,20 @@
 /**
- * File : broker.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of parallel object broker: general part
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of parallel object broker: General part. 
+ *
+ *
  */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_Broker instead of paroc_broker
+ */ 
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>

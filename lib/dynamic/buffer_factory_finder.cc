@@ -1,12 +1,19 @@
 /**
- * File : buffer_factory_finder.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of buffer factory finder
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of buffer factory finder.
+ *
+ *
  */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_BufferFactoryFinder instead of paroc_buffer_factory_finder
+ */ 
 
 #include <stdio.h>
 

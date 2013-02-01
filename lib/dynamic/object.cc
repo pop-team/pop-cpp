@@ -1,15 +1,19 @@
 /**
- * File : object.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of the parallel object-object-side
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
- * P.KUONEN    2011/2      ~paroc_object(), suppress error mess.:Can not unregister...
- * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of the parallel object-object-side
+ *
+ *
  */
-
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_ObjectCore instead of paroc_object
+ */
 
 #include "paroc_object.h"
 #include "paroc_mutex.h"

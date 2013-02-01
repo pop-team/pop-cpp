@@ -1,12 +1,21 @@
 /**
- * File : combox.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of the communication box abstraction
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of the communication box abstraction.
+ *
+ *
  */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_Connection instead of paroc_connector
+    POPC_Combox instead of paroc_combox
+   Need to separate connection and combox implementation in two separate file. 
+ */ 
 
 #include <stdio.h>
 

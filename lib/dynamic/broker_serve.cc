@@ -1,11 +1,18 @@
 /**
- * File : broker_serve.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of parallel object broker : serve request stuffs
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of parallel object broker: serve request stuffs.
+ *
+ *
+ */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_Broker instead of paroc_broker
  */
 
 #include <stdio.h>

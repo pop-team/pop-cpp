@@ -1,11 +1,13 @@
 /**
- * File : paroc_infmain.std.cc
- * Author : Tuan Anh Nguyen
- * Description : "main" entry for the main program
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief "main" entry for the main program.
+ *
+ *
  */
 
 #include <stdio.h>

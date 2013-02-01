@@ -1,13 +1,20 @@
 /**
- * File : thread.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of thread used by POP-C++ runtime
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of thread used by POP-C++ runtime. 
+ *
+ *
  */
-
+ 
+/* 
+  Should check with C++11 std::thread or std::async 
+  Deeply need refactoring: 
+    POPC_Thread instead of paroc_thread
+ */
 
 #include "paroc_thread.h"
 #include <signal.h>

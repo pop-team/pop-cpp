@@ -1,13 +1,18 @@
 /**
- * File : utils.cc
- * Author : Tuan Anh Nguyen
- * Description : commonly used stuffs
- * Creation date : 2010/04/19
- * 
- * Modifications : 
- * Authors		Date			Comment
- * clementval  10/22/2010  Add IsremoteDest() method.
- * clementval  10/24/2010  Add GetCurrentUser(), GetIPFromURL() and GetPortFromURL() methods.
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Regroups commonly used functions. 
+ *
+ *
+ */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_CommonTools instead of paroc_utils
  */
 
 #include <iostream>

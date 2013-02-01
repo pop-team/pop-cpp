@@ -1,13 +1,19 @@
 /**
- * File : buffer_xdr_factory.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of SUN-XDR message buffer
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of SUN-XDR message buffer.
+ *
+ *
  */
-
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_BufferXDR instead of paroc_buffer_xdr
+ */
 
 #include <string.h>
 #include <arpa/inet.h>

@@ -1,13 +1,16 @@
 /**
- * File : accesspoint.cc
- * Author : Tuan Anh Nguyen
- * Description : implementation of network access point of parallel objects
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
- * clementval  2011/9/13   Add the method GetNoAddRef() and the variable _noaddref to be able to handle the THIS keyword correctly
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of network access point of parallel objects.
+ *
+ *
  */
+ 
+// Deeply need refactoring: POPC_AccessPoint instead of paroc_accesspoint 
 
 #include <stdio.h>
 #include <string.h>
@@ -16,8 +19,9 @@
 #include "paroc_accesspoint.h"
 #include "paroc_utils.h"
 
-//paroc_accesspoint class
-
+/**
+ * Accesspoint constructor
+ */
 paroc_accesspoint::paroc_accesspoint()
 {
 	endpoint=NULL;  
@@ -26,6 +30,9 @@ paroc_accesspoint::paroc_accesspoint()
    _noaddref=false;
 }
 
+/**
+ * Accesspoint copy constructor
+ */
 paroc_accesspoint::paroc_accesspoint(const paroc_accesspoint &p)
 {
 	endpoint=NULL;
@@ -39,11 +46,18 @@ paroc_accesspoint::paroc_accesspoint(const paroc_accesspoint &p)
    _noaddref=GetNoAddRef();
 }
 
+/**
+ * Accesspoint destructor
+ */
 paroc_accesspoint::~paroc_accesspoint()
 {
 	if (endpoint!=NULL) free(endpoint);
 }
 
+/**
+ * Set the different access in a string format. Each access is separated by a whit space.
+ * @param hostport  Access string to set as mai access
+ */
 void paroc_accesspoint::SetAccessString(const char *hostport)
 {
 	if (endpoint!=hostport)
@@ -53,6 +67,7 @@ void paroc_accesspoint::SetAccessString(const char *hostport)
 		else endpoint=NULL;
 	}
 }
+
 char* paroc_accesspoint::GetAccessString() const
 {
 	return endpoint;
@@ -79,27 +94,6 @@ paroc_accesspoint & paroc_accesspoint::operator =(const paroc_accesspoint &p)
 }
 
 
-/**
- * ViSaG : clementval
- * Get the Public Key Identifer of the Node running this object
- * @return The public key of the node running the parallel object pointed by this access point
- */
-/*
-POPString paroc_accesspoint::GetPKI() const {
-   return endpoint_pki;
-}
-*/
-
-/**
- * ViSaG : clementval
- * Set the public key if the node running the parallel object pointed by this access point
- * @param pki The public key of the node
- */
-/*
-void paroc_accesspoint::SetPKI(POPString pki){
-   endpoint_pki = pki;
-}
-*/
 /**
  * ViSaG : clementval
  * Check if the access point is in secure mode

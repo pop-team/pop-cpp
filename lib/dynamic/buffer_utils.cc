@@ -1,11 +1,13 @@
 /**
- * File : buffer_utils.cc
- * Author : Tuan Anh Nguyen
- * Description : Additional methods for marshalling
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Additional methods for marshalling.
+ *
+ *
  */
 
 #include "paroc_buffer_utils.h"

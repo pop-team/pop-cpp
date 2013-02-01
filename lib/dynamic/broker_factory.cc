@@ -1,14 +1,19 @@
 /**
- * File : broker_factory.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of broker factory
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
- * clementval  10/27/2011  Set services accesspoint cretaed from String as service accesspoint
- * P.Kuonen     18.9.2012       Add "POP-C++ error" in error messages (PEKA)
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of broker factory.
+ *
+ *
  */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_BrokerFactory instead of paroc_broker_factory
+ */ 
 
 #include <unistd.h>
 #include <sys/types.h>

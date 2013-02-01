@@ -1,12 +1,21 @@
 /**
- * File : combox_socket.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of the communication box for TCP/socket
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of the communication box for TCP/IP socket.
+ *
+ *
  */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_ConnectionTCPIP instead of paroc_connection_sock
+    POPC_ComboxTCPIP instead of paroc_combox_sock
+   Need to separate connection and combox implementation in two separate file. 
+ */ 
 
 
 #include <unistd.h>

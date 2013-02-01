@@ -1,16 +1,18 @@
 /**
- * File : system.cc
- * Author : Tuan Anh Nguyen
- * Description : system stuffs and declarations used by the runtime
- * Creation date : -
- * 
- * Modifications :
- * Authors    Date      Comment
- * L.Winkler  2008-2009   for version 1.3
- * P.Kuonen   02/2010     (GetHost, getIp, add POPC_Host_Name, ...) for version 1.3m (see comments 1.3m)
- * P.Kuonen   02/2011      define default IP for version 1.3.1m (see comments 1.3.1m)
- * P.Kuonen   25/3/2011    Cosmetic changes
-
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief System stuffs and declarations used by the runtime. 
+ *
+ *
+ */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_System instead of paroc_system
  */
 
 #include <stdio.h>

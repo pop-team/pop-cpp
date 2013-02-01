@@ -1,16 +1,19 @@
 /**
- * File : request.cc
- * Author : Valentin Clement (clementval)
- * Description : Implementation of the request object. request is used for the resource discovery
- * Creation date : 2010/04/19
- * 
- * Modifications : 
- * Authors		Date			Comment
- * clementval	2010/04/19	All code added for the semester project begins with this comment //Added by clementval, ends with //End of add
- * clementval	2010/04/19	All code modified during the semester project begins with //Modified by clementval, ends with //End of modification
- * clementval  2010/11/08  Add variable and methods declaration for the ViSaG project
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Valentin Clement (clementval)
+ * @date 2010/04/19
+ * @brief Implementation of the request object. request is used for the resource discovery.
+ *
+ *
  */
-
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_ResourceDiscoveryRequest instead of Request
+ */
 
 #include "request.h"
 #include <iostream>

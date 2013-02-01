@@ -1,13 +1,19 @@
 /**
- * File : broker_receive.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of parallel object broker : receive stuffs
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
- * P.Kuonen     March 2011      suppress warning message "too many requests"
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of parallel object broker : receive requests. 
+ *
+ *
  */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_Broker instead of paroc_broker
+ */ 
 
 #include <stdio.h>
 #include <unistd.h>

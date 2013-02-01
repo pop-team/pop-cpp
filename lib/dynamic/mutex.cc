@@ -1,11 +1,20 @@
 /**
- * File : mutex.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of the mutual exclusive execution
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of the mutual exclusive execution.
+ *
+ *
+ */
+ 
+/* 
+  Should look inside the std for similar implementation. Must be more efficient. 
+  Deeply need refactoring: 
+    POPC_Mutex instead of paroc_mutex
+    POPC_MutexLocker instead of paroc_mutex_locker
  */
 
 #include <stdio.h>
@@ -14,7 +23,6 @@
 #include <sys/time.h>
 
 /*
-POP-C++ mutex implementation....
 */
 
 paroc_mutex::paroc_mutex()
@@ -98,11 +106,6 @@ bool paroc_condition::wait(int timeout)
 	}
 
 }
-
-/*
-POP-C++ locker implementation....
-*/
-
 
 
 paroc_mutex_locker::paroc_mutex_locker(paroc_mutex &_mutex)

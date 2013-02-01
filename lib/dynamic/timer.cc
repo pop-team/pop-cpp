@@ -1,14 +1,20 @@
 /**
- * File : timer.cc
- * Author : Tuan Anh Nguyen
- * Description : the timer implementation, used by the runtime
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Timer implementation, used by the runtime. 
+ *
+ *
  */
-
-
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_Timer instead of Timer
+ */
+ 
 #include "timer.h"
 #include <sys/time.h>
 #include <stdio.h>

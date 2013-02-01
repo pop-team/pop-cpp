@@ -1,13 +1,18 @@
 /**
- * File : od.cc
- * Author : Tuan Anh Nguyen
- * Description : parallel object description implementation
- * Creation date : -
- * 
- * Modifications :
- * Authors		Date			Comment
- * clementval  05/2010     Add od.search support
- * clementval  10/2010     Add od.service support
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Parallel object description implementation.
+ *
+ *
+ */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_ObjectDescription instead of paroc_od
  */
 
 #include "paroc_od.h"

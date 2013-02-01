@@ -1,13 +1,18 @@
 /**
- * File : response.cc
- * Author : Valentin Clement (clementval)
- * Description : Implementation of the response object. response is used for the resource discovery
- * Creation date : 2010/04/19
- * 
- * Modifications : 
- * Authors		Date			Comment
- * clementval	2010/04/19	All code added for the semester project begins with this comment //Added by clementval, ends with //End of add
- * clementval	2010/04/19	All code modified during the semester project begins with //Modified by clementval, ends with //End of modification
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of the response object. response is used for the resource discovery. 
+ *
+ *
+ */
+ 
+/* 
+  Deeply need refactoring: 
+    POPC_ResourceDiscoveryResponse instead of Response
  */
 
 #include "response.h"
