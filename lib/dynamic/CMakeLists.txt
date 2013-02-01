@@ -33,15 +33,14 @@ combox_socket.cc
 event.cc
 exception.cc
 explorationList.cc
-explorationList.h.gch
 interface.cc
 memspool.cc
 mutex.cc
 object.cc
 od.cc
-popwayback.cc
 popc_combox_uds.cpp
 popc_connection_uds.cpp
+popwayback.cc
 string.cc
 system.cc
 thread.cc
