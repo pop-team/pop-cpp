@@ -23,7 +23,12 @@
 #include "paroc_combox.h"
 
 
-
+/**
+ * Initialize a parallel object with XMP support
+ * @param argc Number of arguments passed to main
+ * @param argv Array of char pointer representing the arguments passed to main 
+ * @return 0 if success. 
+ */
 int main(int argc, char* argv[]) 
 {
   MPI::Intercomm communicator; 
@@ -61,9 +66,10 @@ int main(int argc, char* argv[])
   POPC_MPIConnection* mpi_connection = new POPC_MPIConnection(); 
   mpi_connection->set_communicator(communicator); 
   
-
   bool active = true; 
   MPI::Status status; 
+  
+  // Start listening for new requests
   while(active) {
   
     // Receive command and data length  
@@ -110,7 +116,7 @@ int main(int argc, char* argv[])
   delete mpi_connection; 
   delete broker; 
 
-  
+  // Finalize the MPI execution   
   if(!MPI::Is_finalized()) {
     MPI::Finalize();
   }
