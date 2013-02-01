@@ -16,11 +16,6 @@ add_custom_target(popc_objmain.xmp.o ALL
                   DEPENDS popc_objmain.xmp.cc
                   COMMENT "Compile object main for XMP support")
 
-
-
-
-
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_xmp.h DESTINATION include/dynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_objmain.xmp.o DESTINATION lib/dynamic)
 
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "popc_objmain.xmp.o")
