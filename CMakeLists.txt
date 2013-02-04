@@ -52,6 +52,11 @@ if(MPI_SUPPORT)
   endif(NOT DEFINED MPI_CXX_COMPILER)
 endif(MPI_SUPPORT)
 
+if(NOT CMAKE_INSTALL_PREFIX)
+  set(CMAKE_INSTALL_PREFIX "/usr/local/popc")
+endif(NOT CMAKE_INSTALL_PREFIX)
+
+
 # Set to OFF to configure and compile the POP-C++ compiler/parser separately
 option(POPCPP_COMPILER "POP-C++ Compiler compilation" ON)
 
