@@ -21,6 +21,11 @@ RESULTS=tests_results
 NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
 
+if [ "x$POPC_LOCATION" = "x" ]
+then 
+  POPC_LOCATION=/usr/local/popc
+  export POPC_LOCATION
+fi
 
 if [ "x$POPC_INTERCONNECTOR" = "x" ]
 then 
@@ -28,6 +33,11 @@ then
   export POPC_INTERCONNECTOR
 fi
 
+if [ "x$POPC_MPIMANAGER" = "x" ]
+then 
+  POPC_MPIMANAGER=$POPC_LOCATION/mpi/popc_resource_manager_mpi
+  export POPC_MPIMANAGER
+fi
 
 if [ "$1" = "-all" ]
 then
