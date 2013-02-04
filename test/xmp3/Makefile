@@ -7,7 +7,7 @@ main: main.cpp xmp.o
 	popcc -o main main.cpp xmp.o
 
 run:
-	mpiexec -np 1 ../../interconnector/popc_mpi_interconnector -app=./main
+	mpiexec -np 1 $(POPC_INTERCONNECTOR) -app=./main
 
 clean: 
 	rm -f *.o main

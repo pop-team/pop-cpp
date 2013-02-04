@@ -20,4 +20,4 @@ clean:
 	rm -f *.obj MatMul *.o obj.map
 
 run:
-	mpiexec -np $(NODE_NUMBER) ../../interconnector/popc_mpi_interconnector -app=MatMul 1200 16 1 log 1
+	mpiexec -np $(NODE_NUMBER) $(POPC_INTERCONNECTOR) -app=MatMul 1200 16 1 log 1

@@ -15,7 +15,7 @@ popobject.obj: popobject.ph popobject.cpp
 	popcc -cxx=mpic++ -cpp="mpic++ -E" -popc-static -advanced -object -o popobject.obj popobject.ph popobject.cpp popgroup.stub.o
 
 run: main popgroup.obj 
-	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main
+	mpiexec -np 2 $(POPC_INTERCONNECTOR) -app=./main
 
 clean: 
 	rm -rf main *.obj _popc* *.o

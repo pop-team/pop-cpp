@@ -15,7 +15,7 @@ xmp_object:
 	popcc -I/home/clementval/xmp/include -D_XCALABLEMP -L/home/clementval/xmp/lib -xmp -popc-static -object -o pop_xmp_object.obj pop_xmp_object.ph pop_xmp_object.cpp -lxmp
 
 run: main pop_xmp_object.obj
-	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main
+	mpiexec -np 2 $(POPC_INTERCONNECTOR) -app=./main
 
 clean: 
 	rm -rf *.o main pop_xmp_object.obj _popc*

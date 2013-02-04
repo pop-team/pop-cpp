@@ -18,4 +18,4 @@ clean:
 	rm -f obj.map
 	rm -f _popc*	
 run:
-	mpiexec -np 2 ../../interconnector/popc_mpi_interconnector -app=./main
+	mpiexec -np 2 $(POPC_INTERCONNECTOR) -app=./main
