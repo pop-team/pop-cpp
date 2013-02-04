@@ -1,7 +1,6 @@
 POPC_PATH=$(POPC_LOCATION)
 POPC_LIB_PATH=$(POPC_PATH)/lib/dynamic
 POPC_INCLUDE_PATH=$(POPC_PATH)/include/dynamic
-POPC_INTERCONNECTOR=../../interconnector/popc_mpi_interconnector
 
 all: main pop_xmp_object.obj
 object: pop_xmp_object.obj

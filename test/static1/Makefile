@@ -13,4 +13,4 @@ clean:
 	rm -f *.obj MatMul *.o obj.map
 
 run:
-	mpiexec -app appfile
+	mpiexec -np 1 ./MatMul 600 4 1 log : -np 1 $(POPC_MPIMANAGER) : -np 4 ./MatWorker.obj -mpi -object=MatWorker
