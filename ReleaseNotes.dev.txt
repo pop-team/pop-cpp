@@ -7,7 +7,7 @@ COMMENT: These notes are for internal purpose only.
 ------------------------------------------------------
 
 -------------
-POP-C++ 2.6.4
+POP-C++ 2.6.5
 -------------
  
 This version has been developed in the Master Thesis project POP-C++ on the K Computer. Therefore, it is specially fit for 
@@ -20,6 +20,8 @@ New features:
 - New MPI support
 - XMP support
 - Parallel Object Group
+- Allocators with Allocator Factory
+- New layered architecture
 
 Disabled features: 
 - Socket communications

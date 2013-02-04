@@ -1,11 +1,16 @@
 POP-C++ 2.6.5
 
 - New build process with cmake
+- Added feature: Hybrid Communication Model (UDS/MPI)
+- Added feature: MPI Communication Model with pseudo-dynamic allocation
 - Added feature: Parallel Object Group
+- Added feature: New MPI support
+- Added feature: XcalabeMP support
+- Cross-compilation for the K Computer
 - New compiler flag -mpi to enable MPI support during compilation
 - New compiler flag -xmp to enable XMP support during compilation
 - New compiler flag -advanced to enable link to the POP-C++ Advanced Library
-- New compiler flag -statci to use the MPI Communication model with pseudo-dynamic allocation
+- New compiler flag -static to use the MPI Communication model with pseudo-dynamic allocation
 
 
 POP-C++ 2.5
