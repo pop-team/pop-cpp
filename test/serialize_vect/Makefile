@@ -9,12 +9,5 @@ myobj.obj: myobj.ph myobj.cc
 clean:
 	rm -f *.o  *.obj main obj.map
 
-#install: all 
-#	if [ ! -d $(INSTDIR)/ ]; then mkdir $(INSTDIR)/; fi
-#	p *.obj main  $(INSTDIR)/
-
-obj.map: myobj.obj
-	./myobj.obj -listlong > obj.map
-
 run: main myobj.obj obj.map
 	mpiexec -np 2 $(POPC_INTERCONNECTOR) -app=./main 10000 100

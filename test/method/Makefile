@@ -5,7 +5,6 @@ app:
 
 object:
 	popcc -object -o method.obj method.cc method.ph
-	./method.obj -listlong > obj.map
 
 clean:
 	rm -f *.o *.obj main obj.map

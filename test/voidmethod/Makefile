@@ -5,7 +5,6 @@ app:
 
 object:
 	popcc -noclean -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
-	./POPObject.obj -listlong > obj.map
 	
 clean:
 	rm -f *.o *.obj main obj.map _popc*

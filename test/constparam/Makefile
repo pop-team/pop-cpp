@@ -5,7 +5,6 @@ main:
 
 object:
 	popcc -noclean -object -o POPCobject.obj  data.cc structdata.cc POPCobject.ph POPCobject.cc
-	./POPCobject.obj -listlong > obj.map
 
 run:
 	mpiexec -np 2 $(POPC_INTERCONNECTOR) -app=./main

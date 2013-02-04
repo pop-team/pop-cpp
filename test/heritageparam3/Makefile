@@ -5,7 +5,6 @@ main:
 
 object:
 	popcc -noclean -object -o ParObject.obj heritdata.cc data.cc ParObject.cc ParObject.ph
-	./ParObject.obj -listlong > objmap
 
 clean:
 	rm -f *.o *.obj main objmap _popc*

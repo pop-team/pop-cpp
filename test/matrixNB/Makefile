@@ -1,8 +1,7 @@
-POPCC=../../parser/popcc
-POPCPP=../../parser/popcpp
-POPCPATH=../..
+POPCC=popcc
+POPCPP=popcpp
 CROSSCOMPILE=-cxx=FCCpx -Xg -pthread -cpp="FCCpx -E"
-POPCCOMPILE=-popc-static -popcdir=$(POPCPATH) -popcpp=$(POPCPP) 
+POPCCOMPILE=-popc-static 
 
 NODE_NUMBER=2
 
