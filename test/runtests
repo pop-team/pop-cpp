@@ -78,6 +78,7 @@ then
     echo "ALL TESTS SUCCEED! You are ready to use POP-C++!"
   else
     echo "Some test cases failed ! Check your installation and configuration ... Did you set your environement variables ?"
+    echo "This test suite has some test cases dedicated to XcalableMP. Did you install XcalableMP ?"
   fi
   rm -rf $RESULTS
 else
