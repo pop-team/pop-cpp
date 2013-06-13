@@ -53,7 +53,7 @@ int main(int argc, char **argv)
         
         //
         int temp = 1;
-        printf("nguyenvanhieu%d\n", 1);
+        printf("nguyenvanhieu%d\n", temp);
   
 	
         paroc_system app;
