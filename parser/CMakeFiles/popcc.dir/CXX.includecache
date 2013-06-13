@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/hieunv/Desktop/popc2.8/parser/popcc.cc
+unistd.h
+-
+stdio.h
+-
+stdlib.h
+-
+unistd.h
+-
+config.h
+/home/hieunv/Desktop/popc2.8/parser/config.h
+sys/types.h
+-
+sys/wait.h
+-
+string.h
+-
+errno.h
+-
+paroc_utils.h
+/home/hieunv/Desktop/popc2.8/parser/paroc_utils.h
+config.h
+/home/hieunv/Desktop/popc2.8/parser/config.h
+
+config.h
+
+include/dynamic/paroc_string.h
+string
+-
+
+include/dynamic/paroc_utils.h
+paroc_string.h
+include/dynamic/paroc_string.h
+

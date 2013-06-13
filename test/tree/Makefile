@@ -1,0 +1,14 @@
+all: app object
+
+app:
+	popcc -o main tree.ph tree.cc main.cc 
+
+object:
+	popcc -object -o tree.obj tree.cc tree.ph
+
+clean:
+	rm -f *.o *.obj main obj.map
+
+run:
+	mpiexec -np 2 $(POPC_INTERCONNECTOR) -app=./main 3 4
+

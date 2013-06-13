@@ -1,0 +1,35 @@
+#!/bin/bash
+
+MAXCOUNT=25
+RANGE=10
+COUNT=1
+AES=
+
+if [ ! -f ../scripts/aes.h ]
+then   
+   #Generate the key
+   while [ "$COUNT" -le $MAXCOUNT ]
+   do
+      NUMBER=$RANDOM
+      let "NUMBER %= $RANGE"
+      AES=$AES$NUMBER
+      let "COUNT += 1"
+   done
+   #Write the header file
+   echo "#define _AES_KEY \"$AES\"" > ../scripts/aes.h
+
+   AES=""
+   COUNT=1
+
+   #Generate the key
+   while [ "$COUNT" -le $MAXCOUNT ]
+   do
+      NUMBER=$RANDOM
+      let "NUMBER %= $RANGE"
+      AES=$AES$NUMBER
+      let "COUNT += 1"
+   done
+   #Write the key
+   echo "=======> GENERATE $PWD"
+   echo "#define _AES_KEY \"$AES\"" > aes.h
+fi

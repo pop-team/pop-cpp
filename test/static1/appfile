@@ -1,0 +1,3 @@
+-np 1 ./MatMul 600 4 1 log
+-np 1 $POPC_MPIMANAGER 
+-np 4 ./MatWorker.obj -mpi -object=MatWorker

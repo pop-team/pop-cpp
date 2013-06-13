@@ -1,0 +1,3569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="88">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="popc2.8" displayName="popc2.8" projectFiles="true">
+      <logicalFolder name="interconnector"
+                     displayName="interconnector"
+                     projectFiles="true">
+        <itemPath>../popc2.8/interconnector/openmpi_check_support.cpp</itemPath>
+        <itemPath>../popc2.8/interconnector/popc_mpi_interconnector.cpp</itemPath>
+        <itemPath>../popc2.8/interconnector/popc_resource_manager_mpi.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="xmp" displayName="xmp" projectFiles="true">
+        <logicalFolder name="src" displayName="src" projectFiles="true">
+          <itemPath>../popc2.8/xmp/src/popc_group_interface.cpp</itemPath>
+        </logicalFolder>
+        <itemPath>../popc2.8/xmp/popc_objmain.xmp.cc</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <df root="." name="popc2.8">
+      <df name="basic">
+        <df name="future">
+          <in>main.cc</in>
+        </df>
+        <df name="spawn">
+          <in>main.cc</in>
+          <in>spawned.cc</in>
+        </df>
+        <df name="uds">
+          <in>client.cpp</in>
+          <in>combox.cpp</in>
+          <in>combox.h</in>
+          <in>server.cpp</in>
+        </df>
+      </df>
+      <df name="CMakeFiles">
+        <df name="CompilerIdC">
+          <in>CMakeCCompilerId.c</in>
+        </df>
+        <df name="CompilerIdCXX">
+          <in>CMakeCXXCompilerId.cpp</in>
+        </df>
+        <in>cmake_mpi_test.c</in>
+        <in>cmake_mpi_test.cpp</in>
+      </df>
+      <df name="demos">
+        <df name="chat">
+          <in>chat.cc</in>
+          <in>chat.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="demopopc">
+          <in>demopopc.cc</in>
+          <in>demopopc.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="mandelbrot">
+          <in>chrono.cpp</in>
+          <in>chrono.h</in>
+          <in>fractal.cc</in>
+          <in>fractal.ph</in>
+          <in>main.cc</in>
+          <in>screen.cc</in>
+          <in>screen.ph</in>
+          <in>tile.cpp</in>
+          <in>tile.h</in>
+          <in>widget.cpp</in>
+          <in>widget.h</in>
+        </df>
+        <df name="mpi_test">
+          <in>TestMPI.cc</in>
+          <in>TestMPI.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="pingpong">
+          <in>main.cc</in>
+          <in>pingpong.cc</in>
+          <in>pingpong.ph</in>
+        </df>
+      </df>
+      <df name="dev">
+        <df name="popfile">
+          <df name="test_application">
+            <in>main.cpp</in>
+            <in>stdmain.cpp</in>
+          </df>
+          <df name="tinyxml">
+            <in>tinystr.cpp</in>
+            <in>tinystr.h</in>
+            <in>tinyxml.cpp</in>
+            <in>tinyxml.h</in>
+            <in>tinyxmlerror.cpp</in>
+            <in>tinyxmlparser.cpp</in>
+          </df>
+          <in>main.cpp</in>
+          <in>popfile.cpp</in>
+          <in>popfile.h</in>
+          <in>popfile_grip.cpp</in>
+          <in>popfile_grip.h</in>
+          <in>popfile_metadata.cpp</in>
+          <in>popfile_metadata.h</in>
+          <in>popfilebuffer.cpp</in>
+          <in>popfilebuffer.h</in>
+          <in>popfilereader.cc</in>
+          <in>popfilereader.ph</in>
+        </df>
+        <df name="test">
+          <df name="check_problem">
+            <df name="problem01_enumStructClass">
+              <in>POPObject.cc</in>
+              <in>POPObject.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem02_const">
+              <in>POPObject.cc</in>
+              <in>POPObject.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem03_namespace">
+              <in>POPObject.cc</in>
+              <in>POPObject.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem05_cout">
+              <in>POPObject.cc</in>
+              <in>POPObject.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem07_array">
+              <in>POPObject.cc</in>
+              <in>POPObject.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem08_const2">
+              <in>POPObject.cc</in>
+              <in>POPObject.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem10_forwardDecl">
+              <in>classA.cc</in>
+              <in>classA.ph</in>
+              <in>classB.cc</in>
+              <in>classB.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem12_parclassRef">
+              <in>classA.cc</in>
+              <in>classA.ph</in>
+              <in>classB.cc</in>
+              <in>classB.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem14_constMethod">
+              <in>POPObject.cc</in>
+              <in>POPObject.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem15_OR">
+              <in>POPObject.cc</in>
+              <in>POPObject.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem17_ArrayPOPBase">
+              <in>POPData.cc</in>
+              <in>POPData.h</in>
+              <in>POPObject.cc</in>
+              <in>POPObject.ph</in>
+              <in>main.cc</in>
+            </df>
+            <df name="problem18_constPOPBase">
+              <in>POPData.cc</in>
+              <in>POPData.h</in>
+              <in>POPObject.cc</in>
+              <in>POPObject.cpp</in>
+              <in>POPObject.h</in>
+              <in>POPObject.ph</in>
+              <in>main.cc</in>
+              <in>main.cpp</in>
+            </df>
+          </df>
+          <df name="enum">
+            <in>POPObject.cc</in>
+            <in>POPObject.ph</in>
+            <in>main.cc</in>
+          </df>
+          <df name="innerclass">
+            <in>POPObject.cc</in>
+            <in>POPObject.ph</in>
+            <in>main.cc</in>
+          </df>
+          <df name="innerstatic">
+            <in>POPObject.cc</in>
+            <in>POPObject.ph</in>
+            <in>main.cc</in>
+          </df>
+          <df name="namespace">
+            <in>POPObject.cc</in>
+            <in>POPObject.ph</in>
+            <in>main.cc</in>
+          </df>
+          <df name="nopack">
+            <in>POPObject.cc</in>
+            <in>POPObject.ph</in>
+            <in>main.cc</in>
+          </df>
+          <df name="nopack2">
+            <in>main.cc</in>
+            <in>popobject.cc</in>
+            <in>popobject.ph</in>
+            <in>secondobject.cc</in>
+            <in>secondobject.ph</in>
+          </df>
+          <df name="structure">
+            <in>POPObject.cc</in>
+            <in>POPObject.ph</in>
+            <in>main.cc</in>
+          </df>
+          <df name="thisCall">
+            <in>POPObject.cc</in>
+            <in>POPObject.ph</in>
+            <in>main.cc</in>
+          </df>
+          <df name="typedef">
+            <in>POPObject.cc</in>
+            <in>POPObject.ph</in>
+            <in>main.cc</in>
+          </df>
+        </df>
+      </df>
+      <df name="examples">
+        <df name="barrier">
+          <in>barrier.cc</in>
+          <in>barrier.ph</in>
+          <in>main.cc</in>
+          <in>worker.cc</in>
+          <in>worker.ph</in>
+        </df>
+        <df name="heritage">
+          <in>child.cc</in>
+          <in>child.ph</in>
+          <in>main.cc</in>
+          <in>mother.cc</in>
+          <in>mother.ph</in>
+        </df>
+        <df name="integer">
+          <in>integer.cc</in>
+          <in>integer.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="integer_cmake">
+          <in>integer_c.cc</in>
+          <in>integer_h.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="multi_obj">
+          <in>main.cc</in>
+          <in>myobj1.cc</in>
+          <in>myobj1.ph</in>
+          <in>myobj2.cc</in>
+          <in>myobj2.ph</in>
+          <in>myobj3.cc</in>
+          <in>myobj3.ph</in>
+          <in>myobj4.cc</in>
+          <in>myobj4.ph</in>
+        </df>
+        <df name="objReference">
+          <in>classA.cc</in>
+          <in>classA.ph</in>
+          <in>classB.cc</in>
+          <in>classB.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="serialize">
+          <in>data.cc</in>
+          <in>data.h</in>
+          <in>main.cc</in>
+          <in>parObject.cc</in>
+          <in>parObject.ph</in>
+        </df>
+        <df name="serialize_enum">
+          <in>data.cc</in>
+          <in>data.h</in>
+          <in>main.cc</in>
+          <in>parObject.cc</in>
+          <in>parObject.ph</in>
+        </df>
+        <df name="simple">
+          <in>integer.cc</in>
+          <in>integer.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="xmp-matrix">
+          <in>main.cpp</in>
+          <in>mpi-matrix.c</in>
+          <in>xmp-matrix.c</in>
+          <in>xmpworker.cpp</in>
+          <in>xmpworker.ph</in>
+        </df>
+      </df>
+      <df name="include">
+        <df name="dynamic">
+          <in>debug.h</in>
+          <in>explorationList.h</in>
+          <in>nodethread.h</in>
+          <in>paroc_accesspoint.h</in>
+          <in>paroc_allocobj.h</in>
+          <in>paroc_array.h</in>
+          <in>paroc_base.h</in>
+          <in>paroc_broker.h</in>
+          <in>paroc_broker_factory.h</in>
+          <in>paroc_buffer.h</in>
+          <in>paroc_buffer_factory.h</in>
+          <in>paroc_buffer_factory_finder.h</in>
+          <in>paroc_buffer_raw.h</in>
+          <in>paroc_buffer_raw_factory.h</in>
+          <in>paroc_buffer_utils.h</in>
+          <in>paroc_buffer_xdr.h</in>
+          <in>paroc_buffer_xdr_factory.h</in>
+          <in>paroc_combox.h</in>
+          <in>paroc_combox_factory.h</in>
+          <in>paroc_combox_socket.h</in>
+          <in>paroc_event.h</in>
+          <in>paroc_exception.h</in>
+          <in>paroc_interface.h</in>
+          <in>paroc_list.h</in>
+          <in>paroc_memspool.h</in>
+          <in>paroc_mutex.h</in>
+          <in>paroc_object.h</in>
+          <in>paroc_od.h</in>
+          <in>paroc_string.h</in>
+          <in>paroc_system.h</in>
+          <in>paroc_thread.h</in>
+          <in>paroc_utils.h</in>
+          <in>popc_allocator.h</in>
+          <in>popc_allocator_factory.h</in>
+          <in>popc_allocator_mpi_pseudo.h</in>
+          <in>popc_allocator_tcpip.h</in>
+          <in>popc_allocator_uds_interconnector.h</in>
+          <in>popc_buffer_xdr_mpi.h</in>
+          <in>popc_combox_uds.h</in>
+          <in>popc_connection_uds.h</in>
+          <in>popc_search_node_info.h</in>
+          <in>popwayback.h</in>
+          <in>request.h</in>
+          <in>response.h</in>
+          <in>timer.h</in>
+        </df>
+        <df name="pseudodynamic">
+          <in>debug.h</in>
+          <in>paroc_accesspoint.h</in>
+          <in>paroc_allocobj.h</in>
+          <in>paroc_array.h</in>
+          <in>paroc_base.h</in>
+          <in>paroc_broker.h</in>
+          <in>paroc_broker_factory.h</in>
+          <in>paroc_buffer.h</in>
+          <in>paroc_buffer_factory.h</in>
+          <in>paroc_buffer_factory_finder.h</in>
+          <in>paroc_buffer_raw.h</in>
+          <in>paroc_buffer_raw_factory.h</in>
+          <in>paroc_buffer_utils.h</in>
+          <in>paroc_buffer_xdr.h</in>
+          <in>paroc_buffer_xdr_factory.h</in>
+          <in>paroc_combox.h</in>
+          <in>paroc_combox_factory.h</in>
+          <in>paroc_combox_socket.h</in>
+          <in>paroc_event.h</in>
+          <in>paroc_exception.h</in>
+          <in>paroc_interface.h</in>
+          <in>paroc_list.h</in>
+          <in>paroc_memspool.h</in>
+          <in>paroc_mutex.h</in>
+          <in>paroc_object.h</in>
+          <in>paroc_od.h</in>
+          <in>paroc_string.h</in>
+          <in>paroc_system.h</in>
+          <in>paroc_thread.h</in>
+          <in>paroc_utils.h</in>
+          <in>popc_combox_mpi.h</in>
+          <in>popc_connection_mpi.h</in>
+          <in>popc_logger.h</in>
+          <in>popwayback.h</in>
+          <in>timer.h</in>
+        </df>
+      </df>
+      <df name="interconnector">
+        <in>openmpi_check_support.cpp</in>
+        <in>popc_mpi_interconnector.cpp</in>
+        <in>popc_resource_manager_mpi.cpp</in>
+      </df>
+      <df name="kcomputer">
+        <df name="mpitest">
+          <in>forkedprocess.cpp</in>
+          <in>mpiprocess-dumbthread.cpp</in>
+          <in>mpiprocess-only.cpp</in>
+          <in>mpiprocess.cpp</in>
+          <in>onlythread.cpp</in>
+          <in>udsthread.cpp</in>
+        </df>
+      </df>
+      <df name="lib">
+        <df name="dynamic">
+          <in>accesspoint.cc</in>
+          <in>benchmark.cc</in>
+          <in>broker.cc</in>
+          <in>broker_factory.cc</in>
+          <in>broker_receive.cc</in>
+          <in>broker_serve.cc</in>
+          <in>buffer.cc</in>
+          <in>buffer_factory.cc</in>
+          <in>buffer_factory_finder.cc</in>
+          <in>buffer_raw.cc</in>
+          <in>buffer_raw_factory.cc</in>
+          <in>buffer_utils.cc</in>
+          <in>buffer_xdr.cc</in>
+          <in>buffer_xdr_factory.cc</in>
+          <in>combox.cc</in>
+          <in>combox_factory.cc</in>
+          <in>combox_socket.cc</in>
+          <in>debug.cc</in>
+          <in>event.cc</in>
+          <in>exception.cc</in>
+          <in>explorationList.cc</in>
+          <in>interface.cc</in>
+          <in>memspool.cc</in>
+          <in>mutex.cc</in>
+          <in>nodethread.cc</in>
+          <in>object.cc</in>
+          <in>od.cc</in>
+          <in>paroc_infmain.std.cc</in>
+          <in>paroc_objmain.std.cc</in>
+          <in>popc_allocator_factory.cpp</in>
+          <in>popc_allocator_mpi_pseudo.cpp</in>
+          <in>popc_allocator_tcpip.cpp</in>
+          <in>popc_allocator_uds_interconnector.cpp</in>
+          <in>popc_buffer_xdr_mpi.cpp</in>
+          <in>popc_combox_uds.cpp</in>
+          <in>popc_connection_uds.cpp</in>
+          <in>popc_logger.cpp</in>
+          <in>popwayback.cc</in>
+          <in>request.cc</in>
+          <in>response.cc</in>
+          <in>string.cc</in>
+          <in>system.cc</in>
+          <in>thread.cc</in>
+          <in>timer.cc</in>
+          <in>utils.cc</in>
+        </df>
+        <df name="pseudodynamic">
+          <in>accesspoint.cc</in>
+          <in>allocobj.cc</in>
+          <in>alloctest.cc</in>
+          <in>benchmark.cc</in>
+          <in>broker.cc</in>
+          <in>broker_factory.cc</in>
+          <in>broker_receive.cc</in>
+          <in>broker_serve.cc</in>
+          <in>buffer.cc</in>
+          <in>buffer_factory.cc</in>
+          <in>buffer_factory_finder.cc</in>
+          <in>buffer_raw.cc</in>
+          <in>buffer_raw_factory.cc</in>
+          <in>buffer_utils.cc</in>
+          <in>buffer_xdr.cc</in>
+          <in>buffer_xdr_factory.cc</in>
+          <in>combox.cc</in>
+          <in>combox_factory.cc</in>
+          <in>combox_socket.cc</in>
+          <in>debug.cc</in>
+          <in>event.cc</in>
+          <in>exception.cc</in>
+          <in>interface.cc</in>
+          <in>memspool.cc</in>
+          <in>mutex.cc</in>
+          <in>object.cc</in>
+          <in>od.cc</in>
+          <in>paroc_infmain.psdyn.cc</in>
+          <in>popc_combox_mpi.cc</in>
+          <in>popc_connection_mpi.cpp</in>
+          <in>popc_logger.cpp</in>
+          <in>popc_objmain.psdyn.cc</in>
+          <in>popwayback.cc</in>
+          <in>string.cc</in>
+          <in>system.cc</in>
+          <in>testplugin.cc</in>
+          <in>thread.cc</in>
+          <in>timer.cc</in>
+          <in>utils.cc</in>
+        </df>
+      </df>
+      <df name="model">
+        <in>model.cc</in>
+        <in>model.h</in>
+        <in>modelgene.cc</in>
+        <in>modelgene.h</in>
+        <in>probobj.cc</in>
+        <in>probobj.ph</in>
+      </df>
+      <df name="mpi">
+        <in>paroc_objmain.mpi.cc</in>
+        <in>popc_mpi.h</in>
+      </df>
+      <df name="parser">
+        <in>class.cc</in>
+        <in>classmember.cc</in>
+        <in>codefile.cc</in>
+        <in>debug.cc</in>
+        <in>othercode.cc</in>
+        <in>packobject.cc</in>
+        <in>parser.cc</in>
+        <in>parser.h</in>
+        <in>parser.tab.cc</in>
+        <in>parser.tab.h</in>
+        <in>parser.yy.cc</in>
+        <in>parser_common.cc</in>
+        <in>parser_common.h</in>
+        <in>popcc.cc</in>
+        <in>type.cc</in>
+        <in>type.h</in>
+        <in>typearray.cc</in>
+        <in>typeclassstruct.cc</in>
+        <in>typeequal.cc</in>
+        <in>typeptr.cc</in>
+        <in>typeseqclass.cc</in>
+        <in>typestruct.cc</in>
+        <in>typetemplate.cc</in>
+        <in>utils.cc</in>
+      </df>
+      <df name="test">
+        <df name="arraypassing">
+          <in>POPObject.cc</in>
+          <in>POPObject.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="asynccreation">
+          <in>POPObject.cc</in>
+          <in>POPObject.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="barrier">
+          <in>Barrier.cc</in>
+          <in>Barrier.ph</in>
+          <in>main.cc</in>
+          <in>worker.cc</in>
+          <in>worker.ph</in>
+        </df>
+        <df name="bigdata">
+          <in>POPObject.cc</in>
+          <in>POPObject.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="callback">
+          <in>main.cc</in>
+          <in>titi.cc</in>
+          <in>titi.ph</in>
+          <in>toto.cc</in>
+          <in>toto.ph</in>
+        </df>
+        <df name="classparam">
+          <in>ParObject.cc</in>
+          <in>ParObject.ph</in>
+          <in>classdata.cc</in>
+          <in>classdata.h</in>
+          <in>data.cc</in>
+          <in>data.h</in>
+          <in>main.cc</in>
+        </df>
+        <df name="collective1">
+          <in>main.cpp</in>
+          <in>popgroup.cpp</in>
+          <in>popgroup.ph</in>
+        </df>
+        <df name="collective2">
+          <in>main.cpp</in>
+          <in>popgroup.cpp</in>
+          <in>popgroup.ph</in>
+        </df>
+        <df name="collective3">
+          <in>main.cpp</in>
+          <in>popgroup.cpp</in>
+          <in>popgroup.ph</in>
+          <in>popobject.cpp</in>
+          <in>popobject.ph</in>
+        </df>
+        <df name="collective4">
+          <in>main.cpp</in>
+          <in>popgroup.cpp</in>
+          <in>popgroup.ph</in>
+        </df>
+        <df name="constparam">
+          <in>POPCobject.cc</in>
+          <in>POPCobject.ph</in>
+          <in>data.cc</in>
+          <in>data.h</in>
+          <in>main.cc</in>
+          <in>structdata.cc</in>
+          <in>structdata.h</in>
+        </df>
+        <df name="exception">
+          <in>IOExceptions.cc</in>
+          <in>IOExceptions.h</in>
+          <in>classmember.cc</in>
+          <in>exception.cc</in>
+          <in>exception.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="heritage">
+          <in>child.cc</in>
+          <in>child.ph</in>
+          <in>main.cc</in>
+          <in>mother.cc</in>
+          <in>mother.ph</in>
+        </df>
+        <df name="heritageparam1">
+          <in>ParObject.cc</in>
+          <in>ParObject.ph</in>
+          <in>data.cc</in>
+          <in>data.h</in>
+          <in>heritdata.cc</in>
+          <in>heritdata.h</in>
+          <in>main.cc</in>
+        </df>
+        <df name="heritageparam2">
+          <in>ParObject.cc</in>
+          <in>ParObject.ph</in>
+          <in>data.cc</in>
+          <in>data.h</in>
+          <in>heritdata.cc</in>
+          <in>heritdata.h</in>
+          <in>main.cc</in>
+        </df>
+        <df name="heritageparam3">
+          <in>ParObject.cc</in>
+          <in>ParObject.ph</in>
+          <in>data.cc</in>
+          <in>data.h</in>
+          <in>heritdata.cc</in>
+          <in>heritdata.h</in>
+          <in>main.cc</in>
+        </df>
+        <df name="jobManager">
+          <in>POPCobject.cc</in>
+          <in>POPCobject.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="matrixNB">
+          <in>MatWorker.cc</in>
+          <in>MatWorker.ph</in>
+          <in>Matrix2D.cc</in>
+          <in>Matrix2D.h</in>
+          <in>Matrix2Dcl.cc</in>
+          <in>Matrix2Dcl.h</in>
+          <in>Matrix2Dlc.cc</in>
+          <in>Matrix2Dlc.h</in>
+          <in>main.cc</in>
+        </df>
+        <df name="method">
+          <in>main.cc</in>
+          <in>method.cc</in>
+          <in>method.ph</in>
+        </df>
+        <df name="mpi-support">
+          <in>main.cpp</in>
+          <in>mpiobject.cpp</in>
+          <in>mpiobject.ph</in>
+        </df>
+        <df name="param">
+          <in>ParObject.cc</in>
+          <in>ParObject.ph</in>
+          <in>data.cc</in>
+          <in>data.h</in>
+          <in>main.cc</in>
+        </df>
+        <df name="parobjbyref">
+          <in>POPObject.cc</in>
+          <in>POPObject.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="passparam">
+          <in>POPCobject.cc</in>
+          <in>POPCobject.ph</in>
+          <in>data.cc</in>
+          <in>data.h</in>
+          <in>main.cc</in>
+          <in>structdata.cc</in>
+          <in>structdata.h</in>
+        </df>
+        <df name="purevirtual">
+          <in>child.cc</in>
+          <in>child.ph</in>
+          <in>main.cc</in>
+          <in>mother.cc</in>
+          <in>mother.ph</in>
+        </df>
+        <df name="serialize_vect">
+          <in>main.cc</in>
+          <in>myobj.cc</in>
+          <in>myobj.ph</in>
+        </df>
+        <df name="static1">
+          <in>MatWorker.cc</in>
+          <in>MatWorker.ph</in>
+          <in>Matrix2D.cc</in>
+          <in>Matrix2D.h</in>
+          <in>Matrix2Dcl.cc</in>
+          <in>Matrix2Dcl.h</in>
+          <in>Matrix2Dlc.cc</in>
+          <in>Matrix2Dlc.h</in>
+          <in>main.cc</in>
+        </df>
+        <df name="stressallocation">
+          <in>POPObject.cc</in>
+          <in>POPObject.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="stresstest">
+          <in>POPObject.cc</in>
+          <in>POPObject.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="structparam">
+          <in>ParObject.cc</in>
+          <in>ParObject.ph</in>
+          <in>data.h</in>
+          <in>main.cc</in>
+        </df>
+        <df name="templateparam">
+          <in>ClassA.cc</in>
+          <in>ClassA.h</in>
+          <in>X.cc</in>
+          <in>X.h</in>
+          <in>main.cc</in>
+          <in>parobject.cc</in>
+          <in>parobject.ph</in>
+        </df>
+        <df name="tree">
+          <in>main.cc</in>
+          <in>tree.cc</in>
+          <in>tree.ph</in>
+        </df>
+        <df name="vectorint1">
+          <in>ParObject.cc</in>
+          <in>ParObject.ph</in>
+          <in>main.cc</in>
+          <in>popintvector.cc</in>
+          <in>popintvector.h</in>
+        </df>
+        <df name="vectorint2">
+          <in>ParObject.cc</in>
+          <in>ParObject.ph</in>
+          <in>main.cc</in>
+          <in>popintvector.cc</in>
+          <in>popintvector.h</in>
+        </df>
+        <df name="vectorx">
+          <in>ParObject.cc</in>
+          <in>ParObject.ph</in>
+          <in>X.cc</in>
+          <in>X.h</in>
+          <in>main.cc</in>
+          <in>popxvector.cc</in>
+          <in>popxvector.h</in>
+        </df>
+        <df name="voidmethod">
+          <in>POPObject.cc</in>
+          <in>POPObject.ph</in>
+          <in>main.cc</in>
+        </df>
+        <df name="xmp-raw">
+          <in>main.cc</in>
+          <in>pop_xmp_object.cc</in>
+          <in>pop_xmp_object.h</in>
+          <in>pop_xmp_object_broker.cpp</in>
+          <in>pop_xmp_object_broker.h</in>
+          <in>pop_xmp_object_object.cpp</in>
+          <in>pop_xmp_object_object.h</in>
+          <in>sample__omni__test.c</in>
+        </df>
+        <df name="xmp1">
+          <in>main.cpp</in>
+          <in>pop_xmp_object.cpp</in>
+          <in>pop_xmp_object.ph</in>
+          <in>sample__omni__test.c</in>
+        </df>
+        <df name="xmp2">
+          <in>main.cpp</in>
+          <in>pop_xmp_object.cpp</in>
+          <in>pop_xmp_object.ph</in>
+          <in>sample__omni__test.c</in>
+        </df>
+        <df name="xmp3">
+          <in>main.cpp</in>
+          <in>xmp.c</in>
+          <in>xmp.h</in>
+        </df>
+        <df name="xmp4">
+          <in>main.cpp</in>
+          <in>pop_xmp_object.cpp</in>
+          <in>pop_xmp_object.ph</in>
+          <in>test.c</in>
+          <in>test.h</in>
+        </df>
+      </df>
+      <df name="xmp">
+        <df name="src">
+          <in>popc-xmp.h</in>
+          <in>popc_connection_mpi.cpp</in>
+          <in>popc_connection_mpi.h</in>
+          <in>popc_group_broker.cpp</in>
+          <in>popc_group_broker.h</in>
+          <in>popc_group_broker_factory.cpp</in>
+          <in>popc_group_broker_factory.h</in>
+          <in>popc_group_exception.h</in>
+          <in>popc_group_interface.cpp</in>
+          <in>popc_group_interface.h</in>
+          <in>popc_object.cpp</in>
+          <in>popc_object.h</in>
+        </df>
+        <in>popc_objmain.xmp.cc</in>
+      </df>
+      <in>config.h</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>CMakeLists.txt</itemPath>
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath>CMakeFiles/CompilerIdC/a.out</executablePath>
+        </makeTool>
+      </makefileType>
+      <item path="../popc2.8/interconnector/openmpi_check_support.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>../popc2.8/include/dynamic</pElem>
+            <pElem>/usr/local/openmpi/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="../popc2.8/interconnector/popc_mpi_interconnector.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>../popc2.8/include/dynamic</pElem>
+            <pElem>/usr/local/openmpi/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="../popc2.8/interconnector/popc_resource_manager_mpi.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>/usr/local/openmpi/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="../popc2.8/xmp/popc_objmain.xmp.cc" ex="false" tool="1" flavor2="0">
+        <ccTool>
+          <incDir>
+            <pElem>../popc2.8/xmp/src</pElem>
+            <pElem>/usr/local/openmpi/include</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="../popc2.8/xmp/src/popc_group_interface.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="CMakeFiles/CompilerIdC/CMakeCCompilerId.c"
+            ex="false"
+            tool="0"
+            flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="CMakeFiles/CompilerIdCXX/CMakeCXXCompilerId.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="CMakeFiles/cmake_mpi_test.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="CMakeFiles/cmake_mpi_test.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="basic/future/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="basic/spawn/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="basic/spawn/spawned.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="basic/uds/client.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="basic/uds/combox.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="basic/uds/combox.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="basic/uds/server.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="demos/chat/chat.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/chat/chat.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="demos/chat/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/demopopc/demopopc.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/demopopc/demopopc.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="demos/demopopc/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/mandelbrot/chrono.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/mandelbrot/chrono.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="demos/mandelbrot/fractal.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/mandelbrot/fractal.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="demos/mandelbrot/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/mandelbrot/screen.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/mandelbrot/screen.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="demos/mandelbrot/tile.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/mandelbrot/tile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="demos/mandelbrot/widget.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/mandelbrot/widget.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="demos/mpi_test/TestMPI.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/mpi_test/TestMPI.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="demos/mpi_test/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/pingpong/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/pingpong/pingpong.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="demos/pingpong/pingpong.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/popfile/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/popfile.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/popfile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/popfile/popfile_grip.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/popfile_grip.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/popfile/popfile_metadata.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/popfile_metadata.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/popfile/popfilebuffer.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/popfilebuffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/popfile/popfilereader.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/popfilereader.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/popfile/test_application/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/test_application/stdmain.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/tinyxml/tinystr.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/tinyxml/tinystr.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/popfile/tinyxml/tinyxml.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/tinyxml/tinyxml.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/popfile/tinyxml/tinyxmlerror.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/popfile/tinyxml/tinyxmlparser.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem01_enumStructClass/POPObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem01_enumStructClass/POPObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem01_enumStructClass/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem02_const/POPObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem02_const/POPObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem02_const/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem03_namespace/POPObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem03_namespace/POPObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem03_namespace/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem05_cout/POPObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem05_cout/POPObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem05_cout/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem07_array/POPObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem07_array/POPObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem07_array/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem08_const2/POPObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem08_const2/POPObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem08_const2/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem10_forwardDecl/classA.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem10_forwardDecl/classA.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem10_forwardDecl/classB.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem10_forwardDecl/classB.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem10_forwardDecl/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem12_parclassRef/classA.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem12_parclassRef/classA.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem12_parclassRef/classB.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem12_parclassRef/classB.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem12_parclassRef/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem14_constMethod/POPObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem14_constMethod/POPObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem14_constMethod/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem15_OR/POPObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem15_OR/POPObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem15_OR/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem17_ArrayPOPBase/POPData.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem17_ArrayPOPBase/POPData.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem17_ArrayPOPBase/POPObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem17_ArrayPOPBase/POPObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem17_ArrayPOPBase/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem18_constPOPBase/POPData.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem18_constPOPBase/POPData.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem18_constPOPBase/POPObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem18_constPOPBase/POPObject.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem18_constPOPBase/POPObject.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem18_constPOPBase/POPObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="dev/test/check_problem/problem18_constPOPBase/main.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/check_problem/problem18_constPOPBase/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/enum/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/enum/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/test/enum/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/innerclass/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/innerclass/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/test/innerclass/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/innerstatic/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/innerstatic/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/test/innerstatic/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/namespace/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/namespace/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/test/namespace/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/nopack/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/nopack/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/test/nopack/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/nopack2/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/nopack2/popobject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/nopack2/popobject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/test/nopack2/secondobject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/nopack2/secondobject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/test/structure/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/structure/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/test/structure/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/thisCall/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/thisCall/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/test/thisCall/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/typedef/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="dev/test/typedef/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="dev/test/typedef/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/barrier/barrier.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/barrier/barrier.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/barrier/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/barrier/worker.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/barrier/worker.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/heritage/child.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/heritage/child.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/heritage/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/heritage/mother.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/heritage/mother.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/integer/integer.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/integer/integer.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/integer/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/integer_cmake/integer_c.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/integer_cmake/integer_h.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="examples/integer_cmake/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/multi_obj/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/multi_obj/myobj1.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/multi_obj/myobj1.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/multi_obj/myobj2.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/multi_obj/myobj2.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/multi_obj/myobj3.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/multi_obj/myobj3.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/multi_obj/myobj4.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/multi_obj/myobj4.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/objReference/classA.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/objReference/classA.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/objReference/classB.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/objReference/classB.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/objReference/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/serialize/data.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/serialize/data.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/serialize/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/serialize/parObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/serialize/parObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/serialize_enum/data.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/serialize_enum/data.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/serialize_enum/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/serialize_enum/parObject.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/serialize_enum/parObject.ph"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="examples/simple/integer.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/simple/integer.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="examples/simple/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/xmp-matrix/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/xmp-matrix/mpi-matrix.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="examples/xmp-matrix/xmp-matrix.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="examples/xmp-matrix/xmpworker.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="examples/xmp-matrix/xmpworker.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <folder path="popc2.8/xmp">
+        <ccTool>
+          <incDir>
+            <pElem>../popc2.8/include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </folder>
+      <item path="include/dynamic/debug.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/explorationList.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/nodethread.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_accesspoint.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_allocobj.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_array.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_base.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_broker.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_broker_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_buffer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_buffer_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_buffer_factory_finder.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_buffer_raw.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_buffer_raw_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_buffer_utils.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_buffer_xdr.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_buffer_xdr_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_combox.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_combox_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_combox_socket.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_event.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_exception.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_interface.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_list.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_memspool.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_mutex.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_object.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_od.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_string.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_system.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_thread.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/paroc_utils.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/popc_allocator.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/popc_allocator_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/popc_allocator_mpi_pseudo.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/popc_allocator_tcpip.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/popc_allocator_uds_interconnector.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/popc_buffer_xdr_mpi.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/popc_combox_uds.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/popc_connection_uds.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/popc_search_node_info.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/dynamic/popwayback.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/request.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/response.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/dynamic/timer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/debug.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_accesspoint.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_allocobj.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_array.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_base.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_broker.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_broker_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_buffer.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_buffer_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_buffer_factory_finder.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_buffer_raw.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_buffer_raw_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_buffer_utils.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_buffer_xdr.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_buffer_xdr_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_combox.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_combox_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_combox_socket.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_event.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_exception.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_interface.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_list.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_memspool.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_mutex.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_object.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_od.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_string.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_system.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_thread.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/paroc_utils.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/popc_combox_mpi.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/popc_connection_mpi.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/popc_logger.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/popwayback.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/pseudodynamic/timer.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="interconnector/openmpi_check_support.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="interconnector/popc_mpi_interconnector.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="interconnector/popc_resource_manager_mpi.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="kcomputer/mpitest/forkedprocess.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="kcomputer/mpitest/mpiprocess-dumbthread.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="kcomputer/mpitest/mpiprocess-only.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="kcomputer/mpitest/mpiprocess.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="kcomputer/mpitest/onlythread.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="kcomputer/mpitest/udsthread.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/accesspoint.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/benchmark.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/broker.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/broker_factory.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/broker_receive.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/broker_serve.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/buffer.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/buffer_factory.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/buffer_factory_finder.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/buffer_raw.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/buffer_raw_factory.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/buffer_utils.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/buffer_xdr.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/buffer_xdr_factory.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/combox.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/combox_factory.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/combox_socket.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/debug.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/event.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/exception.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/explorationList.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/interface.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/memspool.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/mutex.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/nodethread.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/object.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/od.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/paroc_infmain.std.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/paroc_objmain.std.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/popc_allocator_factory.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/popc_allocator_mpi_pseudo.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/popc_allocator_tcpip.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/popc_allocator_uds_interconnector.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/popc_buffer_xdr_mpi.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/popc_combox_uds.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/popc_connection_uds.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/popc_logger.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/popwayback.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/request.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/response.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/string.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/system.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/thread.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/timer.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/dynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/dynamic/utils.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/accesspoint.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/allocobj.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/alloctest.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/benchmark.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/broker.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/broker_factory.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/broker_receive.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/broker_serve.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/buffer.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/buffer_factory.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/buffer_factory_finder.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/buffer_raw.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/buffer_raw_factory.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/buffer_utils.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/buffer_xdr.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/buffer_xdr_factory.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/combox.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/combox_factory.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/combox_socket.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/debug.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/event.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/exception.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/interface.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/memspool.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/mutex.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/object.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/od.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/paroc_infmain.psdyn.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/popc_combox_mpi.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/popc_connection_mpi.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/popc_logger.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/popc_objmain.psdyn.cc"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/popwayback.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/string.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/system.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/testplugin.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/thread.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/timer.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="lib/pseudodynamic/utils.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+            <pElem>include/pseudodynamic</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="model/model.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="model/model.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="model/modelgene.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="model/modelgene.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="model/probobj.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="model/probobj.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="mpi/paroc_objmain.mpi.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="mpi/popc_mpi.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="parser/class.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/classmember.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/codefile.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/debug.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="parser/othercode.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/packobject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/parser.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/parser.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="parser/parser.tab.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/parser.tab.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="parser/parser.yy.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/parser_common.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/parser_common.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="parser/popcc.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/type.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/type.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="parser/typearray.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/typeclassstruct.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/typeequal.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/typeptr.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/typeseqclass.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/typestruct.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/typetemplate.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+          <incDir>
+            <pElem>parser</pElem>
+            <pElem>include/dynamic</pElem>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+      </item>
+      <item path="parser/utils.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/arraypassing/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/arraypassing/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/arraypassing/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/asynccreation/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/asynccreation/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/asynccreation/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/barrier/Barrier.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/barrier/Barrier.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/barrier/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/barrier/worker.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/barrier/worker.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/bigdata/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/bigdata/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/bigdata/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/callback/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/callback/titi.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/callback/titi.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/callback/toto.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/callback/toto.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/classparam/ParObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/classparam/ParObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/classparam/classdata.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/classparam/classdata.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/classparam/data.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/classparam/data.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/classparam/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/collective1/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/collective1/popgroup.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/collective1/popgroup.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/collective2/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/collective2/popgroup.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/collective2/popgroup.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/collective3/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/collective3/popgroup.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/collective3/popgroup.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/collective3/popobject.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/collective3/popobject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/collective4/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/collective4/popgroup.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/collective4/popgroup.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/constparam/POPCobject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/constparam/POPCobject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/constparam/data.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/constparam/data.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/constparam/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/constparam/structdata.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/constparam/structdata.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/exception/IOExceptions.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/exception/IOExceptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/exception/classmember.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/exception/exception.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/exception/exception.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/exception/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritage/child.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritage/child.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritage/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritage/mother.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritage/mother.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritageparam1/ParObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam1/ParObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritageparam1/data.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam1/data.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritageparam1/heritdata.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam1/heritdata.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritageparam1/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam2/ParObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam2/ParObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritageparam2/data.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam2/data.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritageparam2/heritdata.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam2/heritdata.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritageparam2/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam3/ParObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam3/ParObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritageparam3/data.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam3/data.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritageparam3/heritdata.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/heritageparam3/heritdata.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/heritageparam3/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/jobManager/POPCobject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/jobManager/POPCobject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/jobManager/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/matrixNB/MatWorker.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/matrixNB/MatWorker.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/matrixNB/Matrix2D.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/matrixNB/Matrix2D.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/matrixNB/Matrix2Dcl.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/matrixNB/Matrix2Dcl.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/matrixNB/Matrix2Dlc.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/matrixNB/Matrix2Dlc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/matrixNB/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/method/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/method/method.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/method/method.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/mpi-support/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/mpi-support/mpiobject.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/mpi-support/mpiobject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/param/ParObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/param/ParObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/param/data.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/param/data.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/param/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/parobjbyref/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/parobjbyref/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/parobjbyref/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/passparam/POPCobject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/passparam/POPCobject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/passparam/data.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/passparam/data.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/passparam/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/passparam/structdata.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/passparam/structdata.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/purevirtual/child.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/purevirtual/child.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/purevirtual/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/purevirtual/mother.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/purevirtual/mother.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/serialize_vect/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/serialize_vect/myobj.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/serialize_vect/myobj.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/static1/MatWorker.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/static1/MatWorker.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/static1/Matrix2D.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/static1/Matrix2D.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/static1/Matrix2Dcl.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/static1/Matrix2Dcl.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/static1/Matrix2Dlc.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/static1/Matrix2Dlc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/static1/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/stressallocation/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/stressallocation/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/stressallocation/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/stresstest/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/stresstest/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/stresstest/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/structparam/ParObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/structparam/ParObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/structparam/data.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/structparam/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/templateparam/ClassA.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/templateparam/ClassA.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/templateparam/X.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/templateparam/X.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/templateparam/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/templateparam/parobject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/templateparam/parobject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/tree/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/tree/tree.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/tree/tree.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/vectorint1/ParObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/vectorint1/ParObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/vectorint1/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/vectorint1/popintvector.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/vectorint1/popintvector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/vectorint2/ParObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/vectorint2/ParObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/vectorint2/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/vectorint2/popintvector.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/vectorint2/popintvector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/vectorx/ParObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/vectorx/ParObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/vectorx/X.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/vectorx/X.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/vectorx/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/vectorx/popxvector.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/vectorx/popxvector.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/voidmethod/POPObject.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/voidmethod/POPObject.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/voidmethod/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp-raw/main.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp-raw/pop_xmp_object.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp-raw/pop_xmp_object.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/xmp-raw/pop_xmp_object_broker.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp-raw/pop_xmp_object_broker.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="test/xmp-raw/pop_xmp_object_object.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp-raw/pop_xmp_object_object.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="test/xmp-raw/sample__omni__test.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="test/xmp1/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp1/pop_xmp_object.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp1/pop_xmp_object.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/xmp1/sample__omni__test.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="test/xmp2/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp2/pop_xmp_object.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp2/pop_xmp_object.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/xmp2/sample__omni__test.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="test/xmp3/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp3/xmp.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="test/xmp3/xmp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/xmp4/main.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp4/pop_xmp_object.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="test/xmp4/pop_xmp_object.ph" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test/xmp4/test.c" ex="false" tool="0" flavor2="2">
+        <cTool>
+        </cTool>
+      </item>
+      <item path="test/xmp4/test.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="xmp/popc_objmain.xmp.cc" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="xmp/src/popc-xmp.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="xmp/src/popc_connection_mpi.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="xmp/src/popc_connection_mpi.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="xmp/src/popc_group_broker.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="xmp/src/popc_group_broker.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="xmp/src/popc_group_broker_factory.cpp"
+            ex="false"
+            tool="1"
+            flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="xmp/src/popc_group_broker_factory.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="xmp/src/popc_group_exception.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="xmp/src/popc_group_interface.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="xmp/src/popc_group_interface.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="xmp/src/popc_object.cpp" ex="false" tool="1" flavor2="4">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="xmp/src/popc_object.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

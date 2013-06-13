@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ x$(uname) == "xLinux" ]
+then
+	echo "Building for Linux"
+	rm -rf /usr/local/popc
+	./configure --enable-popfile
+	make clean all install
+else
+	echo "Building for Mac OS X"
+	./configure CPPFLAGS=-DARCH_MAC --enable-popfile
+	make clean all > output
+	sudo rm -rf /usr/local/popc
+	sudo make install
+	sudo cp ./jobmgr.conf /usr/local/popc/etc/
+	sudo cp ./popc-runtime-env.sh /usr/local/popc/etc/ 
+	rm -rf /tmp/pop*
+fi
+
+
+

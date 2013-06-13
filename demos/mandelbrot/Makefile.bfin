@@ -1,0 +1,96 @@
+POPCDIR=/home/duo/popc-bfin-inst
+QTCC=bfin-linux-uclibc-g++
+QTLD=bfin-linux-uclibc-g++
+POPCC=$(POPCDIR)/bin/parocc
+INSTDIR=$(POPCDIR)/test/mandelbrot
+
+QTCCFLAGS=-Wall -DQT_NO_DEBUG -DQT_THREAD_SUPPORT -I/usr/include/qt3 -I/usr/qt/3/include
+#QTMOC=/usr/qt/3/bin/moc
+QTMOC=moc
+#QTLDFLAGS=-L/usr/qt/3/lib -L/usr/X11R6/lib -lqt-mt -lXext -lX11 -lm
+QTLDFLAGS=-L/usr/qt/3/lib -L/usr/X11R6/lib -lqt-mt
+
+QTOBJS=widget.o tile.o moc_widget.o chrono.o
+POPOBJS=fractal.o screen.o main.o
+POPPHS=fractal.ph screen.ph
+TEMP=moc*.cpp _*paroc* *.stub.o
+#TARGET=fractal.master fractal.slave fractal.map
+TARGET=fractal.master fractal.obj screen.obj 
+
+all:	fractal.obj
+	@echo "-----------------------------------------------"
+	@echo "run it with:"
+	@echo "parocrun fractal.map ./fractal.master <options>"
+
+.cpp.o:
+	$(QTCC) -c $(QTCCFLAGS) $<
+
+.cc.o:
+	$(POPCC) -c $(POPCCFLAGS) $*.ph $<
+
+#fractal.master: $(POPOBJS) $(QTOBJS)
+#	$(POPCC) -o $@ $(POPPHS) $(POPOBJS) $(QTOBJS) $(QTLDFLAGS)
+
+#fractal.slave: $(POPOBJS) $(QTOBJS)
+#	$(POPCC) -object -o $@ $(POPPHS) $(POPOBJS) $(QTOBJS) $(QTLDFLAGS)
+
+fractal.obj: screen.ph screen.cc fractal.cc
+	rm -f screen.o screen.stub.o
+	$(POPCC) -parclass-nobroker -c  screen.ph screen.cc
+	$(POPCC) -DBFIN -O3 -object -o fractal.obj fractal.cc fractal.ph screen.stub.o
+
+#screen.obj: tile.o widget.o moc_widget.o chrono.o screen.cc screen.ph fractal.ph fractal.cc
+#	rm -f fractal.o fractal.stub.o
+#	$(POPCC) -parclass-nobroker -c  fractal.ph fractal.cc
+#	$(POPCC) -object -o screen.obj screen.cc screen.ph fractal.stub.o tile.o widget.o moc_widget.o chrono.o -lqt-mt  -I/usr/include/qt3
+
+
+#fractal.map: fractal.obj screen.obj
+#	./fractal.obj -listlong > fractal.map
+#	./screen.obj -listlong >> fractal.map
+moc_%.cpp: %.h
+	$(QTMOC) -o $@ $<
+
+clean:
+	rm -f $(QTOBJS) $(POPOBJS) $(TEMP) $(TARGET)
+
+depend:
+	makedepend *.cc *.cpp 2>/dev/null
+
+install: fractal.obj
+	@if [ ! -d $(INSTDIR)/ ]; then mkdir $(INSTDIR)/; fi
+	cp fractal.obj $(INSTDIR)
+
+# DO NOT DELETE
+
+fractal.o: fractal.ph screen.ph /usr/include/math.h /usr/include/features.h
+fractal.o: /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h
+fractal.o: /usr/include/gnu/stubs.h /usr/include/gnu/stubs-32.h
+fractal.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
+fractal.o: /usr/include/bits/mathcalls.h
+main.o: screen.ph
+screen.o: screen.ph fractal.ph tile.h chrono.h /usr/include/sys/time.h
+screen.o: /usr/include/features.h /usr/include/sys/cdefs.h
+screen.o: /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h
+screen.o: /usr/include/gnu/stubs-32.h /usr/include/bits/types.h
+screen.o: /usr/include/bits/typesizes.h /usr/include/time.h
+screen.o: /usr/include/bits/time.h /usr/include/sys/select.h
+screen.o: /usr/include/bits/select.h /usr/include/bits/sigset.h
+chrono.o: /usr/include/stdio.h /usr/include/features.h
+chrono.o: /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h
+chrono.o: /usr/include/gnu/stubs.h /usr/include/gnu/stubs-32.h
+chrono.o: /usr/include/bits/types.h /usr/include/bits/typesizes.h
+chrono.o: /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h
+chrono.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
+chrono.o: /usr/include/string.h chrono.h /usr/include/sys/time.h
+chrono.o: /usr/include/time.h /usr/include/bits/time.h
+chrono.o: /usr/include/sys/select.h /usr/include/bits/select.h
+chrono.o: /usr/include/bits/sigset.h
+tile.o: /usr/include/stdio.h /usr/include/features.h /usr/include/sys/cdefs.h
+tile.o: /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h
+tile.o: /usr/include/gnu/stubs-32.h /usr/include/bits/types.h
+tile.o: /usr/include/bits/typesizes.h /usr/include/libio.h
+tile.o: /usr/include/_G_config.h /usr/include/wchar.h
+tile.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h tile.h
+tile.o: widget.h
+widget.o: tile.h widget.h

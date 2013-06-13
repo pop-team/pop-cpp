@@ -1,0 +1,2 @@
+/usr/bin/ar cr libpopc_advanced.a  CMakeFiles/popc_advanced.dir/popc_group_interface.cpp.o CMakeFiles/popc_advanced.dir/popc_group_broker.cpp.o CMakeFiles/popc_advanced.dir/popc_group_broker_factory.cpp.o CMakeFiles/popc_advanced.dir/popc_object.cpp.o CMakeFiles/popc_advanced.dir/popc_connection_mpi.cpp.o
+/usr/bin/ranlib libpopc_advanced.a
