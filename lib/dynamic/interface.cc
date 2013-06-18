@@ -130,7 +130,7 @@ paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
 
 //paroc_interface base class
 
-paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL)
+paroc_interface::paroc_interface() : _ssh_tunneling(false), __paroc_combox(NULL), __paroc_buf(NULL)
 {
 
 
@@ -531,7 +531,7 @@ void paroc_interface::Bind(const char *dest)
 
 bool paroc_interface::TryLocal(paroc_accesspoint &objaccess)
 {
-  /*
+  
 	POPString hostname;
 	POPString rarch;
 	POPString codefile;
@@ -572,7 +572,7 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess)
 		}
 		return (status==0);
 	}
-	*/
+	
 	return false;
 }
 
@@ -819,7 +819,6 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od)
 {  
-  /*
 	if (codefile==NULL) return ENOENT;
 	signal(SIGCHLD, SIG_IGN);
 
@@ -1019,8 +1018,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		objaccess->Serialize(*buf,false);
 		buf->Pop();
 	
-	}
-*/		
+	}		
 
 	return 0;
 }
