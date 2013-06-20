@@ -50,6 +50,8 @@
 #define POPC_CONNECT_TIMEOUT 10000
 #endif
 
+#define ALLOC_TIMEOUT 60
+
 int RunCmd(char **argv, char *env[], int *status)
 {
 
@@ -123,11 +125,6 @@ paroc_accesspoint paroc_interface::_paroc_nobind;
 //binding time out in miliseconds
 int paroc_interface::paroc_bind_timeout=10000;
 
-
-int paroc_interface::batchindex=0;
-int paroc_interface::batchsize=0;
-paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
-
 //paroc_interface base class
 
 paroc_interface::paroc_interface() : _ssh_tunneling(false), __paroc_combox(NULL), __paroc_buf(NULL)
@@ -135,7 +132,7 @@ paroc_interface::paroc_interface() : _ssh_tunneling(false), __paroc_combox(NULL)
 
 
  // DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
-//   if(od.isSecureSet()) accesspoint.SetSecure();
+   if(od.isSecureSet()) accesspoint.SetSecure();
    //_ssh_tunneling=false;
 //	__paroc_combox = NULL;
 //	__paroc_buf = NULL;
@@ -315,8 +312,8 @@ void paroc_interface::allocate_only()
 	
 	// Get the right allocator
 	POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance(); 
-  POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR); 
-  //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);        
+  //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR); 
+  POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);        
   if(allocator == NULL) {
     std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
   }
@@ -413,6 +410,7 @@ void paroc_interface::Bind(const char *dest)
 	char protsep[] = "://";
 	char prot[256];
 	char *tmp = (char*)strstr(dest,protsep);
+        printf("*tmp=%s\n", tmp);
 	char defaultprot[] = "socket";
 
 	if (tmp == NULL) {
@@ -529,42 +527,47 @@ void paroc_interface::Bind(const char *dest)
 	__paroc_combox->SetTimeout(-1);
 }
 
-bool paroc_interface::TryLocal(paroc_accesspoint &objaccess)
+bool paroc_interface::TryLocal(paroc_accesspoint &objaccess, paroc_od& od)
 {
-  
+    printf("    ----------------Trylocal----------------\n");
 	POPString hostname;
-	POPString rarch;
+        POPString rarch;
 	POPString codefile;
 	POPString batch;
 
-	POPString objname(ClassName());
-	bool localFlag = od.IsLocal();
+        POPString objname(ClassName());
+        bool localFlag = od.IsLocal();
 	od.getURL(hostname);
 	od.getArch(rarch);
 	od.getBatch(batch);
+        
+        printf("    localFlag=%d\n", localFlag);
+        printf("    ClassName()=%s\n", ClassName());
+        printf("    hostname=%s\n", hostname.GetString());
+        printf("    rarch=%s\n", rarch.GetString());
+        printf("    batch=%s\n", batch.GetString());
+        if (localFlag || hostname != NULL || batch != NULL) {
 
-
-	if (localFlag || hostname != NULL || batch != NULL) {
-
-		if (hostname == NULL) hostname=paroc_system::GetHost();
+            	if (hostname == NULL) hostname=paroc_system::GetHost();
 
 		od.getExecutable(codefile);
-		//Hostname existed
+                printf("    codefile=%s\n", codefile.GetString());
+                //Hostname existed
 		if (codefile == NULL) {
 			//Lookup local code manager for the binary source....
-			assert(!paroc_system::appservice.IsEmpty());
-			CodeMgr mgr(paroc_system::appservice);
+			//assert(!paroc_system::appservice.IsEmpty());
+			//CodeMgr mgr(paroc_system::appservice);
 			if (rarch==NULL)rarch=paroc_system::platform;
-			if (!mgr.QueryCode(objname,rarch,codefile))
-			{
+			//if (!mgr.QueryCode(objname,rarch,codefile))
+			//{
 				paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, ClassName());
 				//else return false;
-			}
+			//}
 		}
 
 		//Local exec using sh or rsh
 		char *hoststr = hostname.GetString();
-
+                printf("hoststr=%s, codefile=%s, ClassName()=%s, objaccess=%s", hoststr, codefile.GetString(), ClassName(), objaccess.GetAccessString());
 		int status = LocalExec(hoststr, codefile, ClassName(), paroc_system::jobservice, paroc_system::appservice,&objaccess,1,od);
 		
 		if (status!=0) {
@@ -572,7 +575,7 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess)
 		}
 		return (status==0);
 	}
-	
+	printf("    ----------------/endTrylocal----------------/n");
 	return false;
 }
 
@@ -819,6 +822,8 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od)
 {  
+    printf("        ------------LocalExec------------n");
+    printf("        JOBSERVICE-INTERFACE %s\n", jobserv.GetAccessString());
 	if (codefile==NULL) return ENOENT;
 	signal(SIGCHLD, SIG_IGN);
 
@@ -829,6 +834,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	char *tmp;
 
 	bool isManual=od.getIsManual();
+        printf("        isManual=%d\n", isManual);
 #ifdef OD_DISCONNECT
 	bool checkConnection=od.getCheckConnection();
 #endif
@@ -846,10 +852,15 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	od.getCore(rcore);
 	od.getBatch(batch);
 	od.getDirectory(cwd);
-
+        
+        printf("        ruser=%s\n", ruser.GetString());
+        printf("        rcore=%s\n", rcore.GetString());
+        printf("        batch=%s\n", batch.GetString());
+        printf("        cwd=%s\n", cwd.GetString());
+        
 	int n=0;
-	//POPString myhost = paroc_system::GetHost();
-	//bool islocal=(isManual||hostname==NULL || *hostname==0 || paroc_utils::SameContact(myhost,hostname) || paroc_utils::isEqual(hostname,"localhost") || paroc_utils::isEqual(hostname,"127.0.0.1"));
+	POPString myhost = paroc_system::GetHost();
+	bool islocal=(isManual||hostname==NULL || *hostname==0 /*|| paroc_utils::SameContact(myhost,hostname)*/ || paroc_utils::isEqual(hostname,"localhost") || paroc_utils::isEqual(hostname,"127.0.0.1"));
 	if (batch == NULL) {
 		if (!islocal) {
 			char *tmp=getenv("POPC_RSH");
@@ -873,8 +884,8 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		if (!islocal)
 		{
 
-			BatchMgr batchman(paroc_system::appservice);
-			sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
+			//BatchMgr batchman(paroc_system::appservice);
+			//sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
 			DEBUG("%s",tmpstr);
 			argv[n++]=strdup(tmpstr);
 		}
@@ -899,14 +910,14 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		tok=strtok_r(NULL," \t\n",&tmp);
 	}
 
-	//paroc_combox_socket tmpsock;
-  // bool isServer = true;
-	// if (!tmpsock.Create(0,isServer)) paroc_exception::paroc_throw_errno();
-	// POPString cburl;
-	// tmpsock.GetUrl(cburl);
+	paroc_combox_socket tmpsock;
+   bool isServer = true;
+	 if (!tmpsock.Create(0,isServer)) paroc_exception::paroc_throw_errno();
+	 POPString cburl;
+	 tmpsock.GetUrl(cburl);
 
-	// sprintf(tmpstr,"-callback=%s", (const char*)cburl);
-	// argv[n++]=strdup(tmpstr);
+	 sprintf(tmpstr,"-callback=%s", (const char*)cburl);
+	 argv[n++]=strdup(tmpstr);
 
 	if (classname != NULL) {
 		sprintf(tmpstr,"-object=%s", classname);
@@ -928,12 +939,12 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		argv[n++]=strdup(tmpstr);
 	}
 	
-	sprintf(tmpstr, "-address=uds_0.%d", paroc_system::pop_current_local_address);
+	/*sprintf(tmpstr, "-address=uds_0.%d", paroc_system::pop_current_local_address);
 	argv[n++]=strdup(tmpstr);	
 	sprintf(tmpstr, "uds://uds_0.%d", paroc_system::pop_current_local_address);
 	objaccess->SetAccessString(tmpstr);
 	
-	paroc_system::pop_current_local_address++;
+	paroc_system::pop_current_local_address++;*/
 	
 	
 
@@ -1019,7 +1030,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		buf->Pop();
 	
 	}		
-
+        printf("        -------------/endlLocalExec-------------/n");
 	return 0;
 }
 

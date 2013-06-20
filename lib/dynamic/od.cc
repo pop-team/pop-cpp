@@ -174,7 +174,7 @@ void paroc_od::url(const char *str)
 	}
 	hostname = h;
 	if (!strcmp(hostname, "localhost")) {
-	  runLocal(true);
+                runLocal(true);
 	}
 }
 
@@ -426,7 +426,7 @@ bool paroc_od::IsEmpty() const
 
 bool paroc_od::IsLocal() const
 {
-	return isLocalJob;
+    	return isLocalJob;
 }
 
 void paroc_od::setPlatforms(const char *objplatforms)
