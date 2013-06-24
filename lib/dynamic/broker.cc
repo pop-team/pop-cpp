@@ -288,7 +288,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 		char argument[1024];
 		sprintf(argument, "-%s_port=", (const char *)protocolName);
 
-		/*char *portstr=paroc_utils::checkremove(argc,argv,argument);
+		char *portstr=paroc_utils::checkremove(argc,argv,argument);
 		if (portstr!=NULL)
 		{
 			int port;
@@ -306,11 +306,11 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 				paroc_system::perror("Broker");
 				return false;
 			}
-		}*/
-		if(!pc->Create(address, true)){
+		}
+		/*if(!pc->Create(address, true)){
 			paroc_system::perror("Broker");
 			return false;
-		}
+		}*/
 		
 		
 		POPString ap;

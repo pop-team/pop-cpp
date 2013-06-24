@@ -338,7 +338,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip)
 bool paroc_system::Initialize(int *argc,char ***argv)
 {
   char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
-  if (info==NULL) return false;
+  if (info==NULL) {printf("Error0\n");return false;}
   paroc_system::jobservice.SetAccessString(info);
   paroc_system::jobservice.SetAsService();
 
@@ -348,8 +348,11 @@ bool paroc_system::Initialize(int *argc,char ***argv)
   if (paroc_utils::checkremove(argc,argv,"-runlocal"))  paroc_od::defaultLocalJob=true;
   char *appcontact=paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
-  if (codeser==NULL && appcontact==NULL) return false;
-
+  if (codeser==NULL && appcontact==NULL)
+  {
+      printf("error1\n");
+      return false;
+  }
   try
   {
     if (appcontact==NULL)
@@ -383,7 +386,8 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       delete mgr;
       mgr=NULL;
     }*/
-
+      printf("error2\n");
+      
     return false;
   }
   catch (...)
@@ -395,6 +399,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       delete mgr;
       mgr=NULL;
     }*/
+      printf("error3\n");
     return false;
   }
 
@@ -403,8 +408,11 @@ bool paroc_system::Initialize(int *argc,char ***argv)
  // DEBUGIF(codeconf==NULL,"No code config file\n");
 
   /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
-    return false;
-  else return true; */
+  {
+      printf("error4\n");
+      return false;
+  }
+  else return true;*/
 
 //  return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
   return false;

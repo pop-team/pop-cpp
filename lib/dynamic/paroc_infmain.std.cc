@@ -51,13 +51,12 @@ int main(int argc, char **argv)
 	paroc_system::processor_set(0);
 #endif
         
-  
         paroc_system app;
-  paroc_system::pop_current_local_address = 1;
-  paroc_system::popc_local_mpi_communicator_rank = 0;
+  /*paroc_system::pop_current_local_address = 1;
+  paroc_system::popc_local_mpi_communicator_rank = 0;*/
 
 	int i;
-	for (i=argc-1;i>=0;i--) {
+	/*for (i=argc-1;i>=0;i--) {
 	  if (paroc_utils::isEqual(argv[i],"-initparoc")) {	    
 			char **argv1=argv+i+1;
 			int argc1=argc-i-1;
@@ -70,8 +69,10 @@ int main(int argc, char **argv)
 			argc=i;
 			break;
 		}
-	}
+	}*/
 
+        atexit(_paroc_atexit);
+        
 	signal(SIGKILL, SignalTerminate);
 	signal(SIGTERM, SignalTerminate);
 	signal(SIGINT, SignalTerminate);
@@ -120,12 +121,6 @@ int main(int argc, char **argv)
   	} */  
 	  return ret;
 	}
-
-
-
-	atexit(_paroc_atexit);
-
-
 
 	try {
 		int ret=parocmain(argc,argv);

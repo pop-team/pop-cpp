@@ -329,7 +329,7 @@ void paroc_interface::allocate_only()
 void paroc_interface::Allocate()
 {
   allocate_only();
-	Bind(accesspoint); 
+        Bind(accesspoint); 
 }
 
 /** 
@@ -337,7 +337,7 @@ void paroc_interface::Allocate()
  */
 void paroc_interface::Bind(const paroc_accesspoint &dest)
 {
-
+    printf("----------------------------------Bind-------------------------------\n");
 	if (dest.IsEmpty()) {
 		Release();
 		return;
@@ -410,8 +410,7 @@ void paroc_interface::Bind(const char *dest)
 	char protsep[] = "://";
 	char prot[256];
 	char *tmp = (char*)strstr(dest,protsep);
-        printf("*tmp=%s\n", tmp);
-	char defaultprot[] = "socket";
+        char defaultprot[] = "socket";
 
 	if (tmp == NULL) {
 		// Default protocol: use TCP socket
@@ -439,7 +438,7 @@ void paroc_interface::Bind(const char *dest)
 	__paroc_combox->SetTimeout(paroc_bind_timeout);
 
   // Check if need proxy
-  std::string connect_dest(dest); 
+  /*std::string connect_dest(dest); 
   connect_dest = connect_dest.substr(6);
   
   size_t pos = connect_dest.find("uds_");
@@ -487,11 +486,10 @@ void paroc_interface::Bind(const char *dest)
   } else {
     create_return = __paroc_combox->Create(connect_dest.c_str(), false);
     connect_return = __paroc_combox->Connect(connect_dest.c_str());        
-  }
-  
-
-	if (create_return && connect_return) {
-   // printf("Before bindstatus\n");	
+  }*/
+         
+	if (__paroc_combox->Create(0, false) && __paroc_combox->Connect(dest)) {
+                // printf("Before bindstatus\n");	
 		int status;
 		POPString info;
 		POPString peerplatform;
@@ -525,6 +523,7 @@ void paroc_interface::Bind(const char *dest)
 	}
 
 	__paroc_combox->SetTimeout(-1);
+        printf("----------------------------------/endlBind-------------------------------\n");
 }
 
 bool paroc_interface::TryLocal(paroc_accesspoint &objaccess, paroc_od& od)
@@ -534,12 +533,16 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess, paroc_od& od)
         POPString rarch;
 	POPString codefile;
 	POPString batch;
+        
+        POPString cwd;
+        POPString classname;
 
-        POPString objname(ClassName());
+        //POPString objname(ClassName());
         bool localFlag = od.IsLocal();
 	od.getURL(hostname);
 	od.getArch(rarch);
 	od.getBatch(batch);
+        od.getDirectory(cwd);
         
         printf("    localFlag=%d\n", localFlag);
         printf("    ClassName()=%s\n", ClassName());
@@ -551,13 +554,14 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess, paroc_od& od)
             	if (hostname == NULL) hostname=paroc_system::GetHost();
 
 		od.getExecutable(codefile);
-                printf("    codefile=%s\n", codefile.GetString());
+                //printf("    codefile=%s\n", codefile.GetString());
                 //Hostname existed
 		if (codefile == NULL) {
 			//Lookup local code manager for the binary source....
 			//assert(!paroc_system::appservice.IsEmpty());
 			//CodeMgr mgr(paroc_system::appservice);
-			if (rarch==NULL)rarch=paroc_system::platform;
+			//if (rarch==NULL)rarch=paroc_system::platform;
+                        //printf("rarch=", rarch.GetString());
 			//if (!mgr.QueryCode(objname,rarch,codefile))
 			//{
 				paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, ClassName());
@@ -566,9 +570,11 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess, paroc_od& od)
 		}
 
 		//Local exec using sh or rsh
+                POPString tempstr;
 		char *hoststr = hostname.GetString();
-                printf("hoststr=%s, codefile=%s, ClassName()=%s, objaccess=%s", hoststr, codefile.GetString(), ClassName(), objaccess.GetAccessString());
-		int status = LocalExec(hoststr, codefile, ClassName(), paroc_system::jobservice, paroc_system::appservice,&objaccess,1,od);
+                
+                //printf("hoststr=%s, codefile=%s, ClassName()=%s, objaccess=%s\n", hoststr, codefile.GetString(), ClassName(), objaccess.GetAccessString());
+		int status = LocalExec(hoststr, "/home/hieunv/Desktop/popc2.8/test/arraypassing/POPObject.obj", "POPObject", paroc_system::jobservice, paroc_system::appservice, &objaccess,1,od);
 		
 		if (status!=0) {
 			paroc_exception::paroc_throw(status, ClassName());
@@ -822,8 +828,8 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od)
 {  
-    printf("        ------------LocalExec------------n");
-    printf("        JOBSERVICE-INTERFACE %s\n", jobserv.GetAccessString());
+    printf("        ------------LocalExec------------\n");
+    //printf("        JOBSERVICE-INTERFACE %s\n", jobserv.GetAccessString());
 	if (codefile==NULL) return ENOENT;
 	signal(SIGCHLD, SIG_IGN);
 
@@ -853,15 +859,18 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	od.getBatch(batch);
 	od.getDirectory(cwd);
         
+        printf("        hostname=%s\n", hostname);
         printf("        ruser=%s\n", ruser.GetString());
         printf("        rcore=%s\n", rcore.GetString());
         printf("        batch=%s\n", batch.GetString());
         printf("        cwd=%s\n", cwd.GetString());
+        printf("        codefile=%s\n", codefile);
+        printf("        rport=%s\n", rport);
         
 	int n=0;
-	POPString myhost = paroc_system::GetHost();
+	//POPString myhost = paroc_system::GetHost();
 	bool islocal=(isManual||hostname==NULL || *hostname==0 /*|| paroc_utils::SameContact(myhost,hostname)*/ || paroc_utils::isEqual(hostname,"localhost") || paroc_utils::isEqual(hostname,"127.0.0.1"));
-	if (batch == NULL) {
+        /*if (batch == NULL) {
 		if (!islocal) {
 			char *tmp=getenv("POPC_RSH");
 			argv[n++]=strdup((tmp==NULL)? "/usr/bin/ssh" : tmp);
@@ -889,19 +898,22 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 			DEBUG("%s",tmpstr);
 			argv[n++]=strdup(tmpstr);
 		}
-	}
-	//  if (strncmp(codefile, "http://",7)==0 || strncmp(codefile,"ftp://",6)==0)
+	}*/
+	
+        //  if (strncmp(codefile, "http://",7)==0 || strncmp(codefile,"ftp://",6)==0)
 	//    {
-	tmp=getenv("POPC_LOCATION");
-	if (tmp!=NULL) sprintf(tmpstr,"%s/services/popcobjrun",tmp);
+	        
+        /*tmp=getenv("POPC_LOCATION");
+        if (tmp!=NULL) sprintf(tmpstr,"%s/services/popcobjrun",tmp);
 	else strcpy(tmpstr,"popcobjrun");
-	argv[n++]=strdup(tmpstr);
+	argv[n++]=strdup(tmpstr);*/
 	//    }
 	//   else  if ((tmp=getenv("POPC_JOB_EXEC"))!=NULL)
 	//    {
 	//       argv[n++]=strdup(tmp);
 	//    }
-
+        
+        //printf("codefile=%s\n", codefile);
 	strcpy(tmpstr,codefile);
 	char *tok=strtok_r(tmpstr," \t\n",&tmp);
 	while (tok!=NULL)
@@ -911,6 +923,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	}
 
 	paroc_combox_socket tmpsock;
+        
    bool isServer = true;
 	 if (!tmpsock.Create(0,isServer)) paroc_exception::paroc_throw_errno();
 	 POPString cburl;
@@ -923,8 +936,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		sprintf(tmpstr,"-object=%s", classname);
 		argv[n++]=strdup(tmpstr);
 	}
-	
-	if (!appserv.IsEmpty()) {
+	/*if (!appserv.IsEmpty()) {
 		sprintf(tmpstr,"-appservice=%s",appserv.GetAccessString());
 		argv[n++]=strdup(tmpstr);
 	}
@@ -932,7 +944,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	if (!jobserv.IsEmpty()) {
 		sprintf(tmpstr,"-jobservice=%s",jobserv.GetAccessString());
 		argv[n++]=strdup(tmpstr);
-	}
+	}*/
 	// Select core
 	if (rcore!=NULL&&rcore!=0) {
 		sprintf(tmpstr,"-core=%s",(const char*)rcore);
@@ -945,7 +957,6 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	objaccess->SetAccessString(tmpstr);
 	
 	paroc_system::pop_current_local_address++;*/
-	
 	
 
 	if (rport!=NULL && *rport!=0)
@@ -1005,7 +1016,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 
 	//Now get the return paroc_accesspoint....
 	tmpsock.SetTimeout(ALLOC_TIMEOUT*1000);
-
+        
 	for (int i=0;i<howmany;i++, objaccess++)
 	{
 
@@ -1028,9 +1039,9 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		buf->Push("address","paroc_accesspoint",1);
 		objaccess->Serialize(*buf,false);
 		buf->Pop();
-	
+                
 	}		
-        printf("        -------------/endlLocalExec-------------/n");
+        printf("        -------------/endlLocalExec-------------\n");
 	return 0;
 }
 

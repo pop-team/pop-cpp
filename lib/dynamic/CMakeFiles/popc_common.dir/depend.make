@@ -458,6 +458,9 @@ lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o: include/dynam
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o: include/dynamic/popc_allocator.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o: include/dynamic/popc_allocator_tcpip.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o: include/dynamic/popwayback.h
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o: parser/parser.h
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o: parser/parser_common.h
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o: parser/type.h
 
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_uds_interconnector.cpp.o: lib/dynamic/popc_allocator_uds_interconnector.cpp
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_uds_interconnector.cpp.o: include/dynamic/debug.h
