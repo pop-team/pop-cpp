@@ -241,6 +241,10 @@ string
 include/dynamic/paroc_system.h
 paroc_accesspoint.h
 -
+net/if.h
+-
+ifaddrs.h
+-
 sched.h
 -
 iostream

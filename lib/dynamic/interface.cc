@@ -404,6 +404,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 
 void paroc_interface::Bind(const char *dest)
 {
+    printf("----------------------------------Bind to %s---------\n", dest);
 	Release();
 	if (dest==NULL || *dest==0) return;
 
@@ -420,7 +421,7 @@ void paroc_interface::Bind(const char *dest)
 		strncpy(prot, dest, sz);
 		prot[sz] = 0;
 	}
-
+        
   // Create combox factory
 	paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
 	POPString p;
@@ -494,10 +495,10 @@ void paroc_interface::Bind(const char *dest)
 		POPString info;
 		POPString peerplatform;
 		BindStatus(status, peerplatform, info);
-
-		switch (status) {
+                
+ 		switch (status) {
   		case BIND_OK:
-	  		//NegotiateEncoding(info,peerplatform);
+	  		NegotiateEncoding(info,peerplatform);
 		  	break;
   		case BIND_FORWARD_SESSION:
 	  	case BIND_FORWARD_PERMANENT: {
@@ -523,7 +524,7 @@ void paroc_interface::Bind(const char *dest)
 	}
 
 	__paroc_combox->SetTimeout(-1);
-        printf("----------------------------------/endlBind-------------------------------\n");
+        printf("----------------------------------endlBind to %s-----\n", dest);
 }
 
 bool paroc_interface::TryLocal(paroc_accesspoint &objaccess, paroc_od& od)
@@ -629,6 +630,8 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
 	paroc_mutex_locker lock(_paroc_imutex);
 	__paroc_buf->Reset();
 	__paroc_buf->SetHeader(h);
+        paroc_Dispatch(__paroc_buf);
+        paroc_Response(__paroc_buf);
 	
 	paroc_connection* connection = __paroc_combox->get_connection();
 	popc_send_request(__paroc_buf, connection);

@@ -305,7 +305,7 @@ POPString paroc_system::GetDefaultInterface()
 
 bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip)
 {
-  /*struct ifaddrs *addrs, *iap;
+  struct ifaddrs *addrs, *iap;
   struct sockaddr_in *sa;
   char str_ip_local[32];
 
@@ -330,7 +330,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip)
       freeifaddrs(addrs);
       return true;
     }}
-  freeifaddrs(addrs);*/
+  freeifaddrs(addrs);
   return false;
 }
 
