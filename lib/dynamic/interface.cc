@@ -50,8 +50,6 @@
 #define POPC_CONNECT_TIMEOUT 10000
 #endif
 
-#define ALLOC_TIMEOUT 60
-
 int RunCmd(char **argv, char *env[], int *status)
 {
 
@@ -125,14 +123,19 @@ paroc_accesspoint paroc_interface::_paroc_nobind;
 //binding time out in miliseconds
 int paroc_interface::paroc_bind_timeout=10000;
 
+
+int paroc_interface::batchindex=0;
+int paroc_interface::batchsize=0;
+paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
+
 //paroc_interface base class
 
-paroc_interface::paroc_interface() : _ssh_tunneling(false), __paroc_combox(NULL), __paroc_buf(NULL)
+paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL)
 {
 
 
  // DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
-   if(od.isSecureSet()) accesspoint.SetSecure();
+//   if(od.isSecureSet()) accesspoint.SetSecure();
    //_ssh_tunneling=false;
 //	__paroc_combox = NULL;
 //	__paroc_buf = NULL;
@@ -306,20 +309,21 @@ paroc_od paroc_interface::get_object_description()
 
 void paroc_interface::allocate_only()
 {
-	Release();
-	POPString objectname = ClassName();
-	POPString objectaddress; 
-	
-	// Get the right allocator
-	POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance(); 
-  //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR); 
-  POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);        
-  if(allocator == NULL) {
-    std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
-  }
-  
-  objectaddress = allocator->allocate(objectname, od); 
-	accesspoint.SetAccessString(objectaddress.GetString());  
+    Release();
+    POPString objectname = ClassName();
+    POPString objectaddress; 
+
+    // Get the right allocator
+    POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance(); 
+    //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR); 
+    POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);        
+    if(allocator == NULL) {
+      std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
+    }
+
+    objectaddress = allocator->allocate(objectname, od); 
+        
+    accesspoint.SetAccessString(objectaddress.GetString());     
 }
 
 /**
@@ -329,7 +333,9 @@ void paroc_interface::allocate_only()
 void paroc_interface::Allocate()
 {
   allocate_only();
-        Bind(accesspoint); 
+  printf("a1\n");
+	Bind(accesspoint);
+        printf("a2\n");
 }
 
 /** 
@@ -337,7 +343,7 @@ void paroc_interface::Allocate()
  */
 void paroc_interface::Bind(const paroc_accesspoint &dest)
 {
-    printf("----------------------------------Bind-------------------------------\n");
+
 	if (dest.IsEmpty()) {
 		Release();
 		return;
@@ -404,14 +410,13 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 
 void paroc_interface::Bind(const char *dest)
 {
-    printf("----------------------------------Bind to %s---------\n", dest);
 	Release();
 	if (dest==NULL || *dest==0) return;
 
 	char protsep[] = "://";
 	char prot[256];
 	char *tmp = (char*)strstr(dest,protsep);
-        char defaultprot[] = "socket";
+	char defaultprot[] = "socket";
 
 	if (tmp == NULL) {
 		// Default protocol: use TCP socket
@@ -421,7 +426,6 @@ void paroc_interface::Bind(const char *dest)
 		strncpy(prot, dest, sz);
 		prot[sz] = 0;
 	}
-        
   // Create combox factory
 	paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
 	POPString p;
@@ -439,7 +443,7 @@ void paroc_interface::Bind(const char *dest)
 	__paroc_combox->SetTimeout(paroc_bind_timeout);
 
   // Check if need proxy
-  /*std::string connect_dest(dest); 
+  std::string connect_dest(dest); 
   connect_dest = connect_dest.substr(6);
   
   size_t pos = connect_dest.find("uds_");
@@ -462,6 +466,7 @@ void paroc_interface::Bind(const char *dest)
   
   bool create_return, connect_return;  
   if(need_redirection) {
+      
     // Spoof address with the local MPI Communicator
     char* local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
@@ -485,20 +490,23 @@ void paroc_interface::Bind(const char *dest)
 	  paroc_connection* connection = __paroc_combox->get_connection();
 	  popc_send_request(__paroc_buf, connection);    
   } else {
-    create_return = __paroc_combox->Create(connect_dest.c_str(), false);
-    connect_return = __paroc_combox->Connect(connect_dest.c_str());        
-  }*/
-         
-	if (__paroc_combox->Create(0, false) && __paroc_combox->Connect(dest)) {
-                // printf("Before bindstatus\n");	
+    //create_return = __paroc_combox->Create(connect_dest.c_str(), false);
+    //connect_return = __paroc_combox->Connect(connect_dest.c_str());
+    create_return = __paroc_combox->Create(0, false);
+    connect_return = __paroc_combox->Connect(dest);        
+  }
+  
+
+	if (create_return && connect_return) {
+   // printf("Before bindstatus\n");	
 		int status;
 		POPString info;
 		POPString peerplatform;
 		BindStatus(status, peerplatform, info);
-                
- 		switch (status) {
+                printf("haha3\n");
+		switch (status) {
   		case BIND_OK:
-	  		NegotiateEncoding(info,peerplatform);
+	  		//NegotiateEncoding(info,peerplatform);
 		  	break;
   		case BIND_FORWARD_SESSION:
 	  	case BIND_FORWARD_PERMANENT: {
@@ -524,65 +532,52 @@ void paroc_interface::Bind(const char *dest)
 	}
 
 	__paroc_combox->SetTimeout(-1);
-        printf("----------------------------------endlBind to %s-----\n", dest);
 }
 
-bool paroc_interface::TryLocal(paroc_accesspoint &objaccess, paroc_od& od)
+bool paroc_interface::TryLocal(paroc_accesspoint &objaccess)
 {
-    printf("    ----------------Trylocal----------------\n");
+  /*
 	POPString hostname;
-        POPString rarch;
+	POPString rarch;
 	POPString codefile;
 	POPString batch;
-        
-        POPString cwd;
-        POPString classname;
 
-        //POPString objname(ClassName());
-        bool localFlag = od.IsLocal();
+	POPString objname(ClassName());
+	bool localFlag = od.IsLocal();
 	od.getURL(hostname);
 	od.getArch(rarch);
 	od.getBatch(batch);
-        od.getDirectory(cwd);
-        
-        printf("    localFlag=%d\n", localFlag);
-        printf("    ClassName()=%s\n", ClassName());
-        printf("    hostname=%s\n", hostname.GetString());
-        printf("    rarch=%s\n", rarch.GetString());
-        printf("    batch=%s\n", batch.GetString());
-        if (localFlag || hostname != NULL || batch != NULL) {
 
-            	if (hostname == NULL) hostname=paroc_system::GetHost();
+
+	if (localFlag || hostname != NULL || batch != NULL) {
+
+		if (hostname == NULL) hostname=paroc_system::GetHost();
 
 		od.getExecutable(codefile);
-                //printf("    codefile=%s\n", codefile.GetString());
-                //Hostname existed
+		//Hostname existed
 		if (codefile == NULL) {
 			//Lookup local code manager for the binary source....
-			//assert(!paroc_system::appservice.IsEmpty());
-			//CodeMgr mgr(paroc_system::appservice);
-			//if (rarch==NULL)rarch=paroc_system::platform;
-                        //printf("rarch=", rarch.GetString());
-			//if (!mgr.QueryCode(objname,rarch,codefile))
-			//{
+			assert(!paroc_system::appservice.IsEmpty());
+			CodeMgr mgr(paroc_system::appservice);
+			if (rarch==NULL)rarch=paroc_system::platform;
+			if (!mgr.QueryCode(objname,rarch,codefile))
+			{
 				paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, ClassName());
 				//else return false;
-			//}
+			}
 		}
 
 		//Local exec using sh or rsh
-                POPString tempstr;
 		char *hoststr = hostname.GetString();
-                
-                //printf("hoststr=%s, codefile=%s, ClassName()=%s, objaccess=%s\n", hoststr, codefile.GetString(), ClassName(), objaccess.GetAccessString());
-		int status = LocalExec(hoststr, "/home/hieunv/Desktop/popc2.8/test/arraypassing/POPObject.obj", "POPObject", paroc_system::jobservice, paroc_system::appservice, &objaccess,1,od);
+
+		int status = LocalExec(hoststr, codefile, ClassName(), paroc_system::jobservice, paroc_system::appservice,&objaccess,1,od);
 		
 		if (status!=0) {
 			paroc_exception::paroc_throw(status, ClassName());
 		}
 		return (status==0);
 	}
-	printf("    ----------------/endTrylocal----------------/n");
+	*/
 	return false;
 }
 
@@ -630,8 +625,6 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
 	paroc_mutex_locker lock(_paroc_imutex);
 	__paroc_buf->Reset();
 	__paroc_buf->SetHeader(h);
-        paroc_Dispatch(__paroc_buf);
-        paroc_Response(__paroc_buf);
 	
 	paroc_connection* connection = __paroc_combox->get_connection();
 	popc_send_request(__paroc_buf, connection);
@@ -831,8 +824,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od)
 {  
-    printf("        ------------LocalExec------------\n");
-    //printf("        JOBSERVICE-INTERFACE %s\n", jobserv.GetAccessString());
+  /*
 	if (codefile==NULL) return ENOENT;
 	signal(SIGCHLD, SIG_IGN);
 
@@ -843,7 +835,6 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	char *tmp;
 
 	bool isManual=od.getIsManual();
-        printf("        isManual=%d\n", isManual);
 #ifdef OD_DISCONNECT
 	bool checkConnection=od.getCheckConnection();
 #endif
@@ -861,19 +852,11 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	od.getCore(rcore);
 	od.getBatch(batch);
 	od.getDirectory(cwd);
-        
-        printf("        hostname=%s\n", hostname);
-        printf("        ruser=%s\n", ruser.GetString());
-        printf("        rcore=%s\n", rcore.GetString());
-        printf("        batch=%s\n", batch.GetString());
-        printf("        cwd=%s\n", cwd.GetString());
-        printf("        codefile=%s\n", codefile);
-        printf("        rport=%s\n", rport);
-        
+
 	int n=0;
 	//POPString myhost = paroc_system::GetHost();
-	bool islocal=(isManual||hostname==NULL || *hostname==0 /*|| paroc_utils::SameContact(myhost,hostname)*/ || paroc_utils::isEqual(hostname,"localhost") || paroc_utils::isEqual(hostname,"127.0.0.1"));
-        /*if (batch == NULL) {
+	//bool islocal=(isManual||hostname==NULL || *hostname==0 || paroc_utils::SameContact(myhost,hostname) || paroc_utils::isEqual(hostname,"localhost") || paroc_utils::isEqual(hostname,"127.0.0.1"));
+	if (batch == NULL) {
 		if (!islocal) {
 			char *tmp=getenv("POPC_RSH");
 			argv[n++]=strdup((tmp==NULL)? "/usr/bin/ssh" : tmp);
@@ -896,27 +879,24 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		if (!islocal)
 		{
 
-			//BatchMgr batchman(paroc_system::appservice);
-			//sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
+			BatchMgr batchman(paroc_system::appservice);
+			sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
 			DEBUG("%s",tmpstr);
 			argv[n++]=strdup(tmpstr);
 		}
-	}*/
-	
-        //  if (strncmp(codefile, "http://",7)==0 || strncmp(codefile,"ftp://",6)==0)
+	}
+	//  if (strncmp(codefile, "http://",7)==0 || strncmp(codefile,"ftp://",6)==0)
 	//    {
-	        
-        /*tmp=getenv("POPC_LOCATION");
-        if (tmp!=NULL) sprintf(tmpstr,"%s/services/popcobjrun",tmp);
+	tmp=getenv("POPC_LOCATION");
+	if (tmp!=NULL) sprintf(tmpstr,"%s/services/popcobjrun",tmp);
 	else strcpy(tmpstr,"popcobjrun");
-	argv[n++]=strdup(tmpstr);*/
+	argv[n++]=strdup(tmpstr);
 	//    }
 	//   else  if ((tmp=getenv("POPC_JOB_EXEC"))!=NULL)
 	//    {
 	//       argv[n++]=strdup(tmp);
 	//    }
-        
-        //printf("codefile=%s\n", codefile);
+
 	strcpy(tmpstr,codefile);
 	char *tok=strtok_r(tmpstr," \t\n",&tmp);
 	while (tok!=NULL)
@@ -925,21 +905,21 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		tok=strtok_r(NULL," \t\n",&tmp);
 	}
 
-	paroc_combox_socket tmpsock;
-        
-   bool isServer = true;
-	 if (!tmpsock.Create(0,isServer)) paroc_exception::paroc_throw_errno();
-	 POPString cburl;
-	 tmpsock.GetUrl(cburl);
+	//paroc_combox_socket tmpsock;
+  // bool isServer = true;
+	// if (!tmpsock.Create(0,isServer)) paroc_exception::paroc_throw_errno();
+	// POPString cburl;
+	// tmpsock.GetUrl(cburl);
 
-	 sprintf(tmpstr,"-callback=%s", (const char*)cburl);
-	 argv[n++]=strdup(tmpstr);
+	// sprintf(tmpstr,"-callback=%s", (const char*)cburl);
+	// argv[n++]=strdup(tmpstr);
 
 	if (classname != NULL) {
 		sprintf(tmpstr,"-object=%s", classname);
 		argv[n++]=strdup(tmpstr);
 	}
-	/*if (!appserv.IsEmpty()) {
+	
+	if (!appserv.IsEmpty()) {
 		sprintf(tmpstr,"-appservice=%s",appserv.GetAccessString());
 		argv[n++]=strdup(tmpstr);
 	}
@@ -947,19 +927,20 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 	if (!jobserv.IsEmpty()) {
 		sprintf(tmpstr,"-jobservice=%s",jobserv.GetAccessString());
 		argv[n++]=strdup(tmpstr);
-	}*/
+	}
 	// Select core
 	if (rcore!=NULL&&rcore!=0) {
 		sprintf(tmpstr,"-core=%s",(const char*)rcore);
 		argv[n++]=strdup(tmpstr);
 	}
 	
-	/*sprintf(tmpstr, "-address=uds_0.%d", paroc_system::pop_current_local_address);
+	sprintf(tmpstr, "-address=uds_0.%d", paroc_system::pop_current_local_address);
 	argv[n++]=strdup(tmpstr);	
 	sprintf(tmpstr, "uds://uds_0.%d", paroc_system::pop_current_local_address);
 	objaccess->SetAccessString(tmpstr);
 	
-	paroc_system::pop_current_local_address++;*/
+	paroc_system::pop_current_local_address++;
+	
 	
 
 	if (rport!=NULL && *rport!=0)
@@ -1019,7 +1000,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 
 	//Now get the return paroc_accesspoint....
 	tmpsock.SetTimeout(ALLOC_TIMEOUT*1000);
-        
+
 	for (int i=0;i<howmany;i++, objaccess++)
 	{
 
@@ -1042,9 +1023,10 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 		buf->Push("address","paroc_accesspoint",1);
 		objaccess->Serialize(*buf,false);
 		buf->Pop();
-                
-	}		
-        printf("        -------------/endlLocalExec-------------\n");
+	
+	}
+*/		
+
 	return 0;
 }
 

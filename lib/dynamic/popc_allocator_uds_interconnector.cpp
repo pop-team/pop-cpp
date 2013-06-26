@@ -60,7 +60,7 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
 	// Get the executable path name
 	POPString codefile;
 	od.getExecutable(codefile);
-	
+
 	// If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
 	if(codefile.Length() <= 0) {
 	  printf("POP-C++ Error: Code file executable path is NULL ! Abort !\n"); 	
@@ -84,10 +84,11 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
   
   char* local_address = new char[15];
   snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
-  
+  printf("local_address=%s\n", local_address);    
   if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address))
     paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
     
+  printf("/endllocal_address\n");
 	paroc_message_header header(20, 200000, INVOKE_SYNC,"_allocate");
 	allocating_buffer->Reset();
 	allocating_buffer->SetHeader(header);

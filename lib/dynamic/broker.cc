@@ -175,6 +175,7 @@ bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned 
 int paroc_broker::Run()
 {
 
+    printf("run in broker\n");
 	//Create threads for each protocols for receiving requests....
 
 	paroc_array<paroc_receivethread *> ptArray;
@@ -184,7 +185,7 @@ int paroc_broker::Run()
 	}
 
 	state = POPC_STATE_RUNNING;
-
+        printf("a111\n");
 	ptArray.SetSize(comboxCount);
 	int i;
 
@@ -195,6 +196,8 @@ int paroc_broker::Run()
 		  return errno;
 		}
 	}
+        
+        printf("a222\n");
 
 
 	if (obj == NULL) 
@@ -203,10 +206,11 @@ int paroc_broker::Run()
 	while (state == POPC_STATE_RUNNING) {
 		try {
 			paroc_request req;
-
+printf("a333\n");
 			if (!GetRequest(req)) break;
 
-			ServeRequest(req);
+printf("a444\n");
+			ServeRequest(req);                          
 			if (req.methodId[2] & INVOKE_CONSTRUCTOR)
 			{
 				alarm(0);
@@ -222,7 +226,6 @@ int paroc_broker::Run()
 	}
 
 
-
 	if (obj!=NULL && state==POPC_STATE_RUNNING)
 	{
 		paroc_mutex_locker test(execCond);
@@ -233,19 +236,19 @@ int paroc_broker::Run()
 			execCond.wait();
 		}
 	}
-	
-  
+	        
 
 	state = POPC_STATE_EXIT;
+        
 	for (i = 0; i < comboxCount; i++) {
 		if (WakeupReceiveThread(comboxArray[i])) {
-		  delete ptArray[i];
+		  delete ptArray[i];      
     } else {
 			ptArray[i]->cancel();
 		}
 	}
 	
-
+        printf("endl in broker\n");
 	return 0;
 }
 
@@ -253,16 +256,15 @@ int paroc_broker::Run()
 bool paroc_broker::Initialize(int *argc, char ***argv)
 {
 	if (paroc_utils::checkremove(argc, argv, "-runlocal"))  paroc_od::defaultLocalJob=true;
-	char *address = paroc_utils::checkremove(argc,argv,"-address=");
+	
+        char *address = paroc_utils::checkremove(argc,argv,"-address=");
 
 	paroc_combox_factory  *ff = paroc_combox_factory::GetInstance();
 	int comboxCount = ff->GetCount();
 	comboxArray.SetSize(comboxCount);
 	POPString protocolName;
 	POPString url;
-
-
-
+        
 	int count=0;
 	for (int i = 0;i < comboxCount;i++) {
 		comboxArray[count] = ff->Create(i);
@@ -287,8 +289,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 		
 		char argument[1024];
 		sprintf(argument, "-%s_port=", (const char *)protocolName);
-
-		char *portstr=paroc_utils::checkremove(argc,argv,argument);
+		/*char *portstr=paroc_utils::checkremove(argc,argv,argument);
 		if (portstr!=NULL)
 		{
 			int port;
@@ -306,11 +307,12 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 				paroc_system::perror("Broker");
 				return false;
 			}
-		}
-		/*if(!pc->Create(address, true)){
+		}*/
+		//if(!pc->Create(address, true)){
+                if(!pc->Create(0, true)){
 			paroc_system::perror("Broker");
 			return false;
-		}*/
+		}
 		
 		
 		POPString ap;
@@ -355,13 +357,14 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 
 bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
 {
-	paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
+    
+    paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
 	POPString url, prot;
 
 	bool ok=false;
 	mycombox->GetProtocol(prot);
 	mycombox->GetUrl(url);
-
+        
 	char *str=url.GetString();
 	if (str==NULL) return false;
 
@@ -376,10 +379,11 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
 		}
     paroc_buffer_factory* buffer_factory = tmp->GetBufferFactory();
     paroc_buffer* buffer = buffer_factory->CreateBuffer();
-		if (tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
+		//if (tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
+                if (tmp->Create(0, false) && tmp->Connect(tok)) {
 		  try {
-        paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
-	      buffer->Reset();
+                paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
+              buffer->Reset();
 	      buffer->SetHeader(h);
 	      paroc_connection* connection = tmp->get_connection();
         if (!buffer->Send((*tmp), connection)) {
@@ -402,7 +406,6 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
     tmp->Destroy();
 		tok = strtok_r(NULL, " \t\n\r", &ptr);
 	}
-
 	return ok;
 }
 

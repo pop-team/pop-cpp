@@ -18,14 +18,10 @@
 #include "paroc_combox.h"
 #include "paroc_combox_factory.h"
 #include "paroc_broker.h"
-#include "paroc_interface.h"
-#include "parser/parser.h"
+#include "include/pseudodynamic/paroc_system.h"
+#include "include/pseudodynamic/paroc_interface.h"
 
-
-int paroc_interface::batchindex=0;
-int paroc_interface::batchsize=0;
-paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
-
+#define ALLOC_TIMEOUT 60
 /**
  * Allocator over TCP/IP with local mechanism constructor
  */ 
@@ -48,114 +44,122 @@ POPC_Allocator_tcpip_local::~POPC_Allocator_tcpip_local()
  */
 POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& od)
 {
-    paroc_interface *paroc_intf = new paroc_interface();
+    POPString p;
+    POPString hostname;
+    POPString cwd;
     
-    printf("--------------------Allocate--------------------\n");
-        paroc_intf->Release();
-	POPString p;
+    char tmpstr[10240];
+    char *argv[1024];
+    //char *tmp;
+    
 	od.getProtocol(p);
-               
-	paroc_accesspoint jobcontact, objaccess, remotejobcontact;
-
-        printf("p=%s\n", p.GetString());
-        printf("paroc_interface::batchindex=%d\n", paroc_interface::batchindex);
-        printf("paroc_interface::batchsize=%d\n", paroc_interface::batchsize);
-        
-	// With the actual code, batchsize is always zero             
-        if(paroc_interface::batchindex < paroc_interface::batchsize && paroc_interface::batchindex >=1)
-        {
-            objaccess = paroc_interface::batchaccesspoint[paroc_interface::batchindex++];
-            if(paroc_interface::batchindex >= paroc_interface::batchsize)
-            {
-                delete[] paroc_interface::batchaccesspoint;
-                paroc_interface::batchindex = 0;
-                paroc_interface::batchsize = 0;
-                paroc_interface::batchaccesspoint = NULL;
-            }
-        }
-        else 
-        {
-            if (!paroc_intf->TryLocal(objaccess, od))
-            {
-                    /*POPString objname(paroc_intf->ClassName());
-
-                    //Exec using JobMgr interface...
-                    POPString platforms;
-                    od.getPlatforms(platforms);
-
-                    if (platforms.Length()<=0)
-                    {                    
-                        paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, paroc_intf->ClassName());
-                        od.setPlatforms(platforms);
-                    }
-                    //Global Resource management system --> Find a resource.
-
-                    POPString joburl;
-                    od.getJobURL(joburl);
-
-
-                    if  (joburl!=NULL)
-                    {
-                            jobcontact.SetAccessString(joburl);
-                    } else jobcontact=paroc_system::jobservice;
-
-                    if (jobcontact.IsEmpty())
-                    {
-                            char str[1024];
-                    printf("INTERFACE - JOBMGR %s", (const char *)paroc_system::GetHost());
-                            sprintf(str,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
-                            jobcontact.SetAccessString(str);
-                    }
-
-                    try
-                    {
-                            printf("JOBMGR --> connect to %s\n", jobcontact.GetAccessString());
-                            //JobCoreService resources(jobcontact);
-                            int ret;
-                            if (paroc_interface::batchindex==0 && paroc_interface::batchsize>1)
-                            {
-                                    if (paroc_interface::batchaccesspoint!=NULL) delete [] paroc_interface::batchaccesspoint;
-                                    paroc_interface::batchaccesspoint=new paroc_accesspoint[paroc_interface::batchsize];
-                                    printf("Create Object : %s\n", paroc_intf->ClassName());
-                                    //TODO put an other array than batchaccesspoint
-                                    //ret=resources.CreateObject(paroc_system::appservice,objname,od, batchsize,  batchaccesspoint, batchsize, batchaccesspoint);
-                                    if (ret==0) objaccess=paroc_interface::batchaccesspoint[paroc_interface::batchindex++];
-                                    printf("Return %d", ret);
-                            }
-                            else{
-
-                                    printf("Create Object : %s\n", paroc_intf->ClassName());
-                                    //ret=resources.CreateObject(paroc_system::appservice,objname,od, 1,  &objaccess, 1, &remotejobcontact);
-                                    printf("Return %d", ret);
-                            }
-
-                            if (ret!=0) paroc_exception::paroc_throw(ret,paroc_intf->ClassName());
-
-
-
-                            //Get the POPAppID
-                            //AppCoreService acs(paroc_system::appservice);
-                            //popAppId = acs.GetPOPCAppID();      
-
-                    }
-                    catch (paroc_exception * e)
-                    {
-                            paroc_system::perror(e);
-                            paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"POP-C++ error: Cannot create object via POP-C++ Job Manager");
-                    }*/
-            }
-        }
+        od.getURL(hostname);
+        od.getDirectory(cwd);
 	
-        //Add for SSH Tunneling
-        if(od.isSecureSet()) objaccess.SetSecure();
-        if(od.isServiceSet()) objaccess.SetAsService();
+        int n = 0;
+	
+	// Get the executable path name
+	POPString codefile;
+	od.getExecutable(codefile);
+
+	// If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
+	if(codefile.Length() <= 0) {
+	  printf("POP-C++ Error: Code file executable path is NULL ! Abort !\n"); 	
+	  paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);	  
+	}
+
+        if(hostname == NULL) hostname = paroc_system::GetHost();
         
-        printf("--------------------/endlAllocate-----------------\n");
+        /**
+	 * Create a combox to allocate the new parallel object.
+	 */
+        paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+	if (combox_factory == NULL) 
+	  paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
+	
+	paroc_combox* tmpsock = combox_factory->Create("socket");
         
-        delete paroc_intf;
-        paroc_intf = NULL;
+        if(tmpsock == NULL)
+                paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
         
-        return objaccess.GetAccessString();
+        paroc_buffer* tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
+        
+        bool isServer=true;
+	
+        if (!tmpsock->Create(0, isServer)) paroc_exception::paroc_throw_errno();
+	
+        POPString cburl;
+	tmpsock->GetUrl(cburl);
+
+        argv[n++]=strdup(codefile);
+
+        sprintf(tmpstr,"-object=%s", "POPObject");
+        argv[n++]=strdup(tmpstr);
+        
+	sprintf(tmpstr,"-callback=%s", (const char*)cburl);
+	argv[n++]=strdup(tmpstr);
+
+	
+	// Select core
+	/*if (rcore!=NULL&&rcore!=0) {
+		sprintf(tmpstr,"-core=%s",(const char*)rcore);
+		argv[n++]=strdup(tmpstr);
+	}*/
+
+	
+#ifdef OD_DISCONNECT
+	if (checkConnection) {
+		sprintf(tmpstr,"-checkConnection");
+		argv[n++]=strdup(tmpstr);
+	}
+#endif	
+
+	// Add the working directory as argument
+	if (cwd!=NULL && *cwd!=0) {
+		sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
+		argv[n++]=strdup(tmpstr);
+	}
+
+	argv[n]=NULL;
+
+	int ret=0, err=0;
+	
+        ret = RunCmd(argv, NULL);
+        err = errno;
+        
+	for (int i=0;i<n;i++) if (argv[i]!=NULL) free(argv[i]);
+
+	if (ret==-1)
+	{
+		DEBUG("Can not start the object code...");
+		paroc_exception::paroc_throw(err, "POPObject");
+	}
+
+	//Now get the return paroc_accesspoint....
+	tmpsock->SetTimeout(ALLOC_TIMEOUT*1000);
+        
+        paroc_connection *connection  = tmpsock->get_connection();
+        
+        if (!tmpbuffer->Recv((*tmpsock), connection))
+            paroc_exception::paroc_throw_errno();
+                
+        paroc_buffer::CheckAndThrow(*tmpbuffer);
+        
+        tmpbuffer->Push("status","int",1);
+        tmpbuffer->UnPack(&n,1);
+        tmpbuffer->Pop();
+
+        /*if (n!=0)
+        {
+                return n;
+        }*/
+        
+        POPString objectaddress;
+        tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
+        tmpbuffer->UnPack(&objectaddress, 1);
+        tmpbuffer->Pop();
+	  
+        return objectaddress;  
 }
 
 /**

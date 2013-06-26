@@ -37,11 +37,10 @@ bool CheckIfPacked(const char *objname);
 
 int main(int argc, char **argv)
 {
-    printf("paroc_objmain.std.cc running\n");
-    
-    /*for(int i = 0; i < argc; i++) {
+    for(int i =0; i < argc; i++)
+    {
         printf("argv[%d]=%s\n", i, argv[i]);
-    }*/
+    }
 	char *rcore=paroc_utils::checkremove(&argc,&argv,"-core=");
 	if (rcore!=NULL) {
 		paroc_system::processor_set(atoi(rcore));
@@ -50,64 +49,37 @@ int main(int argc, char **argv)
 	else paroc_system::processor_set(0);
 #endif
 
-	paroc_system sys;       
-	
-        /*uds*/
-        /*char *local_rank = paroc_utils::checkremove(&argc, &argv, "-local_rank=");
+	paroc_system sys;
+	char *local_rank = paroc_utils::checkremove(&argc, &argv, "-local_rank=");
 	if(local_rank != NULL) {
   	paroc_system::popc_local_mpi_communicator_rank = atoi(local_rank);
-	}*/
-	
-	
+	} 
 
 	// Connect to callback
 	char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");
 	paroc_combox *callback = NULL;
 	int status=0;
-	
-        /*uds*/
-        /*if (address != NULL) {
+	if (address != NULL) {
+            char *tmp = strstr(address, "://");
 	  paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
-	  callback = combox_factory->Create("uds");
-	  if(!callback->Create(address, false)) {
-  	  callback->Close();
-    	callback->Destroy();
-			printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
-			return 1;
-	  }
-	    
-            if(!callback->Connect(address)){
-                  callback->Close();
+	  //callback = combox_factory->Create("uds");
+          callback = combox_factory->Create("socket");
+          
+          //if(!callback->Create(address, false)) {
+          if(!callback->Create(0, false)) {          
+                callback->Close();
                 callback->Destroy();
-                                printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
-                                return 1;    	
+                printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
+                return 1;
+	  }
+            if(!callback->Connect(address)){
+                    callback->Close();
+                    callback->Destroy();
+                    printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
+                    return 1;    	
             }	  	
-	}*/
-        
-        /*tcp/ip*/
-        if (address!=NULL)
-	{
-		char *tmp=strstr(address,"://");
-		paroc_combox_factory *combox_factory=paroc_combox_factory::GetInstance();
-                
-		callback = combox_factory->Create("socket");
-                
-		if(!callback->Create(0, false)) {
-                        callback->Close();
-                        callback->Destroy();
-			printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
-			return 1;
-                }
-                
-                if(!callback->Connect(address)){
-                        callback->Close();
-                        callback->Destroy();
-                        printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
-                        return 1;    	
-                }	  	
 	}
-        
-	paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
+        paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
 	paroc_broker *broker = paroc_broker_factory::Create(&argc, &argv);
 	if (broker == NULL) {
 		status = 1;
@@ -121,8 +93,9 @@ int main(int argc, char **argv)
 	if (callback != NULL) {
 	  paroc_buffer *buffer = callback->GetBufferFactory()->CreateBuffer();
 		paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
+                //paroc_message_header h("Callback");
 		buffer->SetHeader(h);
-		
+                
                 buffer->Push("status", "int", 1);
                 buffer->Pack(&status, 1);
                 buffer->Pop();
@@ -130,9 +103,9 @@ int main(int argc, char **argv)
                 buffer->Push("address", "paroc_accesspoint", 1);
                 paroc_broker::accesspoint.Serialize(*buffer, true);
                 buffer->Pop();
-                
-            paroc_connection* connection = callback->get_connection();	
-            bool ret = buffer->Send((*callback), connection); 
+		
+                paroc_connection* connection = callback->get_connection();	
+                bool ret = buffer->Send((*callback), connection); 
 		buffer->Destroy();
 		callback->Destroy();
 		if (!ret) {
@@ -151,15 +124,14 @@ int main(int argc, char **argv)
 			printf("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
 		}
 	}
-
-	// Start the broker
+        printf("a11\n");
+        // Start the broker
  	if (status == 0) {
 		broker->Run();
 		delete broker;
 	} else if (broker != NULL) { 
 	  delete broker;
 	}
-
-        printf("paroc_objmain.std.cc stop\n");
+        printf("a22\n");
 	return status;
 }

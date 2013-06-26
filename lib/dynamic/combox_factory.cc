@@ -62,7 +62,7 @@ paroc_combox_factory::paroc_combox_factory()
 	COMBOX_CREATOR creator;
 	POPString name;
 
-	char *module=getenv("POPC_COMBOX_MODULES");
+	char *module=getenv("POPC_COMBOX_MODULES");      
 	if (module!=NULL)
 	{
 		char *libs=strdup(module);

@@ -50,14 +50,14 @@ int main(int argc, char **argv)
 #ifdef UC_LINUX
 	paroc_system::processor_set(0);
 #endif
-        
+	
         paroc_system app;
-  /*paroc_system::pop_current_local_address = 1;
-  paroc_system::popc_local_mpi_communicator_rank = 0;*/
+  paroc_system::pop_current_local_address = 1;
+  paroc_system::popc_local_mpi_communicator_rank = 0;
 
 	int i;
-	/*for (i=argc-1;i>=0;i--) {
-	  if (paroc_utils::isEqual(argv[i],"-initparoc")) {	    
+	for (i=argc-1;i>=0;i--) {            
+	  if (paroc_utils::isEqual(argv[i],"-initparoc")) {
 			char **argv1=argv+i+1;
 			int argc1=argc-i-1;
 			if (!paroc_system::Initialize(&argc1, &argv1)) {
@@ -69,10 +69,8 @@ int main(int argc, char **argv)
 			argc=i;
 			break;
 		}
-	}*/
+	}
 
-        atexit(_paroc_atexit);
-        
 	signal(SIGKILL, SignalTerminate);
 	signal(SIGTERM, SignalTerminate);
 	signal(SIGINT, SignalTerminate);
@@ -86,8 +84,8 @@ int main(int argc, char **argv)
 	   * POP-C++ on the K Computer
 	   * Terminate the MPI Communicators network by sending a termination message to the local MPI Communicator with rank 0
 	   */
-          
-	  /*paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+
+	  paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
 	  if (combox_factory == NULL) 
 	    paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain");
 	
@@ -95,7 +93,7 @@ int main(int argc, char **argv)
     if(allocating_combox == NULL)
       paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain");
     
-    paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();  */
+    paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer(); 
     
 /*    char tmpcwd[PATH_MAX+1];
     if (getcwd(tmpcwd, PATH_MAX+1) == NULL) {
@@ -104,7 +102,7 @@ int main(int argc, char **argv)
       printf("main cwd is %s\n", tmpcwd);
     }*/
   
-  /*
+  
     char* local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
 
@@ -118,9 +116,16 @@ int main(int argc, char **argv)
 
     if (!allocating_buffer->Send((*allocating_combox), connection)) {
 	    paroc_exception::paroc_throw_errno();
-  	} */  
+  	}
+          printf("End of main interface\n");
 	  return ret;
 	}
+
+
+
+	atexit(_paroc_atexit);
+
+
 
 	try {
 		int ret=parocmain(argc,argv);
