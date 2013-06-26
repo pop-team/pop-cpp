@@ -76,16 +76,15 @@ int main(int argc, char **argv)
 	signal(SIGINT, SignalTerminate);
 	signal(SIGQUIT, SignalTerminate);
 	signal(SIGPIPE, SIG_IGN);
-
 	if (i < 0) {
-	  int ret = parocmain(argc, argv);
-
+ 	  int ret = parocmain(argc, argv);
+           printf("hieu ahhhhhhhhhhh\n");
 	  /**
 	   * POP-C++ on the K Computer
 	   * Terminate the MPI Communicators network by sending a termination message to the local MPI Communicator with rank 0
 	   */
 
-	  paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+	  /*paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
 	  if (combox_factory == NULL) 
 	    paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain");
 	
@@ -93,7 +92,7 @@ int main(int argc, char **argv)
     if(allocating_combox == NULL)
       paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain");
     
-    paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer(); 
+    paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer(); */
     
 /*    char tmpcwd[PATH_MAX+1];
     if (getcwd(tmpcwd, PATH_MAX+1) == NULL) {
@@ -103,7 +102,7 @@ int main(int argc, char **argv)
     }*/
   
   
-    char* local_address = new char[15];
+    /*char* local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
 
     if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address))
@@ -117,15 +116,13 @@ int main(int argc, char **argv)
     if (!allocating_buffer->Send((*allocating_combox), connection)) {
 	    paroc_exception::paroc_throw_errno();
   	}
-          printf("End of main interface\n");
+          printf("End of main interface\n");*/
 	  return ret;
 	}
 
 
 
 	atexit(_paroc_atexit);
-
-
 
 	try {
 		int ret=parocmain(argc,argv);

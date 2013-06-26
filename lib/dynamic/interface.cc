@@ -123,11 +123,6 @@ paroc_accesspoint paroc_interface::_paroc_nobind;
 //binding time out in miliseconds
 int paroc_interface::paroc_bind_timeout=10000;
 
-
-int paroc_interface::batchindex=0;
-int paroc_interface::batchsize=0;
-paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
-
 //paroc_interface base class
 
 paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL)
@@ -498,13 +493,12 @@ void paroc_interface::Bind(const char *dest)
   
 
 	if (create_return && connect_return) {
-   // printf("Before bindstatus\n");	
+   printf("Before bindstatus\n");	
 		int status;
 		POPString info;
 		POPString peerplatform;
 		BindStatus(status, peerplatform, info);
-                printf("haha3\n");
-		switch (status) {
+                switch (status) {
   		case BIND_OK:
 	  		//NegotiateEncoding(info,peerplatform);
 		  	break;
@@ -1106,6 +1100,8 @@ void paroc_interface::paroc_Response(paroc_buffer *buf)
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn)
 {
+    printf("methodid=%d, methodname=%s\n", buf->GetHeader().GetMethodID(), buf->GetHeader().GetMethodName());
+    
   if (!buf->Send((*__paroc_combox), conn)) {
 	  paroc_exception::paroc_throw_errno();
 	}   
