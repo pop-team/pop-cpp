@@ -60,8 +60,7 @@ int main(int argc, char **argv)
 	paroc_combox *callback = NULL;
 	int status=0;
 	if (address != NULL) {
-            char *tmp = strstr(address, "://");
-	  paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
+          paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
 	  //callback = combox_factory->Create("uds");
           callback = combox_factory->Create("socket");
           
@@ -124,7 +123,7 @@ int main(int argc, char **argv)
 			printf("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
 		}
 	}
-        printf("a11\n");
+        printf("----a1----\n");
         // Start the broker
  	if (status == 0) {
 		broker->Run();
@@ -132,6 +131,6 @@ int main(int argc, char **argv)
 	} else if (broker != NULL) { 
 	  delete broker;
 	}
-        printf("a22\n");
+        printf("----/a1----\n");
 	return status;
 }

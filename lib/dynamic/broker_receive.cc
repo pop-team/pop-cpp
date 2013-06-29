@@ -196,12 +196,12 @@ paroc_object * paroc_broker::GetObject()
 bool  paroc_broker::ParocCall(paroc_request &req)
 {
 
-//  printf("ParocCall\n");
 	if (req.methodId[1]>=10) return false;
 
 	unsigned *methodid=req.methodId;
 	paroc_buffer *buf=req.data;
 
+          printf("ParocCall with methodid[1]=%d, methodid[2]=%d\n", methodid[1], methodid[2]);
 	switch (methodid[1])
 	{
 	case 0:

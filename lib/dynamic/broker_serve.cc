@@ -77,13 +77,16 @@ bool paroc_broker::GetRequest(paroc_request &req)
 	//If the queue is empty then wait for the request....
 	while (request_fifo.IsEmpty())
 	{
-		if ((obj!=NULL && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING)
-		{
-			return false;
-		}
-		execCond.wait(); //Wait for new request
+            printf("empty req from interface\n");
+            if ((obj!=NULL && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING)
+            {
+                    return false;
+            }
+            execCond.wait(); //Wait for new request
+            printf("het empty req from interface\n");
 	}
 
+        printf("het empty thi thoat ra ngoai\n");
 	POSITION pos=request_fifo.GetHeadPosition();
 	if (concPendings)
 	{
@@ -114,12 +117,15 @@ bool paroc_broker::GetRequest(paroc_request &req)
 			execCond.wait();
 		}
 	}
+        printf("sau khi het empty thi ket qua methodid=%d\n", req.methodId[2]);
 	return true;
 }
 
 void paroc_broker::ServeRequest(paroc_request &req)
 {
+    printf("----------------a1111----------------\n");
 	int type=req.methodId[2];
+        printf("                type=%d\n", type);
 	if (type & INVOKE_CONC)
 	{
 		paroc_invokethread *thr= new paroc_invokethread(this,req, &instanceCount,&execCond);
@@ -155,7 +161,7 @@ void paroc_broker::ServeRequest(paroc_request &req)
 	}
 	else
 	{
-
+            printf("                DoInvoke(req)\n");
 		DoInvoke(req);
 		if (type & INVOKE_MUTEX)
 		{
@@ -166,7 +172,9 @@ void paroc_broker::ServeRequest(paroc_request &req)
 		}
 		req.data->Destroy();
 		if (req.from!=NULL) delete req.from;
+                printf("                /DoInvoke(req)\n");
 	}
+        printf("----------------/a1111----------------\n");
 }
 
 void paroc_broker::UnhandledException()

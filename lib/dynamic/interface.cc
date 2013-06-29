@@ -328,9 +328,9 @@ void paroc_interface::allocate_only()
 void paroc_interface::Allocate()
 {
   allocate_only();
-  printf("a1\n");
+  printf("--------a11--------\n");
 	Bind(accesspoint);
-        printf("a2\n");
+        printf("--------/a11--------\n");
 }
 
 /** 
@@ -493,7 +493,7 @@ void paroc_interface::Bind(const char *dest)
   
 
 	if (create_return && connect_return) {
-   printf("Before bindstatus\n");	
+   printf("    Before bindstatus\n");	
 		int status;
 		POPString info;
 		POPString peerplatform;
@@ -1080,7 +1080,7 @@ void paroc_interface::ApplyCommPattern(const char *pattern, paroc_list<char *> &
 // DEPRECATED
 void paroc_interface::paroc_Dispatch(paroc_buffer *buf)
 {
-	if (!buf->Send(*__paroc_combox)) paroc_exception::paroc_throw_errno();
+    	if (!buf->Send(*__paroc_combox)) paroc_exception::paroc_throw_errno();
 }
 
 // DEPRECATED

@@ -174,8 +174,6 @@ bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned 
 
 int paroc_broker::Run()
 {
-
-    printf("run in broker\n");
 	//Create threads for each protocols for receiving requests....
 
 	paroc_array<paroc_receivethread *> ptArray;
@@ -185,7 +183,6 @@ int paroc_broker::Run()
 	}
 
 	state = POPC_STATE_RUNNING;
-        printf("a111\n");
 	ptArray.SetSize(comboxCount);
 	int i;
 
@@ -195,9 +192,7 @@ int paroc_broker::Run()
 		if (ret != 0) {
 		  return errno;
 		}
-	}
-        
-        printf("a222\n");
+	}       
 
 
 	if (obj == NULL) 
@@ -206,11 +201,12 @@ int paroc_broker::Run()
 	while (state == POPC_STATE_RUNNING) {
 		try {
 			paroc_request req;
-printf("a333\n");
+printf("------------a111------------\n");
 			if (!GetRequest(req)) break;
-
-printf("a444\n");
-			ServeRequest(req);                          
+printf("            methodid=%d\n", req.methodId[2]);
+printf("------------/a111------------\n");
+			ServeRequest(req);
+                        printf("------------a222------------\n");
 			if (req.methodId[2] & INVOKE_CONSTRUCTOR)
 			{
 				alarm(0);
@@ -228,6 +224,9 @@ printf("a444\n");
 
 	if (obj!=NULL && state==POPC_STATE_RUNNING)
 	{
+            printf("co vao day khong\n");
+            for(int i = 0; i < obj->argc; i++)
+                printf("obj->argv[%d]=%s\n", i, obj->argv[i]);
 		paroc_mutex_locker test(execCond);
 
 		//Wait for all invocations terminated....
@@ -248,8 +247,8 @@ printf("a444\n");
 		}
 	}
 	
-        printf("endl in broker\n");
-	return 0;
+        printf("------------/a222------------\n");
+        return 0;
 }
 
 

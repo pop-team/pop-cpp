@@ -89,7 +89,7 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
     paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
     
   printf("/endllocal_address\n");
-	paroc_message_header header(20, 200000, INVOKE_SYNC,"_allocate");
+  	paroc_message_header header(20, 200000, INVOKE_SYNC,"_allocate");
 	allocating_buffer->Reset();
 	allocating_buffer->SetHeader(header);
 
