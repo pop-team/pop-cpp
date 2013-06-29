@@ -8,8 +8,8 @@
 int main(int argc, char** argv)
 
 {
-  	std::cout << "Standard syntax array: Starting test..." << std::endl;
-
+  	//std::cout << "Standard syntax array: Starting test..." << std::endl;
+	printf("Standard syntax array: Starting test...\n");
 	int array[5];
 	
 	array[0] = 10;
@@ -21,11 +21,14 @@ int main(int argc, char** argv)
 	POPObject o;
 	o.displayArray(5, array);
 
-	std::cout << "Return of parallel object" << std::endl;	
+	//std::cout << "Return of parallel object" << std::endl;	
+	printf("Return of parallel object\n");
 	for(int i=0; i<5; i++){
-		std::cout << "item[" << i << "]=" << array[i] << std::endl;
+		//std::cout << "item[" << i << "]=" << array[i] << std::endl;
+		printf("item[%d]=%d\n", i, array[i]);
 	}
 	
-	std::cout << "Standard syntax array: test succeeded, destroying object..." << std::endl;		
+	//std::cout << "Standard syntax array: test succeeded, destroying object..." << std::endl;		
+	printf("Standard syntax array: test succeeded, destroying object...\n");
 	return 0;
 }

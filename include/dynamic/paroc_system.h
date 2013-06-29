@@ -14,6 +14,9 @@
 #define _POPC_SYSTEM_H
 #include <paroc_accesspoint.h>
 
+#include <net/if.h>
+#include <ifaddrs.h>
+
 #define DEFAULTPORT  2711
 
 // For set processor

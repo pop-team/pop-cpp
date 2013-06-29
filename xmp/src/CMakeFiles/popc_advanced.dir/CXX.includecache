@@ -6,26 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/hieunv/Desktop/popc2.8/xmp/src/popc_connection_mpi.cpp
-popc_connection_mpi.h
-/home/hieunv/Desktop/popc2.8/xmp/src/popc_connection_mpi.h
-signal.h
--
-
-/home/hieunv/Desktop/popc2.8/xmp/src/popc_connection_mpi.h
-paroc_combox.h
-/home/hieunv/Desktop/popc2.8/xmp/src/paroc_combox.h
-mpi.h
--
-
-/home/hieunv/Desktop/popc2.8/xmp/src/popc_group_broker.cpp
-popc_group_broker.h
-/home/hieunv/Desktop/popc2.8/xmp/src/popc_group_broker.h
-popc_connection_mpi.h
-/home/hieunv/Desktop/popc2.8/xmp/src/popc_connection_mpi.h
-mpi.h
--
-
 /home/hieunv/Desktop/popc2.8/xmp/src/popc_group_broker.h
 paroc_accesspoint.h
 /home/hieunv/Desktop/popc2.8/xmp/src/paroc_accesspoint.h
@@ -98,12 +78,6 @@ paroc_combox.h
 paroc_buffer.h
 /home/hieunv/Desktop/popc2.8/xmp/src/paroc_buffer.h
 vector
--
-
-/home/hieunv/Desktop/popc2.8/xmp/src/popc_object.cpp
-popc_object.h
-/home/hieunv/Desktop/popc2.8/xmp/src/popc_object.h
-mpi.h
 -
 
 /home/hieunv/Desktop/popc2.8/xmp/src/popc_object.h
@@ -288,6 +262,10 @@ string
 
 include/dynamic/paroc_system.h
 paroc_accesspoint.h
+-
+net/if.h
+-
+ifaddrs.h
 -
 sched.h
 -

@@ -439,7 +439,7 @@ char mpicpp[1024] = "/usr/local/openmpi/bin/mpicxx -E";
 #endif
   
   // POP-C++ installation directory
-  char parocdir[1024] = "/user/local/cmake";
+  char parocdir[1024] = "/usr/local/popc";
 
   char *link_cmd[1024];
 
