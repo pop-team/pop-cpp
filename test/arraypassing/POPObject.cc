@@ -19,14 +19,12 @@ POPObject::~POPObject()
    printf("POPCobject: on machine:%s is being destroyed\n", GetAccessPoint().GetAccessString());
 }
 
-void POPObject::displayArray(int length, int array[]){
+void POPObject::displayEle(int ele){
 	//std::cout << "In parallel object" << std::endl;
-	printf("In parallel object\n");
-	for(int i=0; i<length;i++){
-		//std::cout << "item[" << i << "]=" << array[i] << std::endl;
-		printf("item[%d]=%d\n",i, array[i]);
-		array[i] = array[i]+1;
-	}
+	printf("In parallel object\n");	
+        //std::cout << "item[" << i << "]=" << array[i] << std::endl;
+        printf("ele=%d\n", ele);
+        ele = ele+1;
 }
 
 @pack(POPObject);

@@ -320,7 +320,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	case 5:
 	{
 		// ObjectAlive call
-		if (obj == NULL) 
+            	if (obj == NULL) 
 		  return false;
 		if (methodid[2] & INVOKE_SYNC) {
 			buf->Reset();

@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 			printf("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
 		}
 	}
-        printf("----a1----\n");
+        printf("----------------Start the broker----------------\n");
         // Start the broker
  	if (status == 0) {
 		broker->Run();
@@ -131,6 +131,6 @@ int main(int argc, char **argv)
 	} else if (broker != NULL) { 
 	  delete broker;
 	}
-        printf("----/a1----\n");
+        printf("----------------/Start the broker----------------\n");
 	return status;
 }

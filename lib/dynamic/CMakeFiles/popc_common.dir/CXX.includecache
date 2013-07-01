@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/hieunv/Desktop/popc2.8/lib/dynamic/broker_serve.cc
+/home/hieunv/Desktop/popc2.8/lib/dynamic/broker.cc
 stdio.h
 -
 unistd.h
@@ -17,12 +17,20 @@ strings.h
 -
 assert.h
 -
+signal.h
+-
 paroc_broker.h
 /home/hieunv/Desktop/popc2.8/lib/dynamic/paroc_broker.h
 paroc_interface.h
 /home/hieunv/Desktop/popc2.8/lib/dynamic/paroc_interface.h
 paroc_event.h
 /home/hieunv/Desktop/popc2.8/lib/dynamic/paroc_event.h
+paroc_buffer_factory_finder.h
+/home/hieunv/Desktop/popc2.8/lib/dynamic/paroc_buffer_factory_finder.h
+paroc_buffer_raw.h
+/home/hieunv/Desktop/popc2.8/lib/dynamic/paroc_buffer_raw.h
+paroc_utils.h
+/home/hieunv/Desktop/popc2.8/lib/dynamic/paroc_utils.h
 paroc_thread.h
 /home/hieunv/Desktop/popc2.8/lib/dynamic/paroc_thread.h
 paroc_system.h
@@ -97,6 +105,12 @@ paroc_buffer_factory.h
 include/dynamic/paroc_buffer_factory.h
 paroc_string.h
 include/dynamic/paroc_string.h
+
+include/dynamic/paroc_buffer_raw.h
+paroc_array.h
+include/dynamic/paroc_array.h
+paroc_buffer.h
+include/dynamic/paroc_buffer.h
 
 include/dynamic/paroc_buffer_xdr.h
 paroc_array.h
@@ -223,6 +237,10 @@ sstream
 include/dynamic/paroc_thread.h
 pthread.h
 -
+
+include/dynamic/paroc_utils.h
+paroc_string.h
+include/dynamic/paroc_string.h
 
 include/dynamic/popwayback.h
 list
