@@ -224,8 +224,8 @@ printf("----------------/Start serve request----------------\n");
 
 	if (obj!=NULL && state==POPC_STATE_RUNNING)
 	{
-            /*for(int i = 0; i < obj->argc; i++)
-                printf("            obj->argv[%d]=%s\n", i, obj->argv[i]);*/
+            for(int i = 0; i < obj->argc; i++)
+                printf("            obj->argv[%d]=%s\n", i, obj->argv[i]);
 		paroc_mutex_locker test(execCond);
 
 		//Wait for all invocations terminated....
@@ -235,7 +235,7 @@ printf("----------------/Start serve request----------------\n");
 		}
 	}
 	        
-
+        printf("POPC exiting\n");
 	state = POPC_STATE_EXIT;
         
 	for (i = 0; i < comboxCount; i++) {

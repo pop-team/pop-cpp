@@ -581,6 +581,7 @@ void paroc_interface::Release()
 	  // Decrement reference when the interface release its resources
     paroc_connection* connection = __paroc_combox->get_connection();
     if(connection != NULL && !accesspoint.IsService()) {
+      printf("Release\n");// vanhieu.nguyen
       DecRef();	
     } 
       

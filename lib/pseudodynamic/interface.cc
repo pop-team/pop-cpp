@@ -141,8 +141,10 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) : _ssh_tunneling(fa
   if(!p.IsEmpty());
     Bind(p);
 
-  if(p.GetNoAddRef()) 
+  if(p.GetNoAddRef()) { 
+    printf("paroc_interface()\n");// vanhieu.nguyen
     DecRef();   
+  }
 }
 
 
@@ -565,11 +567,13 @@ void paroc_interface::Release()
 	if (__paroc_combox!=NULL)
 	{
 	  paroc_connection* conn = __paroc_combox->get_connection();
-	  if(conn != NULL && !accesspoint.IsService())
-      DecRef();
+	  if(conn != NULL && !accesspoint.IsService()) {
+              printf("paroc_interface::Release()\n");// vanhieu.nguyen 
+              DecRef();
+          }
       
 		__paroc_combox->Destroy();
-		__paroc_combox=NULL;
+		__paroc_combox=NULL;     
 	}
 	if (__paroc_buf!=NULL)
 	{

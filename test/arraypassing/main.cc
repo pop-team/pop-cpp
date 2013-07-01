@@ -15,6 +15,7 @@ int main(int argc, char** argv)
 	ele = 10;		
 	
 	POPObject o;
+        printf("POPObject has been created\n");
 	o.displayEle(ele);
 
 	//std::cout << "Return of parallel object" << std::endl;	
