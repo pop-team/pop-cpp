@@ -568,7 +568,6 @@ void paroc_interface::Release()
 	{
 	  paroc_connection* conn = __paroc_combox->get_connection();
 	  if(conn != NULL && !accesspoint.IsService()) {
-              printf("paroc_interface::Release()\n");// vanhieu.nguyen 
               DecRef();
           }
       

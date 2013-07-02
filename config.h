@@ -80,7 +80,7 @@
 #define VERSION "2.8 - Windows"
 
 /* */
-#define HOST_CPU "i686"
+#define HOST_CPU "x86_64"
 
 #define HOST_KERNEL "Linux"
 

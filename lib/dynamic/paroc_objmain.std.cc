@@ -62,10 +62,10 @@ int main(int argc, char **argv)
 	if (address != NULL) {
           paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
 	  //callback = combox_factory->Create("uds");
-          callback = combox_factory->Create("socket");
+          callback = combox_factory->Create("socket");//vanhieu.nguyen
           
           //if(!callback->Create(address, false)) {
-          if(!callback->Create(0, false)) {          
+          if(!callback->Create(0, false)) {//vanhieu.nguyen          
                 callback->Close();
                 callback->Destroy();
                 printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 			printf("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
 		}
 	}
-        printf("----------------Start the broker----------------\n");
+        printf("----------------Start the broker----------------\n");//vanhieu.nguyen
         // Start the broker
  	if (status == 0) {
 		broker->Run();
@@ -131,6 +131,6 @@ int main(int argc, char **argv)
 	} else if (broker != NULL) { 
 	  delete broker;
 	}
-        printf("----------------/Start the broker----------------\n");
+        printf("----------------/Start the broker----------------\n");//vanhieu.nguyen
 	return status;
 }

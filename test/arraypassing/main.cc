@@ -13,9 +13,9 @@ int main(int argc, char** argv)
 	int ele;
 	
 	ele = 10;		
-	
+	printf("POPObject will be created\n");//vanhieu.nguyen
 	POPObject o;
-        printf("POPObject has been created\n");
+        printf("POPObject has been created\n");//vanhieu.nguyen
 	o.displayEle(ele);
 
 	//std::cout << "Return of parallel object" << std::endl;	

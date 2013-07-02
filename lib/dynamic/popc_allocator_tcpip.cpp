@@ -50,7 +50,6 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     
     char tmpstr[10240];
     char *argv[1024];
-    //char *tmp;
     
 	od.getProtocol(p);
         od.getURL(hostname);
@@ -85,12 +84,13 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         paroc_buffer* tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
         
         bool isServer=true;
-	
+	paroc_connection *connection  = tmpsock->get_connection();        
+        
         if (!tmpsock->Create(0, isServer)) paroc_exception::paroc_throw_errno();
-	
+        
         POPString cburl;
 	tmpsock->GetUrl(cburl);
-
+        
         argv[n++]=strdup(codefile);
 
         sprintf(tmpstr,"-object=%s", "POPObject");
@@ -115,10 +115,10 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 #endif	
 
 	// Add the working directory as argument
-	if (cwd!=NULL && *cwd!=0) {
+	/*if (cwd!=NULL && *cwd!=0) {
 		sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
 		argv[n++]=strdup(tmpstr);
-	}
+	}*/
 
 	argv[n]=NULL;
 
@@ -137,9 +137,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
 	//Now get the return paroc_accesspoint....
 	tmpsock->SetTimeout(ALLOC_TIMEOUT*1000);
-        
-        paroc_connection *connection  = tmpsock->get_connection();
-        
+                
         if (!tmpbuffer->Recv((*tmpsock), connection))
             paroc_exception::paroc_throw_errno();
                 
@@ -148,11 +146,6 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         tmpbuffer->Push("status","int",1);
         tmpbuffer->UnPack(&n,1);
         tmpbuffer->Pop();
-
-        /*if (n!=0)
-        {
-                return n;
-        }*/
         
         POPString objectaddress;
         tmpbuffer->Push("objectaddress","paroc_accesspoint",1);

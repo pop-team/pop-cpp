@@ -182,6 +182,7 @@ int paroc_broker::Run()
 	  return -1;
 	}
         state = POPC_STATE_RUNNING;
+        printf("comboxCount=%d\n", comboxCount);//vanhieu.nguyen
 	ptArray.SetSize(comboxCount);
 	int i;
 
@@ -200,13 +201,13 @@ int paroc_broker::Run()
 	while (state == POPC_STATE_RUNNING) {
 		try {
 			paroc_request req;
-printf("----------------Start get request----------------\n");
+printf("----------------Start get request----------------\n");//vanhieu.nguyen
 			if (!GetRequest(req)) break;
 printf("            methodid=%d, %d\n", req.methodId[1], req.methodId[2]);
-printf("----------------/Start get request----------------\n");
-printf("----------------Start serve request----------------\n");
+printf("----------------/Start get request----------------\n");//vanhieu.nguyen
+printf("----------------Start serve request----------------\n");//vanhieu.nguyen
 			ServeRequest(req);
-printf("----------------/Start serve request----------------\n");                         
+printf("----------------/Start serve request----------------\n");//vanhieu.nguyen                         
 			if (req.methodId[2] & INVOKE_CONSTRUCTOR)
 			{
 				alarm(0);
@@ -225,7 +226,7 @@ printf("----------------/Start serve request----------------\n");
 	if (obj!=NULL && state==POPC_STATE_RUNNING)
 	{
             for(int i = 0; i < obj->argc; i++)
-                printf("            obj->argv[%d]=%s\n", i, obj->argv[i]);
+                printf("            obj->argv[%d]=%s\n", i, obj->argv[i]);//vanhieu.nguyen
 		paroc_mutex_locker test(execCond);
 
 		//Wait for all invocations terminated....
@@ -235,7 +236,7 @@ printf("----------------/Start serve request----------------\n");
 		}
 	}
 	        
-        printf("POPC exiting\n");
+        printf("POPC exiting\n");//vanhieu.nguyen
 	state = POPC_STATE_EXIT;
         
 	for (i = 0; i < comboxCount; i++) {
