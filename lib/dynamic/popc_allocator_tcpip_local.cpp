@@ -84,8 +84,9 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         paroc_buffer* tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
         
         bool isServer=true;
-	paroc_connection *connection  = tmpsock->get_connection();        
+	paroc_connection *connection = tmpsock->get_connection();        
         
+        printf("[Interface] allocate\n");
         if (!tmpsock->Create(0, isServer)) paroc_exception::paroc_throw_errno();
         
         POPString cburl;
@@ -93,7 +94,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         
         argv[n++]=strdup(codefile);
 
-        sprintf(tmpstr,"-object=%s", "POPObject");
+        sprintf(tmpstr,"-object=%s", objectname.GetString());
         argv[n++]=strdup(tmpstr);
         
 	sprintf(tmpstr,"-callback=%s", (const char*)cburl);
@@ -115,10 +116,10 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 #endif	
 
 	// Add the working directory as argument
-	/*if (cwd!=NULL && *cwd!=0) {
+	if (cwd!=NULL && *cwd!=0) {
 		sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
 		argv[n++]=strdup(tmpstr);
-	}*/
+	}
 
 	argv[n]=NULL;
 
@@ -137,7 +138,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
 	//Now get the return paroc_accesspoint....
 	tmpsock->SetTimeout(ALLOC_TIMEOUT*1000);
-                
+          
         if (!tmpbuffer->Recv((*tmpsock), connection))
             paroc_exception::paroc_throw_errno();
                 
