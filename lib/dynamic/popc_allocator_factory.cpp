@@ -72,7 +72,9 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
       {
         switch(alloc_mechanism) {
           case POPC_Allocator::LOCAL : 
-            return new POPC_Allocator_tcpip_local();            
+            return new POPC_Allocator_tcpip_local();
+            case POPC_Allocator::SSH :
+                return new POPC_Allocator_tcpip_ssh();
           default: 
             return NULL; 
         }

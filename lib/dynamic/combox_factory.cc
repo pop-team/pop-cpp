@@ -54,7 +54,7 @@ paroc_combox_factory *paroc_combox_factory::fact=NULL;
 paroc_combox_factory::paroc_combox_factory()
 {
 	
-	Register("socket", 0, combox_socket_creator);
+	Register("socket", 0, combox_socket_creator);//vanhieu.nguyen
 	//Register("uds", 0, combox_uds_creator);
 
 	//Load combox from plugins....
@@ -196,7 +196,7 @@ paroc_combox* paroc_combox_factory::Create(const char * name)
 	POSITION pos = list.GetHeadPosition();
 	while (pos != NULL) {
 		combox_factory_struct &t = list.GetNext(pos);
-		if (strcmp(name, t.name) == 0) {
+                if (strcmp(name, t.name) == 0) {
 		  return t.creator();
 		}
 	}

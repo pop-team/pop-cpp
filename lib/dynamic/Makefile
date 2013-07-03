@@ -808,29 +808,53 @@ popc_allocator_mpi_pseudo.cpp.s:
 	cd /home/hieunv/Desktop/popc2.8 && $(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_mpi_pseudo.cpp.s
 .PHONY : popc_allocator_mpi_pseudo.cpp.s
 
-popc_allocator_tcpip.o: popc_allocator_tcpip.cpp.o
-.PHONY : popc_allocator_tcpip.o
+popc_allocator_tcpip_local.o: popc_allocator_tcpip_local.cpp.o
+.PHONY : popc_allocator_tcpip_local.o
 
 # target to build an object file
-popc_allocator_tcpip.cpp.o:
-	cd /home/hieunv/Desktop/popc2.8 && $(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o
-.PHONY : popc_allocator_tcpip.cpp.o
+popc_allocator_tcpip_local.cpp.o:
+	cd /home/hieunv/Desktop/popc2.8 && $(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o
+.PHONY : popc_allocator_tcpip_local.cpp.o
 
-popc_allocator_tcpip.i: popc_allocator_tcpip.cpp.i
-.PHONY : popc_allocator_tcpip.i
+popc_allocator_tcpip_local.i: popc_allocator_tcpip_local.cpp.i
+.PHONY : popc_allocator_tcpip_local.i
 
 # target to preprocess a source file
-popc_allocator_tcpip.cpp.i:
-	cd /home/hieunv/Desktop/popc2.8 && $(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.i
-.PHONY : popc_allocator_tcpip.cpp.i
+popc_allocator_tcpip_local.cpp.i:
+	cd /home/hieunv/Desktop/popc2.8 && $(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.i
+.PHONY : popc_allocator_tcpip_local.cpp.i
 
-popc_allocator_tcpip.s: popc_allocator_tcpip.cpp.s
-.PHONY : popc_allocator_tcpip.s
+popc_allocator_tcpip_local.s: popc_allocator_tcpip_local.cpp.s
+.PHONY : popc_allocator_tcpip_local.s
 
 # target to generate assembly for a file
-popc_allocator_tcpip.cpp.s:
-	cd /home/hieunv/Desktop/popc2.8 && $(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.s
-.PHONY : popc_allocator_tcpip.cpp.s
+popc_allocator_tcpip_local.cpp.s:
+	cd /home/hieunv/Desktop/popc2.8 && $(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.s
+.PHONY : popc_allocator_tcpip_local.cpp.s
+
+popc_allocator_tcpip_ssh.o: popc_allocator_tcpip_ssh.cpp.o
+.PHONY : popc_allocator_tcpip_ssh.o
+
+# target to build an object file
+popc_allocator_tcpip_ssh.cpp.o:
+	cd /home/hieunv/Desktop/popc2.8 && $(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o
+.PHONY : popc_allocator_tcpip_ssh.cpp.o
+
+popc_allocator_tcpip_ssh.i: popc_allocator_tcpip_ssh.cpp.i
+.PHONY : popc_allocator_tcpip_ssh.i
+
+# target to preprocess a source file
+popc_allocator_tcpip_ssh.cpp.i:
+	cd /home/hieunv/Desktop/popc2.8 && $(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.i
+.PHONY : popc_allocator_tcpip_ssh.cpp.i
+
+popc_allocator_tcpip_ssh.s: popc_allocator_tcpip_ssh.cpp.s
+.PHONY : popc_allocator_tcpip_ssh.s
+
+# target to generate assembly for a file
+popc_allocator_tcpip_ssh.cpp.s:
+	cd /home/hieunv/Desktop/popc2.8 && $(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.s
+.PHONY : popc_allocator_tcpip_ssh.cpp.s
 
 popc_allocator_uds_interconnector.o: popc_allocator_uds_interconnector.cpp.o
 .PHONY : popc_allocator_uds_interconnector.o
@@ -1165,9 +1189,12 @@ help:
 	@echo "... popc_allocator_mpi_pseudo.o"
 	@echo "... popc_allocator_mpi_pseudo.i"
 	@echo "... popc_allocator_mpi_pseudo.s"
-	@echo "... popc_allocator_tcpip.o"
-	@echo "... popc_allocator_tcpip.i"
-	@echo "... popc_allocator_tcpip.s"
+	@echo "... popc_allocator_tcpip_local.o"
+	@echo "... popc_allocator_tcpip_local.i"
+	@echo "... popc_allocator_tcpip_local.s"
+	@echo "... popc_allocator_tcpip_ssh.o"
+	@echo "... popc_allocator_tcpip_ssh.i"
+	@echo "... popc_allocator_tcpip_ssh.s"
 	@echo "... popc_allocator_uds_interconnector.o"
 	@echo "... popc_allocator_uds_interconnector.i"
 	@echo "... popc_allocator_uds_interconnector.s"

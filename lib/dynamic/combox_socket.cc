@@ -93,6 +93,7 @@ bool paroc_combox_socket::Create(int port, bool server)
 	type= SOCK_STREAM;
 
 	sockfd=socket(PF_INET,type,protocol);
+        printf("[Create]sockfd=%d\n", sockfd);
 	if (sockfd<0) return false;
 	if (port>0)
 	{
@@ -160,11 +161,13 @@ bool paroc_combox_socket::Connect(const char *url)
 
 int paroc_combox_socket::Send(const char *s,int len)
 {
-	int n=0;
+        int n=0;
 	int count=0;
 	while (len>0)
 	{
-		n=write(sockfd,s,len);
+printf("paroc_combox_socket::Send1 sockfd=%d\n", sockfd);
+                
+            n=write(sockfd,s,len);
 		if (n>0)
 		{
 			count+=n;
@@ -178,15 +181,16 @@ int paroc_combox_socket::Send(const char *s,int len)
 
 int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn)
 {
-	if (conn==NULL) return Send(s,len);
-
-	int fd=((paroc_connection_sock *)conn)->sockfd;
-	if (fd<0) return -1;
+        if (conn==NULL) return Send(s,len);
+        
+        int fd=((paroc_connection_sock *)conn)->sockfd;
+        printf("paroc_combox_socket::Send2 sockfd=%d\n", sockfd);
+        if (fd<0) return -1;
 	int n=0;
 	int count=0;
 	while (len>0)
 	{
-		n=write(fd,s,len);
+           	n=write(fd,s,len);
 		if (n>0)
 		{
 			count+=n;
@@ -208,7 +212,7 @@ int paroc_combox_socket::Recv(char *s,int len)
 		if (t==NULL) return -1;
 
 		fd=t->sockfd;
-		while ((n=read(fd,s,len))==-1 && errno==EINTR);
+                while ((n=read(fd,s,len))==-1 && errno==EINTR);
 		if (n<=0)
 		{
 			if (CloseSock(fd)) continue;
@@ -238,8 +242,8 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer)
 			fd=((paroc_connection_sock *)iopeer)->sockfd;
 		}
 		if (fd<0) return -1;
-
-		while ( (n=read(fd,s,len))<0 && errno==EINTR);
+                printf("paroc_combox_socket::Recv2 fd=%d\n", fd);
+                while ( (n=read(fd,s,len))<0 && errno==EINTR);
 		if (n==0)
 		{
 			if (CloseSock(fd) && iopeer==NULL) continue;

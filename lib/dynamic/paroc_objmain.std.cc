@@ -62,9 +62,10 @@ int main(int argc, char **argv)
 	if (address != NULL) {
           paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
 	  //callback = combox_factory->Create("uds");
-          callback = combox_factory->Create("socket");//vanhieu.nguyen
-          
+          callback = combox_factory->Create("socket");//vanhieu.nguyen          
+              
           //if(!callback->Create(address, false)) {
+          printf("[Broker] main\n");
           if(!callback->Create(0, false)) {//vanhieu.nguyen          
                 callback->Close();
                 callback->Destroy();
@@ -91,8 +92,8 @@ int main(int argc, char **argv)
 	// Send ack via callback
 	if (callback != NULL) {
 	  paroc_buffer *buffer = callback->GetBufferFactory()->CreateBuffer();
-		paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
-                //paroc_message_header h("Callback");
+		//paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
+                paroc_message_header h("Callback");//vanhieu.nguyen
 		buffer->SetHeader(h);
                 
                 buffer->Push("status", "int", 1);
@@ -103,7 +104,7 @@ int main(int argc, char **argv)
                 paroc_broker::accesspoint.Serialize(*buffer, true);
                 buffer->Pop();
 		
-                paroc_connection* connection = callback->get_connection();	
+                paroc_connection* connection = callback->get_connection();
                 bool ret = buffer->Send((*callback), connection); 
 		buffer->Destroy();
 		callback->Destroy();

@@ -999,9 +999,9 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 
   // Generate broker::Invoke virtual method
   if(is_collective()) {
-    sprintf(str,"\nbool %s::invoke(unsigned method[3], paroc_buffer &_popc_buffer, paroc_connection *_popc_connection) {\n  if (*method == CLASSUID_%s) {\n    switch(method[1]) {",brokername,name);  
+    sprintf(str,"\nbool %s::invoke(unsigned method[3], paroc_buffer &_popc_buffer, paroc_connection *_popc_connection) {\n if (*method == CLASSUID_%s) {\n    switch(method[1]) {",brokername,name);  
   } else {
-  	sprintf(str,"\nbool %s::Invoke(unsigned method[3], paroc_buffer &__brokerbuf, paroc_connection *peer)\n{\nif (*method==CLASSUID_%s) { switch(method[1])\n{",brokername,name);
+  	sprintf(str,"\nbool %s::Invoke(unsigned method[3], paroc_buffer &__brokerbuf, paroc_connection *peer)\n{\n if (*method==CLASSUID_%s) {\n    switch(method[1])\n{",brokername,name);
   }
 	code.InsertAt(-1,str,strlen(str));
 

@@ -857,32 +857,55 @@ lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_uds_interconnector.cpp.o.p
 
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_uds_interconnector.cpp.o.provides.build: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_uds_interconnector.cpp.o
 
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o: lib/dynamic/CMakeFiles/popc_common.dir/flags.make
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o: lib/dynamic/popc_allocator_tcpip.cpp
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: lib/dynamic/CMakeFiles/popc_common.dir/flags.make
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: lib/dynamic/popc_allocator_tcpip_local.cpp
 	$(CMAKE_COMMAND) -E cmake_progress_report /home/hieunv/Desktop/popc2.8/CMakeFiles $(CMAKE_PROGRESS_36)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o"
-	cd /home/hieunv/Desktop/popc2.8/lib/dynamic && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o -c /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_tcpip.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o"
+	cd /home/hieunv/Desktop/popc2.8/lib/dynamic && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o -c /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_tcpip_local.cpp
 
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.i"
-	cd /home/hieunv/Desktop/popc2.8/lib/dynamic && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_tcpip.cpp > CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.i
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.i"
+	cd /home/hieunv/Desktop/popc2.8/lib/dynamic && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_tcpip_local.cpp > CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.i
 
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.s"
-	cd /home/hieunv/Desktop/popc2.8/lib/dynamic && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_tcpip.cpp -o CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.s
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.s"
+	cd /home/hieunv/Desktop/popc2.8/lib/dynamic && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_tcpip_local.cpp -o CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.s
 
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o.requires:
-.PHONY : lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o.requires
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o.requires:
+.PHONY : lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o.requires
 
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o.provides: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o.requires
-	$(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o.provides.build
-.PHONY : lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o.provides
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o.provides: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o.requires
+	$(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o.provides.build
+.PHONY : lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o.provides
 
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o.provides.build: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o.provides.build: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o
+
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o: lib/dynamic/CMakeFiles/popc_common.dir/flags.make
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o: lib/dynamic/popc_allocator_tcpip_ssh.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/hieunv/Desktop/popc2.8/CMakeFiles $(CMAKE_PROGRESS_37)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o"
+	cd /home/hieunv/Desktop/popc2.8/lib/dynamic && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o -c /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_tcpip_ssh.cpp
+
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.i"
+	cd /home/hieunv/Desktop/popc2.8/lib/dynamic && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_tcpip_ssh.cpp > CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.i
+
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.s"
+	cd /home/hieunv/Desktop/popc2.8/lib/dynamic && /usr/bin/g++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_tcpip_ssh.cpp -o CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.s
+
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o.requires:
+.PHONY : lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o.requires
+
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o.provides: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o.requires
+	$(MAKE) -f lib/dynamic/CMakeFiles/popc_common.dir/build.make lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o.provides.build
+.PHONY : lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o.provides
+
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o.provides.build: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o
 
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_mpi_pseudo.cpp.o: lib/dynamic/CMakeFiles/popc_common.dir/flags.make
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_mpi_pseudo.cpp.o: lib/dynamic/popc_allocator_mpi_pseudo.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/hieunv/Desktop/popc2.8/CMakeFiles $(CMAKE_PROGRESS_37)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/hieunv/Desktop/popc2.8/CMakeFiles $(CMAKE_PROGRESS_38)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_mpi_pseudo.cpp.o"
 	cd /home/hieunv/Desktop/popc2.8/lib/dynamic && /usr/bin/g++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/popc_common.dir/popc_allocator_mpi_pseudo.cpp.o -c /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_mpi_pseudo.cpp
 
@@ -940,7 +963,8 @@ popc_common_OBJECTS = \
 "CMakeFiles/popc_common.dir/utils.cc.o" \
 "CMakeFiles/popc_common.dir/popc_allocator_factory.cpp.o" \
 "CMakeFiles/popc_common.dir/popc_allocator_uds_interconnector.cpp.o" \
-"CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o" \
+"CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o" \
+"CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o" \
 "CMakeFiles/popc_common.dir/popc_allocator_mpi_pseudo.cpp.o"
 
 # External object files for target popc_common
@@ -981,7 +1005,8 @@ lib/dynamic/libpopc_common.a: lib/dynamic/CMakeFiles/popc_common.dir/timer.cc.o
 lib/dynamic/libpopc_common.a: lib/dynamic/CMakeFiles/popc_common.dir/utils.cc.o
 lib/dynamic/libpopc_common.a: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_factory.cpp.o
 lib/dynamic/libpopc_common.a: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_uds_interconnector.cpp.o
-lib/dynamic/libpopc_common.a: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o
+lib/dynamic/libpopc_common.a: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o
+lib/dynamic/libpopc_common.a: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o
 lib/dynamic/libpopc_common.a: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_mpi_pseudo.cpp.o
 lib/dynamic/libpopc_common.a: lib/dynamic/CMakeFiles/popc_common.dir/build.make
 lib/dynamic/libpopc_common.a: lib/dynamic/CMakeFiles/popc_common.dir/link.txt
@@ -1028,7 +1053,8 @@ lib/dynamic/CMakeFiles/popc_common.dir/requires: lib/dynamic/CMakeFiles/popc_com
 lib/dynamic/CMakeFiles/popc_common.dir/requires: lib/dynamic/CMakeFiles/popc_common.dir/utils.cc.o.requires
 lib/dynamic/CMakeFiles/popc_common.dir/requires: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_factory.cpp.o.requires
 lib/dynamic/CMakeFiles/popc_common.dir/requires: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_uds_interconnector.cpp.o.requires
-lib/dynamic/CMakeFiles/popc_common.dir/requires: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip.cpp.o.requires
+lib/dynamic/CMakeFiles/popc_common.dir/requires: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o.requires
+lib/dynamic/CMakeFiles/popc_common.dir/requires: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o.requires
 lib/dynamic/CMakeFiles/popc_common.dir/requires: lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_mpi_pseudo.cpp.o.requires
 .PHONY : lib/dynamic/CMakeFiles/popc_common.dir/requires
 

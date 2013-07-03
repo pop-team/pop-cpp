@@ -306,6 +306,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 			}
 		}*/
 		//if(!pc->Create(address, true)){
+                printf("[Broker] Initialize\n");
                 if(!pc->Create(0, true)){
 			paroc_system::perror("Broker");
 			return false;
@@ -377,18 +378,21 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
     paroc_buffer_factory* buffer_factory = tmp->GetBufferFactory();
     paroc_buffer* buffer = buffer_factory->CreateBuffer();
 		//if (tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
-                if (tmp->Create(0, false) && tmp->Connect(tok)) {
+                printf("[Broker] WakeupReceiveThread\n");
+                if (tmp->Create(0, false) && tmp->Connect(NULL)) {
 		  try {
                 paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
               buffer->Reset();
 	      buffer->SetHeader(h);
 	      paroc_connection* connection = tmp->get_connection();
-        if (!buffer->Send((*tmp), connection)) {
+              printf("[WakeupReceiveThread][Broker] Send or receive from/to [Interface]\n");
+              if (!buffer->Send((*tmp), connection)) {
           ok = false;
 	      } else {
           if (!buffer->Recv((*tmp), connection)) {
             ok = false;
 	        }
+          printf("[WakeupReceiveThread][Broker] endl Send or receive from/to [Interface]\n");
     	    bool ret;
         	buffer->Push("result", "bool", 1);
         	buffer->UnPack(&ret,1);

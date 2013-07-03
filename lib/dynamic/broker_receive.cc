@@ -80,7 +80,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) // Receive request and pu
 
 
 bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
-{
+{    
 	server->SetTimeout(-1);
 	while (1) {
 
@@ -109,6 +109,7 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
 				}
 #endif
 			}
+                        printf("[ReceiveRequest]req.methodId[0]=%d, req.methodId[1] = %d, req.methodId[2] = %d\n", req.methodId[0], req.methodId[1], req.methodId[2]);//vanhieu.nguyen
 			return true;
 		}
 		req.data->Destroy();
@@ -209,7 +210,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 		// BindStatus call
 		if (methodid[2] & INVOKE_SYNC)
 		{     
-			paroc_message_header h("BindStatus");
+                    paroc_message_header h(0, 0, INVOKE_SYNC ,"BindStatus");
 			buf->Reset();
 			buf->SetHeader(h);
 			int status = 0;
@@ -264,7 +265,6 @@ bool  paroc_broker::ParocCall(paroc_request &req)
     
 		if (obj == NULL) 
 		  return false;
-		printf("ParocCall\n");// vanhieu.nguyen  
 		int ret = obj->DecRef();
 		
 		if (methodid[2] & INVOKE_SYNC) {

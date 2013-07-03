@@ -277,7 +277,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack)
 
 
 	if (pack) {
-    int ref = 1;
+                int ref = 1;
 		buf.Push("refcount","int",1);
 		buf.Pack(&ref,1);
 		buf.Pop();
@@ -310,7 +310,8 @@ void paroc_interface::allocate_only()
 
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance(); 
-    //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR); 
+    //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+    //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);            
     POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);        
     if(allocator == NULL) {
       std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
@@ -327,10 +328,12 @@ void paroc_interface::allocate_only()
  */
 void paroc_interface::Allocate()
 {
-  allocate_only();
+    printf("----------------Allocate----------------\n");
+    allocate_only();
   printf("----------------Start bind----------------\n");
 	Bind(accesspoint);
         printf("----------------/Start bind----------------\n");
+        printf("----------------/Allocate----------------\n");
 }
 
 /** 
@@ -438,7 +441,7 @@ void paroc_interface::Bind(const char *dest)
 	__paroc_combox->SetTimeout(paroc_bind_timeout);
 
   // Check if need proxy
-  std::string connect_dest(dest); 
+  /*std::string connect_dest(dest); 
   connect_dest = connect_dest.substr(6);
   
   size_t pos = connect_dest.find("uds_");
@@ -458,9 +461,9 @@ void paroc_interface::Bind(const char *dest)
       need_redirection = true;
     } 
   }
-  
+  */
   bool create_return, connect_return;  
-  if(need_redirection) {
+  /*if(need_redirection) {
       
     // Spoof address with the local MPI Communicator
     char* local_address = new char[15];
@@ -484,22 +487,26 @@ void paroc_interface::Bind(const char *dest)
         
 	  paroc_connection* connection = __paroc_combox->get_connection();
 	  popc_send_request(__paroc_buf, connection);    
-  } else {
+  } else {*/
+      bool isServer = false;
     //create_return = __paroc_combox->Create(connect_dest.c_str(), false);
     //connect_return = __paroc_combox->Connect(connect_dest.c_str());
-    create_return = __paroc_combox->Create(0, false);
-    connect_return = __paroc_combox->Connect(dest);        
-  }
+      printf("[Interface] Bind\n");
+    create_return = __paroc_combox->Create(0, isServer);//vanhieu.nguyen
+    connect_return = __paroc_combox->Connect(dest);//vanhieu.nguyen        
+  //}
   
 
 	if (create_return && connect_return) {
    		int status;
 		POPString info;
 		POPString peerplatform;
+                printf("----------------BindStatus----------------\n");//vanhieu.nguyen
 		BindStatus(status, peerplatform, info);
+                printf("----------------/BindStatus----------------\n");//vanhieu.nguyen		
                 switch (status) {
   		case BIND_OK:
-	  		//NegotiateEncoding(info,peerplatform);
+                    	//NegotiateEncoding(info,peerplatform);
 		  	break;
   		case BIND_FORWARD_SESSION:
 	  	case BIND_FORWARD_PERMANENT: {
@@ -621,9 +628,9 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
 	__paroc_buf->SetHeader(h);
 	
 	paroc_connection* connection = __paroc_combox->get_connection();
-	popc_send_request(__paroc_buf, connection);
+        popc_send_request(__paroc_buf, connection);
 	popc_get_response(__paroc_buf, connection);
-
+        
 	__paroc_buf->Push("code","int",1);
 	__paroc_buf->UnPack(&code,1);
 	__paroc_buf->Pop();
@@ -682,6 +689,7 @@ int paroc_interface::DecRef()
 
 bool paroc_interface::Encoding(POPString encoding)
 {
+    
 	if (__paroc_combox == NULL || __paroc_buf == NULL) 
 	  return false;
 	paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(encoding);
@@ -1100,7 +1108,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf)
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn)
 {
-    printf("methodid=%d, methodname=%s\n", buf->GetHeader().GetMethodID(), buf->GetHeader().GetMethodName());
+    printf("methodid[0]=%d, methodid[1]=%d, methodid[2]=%d, methodname=%s\n", buf->GetHeader().GetClassID(), buf->GetHeader().GetMethodID(), buf->GetHeader().GetSemantics(), buf->GetHeader().GetMethodName());
     
   if (!buf->Send((*__paroc_combox), conn)) {
 	  paroc_exception::paroc_throw_errno();

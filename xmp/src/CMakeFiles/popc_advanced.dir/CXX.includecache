@@ -6,6 +6,26 @@
 
 #IncludeRegexTransform: 
 
+/home/hieunv/Desktop/popc2.8/xmp/src/popc_connection_mpi.cpp
+popc_connection_mpi.h
+/home/hieunv/Desktop/popc2.8/xmp/src/popc_connection_mpi.h
+signal.h
+-
+
+/home/hieunv/Desktop/popc2.8/xmp/src/popc_connection_mpi.h
+paroc_combox.h
+/home/hieunv/Desktop/popc2.8/xmp/src/paroc_combox.h
+mpi.h
+-
+
+/home/hieunv/Desktop/popc2.8/xmp/src/popc_group_broker.cpp
+popc_group_broker.h
+/home/hieunv/Desktop/popc2.8/xmp/src/popc_group_broker.h
+popc_connection_mpi.h
+/home/hieunv/Desktop/popc2.8/xmp/src/popc_connection_mpi.h
+mpi.h
+-
+
 /home/hieunv/Desktop/popc2.8/xmp/src/popc_group_broker.h
 paroc_accesspoint.h
 /home/hieunv/Desktop/popc2.8/xmp/src/paroc_accesspoint.h
