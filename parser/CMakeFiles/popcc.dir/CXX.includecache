@@ -32,6 +32,32 @@ debug.h
 paroc_system.h
 /home/hieunv/Desktop/popc2.8/lib/dynamic/paroc_system.h
 
+/home/hieunv/Desktop/popc2.8/parser/popcc.cc
+unistd.h
+-
+stdio.h
+-
+stdlib.h
+-
+unistd.h
+-
+config.h
+/home/hieunv/Desktop/popc2.8/parser/config.h
+sys/types.h
+-
+sys/wait.h
+-
+string.h
+-
+errno.h
+-
+paroc_utils.h
+/home/hieunv/Desktop/popc2.8/parser/paroc_utils.h
+config.h
+/home/hieunv/Desktop/popc2.8/parser/config.h
+
+config.h
+
 include/dynamic/debug.h
 
 include/dynamic/paroc_accesspoint.h
