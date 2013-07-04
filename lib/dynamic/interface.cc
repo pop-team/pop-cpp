@@ -492,7 +492,7 @@ void paroc_interface::Bind(const char *dest)
       bool isServer = false;
     //create_return = __paroc_combox->Create(connect_dest.c_str(), false);
     //connect_return = __paroc_combox->Connect(connect_dest.c_str());
-      printf("[Interface] Bind\n");
+    //printf("[Interface] Bind\n");
     create_return = __paroc_combox->Create(0, isServer);//vanhieu.nguyen
     connect_return = __paroc_combox->Connect(dest);//vanhieu.nguyen        
   //}

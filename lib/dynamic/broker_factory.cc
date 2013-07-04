@@ -111,7 +111,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 	if (tmp!=NULL)
 	{
 		paroc_system::appservice.SetAccessString(tmp);
-      paroc_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
+                paroc_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
 
 /*

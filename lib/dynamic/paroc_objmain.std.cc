@@ -65,19 +65,13 @@ int main(int argc, char **argv)
           callback = combox_factory->Create("socket");//vanhieu.nguyen          
               
           //if(!callback->Create(address, false)) {
-          printf("[Broker] main\n");
-          if(!callback->Create(0, false)) {//vanhieu.nguyen          
+          //printf("[Broker] main\n");
+          if(!callback->Create(0, false) || !callback->Connect(address)) {//vanhieu.nguyen          
                 callback->Close();
                 callback->Destroy();
                 printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
                 return 1;
-	  }
-            if(!callback->Connect(address)){
-                    callback->Close();
-                    callback->Destroy();
-                    printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
-                    return 1;    	
-            }	  	
+	  }              	
 	}
         paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
 	paroc_broker *broker = paroc_broker_factory::Create(&argc, &argv);
@@ -92,8 +86,8 @@ int main(int argc, char **argv)
 	// Send ack via callback
 	if (callback != NULL) {
 	  paroc_buffer *buffer = callback->GetBufferFactory()->CreateBuffer();
-		//paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
-                paroc_message_header h("Callback");//vanhieu.nguyen
+		paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
+                //paroc_message_header h("Callback");//vanhieu.nguyen
 		buffer->SetHeader(h);
                 
                 buffer->Push("status", "int", 1);

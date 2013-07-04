@@ -86,7 +86,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         bool isServer=true;
 	paroc_connection *connection = tmpsock->get_connection();        
         
-        printf("[Interface] allocate\n");
+        //printf("[Interface] allocate\n");
         if (!tmpsock->Create(0, isServer)) paroc_exception::paroc_throw_errno();
         
         POPString cburl;
