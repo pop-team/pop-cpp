@@ -331,6 +331,7 @@ void paroc_interface::Allocate()
     printf("----------------Allocate----------------\n");
     allocate_only();
   printf("----------------Start bind----------------\n");
+  
 	Bind(accesspoint);
         printf("----------------/Start bind----------------\n");
         printf("----------------/Allocate----------------\n");
@@ -353,7 +354,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 	POPString prots=dest.GetAccessString();
 	POPString od_prots;
 	od.getProtocol(od_prots);
-
+        
 	paroc_list<char *> accesslist, pref;
 
 	Tokenize(prots,accesslist);
@@ -362,7 +363,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 	Tokenize(od_prots,pref);
 
 	if (pref.IsEmpty()) {
-		//No preferred protocol in OD specified, try the first protocol in dest
+                //No preferred protocol in OD specified, try the first protocol in dest
 		POSITION pos = accesslist.GetHeadPosition();
 		while (pos != NULL) {
 			char *addr = accesslist.GetNext(pos);
