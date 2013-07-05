@@ -94,9 +94,7 @@ bool paroc_combox_socket::Create(int port, bool server)
 
 	sockfd=socket(PF_INET,type,protocol);
         
-        //printf("[Interface side] [[Create function]] sockfd=%d\n", sockfd);
-	
-	if (sockfd<0) return false;
+        if (sockfd<0) return false;
 	if (port>0)
 	{
 		sockaddr_in sin;
@@ -119,13 +117,13 @@ bool paroc_combox_socket::Create(int port, bool server)
 		index=1;
 		nready=0;
 		connarray.SetSize(1);
-                //printf("[Interface side] [[Create function]] [[[isServer=true]]] sockfd=%d\n", sockfd);                
+                //printf("[Interface side] [[Create function]] [[[isServer=true]]] sockfd=%d\n", sockfd);//vanhieu.nguyen                
 		connarray[0]=CreateConnection(sockfd);
 		return (listen(sockfd,10)==0);
 	}
 	else 
         {
-            //printf("[Interface side] [[Create function]] [[[isServer=false]]] sockfd=%d\n", sockfd);                		
+            //printf("[Interface side] [[Create function]] [[[isServer=false]]] sockfd=%d\n", sockfd); //vanhieu.nguyen               		
             peer=CreateConnection(-1);
         }
 	return true;
@@ -162,7 +160,7 @@ bool paroc_combox_socket::Connect(const char *url)
 	*s=0;
 	bool ret= Connect(host,port);
 	free(host);
-        //printf("[Interface side] [[Connect function]] sockfd=%d\n", sockfd);	
+        //printf("[Interface side] [[Connect function]] sockfd=%d\n", sockfd);//vanhieu.nguyen	
 	if (ret) peer->sockfd=sockfd;
 	return ret;
 }
@@ -173,8 +171,7 @@ int paroc_combox_socket::Send(const char *s,int len)
 	int count=0;
 	while (len>0)
 	{
-            //printf("[Interface side] [[Send function]] [[[Connection is NULL]]] sockfd=%d\n", sockfd);
-	       
+            //printf("[Write to %d with s=%s and len=%d] [[Connection is NULL]]\n", sockfd, s, len);//vanhieu.nguyen                              
             n=write(sockfd,s,len);
 		if (n>0)
 		{
@@ -190,14 +187,14 @@ int paroc_combox_socket::Send(const char *s,int len)
 int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn)
 {
         if (conn==NULL) return Send(s,len);
-        
+       
         int fd=((paroc_connection_sock *)conn)->sockfd;
-        //printf("[Interface side] [[Send function]] [[[Connection is Not NULL]]] sockfd=%d\n", sockfd);
         if (fd<0) return -1;
 	int n=0;
 	int count=0;
 	while (len>0)
 	{
+            //printf("[Write to %d with s=%s and len=%d] [[Connection is Not NULL]]\n", fd, s, len);//vanhieu.nguyen                                                       
            	n=write(fd,s,len);
 		if (n>0)
 		{
@@ -250,8 +247,8 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer)
 			fd=((paroc_connection_sock *)iopeer)->sockfd;
 		}
 		if (fd<0) return -1;
-                //printf("[Interface side] [[Recv function]] fd=%d\n", fd);
                 while ( (n=read(fd,s,len))<0 && errno==EINTR);
+                //printf("[Read from %d with s=%s and len=%d]\n", fd, s, len);//vanhieu.nguyen
 		if (n==0)
 		{
 			if (CloseSock(fd) && iopeer==NULL) continue;

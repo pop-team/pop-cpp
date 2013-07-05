@@ -1015,14 +1015,14 @@ void Method::GenerateClient(CArrayChar &output)
 
 		} else {
     	if(!GetClass()->is_collective()) {   		
-  			strcpy(tmpcode,"\n  __paroc_buf->Reset();");
+  			strcpy(tmpcode,"\n  __paroc_buf->Reset();\n}\n");
       } else {
-  			strcpy(tmpcode,"\n  _popc_buffer->Reset();");      
+  			strcpy(tmpcode,"\n  _popc_buffer->Reset();\n}\n");      
       }  			
 			output.InsertAt(-1,tmpcode,strlen(tmpcode));
       // Added for new communication support		
-      strcpy(tmpcode,"\n  _popc_connection->reset();\n}\n");
-		  output.InsertAt(-1,tmpcode,strlen(tmpcode));	
+      //strcpy(tmpcode,"\n  _popc_connection->reset();\n}\n");
+		  //output.InsertAt(-1,tmpcode,strlen(tmpcode));	
 		}
 	}
 	else
@@ -1054,8 +1054,8 @@ void Method::GenerateClient(CArrayChar &output)
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
     // Added for new communication support		
-    strcpy(tmpcode,"_popc_connection->reset();\n}\n");
-		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+    //strcpy(tmpcode,"_popc_connection->reset();\n}\n");
+		//output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #endif
 	}
 }

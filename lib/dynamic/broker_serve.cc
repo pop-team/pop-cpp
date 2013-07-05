@@ -164,7 +164,7 @@ void paroc_broker::ServeRequest(paroc_request &req)
 	{
             printf("            DoInvoke(req)\n");//vanhieu.nguyen
 		DoInvoke(req);
-		if (type & INVOKE_MUTEX)
+                if (type & INVOKE_MUTEX)
 		{
 			mutexCond.lock();
 			mutexCount--;
@@ -197,7 +197,7 @@ bool paroc_broker::DoInvoke(paroc_request &request)
 {
 	try
 	{
-            if (!Invoke(request.methodId, *request.data, request.from) )  paroc_exception::paroc_throw(OBJECT_MISMATCH_METHOD);
+            if (!Invoke(request.methodId, *request.data, request.from) )  paroc_exception::paroc_throw(OBJECT_MISMATCH_METHOD);            
 	}
 
 	PROPAGATE_EXCEPTION(int)
@@ -288,7 +288,7 @@ bool paroc_broker::DoInvoke(paroc_request &request)
 	{
 		return false;
 	}
-	return true;
+        return true;
 }
 
 

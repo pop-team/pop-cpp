@@ -83,36 +83,38 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
 {    
 	server->SetTimeout(-1);
 	while (1) {
-
-		paroc_connection *conn = server->Wait();
-
-		if (conn == NULL) {
-			execCond.broadcast();
-			return false;
-		}
-  	if (conn->is_initial_connection()){
-  	  continue;
-  	}
-		paroc_buffer_factory *fact = conn->GetBufferFactory();
-		req.data = fact->CreateBuffer();
+            paroc_connection *conn = server->Wait();
+            if (conn == NULL) {
+                    execCond.broadcast();
+                    return false;
+            }
+            
+            if (conn->is_initial_connection()){
+              continue;
+            }
+            
+            paroc_buffer_factory *fact = conn->GetBufferFactory();
+            req.data = fact->CreateBuffer();
 		
-    
-		if (req.data->Recv(conn)) {
-			req.from = conn;
-			const paroc_message_header &h = req.data->GetHeader();
-			req.methodId[0] = h.GetClassID();
-			req.methodId[1] = h.GetMethodID();
-			if ( !((req.methodId[2]=h.GetSemantics()) & INVOKE_SYNC) ) {
+            //printf("[Broker Side] [[ReceiveRequest]]\n");//vanhieu.nguyen
+            if (req.data->Recv(conn)) {
+                    req.from = conn;
+                    const paroc_message_header &h = req.data->GetHeader();
+                    req.methodId[0] = h.GetClassID();
+                    req.methodId[1] = h.GetMethodID();
+            
+                    if ( !((req.methodId[2]=h.GetSemantics()) & INVOKE_SYNC) ) {
 #ifdef OD_DISCONNECT
-				if (checkConnection) {
-					server->SendAck(conn);
-				}
+                            if (checkConnection) {
+                                    server->SendAck(conn);
+                            }
 #endif
-			}
-                        printf("[ReceiveRequest]req.methodId[0]=%d, req.methodId[1] = %d, req.methodId[2] = %d\n", req.methodId[0], req.methodId[1], req.methodId[2]);//vanhieu.nguyen
-			return true;
-		}
-		req.data->Destroy();
+                    }
+                    //printf("[ReceiveRequest]req.methodId[0]=%d, req.methodId[1] = %d, req.methodId[2] = %d\n", req.methodId[0], req.methodId[1], req.methodId[2]);//vanhieu.nguyen
+                    return true;
+            }
+            
+            req.data->Destroy();
 	}
 }
 
@@ -181,7 +183,7 @@ bool paroc_broker::OnNewConnection(paroc_connection *conn)
 bool paroc_broker::OnCloseConnection(paroc_connection *conn)
 {
 	if (obj!=NULL) {
-            printf("OnCloseConnection\n");// vanhieu.nguyen
+            printf("OnCloseConnection\n");//vanhieu.nguyen
 		int ret=obj->DecRef();
 		if (ret<=0) 
 			execCond.broadcast();
@@ -203,14 +205,14 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	unsigned *methodid=req.methodId;
 	paroc_buffer *buf=req.data;
 
-          printf("ParocCall with methodid[1]=%d, methodid[2]=%d\n", methodid[1], methodid[2]);//vanhieu.nguyen
+        printf("ParocCall with methodid[0], methodid[1]=%d, methodid[2]=%d\n", methodid[0], methodid[1], methodid[2]);//vanhieu.nguyen
 	switch (methodid[1])
 	{
 	case 0:
 		// BindStatus call
 		if (methodid[2] & INVOKE_SYNC)
 		{     
-                    paroc_message_header h(0, 0, INVOKE_SYNC ,"BindStatus");
+                        paroc_message_header h(0, 0, INVOKE_SYNC ,"BindStatus");
 			buf->Reset();
 			buf->SetHeader(h);
 			int status = 0;
@@ -253,7 +255,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Push("refcount","int",1);
 			buf->Pack(&ret,1);
 			buf->Pop();
-//      printf("AddRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret); 
+                        //printf("AddRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret);//vanhieu.nguyen 
 			buf->Send(req.from);
 		}
 		execCond.broadcast();
@@ -275,7 +277,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Push("refcount","int",1);
 			buf->Pack(&ret,1);
 			buf->Pop();
-//      printf("DecRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret); 
+                        //printf("DecRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret);//vanhieu.nguyen 
 			buf->Send(req.from);
 		}
 		execCond.broadcast();

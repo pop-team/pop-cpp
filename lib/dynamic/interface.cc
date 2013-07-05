@@ -328,13 +328,13 @@ void paroc_interface::allocate_only()
  */
 void paroc_interface::Allocate()
 {
-    printf("----------------Allocate----------------\n");
+    printf("----------------Allocate----------------\n");//vanhieu.nguyen
     allocate_only();
-  printf("----------------Start bind----------------\n");
+  printf("----------------Start bind----------------\n");//vanhieu.nguyen
   
 	Bind(accesspoint);
-        printf("----------------/Start bind----------------\n");
-        printf("----------------/Allocate----------------\n");
+        printf("----------------/Start bind----------------\n");//vanhieu.nguyen
+        printf("----------------/Allocate----------------\n");//vanhieu.nguyen
 }
 
 /** 
@@ -496,8 +496,6 @@ void paroc_interface::Bind(const char *dest)
     create_return = __paroc_combox->Create(0, isServer);//vanhieu.nguyen
     connect_return = __paroc_combox->Connect(dest);//vanhieu.nguyen        
   //}
-  
-
 	if (create_return && connect_return) {
    		int status;
 		POPString info;

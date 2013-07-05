@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 {
     for(int i =0; i < argc; i++)
     {
-        printf("argv[%d]=%s\n", i, argv[i]);
+        printf("argv[%d]=%s\n", i, argv[i]);//vanhieu.nguyen
     }
 	char *rcore=paroc_utils::checkremove(&argc,&argv,"-core=");
 	if (rcore!=NULL) {
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
           callback = combox_factory->Create("socket");//vanhieu.nguyen          
               
           //if(!callback->Create(address, false)) {
-          //printf("[Broker] main\n");
+          //printf("[Broker] main\n");//vanhieu.nguyen
           if(!callback->Create(0, false) || !callback->Connect(address)) {//vanhieu.nguyen          
                 callback->Close();
                 callback->Destroy();
@@ -118,9 +118,9 @@ int main(int argc, char **argv)
 			printf("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
 		}
 	}
-        printf("----------------Start the broker----------------\n");//vanhieu.nguyen
         // Start the broker
  	if (status == 0) {
+                printf("----------------Start the broker----------------\n");//vanhieu.nguyen        
 		broker->Run();
 		delete broker;
 	} else if (broker != NULL) { 

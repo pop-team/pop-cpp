@@ -80,14 +80,12 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         
         if(tmpsock == NULL)
                 paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
-        
-        paroc_buffer* tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
-        
+                
         bool isServer=true;
-	paroc_connection *connection = tmpsock->get_connection();        
-        
-        //printf("[Interface] allocate\n");
+	
         if (!tmpsock->Create(0, isServer)) paroc_exception::paroc_throw_errno();
+        
+        paroc_connection *connection = tmpsock->get_connection();        
         
         POPString cburl;
 	tmpsock->GetUrl(cburl);
@@ -138,7 +136,11 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
 	//Now get the return paroc_accesspoint....
 	tmpsock->SetTimeout(ALLOC_TIMEOUT*1000);
-          
+        
+        paroc_buffer_xdr buf1;
+        paroc_buffer *tmpbuffer=&buf1;        
+       
+        //printf("[Interface Side] [[allocate]]\n");//vanhieu.nguyen            
         if (!tmpbuffer->Recv((*tmpsock), connection))
             paroc_exception::paroc_throw_errno();
                 
