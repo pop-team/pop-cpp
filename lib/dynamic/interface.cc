@@ -310,9 +310,9 @@ void paroc_interface::allocate_only()
 
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance(); 
-    //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+    POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
     //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);            
-    POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);        
+    //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);        
     if(allocator == NULL) {
       std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
     }
@@ -330,11 +330,11 @@ void paroc_interface::Allocate()
 {
     printf("----------------Allocate----------------\n");//vanhieu.nguyen
     allocate_only();
-  printf("----------------Start bind----------------\n");//vanhieu.nguyen
+    printf("----------------Start bind----------------\n");//vanhieu.nguyen
   
-	Bind(accesspoint);
-        printf("----------------/Start bind----------------\n");//vanhieu.nguyen
-        printf("----------------/Allocate----------------\n");//vanhieu.nguyen
+    Bind(accesspoint);
+    printf("----------------/Start bind----------------\n");//vanhieu.nguyen
+    printf("----------------/Allocate----------------\n");//vanhieu.nguyen
 }
 
 /** 
@@ -442,7 +442,7 @@ void paroc_interface::Bind(const char *dest)
 	__paroc_combox->SetTimeout(paroc_bind_timeout);
 
   // Check if need proxy
-  /*std::string connect_dest(dest); 
+  std::string connect_dest(dest); 
   connect_dest = connect_dest.substr(6);
   
   size_t pos = connect_dest.find("uds_");
@@ -462,9 +462,9 @@ void paroc_interface::Bind(const char *dest)
       need_redirection = true;
     } 
   }
-  */
+  
   bool create_return, connect_return;  
-  /*if(need_redirection) {
+  if(need_redirection) {
       
     // Spoof address with the local MPI Communicator
     char* local_address = new char[15];
@@ -488,14 +488,13 @@ void paroc_interface::Bind(const char *dest)
         
 	  paroc_connection* connection = __paroc_combox->get_connection();
 	  popc_send_request(__paroc_buf, connection);    
-  } else {*/
-      bool isServer = false;
-    //create_return = __paroc_combox->Create(connect_dest.c_str(), false);
-    //connect_return = __paroc_combox->Connect(connect_dest.c_str());
-    //printf("[Interface] Bind\n");
-    create_return = __paroc_combox->Create(0, isServer);//vanhieu.nguyen
-    connect_return = __paroc_combox->Connect(dest);//vanhieu.nguyen        
-  //}
+  } else {
+    //printf("[Interface] Bind\n");    
+    create_return = __paroc_combox->Create(connect_dest.c_str(), false);
+    connect_return = __paroc_combox->Connect(connect_dest.c_str());
+    //create_return = __paroc_combox->Create(0, false);//vanhieu.nguyen
+    //connect_return = __paroc_combox->Connect(dest);//vanhieu.nguyen        
+  }
 	if (create_return && connect_return) {
    		int status;
 		POPString info;

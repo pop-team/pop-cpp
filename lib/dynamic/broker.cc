@@ -304,9 +304,9 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 				return false;
 			}
 		}*/
-		//if(!pc->Create(address, true)){
-                //printf("[Broker] Initialize\n");//vanhieu.nguyen
-                if(!pc->Create(0, true)){
+		//printf("[Broker] Initialize\n");//vanhieu.nguyen                
+                if(!pc->Create(address, true)){
+                //if(!pc->Create(0, true)){
 			paroc_system::perror("Broker");
 			return false;
 		}

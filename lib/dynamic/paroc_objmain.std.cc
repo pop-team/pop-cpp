@@ -61,12 +61,12 @@ int main(int argc, char **argv)
 	int status=0;
 	if (address != NULL) {
           paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
-	  //callback = combox_factory->Create("uds");
-          callback = combox_factory->Create("socket");//vanhieu.nguyen          
-              
-          //if(!callback->Create(address, false)) {
-          //printf("[Broker] main\n");//vanhieu.nguyen
-          if(!callback->Create(0, false) || !callback->Connect(address)) {//vanhieu.nguyen          
+	  callback = combox_factory->Create("uds");
+          //callback = combox_factory->Create("socket");//vanhieu.nguyen          
+          
+          //printf("[Broker] main\n");//vanhieu.nguyen          
+          if(!callback->Create(address, false) || !callback->Connect(address)) {
+          //if(!callback->Create(0, false) || !callback->Connect(address)) {//vanhieu.nguyen          
                 callback->Close();
                 callback->Destroy();
                 printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
@@ -87,8 +87,7 @@ int main(int argc, char **argv)
 	if (callback != NULL) {
 	  paroc_buffer *buffer = callback->GetBufferFactory()->CreateBuffer();
 		paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
-                //paroc_message_header h("Callback");//vanhieu.nguyen
-		buffer->SetHeader(h);
+                buffer->SetHeader(h);
                 
                 buffer->Push("status", "int", 1);
                 buffer->Pack(&status, 1);
