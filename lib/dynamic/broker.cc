@@ -224,9 +224,7 @@ printf("----------------/Start serve request----------------\n");//vanhieu.nguye
 
 	if (obj!=NULL && state==POPC_STATE_RUNNING)
 	{
-            //for(int i = 0; i < obj->argc; i++)
-                //printf("            obj->argv[%d]=%s\n", i, obj->argv[i]);//vanhieu.nguyen
-		paroc_mutex_locker test(execCond);
+                paroc_mutex_locker test(execCond);
 
 		//Wait for all invocations terminated....
 		while (instanceCount > 0 || !request_fifo.IsEmpty())
@@ -244,10 +242,9 @@ printf("----------------/Start serve request----------------\n");//vanhieu.nguye
         } else {
 			ptArray[i]->cancel();
 		}
-	}       
+	} 
         return 0;
 }
-
 
 bool paroc_broker::Initialize(int *argc, char ***argv)
 {
@@ -305,8 +302,8 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 			}
 		}*/
 		//printf("[Broker] Initialize\n");//vanhieu.nguyen                
-                if(!pc->Create(address, true)){
-                //if(!pc->Create(0, true)){
+                //if(!pc->Create(address, true)){
+                if(!pc->Create(0, true)){
 			paroc_system::perror("Broker");
 			return false;
 		}

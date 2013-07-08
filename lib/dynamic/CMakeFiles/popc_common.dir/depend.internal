@@ -451,16 +451,14 @@ lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o
  include/dynamic/paroc_interface.h
  include/dynamic/paroc_list.h
  include/dynamic/paroc_memspool.h
+ include/dynamic/paroc_mutex.h
  include/dynamic/paroc_object.h
  include/dynamic/paroc_od.h
  include/dynamic/paroc_string.h
  include/dynamic/paroc_system.h
  include/dynamic/popc_allocator.h
  include/dynamic/popc_allocator_tcpip.h
- include/pseudodynamic/paroc_interface.h
- include/pseudodynamic/paroc_mutex.h
- include/pseudodynamic/paroc_system.h
- include/pseudodynamic/popwayback.h
+ include/dynamic/popwayback.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o
  /home/hieunv/Desktop/popc2.8/lib/dynamic/popc_allocator_tcpip_ssh.cpp
  include/dynamic/debug.h

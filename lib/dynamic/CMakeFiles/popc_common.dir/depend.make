@@ -450,16 +450,14 @@ lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/paroc_interface.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/paroc_list.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/paroc_memspool.h
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/paroc_mutex.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/paroc_object.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/paroc_od.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/paroc_string.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/paroc_system.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/popc_allocator.h
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/popc_allocator_tcpip.h
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/pseudodynamic/paroc_interface.h
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/pseudodynamic/paroc_mutex.h
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/pseudodynamic/paroc_system.h
-lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/pseudodynamic/popwayback.h
+lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_local.cpp.o: include/dynamic/popwayback.h
 
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o: lib/dynamic/popc_allocator_tcpip_ssh.cpp
 lib/dynamic/CMakeFiles/popc_common.dir/popc_allocator_tcpip_ssh.cpp.o: include/dynamic/debug.h

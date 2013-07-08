@@ -310,9 +310,9 @@ void paroc_interface::allocate_only()
 
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance(); 
-    POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+    //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+    POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);            
     //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);            
-    //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);        
     if(allocator == NULL) {
       std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
     }
@@ -490,10 +490,10 @@ void paroc_interface::Bind(const char *dest)
 	  popc_send_request(__paroc_buf, connection);    
   } else {
     //printf("[Interface] Bind\n");    
-    create_return = __paroc_combox->Create(connect_dest.c_str(), false);
-    connect_return = __paroc_combox->Connect(connect_dest.c_str());
-    //create_return = __paroc_combox->Create(0, false);//vanhieu.nguyen
-    //connect_return = __paroc_combox->Connect(dest);//vanhieu.nguyen        
+    //create_return = __paroc_combox->Create(connect_dest.c_str(), false);
+    //connect_return = __paroc_combox->Connect(connect_dest.c_str());
+    create_return = __paroc_combox->Create(0, false);//vanhieu.nguyen
+    connect_return = __paroc_combox->Connect(dest);//vanhieu.nguyen        
   }
 	if (create_return && connect_return) {
    		int status;

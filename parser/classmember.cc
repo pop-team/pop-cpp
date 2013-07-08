@@ -913,7 +913,7 @@ void Method::GenerateClient(CArrayChar &output)
 	if(!GetClass()->is_collective()) {
   	sprintf(tmpcode, "\n  paroc_mutex_locker __paroc_lock(_paroc_imutex);");
   	output.InsertAt(-1,tmpcode,strlen(tmpcode));  
- 	  sprintf(tmpcode, "\n  paroc_connection* _popc_connection = __paroc_combox->get_connection();\n  __paroc_buf->Reset();\n  paroc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __paroc_buf->SetHeader(__paroc_buf_header);\n", clname, id, invoke_code, name);
+ 	  sprintf(tmpcode, "\n printf(\"a1\");\n  paroc_connection* _popc_connection = __paroc_combox->get_connection();\n  __paroc_buf->Reset();\n  paroc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __paroc_buf->SetHeader(__paroc_buf_header);\n", clname, id, invoke_code, name);
   	output.InsertAt(-1,tmpcode,strlen(tmpcode));	 
 	} else {
 	  // Additional code if the method is not collective
@@ -957,7 +957,7 @@ void Method::GenerateClient(CArrayChar &output)
 	// Marshalling code generation is done. Transmit buffer
 
 	if(!GetClass()->is_collective()) {
-	  strcpy(tmpcode,"\n  popc_send_request(__paroc_buf, _popc_connection);");
+	  strcpy(tmpcode,"\n printf(\"a2\");\n  popc_send_request(__paroc_buf, _popc_connection);");
 	} else {
     strcpy(tmpcode,"\n  popc_send_request(_popc_buffer, _popc_connection);");	
 	}
@@ -972,7 +972,7 @@ void Method::GenerateClient(CArrayChar &output)
 #endif
     
   	if(!GetClass()->is_collective()) {    
-		  strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv((*__paroc_combox), _popc_connection)) paroc_exception::paroc_throw_errno();\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
+		  strcpy(tmpcode,"\t{\n printf(\"a3\");\n\t\tif (!__paroc_buf->Recv((*__paroc_combox), _popc_connection)) paroc_exception::paroc_throw_errno();\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
 		} else {
       strcpy(tmpcode,"\n  popc_recv_response(_popc_buffer, _popc_connection);"); 
 		}
@@ -1015,14 +1015,16 @@ void Method::GenerateClient(CArrayChar &output)
 
 		} else {
     	if(!GetClass()->is_collective()) {   		
-  			strcpy(tmpcode,"\n  __paroc_buf->Reset();\n}\n");
+  			//strcpy(tmpcode,"\n  __paroc_buf->Reset();\n}\n");
+                        strcpy(tmpcode,"\n printf(\"a4\"); \n  __paroc_buf->Reset();\n");
       } else {
-  			strcpy(tmpcode,"\n  _popc_buffer->Reset();\n}\n");      
+  			//strcpy(tmpcode,"\n  _popc_buffer->Reset();\n}\n");      
+                        strcpy(tmpcode,"\n  _popc_buffer->Reset();\n");      
       }  			
 			output.InsertAt(-1,tmpcode,strlen(tmpcode));
       // Added for new communication support		
-      //strcpy(tmpcode,"\n  _popc_connection->reset();\n}\n");
-		  //output.InsertAt(-1,tmpcode,strlen(tmpcode));	
+      strcpy(tmpcode,"\n printf(\"a5\");\n  _popc_connection->reset();\n}\n");
+		  output.InsertAt(-1,tmpcode,strlen(tmpcode));	
 		}
 	}
 	else
@@ -1054,8 +1056,8 @@ void Method::GenerateClient(CArrayChar &output)
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
     // Added for new communication support		
-    //strcpy(tmpcode,"_popc_connection->reset();\n}\n");
-		//output.InsertAt(-1,tmpcode,strlen(tmpcode));
+    strcpy(tmpcode,"_popc_connection->reset();\n}\n");
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #endif
 	}
 }

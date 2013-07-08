@@ -18,8 +18,6 @@
 #include "paroc_combox.h"
 #include "paroc_combox_factory.h"
 #include "paroc_broker.h"
-#include "include/pseudodynamic/paroc_system.h"
-#include "include/pseudodynamic/paroc_interface.h"
 
 #define ALLOC_TIMEOUT 60
 /**
@@ -154,7 +152,9 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
         tmpbuffer->UnPack(&objectaddress, 1);
         tmpbuffer->Pop();
-	  
+        
+        tmpsock->Close();
+        
         return objectaddress;  
 }
 

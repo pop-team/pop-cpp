@@ -150,7 +150,7 @@ void paroc_combox::SetBufferFactory(paroc_buffer_factory *fact)
 	defaultFact=fact;
 }
 
-paroc_buffer_factory *paroc_combox::GetBufferFactory()
+        paroc_buffer_factory *paroc_combox::GetBufferFactory()
 {
 	return defaultFact;
 }

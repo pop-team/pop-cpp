@@ -61,12 +61,12 @@ int main(int argc, char **argv)
 	int status=0;
 	if (address != NULL) {
           paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
-	  callback = combox_factory->Create("uds");
-          //callback = combox_factory->Create("socket");//vanhieu.nguyen          
+	  //callback = combox_factory->Create("uds");
+          callback = combox_factory->Create("socket");//vanhieu.nguyen          
           
           //printf("[Broker] main\n");//vanhieu.nguyen          
-          if(!callback->Create(address, false) || !callback->Connect(address)) {
-          //if(!callback->Create(0, false) || !callback->Connect(address)) {//vanhieu.nguyen          
+          //if(!callback->Create(address, false) || !callback->Connect(address)) {
+          if(!callback->Create(0, false) || !callback->Connect(address)) {//vanhieu.nguyen          
                 callback->Close();
                 callback->Destroy();
                 printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
@@ -126,5 +126,6 @@ int main(int argc, char **argv)
 	  delete broker;
 	}
         printf("----------------/Start the broker----------------\n");//vanhieu.nguyen
-	return status;
+        
+        return status;
 }
