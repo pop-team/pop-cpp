@@ -1,1 +1,0 @@
-/usr/bin/g++   -g3 -gdwarf-2    CMakeFiles/popcc.dir/popcc.cc.o CMakeFiles/popcc.dir/__/lib/dynamic/utils.cc.o  -o popcc -rdynamic 
