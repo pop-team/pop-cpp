@@ -357,7 +357,7 @@ void paroc_combox_socket::Close()
 	else
 	{
 		if (peer!=NULL)
-		{
+		{                    
 			OnCloseConnection(peer);
 			delete peer;
 			peer=NULL;

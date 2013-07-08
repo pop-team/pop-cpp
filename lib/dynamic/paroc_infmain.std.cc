@@ -78,7 +78,7 @@ int main(int argc, char **argv)
 	   * Terminate the MPI Communicators network by sending a termination message to the local MPI Communicator with rank 0
 	   */
 
-	  paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+	  /*paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
 	  if (combox_factory == NULL) 
 	    paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain");
 	
@@ -87,15 +87,7 @@ int main(int argc, char **argv)
       paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain");
     
     paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer(); 
-    
-/*    char tmpcwd[PATH_MAX+1];
-    if (getcwd(tmpcwd, PATH_MAX+1) == NULL) {
-      perror("getcwd failed");
-    } else {
-      printf("main cwd is %s\n", tmpcwd);
-    }*/
-  
-  
+      
     char* local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
 
@@ -109,7 +101,7 @@ int main(int argc, char **argv)
 
     if (!allocating_buffer->Send((*allocating_combox), connection)) {
 	    paroc_exception::paroc_throw_errno();
-  	}
+  	}*/
           printf("End of main interface\n");
 	  return ret;
 	}

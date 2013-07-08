@@ -205,8 +205,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	unsigned *methodid=req.methodId;
 	paroc_buffer *buf=req.data;
 
-        printf("ParocCall with methodid[0], methodid[1]=%d, methodid[2]=%d\n", methodid[0], methodid[1], methodid[2]);//vanhieu.nguyen
-	switch (methodid[1])
+        switch (methodid[1])
 	{
 	case 0:
 		// BindStatus call

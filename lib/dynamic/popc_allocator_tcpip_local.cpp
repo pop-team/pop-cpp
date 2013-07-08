@@ -134,9 +134,8 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
 	//Now get the return paroc_accesspoint....
 	tmpsock->SetTimeout(ALLOC_TIMEOUT*1000);
-        
-        paroc_buffer_xdr buf1;
-        paroc_buffer *tmpbuffer=&buf1;        
+ 
+        paroc_buffer * tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
        
         //printf("[Interface Side] [[allocate]]\n");//vanhieu.nguyen            
         if (!tmpbuffer->Recv((*tmpsock), connection))
@@ -152,6 +151,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
         tmpbuffer->UnPack(&objectaddress, 1);
         tmpbuffer->Pop();
+        tmpbuffer->Destroy();
         
         tmpsock->Close();
         

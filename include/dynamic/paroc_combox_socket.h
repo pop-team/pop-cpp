@@ -59,7 +59,7 @@ public:
 
 	virtual int Send(const char *s,int len);
 	virtual int Send(const char *s,int len, paroc_connection *connection);
-	virtual paroc_connection* get_connection() { return NULL; };
+	virtual paroc_connection* get_connection() { if(!peer){ return NULL;} return peer; };
 
 
 	virtual int Recv(char *s,int len);
