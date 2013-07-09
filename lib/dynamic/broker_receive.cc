@@ -183,7 +183,7 @@ bool paroc_broker::OnNewConnection(paroc_connection *conn)
 bool paroc_broker::OnCloseConnection(paroc_connection *conn)
 {
 	if (obj!=NULL) {
-            printf("OnCloseConnection\n");//vanhieu.nguyen
+            //printf("OnCloseConnection\n");//vanhieu.nguyen
 		int ret=obj->DecRef();
 		if (ret<=0) 
 			execCond.broadcast();

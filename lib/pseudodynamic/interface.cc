@@ -142,7 +142,6 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) : _ssh_tunneling(fa
     Bind(p);
 
   if(p.GetNoAddRef()) { 
-    printf("paroc_interface()\n");// vanhieu.nguyen
     DecRef();   
   }
 }

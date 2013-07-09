@@ -102,8 +102,7 @@ int main(int argc, char **argv)
     if (!allocating_buffer->Send((*allocating_combox), connection)) {
 	    paroc_exception::paroc_throw_errno();
   	}*/
-          printf("End of main interface\n");
-	  return ret;
+          return ret;
 	}
 
 	atexit(_paroc_atexit);

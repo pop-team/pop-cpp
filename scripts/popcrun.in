@@ -14,14 +14,14 @@ fi
 
 unset POPC_DEBUG
 
-if [ -z "${POPC_LOCATION}" ]; then
+if [ -z "$POPC_LOCATION" ]; then
 POPC_LOCATION=@prefix@
 export POPC_LOCATION
 fi
 
 . $POPC_LOCATION/etc/popc-runtime-env.sh
 
-MYJOBSERVICE=${POPC_JOBSERVICE:-"`hostname`:2711"}
+MYJOBSERVICE="`hostname`:2711"
 
 #if [ -z "${POPC_JOBSERVICE}" ]; then
 #POPC_JOBSERVICE="`hostname`:2711"
@@ -29,7 +29,7 @@ MYJOBSERVICE=${POPC_JOBSERVICE:-"`hostname`:2711"}
 
 
 
-MYAPPSERVICE=${POPC_APPSERVICE:-${POPC_LOCATION}/services/appservice}
+MYAPPSERVICE=$POPC_LOCATION/services/appservice
 
 drun=0
 noproxy=0
@@ -60,9 +60,9 @@ for arg in $* ; do
 		logging=1
     elif [ `echo "$arg"|grep "^\-batch="` ]; then
 		export POPC_BATCH=`echo $arg|sed s/-batch=//`
-    elif [ -z "${CODECONF}" ]; then
+    elif [ -z "$CODECONF" ]; then
 		CODECONF=$arg
-    elif [ -z "${PROG}" ]; then
+    elif [ -z "$PROG" ]; then
 		PROG=$arg
     else
 		args="$args $arg"
@@ -100,73 +100,73 @@ if [ $logging = 1 ]; then
 fi
 
 #Check and dowload object map file....
-if [ -z "${CODECONF}" ]; then
+if [ -z "$CODECONF" ]; then
 echo "Code config file missing"
 exit 1
 fi
 
-httpfile=`echo "${CODECONF}" | grep http://`
-ftpfile=`echo "${CODECONF}" | grep ftp://`
-TMPDIR=${POPC_TMP:=/tmp}
+httpfile=`echo "$CODECONF" | grep http://`
+ftpfile=`echo "$CODECONF" | grep ftp://`
+TMPDIR=/tmp
 
-if [ -n "${httpfile}${ftpfile}" ]; then
+if [ -n "$httpfile$ftpfile" ]; then
     wget=`which wget`
-    if [ -z "${wget}" ]; then
+    if [ -z "$wget" ]; then
 	echo "ERROR: wget command not found"
 	exit 1
     fi
     echo Downloading $CODECONF
-    LOCALCODECONF=${TMPDIR}/`whoami`_`echo ${CODECONF} | tr "://~" "____"`
-    $wget -q $CODECONF -O ${LOCALCODECONF}
+    LOCALCODECONF=$TMPDIR/`whoami`_`echo $CODECONF | tr "://~" "____"`
+    $wget -q $CODECONF -O $LOCALCODECONF
     RETVAL=$?
     if [ $RETVAL -ne 0 ]; then
 	echo "Can not get the code configuration file. WGET failed"
 	exit $RETVAL
     fi
-    CODECONF=${LOCALCODECONF}
+    CODECONF=$LOCALCODECONF
 fi
 
-if [ ! -f "${CODECONF}" ]; then
+if [ ! -f "$CODECONF" ]; then
 echo "Code config file not found"
 exit 1
 fi
 
-FILECONF=`basename $CODECONF`
+FILECONF=`/usr/bin/basename $CODECONF`
 OLDPATH=`pwd`
-cd `dirname $CODECONF`
+cd `/usr/bin/dirname $CODECONF`
 PATHCONF=`pwd`
 cd $OLDPATH
 
-if [ -z "${FILECONF}" ]; then
+if [ -z "$FILECONF" ]; then
 echo "Code config file not found"
 exit 1
 fi
 
 
-if [ -z "${PROG}" ]; then
+if [ -z "$PROG" ]; then
 echo "Program file missing"
 exit 1
 fi
 
 #Download the program if it is on the web server
-httpfile=`echo "${PROG}" | grep http://`
-ftpfile=`echo "${PROG}" | grep ftp://`
+httpfile=`echo "$PROG" | grep http://`
+ftpfile=`echo "$PROG" | grep ftp://`
 
-if [ -n "${httpfile}${ftpfile}" ]; then
+if [ -n "$httpfile$ftpfile" ]; then
     wget=`which wget`
-    if [ -z "${wget}" ]; then
+    if [ -z "$wget" ]; then
 	echo "ERROR: wget is required"
 	exit 1
     fi
-    echo "Downloading ${PROG}..."
-    LOCALPROG=${TMPDIR}/`whoami`_`echo ${PROG} | tr "://~" "____"`
-    $wget -q $PROG -O ${LOCALPROG}
+    echo "Downloading $PROG..."
+    LOCALPROG=$TMPDIR/`whoami`_`echo $PROG | tr "://~" "____"`
+    $wget -q $PROG -O $LOCALPROG
     RETVAL=$?
     if [ $RETVAL -ne 0 ]; then
 	echo "Can not get the main program file. WGET failed"
 	exit $RETVAL
     fi
-    PROG=${LOCALPROG}
+    PROG=$LOCALPROG
     chmod +x $PROG
 fi
 
@@ -176,21 +176,21 @@ APPCONTACT=""
 
 MY_PROXY=""
 
-TMPCHALLENGE="`whoami`@`hostname` on `date`"
+TMPCHALLENGE="`/usr/bin/whoami`@`hostname` on `date`"
 TMPNAME=""
 
-if [ -n "${POPC_PROXY}" ] && [ $noproxy -eq 0 ] ; then
-MY_PROXY=" -proxy=${POPC_PROXY}"
+if [ -n "$POPC_PROXY" ] && [ $noproxy -eq 0 ] ; then
+MY_PROXY=" -proxy=$POPC_PROXY"
 fi
 
-
-if [ ! -x ${MYAPPSERVICE} ]; then
-  echo "${MYAPPSERVICE} not found"
-  exit 1
-fi
+#do it later
+#if [ ! -x ${MYAPPSERVICE} ]; then
+#  echo "$MYAPPSERVICE not found"
+#  exit 1
+#fi
 #Use the following line to run the interface side in valgrind
 #cmd="valgrind --log-file=/tmp/$$ $PROG $args -initparoc -appservicecode=${MYAPPSERVICE} ${MY_PROXY} -codeconf=${PATHCONF}/${FILECONF} -jobservice=${MYJOBSERVICE} ${localFlag}"
-cmd="$PROG $args ${localFlag}"
+cmd="$PROG $args $localFlag"
 echo $cmd
 retval=0
 if [ $drun -eq 1 ]; then

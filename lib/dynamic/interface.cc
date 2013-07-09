@@ -328,13 +328,13 @@ void paroc_interface::allocate_only()
  */
 void paroc_interface::Allocate()
 {
-    printf("----------------Allocate----------------\n");//vanhieu.nguyen
+    //printf("----------------Allocate----------------\n");//vanhieu.nguyen
     allocate_only();
-    printf("----------------Start bind----------------\n");//vanhieu.nguyen
+    //printf("----------------Start bind----------------\n");//vanhieu.nguyen
   
     Bind(accesspoint);
-    printf("----------------/Start bind----------------\n");//vanhieu.nguyen
-    printf("----------------/Allocate----------------\n");//vanhieu.nguyen
+    //printf("----------------/Start bind----------------\n");//vanhieu.nguyen
+    //printf("----------------/Allocate----------------\n");//vanhieu.nguyen
 }
 
 /** 
@@ -499,9 +499,9 @@ void paroc_interface::Bind(const char *dest)
    		int status;
 		POPString info;
 		POPString peerplatform;
-                printf("----------------BindStatus----------------\n");//vanhieu.nguyen
+                //printf("----------------BindStatus----------------\n");//vanhieu.nguyen
 		BindStatus(status, peerplatform, info);
-                printf("----------------/BindStatus----------------\n");//vanhieu.nguyen		
+                //printf("----------------/BindStatus----------------\n");//vanhieu.nguyen		
                 switch (status) {
   		case BIND_OK:
                     	//NegotiateEncoding(info,peerplatform);
@@ -586,7 +586,7 @@ void paroc_interface::Release()
 	  // Decrement reference when the interface release its resources
     paroc_connection* connection = __paroc_combox->get_connection();
     if(connection != NULL && !accesspoint.IsService()) {
-      printf("Release\n");// vanhieu.nguyen
+      //printf("Release\n");//vanhieu.nguyen
       DecRef();	
     } 
       
@@ -1107,7 +1107,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf)
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn)
 {
-    printf("methodid[0]=%d, methodid[1]=%d, methodid[2]=%d, methodname=%s\n", buf->GetHeader().GetClassID(), buf->GetHeader().GetMethodID(), buf->GetHeader().GetSemantics(), buf->GetHeader().GetMethodName());
+  //printf("methodid[0]=%d, methodid[1]=%d, methodid[2]=%d, methodname=%s\n", buf->GetHeader().GetClassID(), buf->GetHeader().GetMethodID(), buf->GetHeader().GetSemantics(), buf->GetHeader().GetMethodName());//vanhieu.nguyen
     
   if (!buf->Send((*__paroc_combox), conn)) {
 	  paroc_exception::paroc_throw_errno();

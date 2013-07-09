@@ -37,10 +37,10 @@ bool CheckIfPacked(const char *objname);
 
 int main(int argc, char **argv)
 {
-    for(int i =0; i < argc; i++)
+    /*for(int i =0; i < argc; i++)
     {
         printf("argv[%d]=%s\n", i, argv[i]);//vanhieu.nguyen
-    }
+    }*/
 	char *rcore=paroc_utils::checkremove(&argc,&argv,"-core=");
 	if (rcore!=NULL) {
 		paroc_system::processor_set(atoi(rcore));
@@ -119,13 +119,13 @@ int main(int argc, char **argv)
 	}
         // Start the broker
  	if (status == 0) {
-                printf("----------------Start the broker----------------\n");//vanhieu.nguyen        
+                //printf("----------------Start the broker----------------\n");//vanhieu.nguyen        
 		broker->Run();
 		delete broker;
 	} else if (broker != NULL) { 
 	  delete broker;
 	}
-        printf("----------------/Start the broker----------------\n");//vanhieu.nguyen
+        //printf("----------------/Start the broker----------------\n");//vanhieu.nguyen
         
         return status;
 }

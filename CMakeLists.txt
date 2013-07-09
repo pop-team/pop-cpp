@@ -114,6 +114,7 @@ if(UNIX)
    *.cmake
    interconnector/Makefile
    interconnector/*.cmake
+   interconnector/CMakeFiles
    mpi/Makefile
    mpi/*.cmake
    mpi/CMakeFiles   

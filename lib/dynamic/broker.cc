@@ -182,7 +182,7 @@ int paroc_broker::Run()
 	  return -1;
 	}
         state = POPC_STATE_RUNNING;
-        printf("comboxCount=%d\n", comboxCount);//vanhieu.nguyen
+        //printf("comboxCount=%d\n", comboxCount);//vanhieu.nguyen
 	ptArray.SetSize(comboxCount);
 	int i;
 
@@ -201,12 +201,12 @@ int paroc_broker::Run()
 	while (state == POPC_STATE_RUNNING) {
 		try {
 			paroc_request req;
-printf("----------------Start get request----------------\n");//vanhieu.nguyen
+//printf("----------------Start get request----------------\n");//vanhieu.nguyen
 			if (!GetRequest(req)) break;
-printf("----------------/Start get request----------------\n");//vanhieu.nguyen
-printf("----------------Start serve request----------------\n");//vanhieu.nguyen
+//printf("----------------/Start get request----------------\n");//vanhieu.nguyen
+//printf("----------------Start serve request----------------\n");//vanhieu.nguyen
 			ServeRequest(req);
-printf("----------------/Start serve request----------------\n");//vanhieu.nguyen                         
+//printf("----------------/Start serve request----------------\n");//vanhieu.nguyen                         
 			if (req.methodId[2] & INVOKE_CONSTRUCTOR)
 			{
 				alarm(0);
@@ -233,7 +233,7 @@ printf("----------------/Start serve request----------------\n");//vanhieu.nguye
 		}
 	}
 	        
-        printf("POPC exiting\n");//vanhieu.nguyen
+        //printf("POPC exiting\n");//vanhieu.nguyen
 	state = POPC_STATE_EXIT;
         
 	for (i = 0; i < comboxCount; i++) {
@@ -301,7 +301,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 				return false;
 			}
 		}*/
-		//printf("[Broker] Initialize\n");//vanhieu.nguyen                
+		//printf("[Broker] Initialize\n");//vanhieu.nguyen        
                 //if(!pc->Create(address, true)){
                 if(!pc->Create(0, true)){
 			paroc_system::perror("Broker");

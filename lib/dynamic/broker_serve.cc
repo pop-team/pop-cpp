@@ -75,18 +75,18 @@ bool paroc_broker::GetRequest(paroc_request &req)
 {
 	paroc_mutex_locker locker(execCond);
 	//If the queue is empty then wait for the request....
-        printf("            GetRequest started(%p, %d)\n", obj, state);//vanhieu.nguyen
+        //printf("            GetRequest started(%p, %d)\n", obj, state);//vanhieu.nguyen
 	while (request_fifo.IsEmpty())
 	{
-             printf("            Queue is empty(%p)\n", obj);//vanhieu.nguyen
+             //printf("            Queue is empty(%p)\n", obj);//vanhieu.nguyen
             if ((obj!=NULL && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING)
             {
-                    printf("return false(%p, %d)\n", obj, state);//vanhieu.nguyen
+                    //printf("return false(%p, %d)\n", obj, state);//vanhieu.nguyen
                     return false;
             }
-            printf("            Wait for new request(%p, %d)\n", obj, state);//vanhieu.nguyen
+            //printf("            Wait for new request(%p, %d)\n", obj, state);//vanhieu.nguyen
             execCond.wait(); //Wait for new request
-            printf("            New request received(%p, %d)\n", obj, state);//vanhieu.nguyen
+            //printf("            New request received(%p, %d)\n", obj, state);//vanhieu.nguyen
 	}
 
         POSITION pos=request_fifo.GetHeadPosition();
@@ -119,14 +119,14 @@ bool paroc_broker::GetRequest(paroc_request &req)
 			execCond.wait();
 		}
 	}
-        printf("            after have request then methodid=%d\n", req.methodId[2]);//vanhieu.nguyen
+        //printf("            after have request then methodid=%d\n", req.methodId[2]);//vanhieu.nguyen
 	return true;
 }
 
 void paroc_broker::ServeRequest(paroc_request &req)
 {
 	int type=req.methodId[2];
-        printf("            Serve Request started type=%d\n", type);//vanhieu.nguyen
+        //printf("            Serve Request started type=%d\n", type);//vanhieu.nguyen
 	if (type & INVOKE_CONC)
 	{
 		paroc_invokethread *thr= new paroc_invokethread(this,req, &instanceCount,&execCond);
@@ -162,7 +162,7 @@ void paroc_broker::ServeRequest(paroc_request &req)
 	}
 	else
 	{
-            printf("            DoInvoke(req)\n");//vanhieu.nguyen
+            //printf("            DoInvoke(req)\n");//vanhieu.nguyen
 		DoInvoke(req);
                 if (type & INVOKE_MUTEX)
 		{
@@ -173,9 +173,9 @@ void paroc_broker::ServeRequest(paroc_request &req)
 		}
 		req.data->Destroy();
 		if (req.from!=NULL) delete req.from;
-                printf("            /DoInvoke(req)\n");//vanhieu.nguyen
+                //printf("            /DoInvoke(req)\n");//vanhieu.nguyen
 	}
-         printf("            Serve Request terminated type=%d\n", type);//vanhieu.nguyen
+         //printf("            Serve Request terminated type=%d\n", type);//vanhieu.nguyen
 }
 
 void paroc_broker::UnhandledException()

@@ -123,7 +123,7 @@ bool paroc_combox_socket::Create(int port, bool server)
 	}
 	else 
         {
-            //printf("[Interface side] [[Create function]] [[[isServer=false]]] sockfd=%d\n", sockfd); //vanhieu.nguyen               		
+            //printf("[Interface side] [[Create function]] [[[isServer=false]]] sockfd=%d\n", sockfd);//vanhieu.nguyen              		
             peer=CreateConnection(-1);
         }
 	return true;
