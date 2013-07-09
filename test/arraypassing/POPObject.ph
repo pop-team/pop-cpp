@@ -14,8 +14,8 @@ public:
 	POPObject() @{ od.url("localhost");od.executable("./POPObject.obj");};//@{ od.node(1); od.executable("./POPObject.obj"); };
 	~POPObject();
 
-	//sync seq void displayEle(int ele);
-        sync seq void displayArray(int length, int array[]);
+	sync seq void displayEle(int ele);
+        //sync seq void displayArray(int length, int array[]);
 	
 private:
 	

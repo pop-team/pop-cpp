@@ -8,7 +8,7 @@
 int main(int argc, char** argv)
 
 {
-  	/*//std::cout << "Standard syntax array: Starting test..." << std::endl;
+  	//std::cout << "Standard syntax array: Starting test..." << std::endl;
 	printf("Standard syntax array: Starting test...\n");
 	int ele;
 	
@@ -24,8 +24,8 @@ int main(int argc, char** argv)
 	
 	//std::cout << "Standard syntax array: test succeeded, destroying object..." << std::endl;		
 	printf("Standard syntax array: test succeeded, destroying object...\n");
-	return 0;*/
-     	printf("Standard syntax array: Starting test...\n");
+	return 0;
+     	/*printf("Standard syntax array: Starting test...\n");
 
 	int array[5];
 	
@@ -44,5 +44,5 @@ int main(int argc, char** argv)
 	}
 	
 	printf("Standard syntax array: test succeeded, destroying object...\n");	
-	return 0;
+	return 0;*/
 }

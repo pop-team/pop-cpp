@@ -8,7 +8,8 @@
  * Authors		Date			Comment
  * P.Kuonen   	June 2011 	Modify to print all exceptions raised in methods
  * clementval	March 2012	Add Enum, Struct support
- * clementval	August 2012	Add asynchronous parallel object allocation (APOA) support 
+ * clementval	August 2012	Add asynchronous parallel object allocation (APOA) support
+ * vanhieu      July 2013       Modify line #925 
  */
 
 #include "parser.h"

@@ -5,9 +5,10 @@ main: main.cc POPObject.ph POPObject.cc
 
 POPObject.obj: POPObject.ph POPObject.cc
 	popcc -noclean -object -o POPObject.obj POPObject.cc POPObject.ph
+	./POPObject.obj -listlong > obj.map
 	
 clean:
 	rm -f *.o *.obj main obj.map _popc*
 
-run:	
-	mpiexec -np 2 $(POPC_INTERCONNECTOR) -app=main
+run:
+	popcrun obj.map ./main
