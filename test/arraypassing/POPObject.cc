@@ -24,7 +24,7 @@ void POPObject::displayEle(int ele){
 	printf("In parallel object\n");	
         //std::cout << "item[" << i << "]=" << array[i] << std::endl;
         printf("ele=%d\n", ele);
-        ele = ele+1;
+        ele = ele + 1;
 }
 
 /*void POPObject::displayArray(int length, int array[]){

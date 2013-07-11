@@ -101,6 +101,7 @@ if(XMP_SUPPORT)
   add_subdirectory(scripts)
 endif(XMP_SUPPORT)
 
+add_subdirectory(services)
 
 # Add target to clean the distribution of all CMake generated files
 if(UNIX)
@@ -144,7 +145,10 @@ if(UNIX)
    include/pseudodynamic/CMakeFiles     
    scripts/Makefile
    scripts/*.cmake
-   scripts/CMakeFiles  
+   scripts/CMakeFiles
+   services/Makefile
+   services/*.cmake
+   services/CMakeFiles  
    config.h
    Makefile
    *~

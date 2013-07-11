@@ -44,10 +44,11 @@ POPC_Allocator_tcpip_ssh::~POPC_Allocator_tcpip_ssh()
  */
 POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od)
 {
-        POPString objectaddress;
-        
-        /* Allocation here */
-        return objectaddress;  
+    POPString objectaddress;
+   
+    /* Allocate for remote */
+
+    return objectaddress;
 }
 
 /**

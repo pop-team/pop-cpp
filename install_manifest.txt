@@ -112,3 +112,4 @@
 /usr/local/popc/etc/popc-runtime-env.sh
 /usr/local/popc/bin/popcrun
 /usr/local/popc/bin/popc-xmpcc
+/usr/local/popc/services/popcobjrun

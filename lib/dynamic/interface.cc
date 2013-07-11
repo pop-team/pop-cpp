@@ -41,6 +41,8 @@
 #include "paroc_system.h"
 #include "paroc_utils.h"
 #include "config.h"
+#include "include/pseudodynamic/paroc_string.h"
+#include "include/pseudodynamic/paroc_utils.h"
 
 #if defined POPC_SECURE || defined POPC_SECURE_VIRTUAL
 #include "popc_security_manager.ph"
@@ -307,19 +309,25 @@ void paroc_interface::allocate_only()
     Release();
     POPString objectname = ClassName();
     POPString objectaddress; 
-
+    paroc_string url;
+    
+    od.getURL(url);
+    
     // Get the right allocator
-    POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance(); 
+    POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
+    POPC_Allocator* allocator;
     //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
-    POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);            
-    //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);            
+    if(!paroc_utils::isEqual(url.c_str(), NULL))
+        allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
+    else allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
+    
     if(allocator == NULL) {
       std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
     }
 
     objectaddress = allocator->allocate(objectname, od); 
         
-    accesspoint.SetAccessString(objectaddress.GetString());     
+    accesspoint.SetAccessString(objectaddress.GetString());
 }
 
 /**
