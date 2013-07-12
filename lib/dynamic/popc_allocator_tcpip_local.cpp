@@ -66,7 +66,8 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     int n = 0;
 
     // Get the executable path name
-    od.getExecutable(codefile);       
+    od.getExecutable(codefile);
+    
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
     if(codefile.Length() <= 0) {
       printf("POP-C++ Error: Code file executable path is NULL ! Abort !\n"); 	
@@ -189,6 +190,9 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     int ret=0, err=0;
 
+    for (int j=0;j<n;j++) {
+        printf("argv[%d]=%s\n", j, argv[j]);}
+    
     if (isManual)
     {
             printf("\nTo launch this object, run this command on the target machine :\n");
