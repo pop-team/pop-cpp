@@ -1,25 +1,25 @@
-#!/bin/sh
+#!
 echo '====================================================='
 echo CONFIGURING STARTUP SCRIPT FOR YOUR LOCAL MACHINE...
 
 script=SXXpopc
 scriptglobus=SXXpopc.globus
 
-tmpheader=/tmp/SXXpopc_header_${USER}
+tmpheader=/tmp/SXXpopc_header_
 
-POPC_LOCATION=/Users/clementval/popc
+POPC_LOCATION=
 
-if [ ! -d "${POPC_LOCATION}" ]
+if [ ! -d "" ]
 then
-	echo "ERROR: POPC_LOCATION (${POPC_LOCATION}) does not exist!"
+	echo "ERROR: POPC_LOCATION () does not exist!"
 	exit 1
 fi
 
 echo '#!/bin/bash' > $tmpheader
-echo "POPC_LOCATION=${POPC_LOCATION}" >> $tmpheader
+echo "POPC_LOCATION=" >> $tmpheader
 echo "export POPC_LOCATION" >> $tmpheader
 
-#echo "Enter dynamic library locations (default: [${LD_LIBRARY_PATH}]):"
+#echo "Enter dynamic library locations (default: []):"
 #read libdir
 #if [ "x$libdir" != "x" ]; then
 #	echo "LD_LIBRARY_PATH=$libdir; export LD_LIBRARY_PATH" >>  $tmpheader
@@ -29,33 +29,33 @@ if [ X$insttype = "Xstandard" ]
 then
 	echo "Enter the service port[2711]:"
 	read port
-	if [ -n "${port}" ]
+	if [ -n "" ]
 	then
-		echo "POPC_PORT=${port}" >> $tmpheader
+		echo "POPC_PORT=" >> $tmpheader
 	fi
 
 	echo "Enter the domain name:"
 	read domainname
 
-	if [ -n "${domainname}" ]
+	if [ -n "" ]
 	then
-		echo "POPC_DOMAIN=${domainname}" >> $tmpheader
+		echo "POPC_DOMAIN=" >> $tmpheader
 		echo "export POPC_DOMAIN" >> $tmpheader
 	fi
 
 	echo "Enter the temporary directory for intermediate results:"
 	read tempdir
 
-	if [ -n "${tempdir}" ]
+	if [ -n "" ]
 	then
-		echo "POPC_TEMP=${tempdir}" >> $tmpheader
+		echo "POPC_TEMP=" >> $tmpheader
 		echo "export POPC_TEMP" >> $tmpheader
 	fi
 
 #echo "Enter the command to execute parallel object codes:"
 #read job_exec
-#if [ -n "${job_exec}" ]; then
-#    echo "POPC_JOB_EXEC=${job_exec}" >> $tmpheader
+#if [ -n "" ]; then
+#    echo "POPC_JOB_EXEC=" >> $tmpheader
 #    echo "export POPC_JOB_EXEC" >> $tmpheader
 #fi
 
@@ -73,72 +73,72 @@ then
 		echo "Enter the delegate service for POP-C++ services (service proxy):"
 		read proxyname
 		
-		if [ -n "${proxyname}" ]
+		if [ -n "" ]
 		then
-			echo "POPC_JOBMGR_PROXY=${proxyname}" >> $tmpheader
+			echo "POPC_JOBMGR_PROXY=" >> $tmpheader
 			echo "export POPC_JOBMGR_PROXY" >> $tmpheader
 		fi
 
-		echo "Enter the delegate service to access parallel objects (application proxy) [${proxyname}]:"
+		echo "Enter the delegate service to access parallel objects (application proxy) []:"
 		read appproxyname
-		if [ -z "${appproxyname}" ]
+		if [ -z "" ]
 		then
-			appproxyname=${proxyname}
+			appproxyname=
 		fi
 
-		if [ -n "${appproxyname}" ]
+		if [ -n "" ]
 		then
-			echo "POPC_PROXY=${appproxyname}" >> $tmpheader
+			echo "POPC_PROXY=" >> $tmpheader
 			echo "export POPC_PROXY" >> $tmpheader
 		fi
 
-		while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+		while [ "X" != "Xy" ] && [ "X" != "Xn" ]
 		do
 			echo "Do you want to run the POP-C++ delegate service on this host? (y/n)[n]"
 			read answer
 			
-			if [ -z "${answer}" ]
+			if [ -z "" ]
 			then
 				answer="n"
 			fi
 		done
 
-		if [ "X${answer}" = "Xy" ]
+		if [ "X" = "Xy" ]
 		then
 			echo "Enter delegate service port [2711]:"
 			read proxyport
 
-			if [ "X${proxyport}" = "X" ]
+			if [ "X" = "X" ]
 			then
 				proxyport="2811"
 			fi
 			
-			echo "PROXY_PORT=${proxyport}" >> $tmpheader
+			echo "PROXY_PORT=" >> $tmpheader
 
 			echo "Enter netmask of the local network (only hosts that do not have the same subnet will be connected through the delegate service):"
 			read netmask
 			
-			if [ ! "X${netmask}" = "X" ]
+			if [ ! "X" = "X" ]
 			then
-				echo "POPC_PROXY_NETMASK=${netmask}" >> $tmpheader
+				echo "POPC_PROXY_NETMASK=" >> $tmpheader
 				echo "export POPC_PROXY_NETMASK" >> $tmpheader
 			fi
 
 			echo "Enter port range (xxx:yyy) for parallel objects:"
 			read portrange
 			
-			if [ ! "X${portrange}" = "X" ]
+			if [ ! "X" = "X" ]
 			then
-				echo "POPC_PROXY_PORTS=${portrange}" >> $tmpheader
+				echo "POPC_PROXY_PORTS=" >> $tmpheader
 				echo "export POPC_PROXY_PORTS" >> $tmpheader
 			fi
 
 			echo "Delegate service can be cascaded. If this is the case, what is the parent delegate service?"
 			read parent
 	
-			if [ ! "X${parent}" = "X" ]
+			if [ ! "X" = "X" ]
 			then
-				echo "POPC_PROXY_PARENT=${parent}" >> $tmpheader
+				echo "POPC_PROXY_PARENT=" >> $tmpheader
 				echo "export POPC_PROXY_PARENT" >> $tmpheader
 			fi
 		fi
@@ -148,7 +148,7 @@ then
 
 fi
 
-cat $tmpheader ${POPC_LOCATION}/sbin/SXXpopc.in > ${POPC_LOCATION}/sbin/SXXpopc
-chmod +x ${POPC_LOCATION}/sbin/SXXpopc
+cat $tmpheader /sbin/SXXpopc.in > /sbin/SXXpopc
+chmod +x /sbin/SXXpopc
 
 rm $tmpheader

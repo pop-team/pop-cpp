@@ -19,6 +19,7 @@
 #include "paroc_combox_factory.h"
 #include "paroc_broker.h"
 #include "include/pseudodynamic/paroc_utils.h"
+#include "include/pseudodynamic/paroc_interface.h"
 
 #define ALLOC_TIMEOUT 60
 /**

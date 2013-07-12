@@ -1,8 +1,8 @@
-#!/bin/sh
+#!
 
-POPC_VIRTUAL=@virtual@
-POPC_SECURE_VIRTUAL=@virtsecure@
-POPC_LOCATION=/Users/clementval/popc
+POPC_VIRTUAL=
+POPC_SECURE_VIRTUAL=
+POPC_LOCATION=
 export POPC_LOCATION
 
 #
@@ -25,9 +25,9 @@ else
    answer="y"
 fi
 
-if [ -f /Users/clementval/popc/sbin/paroc_setup ]
+if [ -f /sbin/paroc_setup ]
 then 
-	echo "Error : You are installing on top of an older version, please clean your directory with 'rm -rf /Users/clementval/popc/*' and run 'make install' again."
+	echo "Error : You are installing on top of an older version, please clean your directory with 'rm -rf /*' and run 'make install' again."
 	exit -1
 fi
 
@@ -36,14 +36,14 @@ fi
 if false
 then
 
-	while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+	while [ "X" != "Xy" ] && [ "X" != "Xn" ]
 	do
 		echo ""
 		echo "DO YOU WANT TO CONFIGURE POP-C++ SERVICES? (y/n)"
 		read answer
 	done
 
-	if [ "X${answer}" = "Xn" ]
+	if [ "X" = "Xn" ]
 	then
 		echo "--------------------------------------------------"
 		echo "You chose not to configure the POP-C++ services now."
@@ -92,92 +92,92 @@ insttype="standard"
 export insttype
 
 
-if [ ! -d "${POPC_LOCATION}" ]
+if [ ! -d "" ]
 then
-    echo "ERROR: POPC_LOCATION (${POPC_LOCATION}) does not exist!"
+    echo "ERROR: POPC_LOCATION () does not exist!"
     exit 1
 fi
 
-LD_LIBRARY_PATH=${POPC_LOCATION}/lib:${LD_LIBRARY_PATH}
+LD_LIBRARY_PATH=/lib:
 export LD_LIBRARY_PATH
 
 echo '====================================================='
 echo GENERATING SERVICE MAPS...
 
-servicemap=${POPC_LOCATION}/etc/service.map
+servicemap=/etc/service.map
 echo "#object platform location" >  $servicemap 
 
-if [ -f ${POPC_LOCATION}/services/jobmgr.globus ]
+if [ -f /services/jobmgr.globus ]
 then
-	${POPC_LOCATION}/services/jobmgr.globus -listlong | grep Globus >> $servicemap 
+	/services/jobmgr.globus -listlong | grep Globus >> $servicemap 
 fi 
 
-if [ -f ${POPC_LOCATION}/services/jobmgr ]
+if [ -f /services/jobmgr ]
 then
-	${POPC_LOCATION}/services/jobmgr -listlong >> $servicemap 
+	/services/jobmgr -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/virtual_jobmgr ]
+if [ -f /services/virtual_jobmgr ]
 then
-	${POPC_LOCATION}/services/virtual_jobmgr -listlong >> $servicemap 
+	/services/virtual_jobmgr -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/secure_jobmgr ]
+if [ -f /services/secure_jobmgr ]
 then
-	${POPC_LOCATION}/services/secure_jobmgr -listlong >> $servicemap 
+	/services/secure_jobmgr -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/virtual_secure_jobmgr ]
+if [ -f /services/virtual_secure_jobmgr ]
 then
-	${POPC_LOCATION}/services/virtual_secure_jobmgr -listlong >> $servicemap 
+	/services/virtual_secure_jobmgr -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/popc_search_node ]
+if [ -f /services/popc_search_node ]
 then
-	${POPC_LOCATION}/services/popc_search_node -listlong >> $servicemap 
+	/services/popc_search_node -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/virtual_popc_search_node ]
+if [ -f /services/virtual_popc_search_node ]
 then
-	${POPC_LOCATION}/services/virtual_popc_search_node -listlong >> $servicemap 
+	/services/virtual_popc_search_node -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/secure_popc_search_node ]
+if [ -f /services/secure_popc_search_node ]
 then
-	${POPC_LOCATION}/services/secure_popc_search_node -listlong >> $servicemap 
+	/services/secure_popc_search_node -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/virtual_secure_popc_search_node ]
+if [ -f /services/virtual_secure_popc_search_node ]
 then
-	${POPC_LOCATION}/services/virtual_secure_popc_search_node -listlong >> $servicemap 
+	/services/virtual_secure_popc_search_node -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/virtual_popc_security_manager ]
+if [ -f /services/virtual_popc_security_manager ]
 then
-	${POPC_LOCATION}/services/virtual_popc_security_manager -listlong >> $servicemap 
+	/services/virtual_popc_security_manager -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/popc_security_manager ]
+if [ -f /services/popc_security_manager ]
 then
-	${POPC_LOCATION}/services/popc_security_manager -listlong >> $servicemap 
+	/services/popc_security_manager -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/popcloner ]
+if [ -f /services/popcloner ]
 then
-	${POPC_LOCATION}/services/popcloner -listlong >> $servicemap 
+	/services/popcloner -listlong >> $servicemap 
 fi
 
-if [ -f ${POPC_LOCATION}/services/popfilemanager ]
+if [ -f /services/popfilemanager ]
 then
-	${POPC_LOCATION}/services/popfilemanager -listlong >> $servicemap 
+	/services/popfilemanager -listlong >> $servicemap 
 fi 
 
-if [ -f ${POPC_LOCATION}/services/pqueue ]
+if [ -f /services/pqueue ]
 then
-	${POPC_LOCATION}/services/pqueue -listlong | grep PQueue >> $servicemap 
+	/services/pqueue -listlong | grep PQueue >> $servicemap 
 fi
 
-#${POPC_LOCATION}/services/proxy -listlong >> $servicemap 
+#/services/proxy -listlong >> $servicemap 
 
  if [ X$POPC_SECURE = "Xtrue" ] || [ X$POPC_SECURE_VIRTUAL = "Xtrue" ]
    then 
@@ -190,13 +190,13 @@ fi
 
 echo "CONFIGURING POP-C++ SERVICES ON YOUR LOCAL MACHINE..."
 
-conf=${POPC_LOCATION}/etc/jobmgr.conf
-runtime_env=${POPC_LOCATION}/etc/popc-runtime-env.sh
-confglobus=${POPC_LOCATION}/etc/jobmgr.globus.conf
+conf=/etc/jobmgr.conf
+runtime_env=/etc/popc-runtime-env.sh
+confglobus=/etc/jobmgr.globus.conf
 virtualconf=/tmp/popc_${$}.conf
-virtualconfcipher=${POPC_LOCATION}/etc/virtual.conf.cr
+virtualconfcipher=/etc/virtual.conf.cr
 
-cp ${POPC_LOCATION}/etc/jobmgr.conf.in $conf
+cp /etc/jobmgr.conf.in $conf
 echo " " >> $conf
 
 if [ X$insttype = "Xstandard" ]
@@ -229,8 +229,8 @@ then
 			if [ "x$host" != "xlocalhost" ] && [ "x$host" != "x127.0.0.1" ] && [ "x$host" != "x$HOSTIP" ]
 			then
 				myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711"  }'`
-				echo "parent ${myurl}" >>  $conf
-				echo "node ${myurl}" >>  $conf
+				echo "parent " >>  $conf
+				echo "node " >>  $conf
 			else
 				echo ""
 				echo "Please note that POP-C++ will hang if you define your system "
@@ -241,8 +241,8 @@ then
 				if [ x$response = "xy" ] || [ x$response = "xY" ]
 				then
 					myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711"  }'`
-					echo "parent ${myurl}" >>  $conf
-					echo "node ${myurl}" >>  $conf
+					echo "parent " >>  $conf
+					echo "node " >>  $conf
 				else
 					echo ""
 				fi
@@ -266,7 +266,7 @@ then
 			if [ "x$host" != "x" ]
 			then
 				myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711" }'`
-				echo "node ${myurl}" >>  $conf
+				echo "node " >>  $conf
 			else
 				break
 			fi
@@ -366,9 +366,9 @@ then
 #	read job_exec
 fi
 
-echo "jobmgr ${job_exec} $POPC_LOCATION/services/popcobjrun" >> $conf 
+echo "jobmgr  $POPC_LOCATION/services/popcobjrun" >> $conf 
 
-if [ "@pqueue@" = "true" ]
+if [ "" = "true" ]
 then
 
 	echo "PQUEUE service access point:"
@@ -508,7 +508,7 @@ then
       echo "popc_esx_snapshot $virt_var" >>  $virtualconf
 	   
       echo
-      cat $virtualconf | ${POPC_LOCATION}/bin/popcipher $virtualconfcipher
+      cat $virtualconf | /bin/popcipher $virtualconfcipher
       rm -f $virtualconf
    fi
 fi
@@ -524,16 +524,16 @@ hasld=0
 
 if [ X$insttype = "Xstandard" ]
 then
-	while [ "X${env_var}" != "X" ] && [ "Y${env_val}" != "Y" ]
+	while [ "X" != "X" ] && [ "Y" != "Y" ]
 	do
 		echo "Enter variable name:"
 		#read env_var
 		env_var=""
-		if [ "X${env_var}" != "X" ]
+		if [ "X" != "X" ]
 		then
 			echo "Enter variable value:"
 			read env_val
-			if [ "X${env_val}" != "X" ]
+			if [ "X" != "X" ]
 			then
 				echo "$env_var=\"$env_val\"" >> $runtime_env
 				echo "export $env_var" >> $runtime_env
@@ -557,13 +557,13 @@ then
 	then
 
 		answer=""
-		while [ "X${answer}" != "Xy" ] && [ "X${answer}" != "Xn" ]
+		while [ "X" != "Xy" ] && [ "X" != "Xn" ]
 		do
 			echo "Do you want to generate the POP-C++ startup scripts? (y/n)"
 			read answer
 		done
 
-		if [ "X${answer}" = "Xy" ]
+		if [ "X" = "Xy" ]
 		then
 			$POPC_LOCATION/sbin/popc_script_setup
 		fi

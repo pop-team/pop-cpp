@@ -324,7 +324,7 @@ void paroc_interface::allocate_only()
     if(allocator == NULL) {
       std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
     }
-
+    
     objectaddress = allocator->allocate(objectname, od); 
         
     accesspoint.SetAccessString(objectaddress.GetString());
@@ -340,6 +340,10 @@ void paroc_interface::Allocate()
     allocate_only();
     //printf("----------------Start bind----------------\n");//vanhieu.nguyen
   
+    //Add for SSH tunneling
+    if(od.isSecureSet()) accesspoint.SetSecure();
+    if(od.isServiceSet()) accesspoint.SetAsService();
+    
     Bind(accesspoint);
     //printf("----------------/Start bind----------------\n");//vanhieu.nguyen
     //printf("----------------/Allocate----------------\n");//vanhieu.nguyen
