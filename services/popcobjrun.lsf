@@ -1,0 +1,44 @@
+#! /bin/bash
+# Submits a job to the next node in $LSB_HOSTS
+
+export POPC_BATCH=lsf
+args=""
+prog=""
+current_node="local"
+
+if [ "X$LSB_HOSTS" = "X" ]; then
+        echo "Error : \$LSB_HOSTS not set : popcobjrun.lsf must only be used in a batch environment"
+        exit -1
+fi
+
+if [ "X$POPC_RSH" = "X" ]; then
+	POPC_RSH="/usr/bin/ssh"
+fi
+
+for arg in $* ; do
+    if [ `echo "$arg"|grep "^\-batch-node="` ]; then
+      current_node=`echo $arg|sed s/-batch-node=//`
+    elif [ "X${prog}" = "X" ]; then
+      prog=$arg
+    else
+      args="$args $arg"
+    fi
+done
+
+if [ "$current_node" = "local" ]; then
+  # Execute job locally with the standard command
+  # echo "$0 executes : $prog -batch=lsf $args &"
+  $prog -batch=lsf $args &
+else
+
+  # Find the next node and execute the job
+  nbnodes=`cat $LSB_HOSTS|wc -l`
+  
+  current_node=`expr $current_node % $nbnodes`
+  current_node=`expr $current_node + 1`
+  current_node_name=`cat $LSB_HOSTS|sed -n "${current_node}p"`
+  
+  #echo "$0 executes : ssh $current_node_name $prog -batch=lsf $args &"
+  $POPC_RSH $current_node_name $prog -batch=lsf $args &
+  
+fi
