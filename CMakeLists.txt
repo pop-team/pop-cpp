@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 2.6)
 project(POPCPP)
 
 # Define version of POP-C++ - It will be shown on the compiler usage message and with -version option
-set(VERSION "2.8 - Windows")
+set(VERSION "2.8 - Linux")
 execute_process(COMMAND uname -m OUTPUT_VARIABLE HOST_CPU_RAW)
 string(REGEX REPLACE "\n" "" HOST_CPU ${HOST_CPU_RAW})
 execute_process(COMMAND uname -s OUTPUT_VARIABLE HOST_KERNEL_RAW)
@@ -146,6 +146,7 @@ if(UNIX)
    scripts/Makefile
    scripts/*.cmake
    scripts/CMakeFiles
+   scripts/popcrun
    services/Makefile
    services/*.cmake
    services/CMakeFiles  
