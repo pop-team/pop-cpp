@@ -111,8 +111,5 @@
 /usr/local/popc/lib/dynamic/libpopc_advanced.a
 /usr/local/popc/etc/popc-runtime-env.sh
 /usr/local/popc/bin/popcrun
-/usr/local/popc/sbin/SXXpopc
-/usr/local/popc/sbin/popc_setup
-/usr/local/popc/sbin/popc_script_setup
 /usr/local/popc/bin/popc-xmpcc
 /usr/local/popc/services/popcobjrun

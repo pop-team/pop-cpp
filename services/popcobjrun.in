@@ -11,8 +11,8 @@ MY_POPC_PROXY=""
 prog=""
 drun=0
 
-if [ -n "${POPC_PROXY}" ]; then
-MY_POPC_PROXY="-proxy=${POPC_PROXY}"
+if [ -n "$POPC_PROXY" ]; then
+MY_POPC_PROXY="-proxy=$POPC_PROXY"
 fi
 
 #parse arguments
@@ -21,18 +21,18 @@ for arg in $* ; do
       drun=1
     elif [ `echo "$arg"|grep "^\-batch="` ]; then
       export POPC_BATCH=`echo $arg|sed s/-batch=//`
-    elif [ -z "${prog}" ]; then
+    elif [ -z "$prog" ]; then
       prog=$arg
     else
       args="$args $arg"
     fi
 done
 
-if [ -z "${POPC_LOCATION}" ]; then
-  if [ "X${POPC_BATCH}" = "Xsmscg" ]; then
+if [ -z "$POPC_LOCATION" ]; then
+  if [ "X$POPC_BATCH" = "Xsmscg" ]; then
     POPC_LOCATION=`dirname $0`/..
   else
-    POPC_LOCATION=@prefix@
+    POPC_LOCATION=@CMAKE_INSTALL_PREFIX@
   fi
 export POPC_LOCATION
 fi
@@ -40,10 +40,10 @@ fi
 
 
 if [ "$drun" = "1" ]; then
-    echo "Exec: ${POPC_JOB_EXEC} $prog $args"
+    echo "Exec: $POPC_JOB_EXEC $prog $args"
 elif [ ! "X`which $prog 2>/dev/null`" = "X" ]; then
-#    echo "${POPC_JOB_EXEC} $prog $args 
-    ${POPC_JOB_EXEC} $prog $args &
+#    echo "$POPC_JOB_EXEC $prog $args 
+    $POPC_JOB_EXEC $prog $args &
     RETVAL=$?
     exit $RETVAL
 else
@@ -51,14 +51,14 @@ else
     wget=`which wget`
     pid=$$
 
-    prog1="$TMPDIR/parobject_${USER}_${pid}"
+    prog1="$TMPDIR/parobject_$USER_$pid"
 
     echo "Downloading the executable file..."
 
 #Check for Globus GridFTP files....
 
     gsiprog=`echo $prog | grep ^'gsiftp://'`
-    if [ "X${gsiprog}" = "X" ]; then
+    if [ "X$gsiprog" = "X" ]; then
 	$wget -q $prog -O $prog1
 	RETVAL=$?
     else 
@@ -66,7 +66,7 @@ else
 	    . $GLOBUS_LOCATION/etc/globus-user-env.sh
 	fi
 	gsiftpget=`which globus-url-copy`
-	if [ "X${gsiftpget}" = "X" ]; then
+	if [ "X$gsiftpget" = "X" ]; then
 	    echo "globus-url-copy is required to stage the executable!"
 	    exit 1
 	fi
@@ -80,12 +80,12 @@ else
     fi
     
     if [ ! -f $prog1 ]; then
-        echo "${prog1} not found"
+        echo "$prog1 not found"
         exit 1
     else
         chmod +x $prog1
-#        echo "Now EXEC: ${POPC_JOB_EXEC} ${TMPDIR}/$prog1 $* ${MY_POPC_PROXY}"
-	${POPC_JOB_EXEC} $prog1 $args
+#        echo "Now EXEC: $POPC_JOB_EXEC $TMPDIR/$prog1 $* $MY_POPC_PROXY"
+	$POPC_JOB_EXEC $prog1 $args
         RETVAL=$?
 	rm -f $prog1
         exit $RETVAL

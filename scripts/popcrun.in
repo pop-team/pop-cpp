@@ -15,7 +15,7 @@ fi
 unset POPC_DEBUG
 
 if [ -z "$POPC_LOCATION" ]; then
-POPC_LOCATION=@prefix@
+POPC_LOCATION=@CMAKE_INSTALL_PREFIX@
 export POPC_LOCATION
 fi
 
@@ -23,7 +23,7 @@ fi
 
 MYJOBSERVICE="`hostname`:2711"
 
-#if [ -z "${POPC_JOBSERVICE}" ]; then
+#if [ -z "$POPC_JOBSERVICE" ]; then
 #POPC_JOBSERVICE="`hostname`:2711"
 #fi
 
@@ -184,12 +184,12 @@ MY_PROXY=" -proxy=$POPC_PROXY"
 fi
 
 #do it later
-#if [ ! -x ${MYAPPSERVICE} ]; then
+#if [ ! -x $MYAPPSERVICE ]; then
 #  echo "$MYAPPSERVICE not found"
 #  exit 1
 #fi
 #Use the following line to run the interface side in valgrind
-#cmd="valgrind --log-file=/tmp/$$ $PROG $args -initparoc -appservicecode=${MYAPPSERVICE} ${MY_PROXY} -codeconf=${PATHCONF}/${FILECONF} -jobservice=${MYJOBSERVICE} ${localFlag}"
+#cmd="valgrind --log-file=/tmp/$$ $PROG $args -initparoc -appservicecode=$MYAPPSERVICE $MY_PROXY -codeconf=$PATHCONF/$FILECONF -jobservice=$MYJOBSERVICE $localFlag"
 cmd="$PROG $args $localFlag"
 echo $cmd
 retval=0

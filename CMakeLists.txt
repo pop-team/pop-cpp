@@ -147,9 +147,11 @@ if(UNIX)
    scripts/*.cmake
    scripts/CMakeFiles
    scripts/popcrun
+   scripts/popc-runtime-env.sh
    services/Makefile
    services/*.cmake
-   services/CMakeFiles  
+   services/CMakeFiles
+   services/popcobjrun  
    config.h
    Makefile
    *~
