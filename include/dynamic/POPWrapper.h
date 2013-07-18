@@ -18,8 +18,8 @@
 #include "paroc_accesspoint.h"
 
 extern "C"{
-   #include "libvirt.h"
-   #include "virterror.h"
+   #include <libvirt/libvirt.h>
+   #include <libvirt/virterror.h>
 }
 #include <cstring>
 

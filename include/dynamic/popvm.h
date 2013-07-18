@@ -23,8 +23,8 @@
 #include "paroc_base.h"
 
 extern "C"{
-   #include "libvirt.h"
-   #include "virterror.h"
+   #include <libvirt/libvirt.h>
+   #include <libvirt/virterror.h>
 }
 
 class POPvm: public paroc_base {
