@@ -17,11 +17,11 @@ link_directories(${CMAKE_SOURCE_DIR}/lib/dynamic)
 
 set (CMAKE_CXX_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc)
 
-#add_custom_target(popc_search_node ALL
-#                  COMMAND ${CMAKE_CXX_COMPILER} ${POPCPP_SERVICES_COMPILER_FLAGS} popc_search_node popc_search_node.cc
-#-I${POPCPP_INCLUDE_PATH} ${POPCPP_LIB_PATH}/libpopc_services_common.a
-#                  DEPENDS popc_search_node.cc
-#                  )
+add_custom_target(popc_search_node ALL
+                  COMMAND ${CMAKE_CXX_COMPILER} ${POPCPP_SERVICES_COMPILER_FLAGS} popc_search_node popc_search_node_obj.cc
+-I${POPCPP_INCLUDE_PATH} ${POPCPP_LIB_PATH}/libpopc_services_common.a
+                  DEPENDS popc_search_node_obj.cc
+                  )
 
 #add_custom_target(jobmgr ALL
 #                  COMMAND ${CMAKE_CXX_COMPILER} ${POPCPP_SERVICES_COMPILER_FLAGS} jobmgr jobmgr_obj.cc
@@ -35,11 +35,11 @@ set (CMAKE_CXX_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc)
 #                  DEPENDS appservice_obj.cc
 #                  )
 
-add_custom_target(localservice_launcher ALL
-                  COMMAND ${CMAKE_CXX_COMPILER} ${POPCPP_SERVICES_COMPILER_FLAGS} localservice_launcher localservice_launcher.cc
--I${POPCPP_INCLUDE_PATH} ${POPCPP_LIB_PATH}/libpopc_services_common.a
-                  DEPENDS localservice_launcher.cc
-                  )
+#add_custom_target(localservice_launcher ALL
+#                  COMMAND ${CMAKE_CXX_COMPILER} ${POPCPP_SERVICES_COMPILER_FLAGS} localservice_launcher localservice_launcher.cc
+#-I${POPCPP_INCLUDE_PATH} ${POPCPP_LIB_PATH}/libpopc_services_common.a
+#                  DEPENDS localservice_launcher.cc
+#                  )
 
 #add_custom_target(jobmgr_launcher ALL
 #                  COMMAND ${CMAKE_CXX_COMPILER} ${POPCPP_SERVICES_COMPILER_FLAGS} jobmgr_launcher jobmgr_launcher.cc
