@@ -77,15 +77,15 @@ endif(NOT DEFINED POPC_MAIN_FLAGS)
 # Generate the config.h file during the configuration of the project 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
 
-# Add subdirectory which inlude a CMakeLists.text file
-add_subdirectory(lib)
-add_subdirectory(include)
-
 # If the POP-C++ Compilation option is on, add the parser directory as a sub folder
 if(POPCPP_COMPILER)
   message(STATUS "POP-C++ Compiler will be build with the same configuration as the library")
   add_subdirectory(parser)
 endif(POPCPP_COMPILER)
+
+# Add subdirectory which inlude a CMakeLists.text file
+add_subdirectory(lib)
+add_subdirectory(include)
 
 # Instruction to enable the MPI support for POP-C++
 if(MPI_SUPPORT)
@@ -148,6 +148,7 @@ if(UNIX)
    scripts/CMakeFiles
    scripts/popcrun
    scripts/popc-runtime-env.sh
+   scripts/SXXpopc
    services/Makefile
    services/*.cmake
    services/CMakeFiles

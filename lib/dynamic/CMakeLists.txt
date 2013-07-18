@@ -71,7 +71,23 @@ add_custom_command(OUTPUT paroc_objmain.std.o
 add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o) 
 add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o) 
 
+set (CMAKE_CXX_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc)
+
+add_library(popc_services_common
+service_base.cc
+jobmgr.cc
+popc_search_node.cc
+codemgr.cc
+remotelog.cc
+objectmonitor.cc
+appservice.cc
+batchmgr.cc
+popfilemanager.cc
+popc_logger.cpp
+)
+
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.std.o DESTINATION lib/dynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_objmain.std.o DESTINATION lib/dynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common.a DESTINATION lib/dynamic)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_services_common.a DESTINATION lib/dynamic)
 

@@ -28,7 +28,7 @@
 #define POPC_QUEUE_NORMAL 50
 #define POPC_QUEUE_MAX 200
 
-#define IMPLEMENT_TYPE(aparclass) aparclass##__parocobj
+#define IMPLEMENT_TYPE(aparclass) aparclass##_popcobject
 
 #include "paroc_exception.h"
 #include "paroc_buffer.h"

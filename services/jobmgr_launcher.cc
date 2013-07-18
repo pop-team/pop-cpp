@@ -14,7 +14,7 @@ clementval	2012/04/12	Add POPFileManager service support
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "config.h"
+#include "../config.h"
 
 #include "popfilemanager.ph"
 

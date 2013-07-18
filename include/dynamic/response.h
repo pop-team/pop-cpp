@@ -12,7 +12,6 @@
  * Authors		Date			Comment
  * clementval	2010/04/19	All code added for the semester project begins with this comment //Added by clementval, ends with //End of add
  * clementval	2010/04/19	All code modified during the semester project begins with //Modified by clementval, ends with //End of modification*/
- */
 
 #ifndef _RESPONSE_H
 #define _RESPONSE_H

@@ -15,8 +15,8 @@
 #define _NODEINFO_H
 #include <list>
 #include <map>
-#include "../include/paroc_string.h"
-#include "../include/paroc_base.h"
+#include "paroc_string.h"
+#include "paroc_base.h"
 
 using namespace std;
 

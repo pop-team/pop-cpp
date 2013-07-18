@@ -1,3 +1,5 @@
+/usr/local/popc/bin/popcc
+/usr/local/popc/bin/popcpp
 /usr/local/popc/lib/dynamic/paroc_infmain.std.o
 /usr/local/popc/lib/dynamic/paroc_objmain.std.o
 /usr/local/popc/lib/dynamic/libpopc_common.a
@@ -94,8 +96,6 @@
 /usr/local/popc/include/static/sysinfodef.h
 /usr/local/popc/include/static/timer.h
 /usr/local/popc/include/static/popwayback.h
-/usr/local/popc/bin/popcc
-/usr/local/popc/bin/popcpp
 /usr/local/popc/mpi/popc_mpi_interconnector
 /usr/local/popc/mpi/openmpi_check_support
 /usr/local/popc/mpi/popc_resource_manager_mpi

@@ -1,15 +1,10 @@
 /**
- *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
- * http://gridgroup.hefr.ch/popc
+ * File : POPWrapper.cc
+ * Author : Valentin Clement
+ * Description : Declaration of the basic driver wrapper implementation
+ * Creation date : 2010/1/27
  * 
- * 
- * @author Valentin Clement
- * @date 2010/1/27
- * @brief Declaration of the basic driver wrapper implementation
- * 
- * 
- * UPDATES:
+ * Modifications :
  * Authors		Date			Comment
  * clementval  2010/1/27   Creation of this file on the basis of the original ESXWrapper.h
  */
@@ -23,8 +18,8 @@
 #include "paroc_accesspoint.h"
 
 extern "C"{
-   #include <libvirt/libvirt.h>
-   #include <libvirt/virterror.h>
+   #include "libvirt.h"
+   #include "virterror.h"
 }
 #include <cstring>
 
