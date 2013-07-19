@@ -22,13 +22,13 @@
 
 using namespace std;
 
-//AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const POPString &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge)
-//{
+/*AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const POPString &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge)
+{
   /**
     * ViSaG : clementval
     * Generate the POP Application Unique ID
     */
-/*   POPString tmpChallenge = challenge;
+   /*POPString tmpChallenge = challenge;
    time_t now = time(NULL);
    POPString ip = paroc_system::GetIP();
    char id[100];
