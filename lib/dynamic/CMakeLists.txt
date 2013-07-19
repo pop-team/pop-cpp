@@ -200,7 +200,15 @@ add_custom_command(OUTPUT libpopc_services_common.a
 
 add_custom_target(popc_services_common ALL DEPENDS service_base.o jobmgr.o popc_search_node.o codemgr.o remotelog.o objectmonitor.o appservice.o batchmgr.o popfilemanager.o popc_logger.o libpopc_services_common.a)
 
-
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/appservice.ph DESTINATION ${POPCPP_INCLUDE_PATH})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/batchmgr.ph DESTINATION ${POPCPP_INCLUDE_PATH})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/codemgr.ph DESTINATION ${POPCPP_INCLUDE_PATH})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jobmgr.ph DESTINATION ${POPCPP_INCLUDE_PATH})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/objectmonitor.ph DESTINATION ${POPCPP_INCLUDE_PATH})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_service_base.ph DESTINATION ${POPCPP_INCLUDE_PATH})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_search_node.ph DESTINATION ${POPCPP_INCLUDE_PATH})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popcfilemanager.ph DESTINATION ${POPCPP_INCLUDE_PATH})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/remotelog.ph DESTINATION ${POPCPP_INCLUDE_PATH})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.std.o DESTINATION lib/dynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_objmain.std.o DESTINATION lib/dynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common.a DESTINATION lib/dynamic)
