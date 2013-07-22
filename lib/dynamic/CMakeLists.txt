@@ -151,9 +151,9 @@ add_custom_target(paroc_stub_parclass ALL DEPENDS paroc_service_base.stub.o jobm
 #		  COMMENT "Compile POP-C++ jobmanager")
 
 add_custom_command(OUTPUT popc_search_node.o
-                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS_TMP} popc_search_node.o popc_search_node.cc
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS_TMP} popc_search_node.o popc_search_node.cc popc_search_node.stub.o
 		  -I${POPCPP_INCLUDE_PATH}
-                  DEPENDS popc_search_node.cc
+                  DEPENDS popc_search_node.cc popc_search_node.stub.o
 		  COMMENT "Compile POP-C++ popcsearchnode")
 
 #add_custom_command(OUTPUT codemgr.o
