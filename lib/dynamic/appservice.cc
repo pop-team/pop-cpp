@@ -29,7 +29,7 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
 	POPString ip = paroc_system::GetIP();
 	char id[100];
 	string tmp(tmpChallenge.GetString());
-	locale loc; 
+	locale loc;
 	const collate<char>& coll = use_facet<collate<char> >(loc);
 	long hash = coll.hash(tmp.data(), tmp.data()+tmp.length());
 	if(hash < 0)
