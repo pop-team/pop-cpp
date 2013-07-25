@@ -1,8 +1,6 @@
-POPC_LOCATION=/usr/local/popc
-export POPC_LOCATION
-POPC_VIRTUAL=@virtual@
-POPC_SECURE_VIRTUAL=@virtsecure@
-POPC_SECURE=@secure@
+#POPC_VIRTUAL=@virtual@
+#POPC_SECURE_VIRTUAL=@virtsecure@
+#POPC_SECURE=@secure@
 
 # Startup script for POPC service, standalone version
 # Update : All updates are surounded by comment with the author's name

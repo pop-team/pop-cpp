@@ -1,8 +1,8 @@
-#!@SHELL@
+#!/bin/bash
 
-POPC_VIRTUAL=@virtual@
-POPC_SECURE_VIRTUAL=@virtsecure@
-POPC_LOCATION=@prefix@
+#POPC_VIRTUAL=@virtual@
+#POPC_SECURE_VIRTUAL=@virtsecure@
+POPC_LOCATION=@CMAKE_INSTALL_PREFIX@
 export POPC_LOCATION
 
 #
@@ -25,9 +25,9 @@ else
    answer="y"
 fi
 
-if [ -f @prefix@/sbin/paroc_setup ]
+if [ -f @CMAKE_INSTALL_PREFIX@/sbin/paroc_setup ]
 then 
-	echo "Error : You are installing on top of an older version, please clean your directory with 'rm -rf @prefix@/*' and run 'make install' again."
+	echo "Error : You are installing on top of an older version, please clean your directory with 'rm -rf @CMAKE_INSTALL_PREFIX@/*' and run 'make install' again."
 	exit -1
 fi
 
@@ -88,7 +88,18 @@ echo ""
 echo "**************************************************************************"
 echo ""
 
-insttype="standard"
+answer="nothing"
+while [ "X$answer" != "Xy" ] && [ "X$answer" != "Xn" ]
+do
+	echo "DO YOU WANT TO MAKE A SIMPLE INSTALLATION ? (y/n) : "
+	read answer
+done
+if [ X$answer = "Xy" ]
+then
+	insttype="simple"
+else
+	insttype="standard"
+fi
 export insttype
 
 
@@ -114,6 +125,7 @@ fi
 
 if [ -f $POPC_LOCATION/services/jobmgr ]
 then
+	echo "hahahahahahahahah"
 	$POPC_LOCATION/services/jobmgr -listlong >> $servicemap 
 fi
 
@@ -589,5 +601,5 @@ echo "    export POPC_LOCATION=$POPC_LOCATION"
 echo "    PATH=\$PATH:\$POPC_LOCATION/bin:\$POPC_LOCATION/sbin"
 echo ""
 echo "Press <Return> to continue"
-#read answer
+read answer
 exit 0

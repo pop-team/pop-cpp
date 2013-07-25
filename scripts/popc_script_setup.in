@@ -1,4 +1,4 @@
-#!@SHELL@
+#!/bin/bash
 echo '====================================================='
 echo CONFIGURING STARTUP SCRIPT FOR YOUR LOCAL MACHINE...
 
