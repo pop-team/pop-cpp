@@ -244,7 +244,7 @@ POPString paroc_utils::MakeContact(const char *host, int port)
 }
 
 
-/*#include "appservice.ph"
+#include "appservice.ph"
 int rprintf(const char *format,...)
 {
 	char str[1024];
@@ -272,8 +272,8 @@ int rprintf(const char *format,...)
 		return 0;
 	}
 	return 1;
-}*/
-/*
+}
+
 int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s)
 {
 	if (s==NULL || fileconf==NULL) return 0;
@@ -321,7 +321,7 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s)
 	fclose(f);
 	return 1;
 }
-*/
+
 /**
  * ViSaG : clementval
  * Check if the given string is a IP v4 address

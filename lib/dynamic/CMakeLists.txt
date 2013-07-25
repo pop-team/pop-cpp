@@ -13,14 +13,19 @@ include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_INCLUDE_PATH})
 set(CMAKE_CXX_OUTPUT_EXTENION ".o")
 
 set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc)
-set(POPCPP_FLAGS -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp)
+set(POPCPP_FLAGS -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp -cxx=g++)
 
 set(POPCPP_Object_COMPILER_FLAGS -object -o)
-set(POPCPP_Parclass_COMPILER_FLAGS -parclass-nobroker -c)
-set(POPCPP_Parclass_COMPILER_FLAGS_TMP -c -o)
+set(POPCPP_Parclass_COMPILER_FLAGS -parclass-nobroker -c -o)
+set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
+
+#set(CMAKE_CXX_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc)
+#set(CMAKE_CXX_FLAGS "-cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp -cxx=g++")
 
 add_library(popc_common
 accesspoint.cc
+allocobj.cc
+#benchmark.cc
 broker.cc
 broker_factory.cc
 broker_receive.cc
@@ -37,22 +42,28 @@ popc_buffer_xdr_mpi.cpp
 combox.cc
 combox_factory.cc
 combox_socket.cc
+debug.cc
 event.cc
 exception.cc
 explorationList.cc
 interface.cc
 memspool.cc
 mutex.cc
+#nodethread.cc
 object.cc
 od.cc
 popc_combox_uds.cpp
 popc_connection_uds.cpp
+#popc_logger.cpp
+#popc_search_node_info.cc
 popwayback.cc
+#response.cc
+#request.cc
 string.cc
 system.cc
 thread.cc
 timer.cc
-utils.cc
+#utils.cc
 popc_allocator_factory.cpp
 popc_allocator_uds_interconnector.cpp
 popc_allocator_tcpip_local.cpp
@@ -65,13 +76,16 @@ SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)
 
 TARGET_LINK_LIBRARIES(popc_common ${POPCCOMMON})
 
+
 add_custom_command(OUTPUT paroc_infmain.std.o
-                   COMMAND ${CMAKE_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_infmain.std.cc -I${POPCPP_INCLUDE_PATH}
+                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_infmain.std.o paroc_infmain.std.cc 
+		   -I${POPCPP_INCLUDE_PATH}
                    DEPENDS paroc_infmain.std.cc
                    COMMENT "Compile POP-C++ Master main")
                    
 add_custom_command(OUTPUT paroc_objmain.std.o
-                   COMMAND ${CMAKE_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_objmain.std.cc -I${POPCPP_INCLUDE_PATH}
+                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_objmain.std.o paroc_objmain.std.cc 
+		   -I${POPCPP_INCLUDE_PATH}
                    DEPENDS paroc_objmain.std.cc
                    COMMENT "Compile POP-C++ Object main")  
                   
@@ -79,137 +93,234 @@ add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o)
 add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o) 
 
 #BUILD .ph file
-add_custom_command(OUTPUT paroc_service_base.stub.o
-                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS_TMP} paroc_service_base.stub.o paroc_service_base.ph
+#paroc_service_base.ph
+add_custom_command(OUTPUT paroc_service_base.ph.stub_client.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} paroc_service_base.ph.stub_client.o paroc_service_base.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS paroc_service_base.ph
+		  )
+add_custom_command(OUTPUT paroc_service_base.ph.stub.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_service_base.ph.stub.o paroc_service_base.ph
 		  -I${POPCPP_INCLUDE_PATH}
                   DEPENDS paroc_service_base.ph
 		   )
 
-add_custom_command(OUTPUT jobmgr.stub.o
-                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS_TMP} jobmgr.stub.o jobmgr.ph paroc_service_base.ph popc_search_node.ph
+#jobmgr.ph
+add_custom_command(OUTPUT jobmgr.ph.stub_client.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} jobmgr.ph.stub_client.o jobmgr.ph
 		  -I${POPCPP_INCLUDE_PATH}
-                  DEPENDS jobmgr.ph paroc_service_base.ph popc_search_node.ph
+                  DEPENDS jobmgr.ph
+		   )
+add_custom_command(OUTPUT jobmgr.ph.stub.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} jobmgr.ph.stub.o jobmgr.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS jobmgr.ph
 		   )
 
-add_custom_command(OUTPUT popc_search_node.stub.o
-                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS_TMP} popc_search_node.stub.o popc_search_node.ph paroc_service_base.ph jobmgr.ph
+#popc_search_node.ph
+add_custom_command(OUTPUT popc_search_node.ph.stub_client.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} popc_search_node.ph.stub_client.o popc_search_node.ph
 		  -I${POPCPP_INCLUDE_PATH}
-                  DEPENDS popc_search_node.ph paroc_service_base.ph jobmgr.ph
+                  DEPENDS popc_search_node.ph
+		   )
+add_custom_command(OUTPUT popc_search_node.ph.stub.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_search_node.ph.stub.o popc_search_node.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS popc_search_node.ph
 		   )
 
-#add_custom_command(OUTPUT codemgr.stub.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} codemgr.ph paroc_service_base.ph
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS codemgr.ph paroc_service_base.ph
-#		   )
-
-#add_custom_command(OUTPUT remotelog.stub.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} remotelog.ph paroc_service_base.stub.o
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS remotelog.ph paroc_service_base.stub.o
-#		   )
-
-#add_custom_command(OUTPUT objectmonitor.stub.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} objectmonitor.ph paroc_service_base.ph
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS objectmonitor.ph paroc_service_base.ph
-#		   )
-
-#add_custom_command(OUTPUT batchmgr.stub.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} batchmgr.ph paroc_service_base.ph
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS batchmgr.ph paroc_service_base.ph
-#		   )
-
-#add_custom_command(OUTPUT appservice.stub.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} appservice.ph codemgr.ph remotelog.ph objectmonitor.ph batchmgr.ph
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS appservice.ph codemgr.ph remotelog.ph objectmonitor.ph batchmgr.ph
-#		   )
-
-
-#add_custom_command(OUTPUT popfilemanager.stub.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} popfilemanager.ph paroc_service_base.ph
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS popfilemanager.ph paroc_service_base.ph
-#		   )
-
-#add_custom_target(paroc_stub_parclass ALL DEPENDS paroc_service_base.stub.o jobmgr.stub.o popc_search_node.stub.o codemgr.stub.o remotelog.stub.o objectmonitor.stub.o appservice.stub.o batchmgr.stub.o popfilemanager.stub.o)
-
-add_custom_target(paroc_stub_parclass ALL DEPENDS paroc_service_base.stub.o jobmgr.stub.o popc_search_node.stub.o)
-
-#add_custom_command(OUTPUT service_base.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_Object_COMPILER_FLAGS} service_base.o ${POPCPP_Parclass_COMPILER_FLAGS} ${POPCPP_FLAGS} service_base.cc #paroc_service_base.stub.o objectmonitor.stub.o 
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS service_base.cc paroc_service_base.stub.o objectmonitor.stub.o
-#		  COMMENT "Compile POP-C++ service base")
-
-#add_custom_command(OUTPUT jobmgr.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_Object_COMPILER_FLAGS} jobmgr.o ${POPCPP_Parclass_COMPILER_FLAGS} ${POPCPP_FLAGS} jobmgr.cc #codemgr.stub.o jobmgr.stub.o appservice.stub.o
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS jobmgr.cc codemgr.stub.o jobmgr.stub.o appservice.stub.o
-#		  COMMENT "Compile POP-C++ jobmanager")
-
-add_custom_command(OUTPUT popc_search_node.o
-                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS_TMP} popc_search_node.o popc_search_node.cc popc_search_node.stub.o
+#codemgr.ph
+add_custom_command(OUTPUT codemgr.ph.stub_client.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} codemgr.ph.stub_client.o codemgr.ph
 		  -I${POPCPP_INCLUDE_PATH}
-                  DEPENDS popc_search_node.cc popc_search_node.stub.o
-		  COMMENT "Compile POP-C++ popcsearchnode")
+                  DEPENDS codemgr.ph
+		   )
+add_custom_command(OUTPUT codemgr.ph.stub.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} codemgr.ph.stub.o codemgr.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS codemgr.ph
+		   )
 
-#add_custom_command(OUTPUT codemgr.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_Object_COMPILER_FLAGS} codemgr.o ${POPCPP_Parclass_COMPILER_FLAGS} ${POPCPP_FLAGS} codemgr.cc #codemgr.stub.o
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS codemgr.cc codemgr.stub.o
-#		  COMMENT "Compile POP-C++ codemanager")
+#remotelog.ph
+add_custom_command(OUTPUT remotelog.ph.stub_client.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} remotelog.ph.stub_client.o remotelog.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS remotelog.ph
+		   )
+add_custom_command(OUTPUT remotelog.ph.stub.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} remotelog.ph.stub.o remotelog.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS remotelog.ph
+		   )
 
-#add_custom_command(OUTPUT remotelog.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_Object_COMPILER_FLAGS} remotelog.o ${POPCPP_Parclass_COMPILER_FLAGS} ${POPCPP_FLAGS} remotelog.cc #remotelog.stub.o appservice.stub.o 
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS remotelog.cc remotelog.stub.o appservice.stub.o
-#		  COMMENT "Compile POP-C++ remotelog")
+#objectmonitor.ph
+add_custom_command(OUTPUT objectmonitor.ph.stub_client.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} objectmonitor.ph.stub_client.o objectmonitor.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS objectmonitor.ph
+		   )
+add_custom_command(OUTPUT objectmonitor.ph.stub.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} objectmonitor.ph.stub.o objectmonitor.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS objectmonitor.ph
+		   )
 
-#add_custom_command(OUTPUT objectmonitor.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_Object_COMPILER_FLAGS} objectmonitor.o ${POPCPP_Parclass_COMPILER_FLAGS} ${POPCPP_FLAGS} #objectmonitor.cc objectmonitor.stub.o
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS objectmonitor.cc objectmonitor.stub.o
-#		  COMMENT "Compile POP-C++ objectmonitor")
+#batchmgr.ph
+add_custom_command(OUTPUT batchmgr.ph.stub_client.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} batchmgr.ph.stub_client.o batchmgr.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS batchmgr.ph
+		   )
+add_custom_command(OUTPUT batchmgr.ph.stub.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} batchmgr.ph.stub.o batchmgr.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS batchmgr.ph
+		   )
 
-#add_custom_command(OUTPUT appservice.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_Object_COMPILER_FLAGS} appservice.o ${POPCPP_Parclass_COMPILER_FLAGS} ${POPCPP_FLAGS} appservice.cc #appservice.stub.o jobmgr.stub.o 
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS appservice.cc appservice.stub.o jobmgr.stub.o
-#		  COMMENT "Compile POP-C++ appservice")
+#appservice.ph
+add_custom_command(OUTPUT appservice.ph.stub_client.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} appservice.ph.stub_client.o appservice.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS appservice.ph
+		   )
+add_custom_command(OUTPUT appservice.ph.stub.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} appservice.ph.stub.o appservice.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS appservice.ph
+		   )
 
-#add_custom_command(OUTPUT batchmgr.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_Object_COMPILER_FLAGS} batchmgr.o ${POPCPP_Parclass_COMPILER_FLAGS} ${POPCPP_FLAGS} batchmgr.cc #batchmgr.stub.o
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS batchmgr.cc batchmgr.stub.o
-#		  COMMENT "Compile POP-C++ batchmanager")
 
-#add_custom_command(OUTPUT popfilemanager.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_Object_COMPILER_FLAGS} popfilemanager.o ${POPCPP_Parclass_COMPILER_FLAGS} ${POPCPP_FLAGS} #popfilemanager.cc popc_search_node.stub.o popfilemanager.stub.o
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS popfilemanager.cc popc_search_node.stub.o popfilemanager.stub.o
-#		  COMMENT "Compile POP-C++ popfilemanager")
+#popfilemanager.ph
+add_custom_command(OUTPUT popfilemanager.ph.stub_client.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} popfilemanager.ph.stub_client.o popfilemanager.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS popfilemanager.ph
+		   )
+add_custom_command(OUTPUT popfilemanager.ph.stub.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popfilemanager.ph.stub.o popfilemanager.ph
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS popfilemanager.ph
+		   )
 
-#add_custom_command(OUTPUT popc_logger.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_Object_COMPILER_FLAGS} popc_logger.o ${POPCPP_Parclass_COMPILER_FLAGS} ${POPCPP_FLAGS} popc_logger.cpp
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS popc_logger.cpp
-#		  COMMENT "Compile POP-C++ poplogger")
+add_custom_target(paroc_stub_parclass ALL DEPENDS paroc_service_base.ph.stub.o jobmgr.ph.stub.o popc_search_node.ph.stub.o codemgr.ph.stub.o remotelog.ph.stub.o objectmonitor.ph.stub.o appservice.ph.stub.o batchmgr.ph.stub.o popfilemanager.ph.stub.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o)
 
-#add_custom_command(OUTPUT libpopc_services_common.a
-#                  COMMAND ar rvs libpopc_services_common.a service_base.o jobmgr.o popc_search_node.o codemgr.o remotelog.o objectmonitor.o appservice.o batchmgr.o #popfilemanager.o popc_logger.o
-#		  COMMENT "Compile POP-C++ generated lib for popc_service_common")
-add_custom_command(OUTPUT libpopc_services_common.a
-                  COMMAND ar rvs libpopc_services_common.a popc_search_node.o popc_search_node.stub.o
-		  DEPENDS popc_search_node.o popc_search_node.stub.o
+
+#popc_logger.cpp
+add_custom_command(OUTPUT popc_logger.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_logger.o popc_logger.cpp
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS popc_logger.cpp)
+
+add_custom_command(OUTPUT benchmark.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} benchmark.o benchmark.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS benchmark.cc)
+
+add_custom_command(OUTPUT nodethread.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} nodethread.o nodethread.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS nodethread.cc)
+
+
+add_custom_command(OUTPUT popc_search_node_info.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_search_node_info.o popc_search_node_info.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS popc_search_node_info.cc)
+
+add_custom_command(OUTPUT response.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} response.o response.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS response.cc)
+
+add_custom_command(OUTPUT request.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} request.o request.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS request.cc)
+
+add_custom_command(OUTPUT utils.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} utils.o utils.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS utils.cc)
+
+
+add_custom_command(OUTPUT libpopc_common.a
+                  COMMAND ar r libpopc_common.a benchmark.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
+		  DEPENDS benchmark.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
 		  COMMENT "Compile POP-C++ generated lib for popc_service_common")
 
 
-#add_custom_target(popc_services_common ALL DEPENDS service_base.o jobmgr.o popc_search_node.o codemgr.o remotelog.o objectmonitor.o appservice.o batchmgr.o popfilemanager.o popc_logger.o libpopc_services_common.a)
+add_custom_target(popc_common_link ALL DEPENDS libpopc_common.a benchmark.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o)
 
-add_custom_target(popc_services_common ALL DEPENDS popc_search_node.o libpopc_services_common.a)
+#service_base.cc
+add_custom_command(OUTPUT service_base.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} service_base.o service_base.cc 
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS service_base.cc
+		  COMMENT "Compile POP-C++ service base")
+
+#jobmgr.cc
+add_custom_command(OUTPUT jobmgr.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} jobmgr.o jobmgr.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS jobmgr.cc
+		  COMMENT "Compile POP-C++ jobmanager")
+
+#popc_search_node.cc
+add_custom_command(OUTPUT popc_search_node.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_search_node.o popc_search_node.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS popc_search_node.cc
+		  COMMENT "Compile POP-C++ popcsearchnode")
+
+#codemgr.cc
+add_custom_command(OUTPUT codemgr.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} codemgr.o codemgr.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS codemgr.cc
+		  COMMENT "Compile POP-C++ codemanager")
+
+#remotelog.cc
+add_custom_command(OUTPUT remotelog.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} remotelog.o remotelog.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS remotelog.cc
+		  COMMENT "Compile POP-C++ remotelog")
+
+#objectmonitor.cc
+add_custom_command(OUTPUT objectmonitor.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} objectmonitor.o objectmonitor.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS objectmonitor.cc
+		  COMMENT "Compile POP-C++ objectmonitor")
+
+#batchmgr.cc
+add_custom_command(OUTPUT batchmgr.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} batchmgr.o batchmgr.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS batchmgr.cc
+		  COMMENT "Compile POP-C++ batchmanager")
+
+#appservice.cc
+#add_custom_command(OUTPUT appservice.o
+#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAG} appservice.o appservice.cc
+#		  -I${POPCPP_INCLUDE_PATH}
+#                  DEPENDS appservice.cc
+#		  COMMENT "Compile POP-C++ appservice")
+
+#popfilemanager.cc
+add_custom_command(OUTPUT popfilemanager.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popfilemanager.o popfilemanager.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS popfilemanager.cc
+		  COMMENT "Compile POP-C++ popfilemanager")
+
+
+add_custom_command(OUTPUT libpopc_service_common.a
+                  COMMAND ar cru libpopc_service_common.a service_base.o jobmgr.o popc_search_node.o codemgr.o remotelog.o objectmonitor.o appservice.o batchmgr.o popfilemanager.o popc_logger.o paroc_service_base.ph.stub.o jobmgr.ph.stub.o popc_search_node.ph.stub.o codemgr.ph.stub.o remotelog.ph.stub.o objectmonitor.ph.stub.o appservice.ph.stub.o batchmgr.ph.stub.o popfilemanager.ph.stub.o
+		  DEPENDS service_base.o jobmgr.o popc_search_node.o codemgr.o remotelog.o objectmonitor.o appservice.o batchmgr.o popfilemanager.o popc_logger.o paroc_service_base.ph.stub.o jobmgr.ph.stub.o popc_search_node.ph.stub.o codemgr.ph.stub.o remotelog.ph.stub.o objectmonitor.ph.stub.o appservice.ph.stub.o batchmgr.ph.stub.o popfilemanager.ph.stub.o
+		  COMMENT "Compile POP-C++ generated lib for popc_service_common")
+
+add_custom_target(popc_service_common ALL DEPENDS service_base.o jobmgr.o popc_search_node.o codemgr.o remotelog.o objectmonitor.o batchmgr.o appservice.o popfilemanager.o popc_logger.o paroc_service_base.ph.stub.o jobmgr.ph.stub.o popc_search_node.ph.stub.o codemgr.ph.stub.o remotelog.ph.stub.o objectmonitor.ph.stub.o appservice.ph.stub.o batchmgr.ph.stub.o popfilemanager.ph.stub.o libpopc_service_common.a)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/appservice.ph DESTINATION ${POPCPP_INCLUDE_PATH})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/batchmgr.ph DESTINATION ${POPCPP_INCLUDE_PATH})

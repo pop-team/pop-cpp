@@ -41,8 +41,6 @@
 #include "paroc_system.h"
 #include "paroc_utils.h"
 #include "config.h"
-#include "include/pseudodynamic/paroc_string.h"
-#include "include/pseudodynamic/paroc_utils.h"
 
 #if defined POPC_SECURE || defined POPC_SECURE_VIRTUAL
 #include "popc_security_manager.ph"
@@ -337,7 +335,7 @@ void paroc_interface::allocate_only()
 void paroc_interface::Allocate()
 {
     //printf("----------------Allocate----------------\n");//vanhieu.nguyen
-    allocate_only();
+    //allocate_only();
     //printf("----------------Start bind----------------\n");//vanhieu.nguyen
   
     //Add for SSH tunneling
