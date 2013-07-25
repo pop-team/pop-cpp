@@ -153,6 +153,9 @@ if(UNIX)
    services/*.cmake
    services/CMakeFiles
    services/popcobjrun  
+   services/lib/Makefile
+   services/lib/*.cmake
+   services/lib/CMakeFiles
    config.h
    Makefile
    *~

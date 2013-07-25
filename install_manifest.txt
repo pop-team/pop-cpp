@@ -1,5 +1,14 @@
 /usr/local/popc/bin/popcc
 /usr/local/popc/bin/popcpp
+/home/hieunv/Desktop/popc2.8/include/dynamic/appservice.ph
+/home/hieunv/Desktop/popc2.8/include/dynamic/batchmgr.ph
+/home/hieunv/Desktop/popc2.8/include/dynamic/codemgr.ph
+/home/hieunv/Desktop/popc2.8/include/dynamic/jobmgr.ph
+/home/hieunv/Desktop/popc2.8/include/dynamic/objectmonitor.ph
+/home/hieunv/Desktop/popc2.8/include/dynamic/paroc_service_base.ph
+/home/hieunv/Desktop/popc2.8/include/dynamic/popc_search_node.ph
+/home/hieunv/Desktop/popc2.8/include/dynamic/popfilemanager.ph
+/home/hieunv/Desktop/popc2.8/include/dynamic/remotelog.ph
 /usr/local/popc/lib/dynamic/paroc_infmain.std.o
 /usr/local/popc/lib/dynamic/paroc_objmain.std.o
 /usr/local/popc/lib/dynamic/libpopc_common.a
@@ -120,3 +129,11 @@
 /usr/local/popc/sbin/popc_script_setup
 /usr/local/popc/sbin/popc_setup
 /usr/local/popc/services/popcobjrun
+/usr/local/popc/etc/jobmgr.conf
+/usr/local/popc/services/popc_search_node
+/usr/local/popc/services/jobmgr
+/usr/local/popc/services/appservice
+/usr/local/popc/services/localservice_launcher
+/usr/local/popc/services/jobmgr_launcher
+/usr/local/popc/services/popfilemanager
+/usr/local/popc/lib/dynamic/libpopc_services.a
