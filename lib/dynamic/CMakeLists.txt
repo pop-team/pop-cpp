@@ -18,7 +18,6 @@ set(CMAKE_CXX_OUTPUT_EXTENION ".o")
 set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc)
 set(POPCPP_FLAGS -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp -cxx=g++)
 
-set(POPCPP_Object_COMPILER_FLAGS -object -o)
 set(POPCPP_Parclass_COMPILER_FLAGS -parclass-nobroker -c -o)
 set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
 
