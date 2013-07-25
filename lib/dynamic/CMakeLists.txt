@@ -193,7 +193,7 @@ add_custom_command(OUTPUT utils.o
 add_custom_command(OUTPUT libpopc_common.a
                   COMMAND ar r libpopc_common.a benchmark.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
 		  DEPENDS benchmark.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
-		  COMMENT "Compile POP-C++ generated lib for popc_service_common")
+		  COMMENT "Compile POP-C++ generated lib for popc_common")
 
 
 add_custom_target(popc_common_link ALL DEPENDS libpopc_common.a benchmark.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o)
