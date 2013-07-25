@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ -z "${POPC_LOCATION}" ]; then
+if [ -z "$POPC_LOCATION" ]; then
 POPC_LOCATION=@CMAKE_INSTALL_PREFIX@
 export POPC_LOCATION
 fi

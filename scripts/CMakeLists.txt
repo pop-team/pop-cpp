@@ -7,6 +7,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/popc-user-env.csh.in ${CMAKE_CURRENT_
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/popc-user-env.sh.in ${CMAKE_CURRENT_SOURCE_DIR}/popc-user-env.sh)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/SXXpopc.in ${CMAKE_CURRENT_SOURCE_DIR}/SXXpopc)
 
+add_custom_target(popc_setup_run ALL DEPENDS popc_setup)
+
 #install to dir
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popcrun DESTINATION bin)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popc-xmpcc DESTINATION bin)

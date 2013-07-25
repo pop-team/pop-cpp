@@ -131,9 +131,9 @@ echo "Code config file not found"
 exit 1
 fi
 
-FILECONF=`/usr/bin/basename $CODECONF`
+FILECONF=`basename $CODECONF`
 OLDPATH=`pwd`
-cd `/usr/bin/dirname $CODECONF`
+cd `dirname $CODECONF`
 PATHCONF=`pwd`
 cd $OLDPATH
 
