@@ -102,19 +102,19 @@ add_custom_command(OUTPUT popc_logger.o
 add_custom_command(OUTPUT service_base.o
                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} service_base.o service_base.cc 
 		  -I${POPCPP_INCLUDE_PATH}
-                  DEPENDS service_base.cc")
+                  DEPENDS service_base.cc)
 
 #jobmgr.cc
 add_custom_command(OUTPUT jobmgr.o
                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} jobmgr.o jobmgr.cc
 		  -I${POPCPP_INCLUDE_PATH}
-                  DEPENDS jobmgr.cc")
+                  DEPENDS jobmgr.cc)
 
 #popc_search_node.cc
 add_custom_command(OUTPUT popc_search_node.o
                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_search_node.o popc_search_node.cc
 		  -I${POPCPP_INCLUDE_PATH}
-                  DEPENDS popc_search_node.cc")
+                  DEPENDS popc_search_node.cc)
 
 #codemgr.cc
 add_custom_command(OUTPUT codemgr.o
