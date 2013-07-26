@@ -46,8 +46,8 @@ public:
 	 * @param daemon start in daemon mode
 	 * @param codelocation location of the AppCoreService executable
 	*/
-       AppCoreService(const POPString &challenge, bool daemon, const POPString & codelocation) @{ od.url(paroc_system::GetHost()); od.executable(codelocation); od.runLocal(true); od.service(true); };
-       ~AppCoreService();
+	AppCoreService(const POPString &challenge, bool daemon, const POPString & codelocation) @{ od.url(paroc_system::GetHost()); od.executable(codelocation); od.runLocal(true); od.service(true);} ;
+	~AppCoreService();
 
 
 

@@ -22,6 +22,7 @@
 #include "paroc_interface.h"
 #include "paroc_event.h"
 #include "paroc_broker.h"
+#include "objectmonitor.ph"
 
 int paroc_object::argc=0;
 char **paroc_object::argv=NULL;
@@ -31,7 +32,7 @@ paroc_object::paroc_object()
 	refcount=1;
 
 
-	/*if (!paroc_system::appservice.IsEmpty())
+	if (!paroc_system::appservice.IsEmpty())
 	{
       
 		paroc_accesspoint myself=GetAccessPoint();
@@ -44,14 +45,14 @@ paroc_object::paroc_object()
 		{
 			rprintf("Can not register %s@%s to ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
 		}
-	}*/
+	}
 
 }
 
 paroc_object::~paroc_object()
 {
 
-	/*if (!paroc_system::appservice.IsEmpty())
+	if (!paroc_system::appservice.IsEmpty())
 	{
 		//paroc_accesspoint myself=GetAccessPoint();
 		try
@@ -64,7 +65,7 @@ paroc_object::~paroc_object()
       // Did not find the object to unregister V1.3.1m: suppress error mess.
 			//rprintf("Can not unregister %s@%s from ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
 		}
-	}*/
+	}
 
 }
 

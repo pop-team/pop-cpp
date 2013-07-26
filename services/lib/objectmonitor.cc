@@ -28,7 +28,7 @@ static void LocalServiceTerminate(int sig)
 
 ObjectMonitor::ObjectMonitor(const POPString &challenge): paroc_service_base(challenge)
 {
-	//myObjMonitor=this;
+	myObjMonitor=this;
 	signal(SIGINT,LocalServiceTerminate);
 	signal(SIGKILL,LocalServiceTerminate);
 	signal(SIGTERM,LocalServiceTerminate);

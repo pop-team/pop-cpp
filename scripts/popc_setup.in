@@ -125,7 +125,6 @@ fi
 
 if [ -f $POPC_LOCATION/services/jobmgr ]
 then
-	echo "hahahahahahahahah"
 	$POPC_LOCATION/services/jobmgr -listlong >> $servicemap 
 fi
 

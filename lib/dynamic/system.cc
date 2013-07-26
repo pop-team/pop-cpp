@@ -350,7 +350,6 @@ bool paroc_system::Initialize(int *argc,char ***argv)
 
   if (codeser==NULL && appcontact==NULL)
   {
-      printf("error1\n");
       return false;
   }
   try
@@ -361,7 +360,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       if (proxy==NULL) strcpy(url,codeser);
       else sprintf(url,"%s -proxy=%s",codeser, proxy);
       //printf("mgr=CreateAppCoreService(url=%s);\n", url);
-//      mgr = CreateAppCoreService(url);
+      mgr = CreateAppCoreService(url);
     }
     else
     {
@@ -369,9 +368,9 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       paroc_accesspoint app;
       app.SetAccessString(appcontact);
       app.SetAsService();
-//      mgr=new AppCoreService(app);
+      mgr=new AppCoreService(app);
     }
-    //paroc_system::appservice=mgr->GetAccessPoint();
+    paroc_system::appservice=mgr->GetAccessPoint();
     paroc_system::appservice.SetAsService();
   }
   catch (POPException *e)
@@ -379,27 +378,25 @@ bool paroc_system::Initialize(int *argc,char ***argv)
     printf("POP-C++ Exception occurs in paroc_system::Initialize\n");
     POPSystem::perror(e);
     delete e;
-/*    if (mgr!=NULL)
+    if (mgr!=NULL)
     {
       mgr->KillAll();
       mgr->Stop(challenge);
       delete mgr;
       mgr=NULL;
-    }*/
-      printf("error2\n");
+    }
       
     return false;
   }
   catch (...)
   {
-/*    if (mgr!=NULL)
+    if (mgr!=NULL)
     {
       mgr->KillAll();
       mgr->Stop(challenge);
       delete mgr;
       mgr=NULL;
-    }*/
-      printf("error3\n");
+    }
     return false;
   }
 
@@ -407,20 +404,19 @@ bool paroc_system::Initialize(int *argc,char ***argv)
 
  // DEBUGIF(codeconf==NULL,"No code config file\n");
 
-  /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
+  if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
   {
       printf("error4\n");
       return false;
   }
-  else return true;*/
+  else return true;
 
-//  return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
-  return false;
+  return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
 }
 
 void paroc_system::Finalize(bool normalExit)
 {
-/*   if (mgr!=NULL){
+   if (mgr!=NULL){
       try{
          if (normalExit) {
             //Wait all object to be terminated!
@@ -452,12 +448,12 @@ void paroc_system::Finalize(bool normalExit)
          fprintf(stderr,"POP-C++ error on finalizing the application\n");
       }
       mgr=NULL;
-   } */
+   } 
 }
 
 
 
-/*AppCoreService *paroc_system::CreateAppCoreService(char *codelocation)
+AppCoreService *paroc_system::CreateAppCoreService(char *codelocation)
 {
   srand(time(NULL));
   char tmp[256];
@@ -469,7 +465,7 @@ void paroc_system::Finalize(bool normalExit)
 
   return new AppCoreService(challenge, false, codelocation);
 }
-*/
+
 
 void paroc_system::processor_set(int cpu)
 {

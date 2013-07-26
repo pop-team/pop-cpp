@@ -114,7 +114,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
                 paroc_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
 
-/*
+
 	if ((tmp=getenv("POPC_JOBSERVICE"))!=NULL) {
 		paroc_system::jobservice.SetAccessString(tmp);
       paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
@@ -128,7 +128,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv)
 		paroc_system::jobservice.SetAccessString(tmpstr);
       paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
 	}
-*/
+
 
 	bool nostdio=(paroc_utils::checkremove(argc,argv,"-nostdio")!=NULL);
 

@@ -24,22 +24,27 @@ using namespace std;
 
 AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const POPString &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge)
 {
-	POPString tmpChallenge = challenge;
-	time_t now = time(NULL);
-	POPString ip = paroc_system::GetIP();
-	char id[100];
-	string tmp(tmpChallenge.GetString());
-	locale loc;
-	const collate<char>& coll = use_facet<collate<char> >(loc);
-	long hash = coll.hash(tmp.data(), tmp.data()+tmp.length());
-	if(hash < 0)
-		hash = hash*-1;
-	sprintf(id, "POPAPPID_%ld_%ld_%s_%d", now-0, hash, ip.GetString(), getpid());
-	_popcAppId = id;
-	/* ViSaG */
+  /**
+    * ViSaG : clementval
+    * Generate the POP Application Unique ID
+    */
+   POPString tmpChallenge = challenge;
+   time_t now = time(NULL);
+   POPString ip = paroc_system::GetIP();
+   char id[100];
+   string tmp(tmpChallenge.GetString());
+   locale loc; 
+   const collate<char>& coll = use_facet<collate<char> >(loc);
+   long hash = coll.hash(tmp.data(), tmp.data()+tmp.length());
+   if(hash < 0)
+      hash = hash*-1;
+   sprintf(id, "POPAPPID_%ld_%ld_%s_%d", now-0, hash, ip.GetString(), getpid());
+   _popcAppId = id;
+   /* ViSaG */
 
 	if (daemon) Start();
 	LoadAddOn();
+      
 }
 
 AppCoreService::~AppCoreService()
