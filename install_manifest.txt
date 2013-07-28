@@ -124,8 +124,10 @@
 /usr/local/popc/etc/popc-user-env.csh
 /usr/local/popc/bin/popc-user-env.sh
 /usr/local/popc/etc/popc-user-env.sh
+/usr/local/popc/etc/popc-runtime-env.sh
 /usr/local/popc/etc/popc-runtime-env.in
 /usr/local/popc/sbin/SXXpopc.in
+/usr/local/popc/sbin/SXXpopc
 /usr/local/popc/sbin/popc_script_setup
 /usr/local/popc/sbin/popc_setup
 /usr/local/popc/services/popcobjrun

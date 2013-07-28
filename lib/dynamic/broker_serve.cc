@@ -185,10 +185,10 @@ void paroc_broker::UnhandledException()
 		//char tmp[1024];
 		printf("Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
 //		sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
-		AppCoreService app(paroc_system::appservice);
+		/*AppCoreService app(paroc_system::appservice);
 		app.Log(tmp);
 		app.UnManageObject(paroc_broker::accesspoint);
-		app.KillAll();
+		app.KillAll();*/
 		state=POPC_STATE_ABORT;
 	}
 }

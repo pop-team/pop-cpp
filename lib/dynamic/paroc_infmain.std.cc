@@ -55,11 +55,12 @@ int main(int argc, char **argv)
   paroc_system::pop_current_local_address = 1;
   paroc_system::popc_local_mpi_communicator_rank = 0;
 
+printf("co vao day khong\n");
 	int i;
 	for (i=argc-1;i>=0;i--) {            
 	  if (paroc_utils::isEqual(argv[i],"-initparoc")) {
 			char **argv1=argv+i+1;
-			int argc1=argc-i-1;
+			int argc1=argc-i-1;		
 			if (!paroc_system::Initialize(&argc1, &argv1)) {
 				fprintf(stderr,"Initialization of parallel objects fail...\n");
 				paroc_system::Finalize(false);

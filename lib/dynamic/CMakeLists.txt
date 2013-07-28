@@ -47,13 +47,11 @@ explorationList.cc
 interface.cc
 memspool.cc
 mutex.cc
-object.cc
 od.cc
 popc_combox_uds.cpp
 popc_connection_uds.cpp
 popwayback.cc
 string.cc
-system.cc
 thread.cc
 timer.cc
 popc_allocator_factory.cpp
@@ -189,10 +187,19 @@ add_custom_command(OUTPUT utils.o
 		  -I${POPCPP_INCLUDE_PATH}
                   DEPENDS utils.cc)
 
+add_custom_command(OUTPUT object.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} object.o object.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS object.cc)
+
+add_custom_command(OUTPUT system.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} system.o system.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS system.cc)
 
 add_custom_command(OUTPUT libpopc_common.a
-                  COMMAND ar r libpopc_common.a benchmark.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
-		  DEPENDS benchmark.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
+                  COMMAND ar r libpopc_common.a benchmark.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o object.o system.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
+		  DEPENDS benchmark.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o object.o system.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
 		  COMMENT "Compile POP-C++ generated lib for popc_common")
 
 

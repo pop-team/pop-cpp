@@ -10,13 +10,13 @@ export POPC_LOCATION
 # during the "make install" process. Because the "popc_setup" can be run when necessary
 # from <install_dir>/sbin directory, it must not do any copy of the test sub-directory
 #
-if [ ! -d $POPC_LOCATION/test ]; then
-  echo ""
-  echo "copying test applications to the destination directory, please wait a few seconds"
-  cp -R ../test $POPC_LOCATION/test
-  echo "copy finished ..."
-  echo ""
-fi
+#if [ ! -d $POPC_LOCATION/test ]; then
+#  echo ""
+#  echo "copying test applications to the destination directory, please wait a few seconds"
+#  cp -R ../test $POPC_LOCATION/test
+#  echo "copy finished ..."
+#  echo ""
+#fi
 
 if [ "X$1" = "X-ask" ]
 then

@@ -32,6 +32,7 @@
 #include "paroc_combox_factory.h"
 #include "paroc_exception.h"
 #include "paroc_od.h"
+#include "appservice.ph"
 
 paroc_accesspoint paroc_system::appservice;
 paroc_accesspoint paroc_system::jobservice;
@@ -68,7 +69,7 @@ const char *paroc_system::paroc_errstr[17]=
 };
 
 
-//AppCoreService *paroc_system::mgr=NULL;
+AppCoreService *paroc_system::mgr=NULL;
 POPString paroc_system::challenge;
 
 paroc_system::paroc_system()
@@ -82,8 +83,8 @@ paroc_system::paroc_system()
     char str[128];
 #ifndef POPC_ARCH
     char arch[64], sysname[64];
-//    sysinfo(SI_SYSNAME,sysname,64);
-//    sysinfo(SI_ARCHITECTURE,arch,64);
+    sysinfo(SI_SYSNAME,sysname,64);
+    sysinfo(SI_ARCHITECTURE,arch,64);
     sprintf(str,"%s-%s",sysname,arch);
 #else
     strcpy(str,POPC_ARCH);
@@ -96,12 +97,12 @@ paroc_system::paroc_system()
 
 paroc_system::~paroc_system()
 {
-  /*if (mgr!=NULL)
+  if (mgr!=NULL)
   {
     Finalize(false);
     delete mgr;
   }
-  mgr=NULL;*/
+  mgr=NULL;
 
   paroc_combox_factory *pf=paroc_combox_factory::GetInstance();
   paroc_buffer_factory_finder *bf=paroc_buffer_factory_finder::GetInstance();
@@ -404,12 +405,12 @@ bool paroc_system::Initialize(int *argc,char ***argv)
 
  // DEBUGIF(codeconf==NULL,"No code config file\n");
 
-  if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
+  /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
   {
       printf("error4\n");
       return false;
   }
-  else return true;
+  else return true;*/
 
   return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
 }

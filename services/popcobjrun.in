@@ -11,6 +11,7 @@ MY_POPC_PROXY=""
 prog=""
 drun=0
 
+echo "vao day roi ha"
 if [ -n "$POPC_PROXY" ]; then
 MY_POPC_PROXY="-proxy=$POPC_PROXY"
 fi

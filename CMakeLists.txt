@@ -148,9 +148,10 @@ if(UNIX)
    scripts/CMakeFiles
    scripts/popcrun
    scripts/popc-runtime-env.in
+   scripts/popc-runtime-env.sh
    scripts/popc_script_setup
    scripts/popc_setup
-   scripts/popc_script_setup
+   scripts/SXXpopc
    scripts/popc-user-env.csh
    scripts/popc-user-env.sh
    services/Makefile

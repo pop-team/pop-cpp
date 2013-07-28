@@ -16,6 +16,7 @@ set(POPCPP_FLAGS -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_D
 
 set(POPCPP_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include/dynamic)
 set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/dynamic)
+set(POPCPP_SERVICES_PATH ${CMAKE_SOURCE_DIR}/services/lib)
 
 set(POPCPP_LIB_INSTALL lib/dynamic)
 set(POPCPP_SERVICES_INSTALL services)
@@ -169,7 +170,7 @@ add_custom_command(OUTPUT popfilemanager_obj.o
 
 add_custom_target(popfilemanager ALL
                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Object_COMPILER_FLAGS} popfilemanager popfilemanager_obj.o
--L${POPCPP_LIB_PATH} libpopc_services.a
+-L${POPCPP_LIB_PATH} -L${POPCPP_SERVICES_PATH} libpopc_services.a
                   DEPENDS popfilemanager_obj.o
                   )
 
@@ -182,7 +183,7 @@ add_custom_command(OUTPUT popc_search_node_obj.o
 
 add_custom_target(popc_search_node ALL
                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Object_COMPILER_FLAGS} popc_search_node popc_search_node_obj.o
--L${POPCPP_LIB_PATH} libpopc_services.a
+-L${POPCPP_LIB_PATH} -L${POPCPP_SERVICES_PATH} libpopc_services.a
                   DEPENDS popc_search_node_obj.o
                   )
 
@@ -195,7 +196,7 @@ add_custom_command(OUTPUT jobmgr_obj.o
 
 add_custom_target(jobmgr ALL
                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Object_COMPILER_FLAGS} jobmgr jobmgr_obj.o
--L${POPCPP_LIB_PATH} libpopc_services.a
+-L${POPCPP_LIB_PATH} -L${POPCPP_SERVICES_PATH} libpopc_services.a
                   DEPENDS jobmgr_obj.o
                   )
 
@@ -208,7 +209,7 @@ add_custom_command(OUTPUT appservice_obj.o
 
 add_custom_target(appservice ALL
                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Object_COMPILER_FLAGS} appservice appservice_obj.o
--L${POPCPP_LIB_PATH} libpopc_services.a
+-L${POPCPP_LIB_PATH} -L${POPCPP_SERVICES_PATH} libpopc_services.a
                   DEPENDS appservice_obj.o
                   )
 
@@ -222,7 +223,7 @@ add_custom_command(OUTPUT localservice_launcher.o
 
 add_custom_target(localservice_launcher ALL
                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_COMPILER_FLAGS} localservice_launcher localservice_launcher.o
--L${POPCPP_LIB_PATH} libpopc_services.a
+-L${POPCPP_LIB_PATH} -L${POPCPP_SERVICES_PATH} libpopc_services.a
                   DEPENDS localservice_launcher.o
                   )
 
@@ -235,7 +236,7 @@ add_custom_command(OUTPUT jobmgr_launcher.o
 
 add_custom_target(jobmgr_launcher ALL
                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_COMPILER_FLAGS} jobmgr_launcher jobmgr_launcher.o
--L${POPCPP_LIB_PATH} libpopc_services.a
+-L${POPCPP_LIB_PATH} -L${POPCPP_SERVICES_PATH} libpopc_services.a
                   DEPENDS jobmgr_launcher.o
                   )
 
@@ -249,4 +250,5 @@ install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/localservice_launcher DESTINATION $
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/jobmgr_launcher DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popfilemanager DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_services.a DESTINATION ${POPCPP_LIB_INSTALL})
+install(CODE "execute_process(COMMAND ${CMAKE_INSTALL_PREFIX}/sbin/popc_setup)")
 
