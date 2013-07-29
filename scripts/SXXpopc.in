@@ -1,4 +1,3 @@
-#!/bin/bash
 #POPC_VIRTUAL=@virtual@
 #POPC_SECURE_VIRTUAL=@virtsecure@
 #POPC_SECURE=@secure@

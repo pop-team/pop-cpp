@@ -183,11 +183,10 @@ if [ -n "$POPC_PROXY" ] && [ $noproxy -eq 0 ] ; then
 MY_PROXY=" -proxy=$POPC_PROXY"
 fi
 
-#do it later
-#if [ ! -x $MYAPPSERVICE ]; then
-#  echo "$MYAPPSERVICE not found"
-#  exit 1
-#fi
+if [ ! -x $MYAPPSERVICE ]; then
+  echo "$MYAPPSERVICE not found"
+  exit 1
+fi
 #Use the following line to run the interface side in valgrind
 #cmd="valgrind --log-file=/tmp/$$ $PROG $args -initparoc -appservicecode=${MYAPPSERVICE} ${MY_PROXY} -codeconf=${PATHCONF}/${FILECONF} -jobservice=${MYJOBSERVICE} ${localFlag}"
 cmd="$PROG $args -initparoc -appservicecode=$MYAPPSERVICE $MY_PROXY -codeconf=$PATHCONF/$FILECONF -jobservice=$MYJOBSERVICE $localFlag"
@@ -199,7 +198,6 @@ else
 	#echo "popc_debug = " $POPC_DEBUG
 	echo "#!/bin/bash" > __cmd_to_execute__
 	echo $cmd $logging_cmd >> __cmd_to_execute__
-	cat __cmd_to_execute__
 	chmod a+x __cmd_to_execute__
 	./__cmd_to_execute__
 echo "after run ./__cmd_to_execute"
