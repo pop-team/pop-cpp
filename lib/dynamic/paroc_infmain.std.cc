@@ -55,7 +55,6 @@ int main(int argc, char **argv)
   paroc_system::pop_current_local_address = 1;
   paroc_system::popc_local_mpi_communicator_rank = 0;
 
-printf("co vao day khong\n");
 	int i;
 	for (i=argc-1;i>=0;i--) {            
 	  if (paroc_utils::isEqual(argv[i],"-initparoc")) {
