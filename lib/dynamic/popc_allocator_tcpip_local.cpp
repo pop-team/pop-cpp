@@ -21,6 +21,10 @@
 #include "../../include/dynamic/paroc_utils.h"
 #include "../../include/dynamic/paroc_interface.h"
 
+#include "codemgr.ph"
+#include "batchmgr.ph"
+#include "appservice.ph"
+
 #define ALLOC_TIMEOUT 60
 /**
  * Allocator over TCP/IP with local mechanism constructor
@@ -68,17 +72,21 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     // Get the executable path name
     od.getExecutable(codefile);
-    
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
     if(codefile.Length() <= 0) {
-      printf("POP-C++ Error: Code file executable path is NULL ! Abort !\n"); 	
-      paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);	  
+      assert(!paroc_system::appservice.IsEmpty());
+      CodeMgr mgr(paroc_system::appservice);
+      if(rarch==NULL) rarch=paroc_system::platform;
+      if(!mgr.QueryCode(objectname,rarch, codefile))
+      {
+          paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname);
+      }
     }
 
-    if(hostname == NULL) hostname = paroc_system::GetHost();
-
-    bool isLocal = (hostname==NULL || paroc_utils::isEqual(hostname, "localhost") || paroc_utils::isEqual(hostname, "127.0.0.1"));
-    
+    POPString myhost = paroc_system::GetHost();
+    //printf("hostname=%s\n", hostname.GetString());
+    bool isLocal = (isManual || hostname==NULL || *hostname==0 || paroc_utils::SameContact(myhost, hostname) || paroc_utils::isEqual(hostname, "localhost") || paroc_utils::isEqual(hostname, "127.0.0.1"));
+    //printf("isLocal=%d\n", isLocal);
     if(batch==NULL)
     {   
         if(!isLocal)
@@ -104,14 +112,14 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
        if(tmp!=NULL) sprintf(tmpstr, "%s/services/popcobjrun.%s", tmp, (const char*)batch);
        else sprintf(tmpstr, "popcobjrun.%s", (const char*)batch);
        argv[n++]=strdup(tmpstr);
-       /*if (!isLocal)
+       if (!isLocal)
        {
 
-            BatchMgr batchman(paroc_system::appservice);
-            sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
-            DEBUG("%s",tmpstr);
-            argv[n++]=strdup(tmpstr);
-       }*/
+            //BatchMgr batchman(paroc_system::appservice);
+            //sprintf(tmpstr,"-batch-node=%d", batchman.NextNode());
+            //DEBUG("%s",tmpstr);
+            //argv[n++]=strdup(tmpstr);
+       }
     }
     if(!paroc_utils::isEqual(hostname, "localhost")) 
     {
@@ -155,17 +163,17 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     sprintf(tmpstr,"-object=%s", objectname.GetString());
     argv[n++]=strdup(tmpstr);
 
-    /*if (!appserv.IsEmpty())
+    if (!paroc_system::appservice.IsEmpty())
     {
-            sprintf(tmpstr,"-appservice=%s",appserv.GetAccessString());
+            sprintf(tmpstr,"-appservice=%s",paroc_system::appservice.GetAccessString());
             argv[n++]=strdup(tmpstr);
     }
 
-    if (!jobserv.IsEmpty())
+    if (!paroc_system::jobservice.IsEmpty())
     {
-            sprintf(tmpstr,"-jobservice=%s",jobserv.GetAccessString());
+            sprintf(tmpstr,"-jobservice=%s",paroc_system::jobservice.GetAccessString());
             argv[n++]=strdup(tmpstr);
-    }*/
+    }
     
     // Select core
     if (rcore!=NULL&&rcore!=0) {
@@ -191,8 +199,8 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     int ret=0, err=0;
 
-    for (int j=0;j<n;j++) {
-        printf("argv[%d]=%s\n", j, argv[j]);}
+    /*for (int j=0;j<n;j++) {
+        printf("argv[%d]=%s\n", j, argv[j]);}*/
     
     if (isManual)
     {

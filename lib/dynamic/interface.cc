@@ -40,7 +40,7 @@
 #include "paroc_combox_factory.h"
 #include "paroc_system.h"
 #include "paroc_utils.h"
-#include "config.h"
+#include "../../config.h"
 
 #if defined POPC_SECURE || defined POPC_SECURE_VIRTUAL
 #include "popc_security_manager.ph"
@@ -315,9 +315,10 @@ void paroc_interface::allocate_only()
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
     POPC_Allocator* allocator;
     //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
-    if(!paroc_utils::isEqual(url.c_str(), NULL))
+    /*if(!paroc_utils::isEqual(url.c_str(), NULL)) {
         allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
-    else allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
+    } else { allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);}*/
+    allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
     
     if(allocator == NULL) {
       std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
@@ -335,7 +336,7 @@ void paroc_interface::allocate_only()
 void paroc_interface::Allocate()
 {
     //printf("----------------Allocate----------------\n");//vanhieu.nguyen
-    //allocate_only();
+    allocate_only();
     //printf("----------------Start bind----------------\n");//vanhieu.nguyen
   
     //Add for SSH tunneling

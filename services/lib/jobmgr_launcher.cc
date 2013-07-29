@@ -323,7 +323,7 @@ int main(int argc, char **argv)
 		 * STANDARD VERSION
 		 */
       
-      // Start the POP-C++ Search Node service
+      // Start the POP-C++ Search Node service      
       POPCSearchNode psn(challenge, daemon);
       printf("[POP-C++ Runtime] PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());   
 #endif

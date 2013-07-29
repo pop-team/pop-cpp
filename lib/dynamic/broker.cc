@@ -282,30 +282,25 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 		
 		char argument[1024];
 		sprintf(argument, "-%s_port=", (const char *)protocolName);
-		/*char *portstr=paroc_utils::checkremove(argc,argv,argument);
+		char *portstr=paroc_utils::checkremove(argc,argv,argument);
 		if (portstr!=NULL)
 		{
-			int port;
-			if (sscanf(portstr,"%d",&port)!=1) return false;
-			if (!pc->Create(port, true))
-			{
-				paroc_system::perror("Broker");
-				return false;
-			}
+                    int port;
+                    if (sscanf(portstr,"%d",&port)!=1) return false;
+                    if (!pc->Create(port, true))
+                    {
+                            paroc_system::perror("Broker");
+                            return false;
+                    }
 		}
 		else
 		{
-			if (!pc->Create(0, true))
-			{
-				paroc_system::perror("Broker");
-				return false;
-			}
-		}*/
-		//printf("[Broker] Initialize\n");//vanhieu.nguyen        
-                //if(!pc->Create(address, true)){
-                if(!pc->Create(0, true)){
-			paroc_system::perror("Broker");
-			return false;
+                    //printf("[Broker] Initialize\n");//vanhieu.nguyen        
+                    //if(!pc->Create(address, true)){
+                    if(!pc->Create(0, true)){
+                            paroc_system::perror("Broker");
+                            return false;
+                    }
 		}
 		
 		

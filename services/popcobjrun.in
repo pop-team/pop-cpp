@@ -11,7 +11,6 @@ MY_POPC_PROXY=""
 prog=""
 drun=0
 
-echo "vao day roi ha"
 if [ -n "$POPC_PROXY" ]; then
 MY_POPC_PROXY="-proxy=$POPC_PROXY"
 fi
@@ -43,7 +42,7 @@ fi
 if [ "$drun" = "1" ]; then
     echo "Exec: $POPC_JOB_EXEC $prog $args"
 elif [ ! "X`which $prog 2>/dev/null`" = "X" ]; then
-#    echo "$POPC_JOB_EXEC $prog $args 
+#    echo "exec this : $POPC_JOB_EXEC $prog $args" 
     $POPC_JOB_EXEC $prog $args &
     RETVAL=$?
     exit $RETVAL
