@@ -26,6 +26,7 @@ New features:
 Disabled features: 
 - Socket communications
 - Global and application services
+- Plugin for lib
 
 
 
