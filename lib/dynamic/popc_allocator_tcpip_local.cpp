@@ -18,8 +18,8 @@
 #include "paroc_combox.h"
 #include "paroc_combox_factory.h"
 #include "paroc_broker.h"
-#include "../../include/dynamic/paroc_utils.h"
-#include "../../include/dynamic/paroc_interface.h"
+#include "paroc_utils.h"
+#include "paroc_interface.h"
 
 #include "codemgr.ph"
 #include "batchmgr.ph"
@@ -59,6 +59,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     char tmpstr[10240];
     char *argv[1024];
     char *tmp;
+    const char *rport = NULL;
     bool isManual=od.getIsManual();
     
     od.getURL(hostname);
@@ -67,9 +68,15 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     od.getArch(rarch);
     od.getBatch(batch);    
     od.getDirectory(cwd);
-
+    
     int n = 0;
-
+    
+    if(hostname==NULL) hostname=paroc_system::GetHost();
+    
+    if(hostname !=NULL &&(tmp=(char*)strchr(hostname, ':')) !=NULL) {
+        *tmp=0;
+        rport=tmp+1;
+    }
     // Get the executable path name
     od.getExecutable(codefile);
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
@@ -114,20 +121,16 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
        argv[n++]=strdup(tmpstr);
        if (!isLocal)
        {
-
-            //BatchMgr batchman(paroc_system::appservice);
-            //sprintf(tmpstr,"-batch-node=%d", batchman.NextNode());
-            //DEBUG("%s",tmpstr);
-            //argv[n++]=strdup(tmpstr);
+            BatchMgr batchman(paroc_system::appservice);
+            sprintf(tmpstr,"-batch-node=%d", batchman.NextNode());
+            DEBUG("%s",tmpstr);
+            argv[n++]=strdup(tmpstr);
        }
     }
-    if(!paroc_utils::isEqual(hostname, "localhost")) 
-    {
-        tmp=getenv("POPC_LOCATION");
-        if(tmp!=NULL) sprintf(tmpstr, "%s/services/popcobjrun", tmp);
-        else strcpy(tmpstr, "popcobjrun");
-        argv[n++]=strdup(tmpstr);
-    }
+    tmp=getenv("POPC_LOCATION");
+    if(tmp!=NULL) sprintf(tmpstr, "%s/services/popcobjrun", tmp);
+    else strcpy(tmpstr, "popcobjrun");
+    argv[n++]=strdup(tmpstr);
     
     strcpy(tmpstr,codefile);
     char *tok=strtok_r(tmpstr," \t\n",&tmp);
@@ -181,7 +184,12 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
             argv[n++]=strdup(tmpstr);
     }
 
-
+    // Select core
+    if (rport!=NULL&&rport!=0) {
+            sprintf(tmpstr,"-socket_port=%s",rport);
+            argv[n++]=strdup(tmpstr);
+    }
+    
 #ifdef OD_DISCONNECT
     if (checkConnection) {
             sprintf(tmpstr,"-checkConnection");
@@ -189,6 +197,11 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 #endif	
 
+    if(paroc_od::defaultLocalJob)
+    {
+        argv[n++] = strdup("-runlocal");
+    }
+    
     // Add the working directory as argument
     if (cwd!=NULL && *cwd!=0) {
             sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
@@ -198,9 +211,6 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     argv[n]=NULL;
 
     int ret=0, err=0;
-
-    /*for (int j=0;j<n;j++) {
-        printf("argv[%d]=%s\n", j, argv[j]);}*/
     
     if (isManual)
     {
@@ -245,6 +255,10 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     tmpbuffer->UnPack(&n,1);
     tmpbuffer->Pop();
 
+    if(n!=0)
+    {
+        paroc_exception::paroc_throw(n, objectname);
+    }
     POPString objectaddress;
     tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
     tmpbuffer->UnPack(&objectaddress, 1);

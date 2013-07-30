@@ -41,6 +41,7 @@
 #include "paroc_system.h"
 #include "paroc_utils.h"
 #include "../../config.h"
+#include "appservice.ph"
 
 #if defined POPC_SECURE || defined POPC_SECURE_VIRTUAL
 #include "popc_security_manager.ph"
@@ -306,20 +307,31 @@ void paroc_interface::allocate_only()
 {
     Release();
     POPString objectname = ClassName();
-    POPString objectaddress; 
-    paroc_string url;
+    POPString objectaddress;
+    POPString hostname;
+    POPString batch;
     
-    od.getURL(url);
+    bool localFlag=od.IsLocal();
+    
+    
+    od.getURL(hostname);
+    od.getBatch(batch);
     
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
     POPC_Allocator* allocator;
     //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
-    /*if(!paroc_utils::isEqual(url.c_str(), NULL)) {
+    if(localFlag || hostname!=NULL || batch!=NULL) {
+        //printf("Allocate at local\n");
         allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
-    } else { allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);}*/
-    allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
-    
+    } else {
+        //printf("Allocate at remote\n");
+        allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
+        //Get the POPAppID
+        AppCoreService acs(paroc_system::appservice);
+        popAppId = acs.GetPOPCAppID(); 
+    }
+        
     if(allocator == NULL) {
       std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
     }

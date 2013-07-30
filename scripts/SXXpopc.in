@@ -74,7 +74,6 @@ start() {
       echo "Starting delegate service..."
       $POPC_LOCATION/bin/popcrun -noproxy $POPC_LOCATION/etc/service.map $POPC_LOCATION/services/launchproxy -proxyport=$PROXY_PORT start
    fi
-echo $POPC_LOCATION/bin/popcrun $servicemap $prog start $serviceproxy  -port=$POPC_PORT -genchallenge=$TMPKEY $ARGS
 	$POPC_LOCATION/bin/popcrun $servicemap $prog start $serviceproxy  -port=$POPC_PORT -genchallenge=$TMPKEY $ARGS   
    RETVAL=$?
    return $RETVAL

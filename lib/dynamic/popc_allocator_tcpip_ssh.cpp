@@ -18,10 +18,14 @@
 #include "paroc_combox.h"
 #include "paroc_combox_factory.h"
 #include "paroc_broker.h"
-#include "../../include/dynamic/paroc_utils.h"
-#include "../../include/dynamic/paroc_interface.h"
+#include "paroc_utils.h"
+#include "paroc_interface.h"
 
+#include "codemgr.ph"
+#include "batchmgr.ph"
+#include "appservice.ph"
 #define ALLOC_TIMEOUT 60
+
 /**
  * Allocator over TCP/IP with local mechanism constructor
  */ 
@@ -44,11 +48,10 @@ POPC_Allocator_tcpip_ssh::~POPC_Allocator_tcpip_ssh()
  */
 POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od)
 {
-    //paroc_accesspoint jobcontact, remotejobcontact;
-    POPString objectaddress;   
-    
+    paroc_accesspoint jobcontact, objectaddress, remotejobcontact;   
+        
     //Exec using JobMgr interface...
-    /*POPString platforms;
+    POPString platforms;
     od.getPlatforms(platforms);
 
     if (platforms.Length()<=0)
@@ -74,49 +77,36 @@ POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od
     if (jobcontact.IsEmpty())
     {
             char str[1024];
-            DEBUG("INTERFACE - JOBMGR %s", (const char *)paroc_system::GetHost());
             sprintf(str,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
             jobcontact.SetAccessString(str);
     }
 
     try
     {
-            DEBUG("JOBMGR --> connect to %s\n", jobcontact.GetAccessString());
             JobCoreService resources(jobcontact);
             int ret;
-            if (batchindex==0 && batchsize>1)
+            /*if (paroc_interface::batchindex==0 && paroc_interface::batchsize>1)
             {
                     if (batchaccesspoint!=NULL) delete [] batchaccesspoint;
-                    batchaccesspoint=new paroc_accesspoint[batchsize];
-                    DEBUG("Create Object : %s\n", ClassName());
+                    batchaccesspoint=new paroc_accesspoint[paroc_interface::batchsize];
 //TODO put an other array than batchaccesspoint
-                    ret=resources.CreateObject(paroc_system::appservice,objectname,od, batchsize,  batchaccesspoint, batchsize, batchaccesspoint);
-                    if (ret==0) objectaddress=batchaccesspoint[batchindex++];
-                    DEBUG("Return %d", ret);
+                    ret=resources.CreateObject(paroc_system::appservice,objectname,od, paroc_interface::batchsize,  batchaccesspoint, paroc_interface::batchsize, batchaccesspoint);
+                    if (ret==0) objectaddress=batchaccesspoint[paroc_interface::batchindex++];
             }
-            else{
-
-                    DEBUG("Create Object : %s\n", ClassName());
+            else{*/
                     ret=resources.CreateObject(paroc_system::appservice,objectname,od, 1,  &objectaddress, 1, &remotejobcontact);
-                    DEBUG("Return %d", ret);
-            }
+            //}
 
-            if (ret!=0) paroc_exception::paroc_throw(ret,ClassName());
-
-
-
-            //Get the POPAppID
-            AppCoreService acs(paroc_system::appservice);
-            popAppId = acs.GetPOPCAppID();         
+            if (ret!=0) paroc_exception::paroc_throw(ret,objectname);        
 
     }
     catch (paroc_exception * e)
     {
             paroc_system::perror(e);
             paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"POP-C++ error: Cannot create object via POP-C++ Job Manager");
-    }*/
+    }
                 
-    return objectaddress;
+    return objectaddress.GetAccessString();
 }
 
 /**

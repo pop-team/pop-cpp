@@ -37,10 +37,6 @@ bool CheckIfPacked(const char *objname);
 
 int main(int argc, char **argv)
 {
-    /*for(int i =0; i < argc; i++)
-    {
-        printf("argv[%d]=%s\n", i, argv[i]);//vanhieu.nguyen
-    }*/
 	char *rcore=paroc_utils::checkremove(&argc,&argv,"-core=");
 	if (rcore!=NULL) {
 		paroc_system::processor_set(atoi(rcore));
