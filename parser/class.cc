@@ -798,8 +798,8 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 	}
 
    //Add the declaration of the __POPThis variable for support of the "this" keyword
-/*   sprintf(str,"\n%s* __POPThis_%s; \n", name, name);
-   code.InsertAt(-1,str,strlen(str));*/
+   sprintf(str,"\n%s* __POPThis_%s; \n", name, name);
+   code.InsertAt(-1,str,strlen(str));
    
    sprintf(str,"void AllocateObject();\n");
    code.InsertAt(-1,str,strlen(str));
