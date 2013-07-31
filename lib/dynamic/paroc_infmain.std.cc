@@ -71,6 +71,12 @@ int main(int argc, char **argv)
 		}
 	}
 	
+        signal(SIGKILL, SignalTerminate);
+	signal(SIGTERM, SignalTerminate);
+	signal(SIGINT, SignalTerminate);
+	signal(SIGQUIT, SignalTerminate);
+	signal(SIGPIPE, SIG_IGN);  
+        
 	if (i < 0) {
  	  int ret = parocmain(argc, argv);
            /**
@@ -105,13 +111,7 @@ int main(int argc, char **argv)
           return ret;
 	}
 
-	atexit(_paroc_atexit);
-
-        signal(SIGKILL, SignalTerminate);
-	signal(SIGTERM, SignalTerminate);
-	signal(SIGINT, SignalTerminate);
-	signal(SIGQUIT, SignalTerminate);
-	signal(SIGPIPE, SIG_IGN);        
+	atexit(_paroc_atexit);      
         
 	try {
 		int ret=parocmain(argc,argv);

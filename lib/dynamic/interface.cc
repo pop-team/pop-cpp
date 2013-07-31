@@ -131,8 +131,8 @@ paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL)
 
 
  // DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
-//   if(od.isSecureSet()) accesspoint.SetSecure();
-   //_ssh_tunneling=false;
+   if(od.isSecureSet()) accesspoint.SetSecure();
+   _ssh_tunneling=false;
 //	__paroc_combox = NULL;
 //	__paroc_buf = NULL;
 	//_popc_async_construction_thread=NULL;
@@ -150,12 +150,13 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p)
     accesspoint.SetAsService();
   }
   
-  if(!p.IsEmpty()) {
+  if(!p.IsEmpty())
    	Bind(p);
-	  if(p.GetNoAddRef()) {
-      AddRef();
+        
+    if(p.GetNoAddRef()) {
+      //AddRef();
+        DecRef();
     }
-  }
 }
 
 
@@ -224,7 +225,7 @@ paroc_interface & paroc_interface::operator = (const paroc_interface & obj)
  	Release();  
   if(GetAccessPoint().GetAccessString()) {
   	Bind(accesspoint);
-  	AddRef();
+  	//AddRef();
   }
 	return (*this);
 }
@@ -289,7 +290,8 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack)
 		buf.Pop();
 		if (ref>0) {
 			Bind(accesspoint);
-			AddRef();
+			//AddRef();
+                        DecRef();
 		}
 	}
 	if (old!=NULL) {
@@ -390,8 +392,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 		POSITION pos = accesslist.GetHeadPosition();
 		while (pos != NULL) {
 			char *addr = accesslist.GetNext(pos);
-			try {
-				Bind(addr);
+                        try {
+                                Bind(addr);
 				return;
 			} catch (paroc_exception *e) {
 				//	      DEBUG("Can not bind to %s. Try next protocol...",addr);
@@ -425,8 +427,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest)
 			}
 		}
 	}
-
-	paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName());
+        paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName());
 
 }
 
@@ -527,7 +528,7 @@ void paroc_interface::Bind(const char *dest)
                 //printf("----------------/BindStatus----------------\n");//vanhieu.nguyen		
                 switch (status) {
   		case BIND_OK:
-                    	//NegotiateEncoding(info,peerplatform);
+                    	NegotiateEncoding(info,peerplatform);
 		  	break;
   		case BIND_FORWARD_SESSION:
 	  	case BIND_FORWARD_PERMANENT: {
@@ -605,23 +606,23 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess)
 
 void paroc_interface::Release()
 {
-	if (__paroc_combox != NULL) {
-	  // Decrement reference when the interface release its resources
-    paroc_connection* connection = __paroc_combox->get_connection();
-    if(connection != NULL && !accesspoint.IsService()) {
-      //printf("Release\n");//vanhieu.nguyen
-      DecRef();	
-    } 
+    if (__paroc_combox != NULL) {
+      // Decrement reference when the interface release its resources
+        //paroc_connection* connection = __paroc_combox->get_connection();
+        //if(connection != NULL && !accesspoint.IsService()) {
+          //printf("Release\n");//vanhieu.nguyen
+          //DecRef();	
+        //} 
       
     // Destroy the combox
-		__paroc_combox->Destroy();
-		__paroc_combox = NULL;
-	}
+        __paroc_combox->Destroy();
+        __paroc_combox = NULL;
+    }
 	
-	if (__paroc_buf != NULL) {
-		__paroc_buf->Destroy();
-		__paroc_buf = NULL;
-	}
+    if (__paroc_buf != NULL) {
+            __paroc_buf->Destroy();
+            __paroc_buf = NULL;
+    }
                 
 
   /*if(_ssh_tunneling){
