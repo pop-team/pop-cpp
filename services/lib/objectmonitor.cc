@@ -16,8 +16,8 @@
 
 #include "objectmonitor.ph"
 
-static IMPLEMENT_TYPE(ObjectMonitor) *myObjMonitor=NULL;
-//static ObjectMonitor *myObjMonitor=NULL;
+//static IMPLEMENT_TYPE(ObjectMonitor) *myObjMonitor=NULL;
+static ObjectMonitor *myObjMonitor=NULL;
 
 static void LocalServiceTerminate(int sig)
 {
