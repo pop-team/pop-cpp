@@ -244,7 +244,7 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer)
 		}
 		else
 		{
-			fd=((paroc_connection_sock *)iopeer)->sockfd;
+                        fd=((paroc_connection_sock *)iopeer)->sockfd;
 		}
 		if (fd<0) return -1;
                 while ( (n=read(fd,s,len))<0 && errno==EINTR);
@@ -258,6 +258,7 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer)
 
 	if (iopeer==NULL) iopeer=t;
 	if (n<=0) errno=EIO;
+        //printf("[paroc_combox_socket::Recv]n=%d\n", n);
 	return n;
 }
 

@@ -324,10 +324,10 @@ void paroc_interface::allocate_only()
     POPC_Allocator* allocator;
     //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
     if(localFlag || hostname!=NULL || batch!=NULL) {
-        //printf("Allocate at local\n");
+        printf("Allocate at local\n");
         allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
     } else {
-        //printf("Allocate at remote\n");
+        printf("Allocate at remote\n");
         allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
         //Get the POPAppID
         AppCoreService acs(paroc_system::appservice);
@@ -543,10 +543,12 @@ void paroc_interface::Bind(const char *dest)
 		  default:
 
   			Release();
+                        printf("@@\n");
 	  		paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName());
 		}
 	} else {
 		int code=errno;
+                printf("Error happen at Bind(const char*accesspoint\n");
 		//      DEBUG("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
 		//      DEBUG("Create socket fails. Reason: %s.",strerror(code));
 		Release();
@@ -1134,6 +1136,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
   //printf("methodid[0]=%d, methodid[1]=%d, methodid[2]=%d, methodname=%s\n", buf->GetHeader().GetClassID(), buf->GetHeader().GetMethodID(), buf->GetHeader().GetSemantics(), buf->GetHeader().GetMethodName());//vanhieu.nguyen
     
   if (!buf->Send((*__paroc_combox), conn)) {
+      printf("Error at popc_send_request\n");
 	  paroc_exception::paroc_throw_errno();
 	}   
 }
@@ -1143,7 +1146,10 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
  */
 void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn)
 {    
-	if (!buf->Recv((*__paroc_combox), conn)) {
+    int na = buf->Recv((*__paroc_combox), conn);
+    //printf("[popc_get_response]n=%d\n", na);
+	if (!na) {
+            printf("Error at popc_get_response\n");
     paroc_exception::paroc_throw_errno();	
 	}
 	paroc_buffer::CheckAndThrow(*buf);
