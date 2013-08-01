@@ -611,7 +611,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 	n = 20;
 	do {
 	  if(conn == NULL)
-	    printf("XDR: recv connection is null\n");
+	    //printf("XDR: recv connection is null\n");
 		if ((i = s.Recv(dat, n, conn)) <= 0) {
 			return false;
 		}
