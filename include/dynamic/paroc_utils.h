@@ -57,7 +57,7 @@ typedef paroc_utils POPUtils;
 int rprintf(const char *format,...);
 
 #ifndef _POPC_RUNTIME_
-//#define printf rprintf
+#define printf rprintf
 #define POPGetHost() (const char*)POPSystem::GetHost()
 #endif
 

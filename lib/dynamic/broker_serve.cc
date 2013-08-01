@@ -119,7 +119,7 @@ bool paroc_broker::GetRequest(paroc_request &req)
 			execCond.wait();
 		}
 	}
-        //printf("            after have request then methodid=%d\n", req.methodId[2]);//vanhieu.nguyen
+        //printf("            after have request then methodid=%d, %d, %d\n", req.methodId[0], req.methodId[1], req.methodId[2]);//vanhieu.nguyen
 	return true;
 }
 
@@ -197,6 +197,7 @@ bool paroc_broker::DoInvoke(paroc_request &request)
 {
 	try
 	{
+            //printf("[request.methodId=%d, %d, %d]\n", request.methodId[0], request.methodId[1], request.methodId[2]);
             if (!Invoke(request.methodId, *request.data, request.from) )  paroc_exception::paroc_throw(OBJECT_MISMATCH_METHOD);            
 	}
 

@@ -279,7 +279,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack)
 
 
 	if (pack) {
-                int ref = 1;
+                int ref = AddRef();
 		buf.Push("refcount","int",1);
 		buf.Pack(&ref,1);
 		buf.Pop();
@@ -324,10 +324,10 @@ void paroc_interface::allocate_only()
     POPC_Allocator* allocator;
     //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
     if(localFlag || hostname!=NULL || batch!=NULL) {
-        printf("Allocate at local\n");
+        //printf("Allocate at local\n");
         allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
     } else {
-        printf("Allocate at remote\n");
+        //printf("Allocate at remote\n");
         allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
         //Get the POPAppID
         AppCoreService acs(paroc_system::appservice);
@@ -528,7 +528,7 @@ void paroc_interface::Bind(const char *dest)
                 //printf("----------------/BindStatus----------------\n");//vanhieu.nguyen		
                 switch (status) {
   		case BIND_OK:
-                    	NegotiateEncoding(info,peerplatform);
+                    	//NegotiateEncoding(info,peerplatform);
 		  	break;
   		case BIND_FORWARD_SESSION:
 	  	case BIND_FORWARD_PERMANENT: {
@@ -543,13 +543,11 @@ void paroc_interface::Bind(const char *dest)
 		  default:
 
   			Release();
-                        printf("@@\n");
-	  		paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName());
+                        paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName());
 		}
 	} else {
 		int code=errno;
-                printf("Error happen at Bind(const char*accesspoint\n");
-		//      DEBUG("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
+                //      DEBUG("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
 		//      DEBUG("Create socket fails. Reason: %s.",strerror(code));
 		Release();
 		paroc_exception::paroc_throw(code, ClassName());
@@ -659,8 +657,7 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
 	__paroc_buf->Push("code","int",1);
 	__paroc_buf->UnPack(&code,1);
 	__paroc_buf->Pop();
-
-	__paroc_buf->Push("platform","POPString",1);
+        __paroc_buf->Push("platform","POPString",1);
 	__paroc_buf->UnPack(&platform,1);
 	__paroc_buf->Pop();
 
@@ -714,8 +711,7 @@ int paroc_interface::DecRef()
 
 bool paroc_interface::Encoding(POPString encoding)
 {
-    
-	if (__paroc_combox == NULL || __paroc_buf == NULL) 
+        if (__paroc_combox == NULL || __paroc_buf == NULL) 
 	  return false;
 	paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(encoding);
 	if (fact == NULL) {
@@ -732,8 +728,12 @@ bool paroc_interface::Encoding(POPString encoding)
 	__paroc_buf->Pack(&encoding, 1);
 	__paroc_buf->Pop();
 
-	paroc_Dispatch(__paroc_buf);
-	paroc_Response(__paroc_buf);
+	//paroc_Dispatch(__paroc_buf);
+	//paroc_Response(__paroc_buf);
+        paroc_connection* connection = __paroc_combox->get_connection();
+	popc_send_request(__paroc_buf, connection);
+	popc_get_response(__paroc_buf, connection);
+        
 	bool ret;
 	__paroc_buf->Push("result", "bool", 1);
 	__paroc_buf->UnPack(&ret, 1);
@@ -755,7 +755,9 @@ void paroc_interface::Kill()
 	__paroc_buf->Reset();
 	__paroc_buf->SetHeader(h);
 
-	paroc_Dispatch(__paroc_buf);
+	//paroc_Dispatch(__paroc_buf);
+        paroc_connection* connection = __paroc_combox->get_connection();
+	popc_send_request(__paroc_buf, connection);
 	__paroc_combox->RecvAck();
 
 	Release();
@@ -768,8 +770,12 @@ bool paroc_interface::ObjectActive()
 	paroc_mutex_locker lock(_paroc_imutex);
 	__paroc_buf->Reset();
 	__paroc_buf->SetHeader(h);
-	paroc_Dispatch(__paroc_buf);
-	paroc_Response(__paroc_buf);
+	//paroc_Dispatch(__paroc_buf);
+	//paroc_Response(__paroc_buf);
+        paroc_connection* connection = __paroc_combox->get_connection();
+	popc_send_request(__paroc_buf, connection);
+	popc_get_response(__paroc_buf, connection);
+        
 	bool ret;
 	__paroc_buf->Push("result","bool",1);
 	__paroc_buf->UnPack(&ret,1);
@@ -1146,10 +1152,8 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
  */
 void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn)
 {    
-    int na = buf->Recv((*__paroc_combox), conn);
-    //printf("[popc_get_response]n=%d\n", na);
-	if (!na) {
-            printf("Error at popc_get_response\n");
+    if (!buf->Recv((*__paroc_combox), conn)) {
+            //printf("Error at popc_get_response\n");//vanhieu.nguyen
     paroc_exception::paroc_throw_errno();	
 	}
 	paroc_buffer::CheckAndThrow(*buf);

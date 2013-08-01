@@ -74,7 +74,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) // Receive request and pu
 
 		}
 	}
-	//printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
+	//printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());//vanhieu.nguyen
 	server->Close();
 }
 
@@ -199,8 +199,7 @@ paroc_object * paroc_broker::GetObject()
 
 bool  paroc_broker::ParocCall(paroc_request &req)
 {
-
-	if (req.methodId[1]>=10) return false;
+        if (req.methodId[1]>=10) return false;
 
 	unsigned *methodid=req.methodId;
 	paroc_buffer *buf=req.data;
@@ -314,7 +313,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	{
 		// Kill call
 		if (obj != NULL && obj->CanKill()) {
-		  printf("Object exit by killcall\n"); 
+		  printf("Object exit by killcall\n");//vanhieu.nguyen 
 			exit(1);
 		}
 		break;
