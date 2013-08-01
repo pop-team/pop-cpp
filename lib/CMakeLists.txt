@@ -7,4 +7,4 @@
 #
 
 add_subdirectory(dynamic)
-#add_subdirectory(pseudodynamic)
+add_subdirectory(pseudodynamic)
