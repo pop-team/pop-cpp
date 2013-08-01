@@ -12,6 +12,9 @@
 /usr/local/popc/lib/dynamic/paroc_infmain.std.o
 /usr/local/popc/lib/dynamic/paroc_objmain.std.o
 /usr/local/popc/lib/dynamic/libpopc_common.a
+/usr/local/popc/lib/pseudodynamic/paroc_infmain.psdyn.o
+/usr/local/popc/lib/pseudodynamic/popc_objmain.psdyn.o
+/usr/local/popc/lib/pseudodynamic/libpopc_common_psdyn.a
 /usr/local/popc/include/dynamic/popc_buffer_xdr_mpi.h
 /usr/local/popc/include/dynamic/debug.h
 /usr/local/popc/include/dynamic/paroc_buffer.h

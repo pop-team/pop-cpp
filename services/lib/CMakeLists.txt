@@ -12,7 +12,7 @@ set(POPCPP_Object_COMPILER_FLAGS -object -o)
 set(POPCPP_COMPILER_FLAGS -o)
 set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
 
-set(POPCPP_FLAGS -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp)
+set(POPCPP_FLAGS -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp -cxx=g++ -D_POPC_RUNTIME_)
 
 set(POPCPP_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include/dynamic)
 set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/dynamic)
@@ -142,10 +142,10 @@ add_custom_command(OUTPUT batchmgr.o
                   DEPENDS batchmgr.cc)
 
 #appservice.cc
-#add_custom_command(OUTPUT appservice.o
-#                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAG} appservice.o appservice.cc
-#		  -I${POPCPP_INCLUDE_PATH}
-#                  DEPENDS appservice.cc)
+add_custom_command(OUTPUT appservice.o
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} appservice.o appservice.cc
+		  -I${POPCPP_INCLUDE_PATH}
+                  DEPENDS appservice.cc)
 
 #popfilemanager.cc
 add_custom_command(OUTPUT popfilemanager.o
