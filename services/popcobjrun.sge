@@ -1,0 +1,49 @@
+#! /bin/bash
+# Submits a job to the next node in $LSB_HOSTS
+
+export POPC_BATCH=sge
+args=""
+prog=""
+current_node="local"
+
+if [ "X$TMPDIR" = "X" ]; then
+        echo "Error : \$TMPDIR not set : popcobjrun.sge must only be used in a batch environment"
+        exit -1
+fi
+
+if [ ! -f "$TMPDIR/machines" ]; then
+        echo "Error : \"$TMPDIR/machines\" does not exist"
+        exit -1
+fi
+
+if [ "X$POPC_RSH" = "X" ]; then
+	POPC_RSH="/usr/bin/ssh"
+fi
+
+for arg in $* ; do
+    if [ `echo "$arg"|grep "^\-batch-node="` ]; then
+      current_node=`echo $arg|sed s/-batch-node=//`
+    elif [ "X${prog}" = "X" ]; then
+      prog=$arg
+    else
+      args="$args $arg"
+    fi
+done
+
+if [ "$current_node" = "local" ]; then
+# Execute job locally with the standard command
+# echo "$0 executes : $prog -batch=sge $args &"
+  $prog -batch=sge $args &
+else
+
+# Find the next node and execute the job
+  nbnodes=`cat $TMPDIR/machines|wc -l`
+  
+  current_node=`expr $current_node % $nbnodes`
+  current_node=`expr $current_node + 1`
+  current_node_name=`cat $TMPDIR/machines|sed -n "${current_node}p"`
+  
+# echo "$0 executes : ssh $current_node_name $prog -batch=sge $args &"
+  $POPC_RSH $current_node_name $prog -batch=sge $args &
+  
+fi

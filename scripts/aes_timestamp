@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#Get timestamp of the header used for compilation
+TIME=$(stat -c %y ../lib/aes.h)
+TIMESTAMP=$(echo $TIME | cut -c1-4)
+TIMESTAMP=$TIMESTAMP$(echo $TIME | cut -c6-7)
+TIMESTAMP=$TIMESTAMP$(echo $TIME | cut -c9-10)
+TIMESTAMP=$TIMESTAMP$(echo $TIME | cut -c12-13)
+TIMESTAMP=$TIMESTAMP$(echo $TIME | cut -c15-16)
+TIMESTAMP=$TIMESTAMP.$(echo $TIME | cut -c18-19)
+
+#Remove the header in lib
+rm -rf ../lib/aes.h
+
+#Move the header from scripts to lib
+mv ../scripts/aes.h ../lib/aes.h
+
+#Change the timestamp of the header to avoid re-compilation
+touch -t $TIMESTAMP ../lib/aes.h
+
+
