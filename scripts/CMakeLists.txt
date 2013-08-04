@@ -16,10 +16,8 @@ install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popc-user-env.sh DESTINATION bin)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popc-user-env.sh DESTINATION etc)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popc-runtime-env.sh DESTINATION etc)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popc-runtime-env.in DESTINATION etc)
+
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/SXXpopc.in DESTINATION sbin)
-#delete SXXpopc after debug
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/SXXpopc.in ${CMAKE_CURRENT_SOURCE_DIR}/SXXpopc)
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/SXXpopc DESTINATION sbin)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popc_script_setup DESTINATION sbin)
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popc_setup DESTINATION sbin)
 
