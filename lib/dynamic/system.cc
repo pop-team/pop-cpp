@@ -438,7 +438,6 @@ void paroc_system::Finalize(bool normalExit)
                oldcount=count;
             }
          } else {
-            printf("KillAll\n");
             mgr->KillAll();
          }
          mgr->Stop(challenge);
