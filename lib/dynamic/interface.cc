@@ -211,9 +211,6 @@ paroc_interface::~paroc_interface()
 
 paroc_interface & paroc_interface::operator = (const paroc_interface & obj)
 {
-
-    
-  accesspoint = obj.GetAccessPoint();  
 //  __paroc_combox = NULL;
 //  __paroc_buf = NULL;
   //printf("Bind\n");
@@ -222,12 +219,13 @@ paroc_interface & paroc_interface::operator = (const paroc_interface & obj)
   //Bind(accesspoint);
 //  const paroc_accesspoint &res = obj.GetAccessPoint();
 
- 	Release();  
-  if(GetAccessPoint().GetAccessString()) {
-  	Bind(accesspoint);
-  	//AddRef();
-  }
-	return (*this);
+    Release();
+    accesspoint = obj.GetAccessPoint();  
+    if(GetAccessPoint().GetAccessString()) {
+          Bind(accesspoint);
+          //AddRef();
+    }
+    return (*this);
 }
 
 void paroc_interface::SetOD(const paroc_od &myod)
