@@ -1,0 +1,8 @@
+popcrun objmap ./main 2 localhost localhost
+JobManager: Starting test...
+JobManager: test failed on object creation: default
+JobManager: POPCobject no.1 (URL) created on machine "160.98.61.188"
+JobManager: POPCobject no.1 on machine "160.98.61.188" is being destroyed
+JobManager: test failed on object creation: Power
+JobManager: test failed on object creation: Memory
+JobManager: test failed on object creation: Protocol
