@@ -98,9 +98,9 @@ endif(MPI_SUPPORT)
 if(XMP_SUPPORT)
   message(STATUS "XMP Support for POP-C++ is enable")
   add_subdirectory(xmp)
-  add_subdirectory(scripts)
 endif(XMP_SUPPORT)
 
+add_subdirectory(scripts)
 add_subdirectory(services)
 
 # Add target to clean the distribution of all CMake generated files
