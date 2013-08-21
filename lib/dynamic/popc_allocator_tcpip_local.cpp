@@ -91,9 +91,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 
     POPString myhost = paroc_system::GetHost();
-    //printf("hostname=%s\n", hostname.GetString());
     bool isLocal = (isManual || hostname==NULL || *hostname==0 || paroc_utils::SameContact(myhost, hostname) || paroc_utils::isEqual(hostname, "localhost") || paroc_utils::isEqual(hostname, "127.0.0.1"));
-    //printf("isLocal=%d\n", isLocal);
     if(batch==NULL)
     {   
         if(!isLocal)
@@ -245,7 +243,6 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     paroc_buffer * tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
 
-    //printf("[Interface Side] [[allocate]]\n");//vanhieu.nguyen            
     if (!tmpbuffer->Recv((*tmpsock), connection))
         paroc_exception::paroc_throw_errno();
 

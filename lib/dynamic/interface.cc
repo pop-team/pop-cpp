@@ -320,18 +320,19 @@ void paroc_interface::allocate_only()
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
     POPC_Allocator* allocator;
-    //POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+#ifdef DEFINE_UDS_SUPPORT  
+    allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+#else    
     if(localFlag || hostname!=NULL || batch!=NULL) {
-        //printf("Allocate at local\n");
         allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
     } else {
-        //printf("Allocate at remote\n");
         allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
         //Get the POPAppID
         AppCoreService acs(paroc_system::appservice);
         popAppId = acs.GetPOPCAppID(); 
     }
-        
+#endif
+    
     if(allocator == NULL) {
       std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;     
     }
@@ -347,17 +348,13 @@ void paroc_interface::allocate_only()
  */
 void paroc_interface::Allocate()
 {
-    //printf("----------------Allocate----------------\n");//vanhieu.nguyen
     allocate_only();
-    //printf("----------------Start bind----------------\n");//vanhieu.nguyen
-  
+    
     //Add for SSH tunneling
     if(od.isSecureSet()) accesspoint.SetSecure();
     if(od.isServiceSet()) accesspoint.SetAsService();
     
-    Bind(accesspoint);
-    //printf("----------------/Start bind----------------\n");//vanhieu.nguyen
-    //printf("----------------/Allocate----------------\n");//vanhieu.nguyen
+    Bind(accesspoint);    
 }
 
 /** 
@@ -510,20 +507,20 @@ void paroc_interface::Bind(const char *dest)
         
 	  paroc_connection* connection = __paroc_combox->get_connection();
 	  popc_send_request(__paroc_buf, connection);    
-  } else {
-    //printf("[Interface] Bind\n");    
-    //create_return = __paroc_combox->Create(connect_dest.c_str(), false);
-    //connect_return = __paroc_combox->Connect(connect_dest.c_str());
-    create_return = __paroc_combox->Create(0, false);//vanhieu.nguyen
-    connect_return = __paroc_combox->Connect(dest);//vanhieu.nguyen        
+  } else {    
+#ifdef DEFINE_UDS_SUPPORT     
+    create_return = __paroc_combox->Create(connect_dest.c_str(), false);
+    connect_return = __paroc_combox->Connect(connect_dest.c_str());
+#else
+    create_return = __paroc_combox->Create(0, false);
+    connect_return = __paroc_combox->Connect(dest);
+#endif    
   }
 	if (create_return && connect_return) {
    		int status;
 		POPString info;
 		POPString peerplatform;
-                //printf("----------------BindStatus----------------\n");//vanhieu.nguyen
-		BindStatus(status, peerplatform, info);
-                //printf("----------------/BindStatus----------------\n");//vanhieu.nguyen		
+                BindStatus(status, peerplatform, info);
                 switch (status) {
   		case BIND_OK:
                     	//NegotiateEncoding(info,peerplatform);
@@ -608,7 +605,6 @@ void paroc_interface::Release()
       // Decrement reference when the interface release its resources
         //paroc_connection* connection = __paroc_combox->get_connection();
         //if(connection != NULL && !accesspoint.IsService()) {
-          //printf("Release\n");//vanhieu.nguyen
           //DecRef();	
         //} 
       
@@ -1137,12 +1133,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf)
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn)
 {
-  //printf("methodid[0]=%d, methodid[1]=%d, methodid[2]=%d, methodname=%s\n", buf->GetHeader().GetClassID(), buf->GetHeader().GetMethodID(), buf->GetHeader().GetSemantics(), buf->GetHeader().GetMethodName());//vanhieu.nguyen
-    
-  if (!buf->Send((*__paroc_combox), conn)) {
-      printf("Error at popc_send_request\n");
-	  paroc_exception::paroc_throw_errno();
-	}   
+  if (!buf->Send((*__paroc_combox), conn)) paroc_exception::paroc_throw_errno();
 }
 
 /**
@@ -1150,10 +1141,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
  */
 void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn)
 {    
-    if (!buf->Recv((*__paroc_combox), conn)) {
-            //printf("Error at popc_get_response\n");//vanhieu.nguyen
-    paroc_exception::paroc_throw_errno();	
-	}
+    if (!buf->Recv((*__paroc_combox), conn)) paroc_exception::paroc_throw_errno();	
 	paroc_buffer::CheckAndThrow(*buf);
 }
 

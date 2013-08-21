@@ -97,12 +97,14 @@ paroc_system::paroc_system()
 
 paroc_system::~paroc_system()
 {
+#ifndef DEFINE_UDS_SUPPORT          
   if (mgr!=NULL)
   {
     Finalize(false);
     delete mgr;
   }
   mgr=NULL;
+#endif  
 
   paroc_combox_factory *pf=paroc_combox_factory::GetInstance();
   paroc_buffer_factory_finder *bf=paroc_buffer_factory_finder::GetInstance();
@@ -361,7 +363,9 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       if (proxy==NULL) strcpy(url,codeser);
       else sprintf(url,"%s -proxy=%s",codeser, proxy);
       //printf("mgr=CreateAppCoreService(url=%s);\n", url);
+#ifndef DEFINE_UDS_SUPPORT   
       mgr = CreateAppCoreService(url);
+#endif
     }
     else
     {
@@ -369,7 +373,9 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       paroc_accesspoint app;
       app.SetAccessString(appcontact);
       app.SetAsService();
+#ifndef DEFINE_UDS_SUPPORT           
       mgr=new AppCoreService(app);
+#endif      
     }
     paroc_system::appservice=mgr->GetAccessPoint();
     paroc_system::appservice.SetAsService();
@@ -379,6 +385,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
     printf("POP-C++ Exception occurs in paroc_system::Initialize\n");
     POPSystem::perror(e);
     delete e;
+#ifndef DEFINE_UDS_SUPPORT         
     if (mgr!=NULL)
     {
       mgr->KillAll();
@@ -386,11 +393,12 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       delete mgr;
       mgr=NULL;
     }
-      
+#endif      
     return false;
   }
   catch (...)
   {
+#ifndef DEFINE_UDS_SUPPORT                
     if (mgr!=NULL)
     {
       mgr->KillAll();
@@ -398,6 +406,7 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       delete mgr;
       mgr=NULL;
     }
+#endif    
     return false;
   }
 
@@ -411,12 +420,16 @@ bool paroc_system::Initialize(int *argc,char ***argv)
       return false;
   }
   else return true;*/
-
+#ifdef DEFINE_UDS_SUPPORT
+  return false;
+#else
   return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
+#endif  
 }
 
 void paroc_system::Finalize(bool normalExit)
 {
+#ifndef DEFINE_UDS_SUPPORT             
    if (mgr!=NULL){
       try{
          if (normalExit) {
@@ -449,7 +462,8 @@ void paroc_system::Finalize(bool normalExit)
          fprintf(stderr,"POP-C++ error on finalizing the application\n");
       }
       mgr=NULL;
-   } 
+   }
+#endif 
 }
 
 

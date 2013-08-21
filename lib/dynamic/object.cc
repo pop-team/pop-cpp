@@ -86,23 +86,20 @@ const paroc_accesspoint & paroc_object::GetAccessPointForThis()
 int paroc_object::GetRefCount()
 {
 	paroc_mutex_locker t(lock);
-        //printf("[GetRefCount]ref = %d\n", refcount);//vanhieu.nguyen    
-	return refcount;
+        return refcount;
 }
 
 int paroc_object::AddRef()
 {
 	paroc_mutex_locker t(lock);
-	//printf("[AddRef]ref %d->%d\n", refcount, refcount + 1);//vanhieu.nguyen
-        refcount++;
+	refcount++;
 	return refcount;
 }
 
 int paroc_object::DecRef()
 {
 	paroc_mutex_locker t(lock);
-	//printf("[DecRef]ref %d->%d\n", refcount, refcount - 1);//vanhieu.nguyen
-        refcount--;
+	refcount--;
 	return refcount;
 }
 

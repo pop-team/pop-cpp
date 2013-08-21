@@ -182,8 +182,7 @@ int paroc_broker::Run()
 	  return -1;
 	}
         state = POPC_STATE_RUNNING;
-        //printf("comboxCount=%d\n", comboxCount);//vanhieu.nguyen
-	ptArray.SetSize(comboxCount);
+        ptArray.SetSize(comboxCount);
 	int i;
 
 	for (i = 0; i < comboxCount; i++) {
@@ -201,12 +200,8 @@ int paroc_broker::Run()
 	while (state == POPC_STATE_RUNNING) {
 		try {
 			paroc_request req;
-//printf("----------------Start get request----------------\n");//vanhieu.nguyen
 			if (!GetRequest(req)) break;
-//printf("----------------/Start get request----------------\n");//vanhieu.nguyen
-//printf("----------------Start serve request----------------\n");//vanhieu.nguyen
 			ServeRequest(req);
-//printf("----------------/Start serve request----------------\n");//vanhieu.nguyen                         
 			if (req.methodId[2] & INVOKE_CONSTRUCTOR)
 			{
 				alarm(0);
@@ -233,8 +228,7 @@ int paroc_broker::Run()
 		}
 	}
 	        
-        //printf("POPC exiting\n");//vanhieu.nguyen
-	state = POPC_STATE_EXIT;
+        state = POPC_STATE_EXIT;
         
 	for (i = 0; i < comboxCount; i++) {
 		if (WakeupReceiveThread(comboxArray[i])) {
@@ -295,9 +289,11 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 		}
 		else
 		{
-                    //printf("[Broker] Initialize\n");//vanhieu.nguyen        
-                    //if(!pc->Create(address, true)){
+#ifdef DEFINE_UDS_SUPPORT                  
+                    if(!pc->Create(address, true)){
+#else                    
                     if(!pc->Create(0, true)){
+#endif                       
                             paroc_system::perror("Broker");
                             return false;
                     }
@@ -368,23 +364,23 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
 		}
     paroc_buffer_factory* buffer_factory = tmp->GetBufferFactory();
     paroc_buffer* buffer = buffer_factory->CreateBuffer();
-		//if (tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
-                //printf("[Broker] WakeupReceiveThread\n");//vanhieu.nguyen
+#ifdef DEFINE_UDS_SUPPORT 
+                if (tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
+#else    
                 if (tmp->Create(0, false) && tmp->Connect(tok)) {
+#endif                    
 		  try {
                 paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
               buffer->Reset();
 	      buffer->SetHeader(h);
 	      paroc_connection* connection = tmp->get_connection();
-              //printf("[WakeupReceiveThread][Broker] Send or receive from/to [Interface]\n");//vanhieu.nguyen
               if (!buffer->Send((*tmp), connection)) {
           ok = false;
 	      } else {
           if (!buffer->Recv((*tmp), connection)) {
             ok = false;
 	        }
-            //printf("[WakeupReceiveThread][Broker] endl Send or receive from/to [Interface]\n");//vanhieu.nguyen
-    	    bool ret;
+            bool ret;
         	buffer->Push("result", "bool", 1);
         	buffer->UnPack(&ret,1);
     	    buffer->Pop();

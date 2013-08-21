@@ -75,18 +75,13 @@ bool paroc_broker::GetRequest(paroc_request &req)
 {
 	paroc_mutex_locker locker(execCond);
 	//If the queue is empty then wait for the request....
-        //printf("            GetRequest started(%p, %d)\n", obj, state);//vanhieu.nguyen
-	while (request_fifo.IsEmpty())
+        while (request_fifo.IsEmpty())
 	{
-             //printf("            Queue is empty(%p)\n", obj);//vanhieu.nguyen
             if ((obj!=NULL && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING)
             {
-                    //printf("return false(%p, %d)\n", obj, state);//vanhieu.nguyen
                     return false;
             }
-            //printf("            Wait for new request(%p, %d)\n", obj, state);//vanhieu.nguyen
             execCond.wait(); //Wait for new request
-            //printf("            New request received(%p, %d)\n", obj, state);//vanhieu.nguyen
 	}
 
         POSITION pos=request_fifo.GetHeadPosition();
@@ -119,15 +114,13 @@ bool paroc_broker::GetRequest(paroc_request &req)
 			execCond.wait();
 		}
 	}
-        //printf("            after have request then methodid=%d, %d, %d\n", req.methodId[0], req.methodId[1], req.methodId[2]);//vanhieu.nguyen
-	return true;
+        return true;
 }
 
 void paroc_broker::ServeRequest(paroc_request &req)
 {
 	int type=req.methodId[2];
-        //printf("            Serve Request started type=%d\n", type);//vanhieu.nguyen
-	if (type & INVOKE_CONC)
+        if (type & INVOKE_CONC)
 	{
 		paroc_invokethread *thr= new paroc_invokethread(this,req, &instanceCount,&execCond);
 
@@ -162,7 +155,6 @@ void paroc_broker::ServeRequest(paroc_request &req)
 	}
 	else
 	{
-            //printf("            DoInvoke(req)\n");//vanhieu.nguyen
 		DoInvoke(req);
                 if (type & INVOKE_MUTEX)
 		{
@@ -173,9 +165,7 @@ void paroc_broker::ServeRequest(paroc_request &req)
 		}
 		req.data->Destroy();
 		if (req.from!=NULL) delete req.from;
-                //printf("            /DoInvoke(req)\n");//vanhieu.nguyen
 	}
-         //printf("            Serve Request terminated type=%d\n", type);//vanhieu.nguyen
 }
 
 void paroc_broker::UnhandledException()
@@ -197,7 +187,6 @@ bool paroc_broker::DoInvoke(paroc_request &request)
 {
 	try
 	{
-            //printf("[request.methodId=%d, %d, %d]\n", request.methodId[0], request.methodId[1], request.methodId[2]);
             if (!Invoke(request.methodId, *request.data, request.from) )  paroc_exception::paroc_throw(OBJECT_MISMATCH_METHOD);            
 	}
 

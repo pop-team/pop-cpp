@@ -83,8 +83,8 @@ int main(int argc, char **argv)
 	   * POP-C++ on the K Computer
 	   * Terminate the MPI Communicators network by sending a termination message to the local MPI Communicator with rank 0
 	   */
-
-	  /*paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+#ifdef DEFINE_UDS_SUPPORT         
+	  paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
 	  if (combox_factory == NULL) 
 	    paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain");
 	
@@ -107,7 +107,8 @@ int main(int argc, char **argv)
 
     if (!allocating_buffer->Send((*allocating_combox), connection)) {
 	    paroc_exception::paroc_throw_errno();
-  	}*/
+  	}          
+#endif          
           return ret;
 	}
 

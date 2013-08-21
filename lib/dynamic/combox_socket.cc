@@ -117,13 +117,11 @@ bool paroc_combox_socket::Create(int port, bool server)
 		index=1;
 		nready=0;
 		connarray.SetSize(1);
-                //printf("[Interface side] [[Create function]] [[[isServer=true]]] sockfd=%d\n", sockfd);//vanhieu.nguyen                
-		connarray[0]=CreateConnection(sockfd);
+                connarray[0]=CreateConnection(sockfd);
 		return (listen(sockfd,10)==0);
 	}
 	else 
         {
-            //printf("[Interface side] [[Create function]] [[[isServer=false]]] sockfd=%d\n", sockfd);//vanhieu.nguyen              		
             peer=CreateConnection(-1);
         }
 	return true;
@@ -160,8 +158,7 @@ bool paroc_combox_socket::Connect(const char *url)
 	*s=0;
 	bool ret= Connect(host,port);
 	free(host);
-        //printf("[Interface side] [[Connect function]] sockfd=%d\n", sockfd);//vanhieu.nguyen	
-	if (ret) peer->sockfd=sockfd;
+        if (ret) peer->sockfd=sockfd;
 	return ret;
 }
 
@@ -171,7 +168,6 @@ int paroc_combox_socket::Send(const char *s,int len)
 	int count=0;
 	while (len>0)
 	{
-            //printf("[Write to %d with s=%s and len=%d] [[Connection is NULL]]\n", sockfd, s, len);//vanhieu.nguyen                              
             n=write(sockfd,s,len);
 		if (n>0)
 		{
@@ -193,8 +189,7 @@ int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn)
 	int n=0;
 	int count=0;
 	while (len>0)
-	{
-            //printf("[Write to %d with s=%s and len=%d] [[Connection is Not NULL]]\n", fd, s, len);//vanhieu.nguyen                                                       
+	{                                                     
            	n=write(fd,s,len);
 		if (n>0)
 		{
@@ -248,8 +243,7 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer)
 		}
 		if (fd<0) return -1;
                 while ( (n=read(fd,s,len))<0 && errno==EINTR);
-                //printf("[Read from %d with s=%s and len=%d]\n", fd, s, len);//vanhieu.nguyen
-		if (n==0)
+                if (n==0)
 		{
 			if (CloseSock(fd) && iopeer==NULL) continue;
 			return -1;
@@ -258,8 +252,7 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer)
 
 	if (iopeer==NULL) iopeer=t;
 	if (n<=0) errno=EIO;
-        //printf("[paroc_combox_socket::Recv]n=%d\n", n);
-	return n;
+        return n;
 }
 
 

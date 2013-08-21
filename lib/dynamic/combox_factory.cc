@@ -53,9 +53,11 @@ paroc_combox_factory *paroc_combox_factory::fact=NULL;
 
 paroc_combox_factory::paroc_combox_factory()
 {
-	
-	Register("socket", 0, combox_socket_creator);//vanhieu.nguyen
-	//Register("uds", 0, combox_uds_creator);
+#ifdef DEFINE_UDS_SUPPORT    
+	Register("uds", 0, combox_uds_creator);
+#else
+        Register("socket", 0, combox_socket_creator);//vanhieu.nguyen
+#endif	
 
 	//Load combox from plugins....
 	int metrics=100;

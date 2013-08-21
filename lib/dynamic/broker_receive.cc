@@ -74,7 +74,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) // Receive request and pu
 
 		}
 	}
-	//printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());//vanhieu.nguyen
+        //printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
 	server->Close();
 }
 
@@ -96,7 +96,6 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
             paroc_buffer_factory *fact = conn->GetBufferFactory();
             req.data = fact->CreateBuffer();
 		
-            //printf("[Broker Side] [[ReceiveRequest]]\n");//vanhieu.nguyen
             if (req.data->Recv(conn)) {
                     req.from = conn;
                     const paroc_message_header &h = req.data->GetHeader();
@@ -110,7 +109,6 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
                             }
 #endif
                     }
-                    //printf("[ReceiveRequest]req.methodId[0]=%d, req.methodId[1] = %d, req.methodId[2] = %d\n", req.methodId[0], req.methodId[1], req.methodId[2]);//vanhieu.nguyen
                     return true;
             }
             
@@ -183,7 +181,6 @@ bool paroc_broker::OnNewConnection(paroc_connection *conn)
 bool paroc_broker::OnCloseConnection(paroc_connection *conn)
 {
 	if (obj!=NULL) {
-            //printf("OnCloseConnection\n");//vanhieu.nguyen
 		int ret=obj->DecRef();
 		if (ret<=0) 
 			execCond.broadcast();
@@ -199,6 +196,7 @@ paroc_object * paroc_broker::GetObject()
 
 bool  paroc_broker::ParocCall(paroc_request &req)
 {
+    //printf("ParocCall\n");
         if (req.methodId[1]>=10) return false;
 
 	unsigned *methodid=req.methodId;
@@ -253,8 +251,8 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Push("refcount","int",1);
 			buf->Pack(&ret,1);
 			buf->Pop();
-                        //printf("AddRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret);//vanhieu.nguyen 
-			buf->Send(req.from);
+//      printf("AddRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret);                        
+                        buf->Send(req.from);
 		}
 		execCond.broadcast();
 	}
@@ -275,8 +273,8 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 			buf->Push("refcount","int",1);
 			buf->Pack(&ret,1);
 			buf->Pop();
-                        //printf("DecRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret);//vanhieu.nguyen 
-			buf->Send(req.from);
+//      printf("DecRef %s ret = %d\n", paroc_broker::accesspoint.GetAccessString(), ret); 
+                        buf->Send(req.from);
 		}
 		execCond.broadcast();
 		break;
@@ -313,7 +311,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
 	{
 		// Kill call
 		if (obj != NULL && obj->CanKill()) {
-		  printf("Object exit by killcall\n");//vanhieu.nguyen 
+                    printf("Object exit by killcall\n");
 			exit(1);
 		}
 		break;
