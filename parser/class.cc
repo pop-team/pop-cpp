@@ -359,7 +359,7 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/)
     		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg);\n}\n\n", name, cons->get_id());
 		    code.InsertAt(-1,tmpcode,strlen(tmpcode));
 		    
-	  	  sprintf(tmpcode, "typedef struct pthread_args%d\n{\n  POPObject* ptr_interface;\n", cons->get_id()); 
+	  	  sprintf(tmpcode, "typedef struct pthread_args%d\n{\n  %s* ptr_interface;\n", cons->get_id(), name); 
         code.InsertAt(-1, tmpcode, strlen(tmpcode));	
         
         int nb = (*met).params.GetSize();

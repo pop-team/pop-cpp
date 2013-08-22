@@ -899,12 +899,16 @@ void Method::GenerateClient(CArrayChar &output)
 	 * Generated at the beginning of each remote method invocation (not for constructor method).
 	 */
 	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && GetClass()->IsAsyncAllocationDisable()){
-		sprintf(tmpcode, "\n  // Waiting for APOA to be done before executing any method\n");
-		output.InsertAt(-1,tmpcode,strlen(tmpcode));	
-		sprintf(tmpcode, "  void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n");
-		output.InsertAt(-1,tmpcode,strlen(tmpcode));	
-  	sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    return;\n  }\n");
-  	output.InsertAt(-1,tmpcode,strlen(tmpcode));	  	
+            sprintf(tmpcode, "\n  // Waiting for APOA to be done before executing any method\n");
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));	
+            sprintf(tmpcode, "  void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n");
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
+            char* nameOfRetType = returnparam.GetType()->GetName();
+            if (MethodType()==METHOD_NORMAL &&!returnparam.GetType()->Same((char*)"void")) 
+                sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    %s *tempObject = 0;\n    return (*tempObject);\n  }\n", nameOfRetType);
+            else  if (MethodType()==METHOD_NORMAL && returnparam.GetType()->Same((char*)"void")) 
+                sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    return;\n  }\n");           
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));	  	
 	} // End of APOA Support
 	
 	
