@@ -13,7 +13,7 @@ export POPC_LOCATION
 if [ ! -d $POPC_LOCATION/test ]; then
   echo ""
   echo "copying test applications to the destination directory, please wait a few seconds"
-  cp -R ../test $POPC_LOCATION/test
+  cp -R test $POPC_LOCATION/test
   echo "copy finished ..."
   echo ""
 fi
