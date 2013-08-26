@@ -39,12 +39,4 @@ The installation script will ask you several questions. Here they are:
       If you answered "y" at the 1st question, you will be asked if you want to make a simple installation. The simple installation
       will set the default parameters. If you want to parameterize the POP-C++ Global Services, answer "n".
 
-3. TESTING YOUR INSTALLATION
-
-The release directory contains a test suite. This test suite is located under ./test
-
-You can execute the test suite by running the "runtests" script with the "-all" option. 
-
-user@computer$ ./runtests -all
-
 
