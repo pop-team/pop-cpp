@@ -10,13 +10,13 @@ export POPC_LOCATION
 # during the "make install" process. Because the "popc_setup" can be run when necessary
 # from <install_dir>/sbin directory, it must not do any copy of the test sub-directory
 #
-#if [ ! -d $POPC_LOCATION/test ]; then
-#  echo ""
-#  echo "copying test applications to the destination directory, please wait a few seconds"
-#  cp -R ../test $POPC_LOCATION/test
-#  echo "copy finished ..."
-#  echo ""
-#fi
+if [ ! -d $POPC_LOCATION/test ]; then
+  echo ""
+  echo "copying test applications to the destination directory, please wait a few seconds"
+  cp -R ../test $POPC_LOCATION/test
+  echo "copy finished ..."
+  echo ""
+fi
 
 if [ "X$1" = "X-ask" ]
 then
@@ -233,8 +233,7 @@ then
 	while [ 1 ]
 	do
 		echo "Enter the full qualified neighbour host name or IP address :"
-		#read host
-		host=""
+		read host
 		if [ "x$host" != "x" ]
 		then
 			if [ "x$host" != "xlocalhost" ] && [ "x$host" != "x127.0.0.1" ] && [ "x$host" != "x$HOSTIP" ]
@@ -289,9 +288,8 @@ then
 	while [ 1 ]
 	do
 		echo "Enter number of processors available (default:1):"
-		#read nprocs
-		nprocs=""
-
+		read nprocs
+		
 		if [ "x$nprocs" = "x" ]
 		then
 			nprocs=1 
@@ -309,8 +307,7 @@ then
 	while [ 1 ]
 	do
 		echo "Enter the maximum number of POP-C++ jobs that can run concurrently (default: 100):"
-		#read maxjobs
-		maxjobs=""
+		read maxjobs
 		if [ "x$maxjobs" = "x" ]
 		then
 			maxjobs=100 
@@ -328,8 +325,7 @@ then
 	while [ 1 ]
 	do
 		echo "Enter the available RAM for job execution in MB (default: 1024) :"
-		#read ram
-		ram=""
+		read ram
 		if [ "x$ram" = "x" ]
 		then
 			ram=2048 
@@ -345,8 +341,7 @@ then
 	done
 
 	echo "Which local user you want to use for running POP-C++ jobs?"
-#	read parocuser
-  parocuser=""
+	read parocuser
 
 	if [ "x$parocuser" != "x" ]
 	then
@@ -374,7 +369,7 @@ if [ X$insttype = "Xstandard" ]
 then
 	echo "Enter the script to submit jobs to the local system:"
 	job_exec=""
-#	read job_exec
+	read job_exec
 fi
 
 echo "jobmgr $job_exec $POPC_LOCATION/services/popcobjrun" >> $conf 
@@ -397,7 +392,7 @@ if [ X$insttype = "Xstandard" ]
 then
 	echo "Communication pattern:"
 	comm=""
-#	read comm
+	read comm
 fi
 
 if [ -n "$comm" ]
@@ -538,8 +533,7 @@ then
 	while [ "X$env_var" != "X" ] && [ "Y$env_val" != "Y" ]
 	do
 		echo "Enter variable name:"
-		#read env_var
-		env_var=""
+		read env_var
 		if [ "X$env_var" != "X" ]
 		then
 			echo "Enter variable value:"
@@ -580,7 +574,7 @@ then
 		fi
 	fi
 # following line is required because the block above is shortcuted / JFR - 06-sep-2011
-#	$POPC_LOCATION/sbin/popc_script_setup
+	$POPC_LOCATION/sbin/popc_script_setup
 	
 else
 	$POPC_LOCATION/sbin/popc_script_setup
