@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Allows POP-C++ core developers to install GNU Autotools
+
+# Define version to install
+# These are latest version as on the 3rd of September 2012
+FILEM4=m4-1.4.16
+FILEAUTOCONF=autoconf-2.69
+FILEAUTOMAKE=automake-1.12
+FILELIBTOOL=libtool-2.4.2
+
+# Install m4
+wget http://mirrors.kernel.org/gnu/m4/$FILEM4.tar.gz
+tar -xzvf $FILEM4.tar.gz
+cd $FILEM4
+./configure --prefix=/usr/local
+make
+sudo make install
+cd ..
+rm -rf $FILEM4 $FILEM4.tar.gz
+
+#Install autoconf
+wget http://mirrors.kernel.org/gnu/autoconf/$FILEAUTOCONF.tar.gz
+tar -xzvf $FILEAUTOCONF.tar.gz
+cd $FILEAUTOCONF
+./configure --prefix=/usr/local # ironic, isn't it?
+make
+sudo make install
+cd ..
+rm -rf $FILEAUTOCONF $FILEAUTOCONF.tar.gz
+
+#Install automake
+wget  http://mirrors.kernel.org/gnu/automake/$FILEAUTOMAKE.tar.gz
+tar xzvf $FILEAUTOMAKE.tar.gz
+cd $FILEAUTOMAKE
+./configure --prefix=/usr/local
+make
+sudo make install
+cd ..
+rm -rf $FILEAUTOMAKE $FILEAUTOMAKE.tar.gz
+
+#Install libtool
+wget http://mirrors.kernel.org/gnu/libtool/$FILELIBTOOL.tar.gz
+tar xzvf $FILELIBTOOL.tar.gz
+cd $FILELIBTOOL
+./configure --prefix=/usr/local
+make
+sudo make install
+cd ..
+rm -rf $FILELIBTOOL $FILELIBTOOL.tar.gz

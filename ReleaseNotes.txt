@@ -1,0 +1,44 @@
+POP-C++ 2.8
+
+- Reintroduce feature: Socket Communication Model (TCP/IP)
+- Reintroduce feature: Global and Application services
+- Optimize services folder with lib folder for further development
+
+
+POP-C++ 2.6.5
+
+- New build process with cmake
+- Added feature: Hybrid Communication Model (UDS/MPI)
+- Added feature: MPI Communication Model with pseudo-dynamic allocation
+- Added feature: Parallel Object Group
+- Added feature: New MPI support
+- Added feature: XcalabeMP support
+- Cross-compilation for the K Computer
+- New compiler flag -mpi to enable MPI support during compilation
+- New compiler flag -xmp to enable XMP support during compilation
+- New compiler flag -advanced to enable link to the POP-C++ Advanced Library
+- New compiler flag -static to use the MPI Communication model with pseudo-dynamic allocation
+
+
+POP-C++ 2.5
+
+- Improve the termination time of a parallel application
+- Fix slowness of POP-C++ application on MAC OS X
+- Add support for enum type inside a parclass declaration
+- Add specific error message for unsupported C++ functionalities inside a parclass declaration
+- Automatic detection of architecture in the configure script (no need to use CPPFLAGS=-DARCH_MAC anymore)
+- Automatic detection of active interface at runtime for Mac OS X (no need to set POPC_IFACE anymore)
+- Add simple typedef support inside parclass declaration
+- Add better support of pure virtual parclass
+- Allow the void parameter in function declaration
+- Solve the problem when using 'namespace'
+- Fix parser erroneous behavior when inheriting from template class before POPBase.
+- Removing non-useful directories in the release
+- Accept the [] syntax for arrays in method parameters
+- Improve coherence of errors and warning messages
+- Solve a compilation issue with when using Fedora
+- Corrections of several minors bugs
+- Add new command to SXXpopc "kill" to kill the POP-C++ runtime services.
+- Add new command to SXXpopc "killnstart" to kill the POP-C++ runtime services and start it.
+- Add new command to SXXpopc "clearlog" to clear the log file of POP-C++.
+- Add new command to SXXpopc "log" to display the log file of POP-C++.

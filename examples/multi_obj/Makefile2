@@ -1,0 +1,32 @@
+all: myobj1.obj myobj2.obj myobj3.obj myobj4.obj main obj.map
+
+%.inf.o : %.ph
+	popcc -c -parclass-nobroker $< -o $@
+
+main: myobj1.ph myobj1.cc myobj2.inf.o
+	popcc -o main main.cc myobj1.ph myobj1.cc myobj2.inf.o
+
+myobj4.obj :	myobj4.ph myobj4.cc
+	popcc -object -o myobj4.obj myobj4.ph myobj4.cc
+
+myobj3.obj: myobj3.ph myobj3.cc myobj4.inf.o	
+	popcc -object -o myobj3.obj myobj3.ph myobj3.cc myobj4.inf.o
+
+myobj2.obj: myobj2.ph myobj2.cc myobj3.inf.o	
+	popcc -object -o myobj2.obj myobj2.ph myobj2.cc myobj3.inf.o
+
+myobj1.obj:  myobj1.ph myobj1.cc myobj2.inf.o
+	popcc -object -o myobj1.obj myobj1.ph myobj1.cc myobj2.inf.o
+
+obj.map: myobj1.obj myobj2.obj myobj3.obj myobj4.obj	
+	./myobj1.obj -listlong > obj.map
+	./myobj2.obj -listlong >> obj.map
+	./myobj3.obj -listlong >> obj.map
+	./myobj4.obj -listlong >> obj.map
+
+clean:
+	rm -f *.o *.obj main obj.map
+	
+run:
+	popcrun obj.map ./main
+

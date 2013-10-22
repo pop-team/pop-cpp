@@ -1,0 +1,11 @@
+LIMITATION OF THE POP-C++ PARSER
+
+- enum declaration inside a parclass: The declaration of a enum type inside a parclass is totally supported. However, this type
+  could not be passed as a parameter in parclass method. For this purpose, the type of the parameter must be a int. 
+
+- struct declaration inside a parclass: Only simple struct declaration are allowed in parclass. Nested struct declaration is not
+  supported yet. 
+  
+- class declaration inside a parclass: Class declaration inside parclass is not currently supported. 
+
+- typedef declaration inside a parclass: typedef declaration with structure inside a parclass is not currently supported. 

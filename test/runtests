@@ -1,0 +1,104 @@
+#!/bin/bash 
+
+RESULTS=tests_results
+NUMBEROFTEST=0
+NUMBEROFSUCCESS=0
+
+SXXLOCATION=/usr/local/popc/sbin
+
+if [ "x" != "x$POPC_LOCATION" ]
+then
+SXXLOCATION=$POPC_LOCATION/sbin/
+fi
+
+$SXXLOCATION/SXXpopc killnstart
+
+if [ "$1" = "-all" ]
+then
+	echo ""
+	echo Starting test suite...
+	echo ""
+	rm -rf $RESULTS
+	for test in `ls -F -d * | grep -v asynccreation | grep -v runtests | grep -v runtests_short | grep -v stressallocation`
+	do
+		echo "---------------------------------------------------------------------------"
+		echo "*** $test test ($NUMBEROFTEST) **"
+		echo "---------------------------------------------------------------------------"
+		cd $test
+		rm -rf $RESULTS
+		((NUMBEROFTEST++))
+		make clean
+		make 
+		make run
+		if [ "$?" = "0" ]
+		then 
+			echo "$test succeed" >> ../$RESULTS
+			((NUMBEROFSUCCESS++))
+		else 
+			echo "$test failed" >> ../$RESULTS			
+		fi
+		make clean
+		cd ..
+		echo ""
+	done
+	echo "---------------------------------------------------------------------------"
+	echo "*** TEST SUITE COMPLETED: RESULTS ARE SHOWN BELOW ***"
+	echo "---------------------------------------------------------------------------"
+	cat $RESULTS
+	echo "$NUMBEROFSUCCESS succeed on $NUMBEROFTEST"
+	if [ "$NUMBEROFSUCCESS" = "$NUMBEROFTEST" ]
+	then
+		echo "ALL TESTS SUCCEED! You are ready to use POP-C++!"
+	fi
+	rm -rf $RESULTS
+else
+	if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]
+	then
+		echo ""
+		echo "usage : ./runtests <parameter>"
+		echo ""
+		echo "with parameter :"
+		echo ""
+		echo "-h  or  --help  : displays this help message"
+		echo "-all            : launches all tests at once"
+		echo ""
+		echo "    one of the following test name :"
+		echo ""
+		echo "barrier, callback, classparam, constparam, exception, heritage, heritageparam1,"
+		echo "heritageparam2, jobManager, matrixNB, method, param, passparam, serialize_vect,"
+		echo "structparam, templateparam, tree, vertorint1, vectorint2, vectorx"
+		echo ""
+		echo "                : will launch the specific test"
+		echo ""
+		exit
+	else
+		if [ -d $1 ]
+		then
+			cd $1
+			echo ""
+			echo "Start of \"$1\" test"
+			echo ""
+			make clean
+			make
+			echo "---------------------------------------------------------------------------"
+			echo "*** $1 test ***"
+			echo "---------------------------------------------------------------------------"
+			make run
+			make clean
+			cd ..
+			echo ""
+			echo "End of \"$1\" test"
+			
+		else
+			echo ""
+			echo "The test \"$1\" does not exist !!"
+			echo ""
+			./runtests1 -h
+			
+		fi
+	fi
+fi
+
+$SXXLOCATION/SXXpopc kill
+
+

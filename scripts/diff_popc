@@ -1,0 +1,46 @@
+#! /bin/bash
+
+# Usage : this script compares a .ph POP-C++ header with a .h header : 
+#    it simplifies the 2 files before comparing them.
+#
+#    command : diff_popc myheader.ph myheader.h
+
+a=$1
+
+if [ "$*" != "2" ] ; then 
+ b="`echo $1|sed 's/\.ph/\.h/g'`"
+else
+ b=$2
+fi
+
+for i in $a $b ; do
+sed -e 's/parclass/class/g' \
+    -e 's/\.ph/\.h/g' \
+    -e 's/\[[^]]*\]//g' \
+    -e 's/\@{.*}//g' \
+    -e 's/\/\/.*$//g' \
+    -e 's/\t/ /g' \
+    -e 's/  / /g' \
+    -e 's/  / /g' \
+    -e 's/  / /g' \
+    -e 's/  / /g' \
+    -e 's/  / /g' \
+    -e 's/^ $//g' \
+    -e 's/^ \n//g' \
+    -e 's/async //g' \
+    -e 's/sync //g' \
+    -e 's/conc //g' \
+    -e 's/seq //g' \
+    -e 's/mutex //g' \
+    -e 's/classuid\(.*\)//g' $i > /tmp/`basename $i`.tmp
+
+done
+
+echo ""
+echo "  differences between $b and $a (simplified!)"
+echo "  ========================================================="
+git diff -w /tmp/`basename $b`.tmp /tmp/`basename $a`.tmp|cat
+
+#     -e ':a;N;$!ba;s/\n/ /g' \
+#    -e 's/;/;\n/g' \
+
