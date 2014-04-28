@@ -15,18 +15,20 @@
 #include "paroc_array.h"
 #include "paroc_service_base.ph"
 
-typedef char string256[256];
+#define CODE_MAX_STRING_SIZE 1024
+
+typedef char longString[CODE_MAX_STRING_SIZE];
 struct codedata
 {
 	codedata() {};
-	string256 platform;
-	string256 codefile;
+	longString platform;
+	longString codefile;
 };
 
 struct codedb
 {
 	codedb() {};
-	string256 objname;
+	longString objname;
 	paroc_array<codedata> platform;
 };
 
