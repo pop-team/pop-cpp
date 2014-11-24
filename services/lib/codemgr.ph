@@ -17,7 +17,7 @@
 
 #define CODE_MAX_STRING_SIZE 1024
 
-typedef char long_string[MAX_STRING_SIZE];
+typedef char long_string[CODE_MAX_STRING_SIZE];
 
 struct codedata
 {
