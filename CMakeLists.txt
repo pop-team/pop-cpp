@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 
 #
-# POP-C++ 
-# Entry point of the build process of POP-C++. 
-# 
-# Options: 
+# POP-C++
+# Entry point of the build process of POP-C++.
+#
+# Options:
 #  - use -DCMAKE_INSTALL_PREFIX=<install-path> to specify the installation prefix
 #  - use -DPOPCPP_COMPILER=OFF to disable the POP-C++ compiler build
 #  - use -DMPI_SUPPORT=ON to enable MPI support in POP-C++
@@ -19,10 +19,10 @@ project(POPCPP)
 
 # Define version of POP-C++ - It will be shown on the compiler usage message and with -version option
 if(WIN32)
-  set(VERSION "2.9 - Windows")
+  set(VERSION "3.0 - Windows")
 elseif(UNIX)
-  set(VERSION "2.8 - Linux")
-endif(WIN32) 
+  set(VERSION "3.0 - Linux")
+endif(WIN32)
 
 execute_process(COMMAND uname -m OUTPUT_VARIABLE HOST_CPU_RAW)
 string(REGEX REPLACE "\n" "" HOST_CPU "${HOST_CPU_RAW}")
@@ -35,7 +35,7 @@ include(CheckLibraryExists)
 # Check availability of pthread
 check_include_file(pthread.h HAVE_PTHREAD_H)
 check_library_exists(pthread pthread_create "" HAVE_LIBPTHREAD)
-# Check existence of header files and library 
+# Check existence of header files and library
 #check_include_file(dlfcn.h HAVE_DLFCN_H)
 #check_library_exists(dl dlclose "" HAVE_LIBDL)
 
@@ -67,7 +67,7 @@ if(NOT DEFINED CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX "C:\\popc")
   elseif(UNIX)
     set(CMAKE_INSTALL_PREFIX "/usr/local/popc")
-  endif(WIN32)  
+  endif(WIN32)
 endif(NOT DEFINED CMAKE_INSTALL_PREFIX)
 
 
@@ -88,7 +88,7 @@ if(NOT DEFINED POPC_MAIN_FLAGS)
 endif(NOT DEFINED POPC_MAIN_FLAGS)
 
 
-# Generate the config.h file during the configuration of the project 
+# Generate the config.h file during the configuration of the project
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
 
 # If the POP-C++ Compilation option is on, add the parser directory as a sub folder
@@ -131,31 +131,31 @@ add_custom_target (distclean @echo cleaning for source distribution)
    interconnector/CMakeFiles
    mpi/Makefile
    mpi/*.cmake
-   mpi/CMakeFiles   
+   mpi/CMakeFiles
    xmp/Makefile
-   xmp/*.cmake   
+   xmp/*.cmake
    xmp/CMakeFiles
    xmp/src/CMakeFiles
    xmp/src/*.cmake
    xmp/src/Makefile
    lib/Makefile
-   lib/*.cmake 
-   lib/CMakeFiles    
+   lib/*.cmake
+   lib/CMakeFiles
    lib/dynamic/Makefile
-   lib/dynamic/*.cmake 
-   lib/dynamic/CMakeFiles    
+   lib/dynamic/*.cmake
+   lib/dynamic/CMakeFiles
    lib/pseudodynamic/Makefile
-   lib/pseudodynamic/*.cmake    
+   lib/pseudodynamic/*.cmake
    lib/pseudodynamic/CMakeFiles
    include/Makefile
    include/*.cmake
-   include/CMakeFiles  
+   include/CMakeFiles
    include/dynamic/Makefile
    include/dynamic/*.cmake
-   include/dynamic/CMakeFiles  
+   include/dynamic/CMakeFiles
    include/pseudodynamic/Makefile
    include/pseudodynamic/*.cmake
-   include/pseudodynamic/CMakeFiles     
+   include/pseudodynamic/CMakeFiles
    scripts/Makefile
    scripts/*.cmake
    scripts/CMakeFiles
@@ -170,7 +170,7 @@ add_custom_target (distclean @echo cleaning for source distribution)
    services/Makefile
    services/*.cmake
    services/CMakeFiles
-   services/popcobjrun  
+   services/popcobjrun
    services/lib/Makefile
    services/lib/*.cmake
    services/lib/CMakeFiles
@@ -178,18 +178,18 @@ add_custom_target (distclean @echo cleaning for source distribution)
    Makefile
    *~
   )
-  
+
   if(POPCPP_COMPILER)
     set(EXTRACLEANED
       parser/*.cmake
       parser/CMakeFiles
-      parser/Makefile 
-      parser/popcc.cc      
+      parser/Makefile
+      parser/popcc.cc
     )
   else(POPCPP_COMPILER)
     set(EXTRACLEANED "")
-  endif(POPCPP_COMPILER) 
-  
+  endif(POPCPP_COMPILER)
+
   add_custom_command(
     DEPENDS clean
     COMMENT "distribution clean"
