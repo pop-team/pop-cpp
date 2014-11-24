@@ -348,13 +348,12 @@ void paroc_interface::allocate_only()
 
     bool localFlag=od.IsLocal();
 
-
     od.getURL(hostname);
     od.getBatch(batch);
 
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
-    POPC_Allocator* allocator;
+    POPC_Allocator* allocator = NULL;
 #ifdef DEFINE_UDS_SUPPORT
     allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
 #else
@@ -373,7 +372,6 @@ void paroc_interface::allocate_only()
     }
 
     objectaddress = allocator->allocate(objectname, od);
-
     accesspoint.SetAccessString(objectaddress.GetString());
 }
 
