@@ -28,3 +28,4 @@ parser/parser.yy.cc
 parser/popcc.cc
 parser/popcc
 parser/popcpp
+test/*/main
