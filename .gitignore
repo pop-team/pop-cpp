@@ -12,3 +12,4 @@ scripts/popc_script_setup
 scripts/popc_setup
 scripts/popcrun
 services/popcobjrun
+install_manifest.txt
