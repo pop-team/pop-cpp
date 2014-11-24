@@ -9,9 +9,9 @@
  *
  *
  */
- 
-/* 
-  Deeply need refactoring: 
+
+/*
+  Deeply need refactoring:
     POPC_BufferXDR instead of paroc_buffer_xdr
  */
 #include "popc_intface.h"
@@ -239,7 +239,7 @@ void paroc_buffer_xdr::UnPack(bool *data, int n)
 	char *dat = ((char *)packeddata) + unpackpos;
 	while (n-->0) {
 		*data = (*dat != 0);
-		dat++; 
+		dat++;
 		data++;
 	}
 	unpackpos += ((n-1)/4+1) * 4;
@@ -562,7 +562,7 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
   // Pack the header (20 bytes)
   char *dat=(char *)packeddata;
 
-  if (dat == NULL) { 
+  if (dat == NULL) {
     printf("fail 1\n");
     return false;
   }
@@ -612,7 +612,6 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 	n = 20;
 	do {
 	  if(conn == NULL)
-	    printf("XDR: recv connection is null\n");//vanhieu.nguyen
 		if ((i = s.Recv(dat, n, conn)) <= 0) {
 			return false;
 		}
@@ -649,7 +648,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 	packeddata.SetSize(n);
         dat = (char *)packeddata+20;
 	n -= 20;
-        
+
         i = 0;
 	while (n) {
 		if ((i = s.Recv(dat,n, conn)) <= 0) {
@@ -670,7 +669,7 @@ char* paroc_buffer_xdr::get_load()
 {
 	char *dat = (char*)packeddata;
 
-	if (dat == NULL) { 
+	if (dat == NULL) {
 	  return NULL;
 	}
 	int n = packeddata.GetSize();
@@ -696,7 +695,7 @@ char* paroc_buffer_xdr::get_load()
 		  h[3]=popc_htonl(header.GetMethodID());
   		break;
 	  default:
-  	  printf("fail 2\n");	  
+  	  printf("fail 2\n");
 		  return NULL;
 	}
 	memcpy(dat, h, 20);
@@ -709,16 +708,16 @@ char* paroc_buffer_xdr::get_load()
 void paroc_buffer_xdr::load(char* data, int length)
 {
 	int h[5];
-	
+
 	Reset();
-	memcpy(packeddata, data, length); 
-	memcpy(h, packeddata, 20); 
+	memcpy(packeddata, data, length);
+	memcpy(h, packeddata, 20);
 	int n = popc_ntohl(h[0]);
 	if (n < 20) {
 	  printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
 		return;
-	}	
-	
+	}
+
   int type = popc_ntohl(h[1]);
 	header.SetType(type);
 	switch (type) {
@@ -736,8 +735,8 @@ void paroc_buffer_xdr::load(char* data, int length)
   		break;
 	  default:
 		  return;
-	}	
-	packeddata.SetSize(length);	
+	}
+	packeddata.SetSize(length);
 }
 
 
@@ -746,8 +745,7 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
 	while (true) {
 		paroc_connection * t = (paroc_connection *) s.Wait();
 		if (t == NULL) {
-			paroc_exception::paroc_throw(9998,
-										 "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
+			paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
 		}
 		if (!Recv(s, t))
 			paroc_exception::paroc_throw(errno);
@@ -760,8 +758,7 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
 				paroc_array<char> packeddataold = packeddata;
 				paroc_connection * t = (paroc_connection *) s.Wait();
 				if (t == NULL) {
-					paroc_exception::paroc_throw(9998,
-												 "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
+					paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
 				}
 				if (!Recv(s, t))
 					paroc_exception::paroc_throw(errno);
