@@ -1,7 +1,7 @@
 #
-# POP-C++ 
+# POP-C++
 # Common (dynamic) library build process
-# 
+#
 # AUTHOR: Valentin Clement
 # DATE: 2012/11/14
 #
@@ -13,7 +13,7 @@ set(POPCC_LIB_INSTALL lib/dynamic)
 
 include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_INCLUDE_PATH})
 
-set(CMAKE_CXX_OUTPUT_EXTENION ".o")
+set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
 
 if(WIN32)
 set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc.exe)
@@ -61,19 +61,19 @@ SET (POPCCOMMON -Wl,-ldl -Wl)
 TARGET_LINK_LIBRARIES(popc_common ${POPCCOMMON})
 
 add_custom_command(OUTPUT paroc_infmain.std.o
-                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_infmain.std.o paroc_infmain.std.cc 
+                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_infmain.std.o paroc_infmain.std.cc
 		   -I${POPCPP_INCLUDE_PATH}
                    DEPENDS paroc_infmain.std.cc
                    COMMENT "Compile POP-C++ Master main")
-                   
+
 add_custom_command(OUTPUT paroc_objmain.std.o
-                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_objmain.std.o paroc_objmain.std.cc 
+                   COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_objmain.std.o paroc_objmain.std.cc
 		   -I${POPCPP_INCLUDE_PATH}
                    DEPENDS paroc_objmain.std.cc
-                   COMMENT "Compile POP-C++ Object main")  
-                  
-add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o) 
-add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o) 
+                   COMMENT "Compile POP-C++ Object main")
+
+add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o)
+add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o)
 
 #BUILD .ph file
 #paroc_service_base.ph
