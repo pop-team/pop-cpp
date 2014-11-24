@@ -14,16 +14,22 @@ In order to install properly POP-C++ from source, you will need following softwa
 COMPILE POP-C++ SOURCE CODE
 ---------------------------
 
-user@computer$ cmake .
+.. code::
+
+  user@computer$ cmake .
 
 Once the configuration script is done.
 
-user@computer$ make
+.. code::
+
+  user@computer$ make
 
 INSTALLING POP-C++
 ------------------
 
-user@computer$ make install
+.. code::
+
+  user@computer$ make install
 
 You might use sudo or to be root tu execute "make install" if you do not have the right to write in the destination folder.
 
@@ -44,4 +50,6 @@ The release directory contains a test suite. This test suite is located under ./
 
 You can execute the test suite by running the "runtests" script with the "-all" option.
 
-user@computer$ ./runtests -all
+.. code::
+
+  user@computer$ ./runtests -all
