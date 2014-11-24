@@ -107,8 +107,8 @@ paroc_array<T>::paroc_array(int asize,int grow)
 	size=actualsize=0;
 	data=0;
 	growby=(grow<0) ? 0 : grow;
-	SetSize(asize);
 	autodelete=true;
+	SetSize(asize);
 }
 
 template<class T>
