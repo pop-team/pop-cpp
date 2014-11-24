@@ -14,7 +14,6 @@ clean:
 	rm -f *.o
 	rm -f *.obj
 	rm -f main
-	rm -f main.exe
 	rm -f ob*
 	rm -f _paroc*
 

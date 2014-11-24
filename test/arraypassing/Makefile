@@ -6,9 +6,9 @@ app:
 object:
 	popcc -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
 	./POPObject.obj -listlong > obj.map
-	
+
 clean:
-	rm -f *.o *.obj main.exe obj.map _paroc*
+	rm -f *.o *.obj main obj.map _paroc*
 
 run:
 	popcrun obj.map ./main

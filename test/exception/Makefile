@@ -8,7 +8,7 @@ object:
 	./exception.obj -listlong > obj.map
 
 clean:
-	rm -f *.o _p*.* *.obj main.exe obj.map
+	rm -f *.o _p*.* *.obj main obj.map
 
 run:
 	popcrun obj.map ./main
