@@ -29,3 +29,5 @@ parser/popcc.cc
 parser/popcc
 parser/popcpp
 test/*/main
+test/*/_popc*
+__cmd_to_execute__
