@@ -1,13 +1,13 @@
 #ifndef _TOTO_PH
 #define _TOTO_PH
 
-parclass Toto          
+parclass Toto
 {
 
 classuid(1002);
 
 public:
-	Toto() @{od.url("localhost");od.executable("toto.obj");};
+	Toto() @{od.url("localhost");};
 	~Toto();
 
 	seq sync void SetIdent(int i);
