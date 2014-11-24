@@ -3,7 +3,7 @@
  * Author : Tuan Anh Nguyen
  * Description : Declaration of the code manager service
  * Creation date : -
- * 
+ *
  * Modifications :
  * Authors		Date			Comment
  */
@@ -15,18 +15,21 @@
 #include "paroc_array.h"
 #include "paroc_service_base.ph"
 
-typedef char string256[256];
+#define CODE_MAX_STRING_SIZE 1024
+
+typedef char long_string[MAX_STRING_SIZE];
+
 struct codedata
 {
 	codedata() {};
-	string256 platform;
-	string256 codefile;
+	long_string platform;
+	long_string codefile;
 };
 
 struct codedb
 {
 	codedb() {};
-	string256 objname;
+	long_string objname;
 	paroc_array<codedata> platform;
 };
 

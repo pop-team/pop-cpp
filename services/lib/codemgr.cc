@@ -1,9 +1,9 @@
 /**
  * File : codemgr.cc
  * Author : Tuan Anh Nguyen
- * Description : Implementation of the code manager service 
+ * Description : Implementation of the code manager service
  * Creation date : -
- * 
+ *
  * Modifications :
  * Authors		Date			Comment
  */
@@ -14,6 +14,7 @@
 #include <ctype.h>
 
 #include "codemgr.ph"
+#include "popc_logger.h"
 
 CodeMgr::CodeMgr(const POPString &challenge): paroc_service_base(challenge)
 {
@@ -26,6 +27,15 @@ CodeMgr::~CodeMgr()
 
 void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, const POPString &codefile)
 {
+    if(objname.Length() >= CODE_MAX_STRING_SIZE || platform.Length() >= CODE_MAX_STRING_SIZE || codefile.Length() >= CODE_MAX_STRING_SIZE){
+        popc_logger(ERROR, "Could not register code, information longer than %i: %i %i %i",
+            CODE_MAX_STRING_SIZE, objname.Length(), platform.Length(), codefile.Length());
+        popc_logger(ERROR, "RegisterCode %s %s %s", objname.GetString(), platform.GetString(), codefile.GetString());
+
+        //TODO: Throw exception
+        return;
+    }
+
 	int n=info.GetSize();
 	int i;
 	codedb *element;
