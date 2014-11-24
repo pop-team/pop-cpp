@@ -45,7 +45,8 @@ public:
 	 * @param tname Name of the type (without * &)
 	 */
 	const char *operator =(const char *x);
-	inline const char *c_str() {return data;};
+	const char *c_str() {return data;};
+	const char * const c_str() const {return data;};
 	const paroc_string & operator =(const paroc_string &x);
 	void operator +=(const char *x);
 	paroc_string operator +  (const paroc_string &x);
