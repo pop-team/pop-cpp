@@ -14,6 +14,14 @@ services/popcobjrun
 install_manifest.txt
 lib/dynamic/*.o
 lib/dynamic/*.a
+services/lib/*.o
+services/lib/*.a
+services/lib/appservice
+services/lib/jobmgr
+services/lib/jobmgr_launcher
+services/lib/localservice_launcher
+services/lib/popc_search_node
+services/lib/popfilemanager
 parser/parser.tab.cc
 parser/parser.tab.h
 parser/parser.yy.cc
