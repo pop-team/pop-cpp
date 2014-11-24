@@ -3,7 +3,6 @@ CMakeFiles
 Makefile
 cmake_install.cmake
 config.h
-parser/popcc.cc
 scripts/popc-runtime-env.in
 scripts/popc-runtime-env.sh
 scripts/popc-user-env.csh
@@ -13,3 +12,11 @@ scripts/popc_setup
 scripts/popcrun
 services/popcobjrun
 install_manifest.txt
+lib/dynamic/*.o
+lib/dynamic/*.a
+parser/parser.tab.cc
+parser/parser.tab.h
+parser/parser.yy.cc
+parser/popcc.cc
+parser/popcc
+parser/popcpp
