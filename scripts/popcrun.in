@@ -9,7 +9,7 @@ echo "  -debug    : Give some debugging informations"
 echo "  -log=<filename> : put all message in the <filename> file"
 echo "  -version	: Display the installed POP-C++ version"
 echo ""
-exit	
+exit
 fi
 
 unset POPC_DEBUG
@@ -190,8 +190,7 @@ fi
 #fi
 #Use the following line to run the interface side in valgrind
 #cmd="valgrind --log-file=/tmp/$$ $PROG $args -initparoc -appservicecode=${MYAPPSERVICE} ${MY_PROXY} -codeconf=${PATHCONF}/${FILECONF} -jobservice=${MYJOBSERVICE} ${localFlag}"
-#cmd="$PROG $args -initparoc -appservicecode=$MYAPPSERVICE $MY_PROXY -codeconf=$PATHCONF/$FILECONF -jobservice=$MYJOBSERVICE $localFlag"
-cmd="$PROG $args ${localFlag}"
+cmd="$PROG $args -initparoc -appservicecode=$MYAPPSERVICE $MY_PROXY -codeconf=$PATHCONF/$FILECONF -jobservice=$MYJOBSERVICE $localFlag"
 
 retval=0
 if [ $drun -eq 1 ]; then
