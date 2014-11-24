@@ -43,7 +43,7 @@
 #include "paroc_system.h"
 #include "paroc_utils.h"
 #include "../../config.h"
-//#include "appservice.ph"
+#include "appservice.ph"
 
 #if defined POPC_SECURE || defined POPC_SECURE_VIRTUAL
 #include "popc_security_manager.ph"
