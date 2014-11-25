@@ -374,7 +374,7 @@ uint16_t	popc_ntohs(uint16_t a)
 
 
 //functions below are derivated from <stdlib.h>
-int popc_sysinfo(int command, char *buf, long count)
+int popc_sysinfo(int /*command*/, char* /*buf*/, long /*count*/)
 {
     return 0;
     //TODO return sysinfo(command, buf, count);

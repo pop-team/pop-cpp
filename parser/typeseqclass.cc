@@ -15,7 +15,7 @@ void TypeSeqClass::AddBase(DataType *t)
 }
 
 /**
- * Check if the current class can be marshalled 
+ * Check if the current class can be marshalled
  */
 int TypeSeqClass::CanMarshal()
 {
@@ -24,9 +24,9 @@ int TypeSeqClass::CanMarshal()
 		return 0;
 	}
 	char *str=GetName();
-	if (str==NULL) 
+	if (str==NULL)
 		return 0;
-	if (strcmp(str,"paroc_base")==0) 
+	if (strcmp(str,"paroc_base")==0)
 		return 1;
 
 	Mark(true);
@@ -42,12 +42,12 @@ int TypeSeqClass::CanMarshal()
 	return 0;
 }
 
-void TypeSeqClass::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output)
+void TypeSeqClass::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output)
 {
 	char tmpstr[1024];
 	char paramname[256];
 
-	if (!FindVarName(varname,paramname)) 
+	if (!FindVarName(varname,paramname))
 		strcpy(paramname,"unkown");
 	sprintf(tmpstr,"%s.Push(\"%s\",\"%s\",1);\n",bufname,paramname, GetName());
 	output.InsertAt(-1,tmpstr,strlen(tmpstr));
@@ -59,12 +59,12 @@ void TypeSeqClass::Marshal(char *varname, char *bufname, char *sizehelper, CArra
 	output.InsertAt(-1,tmpstr,strlen(tmpstr));
 }
 
-void TypeSeqClass::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output)
+void TypeSeqClass::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output)
 {
 	char tmpstr[1024];
 	char paramname[256];
 
-	if (!FindVarName(varname,paramname)) 
+	if (!FindVarName(varname,paramname))
 		strcpy(paramname,"unkown");
 	sprintf(tmpstr,"%s.Push(\"%s\",\"%s\",1);\n",bufname,paramname, GetName());
 	output.InsertAt(-1,tmpstr,strlen(tmpstr));

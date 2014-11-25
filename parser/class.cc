@@ -85,7 +85,7 @@ int Class::CanMarshal()
     return 1;
 }
 
-void Class::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output)
+void Class::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output)
 {
     char tmpstr[1024];
     char paramname[256];
@@ -107,7 +107,7 @@ void Class::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &
     output.InsertAt(-1,tmpstr,strlen(tmpstr));
 }
 
-void Class::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output)
+void Class::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output)
 {
     char tmpstr[1024];
     char paramname[256];
@@ -617,10 +617,6 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface)
             code.InsertAt(-1, accessstr[currentaccess], strlen(accessstr[currentaccess]));
         }
 
-        if (memberList[i]->Type() == TYPE_METHOD) {
-            Method *t = (Method *)memberList[i];
-        }
-
         memberList[i]->generate_header_pog(code, interface);
     }
 
@@ -631,10 +627,10 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface)
         //sprintf(str,"\n  void _popc_constructor();", name);
         //code.InsertAt(-1, str, strlen(str));
 
-    sprintf(str, "\n  virtual char* get_class_name() { return (char*)\"%s\"; };\n", name);
+        sprintf(str, "\n  virtual char* get_class_name() { return (char*)\"%s\"; };\n", name);
         code.InsertAt(-1, str, strlen(str));
 
-    sprintf(str, "\n  %s& operator[] (const int index);\n", name);
+        sprintf(str, "\n  %s& operator[] (const int index);\n", name);
         code.InsertAt(-1, str, strlen(str));
 
         /*int n=baseClass.GetSize();

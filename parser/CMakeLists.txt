@@ -31,17 +31,17 @@ endif(NOT DEFINED BISON)
 message(STATUS "Bison found at ${BISON}")
 
 if(POPCPP_COMPILER)
-  include_directories(${CMAKE_SOURCE_DIR}/parser/ ${CMAKE_SOURCE_DIR}/include/dynamic ${CMAKE_SOURCE_DIR}/)             
+  include_directories(${CMAKE_SOURCE_DIR}/parser/ ${CMAKE_SOURCE_DIR}/include/dynamic ${CMAKE_SOURCE_DIR}/)
 else(POPCPP_COMPILER)
-  include_directories(${CMAKE_SOURCE_DIR}/../ ${CMAKE_SOURCE_DIR}/../include/dynamic)             
-endif(POPCPP_COMPILER)  
+  include_directories(${CMAKE_SOURCE_DIR}/../ ${CMAKE_SOURCE_DIR}/../include/dynamic)
+endif(POPCPP_COMPILER)
 
-add_custom_target(gen 
+add_custom_target(gen
                   COMMAND ${BISON} -y -b parser -d parser.y
                   COMMAND mv parser.tab.c parser.tab.cc
                   COMMAND ${FLEX} -oparser.yy.cc parser.lex
-                  DEPENDS parser.y                  
-                  COMMENT "Generating parser files")                     
+                  DEPENDS parser.y
+                  COMMENT "Generating parser files")
 
 add_custom_command(OUTPUT parser.tab.h
                   COMMENT "Generate parser.tab.h")
@@ -51,84 +51,86 @@ add_custom_command(OUTPUT parser.tab.cc
 
 add_custom_command(OUTPUT parser.yy.cc
                   COMMENT "Generate parser.yy.cc")
-                   
+
 
 if(POPCPP_COMPILER)
   set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/dynamic)
 else(POPCPP_COMPILER)
   set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/../lib/dynamic)
-endif(POPCPP_COMPILER)  
+endif(POPCPP_COMPILER)
+
+add_definitions(-Wall -Wextra -Werror)
 
 if(UNIX)
-  add_executable(popcpp 
-  parser.cc 
-  parser_common.cc 
-  parser_common.h 
-  codefile.cc 
-  othercode.cc 
-  classmember.cc 
-  class.cc 
+  add_executable(popcpp
+  parser.cc
+  parser_common.cc
+  parser_common.h
+  codefile.cc
+  othercode.cc
+  classmember.cc
+  class.cc
   packobject.cc
-  parser.tab.cc 
-  parser.yy.cc 
-  parser.h 
-  parser.tab.h 
-  parser_common.h 
+  parser.tab.cc
+  parser.yy.cc
+  parser.h
+  parser.tab.h
+  parser_common.h
   type.h
-  typearray.cc  
-  type.cc  
-  typeequal.cc  
-  typeptr.cc  
-  typestruct.cc 
-  typeseqclass.cc 
-  typeclassstruct.cc 
+  typearray.cc
+  type.cc
+  typeequal.cc
+  typeptr.cc
+  typestruct.cc
+  typeseqclass.cc
+  typeclassstruct.cc
   typetemplate.cc
   ${POPCPP_LIB_PATH}/utils.cc
   ${POPCPP_LIB_PATH}/debug.cc
   ${POPCPP_LIB_PATH}/popc_intface_linux.cc
   )
 elseif(WIN32)
-  add_executable(popcpp 
-  parser.cc 
-  parser_common.cc 
-  parser_common.h 
-  codefile.cc 
-  othercode.cc 
-  classmember.cc 
-  class.cc 
+  add_executable(popcpp
+  parser.cc
+  parser_common.cc
+  parser_common.h
+  codefile.cc
+  othercode.cc
+  classmember.cc
+  class.cc
   packobject.cc
-  parser.tab.cc 
-  parser.yy.cc 
-  parser.h 
-  parser.tab.h 
-  parser_common.h 
+  parser.tab.cc
+  parser.yy.cc
+  parser.h
+  parser.tab.h
+  parser_common.h
   type.h
-  typearray.cc  
-  type.cc  
-  typeequal.cc  
-  typeptr.cc  
-  typestruct.cc 
-  typeseqclass.cc 
-  typeclassstruct.cc 
+  typearray.cc
+  type.cc
+  typeequal.cc
+  typeptr.cc
+  typestruct.cc
+  typeseqclass.cc
+  typeclassstruct.cc
   typetemplate.cc
   ${POPCPP_LIB_PATH}/utils.cc
   ${POPCPP_LIB_PATH}/debug.cc
   ${POPCPP_LIB_PATH}/popc_intface_windows.cc
-  ) 
+  )
 endif(UNIX)
-add_dependencies(popcpp gen)  
-  
-  
+add_dependencies(popcpp gen)
+
+
 # Build the popcc executable
-if(UNIX) 
+if(UNIX)
   add_executable(popcc
-               popcc.cc 
+               popcc.cc
                ${POPCPP_LIB_PATH}/utils.cc
                ${POPCPP_LIB_PATH}/popc_intface_linux.cc
                )
 elseif(WIN32)
   add_executable(popcc
-               popcc.cc 
+               popcc.cc
                ${POPCPP_LIB_PATH}/utils.cc
                ${POPCPP_LIB_PATH}/popc_intface_windows.cc
                )
@@ -145,7 +147,7 @@ if(UNIX)
 elseif(WIN32)
   install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popcc.exe DESTINATION bin)
   install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popcpp.exe DESTINATION bin)
-endif(UNIX) 
+endif(UNIX)
 
 
 if(NOT POPCPP_COMPILER)
@@ -163,7 +165,7 @@ if(NOT POPCPP_COMPILER)
      popcc.cc
      *~
     )
-  
+
     ADD_CUSTOM_COMMAND(
       DEPENDS clean
       COMMENT "distribution clean"

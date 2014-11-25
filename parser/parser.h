@@ -3,7 +3,7 @@
  * Author : Tuan Anh Nguyen
  * Description : parser header declaration
  * Creation date : -
- * 
+ *
  * Modifications :
  * Authors		Date			Comment
  * clementval	March 2012	Add Enum support
@@ -189,14 +189,14 @@ public:
 
 	void SetAsCoreCompilation();
 	bool IsCoreCompilation();
-	
+
 	void DisableAsyncAllocation();
 	bool IsAsyncAllocationDisable();
-	
-	
+
+
 	static bool SameFile(char *file1, char *file2);
-	
-	
+
+
 protected:
 	char *filename;
 	char *outfile;
@@ -224,7 +224,7 @@ class Param
 public:
 	Param(DataType *ptype);
 	Param();
-	~Param();
+	virtual ~Param();
 	char *Parse(char *str);
 	bool Match(Param *p);
 
@@ -233,7 +233,7 @@ public:
 	bool IsConst();
 	bool InParam();
 	bool IsArray();
-	bool IsVoid();	
+	bool IsVoid();
 	bool OutParam();
 
 	void SetType(DataType *type);
@@ -308,7 +308,7 @@ public:
 	virtual void GenerateClient(CArrayChar &output);
 	virtual void GenerateHeader(CArrayChar &output, bool interface);
 	virtual void generate_header_pog(CArrayChar &output, bool interface);
-	
+
 	void SetLineInfo(int linenum);
 
 	AccessType GetMyAccess();
@@ -342,20 +342,20 @@ protected:
 
 /**
  * @class Enumeration
- * @brief This class is holding enum type information 
+ * @brief This class is holding enum type information
  */
 class Enumeration: public ClassMember
 {
 public:
 	Enumeration(Class *cl, AccessType myaccess);
-	~Enumeration();	
+	~Enumeration();
 	virtual void GenerateHeader(CArrayChar &output, bool interface);
-	
+
 	void setName(std::string value);
 	void setArgs(std::string value);
-	
+
 private:
-	std::string name;	
+	std::string name;
 	std::string args;
 };
 
@@ -369,11 +369,11 @@ public:
 	Structure(Class *cl, AccessType myaccess);
 	~Structure();
 	virtual void GenerateHeader(CArrayChar &output, bool interface);
-	
+
 	void setName(std::string value);
 	void setObjects(std::string value);
 	void setInnerDecl(std::string value);
-	
+
 private:
 	std::string name;
 	std::string objects;
@@ -386,11 +386,11 @@ private:
  */
 class TypeDefinition: public ClassMember
 {
-public: 
+public:
 	TypeDefinition(Class *cl, AccessType myaccess);
 	~TypeDefinition();
 	virtual void GenerateHeader(CArrayChar &output, bool interface);
-	
+
 	void setName(std::string name);
 	void setBaseType(std::string basetype);
 	void setAsPtr();
@@ -434,20 +434,20 @@ class Method: public ClassMember
 public:
 	Method(Class *cl, AccessType myaccess);
 	~Method();
-	
-	static const int POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID; 
+
+	static const int POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID;
 	static const int POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE;
-	static const char* POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME; 
-		
+	static const char* POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME;
+
 	virtual int Type() { return TYPE_METHOD; };
 
 	int CheckMarshal();
 
 	virtual void GenerateClient(CArrayChar &output);
 	virtual void GenerateHeader(CArrayChar &output, bool interface);
-	virtual void generate_header_pog(CArrayChar &output, bool interface);	
+	virtual void generate_header_pog(CArrayChar &output, bool interface);
 	virtual void GenerateBrokerHeader(CArrayChar &output);
-	virtual void generate_broker_header_pog(CArrayChar &output);	
+	virtual void generate_broker_header_pog(CArrayChar &output);
 	virtual void GenerateBroker(CArrayChar &output);
 
 	virtual int MethodType() { return METHOD_NORMAL; };
@@ -465,11 +465,11 @@ public:
 	bool isVirtual;
 	bool isPureVirtual;
 	bool isGlobalConst; // add by david
-	
 
-	enum CollectiveType { POPC_COLLECTIVE_BROADCAST, POPC_COLLECTIVE_GATHER, POPC_COLLECTIVE_SCATTER, POPC_COLLECTIVE_REDUCE }; 
-  void set_collective(CollectiveType type); 
-  bool is_collective(); 
+
+	enum CollectiveType { POPC_COLLECTIVE_BROADCAST, POPC_COLLECTIVE_GATHER, POPC_COLLECTIVE_SCATTER, POPC_COLLECTIVE_REDUCE };
+  void set_collective(CollectiveType type);
+  bool is_collective();
 
 	bool isConcurrent;
 	bool isMutex;
@@ -493,13 +493,13 @@ protected:
 
 	virtual void GenerateClientPrefixBody(CArrayChar &output);
 
-private: 	
+private:
 	bool _is_collective;
 	bool _is_broadcast;
 	bool _is_scatter;
 	bool _is_gather;
 	bool _is_reduce;
-		
+
 };
 /**
  * @class Constructor
@@ -515,12 +515,12 @@ public:
 
 	virtual void GenerateHeader(CArrayChar &output, bool interface);
 	virtual void generate_header_pog(CArrayChar &output, bool interface);
-	
+
 	bool isDefault();
 
 	ObjDesc &GetOD();
 
-  void set_id(int value); 
+  void set_id(int value);
   int get_id();
 protected:
 	virtual void GenerateReturn(CArrayChar &output, bool header, bool interface) {  Method::GenerateReturn(output, header, interface); };
@@ -530,7 +530,7 @@ protected:
 
 	ObjDesc od; //Only used for constructor method
 
-private: 
+private:
   int identifier;
 };
 /**
@@ -598,7 +598,7 @@ public:
 	void SetClassID(char *id);
 	void SetPureVirtual(bool val);
 	bool IsPureVirtual();
-	void SetBasePureVirtual(bool val);	
+	void SetBasePureVirtual(bool val);
 	bool IsBasePureVirtual();
 
 
@@ -615,28 +615,28 @@ public:
 	bool GenerateBrokerHeader(CArrayChar & code);
 	bool GenerateBroker(CArrayChar & code);
 
-  bool generate_header_pog(CArrayChar &code, bool interface); 
-  bool generate_broker_header_pog(CArrayChar &code); 
-  
+  bool generate_header_pog(CArrayChar &code, bool interface);
+  bool generate_broker_header_pog(CArrayChar &code);
+
 	char classid[64];
 
 	CArrayBaseClass baseClass;
 	CArrayClassMember memberList;
-	
+
 	void SetNamespace(char* value);
 	std::string GetNamespace();
-	
+
 	void SetAsCoreCompilation();
 	bool IsCoreCompilation();
 	void EnableWarning();
 	bool IsWarningEnable();
 	void DisableAsyncAllocation();
-	bool IsAsyncAllocationDisable();	
-	void set_as_collective(); 
-	bool is_collective(); 
-	
-	
-  static const char* POG_BASE_INTERFACE_NAME;	
+	bool IsAsyncAllocationDisable();
+	void set_as_collective();
+	bool is_collective();
+
+
+  static const char* POG_BASE_INTERFACE_NAME;
   static const char* POG_BASE_OBJECT_NAME;
   static const char* POG_OBJECT_POSTFIX;
   static const char* POG_BASE_BROKER_NAME;
@@ -649,7 +649,7 @@ public:
 
 protected:
 	Constructor constructor;
-	
+
 	char *myFile;
 	bool initDone;
 	int endid;
@@ -662,12 +662,12 @@ protected:
 	bool hasWarningEnable;
 	bool isAsyncAllocationDisable;
 	bool _is_collective;
-	
+
 	char *my_interface_base;
 	char *my_object_base;
 	char *my_broker_base;
 	std::string strnamespace;
-	
+
 private:
   int constrcutor_id;
 };
