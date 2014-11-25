@@ -82,7 +82,7 @@ void Usage()
  */
 void DisplayVersion()
 {
-    fprintf(stderr,"\nPOP-C++ version %s on %s\n\n", VERSION, arch);
+    fprintf(stderr,"POP-C++ version %s on %s\n", VERSION, arch);
 }
 
 /**
