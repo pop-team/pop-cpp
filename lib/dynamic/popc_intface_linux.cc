@@ -146,7 +146,7 @@ char * popc_strtok_r(char * a , const char * b , char ** c)
 
 popc_pid_t popc_wait( int * a)
 {
-	wait(a);
+	return wait(a);
 }
 
 
@@ -210,12 +210,12 @@ popc_pthread_t popc_pthread_self(void)
 
 popc_sighandler_t popc_signal(int a, popc_sighandler_t b)
 {
-	signal(a, b);
+	return signal(a, b);
 }
 
 int popc_kill(pid_t a, int b)
 {
-	kill(a,b);
+	return kill(a,b);
 }
 
 
@@ -289,7 +289,7 @@ int popc_open(const char * a, int b, mode_t c)
 
 int popc_creat(const char * a, mode_t b)
 {
-	creat(a, b);
+	return creat(a, b);
 }
 
 
@@ -376,7 +376,8 @@ uint16_t	popc_ntohs(uint16_t a)
 //functions below are derivated from <stdlib.h>
 int popc_sysinfo(int command, char *buf, long count)
 {
-    //return sysinfo(command, buf, count);
+    return 0;
+    //TODO return sysinfo(command, buf, count);
 }
 
 int popc_mkstemp(char *a)
@@ -388,10 +389,10 @@ int popc_mkstemp(char *a)
 //functions below are derivated from <poll.h>
 
 
-/*int popc_poll(struct pollfd * a, nfds_t b, int c)
+int popc_poll(struct pollfd * a, nfds_t b, int c)
 {
-	return poll(a, b, c);
-}*/
+    return poll(a, b, c);
+}
 
 
 //functions below are derivated from <strings.h>
@@ -434,7 +435,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[])
 	argv1[argc1] = 0;
 	argv2[argc2] = 0;
 
-	int p[2]; 
+	int p[2];
 	if (pipe(p) != 0) {
 		perror("Error");
 		_exit(1);
@@ -464,14 +465,14 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[])
 		dup2(p[0],0);
 		execvp(argv2[0],argv2);
 		fprintf(stderr,"POP-C++ Error: %s not found\n",argv2[0]);
-		_exit(1);		
+		_exit(1);
 	}
 	close(p[0]);
 	close(p[1]);
 
 	wait(&status);
 	int ret = WEXITSTATUS(status);
-	if (ret != 0) 
+	if (ret != 0)
 		return ret;
 
 	wait(&status);
