@@ -5,24 +5,18 @@
  *
  * @author Tuan Anh Nguyen
  * @date 2005/01/01
- * @brief Implementation of parallel object broker: General part. 
+ * @brief Implementation of parallel object broker: General part.
  *
  *
  */
- 
-/* 
-  Deeply need refactoring: 
+
+/*
+  Deeply need refactoring:
     POPC_Broker instead of paroc_broker
- */ 
+ */
 
 #include "popc_intface.h"
 
-//#include <stdio.h>
-//#include <unistd.h>
-//#include <stdlib.h>
-//#include <strings.h>
-//#include <assert.h>
-//#include <signal.h>
 #include "paroc_broker.h"
 #include "paroc_interface.h"
 #include "paroc_event.h"
@@ -61,9 +55,9 @@ void paroc_request::operator =(const paroc_request &r)
 
 void broker_interupt(int sig)
 {
-#ifndef __WIN32__    
+#ifndef __WIN32__
 	printf("Interrupt on thread id %lu\n",(unsigned long)pthread_self());
-#else   
+#else
         printf("Interrupt on thread id %lu\n",(unsigned long)GetCurrentThreadId());
 #endif
 }
@@ -180,90 +174,72 @@ bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned 
 }
 
 
-int paroc_broker::Run()
-{
-	//Create threads for each protocols for receiving requests....
+int paroc_broker::Run(){
+    //Create threads for each protocols for receiving requests....
 
-	paroc_array<paroc_receivethread *> ptArray;
-	int comboxCount = comboxArray.GetSize();
-	if (comboxCount <= 0) {
-	  return -1;
-	}
-        state = POPC_STATE_RUNNING;
-        ptArray.SetSize(comboxCount);
-	int i;
+    paroc_array<paroc_receivethread *> ptArray;
+    int comboxCount = comboxArray.GetSize();
+    if (comboxCount <= 0) {
+        return -1;
+    }
 
-        //printf("-----------------------paroc_broker::Run() start-------------------------------\n");//vanhieu.nguyen
-	for (i = 0; i < comboxCount; i++) {
-                //printf("-----------------------------paroc_receivethread start-------------------\n");//vanhieu.nguyen
-		ptArray[i] = new paroc_receivethread(this, comboxArray[i]);
-                //printf("-----------------------------paroc_receivethread end-------------------\n");//vanhieu.nguyen
-                //printf("-----------------------------ptArray[%d]->create start-------------------\n", i);//vanhieu.nguyen
-		int ret = ptArray[i]->create();
-                //printf("-----------------------------ptArray[%d]->create end-------------------\n", i);//vanhieu.nguyen
-		if (ret != 0) {
-		  return errno;
-		}
-	}       
+    state = POPC_STATE_RUNNING;
+    ptArray.SetSize(comboxCount);
+    int i;
 
-
-	if (obj == NULL) {
-            //printf("alarm(%d)\n", TIMEOUT);//vanhieu.nguyen
-            popc_alarm(TIMEOUT);
+    for (i = 0; i < comboxCount; i++) {
+        ptArray[i] = new paroc_receivethread(this, comboxArray[i]);
+        int ret = ptArray[i]->create();
+        if (ret != 0) {
+            return errno;
         }
+    }
 
-	while (state == POPC_STATE_RUNNING) {
-		try {
-			paroc_request req;
-                        //printf("-----------------------------GetRequest start-------------------\n");//vanhieu.nguyen
-			if (!GetRequest(req)) break;
-                        //printf("-----------------------------GetRequest end-------------------\n");//vanhieu.nguyen
-                        //printf("-----------------------------ServeRequest start-------------------\n");//vanhieu.nguyen
-			ServeRequest(req);
-                        //printf("-----------------------------ServeRequest end-------------------\n");//vanhieu.nguyen
-			if (req.methodId[2] & INVOKE_CONSTRUCTOR)
-			{
-				popc_alarm(0);
-				if (obj == NULL) 
-				  break;
-			}
-		}
+    if (obj == NULL) {
+        popc_alarm(TIMEOUT);
+    }
 
-		catch (...)
-		{
-			UnhandledException();
-		}
-	}
+    while (state == POPC_STATE_RUNNING) {
+        try {
+            paroc_request req;
+            if (!GetRequest(req)) break;
+            ServeRequest(req);
+            if (req.methodId[2] & INVOKE_CONSTRUCTOR){
+                popc_alarm(0);
+                if (obj == NULL)
+                    break;
+            }
+        } catch (...){
+            UnhandledException();
+        }
+    }
 
 
-	if (obj!=NULL && state==POPC_STATE_RUNNING)
-	{
-                paroc_mutex_locker test(execCond);
+    if (obj!=NULL && state==POPC_STATE_RUNNING){
+        paroc_mutex_locker test(execCond);
 
-		//Wait for all invocations terminated....
-		while (instanceCount > 0 || !request_fifo.IsEmpty())
-		{
-			execCond.wait();
-		}
-	}
-	        
-        state = POPC_STATE_EXIT;
-        
-	for (i = 0; i < comboxCount; i++) {
-		if (WakeupReceiveThread(comboxArray[i])) {
-		  delete ptArray[i];      
+        //Wait for all invocations terminated....
+        while (instanceCount > 0 || !request_fifo.IsEmpty()){
+            execCond.wait();
+        }
+    }
+
+    state = POPC_STATE_EXIT;
+
+    for (i = 0; i < comboxCount; i++) {
+        if (WakeupReceiveThread(comboxArray[i])) {
+            delete ptArray[i];
         } else {
-			ptArray[i]->cancel();
-		}
-	} 
-        //printf("------------------------------paroc_broker::Run() end------------------------------\n");//vanhieu.nguyen
-        return 0;
+            ptArray[i]->cancel();
+        }
+    }
+    return 0;
 }
 
 bool paroc_broker::Initialize(int *argc, char ***argv)
 {
 	if (paroc_utils::checkremove(argc, argv, "-runlocal"))  paroc_od::defaultLocalJob=true;
-	
+
         char *address = paroc_utils::checkremove(argc,argv,"-address=");
 
 	paroc_combox_factory  *ff = paroc_combox_factory::GetInstance();
@@ -271,7 +247,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 	comboxArray.SetSize(comboxCount);
 	POPString protocolName;
 	POPString url;
-        
+
 	int count=0;
 	for (int i = 0;i < comboxCount;i++) {
 		comboxArray[count] = ff->Create(i);
@@ -286,14 +262,14 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 		comboxCount=count;
 		comboxArray.SetSize(comboxCount);
 	}
-	
+
 	if (comboxCount<=0) return false;
 
 	for (int i=0; i<comboxCount; i++)
 	{
 		paroc_combox * pc = comboxArray[i];
 		pc->GetProtocol(protocolName);
-		
+
 		char argument[1024];
 		sprintf(argument, "-%s_port=", (const char *)protocolName);
 		char *portstr=paroc_utils::checkremove(argc,argv,argument);
@@ -309,25 +285,25 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 		}
 		else
 		{
-#ifdef DEFINE_UDS_SUPPORT                  
+#ifdef DEFINE_UDS_SUPPORT
                     if(!pc->Create(address, true)){
-#else                    
+#else
                     if(!pc->Create(0, true)){
-#endif                       
+#endif
                             paroc_system::perror("Broker");
                             return false;
                     }
 		}
-		
-		
+
+
 		POPString ap;
 		pc->GetUrl(ap);
 		url+=ap;
 		if (i<comboxCount-1) url+=PROTO_DELIMIT_CHAR;
 	}
-	
+
 	accesspoint.SetAccessString(url.GetString());
-  
+
 	char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
 	if (tmp!=NULL && classname!=NULL)
 	{
@@ -347,14 +323,14 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 	paroc_object::argv=*argv;
 
 	popc_signal(popc_SIGTERM, broker_killed);
-	popc_signal(popc_SIGINT, broker_killed);	
+	popc_signal(popc_SIGINT, broker_killed);
 	popc_signal(popc_SIGILL, broker_killed);
 	popc_signal(popc_SIGABRT, broker_killed);
 #ifndef __WIN32__
 	popc_signal(popc_SIGQUIT, broker_killed);
 	popc_signal(popc_SIGPIPE, popc_SIG_IGN);
 #endif
-	
+
 
 	return true;
 }
@@ -363,58 +339,58 @@ bool paroc_broker::Initialize(int *argc, char ***argv)
 
 bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
 {
-    
+
     paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
-	POPString url, prot;
+    POPString url, prot;
 
-	bool ok=false;
-	mycombox->GetProtocol(prot);
-	mycombox->GetUrl(url);
-        
-	char *str=url.GetString();
-	if (str==NULL) return false;
+    bool ok=false;
+    mycombox->GetProtocol(prot);
+    mycombox->GetUrl(url);
 
-	char *ptr;
-	char *tok = popc_strtok_r(str," \t\n\r",&ptr);
-	while (tok != NULL && !ok) {
-		paroc_combox *tmp = combox_factory->Create(prot);
-		tmp->SetTimeout(100000);
-		std::string address(tok);
-		if(address.find("uds://") == 0){
-		  address = address.substr(6);
-		}
-    paroc_buffer_factory* buffer_factory = tmp->GetBufferFactory();
-    paroc_buffer* buffer = buffer_factory->CreateBuffer();
-#ifdef DEFINE_UDS_SUPPORT 
-                if (tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
-#else    
-                if (tmp->Create(0, false) && tmp->Connect(tok)) {
-#endif                    
-		  try {
+    char *str=url.GetString();
+    if (str==NULL) return false;
+
+    char *ptr;
+    char *tok = popc_strtok_r(str," \t\n\r",&ptr);
+    while (tok != NULL && !ok) {
+        paroc_combox *tmp = combox_factory->Create(prot);
+        tmp->SetTimeout(100000);
+        std::string address(tok);
+        if(address.find("uds://") == 0){
+            address = address.substr(6);
+        }
+        paroc_buffer_factory* buffer_factory = tmp->GetBufferFactory();
+        paroc_buffer* buffer = buffer_factory->CreateBuffer();
+#ifdef DEFINE_UDS_SUPPORT
+        if (tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
+#else
+        if (tmp->Create(0, false) && tmp->Connect(tok)) {
+#endif
+            try {
                 paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
-              buffer->Reset();
-	      buffer->SetHeader(h);
-	      paroc_connection* connection = tmp->get_connection();
-              if (!buffer->Send((*tmp), connection)) {
-          ok = false;
-	      } else {
-          if (!buffer->Recv((*tmp), connection)) {
-            ok = false;
-	        }
-            bool ret;
-        	buffer->Push("result", "bool", 1);
-        	buffer->UnPack(&ret,1);
-    	    buffer->Pop();
-          ok = !ret;  
-  	    }   
-  	  } catch (...) {
-  	    ok = true;
-  	  }
-		}
-	  buffer->Destroy();
-    tmp->Destroy();
-		tok = popc_strtok_r(NULL, " \t\n\r", &ptr);
-	}
-	return ok;
-}
+                buffer->Reset();
+                buffer->SetHeader(h);
+                paroc_connection* connection = tmp->get_connection();
+                if (!buffer->Send((*tmp), connection)) {
+                    ok = false;
+                } else {
+                    if (!buffer->Recv((*tmp), connection)) {
+                        ok = false;
+                    }
+                    bool ret;
+                    buffer->Push("result", "bool", 1);
+                    buffer->UnPack(&ret,1);
+                    buffer->Pop();
+                    ok = !ret;
+                }
+            } catch (...) {
+                ok = true;
+            }
+        }
+        buffer->Destroy();
+        tmp->Destroy();
+        tok = popc_strtok_r(NULL, " \t\n\r", &ptr);
+    }
 
+    return ok;
+}
