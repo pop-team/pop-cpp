@@ -1,19 +1,19 @@
 #
-# POP-C++ 
+# POP-C++
 # Common (pseudo-dynamic) library build process
-# 
+#
 # AUTHOR: Valentin Clement
 # DATE: 2012/11/14
 #
 
-
 include_directories(${CMAKE_SOURCE_DIR}/ ${CMAKE_SOURCE_DIR}/include/pseudodynamic ${MPI_INCLUDE_PATH})
-
 
 include(CMakeForceCompiler)
 # CMAKE_FORCE_CXX_COMPILER(${MPI_CXX_COMPILER} mpicxx)
 
-set(CMAKE_CXX_OUTPUT_EXTENION ".o")
+set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
+
+add_definitions(-Wall -Wextra -Werror)
 
 add_library(popc_common_psdyn
 accesspoint.cc
@@ -59,14 +59,14 @@ add_custom_command(OUTPUT paroc_infmain.psdyn.o
                    COMMAND ${MPI_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_infmain.psdyn.cc -I${CMAKE_SOURCE_DIR}/include/pseudodynamic
                    DEPENDS paroc_infmain.psdyn.cc
                    COMMENT "Compile POP-C++ Master main")
-                   
+
 add_custom_command(OUTPUT popc_objmain.psdyn.o
                    COMMAND ${MPI_CXX_COMPILER} ${POPC_MAIN_FLAGS} popc_objmain.psdyn.cc -I${CMAKE_SOURCE_DIR}/include/pseudodynamic
                    DEPENDS popc_objmain.psdyn.cc
-                   COMMENT "Compile POP-C++ Object main")                   
-                   
-add_custom_target(popcpp_object_psdyn_main ALL DEPENDS popc_objmain.psdyn.o) 
-add_custom_target(popcpp_master_psdyn_main ALL DEPENDS paroc_infmain.psdyn.o) 
+                   COMMENT "Compile POP-C++ Object main")
+
+add_custom_target(popcpp_object_psdyn_main ALL DEPENDS popc_objmain.psdyn.o)
+add_custom_target(popcpp_master_psdyn_main ALL DEPENDS paroc_infmain.psdyn.o)
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.psdyn.o DESTINATION lib/pseudodynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_objmain.psdyn.o DESTINATION lib/pseudodynamic)
