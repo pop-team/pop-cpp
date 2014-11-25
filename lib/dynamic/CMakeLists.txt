@@ -20,10 +20,10 @@ add_definitions(-Wall -Wextra -Werror)
 
 if(WIN32)
     set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc.exe)
-    set(POPCPP_FLAGS -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp.exe -cxx=g++)
+    set(POPCPP_FLAGS -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp.exe)
 elseif(UNIX)
     set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc)
-    set(POPCPP_FLAGS -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp -cxx=g++)
+    set(POPCPP_FLAGS -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp)
 endif(WIN32)
 
 set(POPCPP_Parclass_COMPILER_FLAGS -parclass-nobroker -c -o)
