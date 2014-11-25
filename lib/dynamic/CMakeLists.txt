@@ -15,6 +15,7 @@ include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_INCLUDE_PATH})
 
 set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
 
+# Activate some warnings
 add_definitions(-Wall -Wextra -Werror)
 
 if(WIN32)
