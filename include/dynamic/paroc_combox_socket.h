@@ -34,7 +34,7 @@ public:
 	paroc_connection_sock(paroc_connection_sock &me);
 
 	virtual paroc_connection *Clone();
-  virtual void reset() {};	
+  virtual void reset() {};
 
 	int sockfd;
 };
@@ -53,7 +53,7 @@ public:
 	virtual ~paroc_combox_socket();
 
 	virtual bool Create(int port=0, bool server=false);
-	virtual bool Create(const char *address, bool server=false) { return false; };	
+	virtual bool Create(const char* /*address*/, bool /*server*/) { return false; };
 
 	virtual bool Connect(const char *url);
 
@@ -97,7 +97,7 @@ protected:
     fd_set readfds, activefdset;
 #else
 	paroc_array<pollfd> pollarray;
-#endif	    
+#endif
 	paroc_connection_sock *peer;
 
 	//Only used by combox server...

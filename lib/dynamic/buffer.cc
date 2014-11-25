@@ -9,13 +9,13 @@
  *
  *
  */
- 
-/* 
-  Deeply need refactoring: 
+
+/*
+  Deeply need refactoring:
     POPC_Buffer instead of paroc_buffer
     POPC_MessageHeader instead of paroc_message_header (put implementation in a separate file)
  */
- 
+
 #include <string.h>
 #include <stdlib.h>
 #include "paroc_interface.h"
@@ -25,7 +25,7 @@
 #include "paroc_exception.h"
 
 #define METH_VECT_PACK(type) \
-void paroc_buffer::Pack( std::vector<type> *vect, int n)\
+void paroc_buffer::Pack( std::vector<type> *vect, int /*n*/)\
 {\
 	int s = static_cast<int>(vect->size());\
 	Pack(&s,1);\
@@ -33,7 +33,7 @@ void paroc_buffer::Pack( std::vector<type> *vect, int n)\
 }
 
 #define METH_VECT_UNPACK(type) \
-void paroc_buffer::UnPack( std::vector<type> *vect, int n)\
+void paroc_buffer::UnPack( std::vector<type> *vect, int /*n*/)\
 {\
 	int s=0;\
 	UnPack(&s,1);\
@@ -111,7 +111,7 @@ const paroc_message_header & paroc_buffer::GetHeader() const
 	return header;
 }
 
-void paroc_buffer::Push(const char *paramname, const char *paramtype, int nelem)
+void paroc_buffer::Push(const char* /*paramname*/, const char* /*paramtype*/, int /*nelem*/)
 {
 }
 
@@ -202,7 +202,7 @@ METH_VECT_UNPACK(std::string)
 
 bool paroc_buffer::Send(paroc_connection *conn)
 {
-	if (conn == NULL) 
+	if (conn == NULL)
 	  return false;
 	paroc_combox *combox = conn->GetCombox();
 	return Send(*combox, conn);
