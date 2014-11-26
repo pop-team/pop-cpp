@@ -129,8 +129,3 @@ protected:
 	ProbObj *sequential;
 
 };
-
-
-
-
-
