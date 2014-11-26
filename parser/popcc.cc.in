@@ -120,6 +120,8 @@ void PrepareSource(char *src, char *dest, bool advanced)
     fclose(sf);
 }
 
+//TODO This function needs a MAJOR rewriting and cleaning
+
 char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp, bool noasyncallocation, bool /*kcomputer*/, bool collective, bool advanced){
     char *cmd[1000];
     int count=0;
@@ -147,15 +149,17 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 
     if (fname != NULL) {
         fname++;
-        int n = fname - source + 1;
+        int n = fname - source;
         strncpy(sdir, source, n);
-        sdir[n] = 0;
+        sdir[n+1] = 0;
     } else {
         fname = source;
         *sdir=0;
     }
+
+    // Get the extension
     char *str = strrchr(fname, '.');
-    if (str == NULL) {
+    if (!str) {
         return NULL;
     }
 
