@@ -144,8 +144,9 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
      */
 
     paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
-    if (combox_factory == NULL)
+    if (combox_factory == NULL){
       paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
+    }
 
     paroc_combox* tmpsock = combox_factory->Create("socket");
     if(tmpsock == NULL) {
@@ -153,9 +154,10 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 
     bool isServer=true;
-    //printf("----------------[Interface] Create start.---------------------\n");//vanhieu.nguyen
-    if (!tmpsock->Create(0, isServer)) paroc_exception::paroc_throw_errno();
-    //printf("----------------[Interface] Create end.----------------\n");//vanhieu.nguyen
+    if (!tmpsock->Create(0, isServer)){
+        paroc_exception::paroc_throw_errno();
+    }
+
     paroc_connection *connection = tmpsock->get_connection();
     POPString cburl;
     tmpsock->GetUrl(cburl);
@@ -165,22 +167,20 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     sprintf(tmpstr,"-object=%s", objectname.GetString());
     argv[n++]=popc_strdup(tmpstr);
 
-    if (!paroc_system::appservice.IsEmpty())
-    {
-            sprintf(tmpstr,"-appservice=%s",paroc_system::appservice.GetAccessString());
-            argv[n++]=popc_strdup(tmpstr);
+    if (!paroc_system::appservice.IsEmpty()){
+        sprintf(tmpstr,"-appservice=%s",paroc_system::appservice.GetAccessString());
+        argv[n++]=popc_strdup(tmpstr);
     }
 
-    if (!paroc_system::jobservice.IsEmpty())
-    {
-            sprintf(tmpstr,"-jobservice=%s",paroc_system::jobservice.GetAccessString());
-            argv[n++]=popc_strdup(tmpstr);
+    if (!paroc_system::jobservice.IsEmpty()){
+        sprintf(tmpstr,"-jobservice=%s",paroc_system::jobservice.GetAccessString());
+        argv[n++]=popc_strdup(tmpstr);
     }
 
     // Select core
     if (rcore!=NULL&&rcore!=0) {
-            sprintf(tmpstr,"-core=%s",(const char*)rcore);
-            argv[n++]=popc_strdup(tmpstr);
+        sprintf(tmpstr,"-core=%s",(const char*)rcore);
+        argv[n++]=popc_strdup(tmpstr);
     }
 
     // Select core
@@ -191,52 +191,47 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
 #ifdef OD_DISCONNECT
     if (checkConnection) {
-            sprintf(tmpstr,"-checkConnection");
-            argv[n++]=popc_strdup(tmpstr);
+        sprintf(tmpstr,"-checkConnection");
+        argv[n++]=popc_strdup(tmpstr);
     }
 #endif
 
-    if(paroc_od::defaultLocalJob)
-    {
+    if(paroc_od::defaultLocalJob){
         argv[n++] = popc_strdup("-runlocal");
     }
 
     // Add the working directory as argument
     if (cwd!=NULL && *cwd!=0) {
-            sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
-            argv[n++]=popc_strdup(tmpstr);
+        sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
+        argv[n++]=popc_strdup(tmpstr);
     }
 
     argv[n]=NULL;
 
     int ret=0, err=0;
 
-    if (isManual)
-    {
-            printf("\nTo launch this object, run this command on the target machine :\n");
-            for (int i=0;i<n;i++) printf("%s ", argv[i]);
-            printf("\n");
-    }
-    else
-    {
+    if (isManual){
+        printf("\nTo launch this object, run this command on the target machine :\n");
+        for (int i=0;i<n;i++) printf("%s ", argv[i]);
+        printf("\n");
+    } else {
 #ifndef NDEBUG
-            if (getenv("POPC_DEBUG")) {
-                    DEBUG("Launching a new object with command : ");
-                    fprintf(stderr,"--->");
-                    for (int i=0;i<n;i++) fprintf(stderr,"%s ", argv[i]);
-                    fprintf(stderr,"\n");
-            }
+        if (getenv("POPC_DEBUG")) {
+            DEBUG("Launching a new object with command : ");
+            fprintf(stderr,"--->");
+            for (int i=0;i<n;i++) fprintf(stderr,"%s ", argv[i]);
+            fprintf(stderr,"\n");
+        }
 #endif
-            ret=RunCmd(n,argv,NULL);
-            err=errno;
+        ret=RunCmd(n,argv,NULL);
+        err=errno;
     }
 
     for (int i=0;i<n;i++) if (argv[i]!=NULL) free(argv[i]);
 
-    if (ret==-1)
-    {
-            DEBUG("Can not start the object code...");
-            paroc_exception::paroc_throw(err, objectname);
+    if (ret==-1){
+        DEBUG("Can not start the object code...");
+        paroc_exception::paroc_throw(err, objectname);
     }
 
     //Now get the return paroc_accesspoint....
@@ -244,32 +239,29 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     paroc_buffer * tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
 
-    //printf("----------------[Interface] Recv start.---------------------\n");//vanhieu.nguyen
-    if (!tmpbuffer->Recv((*tmpsock), connection))
-    {
+    if (!tmpbuffer->Recv((*tmpsock), connection)){
         printf("cannot receive anything\n");
         paroc_exception::paroc_throw_errno();
     }
-    //printf("----------------[Interface] Recv end.---------------------\n");//vanhieu.nguyen
+
     paroc_buffer::CheckAndThrow(*tmpbuffer);
 
     tmpbuffer->Push("status","int",1);
     tmpbuffer->UnPack(&n,1);
     tmpbuffer->Pop();
 
-    if(n!=0)
-    {
+    if(n!=0){
         paroc_exception::paroc_throw(n, objectname);
     }
+
     POPString objectaddress;
     tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
     tmpbuffer->UnPack(&objectaddress, 1);
     tmpbuffer->Pop();
     tmpbuffer->Destroy();
 
-    //printf("objectaddress=%s\n", objectname.GetString());//vanhieu.nguyen
     tmpsock->Close();
-    //printf("tmpsock->Close()\n");//vanhieu.nguyen
+
     return objectaddress;
 }
 

@@ -8,22 +8,12 @@
  * 2- Set environment variable "POPC_JOBSERVICE to the job service point
  * 3- <localhost>:2711 ( if 1/ and 2/ are not specified )
  * Creation date : -
- * 
+ *
  * Modifications :
- * Authors		Date			Comment
+ * Authors      Date            Comment
  */
 
 #include "popc_intface.h"
-
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <arpa/inet.h>
-//#include <signal.h>
-//#include <unistd.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <fcntl.h>
 
 #ifndef __APPLE__
 #include <sched.h>
@@ -39,101 +29,97 @@ bool CheckIfPacked(const char *objname);
 
 int main(int argc, char **argv)
 {
-    	char *rcore=paroc_utils::checkremove(&argc,&argv,"-core=");
-	if (rcore!=NULL) {
-		paroc_system::processor_set(atoi(rcore));
-	}
+    char *rcore=paroc_utils::checkremove(&argc,&argv,"-core=");
+    if (rcore) {
+        paroc_system::processor_set(atoi(rcore));
+    }
+
 #ifdef UC_LINUX
-	else paroc_system::processor_set(0);
+    else paroc_system::processor_set(0);
 #endif
 
+    paroc_system sys;
+    char *local_rank = paroc_utils::checkremove(&argc, &argv, "-local_rank=");
 
-	paroc_system sys;
-	char *local_rank = paroc_utils::checkremove(&argc, &argv, "-local_rank=");
-	if(local_rank != NULL) {
-  	paroc_system::popc_local_mpi_communicator_rank = atoi(local_rank);
-	} 
+    if(local_rank != NULL) {
+        paroc_system::popc_local_mpi_communicator_rank = atoi(local_rank);
+    }
 
-	// Connect to callback
-	char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");
-	paroc_combox *callback = NULL;
-	int status=0;
-	if (address != NULL) {
-          paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
-#ifdef DEFINE_UDS_SUPPORT         
-	  callback = combox_factory->Create("uds");
-          if(!callback->Create(address, false) || !callback->Connect(address)) {
-#else          
-              
-          callback = combox_factory->Create("socket");
-          //printf("----------------[broker] Create start.----------------\n");//vanhieu.nguyen
-          if(!callback->Create(0, false) || !callback->Connect(address)) {  
-#endif                        
-                callback->Close();
-                callback->Destroy();
-                printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
-                return 1;
-	  }              	
-	}
-        //printf("----------------[broker] Create end.----------------\n");//vanhieu.nguyen
-        //printf("----------------[broker] [broker] paroc_broker_factory::Create(&argc, &argv).----------------\n");//vanhieu.nguyen
-        paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
-        //printf("----------------[broker] [broker] paroc_broker_factory::Create(&argc, &argv) end.----------------\n");//vanhieu.nguyen
-	paroc_broker *broker = paroc_broker_factory::Create(&argc, &argv);
-	if (broker == NULL) {
-		status = 1;
-	} else if (!broker->Initialize(&argc, &argv)) {
-		//Initialize broker...
-		printf("Fail to initialize the broker for class %s\n",(const char *)paroc_broker::classname);
-		status = 1;
-	}
-        //printf("-------------------[broker] Send ack via callback start.----------------\n");//vanhieu.nguyen
+    // Connect to callback
+    char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");
+    paroc_combox *callback = NULL;
+    int status=0;
+    if (address != NULL) {
+        paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
+#ifdef DEFINE_UDS_SUPPORT
+        callback = combox_factory->Create("uds");
 
-	// Send ack via callback
-	if (callback != NULL) {
-            //printf("-------------------[broker] start send.----------------\n");//vanhieu.nguyen
-	  paroc_buffer *buffer = callback->GetBufferFactory()->CreateBuffer();
-		paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
-                buffer->SetHeader(h);
-                
-                buffer->Push("status", "int", 1);
-                buffer->Pack(&status, 1);
-                buffer->Pop();
-                
-                buffer->Push("address", "paroc_accesspoint", 1);
-                paroc_broker::accesspoint.Serialize(*buffer, true);
-                buffer->Pop();
-		
-                paroc_connection* connection = callback->get_connection();
-                bool ret = buffer->Send((*callback), connection); 
-		buffer->Destroy();
-		callback->Destroy();
-                //printf("-------------------[broker] end send.----------------\n");//vanhieu.nguyen
-		if (!ret) {
-			printf("POP-C++ Error: fail to send accesspoint via callback\n");
-			delete broker;
-			return 1;
-		}
-	} else if (status == 0) {
-		fprintf(stdout, "%s\n", (const char *)paroc_broker::accesspoint.GetAccessString());
-	}
-	
-	// set the current working directory
-	char *cwd = paroc_utils::checkremove(&argc,&argv,"-cwd=");
-	if (cwd!=NULL) {
-		if (popc_chdir(cwd) != 0) {
-			printf("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
-		}
-	}
-        // Start the broker
- 	if (status == 0) {
-                //printf("------------------[broker] broker->Run() start.------------------\n");//vanhieu.nguyen        
-                broker->Run();
-		delete broker;
-	} else if (broker != NULL) { 
-	  delete broker;
-	}
-        //printf("------------------[broker] broker->Run() end.------------------\n");//vanhieu.nguyen
-        
-        return status;
+        if(!callback->Create(address, false) || !callback->Connect(address)) {
+#else
+        callback = combox_factory->Create("socket");
+
+        if(!callback->Create(0, false) || !callback->Connect(address)) {
+#endif
+            callback->Close();
+            callback->Destroy();
+            printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
+            return 1;
+        }
+    }
+
+    paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
+    paroc_broker *broker = paroc_broker_factory::Create(&argc, &argv);
+
+    if (!broker) {
+        status = 1;
+    } else if (!broker->Initialize(&argc, &argv)) {
+        printf("Fail to initialize the broker for class %s\n",(const char *)paroc_broker::classname);
+        status = 1;
+    }
+
+    // Send ack via callback
+    if (callback != NULL) {
+        paroc_buffer *buffer = callback->GetBufferFactory()->CreateBuffer();
+        paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
+        buffer->SetHeader(h);
+
+        buffer->Push("status", "int", 1);
+        buffer->Pack(&status, 1);
+        buffer->Pop();
+
+        buffer->Push("address", "paroc_accesspoint", 1);
+        paroc_broker::accesspoint.Serialize(*buffer, true);
+        buffer->Pop();
+
+        paroc_connection* connection = callback->get_connection();
+        bool ret = buffer->Send((*callback), connection);
+        buffer->Destroy();
+        callback->Destroy();
+
+        if (!ret) {
+            printf("POP-C++ Error: fail to send accesspoint via callback\n");
+            delete broker;
+            return 1;
+        }
+    } else if (status == 0) {
+        fprintf(stdout, "%s\n", (const char *)paroc_broker::accesspoint.GetAccessString());
+    }
+
+    // set the current working directory
+    char *cwd = paroc_utils::checkremove(&argc,&argv,"-cwd=");
+    if (cwd!=NULL) {
+        if (popc_chdir(cwd) != 0) {
+            printf("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
+        }
+    }
+
+    // Start the broker
+    if (status == 0) {
+        broker->Run();
+        delete broker;
+    } else if (broker != NULL) {
+        delete broker;
+    }
+
+    return status;
 }
