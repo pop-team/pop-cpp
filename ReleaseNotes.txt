@@ -1,3 +1,13 @@
+POP-C++ 3.0:
+
+- Stabilization of version 2.9
+
+
+POP-C++ 2.9:
+
+- Basic support for Windows
+
+
 POP-C++ 2.8
 
 - Reintroduce feature: Socket Communication Model (TCP/IP)
