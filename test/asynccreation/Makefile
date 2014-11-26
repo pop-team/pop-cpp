@@ -1,10 +1,5 @@
 all: app object
 
-noasync:
-	popcc -no-async-allocation -o main POPObject.ph POPObject.cc main.cc
-	popcc -no-async-allocation -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
-	./POPObject.obj -listlong > obj.map
-
 app:
 	popcc -o main POPObject.ph POPObject.cc main.cc
 
