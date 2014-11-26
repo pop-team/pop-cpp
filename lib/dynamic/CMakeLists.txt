@@ -28,6 +28,9 @@ endif(WIN32)
 
 set(POPCPP_Parclass_COMPILER_FLAGS -parclass-nobroker -c -o)
 set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
+set(POPCC_PARCLASS_COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS})
+set(POPCC_PARCLASS_SERVICE_COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS})
+set(POPCC_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 
 add_library(popc_common
     accesspoint.cc
@@ -78,178 +81,92 @@ add_custom_command(OUTPUT paroc_objmain.std.o
 add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o)
 add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o)
 
-#BUILD .ph file
-#paroc_service_base.ph
-add_custom_command(OUTPUT paroc_service_base.ph.stub_client.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} paroc_service_base.ph.stub_client.o paroc_service_base.ph
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS paroc_service_base.ph
-    )
+# Compile a .ph file into a .ph.stub_client.o
+function(popcc_compile_ph ph_file)
+add_custom_command(
+    OUTPUT ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o
+    COMMAND ${POPCC_PARCLASS_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o ${ph_file} -I${POPCPP_INCLUDE_PATH}
+    DEPENDS ${ph_file})
+endfunction(popcc_compile_ph)
 
-#jobmgr.ph
-add_custom_command(OUTPUT jobmgr.ph.stub_client.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} jobmgr.ph.stub_client.o jobmgr.ph
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS jobmgr.ph
-    )
+# Compile a cxx file into a .o
+function(popcc_compile_cxx cxx_file)
+add_custom_command(
+    OUTPUT ${POPCC_OUTPUT_DIR}/${cxx_file}.o
+    COMMAND ${POPCC_PARCLASS_SERVICE_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${cxx_file} -I${POPCPP_INCLUDE_PATH}
+    DEPENDS ${cxx_file})
+endfunction(popcc_compile_cxx)
 
-#popc_search_node.ph
-add_custom_command(OUTPUT popc_search_node.ph.stub_client.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} popc_search_node.ph.stub_client.o popc_search_node.ph
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS popc_search_node.ph
-    )
+# Build .ph files
 
-#codemgr.ph
-add_custom_command(OUTPUT codemgr.ph.stub_client.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} codemgr.ph.stub_client.o codemgr.ph
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS codemgr.ph
-    )
+popcc_compile_ph(paroc_service_base.ph)
+popcc_compile_ph(jobmgr.ph)
+popcc_compile_ph(popc_search_node.ph)
+popcc_compile_ph(codemgr.ph)
+popcc_compile_ph(remotelog.ph)
+popcc_compile_ph(objectmonitor.ph)
+popcc_compile_ph(batchmgr.ph)
+popcc_compile_ph(appservice.ph)
+popcc_compile_ph(popfilemanager.ph)
 
-#remotelog.ph
-add_custom_command(OUTPUT remotelog.ph.stub_client.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} remotelog.ph.stub_client.o remotelog.ph
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS remotelog.ph
-    )
+set(POPCC_GENERATED_STUBS
+    ${POPCC_OUTPUT_DIR}/paroc_service_base.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/jobmgr.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/popc_search_node.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/codemgr.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/remotelog.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/objectmonitor.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/appservice.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/batchmgr.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/popfilemanager.ph.stub_client.o)
 
-#objectmonitor.ph
-add_custom_command(OUTPUT objectmonitor.ph.stub_client.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} objectmonitor.ph.stub_client.o objectmonitor.ph
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS objectmonitor.ph
-    )
+add_custom_target(paroc_stub_parclass ALL DEPENDS ${POPCC_GENERATED_STUBS})
 
-#batchmgr.ph
-add_custom_command(OUTPUT batchmgr.ph.stub_client.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} batchmgr.ph.stub_client.o batchmgr.ph
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS batchmgr.ph
-    )
+# Build CXX files
 
-#appservice.ph
-add_custom_command(OUTPUT appservice.ph.stub_client.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} appservice.ph.stub_client.o appservice.ph
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS appservice.ph
-    )
+popcc_compile_cxx(popc_logger.cpp)
+popcc_compile_cxx(benchmark.cc)
+popcc_compile_cxx(broker.cc)
+popcc_compile_cxx(broker_receive.cc)
+popcc_compile_cxx(broker_serve.cc)
+popcc_compile_cxx(buffer_xdr.cc)
+popcc_compile_cxx(combox.cc)
+popcc_compile_cxx(combox_factory.cc)
+popcc_compile_cxx(combox_socket.cc)
+popcc_compile_cxx(nodethread.cc)
+popcc_compile_cxx(popc_search_node_info.cc)
+popcc_compile_cxx(response.cc)
+popcc_compile_cxx(request.cc)
+popcc_compile_cxx(utils.cc)
+popcc_compile_cxx(object.cc)
+popcc_compile_cxx(system.cc)
+popcc_compile_cxx(interface.cc)
+popcc_compile_cxx(popc_allocator_tcpip_local.cpp)
+popcc_compile_cxx(popc_allocator_tcpip_ssh.cpp)
 
-#popfilemanager.ph
-add_custom_command(OUTPUT popfilemanager.ph.stub_client.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} popfilemanager.ph.stub_client.o popfilemanager.ph
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS popfilemanager.ph
-    )
+set(POPCC_GENERATED_FILES
+    ${POPCC_OUTPUT_DIR}/benchmark.cc.o
+    ${POPCC_OUTPUT_DIR}/broker.cc.o
+    ${POPCC_OUTPUT_DIR}/broker_receive.cc.o
+    ${POPCC_OUTPUT_DIR}/broker_serve.cc.o
+    ${POPCC_OUTPUT_DIR}/buffer_xdr.cc.o
+    ${POPCC_OUTPUT_DIR}/combox.cc.o
+    ${POPCC_OUTPUT_DIR}/combox_factory.cc.o
+    ${POPCC_OUTPUT_DIR}/combox_socket.cc.o
+    ${POPCC_OUTPUT_DIR}/nodethread.cc.o
+    ${POPCC_OUTPUT_DIR}/popc_logger.cpp.o
+    ${POPCC_OUTPUT_DIR}/popc_search_node_info.cc.o
+    ${POPCC_OUTPUT_DIR}/response.cc.o
+    ${POPCC_OUTPUT_DIR}/request.cc.o
+    ${POPCC_OUTPUT_DIR}/utils.cc.o
+    ${POPCC_OUTPUT_DIR}/object.cc.o
+    ${POPCC_OUTPUT_DIR}/system.cc.o
+    ${POPCC_OUTPUT_DIR}/interface.cc.o
+    ${POPCC_OUTPUT_DIR}/popc_allocator_tcpip_local.cpp.o
+    ${POPCC_OUTPUT_DIR}/popc_allocator_tcpip_ssh.cpp.o
+    ${POPCC_GENERATED_STUBS})
 
-add_custom_target(paroc_stub_parclass ALL DEPENDS paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o)
-
-#popc_logger.cpp
-add_custom_command(OUTPUT popc_logger.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_logger.o popc_logger.cpp
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS popc_logger.cpp)
-
-add_custom_command(OUTPUT benchmark.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} benchmark.o benchmark.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS benchmark.cc)
-
-add_custom_command(OUTPUT broker.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} broker.o broker.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS broker.cc)
-
-add_custom_command(OUTPUT broker_receive.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} broker_receive.o broker_receive.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS broker_receive.cc)
-
-add_custom_command(OUTPUT broker_serve.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} broker_serve.o broker_serve.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS broker_serve.cc)
-
-add_custom_command(OUTPUT buffer_xdr.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} buffer_xdr.o buffer_xdr.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS buffer_xdr.cc)
-
-add_custom_command(OUTPUT combox.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} combox.o combox.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS combox.cc)
-
-add_custom_command(OUTPUT combox_factory.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} combox_factory.o combox_factory.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS combox_factory.cc)
-
-add_custom_command(OUTPUT combox_socket.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} combox_socket.o combox_socket.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS combox_socket.cc)
-
-add_custom_command(OUTPUT nodethread.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} nodethread.o nodethread.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS nodethread.cc)
-
-
-add_custom_command(OUTPUT popc_search_node_info.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_search_node_info.o popc_search_node_info.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS popc_search_node_info.cc)
-
-add_custom_command(OUTPUT response.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} response.o response.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS response.cc)
-
-add_custom_command(OUTPUT request.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} request.o request.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS request.cc)
-
-add_custom_command(OUTPUT utils.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} utils.o utils.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS utils.cc)
-
-add_custom_command(OUTPUT object.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} object.o object.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS object.cc)
-
-add_custom_command(OUTPUT system.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} system.o system.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS system.cc)
-
-add_custom_command(OUTPUT interface.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} interface.o interface.cc
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS interface.cc)
-
-add_custom_command(OUTPUT popc_allocator_tcpip_local.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_allocator_tcpip_local.o popc_allocator_tcpip_local.cpp
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS popc_allocator_tcpip_local.cpp)
-
-add_custom_command(OUTPUT popc_allocator_tcpip_ssh.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_allocator_tcpip_ssh.o popc_allocator_tcpip_ssh.cpp
-    -I${POPCPP_INCLUDE_PATH}
-    DEPENDS popc_allocator_tcpip_ssh.cpp)
-
-set(POPCC_GENERATED_FILES benchmark.o broker.o broker_receive.o broker_serve.o
-    buffer_xdr.o combox.o combox_factory.o combox_socket.o nodethread.o
-    popc_logger.o popc_search_node_info.o response.o request.o utils.o
-    object.o system.o interface.o popc_allocator_tcpip_local.o
-    popc_allocator_tcpip_ssh.o paroc_service_base.ph.stub_client.o
-    jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o
-    codemgr.ph.stub_client.o remotelog.ph.stub_client.o
-    objectmonitor.ph.stub_client.o appservice.ph.stub_client.o
-    batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o)
+# Build the interface (Win/Lin)
 
 if(WIN32)
     set(intface_cc_file popc_intface_windows.cc)
@@ -265,6 +182,8 @@ add_custom_command(
         -I${POPCPP_INCLUDE_PATH}
     DEPENDS ${intface_cc_file})
 
+# Final link steps
+
 add_custom_command(
     OUTPUT libpopc_common.a
     COMMAND ar r libpopc_common.a ${intface_o_file} ${POPCC_GENERATED_FILES}
@@ -274,6 +193,8 @@ add_custom_command(
 add_custom_target(
     popc_common_link ALL
     DEPENDS libpopc_common.a ${intface_o_file} ${POPCC_GENERATED_FILES})
+
+# Install all the files
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/appservice.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/batchmgr.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
