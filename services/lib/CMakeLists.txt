@@ -1,7 +1,7 @@
 #
-# POP-C++ 
+# POP-C++
 # services components
-# 
+#
 # AUTHOR: vanhieu.nguyen
 # DATE: 2013/07/25
 #
@@ -27,6 +27,8 @@ set(POPCPP_SERVICES_INSTALL services)
 include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_INCLUDE_PATH})
 link_directories(${CMAKE_SOURCE_DIR}/lib/dynamic)
 
+# Add more warnings
+add_definitions(-Wall -Wextra -Werror)
 
 #BUILD .ph file
 #paroc_service_base.ph
@@ -104,7 +106,7 @@ add_custom_command(OUTPUT popc_logger.o
 
 #service_base.cc
 add_custom_command(OUTPUT service_base.o
-                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} service_base.o service_base.cc 
+                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} service_base.o service_base.cc
 		  -I${POPCPP_INCLUDE_PATH}
                   DEPENDS service_base.cc)
 

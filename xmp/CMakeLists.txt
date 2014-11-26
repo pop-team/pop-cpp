@@ -1,13 +1,15 @@
 #
-# POP-C++ 
+# POP-C++
 # XMP support component and POP-C++ advanced library
-# 
+#
 # AUTHOR: Valentin Clement
 # DATE: 2012/11/29
 #
 
+# Add more warnings
+add_definitions(-Wall -Wextra -Werror)
 
-add_subdirectory(src) 
+add_subdirectory(src)
 
 set(POPCPP_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include/dynamic)
 

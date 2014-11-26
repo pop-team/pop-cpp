@@ -1,5 +1,5 @@
 #
-# POP-C++ 
+# POP-C++
 # Advanced library build process
 #
 # AUTHOR: Valentin Clement
@@ -8,6 +8,9 @@
 
 # Refers to the dynamic version of POP-C++
 include_directories(${CMAKE_SOURCE_DIR}/include/dynamic)
+
+# Add more warnings
+add_definitions(-Wall -Wextra -Werror)
 
 # Build libpopc_advanced
 add_library(popc_advanced

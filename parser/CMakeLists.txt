@@ -5,6 +5,9 @@ project(POPC_PARSER)
 include(CheckIncludeFile)
 include(CheckLibraryExists)
 
+# Add more warnings
+add_definitions(-Wall -Wextra -Werror)
+
 if(NOT POPCPP_COMPILER)
   message(STATUS "Configuring POP-C++ Compiler separately than library project.")
   if(NOT EXISTS "../config.h")
@@ -58,8 +61,6 @@ if(POPCPP_COMPILER)
 else(POPCPP_COMPILER)
   set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/../lib/dynamic)
 endif(POPCPP_COMPILER)
-
-add_definitions(-Wall -Wextra -Werror)
 
 if(UNIX)
   add_executable(popcpp
