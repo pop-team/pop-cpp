@@ -61,7 +61,6 @@ add_library(popc_common
 
 SET (POPCCOMMON -Wl,-ldl -Wl)
 
-
 TARGET_LINK_LIBRARIES(popc_common ${POPCCOMMON})
 
 add_custom_command(OUTPUT paroc_infmain.std.o
@@ -136,7 +135,6 @@ add_custom_command(OUTPUT appservice.ph.stub_client.o
     DEPENDS appservice.ph
     )
 
-
 #popfilemanager.ph
 add_custom_command(OUTPUT popfilemanager.ph.stub_client.o
     COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS} popfilemanager.ph.stub_client.o popfilemanager.ph
@@ -145,7 +143,6 @@ add_custom_command(OUTPUT popfilemanager.ph.stub_client.o
     )
 
 add_custom_target(paroc_stub_parclass ALL DEPENDS paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o)
-
 
 #popc_logger.cpp
 add_custom_command(OUTPUT popc_logger.o
@@ -244,31 +241,39 @@ add_custom_command(OUTPUT popc_allocator_tcpip_ssh.o
     -I${POPCPP_INCLUDE_PATH}
     DEPENDS popc_allocator_tcpip_ssh.cpp)
 
+set(POPCC_GENERATED_FILES benchmark.o broker.o broker_receive.o broker_serve.o
+    buffer_xdr.o combox.o combox_factory.o combox_socket.o nodethread.o
+    popc_logger.o popc_search_node_info.o response.o request.o utils.o
+    object.o system.o interface.o popc_allocator_tcpip_local.o
+    popc_allocator_tcpip_ssh.o paroc_service_base.ph.stub_client.o
+    jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o
+    codemgr.ph.stub_client.o remotelog.ph.stub_client.o
+    objectmonitor.ph.stub_client.o appservice.ph.stub_client.o
+    batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o)
+
 if(WIN32)
-    add_custom_command(OUTPUT popc_intface_windows.o
-                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_intface_windows.o popc_intface_windows.cc
-          -I${POPCPP_INCLUDE_PATH}
-                  DEPENDS popc_intface_windows.cc)
-    add_custom_command(OUTPUT libpopc_common.a
-                  COMMAND ar r libpopc_common.a benchmark.o broker.o broker_receive.o broker_serve.o buffer_xdr.o combox.o combox_factory.o combox_socket.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o object.o system.o interface.o popc_allocator_tcpip_local.o popc_allocator_tcpip_ssh.o popc_intface_windows.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
-                  DEPENDS benchmark.o broker.o broker_receive.o broker_serve.o buffer_xdr.o combox.o combox_factory.o combox_socket.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o object.o system.o interface.o popc_allocator_tcpip_local.o popc_allocator_tcpip_ssh.o popc_intface_windows.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
-          COMMENT "Compile POP-C++ generated lib for popc_common")
-
-
-    add_custom_target(popc_common_link ALL DEPENDS libpopc_common.a benchmark.o broker.o broker_receive.o broker_serve.o buffer_xdr.o combox.o combox_factory.o combox_socket.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o object.o system.o interface.o popc_allocator_tcpip_local.o popc_allocator_tcpip_ssh.o popc_intface_windows.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o)
+    set(intface_cc_file popc_intface_windows.cc)
+    set(intface_o_file popc_intface_windows.o)
 elseif(UNIX)
-    add_custom_command(OUTPUT popc_intface_linux.o
-                  COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} popc_intface_linux.o popc_intface_linux.cc
-          -I${POPCPP_INCLUDE_PATH}
-                  DEPENDS popc_intface_linux.cc)
-    add_custom_command(OUTPUT libpopc_common.a
-                  COMMAND ar r libpopc_common.a benchmark.o broker.o broker_receive.o broker_serve.o buffer_xdr.o combox.o combox_factory.o combox_socket.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o object.o system.o interface.o popc_allocator_tcpip_local.o popc_allocator_tcpip_ssh.o popc_intface_linux.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
-                  DEPENDS benchmark.o broker.o broker_receive.o broker_serve.o buffer_xdr.o combox.o combox_factory.o combox_socket.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o object.o system.o interface.o popc_allocator_tcpip_local.o popc_allocator_tcpip_ssh.o popc_intface_linux.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o
-          COMMENT "Compile POP-C++ generated lib for popc_common")
-
-
-    add_custom_target(popc_common_link ALL DEPENDS libpopc_common.a benchmark.o broker.o broker_receive.o broker_serve.o buffer_xdr.o combox.o combox_factory.o combox_socket.o nodethread.o popc_logger.o popc_search_node_info.o response.o request.o utils.o object.o system.o interface.o popc_allocator_tcpip_local.o popc_allocator_tcpip_ssh.o popc_intface_linux.o paroc_service_base.ph.stub_client.o jobmgr.ph.stub_client.o popc_search_node.ph.stub_client.o codemgr.ph.stub_client.o remotelog.ph.stub_client.o objectmonitor.ph.stub_client.o appservice.ph.stub_client.o batchmgr.ph.stub_client.o popfilemanager.ph.stub_client.o)
+    set(intface_cc_file popc_intface_linux.cc)
+    set(intface_o_file popc_intface_linux.o)
 endif(WIN32)
+
+add_custom_command(
+    OUTPUT ${intface_o_file}
+    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} ${intface_o_file} ${intface_cc_file}
+        -I${POPCPP_INCLUDE_PATH}
+    DEPENDS ${intface_cc_file})
+
+add_custom_command(
+    OUTPUT libpopc_common.a
+    COMMAND ar r libpopc_common.a ${intface_o_file} ${POPCC_GENERATED_FILES}
+    DEPENDS ${intface_o_file} ${POPCC_GENERATED_FILES}
+    COMMENT "Compile POP-C++ generated lib for popc_common")
+
+add_custom_target(
+    popc_common_link ALL
+    DEPENDS libpopc_common.a ${intface_o_file} ${POPCC_GENERATED_FILES})
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/appservice.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/batchmgr.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
