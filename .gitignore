@@ -28,6 +28,11 @@ parser/parser.yy.cc
 parser/popcc.cc
 parser/popcc
 parser/popcpp
+
+# Clean tests
+!test/*/Makefile
 test/*/main
+test/*/*.o
+test/*/*.map
 test/*/_popc*
 __cmd_to_execute__
