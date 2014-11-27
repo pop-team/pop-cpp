@@ -18,17 +18,18 @@
 #include "paroc_utils.h"
 #include "debug.h"
 
+//Declaration in parser.lex:
 
- //Declaration in parser.lex:
+int PutToken(char *str);
+int PutToken(char chr);
+char *GetToken(int yyval);
 
- int PutToken(char *str);
- int PutToken(char chr);
- char *GetToken(int yyval);
+//Utility functions
 
- void errormsg(const  char *s);
- void setReturnParam(int pointer, int ref, int const_virtual); // Methode to group code that set C++ specific C++ Param attributes
- void setPOPCMethodeModifier(int settings); // mehtode to group code that set/controlle Methode attributes (sync, conc, ...)
- void errorGlobalMehtode(bool isGlobal);
+void errormsg(const  char *s);
+void setReturnParam(int pointer, int ref, int const_virtual); // Function to group code that set C++ specific C++ Param attributes
+void setPOPCMethodeModifier(int settings); // Function to group code that set/controlle Methode attributes (sync, conc, ...)
+void global_method_error(bool isGlobal);
 
 extern "C" {
     int yywrap();
@@ -1583,28 +1584,28 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
     setReturnParam($2,$3, 0);
 
     method->isGlobalConst = ($8 == 1 ? true : false);
-    errorGlobalMehtode(method->isGlobalConst);
+    global_method_error(method->isGlobalConst);
 }
 | const_virutal_specifier decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
     setReturnParam($3,$4, $1);
 
     method->isGlobalConst = ($9 == 1 ? true : false);
-    errorGlobalMehtode(method->isGlobalConst);
+    global_method_error(method->isGlobalConst);
 }
 | decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
     setReturnParam($3,$4, $2);
 
     method->isGlobalConst = ($9 == 1 ? true : false);
-    errorGlobalMehtode(method->isGlobalConst);
+    global_method_error(method->isGlobalConst);
 }
 | const_virutal_specifier decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
     setReturnParam($4,$5, ($1 | $3));
 
     method->isGlobalConst = ($10 == 1 ? true : false);
-    errorGlobalMehtode(method->isGlobalConst);
+    global_method_error(method->isGlobalConst);
 }
 | fct_specifier const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
@@ -1612,14 +1613,14 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
     setPOPCMethodeModifier($1);
 
     method->isGlobalConst = ($11 == 1 ? true : false);
-    errorGlobalMehtode(method->isGlobalConst);
+    global_method_error(method->isGlobalConst);
 }
 | '[' marshal_opt_list ']' const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
 {
     setReturnParam($7,$8, ($4 | $6));
 
     method->isGlobalConst = ($13 == 1 ? true : false);
-    errorGlobalMehtode(method->isGlobalConst);
+    global_method_error(method->isGlobalConst);
 }
 | fct_specifier  '[' marshal_opt_list ']' const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
 {
@@ -1627,7 +1628,7 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
     setPOPCMethodeModifier($1);
 
     method->isGlobalConst = ($14 == 1 ? true : false);
-    errorGlobalMehtode(method->isGlobalConst);
+    global_method_error(method->isGlobalConst);
 }
 ;
 
@@ -2551,11 +2552,11 @@ void setPOPCMethodeModifier(int settings)
     }
 }
 
-void errorGlobalMehtode(bool isGlobal)
+void global_method_error(bool isGlobal)
 {
     if(isGlobal)
     {
-        errormsg("inspectors/const member functions are supported in the current version of POP-C++");
+        errormsg("inspectors/const member functions are not supported in POP-C++");
         exit(1);
     }
     else
