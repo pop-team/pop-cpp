@@ -1,9 +1,7 @@
 POP-C++ 3.0
 ===========
 
-Version 3.0 of POP-C++ is in active development. The last stable version is the
-version 2.5. This version is expected to be stabilized and officially released
-in late 2014 / early 2015.
+Version 3.0 is under development, use it at your own risk.
 
 BEFORE STARTING
 ---------------
