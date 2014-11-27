@@ -1,8 +1,20 @@
+# Ignore CMake generated files
 CMakeCache.txt
 CMakeFiles
 Makefile
 cmake_install.cmake
+install_manifest.txt
+
+# Ignore files configured by cmake
 config.h
+services/popcobjrun
+
+# Ignore common generated files in lib/dynamic
+# TODO: These files should not be generated here
+lib/dynamic/*.o
+lib/dynamic/*.a
+
+# Ignore configured scripts
 scripts/popc-runtime-env.in
 scripts/popc-runtime-env.sh
 scripts/popc-user-env.csh
@@ -10,18 +22,8 @@ scripts/popc-user-env.sh
 scripts/popc_script_setup
 scripts/popc_setup
 scripts/popcrun
-services/popcobjrun
-install_manifest.txt
-lib/dynamic/*.o
-lib/dynamic/*.a
-services/lib/*.o
-services/lib/*.a
-services/lib/appservice
-services/lib/jobmgr
-services/lib/jobmgr_launcher
-services/lib/localservice_launcher
-services/lib/popc_search_node
-services/lib/popfilemanager
+
+#Ignore generated files in the parser
 parser/parser.tab.cc
 parser/parser.tab.h
 parser/parser.yy.cc
