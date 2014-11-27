@@ -1,10 +1,12 @@
-#include <string.h>
-#include <stdio.h>
+#include "popc_intface.h"
+
+//#include <string.h>
+//#include <stdio.h>
 #include "type.h"
 
 TypeArray::TypeArray(char *name, char *cardstr, DataType *base): DataType(name)
 {
-	cardinal=strdup(cardstr);
+	cardinal=popc_strdup(cardstr);
 	typebase=base;
 }
 

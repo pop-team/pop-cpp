@@ -1,6 +1,7 @@
+#include "popc_intface.h"
 
-#include "string.h"
-#include "stdio.h"
+//#include "string.h"
+//#include "stdio.h"
 #include "type.h"
 
 //Pointer of a type....
@@ -136,7 +137,7 @@ bool TypePtr::GetDeclaration(const char *varname, char *output)
 
 	for (int i=0;i<nptr;i++) {
 		strcat(output,"*");
-		if(i < constPos.size())
+		if(i < static_cast<int>(constPos.size()))
 		{
 			if(constPos[i])
 			{ 
@@ -159,7 +160,7 @@ void TypePtr::GetExpandType(char *output)
 void TypePtr::SetSize(char *sizestr)
 {
 	if (size!=NULL) free(size);
-	size=(sizestr==NULL)? NULL : strdup(sizestr);
+	size=(sizestr==NULL)? NULL : popc_strdup(sizestr);
 }
 
 int TypePtr::IsPointer()

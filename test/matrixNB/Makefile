@@ -6,12 +6,12 @@ fast:
 	./MatWorker.obj -listlong > obj.map
 
 slow:
-	popcc -o MatMul Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc main.cc
-	popcc -object -o MatWorker.obj Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc
+	popcc -async-allocation -o MatMul Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc main.cc
+	popcc -async-allocation  -object -o MatWorker.obj Matrix2D.cc Matrix2Dlc.cc Matrix2Dcl.cc MatWorker.ph MatWorker.cc
 	./MatWorker.obj -listlong > obj.map
 
 clean:
 	rm -f *.obj MatMul *.o obj.map
 
 run:
-	popcrun obj.map ./MatMul 600 10 5 log
+	popcrun obj.map ./MatMul 600 10 5 log 1

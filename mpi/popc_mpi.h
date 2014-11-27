@@ -17,12 +17,12 @@ public:
 	POPMPI(int np);
 	~POPMPI();
 
-	//Initialize...
+	// Initialize
 	bool Create(int np);
 	bool Success();
 	int GetNP();
 
-	//Operation...
+	// Operation
 	bool ExecuteMPI();
 	inline operator T*();
 

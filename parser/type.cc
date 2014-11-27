@@ -1,8 +1,10 @@
+#include "popc_intface.h"
+
 #include "type.h"
-#include <string.h>
-#include <stdio.h>
+//#include <string.h>
+//#include <stdio.h>
 #include "parser.h"
-#include <assert.h>
+//#include <assert.h>
 
 
 char DataType::stdType[MAXSTDTYPES][32]={"bool",
@@ -52,7 +54,7 @@ DataType::DataType(char *tname)
 			tmp=strtok(NULL,sep);
 			if (tmp!=NULL) strcat(str1," ");
 		}
-		name=strdup(str1);
+		name=popc_strdup(str1);
 
 		for (int i=0;i<MAXSTDTYPES;i++) if (strcmp(name,stdType[i])==0) {
 			isStandard=true;
@@ -151,7 +153,7 @@ void DataType::SetName(const char *tname)
 	if (tname==NULL) { 
 		name=NULL;
 	} else {
-		name=strdup(tname);
+		name=popc_strdup(tname);
 		isStandard=false;
 		for (int i=0;i<MAXSTDTYPES;i++) if (strcmp(name,stdType[i])==0) {
 			isStandard=true;

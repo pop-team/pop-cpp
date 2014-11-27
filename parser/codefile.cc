@@ -9,27 +9,29 @@
  * clementval	Jul/Aug 2012	Add information for compilation process (core compilation & asynchronous parallel object allocation)
  */
 
+#include "popc_intface.h"
+
 #include "parser.h"
 #include "paroc_utils.h"
 #include "debug.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include <ctype.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+//#include <string.h>
+//#include <stdlib.h>
+//#include <stdio.h>
+//#include <assert.h>
+//#include <ctype.h>
+//#include <unistd.h>
+//#include <sys/stat.h>
+//#include <sys/types.h>
 
-#include <sys/types.h>
-#include <time.h>
+//#include <sys/types.h>
+//#include <time.h>
 
 
 CodeFile::CodeFile(char *fname)
 {
 	isCoreCompilation = false;				// Core compilation is disable by default.
 	isAsyncAllocationDisable = false;	// Asynchronous allocation is enable by default.
-	filename=(fname==NULL) ? NULL : strdup(fname);
+	filename = (fname == NULL) ? NULL : popc_strdup(fname);
 	codes.SetGrowby(1024);
 	outfile=NULL;
 	DataType *std;
@@ -43,8 +45,11 @@ CodeFile::CodeFile(char *fname)
 
 CodeFile::~CodeFile()
 {
-	if (filename!=NULL) free(filename);
-	if (outfile!=NULL) free(outfile);
+	if (filename != NULL) 
+	  free(filename);
+
+	if (outfile != NULL) 
+	  free(outfile);
 
 	EmptyCodeData();
 }
@@ -62,26 +67,26 @@ void CodeFile::EmptyCodeData()
 	codes.SetSize(0);
 }
 
-void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker/*, bool isPOPCPPCompilation*/)
+void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker)
 {
-	int n;
-   n=classlist.GetSize();
-	int m=codes.GetSize();
-	for (int j=0;j<m;j++)
-	{
-		if (broker || codes[j]->Type()!=TYPE_PACKOBJECT) codes[j]->GenerateCode(output);
+	int m = codes.GetSize();
+	for (int j = 0; j < m; j++) {
+		if (broker || codes[j]->Type() != TYPE_PACKOBJECT) {
+		  codes[j]->GenerateCode(output);
+		}
 	}
 
-	for (int j=0;j<m;j++)
-	{
-		if (codes[j]->Type()==TYPE_CLASS)
-		{
-			Class &cl=*(Class *)(codes[j]);
-			char *clfname=cl.GetFileInfo();
-			if (filename==NULL || clfname==NULL || SameFile(clfname,filename))
-			{
-				if (client) cl.GenerateClient(output/*, isPOPCPPCompilation*/);
-				if (broker) cl.GenerateBroker(output/*, isPOPCPPCompilation*/);
+	for (int j = 0; j < m; j++) {
+		if (codes[j]->Type() == TYPE_CLASS) {
+			Class &cl = *(Class *)(codes[j]);
+			char *clfname = cl.GetFileInfo();
+			if (filename == NULL || clfname == NULL || SameFile(clfname, filename)) {
+				if (client) {
+				  cl.GenerateClient(output);
+				}
+				if (broker) {							
+				  cl.GenerateBroker(output);
+				}
 			}
 		}
 	}
@@ -103,8 +108,9 @@ char *CodeFile::GetFileName()
 
 void CodeFile::SetFileName(char *name)
 {
-	if (filename!=NULL) free(filename);
-	filename= (name==NULL) ? NULL: strdup(name);
+	if (filename != NULL) 
+	  free(filename);
+	filename = (name == NULL) ? NULL : popc_strdup(name);
 }
 
 char *CodeFile::GetOutputName()
@@ -114,8 +120,8 @@ char *CodeFile::GetOutputName()
 
 void CodeFile::SetOutputName(char *name)
 {
-	if (outfile!=NULL) free(outfile);
-	outfile= (name==NULL) ? NULL: strdup(name);
+	if (outfile != NULL) free(outfile);
+	outfile = (name == NULL) ? NULL : popc_strdup(name);
 }
 
 Class *CodeFile::FindClass(char *clname)
@@ -249,8 +255,7 @@ bool CodeFile::SameFile(char *file1, char *file2)
 	if (fn1==NULL)
 	{
 		fn1=file1;
-      char* res;
-		res=getcwd(dir1,255);
+		popc_getcwd(dir1,255);
 	}
 	else
 	{
@@ -259,23 +264,18 @@ bool CodeFile::SameFile(char *file1, char *file2)
 		strncpy(dir1, file1,n);
 		dir1[n]=0;
 		fn1++;
-		if (*dir1!='/')
-		{
-         int _r1, _r2;
-         char* _ch1;
-         _ch1=getcwd(tmp,255);
-			_r1=chdir(dir1);
-         char* _ch2;
-			_ch2=getcwd(dir1,255);
-			_r2=chdir(tmp);
+		if (*dir1!='/') {
+      popc_getcwd(tmp,255);
+      popc_chdir(dir1);   
+      popc_getcwd(dir1,255);
+			popc_chdir(tmp);
 		}
 	}
 
 	if (fn2==NULL)
 	{
 		fn2=file2;
-      char* _ch;
-		_ch=getcwd(dir2,255);
+		popc_getcwd(dir2,255);
 	}
 	else
 	{
@@ -286,13 +286,10 @@ bool CodeFile::SameFile(char *file1, char *file2)
 		fn2++;
 		if (*dir2!='/')
 		{
-         int _r1, _r2;
-         char* _ch1;
-			_ch1=getcwd(tmp,255);
-			_r1=chdir(dir2);
-         char* _ch2;
-			_ch2=getcwd(dir2,255);
-			_r2=chdir(tmp);
+			popc_getcwd(tmp,255);
+			popc_chdir(dir2);
+			popc_getcwd(dir2,255);
+			popc_chdir(tmp);
 		}
 	}
 

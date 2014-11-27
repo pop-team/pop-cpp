@@ -10,7 +10,11 @@
 POPObject::POPObject()
 {	
    cout << "POPObject is processing its construction (5 secondes delay) on machine:" <<  (const char*)POPSystem::GetHost() << popcendl;
-	sleep(5);
+#ifndef __WIN32__
+    sleep(5);
+#else
+    Sleep(5000);
+#endif
    cout << "POPObject created (by JobMgr) on machine:" <<  (const char*)POPSystem::GetHost() << popcendl;
 }
 /*

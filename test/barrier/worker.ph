@@ -6,8 +6,8 @@ parclass Cworker
 {
   classuid(1002);
   public: 
-    Cworker() @{od.url("localhost");};
-    Cworker(int No) @{od.url("localhost");};
+    Cworker() @{od.url("localhost");od.executable("./Cworker.obj");};
+    Cworker(int No) @{od.url("localhost");od.executable("./Cworker.obj");};
     
     async seq void Work(POP_Barrier &b);
     sync seq void SetNo(int no);

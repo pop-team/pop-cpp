@@ -3,28 +3,20 @@
  * Author : Tuan Anh Nguyen
  * Description : Generate source code for the broker of parallel objects
  * Creation date : -
- * 
+ *
  * Modifications :
  * Authors		Date			Comment
  * P.Kuonen   	June 2011 	Modify to print all exceptions raised in methods
  * clementval	March 2012	Add Enum, Struct support
- * clementval	August 2012	Add asynchronous parallel object allocation (APOA) support 
+ * clementval	August 2012	Add asynchronous parallel object allocation (APOA) support
+ * vanhieu      July 2013       Modify line #925
  */
+
+#include "popc_intface.h"
 
 #include "parser.h"
 #include "paroc_utils.h"
 #include "debug.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include <ctype.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-
-#include <sys/types.h>
-#include <time.h>
 
 #define MIN_CLASSID 1000
 
@@ -34,7 +26,7 @@ Param::Param(DataType *ptype)
 {
 	name[0]=0;
 	mytype=ptype;
-	
+
 	paramSize=marshalProc=defaultVal=NULL;
 	isVoid=isArray=isRef=isConst=isInput=isOutput=false;
 }
@@ -127,10 +119,10 @@ int  Param::GetAttr()
 
 bool Param::CanMarshal()
 {
-	if (mytype==NULL) 
+	if (mytype==NULL)
 		return false;
 	int stat=mytype->CanMarshal();
-	if (marshalProc!=NULL || stat==1 || (stat==2 && paramSize!=NULL)) 
+	if (marshalProc!=NULL || stat==1 || (stat==2 && paramSize!=NULL))
 		return true;
 	return false;
 
@@ -138,14 +130,14 @@ bool Param::CanMarshal()
 
 bool Param::DeclareParam(char *output, bool header)
 {
-	if (mytype==NULL) return false;
-	if (isConst)
-	{
+	if (mytype == NULL)
+	  return false;
+	if (isConst) {
 		strcpy(output,"const ");
 		output+=strlen(output);
 	}
 	char tmpvar[1024];
-	
+
 	if (isRef) {
 		sprintf(tmpvar,"&%s", name);
 	} else if (isArray){
@@ -167,7 +159,7 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem)
 {
 	if (mytype==NULL) return false;
 	if (isVoid) return false;
-	
+
 	int nptr=mytype->IsPointer();
 	if (nptr==1 && paramSize==NULL)
 	{
@@ -335,14 +327,14 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
 
 bool Param::UserProc(char *output)
 {
-	if (mytype==NULL) 
+	if (mytype==NULL)
 		return false;
 
 	*output=0;
-	
-	if (marshalProc==0) 
+
+	if (marshalProc==0)
 		return false;
-		
+
 	char decl[1024];
 
 	mytype->GetDeclaration("param",decl);
@@ -366,14 +358,16 @@ ObjDesc::~ObjDesc()
 void ObjDesc::Generate(char *code)
 {
 	code[0]=0;
-	if (odstr==NULL) return;
-	strcpy(code,odstr);
+	if (odstr == NULL)
+	  return;
+	strcpy(code, "\n  ");
+	strcat(code, odstr);
 }
 
 void ObjDesc::SetCode(char *code)
 {
 	if (odstr!=NULL) free(odstr);
-	odstr=(code==NULL)? NULL : strdup(code);
+	odstr=(code==NULL)? NULL : popc_strdup(code);
 }
 
 //END ObjectDesc - object description class
@@ -406,25 +400,30 @@ void ClassMember::SetLineInfo(int linenum)
 	line=linenum;
 }
 
-void ClassMember::GenerateClient(CArrayChar &output)
+void ClassMember::GenerateClient(CArrayChar& /*output*/)
 {
 }
 
-void ClassMember::GenerateHeader(CArrayChar &output, bool interface)
+void ClassMember::generate_header_pog(CArrayChar &output, bool interface)
+{
+  GenerateHeader(output, interface);
+}
+
+void ClassMember::GenerateHeader(CArrayChar& output, bool /*interface*/)
 {
 	char *fname;
 	if (line>0 && (fname=myclass->GetFileInfo())!=NULL)
 	{
 		char str[1024];
-		sprintf(str,"\n# %d \"%s\"\n",line,fname);
+		sprintf(str,"\n# %d \"%s\"\n", line, fname);
 		output.InsertAt(-1,str,strlen(str));
 	}
 
 }
 
-// END  ClassMember implementation....
+// END of ClassMember implementation
 
-//Implement Attribute class
+// Implement Attribute class
 Attribute::Attribute(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), attributes(0,1)
 {
 }
@@ -454,11 +453,11 @@ Param *Attribute::NewAttribute()
 /**
  * Implementation of Enumeration class
  */
- 
+
 // enum type constrcutor
 Enumeration::Enumeration(Class *cl, AccessType myaccess): ClassMember(cl, myaccess)
 {
-	
+
 }
 
 // enum type destructor
@@ -485,18 +484,18 @@ void Enumeration::GenerateHeader(CArrayChar &output, bool interface){
 	output.InsertAt(-1, "enum ",strlen("enum "));
 	output.InsertAt(-1,name.c_str(),strlen(name.c_str()));
 	output.InsertAt(-1, "{", 1);
-	output.InsertAt(-1, args.c_str(), strlen(args.c_str()));	
+	output.InsertAt(-1, args.c_str(), strlen(args.c_str()));
 	output.InsertAt(-1, "};", 2);
 }
 
 /**
  * Implementation of Structure class
  */
- 
+
 // struct type constrcutor
 Structure::Structure(Class *cl, AccessType myaccess): ClassMember(cl, myaccess)
 {
-	
+
 }
 
 // struct type destructor
@@ -520,7 +519,7 @@ void Structure::setObjects(std::string value)
 void Structure::setInnerDecl(std::string value)
 {
 	if(innerdecl.length()==0){
-		innerdecl = value;	
+		innerdecl = value;
 	} else {
 		innerdecl.append("\n");
 		innerdecl.append(value);
@@ -533,7 +532,7 @@ void Structure::GenerateHeader(CArrayChar &output, bool interface){
 	output.InsertAt(-1, "struct ",strlen("struct "));
 	output.InsertAt(-1, name.c_str(),strlen(name.c_str()));
 	output.InsertAt(-1, "{\n", 2);
-	output.InsertAt(-1, innerdecl.c_str(), strlen(innerdecl.c_str()));	
+	output.InsertAt(-1, innerdecl.c_str(), strlen(innerdecl.c_str()));
 	output.InsertAt(-1, "\n}", 2);
 	output.InsertAt(-1, objects.c_str(), strlen(objects.c_str()));
 	output.InsertAt(-1, ";", 1);
@@ -542,7 +541,7 @@ void Structure::GenerateHeader(CArrayChar &output, bool interface){
 /**
  * Implementation of TypeDefinition class
  */
- 
+
 // TypeDefinition constructor
 TypeDefinition::TypeDefinition(Class *cl, AccessType myaccess): ClassMember(cl, myaccess)
 {
@@ -611,7 +610,7 @@ void TypeDefinition::GenerateHeader(CArrayChar &output, bool interface){
 //Directives inside a parallel class
 Directive::Directive(Class *cl, char *directive): ClassMember(cl, PUBLIC)
 {
-	code=strdup(directive);
+	code=popc_strdup(directive);
 }
 
 Directive::~Directive()
@@ -619,7 +618,7 @@ Directive::~Directive()
 	if (code!=NULL) free(code);
 }
 
-void Directive::GenerateHeader(CArrayChar &output, bool interface)
+void Directive::GenerateHeader(CArrayChar &output, bool /*interface*/)
 {
 	if (code!=NULL)
 	{
@@ -633,17 +632,27 @@ void Directive::GenerateHeader(CArrayChar &output, bool interface)
 
 // BEGIN Method class implementation....
 
+const int Method::POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID = 9;
+const int Method::POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE = 0;
+const char* Method::POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME = "set_non_collective_rank";
+
 Method::Method(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), returnparam(NULL)
 {
 	name[0]=0;
 	id=0;
-	invoketype=invokesync;
-	isConcurrent=false;
-	isMutex=false;
-	isHidden=false;
-	isVirtual=false;
-	isPureVirtual=false;
-	isGlobalConst=false; // add by david
+	invoketype = invokesync;
+	isConcurrent = false;
+	isMutex = false;
+	isHidden = false;
+	isVirtual = false;
+	isPureVirtual = false;
+	isGlobalConst = false;
+
+	_is_collective = false;
+	_is_broadcast = false;
+	_is_scatter = false;
+	_is_gather = false;
+  _is_reduce = false;
 }
 
 Method::~Method()
@@ -654,19 +663,54 @@ Method::~Method()
 }
 
 /**
+ * Set a method as collective method
+ * @param type  Type of the collective method (Broadcast, Gather, Scatter, Reduce).
+ */
+void Method::set_collective(CollectiveType type)
+{
+  _is_collective = true;
+  switch (type) {
+    case POPC_COLLECTIVE_BROADCAST:
+      _is_broadcast = true;
+      break;
+    case POPC_COLLECTIVE_SCATTER:
+      _is_scatter = true;
+      break;
+    case POPC_COLLECTIVE_GATHER:
+      _is_gather = true;
+      break;
+    case POPC_COLLECTIVE_REDUCE:
+      _is_reduce = true;
+      break;
+    default:
+      _is_collective = false;
+  }
+}
+
+/**
+ * Check if the method is a collective method
+ * @return TRUE if the method is collective. FALSE if it is non-collective.
+ */
+bool Method::is_collective() {
+  if(_is_collective)
+    return true;
+  return false;
+}
+
+/**
  * Check if the parameter of a specific method can be marshalled
  * @return 0 in case of succes, -1 is the return argument cannot be marshalled, the number of the parameter that cannot be marshalled
  */
 int Method::CheckMarshal()
 {
 	// Avoid if access modifier is not public or if the method is hidden
-	if (GetMyAccess()!=PUBLIC || isHidden) 
+	if (GetMyAccess()!=PUBLIC || isHidden)
 		return 0;
 
-	if (MethodType()==METHOD_NORMAL && !returnparam.CanMarshal()) 
+	if (MethodType()==METHOD_NORMAL && !returnparam.CanMarshal())
 		return -1;
-		
-	// Get the number of parameter for this method	
+
+	// Get the number of parameter for this method
 	int n=params.GetSize();
 	Class *cl=GetClass();
 
@@ -676,8 +720,8 @@ int Method::CheckMarshal()
 			fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s : parallel object '%s' must be passed as reference to the remote object.\n",  cl->GetFileInfo(), line, cl->GetName(), name,params[i]->GetName());
 			return(i+1);
 		}
-		// Check if the parameter can be marshalled 
-		if (!params[i]->CanMarshal()) 
+		// Check if the parameter can be marshalled
+		if (!params[i]->CanMarshal())
 			return (i+1);
 	}
 	return 0;
@@ -700,7 +744,7 @@ void Method::GenerateReturn(CArrayChar &output, bool header, bool interface)
 	{
 		/* changed by David : no more warning, error ! */
 		//fprintf(stderr,"%s:%d: WARNING in %s::%s : the return argument '%s' is treated as a reference to a parallel object.\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name, returnparam.GetType()->GetName());
-		
+
 		fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s : the return argument '%s' should by a reference to a parallel object !\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name, returnparam.GetType()->GetName());
 		exit(1);
 	}
@@ -717,11 +761,11 @@ void Method::GenerateReturn(CArrayChar &output, bool header, bool interface)
 	}
 
 	char tmp[1024];
-	
+
 	type->GetDeclaration(NULL,tmp);
 	//if (returnparam.IsConst())sprintf(tmp, "const %s", tmp);
 	output.InsertAt(-1,tmp, strlen(tmp));
-	
+
 	// add by david
 	if (returnparam.IsRef() && !interface){
 //		if(!returnparam.GetType()->IsParClass())
@@ -730,7 +774,7 @@ void Method::GenerateReturn(CArrayChar &output, bool header, bool interface)
 			output.InsertAt(-1,tmp_const, strlen(tmp_const));
 //		}
 	}
-	
+
 	output.InsertAt(-1," ");
 }
 
@@ -742,15 +786,16 @@ void Method::GeneratePostfix(CArrayChar &output, bool header)
 		const char* tmp = " const ";
 		output.InsertAt(-1,tmp, strlen(tmp));
 	}
-	
-	if (header) output.InsertAt(-1,";",1);
+
+	if (header)
+	  output.InsertAt(-1,";",1);
 }
 
 void Method::GenerateName(CArrayChar &output, bool header)
 {
-	if (header) output.InsertAt(-1,name,strlen(name));
-	else
-	{
+	if (header) {
+	  output.InsertAt(-1,name,strlen(name));
+	} else {
 		char str[256];
 		sprintf(str,"%s::%s",GetClass()->GetName(),name);
 		output.InsertAt(-1,str,strlen(str));
@@ -774,158 +819,206 @@ void Method::GenerateArguments(CArrayChar &output, bool header)
 }
 
 
-void Method::GenerateClientPrefixBody(CArrayChar &output)
+void Method::GenerateClientPrefixBody(CArrayChar& /*output*/)
 {
 
 }
 
 void Method::GenerateClient(CArrayChar &output)
 {
+	if ((isVirtual && GetClass()->methodInBaseClass(*this)) || isHidden)
+	  return;
 
-	if ((isVirtual && GetClass()->methodInBaseClass(*this)) || isHidden) return;
-
-	//Check if we can generate marshalling stubs....
-	int t=CheckMarshal();
-	/*if (t!=0)
-	{
-		Class *cl=GetClass();
-		if (t==-1)
-			fprintf(stderr,"%s:%d: ERROR in %s::%s: unable to marshal the return argument.\n", cl->GetFileInfo(),line, cl->GetName(), name);
-		else
-			fprintf(stderr,"%s:%d: ERROR in %s::%s: unable to marshal argument %d.\n",  cl->GetFileInfo(), line, cl->GetName(), name,t);
-		exit(1);
-	}*/
-	
-	// more detailled error msg - added by david
-	if (t!=0)
-	{
-		Class *cl=GetClass();
-		if (t==-1)
-		{
-			if(returnparam.IsPointer())
+	// Check if we can generate marshalling stubs
+	int t = CheckMarshal();
+	if (t != 0) {
+		Class *cl = GetClass();
+		if (t == -1) {
+			if(returnparam.IsPointer()) {
 				fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s: The return argument is a Illegal Pointer.\n", cl->GetFileInfo(),line, cl->GetName(), name);
-			else
+			} else {
 				fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s: unable to marshal the return argument.\n", cl->GetFileInfo(),line, cl->GetName(), name);
-		}
-		else
-		{
-			if(params[t-1]->IsPointer())
+			}
+		} else {
+			if(params[t-1]->IsPointer()) {
 				fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s: Illegal Pointer Parameter at argument %d.\n",  cl->GetFileInfo(), line, cl->GetName(), name,t);
-			else
+			} else {
 				fprintf(stderr,"%s:%d: POP-C++ Error in %s::%s: unable to marshal argument %d.\n",  cl->GetFileInfo(), line, cl->GetName(), name,t);
+			}
 		}
 		exit(1);
 	}
-	
-	//  Method &met=*memberList[i]->GetMethod();
+
 	char tmpcode[10240];
 
-	char *clname=GetClass()->GetName();
-	int j,nb=params.GetSize();
-	//      Param &ret=met.returnparam;
+	char *clname = GetClass()->GetName();
+	int j, nb = params.GetSize();
 
-	//changed by david
-	GenerateReturn(output,false, true);
+	GenerateReturn(output, false, true);
 	GenerateName(output, false);
-	GenerateArguments(output,false);
-	GeneratePostfix(output,false);
+	GenerateArguments(output, false);
+	GeneratePostfix(output, false);
 
-	output.InsertAt(-1,"\n{",2);
+	output.InsertAt(-1, "\n{", 2);
 
 	GenerateClientPrefixBody(output);
-		
 
-	//Generate method body ---interface part
-	int invoke_code=0;
-	bool waitreturn=false;
-	if (MethodType()==METHOD_CONSTRUCTOR)
-	{
-		invoke_code|=INVOKE_CONSTRUCTOR | INVOKE_SYNC | INVOKE_MUTEX;
-		waitreturn=true;
-	}
-	else
-	{
-		if (invoketype==invokesync || (invoketype==autoselect && hasOutput()) )
-		{
-			invoke_code|=INVOKE_SYNC;
-			waitreturn=true;
+
+	// Generate method body
+	int invoke_code = 0;
+	bool waitreturn = false;
+	if (MethodType() == METHOD_CONSTRUCTOR) {
+		invoke_code |= INVOKE_CONSTRUCTOR | INVOKE_SYNC | INVOKE_MUTEX;
+		waitreturn = true;
+	} else {
+		if (invoketype == invokesync || (invoketype == autoselect && hasOutput()) ) {
+			invoke_code |= INVOKE_SYNC;
+			waitreturn = true;
 		}
-		//      else  invoke_code|=INVOKE_ASYNC;
 
-		if (isMutex) invoke_code|=INVOKE_MUTEX;
-		else if (isConcurrent) invoke_code|=INVOKE_CONC;
-		
-		
-
+		if (isMutex) {
+		  invoke_code |= INVOKE_MUTEX;
+		} else if (isConcurrent) {
+		  invoke_code |= INVOKE_CONC;
+		}
 	}
-	
-	
+
+
 	/**
-	 * Asynchronous Parallel Object Creation (APOA)
+	 * Asynchronous Parallel Object Allocation (APOA)
 	 * The code below is generated to support the APOA in POP-C++ application.
 	 * Generated at the beginning of each remote method invocation (not for constructor method).
 	 */
-	/* COMMENTED FOR 2.5 BUT TO BE PUT IN 2.5.1	 
-	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && !GetClass()->IsAsyncAllocationDisable()){
-		sprintf(tmpcode,"void* status;\npthread_join(_popc_async_construction_thread, &status); if(!isBinded()) {rprintf(\"Not allocated\"); return;}\n");
-		output.InsertAt(-1,tmpcode,strlen(tmpcode));	
+	if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && GetClass()->IsAsyncAllocationDisable()){
+            sprintf(tmpcode, "\n  // Waiting for APOA to be done before executing any method\n");
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
+            sprintf(tmpcode, "  void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n");
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
+            char* nameOfRetType = returnparam.GetType()->GetName();
+            if (MethodType()==METHOD_NORMAL &&!returnparam.GetType()->Same((char*)"void"))
+                sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    %s *tempObject = 0;\n    return (*tempObject);\n  }\n", nameOfRetType);
+            else  if (MethodType()==METHOD_NORMAL && returnparam.GetType()->Same((char*)"void"))
+                sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    return;\n  }\n");
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
 	} // End of APOA Support
-	*/
-	
-	sprintf(tmpcode,"\nparoc_mutex_locker __paroc_lock(_paroc_imutex);\n__paroc_buf->Reset();\nparoc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n__paroc_buf->SetHeader(__paroc_buf_header);\n",clname, id, invoke_code, name);
-	output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-	//Generate marshalling stub
+
+
+
+
+	if(!GetClass()->is_collective()) {
+  	sprintf(tmpcode, "\n  paroc_mutex_locker __paroc_lock(_paroc_imutex);");
+  	output.InsertAt(-1,tmpcode,strlen(tmpcode));
+ 	  sprintf(tmpcode, "\n  paroc_connection* _popc_connection = __paroc_combox->get_connection();\n  __paroc_buf->Reset();\n  paroc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __paroc_buf->SetHeader(__paroc_buf_header);\n", clname, id, invoke_code, name);
+  	output.InsertAt(-1,tmpcode,strlen(tmpcode));
+	} else {
+	  // Additional code if the method is not collective
+	  if(!is_collective() && MethodType() != METHOD_CONSTRUCTOR) {
+     	sprintf(tmpcode, "\n  // Generate additional information for a non collective call");
+    	output.InsertAt(-1,tmpcode,strlen(tmpcode));
+
+      sprintf(tmpcode, "\n  paroc_connection* _popc_connection = _popc_combox->get_connection();\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n  _popc_buffer->SetHeader(_popc_message_header);\n",
+        clname, POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID, POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE, POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME);
+    	output.InsertAt(-1, tmpcode, strlen(tmpcode));
+
+      sprintf(tmpcode, "\n   _popc_buffer->Push(\"rank\", \"int\", 1);\n  _popc_buffer->Pack(&_popc_default_rank_for_single_call, 1);\n  _popc_buffer->Pop();\n");
+      output.InsertAt(-1, tmpcode, strlen(tmpcode));
+
+      sprintf(tmpcode, "\n  popc_send_request(_popc_buffer, _popc_connection);\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header_call(CLASSUID_%s, %d, %d, \"%s\");", clname, id, invoke_code, name);
+      output.InsertAt(-1, tmpcode, strlen(tmpcode));
+
+      sprintf(tmpcode, "\n  _popc_buffer->SetHeader(_popc_message_header_call);");
+      output.InsertAt(-1, tmpcode, strlen(tmpcode));
+	  }	else {
+      sprintf(tmpcode, "\n  paroc_connection* _popc_connection = _popc_combox->get_connection();\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n  _popc_buffer->SetHeader(_popc_message_header);\n", clname, id, invoke_code, name);
+    	output.InsertAt(-1,tmpcode,strlen(tmpcode));
+    }
+	}
+
+
+
+	// Generate marshalling stub
 	for (j=0;j<nb;j++)
 	{
 		Param &p=*(params[j]);
-		if (p.InParam())
-		{
-			p.Marshal((char*)"(*__paroc_buf)", false,true,output);
+		if (p.InParam())  {
+		  if(!GetClass()->is_collective()) {
+  			p.Marshal((char*)"(*__paroc_buf)", false, true, output);
+  		} else {
+      	p.Marshal((char*)"  (*_popc_buffer)", false, true, output);
+  		}
 		}
 	}
 
-	//Finish marshaling buffer....now transmit the buffer....
+	// Marshalling code generation is done. Transmit buffer
 
-	strcpy(tmpcode,"\nparoc_Dispatch(__paroc_buf);");
+	if(!GetClass()->is_collective()) {
+	  strcpy(tmpcode,"\n  popc_send_request(__paroc_buf, _popc_connection);");
+	} else {
+    strcpy(tmpcode,"\n  popc_send_request(_popc_buffer, _popc_connection);");
+	}
 	output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-	if (waitreturn)
-	{
+	if (waitreturn) {
 #ifdef OD_DISCONNECT
 		strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())paroc_exception::paroc_throw_errno();\n\t}");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 		strcpy(tmpcode,"\n\telse\n");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #endif
-		strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv(*__paroc_combox)) paroc_exception::paroc_throw_errno();\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
+
+  	if(!GetClass()->is_collective()) {
+		  strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv((*__paroc_combox), _popc_connection)) paroc_exception::paroc_throw_errno();\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
+		} else {
+      strcpy(tmpcode,"\n  popc_recv_response(_popc_buffer, _popc_connection);");
+		}
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
-		for (j=0;j<nb;j++)
-		{
+		for (j=0;j<nb;j++) {
 			Param &p=*(params[j]);
-			if (p.OutParam())
-			{
-				p.UnMarshal((char*)"(*__paroc_buf)",false,false, true, output);
+			if (p.OutParam()) {
+  		  if(!GetClass()->is_collective()) {
+    			p.UnMarshal((char*)"(*__paroc_buf)",false,false, true, output);
+  	  	} else {
+    			p.UnMarshal((char*)"  (*_popc_buffer)",false,false, true, output);
+    		}
 			}
 		}
 
-		if (MethodType()==METHOD_NORMAL && !returnparam.GetType()->Same((char*)"void"))
-		{
+		if (MethodType() == METHOD_NORMAL && !returnparam.GetType()->Same((char*)"void")) {
 			bool reformat;
 			returnparam.DeclareVariable(tmpcode,reformat,false);
 			output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-			returnparam.UnMarshal((char*)"(*__paroc_buf)",reformat,true, true, output);
-			strcpy(tmpcode,"\n__paroc_buf->Reset();\nreturn ");
+
+
+    	if(!GetClass()->is_collective()) {
+  			returnparam.UnMarshal((char*)"(*__paroc_buf)", reformat, true, true, output);
+  			strcpy(tmpcode,"\n  __paroc_buf->Reset();");
+      } else {
+  			returnparam.UnMarshal((char*)"(*_popc_buffer)", reformat, true, true, output);
+  			strcpy(tmpcode,"\n  _popc_buffer->Reset();");
+      }
+		  output.InsertAt(-1,tmpcode,strlen(tmpcode));
+
+
+      // Added for new communication support
+      strcpy(tmpcode,"\n_popc_connection->reset();\nreturn ");
+
 			if (reformat) strcat(tmpcode,"&");
 			strcat(tmpcode,returnparam.name);
 			strcat(tmpcode,";\n}\n");
 			output.InsertAt(-1,tmpcode,strlen(tmpcode));
-		}
-		else
-		{
-			strcpy(tmpcode,"\n__paroc_buf->Reset();\n}\n");
+
+		} else {
+    	if(!GetClass()->is_collective()) {
+  			strcpy(tmpcode,"\n  __paroc_buf->Reset();\n");
+      } else {
+  			strcpy(tmpcode,"\n  _popc_buffer->Reset();\n");
+      }
 			output.InsertAt(-1,tmpcode,strlen(tmpcode));
+      // Added for new communication support
+                strcpy(tmpcode,"\n  _popc_connection->reset();}\n");
+		  output.InsertAt(-1,tmpcode,strlen(tmpcode));
 		}
 	}
 	else
@@ -949,10 +1042,53 @@ void Method::GenerateClient(CArrayChar &output)
 		strcpy(tmpcode,"\n\tif(time_alive > 0 && time_control > 0 ){\n\t\toldTime=__paroc_combox->GetTimeout();\n\t\t__paroc_combox->SetTimeout(time_alive);\n\t\t__paroc_combox->RecvAck();\n\t\t__paroc_combox->SetTimeout(oldTime);\n\t}");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #else
-		strcpy(tmpcode,"__paroc_buf->Reset();\n}\n");
+  	if(!GetClass()->is_collective()) {
+ 			strcpy(tmpcode,"\n  __paroc_buf->Reset();");
+    } else {
+			strcpy(tmpcode,"\n  _popc_buffer->Reset();");
+    }
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+
+    // Added for new communication support
+    strcpy(tmpcode,"_popc_connection->reset();\n}\n");
 		output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #endif
 	}
+}
+
+void Method::generate_header_pog(CArrayChar &output, bool interface) {
+	int type = MethodType();
+	if (interface) {
+		if (type == METHOD_DESTRUCTOR || GetMyAccess() != PUBLIC || isHidden)
+		  return;
+		if (isVirtual && GetClass()->methodInBaseClass(*this)) {
+			return;
+		}
+	}
+
+	ClassMember::GenerateHeader(output, interface);
+
+	if(type == METHOD_NORMAL) {
+	  GenerateReturn(output, true, interface);
+	} else {
+	  GenerateReturn(output, true);
+	}
+
+	if (!interface && type != METHOD_NORMAL) {
+		char str[256];
+		sprintf(str, "%s%s", name, Class::POG_OBJECT_POSTFIX);
+		output.InsertAt(-1, str, strlen(str));
+	} else {
+	  GenerateName(output, true);
+  }
+
+ 	GenerateArguments(output, true);
+
+	if (isPureVirtual && !interface) {
+		output.InsertAt(-1,"=0",2);
+	}
+
+	GeneratePostfix(output, true);
 }
 
 void Method::GenerateHeader(CArrayChar &output, bool interface)
@@ -967,17 +1103,18 @@ void Method::GenerateHeader(CArrayChar &output, bool interface)
 		}
 	}
 	ClassMember::GenerateHeader(output, interface);
-	
+
 	if(type==METHOD_NORMAL) GenerateReturn(output, true, interface);
 	else GenerateReturn(output, true);
 
-	if (!interface && type!=METHOD_NORMAL)
+	if (!interface && type != METHOD_NORMAL)
 	{
 		char str[256];
-		sprintf(str,"%s%s",name,OBJ_POSTFIX);
-		output.InsertAt(-1,str,strlen(str));
+		sprintf(str, "%s%s", name, OBJ_POSTFIX);
+		output.InsertAt(-1, str, strlen(str));
+	} else {
+	  GenerateName(output, true);
 	}
-	else GenerateName(output, true);
 	GenerateArguments(output, true);
 
 	if (isPureVirtual && !interface)
@@ -999,84 +1136,125 @@ void Method::GenerateBrokerHeader(CArrayChar &output)
 	output.InsertAt(-1,str,strlen(str));
 }
 
-void Method::GenerateBroker(CArrayChar &output)
+void Method::generate_broker_header_pog(CArrayChar &output)
 {
-	
 	int type=MethodType();
 	if (type==METHOD_DESTRUCTOR || GetMyAccess()!=PUBLIC || isHidden) return;
 	if (isVirtual && GetClass()->methodInBaseClass(*this)) return;
 
-	Class *cl=GetClass();
-	char *clname=cl->GetName();
+	char str[1024];
+	sprintf(str,"\n  void Invoke_%s_%d(paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);",name , id);
+	output.InsertAt(-1,str,strlen(str));
+}
+
+void Method::GenerateBroker(CArrayChar &output)
+{
+	int type = MethodType();
+
+	if (type == METHOD_DESTRUCTOR || GetMyAccess() != PUBLIC || isHidden) {
+	  return;
+	}
+
+	if (isVirtual && GetClass()->methodInBaseClass(*this)) {
+	  return;
+	}
+
+	Class *cl = GetClass();
+	char *clname = cl->GetName();
 
 	int nb=params.GetSize();
 
 	char brokername[256];
-	sprintf(brokername,"%s%sBroker",cl->GetName(),OBJ_POSTFIX);
+	sprintf(brokername, "%s%s", cl->GetName(), Class::POG_BROKER_POSTFIX);
 
-	paroc_array<bool>  reformat;
+	paroc_array<bool> reformat;
 	reformat.SetSize(nb);
 
 
-	//Now generate method wrappers...
+	// Now generate method wrappers
 	char str[1024];
 
-	sprintf(str,"// Generate method %s",name);
-	output.InsertAt(-1,str,strlen(str));
-
-	sprintf(str,"\nvoid %s::Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output)\n{",brokername,name, id);
+  if(GetClass()->is_collective()) {
+    sprintf(str,"\nvoid %s::Invoke_%s_%d(paroc_buffer &_popc_buffer, paroc_connection *_popc_connection)\n{",brokername,name, id);
+  } else {
+  	sprintf(str,"\nvoid %s::Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output)\n{",brokername,name, id);
+  }
 	output.InsertAt(-1,str,strlen(str));
 
 	char methodcall[1024];
 	bool haveReturn=false;
-	
+
 	if (cl->IsCoreCompilation() || !cl->IsBasePureVirtual()) { // ADDED FOR 2.0.3 Create constructor and stuff only if the parclass is not abstract
 		if (type==METHOD_CONSTRUCTOR) {
 			//Constructor...create object now...
-			sprintf(methodcall,"\ntry {\nobj=new %s%s(",clname,OBJ_POSTFIX);
-		} else if (type!=METHOD_NORMAL || returnparam.GetType()->Same((char*)"void")) {
-			sprintf(methodcall,"\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n_paroc_obj->%s(",clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, name); 
+			if(GetClass()->is_collective()) {
+  			sprintf(methodcall,"\n  try {\n    _popc_internal_object = new %s%s(", clname, Class::POG_OBJECT_POSTFIX);
+			} else {
+  			sprintf(methodcall,"\n  try {\n    obj = new %s%s(", clname, OBJ_POSTFIX);
+  		}
+		} else if (type != METHOD_NORMAL || returnparam.GetType()->Same((char*)"void")) {
+		  if(GetClass()->is_collective()) {
+  			sprintf(methodcall,"\n  %s%s* _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    _popc_object->%s(",clname,Class::POG_OBJECT_POSTFIX,clname,Class::POG_OBJECT_POSTFIX, name);
+      } else {
+  			sprintf(methodcall,"\n%s%s * _paroc_obj = dynamic_cast<%s%s *>(obj);\ntry {\n_paroc_obj->%s(", clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, name);
+      }
 		} else {
 			char retdecl[1024];
 			char tmpvar[1024];
 			strcpy(tmpvar,returnparam.GetName());
 			returnparam.GetType()->GetDeclaration(tmpvar,retdecl);
 
-			if (returnparam.GetType()->IsParClass())
-				sprintf(methodcall,"\n%s(paroc_interface::_paroc_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl,clname,OBJ_POSTFIX,clname,OBJ_POSTFIX, tmpvar,name);
-			else
-				sprintf(methodcall,"\n%s;\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
-
-			haveReturn=true;
+			if (returnparam.GetType()->IsParClass()) {
+        if(GetClass()->is_collective()) {
+				  sprintf(methodcall,"\n%s(paroc_interface::_paroc_nobind);\n    %s%s * _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    %s=_popc_object->%s(",retdecl, clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, tmpvar, name);
+				} else {
+          sprintf(methodcall,"\n%s(paroc_interface::_paroc_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(", retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
+				}
+			} else {
+			  if(GetClass()->is_collective()) {
+	  			sprintf(methodcall,"\n%s;\n%s%s * _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    %s=_popc_object->%s(",retdecl, clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, tmpvar, name);
+				} else {
+  				sprintf(methodcall,"\n%s;\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
+				}
+			}
+			haveReturn = true;
 		}
 
-		bool have_memspool=false;
+		bool have_memspool = false;
 
-		//unmarhall and allocate memory for inpput arguments first
-		for (int j=0;j<nb;j++) {
-			Param &p=*(params[j]);
-			/*if(strcmp(p.GetType()->GetName(), "void") == 0)
-				printf("1DECLARE VARIABLE IS VOID\n");*/
-			if (!p.InParam()) 
+		// unmarhall and allocate memory for input arguments first
+  	strcpy(str,"\n  ");
+		output.InsertAt(-1,str,strlen(str));
+
+		for (int j = 0; j < nb; j++) {
+			Param &p = *(params[j]);
+			if (!p.InParam())
 				continue;
 			char decl[1024];
 			if(p.DeclareVariable(decl,reformat[j],false))
 				output.InsertAt(-1, decl, strlen(decl));
 
-	
-			strcpy(str,"__paroc_buf");
+		  if(GetClass()->is_collective()) {
+  			strcpy(str,"_popc_buffer");
+  		} else {
+  			strcpy(str,"__paroc_buf");
+  		}
 			if (p.marshalProc!=NULL && !have_memspool) {
 				strcpy(str,"\nparoc_memspool _internal_mem;");
 				output.InsertAt(-1,str,strlen(str));
 				have_memspool=true;
 			}
-			p.UnMarshal((char*)"__paroc_buf",reformat[j],true,false,output);
+		  if(GetClass()->is_collective()) {
+  			p.UnMarshal((char*)"  _popc_buffer", reformat[j], true, false, output);
+  		} else {
+      	p.UnMarshal((char*)"__paroc_buf",reformat[j],true,false,output);
+  		}
 		}
 
-		//Then, declare and alloc mem  for output-only arguments
+		// Then, declare and alloc mem  for output-only arguments
 
-		for (int j=0;j<nb;j++) {
-		
+		for (int j = 0; j < nb;j++) {
+
 			Param &p=*(params[j]);
 			if (!p.InParam()  /*&& strcmp(p.GetType()->GetName(), "void") != 0 */) {
 				char decl[1024];
@@ -1084,12 +1262,12 @@ void Method::GenerateBroker(CArrayChar &output)
 				output.InsertAt(-1, decl, strlen(decl));
 			}
 
-			if (reformat[j] && !p.IsVoid())  
+			if (reformat[j] && !p.IsVoid())
 				strcat(methodcall," &");
 			strcat(methodcall,p.GetName());
-			if (j<nb-1) 
+			if (j<nb-1)
 				strcat(methodcall,", ");
-		} 
+		}
 
 		strcat(methodcall,");");
 		// Add 'catch' to catch and print all std exceptions raised in the method
@@ -1097,32 +1275,73 @@ void Method::GenerateBroker(CArrayChar &output)
 		for (int i=0; i<256; i++)
             tempcatch[i]='\0';
 
-		sprintf(tempcatch,"\n}\ncatch(std::exception& e) {rprintf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what()); throw;}", name, clname);
-		strcat(methodcall,tempcatch); 
-		
+		sprintf(tempcatch,"\n  } catch(std::exception& e) {\n    printf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what());\n    throw;\n  }\n", name, clname);
+		strcat(methodcall,tempcatch);
+
 
 
 		//now....generate the call...
 		output.InsertAt(-1,methodcall,strlen(methodcall));
-		sprintf(str,"\nif (__interface_output!=0) \n{\n__paroc_buf.Reset();\nparoc_message_header __paroc_buf_header(\"%s\");\n__paroc_buf.SetHeader(__paroc_buf_header);\n", name);
+
+/*
+
+  } */
+
+		if(GetClass()->is_collective()) {
+  		sprintf(str,"\n  if (_popc_connection != 0) {\n    _popc_buffer.Reset();\n    paroc_message_header _popc_message_header(\"%s\");\n    _popc_buffer.SetHeader(_popc_message_header);\n", name);
+		} else {
+    	sprintf(str,"\nif (__interface_output!=0) \n{\n__paroc_buf.Reset();\nparoc_message_header __paroc_buf_header(\"%s\");\n__paroc_buf.SetHeader(__paroc_buf_header);\n", name);
+		}
+
 		output.InsertAt(-1,str,strlen(str));
 
 		for (int j=0;j<nb;j++) {
 			Param &p=*(params[j]);
 			if (p.OutParam()) {
-				p.Marshal((char*)"__paroc_buf", reformat[j], false, output);
+    		if(GetClass()->is_collective()) {
+		  		p.Marshal((char*)"    _popc_buffer", reformat[j], false, output);
+		  	} else {
+  		  	p.Marshal((char*)"__paroc_buf", reformat[j], false, output);
+		  	}
 			}
 		}
+
 		if (haveReturn) {
-			returnparam.Marshal((char*)"__paroc_buf",false,false, output);
+			if(GetClass()->is_collective()) {
+  			returnparam.Marshal((char*)"    _popc_buffer",false,false, output);
+		  } else {
+  			returnparam.Marshal((char*)"__paroc_buf",false,false, output);
+		  }
+
 		}
-		strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n}\n");
-	} else { // ADDED FOR 2.0.3
+
+
+
+
+		if(GetClass()->is_collective()) {
+		  // TODO change true by false if non-collective
+		  if(type == METHOD_CONSTRUCTOR) {
+      	sprintf(str, "\n    popc_send_response(_popc_buffer, _popc_connection, true);");
+		  } else {
+  		  sprintf(str, "\n    popc_send_response(_popc_buffer, _popc_connection, %s);", (is_collective()) ? "true" : "false");
+		  }
+    	output.InsertAt(-1,str,strlen(str));
+    	strcpy(str, "\n    _popc_connection->reset();\n  }\n}\n");
+    	output.InsertAt(-1,str,strlen(str));
+    } else {
+  		strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n");
+    	output.InsertAt(-1,str,strlen(str));
+    	strcpy(str,"\nif(__interface_output != 0)\n__interface_output->reset();\n}\n");
+    	output.InsertAt(-1,str,strlen(str));
+    }
+  	// End of mod
+	} else {
 		if(cl->IsWarningEnable())
 			printf("POP-C++ Warning: %s is an abstract parclass. Be aware that only the final class (parallel object) will keep this semantic.\n", clname);
 		strcpy(str,"}\n");	// Close the method braces
+  	output.InsertAt(-1,str,strlen(str));
 	}
-	output.InsertAt(-1,str,strlen(str));
+
 }
 
 Param *Method::AddNewParam()
@@ -1188,6 +1407,15 @@ Constructor::Constructor(Class *cl, AccessType myaccess):Method(cl, myaccess)
 	strcpy(name, cl->GetName());
 }
 
+void Constructor::set_id(int value)
+{
+  identifier = value;
+}
+int Constructor::get_id()
+{
+  return identifier;
+}
+
 bool Constructor::isDefault()
 {
 	return (params.GetSize()==0);
@@ -1199,13 +1427,26 @@ ObjDesc & Constructor::GetOD()
 	return od;
 }
 
+void Constructor::generate_header_pog(CArrayChar &output, bool interface)
+{
+	Method::generate_header_pog(output, interface);
+
+
+
+	if (interface) {
+		char str[1024];
+		strcpy(str,"\nvoid _popc_constructor");
+		output.InsertAt(-1,str,strlen(str));
+		GenerateArguments(output, true);
+		GeneratePostfix(output,true);
+	}
+}
+
 void Constructor::GenerateHeader(CArrayChar &output, bool interface)
 {
-	Method::GenerateHeader(output,interface);
+	Method::GenerateHeader(output, interface);
 
-	//SEPARATE allocation from invocation
-	if (interface)
-	{
+	if (interface) {
 		char str[1024];
 		strcpy(str,"\nvoid _paroc_Construct");
 		output.InsertAt(-1,str,strlen(str));
@@ -1214,7 +1455,7 @@ void Constructor::GenerateHeader(CArrayChar &output, bool interface)
 	}
 }
 
-void Constructor::GenerateReturn(CArrayChar &output, bool header)
+void Constructor::GenerateReturn(CArrayChar& /*output*/, bool /*header*/)
 {
 }
 
@@ -1257,17 +1498,41 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 
 	/**
 	 * Asynchronous Parallel Object Creation (APOA)
-	 * The code below is generated to support the APOA in POP-C++ application. 
+	 * The code below is generated to support the APOA in POP-C++ application.
 	 */
-	/* COMMENTED FOR 2.5 BUT TO BE PUT IN 2.5.1
-	if(!GetClass()->IsCoreCompilation() && !GetClass()->IsAsyncAllocationDisable()){
-		strcpy(tmpcode,"\npthread_attr_t attr;\n pthread_attr_init(&attr);\npthread_attr_setdetachstate(&attr, 1);\n");
+
+	if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()){
+  	strcpy(tmpcode, "\n");
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-		sprintf(tmpcode, "int ret;\nret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread, this);\n", GetClass()->GetName());	
+		od.Generate(tmpcode);	// Generates the object description
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-		strcpy(tmpcode, "if(ret != 0)\n{\npthread_attr_destroy(&attr);\nreturn;\n}\npthread_attr_destroy(&attr);\n");
+#ifdef __APPLE__
+		strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, 1);");
+#else
+		strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);");
+#endif
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
-	} else { */ // End of APOA Support
+
+		sprintf(tmpcode,"\n  pthread_args_t_%d *arguments = (pthread_args_t_%d *) malloc(sizeof(pthread_args_t_%d));\n  %s* ptr = static_cast<%s*>(this);\n  arguments->ptr_interface = ptr;\n", get_id(), get_id(), get_id(), GetClass()->GetName(), GetClass()->GetName());
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+
+		int nb = params.GetSize();
+		for (int j = 0; j < nb; j++)
+		{
+			Param &p = *(params[j]);
+			sprintf(tmpcode, "  arguments->");
+			strcat(tmpcode, p.GetName());
+			strcat(tmpcode, " = ");
+			strcat(tmpcode, p.GetName());
+      strcat(tmpcode, ";\n");
+      output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		}
+
+		sprintf(tmpcode, "  int ret;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread%d, arguments);\n", GetClass()->GetName(), get_id());
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		strcpy(tmpcode, "  if(ret != 0) {\n    printf(\"Thread creation failed\\n\");\n    perror(\"pthread_create\");\n    pthread_attr_destroy(&attr);\n    return;\n  }\n  pthread_attr_destroy(&attr);\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+	} else if(!GetClass()->is_collective()) { // End of APOA Support
 		/**
 		 * Standard parallel object allocation
 		 */
@@ -1277,8 +1542,8 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
 		// Generates invocation to the constructor of the remote object
-		strcpy(tmpcode,"\n_paroc_Construct(");	
-		int nb=params.GetSize();
+		strcpy(tmpcode,"\n_paroc_Construct(");
+		int nb = params.GetSize();
 		for (int j=0;j<nb;j++)
 		{
 			Param &p=*(params[j]);
@@ -1286,22 +1551,105 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 			if (j<nb-1) strcat(tmpcode,", ");
 		}
 		strcat(tmpcode,");\n");
-		output.InsertAt(-1, tmpcode, strlen(tmpcode)); 
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
 		// End of constructor invocation
-	/* COMMENTED FOR 2.5 BUT TO BE PUT IN 2.5.1 
+	} else {
+	  // Generate the object description in the interface constructor
+	  sprintf(tmpcode, "\n  _popc_selected_constructor_id = %d;", id);
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+
+		strcpy(tmpcode, "\n  ");
+		od.Generate(tmpcode);
+		strcat(tmpcode, "\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+
+		// Save constructor parameters for group initialization
+		int nb = params.GetSize();
+		for (int j=0;j<nb;j++) {
+			Param &p = *(params[j]);
+			sprintf(tmpcode, "  _popc_constructor_%d_%s = %s;\n", id, p.GetName(), p.GetName());
+			output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		}
 	}
-	*/
-	
+
+
 	strcpy(tmpcode,"}\n");
 	output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
-	
-	sprintf(tmpcode,"\nvoid %s::_paroc_Construct",GetClass()->GetName());
-	output.InsertAt(-1, tmpcode, strlen(tmpcode));
-	GenerateArguments(output,false);
 
-	strcpy(tmpcode,"\n{");
-	output.InsertAt(-1, tmpcode, strlen(tmpcode));
+	// APOA Code generation
+	if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()){
+	  sprintf(tmpcode,"\n// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", GetClass()->GetName());
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+		sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg)\n  {\n", GetClass()->GetName(), get_id());
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+
+		sprintf(tmpcode,"    pthread_args_t_%d *arguments = (pthread_args_t_%d*)arg;\n", get_id(), get_id());
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+
+		sprintf(tmpcode,"    %s* _this_interface = static_cast<%s*>(arguments->ptr_interface);\n",GetClass()->GetName(), GetClass()->GetName());
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+
+		int nb = params.GetSize();
+		for (int j = 0; j < nb; j++)
+		{
+			Param &p=*(params[j]);
+		  sprintf(tmpcode, "%s %s = arguments->%s;\n", p.GetType()->GetName(), p.GetName(), p.GetName());
+			output.InsertAt(-1, tmpcode, strlen(tmpcode));
+		}
+
+		sprintf(tmpcode, "    try{\n      _this_interface->Allocate();\n      _this_interface->_paroc_Construct(");
+
+		for (int j=0;j<nb;j++) {
+			Param &p = *(params[j]);
+			strcat(tmpcode,p.GetName());
+			if (j<nb-1) strcat(tmpcode,", ");
+		}
+
+		strcat(tmpcode, ");\n");
+		output.InsertAt(-1, tmpcode, strlen(tmpcode));
+
+		sprintf(tmpcode, "    } catch(paroc_exception* ex) {\n      printf(\"Async allocation: %%s\", ex->what()); \n    }\n   free(arg);\n  return 0;\n  }\n}\n");
+		output.InsertAt(-1,tmpcode,strlen(tmpcode));
+	}
+
+
+
+  if(!GetClass()->is_collective()) {
+  	sprintf(tmpcode, "\nvoid %s::_paroc_Construct", GetClass()->GetName());
+	  output.InsertAt(-1, tmpcode, strlen(tmpcode));
+  } else {
+   	//sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  _popc_constructor(", GetClass()->GetName());
+	  //output.InsertAt(-1, tmpcode, strlen(tmpcode));
+
+
+
+	  // Place saved constructor arguments
+/*		int nb = params.GetSize();
+		for (int j = 0; j < nb; j++) {
+			Param &p = *(params[j]);
+			sprintf(tmpcode, "_popc_constructor_%d_%s", get_id(), p.GetName());
+			output.InsertAt(-1, tmpcode, strlen(tmpcode));
+			if (j < nb-1) {
+  			strcpy(tmpcode, ", ");
+  			output.InsertAt(-1, tmpcode, strlen(tmpcode));
+  		}
+		}
+
+
+	  strcpy(tmpcode, ");\n}\n");
+	  output.InsertAt(-1, tmpcode, strlen(tmpcode)); 	 */
+
+  	sprintf(tmpcode,"\nvoid %s::_popc_constructor",GetClass()->GetName());
+	  output.InsertAt(-1, tmpcode, strlen(tmpcode));
+  }
+
+  GenerateArguments(output,false);
+
+
+
+  strcpy(tmpcode,"\n{");
+  output.InsertAt(-1, tmpcode, strlen(tmpcode));
 }
 
 //Implement Destructor class
@@ -1309,7 +1657,8 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output)
 Destructor::Destructor(Class *cl, AccessType myaccess): Method(cl, myaccess)
 {
 }
-void Destructor::GenerateClient(CArrayChar &output)
+
+void Destructor::GenerateClient(CArrayChar& /*output*/)
 {
 	//Ignore the destructor of the interface....
 }

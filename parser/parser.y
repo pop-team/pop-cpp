@@ -18,20 +18,21 @@
 #include "paroc_utils.h"
 #include "debug.h"
 
+//Declaration in parser.lex:
 
- //Declaration in parser.lex:
-  
- int PutToken(char *str);
- int PutToken(char chr);
- char *GetToken(int yyval);
+int PutToken(char *str);
+int PutToken(char chr);
+char *GetToken(int yyval);
 
- void errormsg(const  char *s);
- void setReturnParam(int pointer, int ref, int const_virtual); // Methode to group code that set C++ specific C++ Param attributes
- void setPOPCMethodeModifier(int settings); // mehtode to group code that set/controlle Methode attributes (sync, conc, ...)
- void errorGlobalMehtode(bool isGlobal);
-  
+//Utility functions
+
+void errormsg(const  char *s);
+void setReturnParam(int pointer, int ref, int const_virtual); // Function to group code that set C++ specific C++ Param attributes
+void setPOPCMethodeModifier(int settings); // Function to group code that set/controlle Methode attributes (sync, conc, ...)
+void global_method_error(bool isGlobal);
+
 extern "C" {
-	int yywrap();
+    int yywrap();
 }
 
 void yyerror(const  char *s);
@@ -42,7 +43,7 @@ extern char filename[1024];
 
 CArrayCharPtr incl[1000];
 CArrayCharPtr sources;
-CArrayCharPtr searchpath; 
+CArrayCharPtr searchpath;
 
 int indexsource=0;  //the index of source file and the include directive
 
@@ -52,36 +53,36 @@ int indexsource=0;  //the index of source file and the include directive
  extern int startPos;
 
 
-	CodeFile *thisCodeFile;
-	Class *currentClass;
-	DataType *currenttype;
-	DataType *returntype;
- 
-	std::vector<bool> constPointerPositions; // counter variables who contains order of conts possition in pointers
+    CodeFile *thisCodeFile;
+    Class *currentClass;
+    DataType *currenttype;
+    DataType *returntype;
 
-	TypeClassStruct *seqclass;
+    std::vector<bool> constPointerPositions; // counter variables who contains order of conts possition in pointers
 
-	Param *currentparam;
+    TypeClassStruct *seqclass;
 
-	PackObject *currentPack;
-	Structure *structContainer;
+    Param *currentparam;
 
-	TypeDefinition *typeDefContainer;
-	Method *method;
-	// Param *param;
+    PackObject *currentPack;
+    Structure *structContainer;
+
+    TypeDefinition *typeDefContainer;
+    Method *method;
+    // Param *param;
 
  int n,t;
  bool isNamespace = false;
- 
+
  bool isInStruct = false;
- 
+
  bool isParclassDeclared = false;
- 
- bool hadParclass = false; 
- 
+
+ bool hadParclass = false;
+
  bool isWarningEnable;
  bool isImplicitPackEnable;
- bool isPOPCPPCompilation; 
+ bool isPOPCPPCompilation;
  bool isAsyncAllocationDisable;
  char holdnamespace[500];
  char tmp[10240];
@@ -126,14 +127,14 @@ struct TemplateArgument
 
 %token PARCLASS_KEYWORD CLASS_KEYWORD CLASSID ID ID1 INTEGER REAL STRING PUBLIC_KEYWORD PROTECTED_KEYWORD PRIVATE_KEYWORD VIRTUAL_KEYWORD CONST_KEYWORD STRUCT_KEYWORD TYPEDEF_KEYWORD
 %token SYNC_INVOKE ASYNC_INVOKE INPUT OUTPUT  CONCURRENT SEQUENTIAL MUTEX HIDDEN PROC SIZE THIS_KEYWORD
-%token INCLUDE DIRECTIVE OD AUTO_KEYWORD REGISTER_KEYWORD VOLATILE_KEYWORD PACK_KEYWORD 
+%token INCLUDE DIRECTIVE OD AUTO_KEYWORD REGISTER_KEYWORD VOLATILE_KEYWORD PACK_KEYWORD
 %token AND_OP OR_OP EQUAL_OP NOTEQUAL_OP GREATEREQUAL_OP LESSEQUAL_OP NONSTRICT_OD_OP EOFCODE
-%token SCOPE ENUM CLASS NAMESPACE STATIC_KEYWORD
+%token SCOPE ENUM CLASS NAMESPACE STATIC_KEYWORD BROADCAST
 
 %left '+' '-' '*' '/' '%'
 %left '&' '|' '^' '~' '!' '='
-%left AND_OP OR_OP EQUAL_OP NOTEQUAL_OP GREATEREQUAL_OP LESSEQUAL_OP '>' '<' 
-%left ':' '?' 
+%left AND_OP OR_OP EQUAL_OP NOTEQUAL_OP GREATEREQUAL_OP LESSEQUAL_OP '>' '<'
+%left ':' '?'
 %left UMINUS /*supplies precedence for unary minus */
 %nonassoc '('
 
@@ -145,239 +146,237 @@ struct TemplateArgument
 startlist: handle_this startlist
 |/*empty*/
 {
-	if (othercodes.GetSize()) {
-		assert(thisCodeFile!=NULL);
-		OtherCode *dat=new OtherCode(thisCodeFile);
-		dat->AddCode(othercodes);
-		thisCodeFile->AddCodeData(dat);
-		othercodes.SetSize(0);
-	}
+    if (othercodes.GetSize()) {
+        assert(thisCodeFile != NULL);
+        OtherCode *dat = new OtherCode(thisCodeFile);
+        dat->AddCode(othercodes);
+        thisCodeFile->AddCodeData(dat);
+        othercodes.SetSize(0);
+    }
 }
 
-| namespace_declaration 
-| class_declaration  
-{ 
-	insideClass=false; 
-	othercodes.SetSize(0); 
-	startPos=-1;
-} startlist 
+| namespace_declaration
+| class_declaration
+{
+    insideClass=false;
+    othercodes.SetSize(0);
+    startPos=-1;
+} startlist
 | class_prototype startlist
 | DIRECTIVE  startlist
 | pack_directive startlist
 | type_definition startlist
 | not_care_code startlist
 {
-	CleanStack(); 
+    CleanStack();
 }
 | handle_eof
 ;
 
 handle_eof: EOFCODE
 {
-	
 
 
-	if(isImplicitPackEnable){     
-	 
-		/** 
-		 * The following code handles the implicit @pack directive if it's not specified by the developer 
-		 * Algo for implicit pack
-		 * 1. Look for all included .ph file in the current file
-		 * 2. For all .ph file find the parclass(s) included in it
-		 * 3. Match the found parclass(s) with the code in the current file (ParClassName::). If match, put in pack directive
-		 */
-		 
-		
-		/** 
-		 * Perform this task only on file with implementation (.C, .cc, .cpp, .cp, .cxx, .c++, .CPP)
-		 * Find the extension of the file in the current C++ extension 
-		 */
-		std::string fname(filename);
-				
-		std::size_t cc = fname.find(".cc");
-		std::size_t cpp = fname.find(".cpp");
-		std::size_t cp = fname.find(".cp");		
-		std::size_t cxx = fname.find(".cxx");	
-		std::size_t cplusplus = fname.find(".c++");	
-		std::size_t CPP = fname.find(".CPP");	
-		std::size_t C = fname.find(".C");	
-			
-		if((cc != std::string::npos || cpp != std::string::npos || cxx != std::string::npos || cp != std::string::npos || cplusplus != std::string::npos 
-			|| CPP != std::string::npos || C != std::string::npos) && !isParclassDeclared){	
-				
-			/**
-			 * Find all .ph files included in the current file
-			 */
-			 
-			// Create a list to store all .ph files' name
-			std::list<std::string> ph_files; 
-			 
-			std::fstream cc_real_file; 
-			cc_real_file.open(fname.c_str(), std::ios_base::out | std::ios_base::in);
+    if(isImplicitPackEnable){
 
-			if (cc_real_file.is_open()){
-				// Find name of the parclass
-				char line[512]; 
-				bool notEOF = true;
-				while (notEOF){
-					cc_real_file.getline(line, 512);
-					if(cc_real_file.eof()){
-						notEOF = false;
-						cc_real_file.close();
-					} else {
-						// Get the next line
-						std::string str_line(line);
-						// Find a .ph include in the current file
-						std::size_t ph_extension_pos = str_line.find(".ph"); 
-						if(ph_extension_pos != std::string::npos){
-							std::size_t ph_file_name_start = str_line.rfind('"', ph_extension_pos);
-							std::string ph_file_name = str_line.substr(ph_file_name_start+1, (ph_extension_pos-ph_file_name_start)+2);
-							// Save the .ph file found
-							ph_files.push_back(ph_file_name);
-						}
-					}
-				}
-			}	
-			
-			
-			if(!ph_files.empty()){
-				/**
-				 * Find all the parclass declared in the .ph files found before. 
-				 */
-				std::list<std::string> parclass_names;
-				std::list<std::string>::iterator it;
-				for(it=ph_files.begin(); it != ph_files.end(); it++) {
-					std::fstream ph_real_file;			
-					ph_real_file.open((*it).c_str(), std::ios_base::out | std::ios_base::in);				
-					if (ph_real_file.is_open()){
-						// Find name of the parclass
-						char line[512]; 
-						bool notEOF = true;
-						while (notEOF){
-							ph_real_file.getline(line, 512);
-							if(ph_real_file.eof()){
-								notEOF = false;
-								ph_real_file.close();
-							} else {
-								std::string str_line(line);
-								std::size_t parclass_pos = str_line.find("parclass"); 
-								if(parclass_pos != std::string::npos){
-									std::size_t parclass_name_start = str_line.find(" ", parclass_pos); 
-									std::size_t parclass_name_stop = str_line.find(" ", parclass_name_start+1);
-									if(parclass_name_stop == std::string::npos){
-										parclass_name_stop = str_line.find(";", parclass_name_start+1); 
-									}
-									if(parclass_name_stop == std::string::npos){
-										parclass_name_stop = str_line.find("{", parclass_name_start+1); 																	
-									}
-									if(parclass_name_stop == std::string::npos){			
-										parclass_name_stop = str_line.find("\n", parclass_name_start+1); 		
-									}
-									if(parclass_name_stop == std::string::npos){			
-										parclass_name_stop = str_line.find("\r", parclass_name_start+1); 		
-									}
-									if(parclass_name_stop == std::string::npos){			
-										parclass_name_stop = str_line.find("\r\n", parclass_name_start+1); 						
-									}
-									if(parclass_name_stop == std::string::npos){			
-										parclass_name_stop = str_line.size();
-									}
-									if(parclass_name_stop != std::string::npos && parclass_name_start != std::string::npos){
-										std::string parclass_name = str_line.substr(parclass_name_start, (parclass_name_stop - parclass_name_start));
-										// Removed possible withespaces from the parclass name
-										for(int i=0; i < parclass_name.length(); i++){
-											if(parclass_name[i] == ' '){
-												parclass_name.erase(i, 1);
-												i--;
-											}
-										}
-										// Save the parclass's name found
-										parclass_names.push_back(parclass_name);
-									}
-								}
-							}	
-						}			
-					}
-				}	
-				/**
-				 * Find implementation of the found parclass in the current file
-				 */
-				std::set<std::string> matched_parclasses;			
-				cc_real_file.open(fname.c_str(), std::ios_base::out | std::ios_base::in);
-				if (cc_real_file.is_open()){
-					// Find name of the parclass
-					char line[512]; 
-					bool notEOF = true;
-					while (notEOF){
-						cc_real_file.getline(line, 512);
-						if(cc_real_file.eof()){
-							notEOF = false;
-							cc_real_file.close();
-						} else {
-							// Get the next line
-							std::string str_line(line);
-							std::list<std::string>::iterator it;
-							for(it=parclass_names.begin(); it != parclass_names.end(); it++) {
-								std::string prefix = (*it);
-								prefix.append("::");
-								std::size_t pos = str_line.find(prefix);
-								if(pos != std::string::npos){
-									// Saved the matched parclass in a set
-									matched_parclasses.insert((*it));
-								}
-							}
-						}
-					}
-				}	
-			
-				if(!matched_parclasses.empty()){
-					// Implict add the pack directive
-					if (othercodes.GetSize() && startPos>0) {
-						assert(thisCodeFile!=NULL);
-						OtherCode *dat=new OtherCode(thisCodeFile);
-						dat->AddCode((char *)othercodes,startPos);
-						thisCodeFile->AddCodeData(dat);
-						othercodes.SetSize(0);
-					}  
-					startPos=-1;
-					currentPack=new PackObject(thisCodeFile);
-					currentPack->SetStartLine(linenumber-1);
-					thisCodeFile->AddCodeData(currentPack); 
-					std::set<std::string>::iterator it;
-					for(it=matched_parclasses.begin() ; it != matched_parclasses.end(); it++ ){
-						if (currentPack!=NULL) {
+        /**
+         * The following code handles the implicit @pack directive if it's not specified by the developer
+         * Algo for implicit pack
+         * 1. Look for all included .ph file in the current file
+         * 2. For all .ph file find the parclass(s) included in it
+         * 3. Match the found parclass(s) with the code in the current file (ParClassName::). If match, put in pack directive
+         */
 
-							char * objname = new char[(*it).size() + 1];
-							std::copy((*it).begin(), (*it).end(), objname);
-							objname[(*it).size()] = '\0';
-							currentPack->AddObject(objname);
-							// Ok file exists, so we will find the parclass name and add the pack directive with it
-							if(isWarningEnable){
-								std::cout << filename << ":" << linenumber << ": Warning: No @pack directive for class: " << objname;
-								std::cout << ", @pack(" << objname << ") is assumed..." << std::endl;
-							}							
-							delete [] objname;
-						}
-					}
-					isParclassDeclared = true; 
-					currentPack->SetEndLine(linenumber-1);
-					currentPack=NULL;
-					othercodes.SetSize(0);
-					startPos=-1;
-				}
-			}
-		}
-	}	
+
+        /**
+         * Perform this task only on file with implementation (.C, .cc, .cpp, .cp, .cxx, .c++, .CPP)
+         * Find the extension of the file in the current C++ extension
+         */
+        std::string fname(filename);
+        std::size_t cc = fname.find(".cc");
+        std::size_t cpp = fname.find(".cpp");
+        std::size_t cp = fname.find(".cp");
+        std::size_t cxx = fname.find(".cxx");
+        std::size_t cplusplus = fname.find(".c++");
+        std::size_t CPP = fname.find(".CPP");
+        std::size_t C = fname.find(".C");
+
+        if((cc != std::string::npos || cpp != std::string::npos || cxx != std::string::npos || cp != std::string::npos || cplusplus != std::string::npos
+            || CPP != std::string::npos || C != std::string::npos) && !isParclassDeclared){
+
+            /**
+             * Find all .ph files included in the current file
+             */
+
+            // Create a list to store all .ph files' name
+            std::list<std::string> ph_files;
+
+            std::fstream cc_real_file;
+            cc_real_file.open(fname.c_str(), std::ios_base::out | std::ios_base::in);
+
+            if (cc_real_file.is_open()){
+                // Find name of the parclass
+                char line[512];
+                bool notEOF = true;
+                while (notEOF){
+                    cc_real_file.getline(line, 512);
+                    if(cc_real_file.eof()){
+                        notEOF = false;
+                        cc_real_file.close();
+                    } else {
+                        // Get the next line
+                        std::string str_line(line);
+                        // Find a .ph include in the current file
+                        std::size_t ph_extension_pos = str_line.find(".ph");
+                        if(ph_extension_pos != std::string::npos){
+                            std::size_t ph_file_name_start = str_line.rfind('"', ph_extension_pos);
+                            std::string ph_file_name = str_line.substr(ph_file_name_start+1, (ph_extension_pos-ph_file_name_start)+2);
+                            // Save the .ph file found
+                            ph_files.push_back(ph_file_name);
+                        }
+                    }
+                }
+            }
+
+
+            if(!ph_files.empty()){
+                /**
+                 * Find all the parclass declared in the .ph files found before.
+                 */
+                std::list<std::string> parclass_names;
+                std::list<std::string>::iterator it;
+                for(it=ph_files.begin(); it != ph_files.end(); it++) {
+                    std::fstream ph_real_file;
+                    ph_real_file.open((*it).c_str(), std::ios_base::out | std::ios_base::in);
+                    if (ph_real_file.is_open()){
+                        // Find name of the parclass
+                        char line[512];
+                        bool notEOF = true;
+                        while (notEOF){
+                            ph_real_file.getline(line, 512);
+                            if(ph_real_file.eof()){
+                                notEOF = false;
+                                ph_real_file.close();
+                            } else {
+                                std::string str_line(line);
+                                std::size_t parclass_pos = str_line.find("parclass");
+                                if(parclass_pos != std::string::npos){
+                                    std::size_t parclass_name_start = str_line.find(" ", parclass_pos);
+                                    std::size_t parclass_name_stop = str_line.find(" ", parclass_name_start+1);
+                                    if(parclass_name_stop == std::string::npos){
+                                        parclass_name_stop = str_line.find(";", parclass_name_start+1);
+                                    }
+                                    if(parclass_name_stop == std::string::npos){
+                                        parclass_name_stop = str_line.find("{", parclass_name_start+1);
+                                    }
+                                    if(parclass_name_stop == std::string::npos){
+                                        parclass_name_stop = str_line.find("\n", parclass_name_start+1);
+                                    }
+                                    if(parclass_name_stop == std::string::npos){
+                                        parclass_name_stop = str_line.find("\r", parclass_name_start+1);
+                                    }
+                                    if(parclass_name_stop == std::string::npos){
+                                        parclass_name_stop = str_line.find("\r\n", parclass_name_start+1);
+                                    }
+                                    if(parclass_name_stop == std::string::npos){
+                                        parclass_name_stop = str_line.size();
+                                    }
+                                    if(parclass_name_stop != std::string::npos && parclass_name_start != std::string::npos){
+                                        std::string parclass_name = str_line.substr(parclass_name_start, (parclass_name_stop - parclass_name_start));
+                                        // Removed possible withespaces from the parclass name
+                                        for(std::size_t i=0; i < parclass_name.length(); i++){
+                                            if(parclass_name[i] == ' '){
+                                                parclass_name.erase(i, 1);
+                                                i--;
+                                            }
+                                        }
+                                        // Save the parclass's name found
+                                        parclass_names.push_back(parclass_name);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                /**
+                 * Find implementation of the found parclass in the current file
+                 */
+                std::set<std::string> matched_parclasses;
+                cc_real_file.open(fname.c_str(), std::ios_base::out | std::ios_base::in);
+                if (cc_real_file.is_open()){
+                    // Find name of the parclass
+                    char line[512];
+                    bool notEOF = true;
+                    while (notEOF){
+                        cc_real_file.getline(line, 512);
+                        if(cc_real_file.eof()){
+                            notEOF = false;
+                            cc_real_file.close();
+                        } else {
+                            // Get the next line
+                            std::string str_line(line);
+                            std::list<std::string>::iterator it;
+                            for(it=parclass_names.begin(); it != parclass_names.end(); it++) {
+                                std::string prefix = (*it);
+                                prefix.append("::");
+                                std::size_t pos = str_line.find(prefix);
+                                if(pos != std::string::npos){
+                                    // Saved the matched parclass in a set
+                                    matched_parclasses.insert((*it));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if(!matched_parclasses.empty()){
+                    // Implict add the pack directive
+                    if (othercodes.GetSize() && startPos>0) {
+                        assert(thisCodeFile != NULL);
+                        OtherCode *dat=new OtherCode(thisCodeFile);
+                        dat->AddCode((char *)othercodes,startPos);
+                        thisCodeFile->AddCodeData(dat);
+                        othercodes.SetSize(0);
+                    }
+                    startPos=-1;
+                    currentPack=new PackObject(thisCodeFile);
+                    currentPack->SetStartLine(linenumber-1);
+                    thisCodeFile->AddCodeData(currentPack);
+                    std::set<std::string>::iterator it;
+                    for(it=matched_parclasses.begin() ; it != matched_parclasses.end(); it++ ){
+                        if (currentPack!=NULL) {
+
+                            char * objname = new char[(*it).size() + 1];
+                            std::copy((*it).begin(), (*it).end(), objname);
+                            objname[(*it).size()] = '\0';
+                            currentPack->AddObject(objname);
+                            // Ok file exists, so we will find the parclass name and add the pack directive with it
+                            if(isWarningEnable){
+                                std::cout << filename << ":" << linenumber << ": Warning: No @pack directive for class: " << objname;
+                                std::cout << ", @pack(" << objname << ") is assumed..." << std::endl;
+                            }
+                            delete [] objname;
+                        }
+                    }
+                    isParclassDeclared = true;
+                    currentPack->SetEndLine(linenumber-1);
+                    currentPack=NULL;
+                    othercodes.SetSize(0);
+                    startPos=-1;
+                }
+            }
+        }
+    }
 }
 
 handle_this: THIS_KEYWORD
 {
-	othercodes.InsertAt(-1,"\n",strlen("\n"));
+    othercodes.InsertAt(-1,"\n",strlen("\n"));
 }
 ;
 
 
-not_care_code: error ';' 
+not_care_code: error ';'
 {
   startPos=-1;
   insideClass=false;
@@ -388,7 +387,7 @@ not_care_code: error ';'
       dat->AddCode((char *)othercodes,othercodes.GetSize());
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
-    }  
+    }
 }
 | error '}'
 {
@@ -401,7 +400,7 @@ not_care_code: error ';'
       dat->AddCode((char *)othercodes,othercodes.GetSize());
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
-    }  
+    }
 }
 | error EOFCODE
 {
@@ -414,68 +413,68 @@ not_care_code: error ';'
       dat->AddCode((char *)othercodes,othercodes.GetSize());
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
-    } 
+    }
   YYACCEPT;
 }
 ;
 
 pack_directive: pack_header '(' object_list ')'
 {
-	
-	isParclassDeclared = true; 
-	currentPack->SetEndLine(linenumber-1);
-  	currentPack=NULL;
-  	othercodes.SetSize(0);
-  	startPos=-1;
+
+    isParclassDeclared = true;
+    currentPack->SetEndLine(linenumber-1);
+    currentPack=NULL;
+    othercodes.SetSize(0);
+    startPos=-1;
 };
 
 pack_header: PACK_KEYWORD
 {
-  	if (othercodes.GetSize() && startPos>0) {
+    if (othercodes.GetSize() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode((char *)othercodes,startPos);
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
-	}  
-	startPos=-1;
-	currentPack=new PackObject(thisCodeFile);
-	currentPack->SetStartLine(linenumber-1);
-	thisCodeFile->AddCodeData(currentPack);  
+    }
+    startPos=-1;
+    currentPack=new PackObject(thisCodeFile);
+    currentPack->SetStartLine(linenumber-1);
+    thisCodeFile->AddCodeData(currentPack);
 };
 
 
 
 object_list: ID rest_object_list
 {
-  		if (currentPack!=NULL) {
-			currentPack->AddObject(GetToken($1));
-		}
+        if (currentPack!=NULL) {
+            currentPack->AddObject(GetToken($1));
+        }
 }
 ;
 
 
 
-namespace_declaration: NAMESPACE ID 
+namespace_declaration: NAMESPACE ID
 
 {
-	
-	// Avoid handling of standard namespace used in POP-C++
-	
-	if(strcmp("__gnu_cxx", GetToken($2)) != 0 &&  strcmp("std", GetToken($2)) != 0 && strcmp("__gnu_debug", GetToken($2)) != 0 && strcmp("rel_ops", GetToken($2)) != 0  && strcmp("__debug", GetToken($2)) != 0){
-			
-		isNamespace = true;
-			
-		sprintf(holdnamespace, "%s", GetToken($2));
-	
-	}
+
+    // Avoid handling of standard namespace used in POP-C++
+
+    if(strcmp("__gnu_cxx", GetToken($2)) != 0 &&  strcmp("std", GetToken($2)) != 0 && strcmp("__gnu_debug", GetToken($2)) != 0 && strcmp("rel_ops", GetToken($2)) != 0  && strcmp("__debug", GetToken($2)) != 0){
+
+        isNamespace = true;
+
+        sprintf(holdnamespace, "%s", GetToken($2));
+
+    }
 
 }
 '{' startlist '}'
 
 {
-	
-	isNamespace = false;
+
+    isNamespace = false;
 
 };
 
@@ -500,34 +499,34 @@ type_definition: struct_definition
 | seqclass_definition
 
 /**
- 
+
  * Inner Class delcaration
- 
+
  * Catch inner class definition to raise an error message and abort the compilation
- 
+
  */
- 
+
 
 innerclass_definition: CLASS_KEYWORD
 {
-	
-	sprintf(tmp,"Class declaration inside parclass are not currently supported in POP-C++ !\n");
-	
-	errormsg(tmp);
-	exit(1);
 
-} 
+    sprintf(tmp,"Class declaration inside parclass are not currently supported in POP-C++ !\n");
+
+    errormsg(tmp);
+    exit(1);
+
+}
 
 
 
 innerclass_static: STATIC_KEYWORD {
-	sprintf(tmp,"Use of static member inside parclass is not currently supported in POP-C++!\n");
-	
-	errormsg(tmp);
-	exit(1);
+    sprintf(tmp,"Use of static member inside parclass is not currently supported in POP-C++!\n");
+
+    errormsg(tmp);
+    exit(1);
 
 }
-/* 
+/*
 STRUCT TYPES...
 */
 
@@ -535,11 +534,11 @@ STRUCT TYPES...
 
 struct_definition: struct_head '{' struct_body '}'
 {
-  	currentstruct=Pop();
-  	if (currentstruct!=NULL) currentstruct->SetTypeClass(false);
-  	$$=$1;
-  	structContainer = NULL;
-  	isInStruct = false;
+    currentstruct=Pop();
+    if (currentstruct!=NULL) currentstruct->SetTypeClass(false);
+    $$=$1;
+    structContainer = NULL;
+    isInStruct = false;
 }
 | struct_head not_care_code
 {
@@ -549,40 +548,40 @@ struct_definition: struct_head '{' struct_body '}'
 
 struct_head: STRUCT_KEYWORD ID
 {
-	
-	if(currentClass!=NULL){
-		
-		isInStruct = true;
-		
-		structContainer = new Structure(currentClass, accessmodifier);
-		
-		structContainer->SetLineInfo(linenumber-1);
-		
-		currentClass->AddMember(structContainer);
-      
-		structContainer->setName(GetToken($2));	
-	
-	}
-  	char *tname=GetToken($2);
-	DataType *type=thisCodeFile->FindDataType(tname);
-  	TypeClassStruct *t;
-  	if (type!=NULL){
-		t=dynamic_cast<TypeClassStruct *>(type);
-		if (t==NULL) {
-	  //	  	  thisCodeFile->RemoveDataType(type);
-	  //	  	  delete type;
-	  t=new TypeClassStruct(tname, false);
-	  thisCodeFile->AddDataType(t);
-	  //	  sprintf(tmp,"data type \"%s\" has been redefined!\n",tname);
-	  //	  errormsg(tmp);
-	  //	  exit(1);
-		}
-	} else { 
+
+    if(currentClass!=NULL){
+
+        isInStruct = true;
+
+        structContainer = new Structure(currentClass, accessmodifier);
+
+        structContainer->SetLineInfo(linenumber-1);
+
+        currentClass->AddMember(structContainer);
+
+        structContainer->setName(GetToken($2));
+
+    }
+    char *tname=GetToken($2);
+    DataType *type=thisCodeFile->FindDataType(tname);
+    TypeClassStruct *t;
+    if (type!=NULL){
+        t=dynamic_cast<TypeClassStruct *>(type);
+        if (t==NULL) {
+      //          thisCodeFile->RemoveDataType(type);
+      //          delete type;
+      t=new TypeClassStruct(tname, false);
+      thisCodeFile->AddDataType(t);
+      //      sprintf(tmp,"data type \"%s\" has been redefined!\n",tname);
+      //      errormsg(tmp);
+      //      exit(1);
+        }
+    } else {
       t=new TypeClassStruct(tname,false);
-      thisCodeFile->AddDataType(t);	
+      thisCodeFile->AddDataType(t);
    }
-	Push(t);
-	$$=$2;
+    Push(t);
+    $$=$2;
 }
 | STRUCT_KEYWORD
 {
@@ -597,34 +596,34 @@ struct_body: /*empty*/
 | struct_element ';' struct_body
 ;
 
-struct_element: decl_specifier struct_elname_list 
+struct_element: decl_specifier struct_elname_list
 ;
 
 struct_elname_list: pointer_specifier ID array_declarator struct_elname_other
 {
-	// Save the attribute in the Strcuture object to be able to produce code
-	if(structContainer!=NULL) {
-		std::string attribute;
-		attribute.append(typetmp);
-		attribute.append(" ");
-		attribute.append(GetToken($2));
-		attribute.append(";");	
-		structContainer->setInnerDecl(attribute);			
-	}
+    // Save the attribute in the Strcuture object to be able to produce code
+    if(structContainer!=NULL) {
+        std::string attribute;
+        attribute.append(typetmp);
+        attribute.append(" ");
+        attribute.append(GetToken($2));
+        attribute.append(";");
+        structContainer->setInnerDecl(attribute);
+    }
 
-	DataType *type1=currenttype;
-	if ($1>0) {
-		//type1=new TypePtr(NULL,$1, type1);
+    DataType *type1=currenttype;
+    if ($1>0) {
+        //type1=new TypePtr(NULL,$1, type1);
       type1=new TypePtr(NULL, $1, type1, constPointerPositions);
       thisCodeFile->AddDataType(type1);
    }
-  	if ($3!=-1){
+    if ($3!=-1){
       type1=new TypeArray(NULL,GetToken($3), type1);
-      thisCodeFile->AddDataType(type1);     
-   }  
-	TypeClassStruct *t=Peek();
-	assert(t!=NULL);
-	t->Add(type1, GetToken($2));
+      thisCodeFile->AddDataType(type1);
+   }
+    TypeClassStruct *t=Peek();
+    assert(t!=NULL);
+    t->Add(type1, GetToken($2));
 }
 ;
 
@@ -640,54 +639,54 @@ TYPEDEF TYPES
 
 typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
 {
-	if(currentClass!=NULL){
-			
-		typeDefContainer = new TypeDefinition(currentClass, accessmodifier);
-		
-		typeDefContainer->SetLineInfo(linenumber-1);
-		
-		currentClass->AddMember(typeDefContainer);
-      
-		typeDefContainer->setName(GetToken($2));	
-	
-		typeDefContainer->setBaseType(GetToken($4));	
-	
-		if ($3>0) {
-			typeDefContainer->setAsPtr();	
+    if(currentClass!=NULL){
 
-		}
-		if ($5!=-1) {
-			typeDefContainer->setAsArray();	
+        typeDefContainer = new TypeDefinition(currentClass, accessmodifier);
 
-    	}
-	}
-	char *orgtype=GetToken($2);
-	DataType *type=thisCodeFile->FindDataType(orgtype);
-	if (type==NULL) {
-		type=new DataType(orgtype);
+        typeDefContainer->SetLineInfo(linenumber-1);
+
+        currentClass->AddMember(typeDefContainer);
+
+        typeDefContainer->setName(GetToken($2));
+
+        typeDefContainer->setBaseType(GetToken($4));
+
+        if ($3>0) {
+            typeDefContainer->setAsPtr();
+
+        }
+        if ($5!=-1) {
+            typeDefContainer->setAsArray();
+
+        }
+    }
+    char *orgtype=GetToken($2);
+    DataType *type=thisCodeFile->FindDataType(orgtype);
+    if (type==NULL) {
+        type=new DataType(orgtype);
       thisCodeFile->AddDataType(type);
-	}
-	if ($3>0) {
+    }
+    if ($3>0) {
       //type=new TypePtr(NULL,$3, type);
       type=new TypePtr(NULL,$3, type, constPointerPositions);
       thisCodeFile->AddDataType(type);
-	}
+    }
   if ($5!=-1)
     {
       type=new TypeArray(NULL,GetToken($5), type);
-      thisCodeFile->AddDataType(type); 
+      thisCodeFile->AddDataType(type);
     }
   type=new TypeEqual(GetToken($4),type);
-  thisCodeFile->AddDataType(type); 
-} 
+  thisCodeFile->AddDataType(type);
+}
 | TYPEDEF_KEYWORD STRUCT_KEYWORD ID pointer_specifier ID array_declarator
 {
-	if(insideClass){
-		sprintf(tmp,"typedef definition with structure inside a parclass is not currently supported !\n");
-	
-		errormsg(tmp);
-		exit(1);
-	}
+    if(insideClass){
+        sprintf(tmp,"typedef definition with structure inside a parclass is not currently supported !\n");
+
+        errormsg(tmp);
+        exit(1);
+    }
   char *orgtype=GetToken($3);
   DataType *type=thisCodeFile->FindDataType(orgtype);
   if (type==NULL)
@@ -699,16 +698,16 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
     {
       //type=new TypePtr(NULL,$4, type);
       type=new TypePtr(NULL, $4, type, constPointerPositions);
-      
+
       thisCodeFile->AddDataType(type);
     }
   if ($6!=-1)
     {
       type=new TypeArray(NULL,GetToken($6), type);
-      thisCodeFile->AddDataType(type); 
+      thisCodeFile->AddDataType(type);
     }
   type=new TypeEqual(GetToken($5),type);
-  thisCodeFile->AddDataType(type);   
+  thisCodeFile->AddDataType(type);
 }
 | TYPEDEF_KEYWORD CLASS_KEYWORD ID pointer_specifier ID array_declarator
 {
@@ -723,25 +722,25 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
     {
       //type=new TypePtr(NULL,$4, type);
       type=new TypePtr(NULL, $4, type, constPointerPositions);
-      
+
       thisCodeFile->AddDataType(type);
     }
   if ($6!=-1)
     {
       type=new TypeArray(NULL,GetToken($6), type);
-      thisCodeFile->AddDataType(type); 
+      thisCodeFile->AddDataType(type);
     }
   type=new TypeEqual(GetToken($5),type);
-  thisCodeFile->AddDataType(type);   
+  thisCodeFile->AddDataType(type);
 }
 |  TYPEDEF_KEYWORD struct_definition pointer_specifier ID array_declarator
 {
-	if(insideClass){
-		sprintf(tmp,"typedef definition with structure inside a parclass is not currently supported !\n");
-	
-		errormsg(tmp);
-		exit(1);
-	}
+    if(insideClass){
+        sprintf(tmp,"typedef definition with structure inside a parclass is not currently supported !\n");
+
+        errormsg(tmp);
+        exit(1);
+    }
   DataType *type=currentstruct;
   assert(type!=NULL);
 
@@ -749,44 +748,44 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
     {
       //type=new TypePtr(NULL,$3, type);
       type=new TypePtr(NULL, $3, type, constPointerPositions);
-      
+
       thisCodeFile->AddDataType(type);
     }
   if ($5!=-1)
     {
       type=new TypeArray(NULL,GetToken($5), type);
-      thisCodeFile->AddDataType(type); 
+      thisCodeFile->AddDataType(type);
     }
   type=new TypeEqual(GetToken($4),type);
-  thisCodeFile->AddDataType(type); 
+  thisCodeFile->AddDataType(type);
 }
 ;
 
 /*
 SEQUENTIAL CLASS DEFINITION...
  */
-seqclass_definition: seqclass_header seqbase_spec '{' error '}' 
+seqclass_definition: seqclass_header seqbase_spec '{' error '}'
 {
-	if (seqclass!=NULL) 
-		seqclass->SetTypeClass(true);
+    if (seqclass!=NULL)
+        seqclass->SetTypeClass(true);
 }
 | seqclass_header ';'
 
 seqclass_header: CLASS_KEYWORD ID
 {
-	DataType *t=thisCodeFile->FindDataType(GetToken($2));
-	if (t==NULL) {
-		seqclass=new TypeClassStruct(GetToken($2),true);
-		thisCodeFile->AddDataType(seqclass);
-	} else if (!t->IsStandardType()) {
-		seqclass=dynamic_cast<TypeClassStruct *>(t);
+    DataType *t=thisCodeFile->FindDataType(GetToken($2));
+    if (t==NULL) {
+        seqclass=new TypeClassStruct(GetToken($2),true);
+        thisCodeFile->AddDataType(seqclass);
+    } else if (!t->IsStandardType()) {
+        seqclass=dynamic_cast<TypeClassStruct *>(t);
       if (seqclass==NULL) {
-			char tmp[256];
-			sprintf(tmp,"%s has been declared as non-class data type", GetToken($2));
-			errormsg(tmp);
-			exit(1);
-		}
-	}
+            char tmp[256];
+            sprintf(tmp,"%s has been declared as non-class data type", GetToken($2));
+            errormsg(tmp);
+            exit(1);
+        }
+    }
 }
 
 seqbase_spec: /*empty*/
@@ -800,63 +799,63 @@ seqbase_list: seqbase_specifier
 
 seqbase_specifier: ID
 {
-	assert(seqclass!=NULL);
-	TypeClassStruct *seqbase;
-	DataType *t=thisCodeFile->FindDataType(GetToken($1));
-	if (t==NULL) {
-		seqbase=new TypeClassStruct(GetToken($1), true);
-		seqclass->AddBase(seqbase);  
-	} else if (!t->IsStandardType()) {
+    assert(seqclass!=NULL);
+    TypeClassStruct *seqbase;
+    DataType *t=thisCodeFile->FindDataType(GetToken($1));
+    if (t==NULL) {
+        seqbase=new TypeClassStruct(GetToken($1), true);
+        seqclass->AddBase(seqbase);
+    } else if (!t->IsStandardType()) {
       seqclass->AddBase(t);
-	}
+    }
 }
 | access_specifier ID
 {
-	assert(seqclass!=NULL);
-	TypeClassStruct *seqbase;
-	DataType *t=thisCodeFile->FindDataType(GetToken($2));
-	if (t==NULL) {
-		seqbase=new TypeClassStruct(GetToken($2), true);
-      seqclass->AddBase(seqbase);  
-	} else  if (!t->IsStandardType()) {
-		seqclass->AddBase(t);
-	}
+    assert(seqclass!=NULL);
+    TypeClassStruct *seqbase;
+    DataType *t=thisCodeFile->FindDataType(GetToken($2));
+    if (t==NULL) {
+        seqbase=new TypeClassStruct(GetToken($2), true);
+      seqclass->AddBase(seqbase);
+    } else  if (!t->IsStandardType()) {
+        seqclass->AddBase(t);
+    }
 }
 | access_specifier ID '<' ID '>'
 {
-	assert(seqclass!=NULL);
-	TypeClassStruct *seqbase;
-	DataType *t=thisCodeFile->FindDataType(GetToken($2));
-	if (t==NULL) {
-		seqbase=new TypeClassStruct(GetToken($2), true);
-      seqclass->AddBase(seqbase);  
-	} else  if (!t->IsStandardType()) {
-		seqclass->AddBase(t);
-	}
+    assert(seqclass!=NULL);
+    TypeClassStruct *seqbase;
+    DataType *t=thisCodeFile->FindDataType(GetToken($2));
+    if (t==NULL) {
+        seqbase=new TypeClassStruct(GetToken($2), true);
+      seqclass->AddBase(seqbase);
+    } else  if (!t->IsStandardType()) {
+        seqclass->AddBase(t);
+    }
 }
 | VIRTUAL_KEYWORD access_specifier ID
 {
-	assert(seqclass!=NULL);
-	TypeClassStruct *seqbase;
-	DataType *t=thisCodeFile->FindDataType(GetToken($3));
-	if (t==NULL) {
-		seqbase=new TypeClassStruct(GetToken($3), true);
-		seqclass->AddBase(seqbase);  
-	} else  if (!t->IsStandardType()) {
+    assert(seqclass!=NULL);
+    TypeClassStruct *seqbase;
+    DataType *t=thisCodeFile->FindDataType(GetToken($3));
+    if (t==NULL) {
+        seqbase=new TypeClassStruct(GetToken($3), true);
+        seqclass->AddBase(seqbase);
+    } else  if (!t->IsStandardType()) {
       seqclass->AddBase(t);
-	}
+    }
 }
 | access_specifier VIRTUAL_KEYWORD ID
 {
-	assert(seqclass!=NULL);
-	TypeClassStruct *seqbase;
-	DataType *t=thisCodeFile->FindDataType(GetToken($3));
-	if (t==NULL) {
-		seqbase=new TypeClassStruct(GetToken($3), true);
-		seqclass->AddBase(seqbase);
-	} else  if (!t->IsStandardType()) {
+    assert(seqclass!=NULL);
+    TypeClassStruct *seqbase;
+    DataType *t=thisCodeFile->FindDataType(GetToken($3));
+    if (t==NULL) {
+        seqbase=new TypeClassStruct(GetToken($3), true);
+        seqclass->AddBase(seqbase);
+    } else  if (!t->IsStandardType()) {
       seqclass->AddBase(t);
-	}
+    }
 };
 
 
@@ -880,7 +879,7 @@ class_prototype: class_key ';'
 }
 ;
 
-/* 
+/*
 Parallel class declaration
 */
 
@@ -892,7 +891,7 @@ class_declaration:  class_head '{' member_list '}' ';'
 }
 ;
 
-class_head: class_key pure_class_decl base_spec 
+class_head: class_key pure_class_decl base_spec
 {
   accessmodifier=PUBLIC;
   if ($2) currentClass->SetPureVirtual(true);
@@ -903,40 +902,45 @@ class_head: class_key pure_class_decl base_spec
 
 class_key: PARCLASS_KEYWORD ID
 {
-	hadParclass = true; 
-	if (othercodes.GetSize() && startPos>0) {
+
+  hadParclass = true;
+    if (othercodes.GetSize() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode((char *)othercodes,startPos);
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
-	}
-	insideClass=true;
-	char *clname=GetToken($2);
-  
-	Class *t;
-	if ((t=thisCodeFile->FindClass(clname))==NULL) {
-      t=new Class(clname, thisCodeFile);
-      thisCodeFile->AddDataType(t);
-      
-      // Pass compilation options to classes
-      if(thisCodeFile->IsCoreCompilation())
-      	t->SetAsCoreCompilation();
-		if(thisCodeFile->IsAsyncAllocationDisable()) {
-			t->DisableAsyncAllocation();
-		}
-      if(isWarningEnable)
-      	t->EnableWarning();  
-	}
-	t->SetFileInfo(filename);
-	t->SetStartLine(linenumber);
-	currentClass=t;
-	
-	if(isNamespace) {
-		
-		t->SetNamespace(holdnamespace);
-	
-	}
+    }
+    insideClass=true;
+    char *clname=GetToken($2);
+
+    Class *t;
+    if ((t=thisCodeFile->FindClass(clname))==NULL) {
+    t=new Class(clname, thisCodeFile);
+    thisCodeFile->AddDataType(t);
+
+    // Pass compilation options to classes
+    if(thisCodeFile->IsCoreCompilation()) {
+      t->SetAsCoreCompilation();
+    }
+
+        if(thisCodeFile->IsAsyncAllocationDisable()) {
+      t->DisableAsyncAllocation();
+        }
+
+    if(isWarningEnable) {
+      t->EnableWarning();
+    }
+    }
+    t->SetFileInfo(filename);
+    t->SetStartLine(linenumber);
+    currentClass=t;
+
+    if(isNamespace) {
+
+        t->SetNamespace(holdnamespace);
+
+    }
 
 };
 
@@ -950,80 +954,79 @@ base_list: base_specifier
 
 base_specifier: ID
 {
-	assert(currentClass!=NULL);
-	Class *cl=thisCodeFile->FindClass(GetToken($1));
-	if (cl==NULL) 
-	  {
-	    char str[1024];
-	    sprintf(str,"base class %s not declared",GetToken($1));
-	    errormsg(str);
-	    exit(1);
-	  }
-	BaseClass *t=new BaseClass(cl, PUBLIC, false);
-	currentClass->baseClass.InsertAt(-1,t);
+    assert(currentClass!=NULL);
+    Class *cl = thisCodeFile->FindClass(GetToken($1));
+    if (cl == NULL) {
+        char str[1024];
+        sprintf(str,"base class %s not declared",GetToken($1));
+        errormsg(str);
+        exit(1);
+      }
+    BaseClass *t=new BaseClass(cl, PUBLIC, false);
+    currentClass->baseClass.InsertAt(-1,t);
 }
 | access_specifier ID
 {
-	assert(currentClass!=NULL);
-	AccessType accessmode=(AccessType)$1;
-	Class *cl=thisCodeFile->FindClass(GetToken($2));
-	if (cl==NULL) 
-	  {
-	    char str[1024];
-	    sprintf(str,"base class %s not declared",GetToken($2));
-	    errormsg(str);
-	    exit(1);
-	  }
-	BaseClass *t=new BaseClass(cl,accessmode,false);
-	currentClass->baseClass.InsertAt(-1,t);
+    assert(currentClass!=NULL);
+    AccessType accessmode=(AccessType)$1;
+    Class *cl = thisCodeFile->FindClass(GetToken($2));
+    if (cl==NULL)
+      {
+        char str[1024];
+        sprintf(str,"base class %s not declared",GetToken($2));
+        errormsg(str);
+        exit(1);
+      }
+    BaseClass *t=new BaseClass(cl,accessmode,false);
+    currentClass->baseClass.InsertAt(-1,t);
 }
 | VIRTUAL_KEYWORD access_specifier ID
 {
-	assert(currentClass!=NULL);
-	AccessType accessmode=(AccessType)$2;
+    assert(currentClass!=NULL);
+    AccessType accessmode=(AccessType)$2;
 
-	Class *cl=thisCodeFile->FindClass(GetToken($3));
-	if (cl==NULL) 
-	  {
-	    char str[1024];
-	    sprintf(str,"base class %s not declared",GetToken($3));
-	    errormsg(str);
-	    exit(1);
-	  }
+    Class *cl=thisCodeFile->FindClass(GetToken($3));
+    if (cl==NULL)
+      {
+        char str[1024];
+        sprintf(str,"base class %s not declared",GetToken($3));
+        errormsg(str);
+        exit(1);
+      }
 
-	BaseClass *t=new BaseClass(cl,accessmode,true);
-	currentClass->baseClass.InsertAt(-1,t);
+    BaseClass *t=new BaseClass(cl,accessmode,true);
+    currentClass->baseClass.InsertAt(-1,t);
 }
 | access_specifier VIRTUAL_KEYWORD ID
 {
-	assert(currentClass!=NULL);
-	AccessType accessmode=(AccessType)$1;
+    assert(currentClass!=NULL);
+    AccessType accessmode=(AccessType)$1;
 
-	Class *cl=thisCodeFile->FindClass(GetToken($3));
-	if (cl==NULL) 
-	  {
-	    char str[1024];
-	    sprintf(str,"base class %s not declared",GetToken($3));
-	    errormsg(str);
-	    exit(1);
-	  }
+    Class *cl=thisCodeFile->FindClass(GetToken($3));
+    if (cl==NULL)
+      {
+        char str[1024];
+        sprintf(str,"base class %s not declared",GetToken($3));
+        errormsg(str);
+        exit(1);
+      }
 
-	BaseClass *t=new BaseClass(cl,accessmode,true);
-	currentClass->baseClass.InsertAt(-1,t);
+    BaseClass *t=new BaseClass(cl,accessmode,true);
+    currentClass->baseClass.InsertAt(-1,t);
 }
 ;
 
 access_specifier: PRIVATE_KEYWORD
 {
-	$$=PRIVATE;
+    $$=PRIVATE;
 }
 | PUBLIC_KEYWORD
 {
-	$$=PUBLIC;
+    $$=PUBLIC;
 }
 | PROTECTED_KEYWORD
 {
-	$$=PROTECTED;
+    $$=PROTECTED;
 }
 ;
 
@@ -1037,8 +1040,8 @@ pure_class_decl: /*empty*/
   $$= (paroc_utils::isEqual(GetToken($2), "0")) ? 1 : 0;
 }
 ;
-/* 
-Parallel class member declaration 
+/*
+Parallel class member declaration
 */
 
 member_list: /*empty*/
@@ -1052,29 +1055,28 @@ member_declaration:  enum_declaration ';'
 | function_definition ';'
 | innerclass_definition ';' | innerclass_static ';' | typedef_definition ';'
 {
-	assert(method!=NULL);
-	int t=method->CheckMarshal();
-	if (t!=0) {      
-		if (t==-1) {
-			sprintf(tmp,"In method %s::%s: unable to marshal the return argument.\n", currentClass->GetName(), method->name);
-      } else {
-      	
-			sprintf(tmp,"In method %s::%s: unable to marshal argument %d.\n", currentClass->GetName(), method->name, t);
-		}
-      errormsg(tmp);
-		exit(1);
-	}
-	currenttype=returntype=NULL;
+    assert(method != NULL);
+    int t = method->CheckMarshal();
+    if (t!=0) {
+        if (t==-1) {
+            sprintf(tmp,"In method %s::%s: unable to marshal the return argument.\n", currentClass->GetName(), method->name);
+    } else {
+            sprintf(tmp,"In method %s::%s: unable to marshal argument %d.\n", currentClass->GetName(), method->name, t);
+        }
+    errormsg(tmp);
+        exit(1);
+    }
+    currenttype = returntype = NULL;
 }
- 
+
 | attribute_definition ';'
 {
-	if (accessmodifier==PUBLIC) {
+    if (accessmodifier == PUBLIC) {
       sprintf(tmp,"%s:%d: attributes of a parallel class must be private or protected.\n",thisCodeFile->GetFileName(), linenumber);
       errormsg(tmp);
       exit(1);
-	}
-	currenttype=returntype=NULL;  
+    }
+    currenttype=returntype=NULL;
 }
 | DIRECTIVE
 {
@@ -1090,37 +1092,37 @@ member_declaration:  enum_declaration ';'
 
 /**
  * @author : clementval
- * Enum declaration 
+ * Enum declaration
  */
 enum_declaration: ENUM ID '{' enum_members '}'
 {
-	assert(currentClass!=NULL);
-	Enumeration *t = new Enumeration(currentClass, accessmodifier);
-	t->SetLineInfo(linenumber-1);
-	currentClass->AddMember(t);
-	t->setName(GetToken($2));
-	t->setArgs(GetToken($4));
+    assert(currentClass!=NULL);
+    Enumeration *t = new Enumeration(currentClass, accessmodifier);
+    t->SetLineInfo(linenumber-1);
+    currentClass->AddMember(t);
+    t->setName(GetToken($2));
+    t->setArgs(GetToken($4));
 }
 ;
 
-enum_members: enum_member 
+enum_members: enum_member
 {
-	$$ = $1;	
+    $$ = $1;
 }
 | enum_member ',' enum_members
 {
-	sprintf(tmp,"%s , %s",GetToken($1), GetToken($3));
-	$$ = PutToken(tmp);
+    sprintf(tmp,"%s , %s",GetToken($1), GetToken($3));
+    $$ = PutToken(tmp);
 }
 ;
 
 enum_member: ID
 {
-	$$ = $1;
+    $$ = $1;
 }
 | ID '=' INTEGER
-{      
-	sprintf(tmp,"%s = %s",GetToken($1), GetToken($3));
+{
+    sprintf(tmp,"%s = %s",GetToken($1), GetToken($3));
    $$=PutToken(tmp);
 }
 ;
@@ -1137,27 +1139,27 @@ attribute_name_list: attribute_name
 
 attribute_name: pointer_specifier ref_specifier ID array_declarator
 {
-	assert(currentClass!=NULL);
-	Attribute *t=new Attribute(currentClass,accessmodifier);
-	t->SetLineInfo(linenumber-1);
-	currentClass->AddMember(t);
-	Param *tparam = t->NewAttribute();
-	DataType *type;
-	strcpy(tparam->name,GetToken($3));
-	
-	if ($1==0) {
-		type=currenttype;
-	} else {
+    assert(currentClass!=NULL);
+    Attribute *t=new Attribute(currentClass,accessmodifier);
+    t->SetLineInfo(linenumber-1);
+    currentClass->AddMember(t);
+    Param *tparam = t->NewAttribute();
+    DataType *type;
+    strcpy(tparam->name,GetToken($3));
+
+    if ($1==0) {
+        type=currenttype;
+    } else {
       type=new TypePtr(NULL, $1 , currenttype, constPointerPositions);
       thisCodeFile->AddDataType(type);
-	}
+    }
 
-	if ($4!=-1) {
-		type=new TypeArray(NULL, GetToken($4) , type);
-		thisCodeFile->AddDataType(type);
-	}
-	tparam->isRef=$2;
-	tparam->SetType(type);
+    if ($4!=-1) {
+        type=new TypeArray(NULL, GetToken($4) , type);
+        thisCodeFile->AddDataType(type);
+    }
+    tparam->isRef=$2;
+    tparam->SetType(type);
 };
 
 array_declarator: /*empty*/
@@ -1166,17 +1168,17 @@ array_declarator: /*empty*/
 }
 | '[' ']'
 {
-	$$=0;
+    $$=0;
 }
 | '[' expr_decl ']' array_declarator
 {
-	if ($4==-1) {
-		sprintf(tmp,"[%s]",GetToken($2));
-		$$=PutToken(tmp);
-	} else {
+    if ($4==-1) {
+        sprintf(tmp,"[%s]",GetToken($2));
+        $$=PutToken(tmp);
+    } else {
       sprintf(tmp,"[%s]%s",GetToken($2),GetToken($4));
       $$=PutToken(tmp);
-	}
+    }
 }
 ;
 
@@ -1186,15 +1188,15 @@ decl_specifier: storage_class_specifier type_specifier
 }
 | type_specifier
 {
-	
-	
-	$$=0;
+
+
+    $$=0;
 }
 ;
 
 storage_class_specifier:  AUTO_KEYWORD
 {
-  $$=1;  
+  $$=1;
 }
 | REGISTER_KEYWORD
 {
@@ -1204,16 +1206,16 @@ storage_class_specifier:  AUTO_KEYWORD
 
 type_specifier: ID
 {
-	if(isInStruct)
-		sprintf(typetmp, "%s", GetToken($1)); // Save the type specifier for struct attribute
-	currenttype=thisCodeFile->FindDataType(GetToken($1));
-	if (currenttype==NULL) {
-	   currenttype=new DataType(GetToken($1));
+    if(isInStruct)
+        sprintf(typetmp, "%s", GetToken($1)); // Save the type specifier for struct attribute
+    currenttype=thisCodeFile->FindDataType(GetToken($1));
+    if (currenttype==NULL) {
+       currenttype=new DataType(GetToken($1));
       thisCodeFile->AddDataType(currenttype);
    }
-	$$=(YYSTYPE)currenttype;
+    $$=(YYSTYPE)currenttype;
 }
-| ID1 
+| ID1
 {
   currenttype=thisCodeFile->FindDataType(GetToken($1));
   if (currenttype==NULL)
@@ -1222,9 +1224,9 @@ type_specifier: ID
       thisCodeFile->AddDataType(currenttype);
 
       /*
-	sprintf(tmp,"Undeclared type \"%s\"\n",GetToken($1)); 
-	errormsg(tmp);
-	exit(1);
+    sprintf(tmp,"Undeclared type \"%s\"\n",GetToken($1));
+    errormsg(tmp);
+    exit(1);
       */
     }
   $$=(YYSTYPE)currenttype;
@@ -1242,13 +1244,13 @@ type_specifier: ID
       delete el;
     }
   delete list;
- 
+
   thisCodeFile->AddDataType(type);
   currenttype=type;
   $$=(YYSTYPE)currenttype;
 
 }
-| struct_definition  
+| struct_definition
 {
   assert(currenttype!=NULL);
   currenttype=currentstruct;
@@ -1261,7 +1263,7 @@ type_specifier: ID
     {
       type=new TypeClassStruct(GetToken($2), false);
       thisCodeFile->AddDataType(type);
-    } 
+    }
   currenttype=type;
   $$=(YYSTYPE)currenttype;
 }
@@ -1274,7 +1276,7 @@ template_arguments: template_arg
   list->AddHead(v);
   $$=(YYSTYPE)list;
 }
-| template_arg ',' template_arguments 
+| template_arg ',' template_arguments
 {
   paroc_list<TemplateArgument *> *list=(paroc_list<TemplateArgument *> *)$3;
   TemplateArgument *v=(TemplateArgument *)$1;
@@ -1285,20 +1287,20 @@ template_arguments: template_arg
 
 template_arg: type_specifier pointer_specifier array_declarator ref_specifier
 {
-  TemplateArgument *t=new TemplateArgument;	
+  TemplateArgument *t=new TemplateArgument;
   t->type=(DataType *)$1;
   if ($2>0)
   {
-	//t->type=new TypePtr(NULL,$2,t->type);
-	t->type=new TypePtr(NULL, $2, t->type, constPointerPositions);
+    //t->type=new TypePtr(NULL,$2,t->type);
+    t->type=new TypePtr(NULL, $2, t->type, constPointerPositions);
   }
-  if ($3!=-1) 
+  if ($3!=-1)
   {
-	t->type=new TypeArray(NULL,GetToken($3), t->type);
+    t->type=new TypeArray(NULL,GetToken($3), t->type);
   }
   t->isRef=($4!=0);
   $$=(YYSTYPE)t;
-  
+
 }
 ;
 /*
@@ -1311,7 +1313,7 @@ template_arg: ID pointer_specifier array_declarator ref_specifier
   else
     {
       strcpy(tmp, GetToken($1));
-      for (int i=0;i<$2; i++) strcat(tmp, "*"); 
+      for (int i=0;i<$2; i++) strcat(tmp, "*");
       if ($3!=-1) strcat(tmp,GetToken($3));
       if ($4) strcat(tmp,"&");
       $$=PutToken(tmp);
@@ -1326,7 +1328,7 @@ template_arg: ID pointer_specifier array_declarator ref_specifier
   else
     {
       strcpy(tmp, GetToken($1));
-      for (int i=0;i<$2; i++) strcat(tmp, "*"); 
+      for (int i=0;i<$2; i++) strcat(tmp, "*");
       if ($3!=-1) strcat(tmp,GetToken($3));
       if ($4) strcat(tmp,"&");
       $$=PutToken(tmp);
@@ -1346,7 +1348,7 @@ template_arg: ID pointer_specifier array_declarator ref_specifier
 pointer_specifier:/*empty
 {
   $$=0;
-  
+
 }
 | '*' pointer_specifier
 {
@@ -1357,13 +1359,13 @@ pointer_specifier:/*empty
 
 pointer_specifier:/*empty*/
 {
-	$$=0;
-	constPointerPositions.clear();
+    $$=0;
+    constPointerPositions.clear();
 }
 | '*' const_specifier pointer_specifier
 {
-	$$=$3+1; /* modivied by David (added const)*/
-	constPointerPositions.push_back(($2 == 1 ? true : false));
+    $$=$3+1; /* modivied by David (added const)*/
+    constPointerPositions.push_back(($2 == 1 ? true : false));
 }
 ;
 
@@ -1389,7 +1391,7 @@ ref_specifier: /*empty*/
 ;
 
 /*
-Method declaration 
+Method declaration
 */
 
 function_definition: constructor_definition
@@ -1404,7 +1406,7 @@ pure_virtual_decl: /*empty*/
 }
 ;
 
-constructor_definition: constructor_name '(' argument_declaration ')' od_specifier 
+constructor_definition: constructor_name '(' argument_declaration ')' od_specifier
 {
   if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
     {
@@ -1429,84 +1431,80 @@ constructor_name: ID
 }
 ;
 
-destructor_definition: '~' destructor_name '('  ')' 
+destructor_definition: '~' destructor_name '('  ')'
 {
   if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
     {
       errormsg("Bad declaration of destructor\n");
       exit(1);
     }
-	strcpy(method->name,currentClass->GetName());
+    strcpy(method->name,currentClass->GetName());
 }
-| VIRTUAL_KEYWORD '~' destructor_name '('  ')' 
+| VIRTUAL_KEYWORD '~' destructor_name '('  ')'
 {
   if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
     {
       errormsg("Bad declaration of destructor\n");
       exit(1);
     }
-	strcpy(method->name,currentClass->GetName());
-	method->isVirtual=true;
-	
+    strcpy(method->name,currentClass->GetName());
+    method->isVirtual=true;
+
 }
 ;
 
 destructor_name: ID
 {
-  method=new Destructor(currentClass,accessmodifier);
-  method->SetLineInfo(linenumber-1);
+  method = new Destructor(currentClass, accessmodifier);
+  method->SetLineInfo(linenumber - 1);
   currentClass->AddMember(method);
-  strcpy(method->name,GetToken($1));
+  strcpy(method->name, GetToken($1));
 }
 ;
 
 /*
-method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' 
+method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')'
 {
-  //Old data:  argument_type function_name 
+  //Old data:  argument_type function_name
   strcpy(method->returnparam.name,"_RemoteRet");
 
   DataType *type=returntype;
-  if ($2>0)
-    {
-      type=new TypePtr(NULL, $2 , type);
-      thisCodeFile->AddDataType(type);
-    }
+  if ($2>0) {
+    type = new TypePtr(NULL, $2 , type);
+    thisCodeFile->AddDataType(type);
+  }
 
-  if ($3)
-    {
-      method->returnparam.isRef=true;
-    }
+  if ($3) {
+    method->returnparam.isRef=true;
+  }
   method->returnparam.SetType(type);
-
 }
 |  fct_specifier decl_specifier  pointer_specifier ref_specifier function_name '(' argument_declaration ')'
 {
-  strcpy(method->returnparam.name,"_RemoteRet");
+  strcpy(method->returnparam.name, "_RemoteRet");
 
-  DataType *type=returntype;
-  if ($3>0)
-    {
-      type=new TypePtr(NULL, $3 , type);
-      thisCodeFile->AddDataType(type);
-    }
-  
-  if ($4)
-    {
-      method->returnparam.isRef=true;
-    }
+  DataType *type = returntype;
+  if ($3 > 0) {
+    type = new TypePtr(NULL, $3 , type);
+    thisCodeFile->AddDataType(type);
+  }
+
+  if ($4) {
+    method->returnparam.isRef=true;
+  }
 
   method->returnparam.SetType(type);
 
   method->isVirtual=(($1 & 1)!=0);
-  if (($1 & 8)!=0) method->isConcurrent=true;
+
+  if (($1 & 8) != 0) method->isConcurrent = true;
   else if (($1 & 32)!=0) method->isConcurrent=false;
 
   method->isHidden=(($1 & 64)!=0);
   method->isMutex=(($1 & 16)!=0);
 
-  if (($1 & 6)==2) method->invoketype=invokesync;
-  else if (($1 & 6)==4) method->invoketype=invokeasync;
+  if (($1 & 6)==2) method->invoketype = invokesync;
+  else if (($1 & 6)==4) method->invoketype = invokeasync;
   //else method->invoketype=autoselect;
 }
 | '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')'
@@ -1517,13 +1515,13 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
       type=new TypePtr(NULL, $5 , type);
       thisCodeFile->AddDataType(type);
     }
-  
+
   if ($6)
     {
       method->returnparam.isRef=true;
     }
   method->returnparam.SetType(type);
-  
+
   strcpy(method->returnparam.name,"_RemoteRet");
 }
 | fct_specifier  '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')'
@@ -1536,7 +1534,7 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
       type=new TypePtr(NULL, $6 , type);
       thisCodeFile->AddDataType(type);
     }
-  
+
   if ($7)
     {
       method->returnparam.isRef=true;
@@ -1547,10 +1545,10 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
 
   if (($1 & 8)!=0) method->isConcurrent=true;
   else if (($1 & 32)!=0) method->isConcurrent=false;
-  
+
   method->isMutex=(($1 & 16)!=0);
   method->isHidden=(($1 & 64)!=0);
-  
+
   if (($1 & 6)==2) method->invoketype=invokesync;
   else if (($1 & 6)==4) method->invoketype=invokeasync;
   // else method->invoketype=autoselect;
@@ -1559,23 +1557,23 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
 */
 
 /*
-method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' 
+method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')'
 {
-	setReturnParam($2,$3, 0);
+    setReturnParam($2,$3, 0);
 }
 |  fct_specifier decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')'
 {
-	setReturnParam($3,$4, ($1 & 1));
-	setPOPCMethodeModifier($1 & 254);
+    setReturnParam($3,$4, ($1 & 1));
+    setPOPCMethodeModifier($1 & 254);
 }
 | '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')'
 {
-	setReturnParam($5,$6, ($1 & 1));
+    setReturnParam($5,$6, ($1 & 1));
 }
 | fct_specifier  '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')'
 {
-	setReturnParam($6,$7, ($1 & 1));
-	setPOPCMethodeModifier($1 & 254);
+    setReturnParam($6,$7, ($1 & 1));
+    setPOPCMethodeModifier($1 & 254);
 }
 ;
 */
@@ -1583,54 +1581,54 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
 
 method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
-	setReturnParam($2,$3, 0);
-	
-	method->isGlobalConst = ($8 == 1 ? true : false); 
-	errorGlobalMehtode(method->isGlobalConst);
+    setReturnParam($2,$3, 0);
+
+    method->isGlobalConst = ($8 == 1 ? true : false);
+    global_method_error(method->isGlobalConst);
 }
 | const_virutal_specifier decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
-	setReturnParam($3,$4, $1);
-	
-	method->isGlobalConst = ($9 == 1 ? true : false); 
-	errorGlobalMehtode(method->isGlobalConst);
+    setReturnParam($3,$4, $1);
+
+    method->isGlobalConst = ($9 == 1 ? true : false);
+    global_method_error(method->isGlobalConst);
 }
 | decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
-	setReturnParam($3,$4, $2);
-	
-	method->isGlobalConst = ($9 == 1 ? true : false); 
-	errorGlobalMehtode(method->isGlobalConst);
+    setReturnParam($3,$4, $2);
+
+    method->isGlobalConst = ($9 == 1 ? true : false);
+    global_method_error(method->isGlobalConst);
 }
 | const_virutal_specifier decl_specifier const_virutal_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
-	setReturnParam($4,$5, ($1 | $3));
-	
-	method->isGlobalConst = ($10 == 1 ? true : false);
-	errorGlobalMehtode(method->isGlobalConst); 
+    setReturnParam($4,$5, ($1 | $3));
+
+    method->isGlobalConst = ($10 == 1 ? true : false);
+    global_method_error(method->isGlobalConst);
 }
 | fct_specifier const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
 {
-	setReturnParam($5,$6, ($2|$4));
-	setPOPCMethodeModifier($1);
-	
-	method->isGlobalConst = ($11 == 1 ? true : false);
-	errorGlobalMehtode(method->isGlobalConst);
+    setReturnParam($5,$6, ($2|$4));
+    setPOPCMethodeModifier($1);
+
+    method->isGlobalConst = ($11 == 1 ? true : false);
+    global_method_error(method->isGlobalConst);
 }
 | '[' marshal_opt_list ']' const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
 {
-	setReturnParam($7,$8, ($4 | $6));
-	
-	method->isGlobalConst = ($13 == 1 ? true : false);
-	errorGlobalMehtode(method->isGlobalConst);
+    setReturnParam($7,$8, ($4 | $6));
+
+    method->isGlobalConst = ($13 == 1 ? true : false);
+    global_method_error(method->isGlobalConst);
 }
 | fct_specifier  '[' marshal_opt_list ']' const_virutal_empty_specifier decl_specifier const_virutal_empty_specifier pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')' const_specifier
 {
-	setReturnParam($8,$9, ($5 & 7));
-	setPOPCMethodeModifier($1);
-	
-	method->isGlobalConst = ($14 == 1 ? true : false);
-	errorGlobalMehtode(method->isGlobalConst);
+    setReturnParam($8,$9, ($5 & 7));
+    setPOPCMethodeModifier($1);
+
+    method->isGlobalConst = ($14 == 1 ? true : false);
+    global_method_error(method->isGlobalConst);
 }
 ;
 
@@ -1640,37 +1638,38 @@ fct_specifier:  fct_spec
 }
 |  fct_specifier fct_spec
 {
-	/* error if multimple time same reserved word */
-	if (($2 & $1) != 0)
-	{
-		errormsg("Multiple semantics keyword");
-		exit(1);
-	}
-  
-	$$=$1 | $2;
+    /* error if multimple time same reserved word */
+    if (($2 & $1) != 0)
+    {
+        errormsg("Multiple semantics keyword");
+        exit(1);
+    }
+
+    $$=$1 | $2;
 }
 ;
 
 /*
-fct_spec: VIRTUAL_KEYWORD
+fct_spec:
+VIRTUAL_KEYWORD
 {
-	$$=1;
-} 
+    $$=1;
+}
 | SYNC_INVOKE
 {
-	$$=2;
+    $$=2;
 }
 | ASYNC_INVOKE
 {
-	$$=4;
-} 
+    $$=4;
+}
 | CONCURRENT
 {
-	$$=8;
+    $$=8;
 }
 | SEQUENTIAL
 {
-	$$=32;
+    $$=32;
 }
 | MUTEX
 {
@@ -1679,26 +1678,30 @@ fct_spec: VIRTUAL_KEYWORD
 | HIDDEN
 {
   $$=64;
+}
+| BROADCAST
+{
+  $$=128;
 }
 ;
 */
 
-/* remove C++ Virtual - david  */
-fct_spec: SYNC_INVOKE
+fct_spec:
+SYNC_INVOKE
 {
-	$$=2;
+    $$=2;
 }
 | ASYNC_INVOKE
 {
-	$$=4;
-} 
+    $$=4;
+}
 | CONCURRENT
 {
-	$$=8;
+    $$=8;
 }
 | SEQUENTIAL
 {
-	$$=32;
+    $$=32;
 }
 | MUTEX
 {
@@ -1707,48 +1710,52 @@ fct_spec: SYNC_INVOKE
 | HIDDEN
 {
   $$=64;
+}
+| BROADCAST
+{
+  $$=128;
 }
 ;
 
 /* added by david, for dedection of const or/and vitural methode modivier */
 const_virutal_specifier: VIRTUAL_KEYWORD
 {
-	$$=1;
-} 
+    $$=1;
+}
 | CONST_KEYWORD
 {
-	$$=2;
+    $$=2;
 }
 | CONST_KEYWORD VIRTUAL_KEYWORD
 {
-	$$=3;
+    $$=3;
 }
 | VIRTUAL_KEYWORD CONST_KEYWORD
 {
-	$$=3;
+    $$=3;
 }
 ;
 
 /* added by david, for dedection of none, const or/and vitural methode modivier */
 const_virutal_empty_specifier: /* empty */
 {
-	$$=0;
+    $$=0;
 }
-|VIRTUAL_KEYWORD
+| VIRTUAL_KEYWORD
 {
-	$$=1;
-} 
+    $$=1;
+}
 | CONST_KEYWORD
 {
-	$$=2;
+    $$=2;
 }
 | CONST_KEYWORD VIRTUAL_KEYWORD
 {
-	$$=3;
+    $$=3;
 }
 | VIRTUAL_KEYWORD CONST_KEYWORD
 {
-	$$=3;
+    $$=3;
 }
 ;
 
@@ -1828,91 +1835,86 @@ od_exprlist: /*empty*/
 }
 | ID '=' expr_decl od_expr_nonstrict ';' od_exprlist
 {
-    char *odtmp=GetToken($1);
-    if (paroc_utils::isEqual(odtmp,"host"))
-      {
-	sprintf(tmp,"od.url(%s);",GetToken($3));
-	if ($6!=-1) strcat(tmp,GetToken($6));
-	if ($4!=-1)
-	  {
-	    errormsg("OD: host should be a string expression. Non-strict description is not allowed");
-	    exit(1);
-	  }
-      } 
-    else if (paroc_utils::isEqual(odtmp,"jobcontact"))
-      {
-	sprintf(tmp,"od.joburl(%s);",GetToken($3));
-	if ($6!=-1) strcat(tmp,GetToken($6));
-	if ($4!=-1)
-	  {
-	    errormsg("OD: jobcontact should be a string expression. Non-strict description is not allowed");
-	    exit(1);
-	  }
-      } 
+  char *odtmp=GetToken($1);
+  if (paroc_utils::isEqual(odtmp,"host")) {
+    sprintf(tmp,"od.url(%s);",GetToken($3));
+    if ($6!=-1) strcat(tmp,GetToken($6));
+      if ($4!=-1) {
+      errormsg("OD: host should be a string expression. Non-strict description is not allowed");
+        exit(1);
+      }
+  } else if (paroc_utils::isEqual(odtmp,"jobcontact")) {
+    sprintf(tmp,"od.joburl(%s);",GetToken($3));
+      if ($6 != -1) strcat(tmp,GetToken($6));
+    if ($4 != -1) {
+        errormsg("OD: jobcontact should be a string expression. Non-strict description is not allowed");
+        exit(1);
+      }
+      }
     else if (paroc_utils::isEqual(odtmp,"memory"))
       {
-	sprintf(tmp,"od.memory(%s",GetToken($3));
-	if ($4!=-1)
-	  {
-	    strcat(tmp,",");
-	    strcat(tmp,GetToken($4));
-	  }
-	strcat(tmp,");");
-	if ($6!=-1) strcat(tmp,GetToken($6));
-      } 
+    sprintf(tmp,"od.memory(%s",GetToken($3));
+    if ($4!=-1)
+      {
+        strcat(tmp,",");
+        strcat(tmp,GetToken($4));
+      }
+    strcat(tmp,");");
+    if ($6!=-1) strcat(tmp,GetToken($6));
+      }
     else if (paroc_utils::isEqual(odtmp,"power"))
       {
-	sprintf(tmp,"od.power(%s",GetToken($3));
-	if ($4!=-1)
-	  {
-	    strcat(tmp,",");
-	    strcat(tmp,GetToken($4));
-	  }
-	strcat(tmp,");");
+    sprintf(tmp,"od.power(%s",GetToken($3));
+    if ($4!=-1)
+      {
+        strcat(tmp,",");
+        strcat(tmp,GetToken($4));
+      }
+    strcat(tmp,");");
 //Added by clementval
-	if ($6!=-1) strcat(tmp,GetToken($6));
-      } 
+    if ($6!=-1) strcat(tmp,GetToken($6));
+      }
     else if (paroc_utils::isEqual(odtmp,"search"))
       {
-	sprintf(tmp,"od.search(%s",GetToken($3));
-	if ($4!=-1)
-	  {
-	    strcat(tmp,",");
-	    strcat(tmp,GetToken($4));
-	  }
-	if ($5!=-1)
-	  {
-	    strcat(tmp,",");
-	    strcat(tmp,GetToken($5));
-	  }
-	strcat(tmp,");");
+    sprintf(tmp,"od.search(%s",GetToken($3));
+    if ($4!=-1)
+      {
+        strcat(tmp,",");
+        strcat(tmp,GetToken($4));
+      }
+    if ($5!=-1)
+      {
+        strcat(tmp,",");
+        strcat(tmp,GetToken($5));
+      }
+    strcat(tmp,");");
 //End of add
-	if ($6!=-1) strcat(tmp,GetToken($6));
-      } 
+    if ($6!=-1) strcat(tmp,GetToken($6));
+      }
     else if (paroc_utils::isEqual(odtmp,"network"))
     {
-	sprintf(tmp,"od.bandwidth(%s",GetToken($3));
-	if ($4!=-1)
-	  {
-	    strcat(tmp,",");
-	    strcat(tmp,GetToken($4));
-	  }
-	strcat(tmp,");");
-	if ($6!=-1) strcat(tmp,GetToken($6));
-    } 
+    sprintf(tmp,"od.bandwidth(%s",GetToken($3));
+    if ($4!=-1)
+      {
+        strcat(tmp,",");
+        strcat(tmp,GetToken($4));
+      }
+    strcat(tmp,");");
+    if ($6!=-1) strcat(tmp,GetToken($6));
+    }
     else if (paroc_utils::isEqual(odtmp,"walltime"))
       {
-	sprintf(tmp,"od.walltime(%s);",GetToken($3));
-	if ($4!=-1)
-	  {
-	    errormsg("OD: walltime  should be a number expression. Non-strict description is not allowed");
-	    exit(1);
-	  }
-      } 
+    sprintf(tmp,"od.walltime(%s);",GetToken($3));
+    if ($4!=-1)
+      {
+        errormsg("OD: walltime  should be a number expression. Non-strict description is not allowed");
+        exit(1);
+      }
+      }
     else
       {
-	errormsg("Unknown OD declaration");
-	exit(1);
+    errormsg("Unknown OD declaration");
+    exit(1);
       }
     $$=PutToken(tmp);
 }
@@ -1934,70 +1936,70 @@ argument_declaration: /*empty*/
 | argument_list;
 
 argument_list:  arg_declaration
-| arg_declaration ',' argument_list 
+| arg_declaration ',' argument_list
 ;
 
 arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_specifier ref_specifier argument_name array_declarator arg_default_value
 {
-	Param *t=method->AddNewParam();
-	UpdateMarshalParam($1,t);
-	
-	
-	DataType *type=currenttype;
-	if ($5>0) {
+    Param *t=method->AddNewParam();
+    UpdateMarshalParam($1,t);
+
+
+    DataType *type=currenttype;
+    if ($5>0) {
       type=new TypePtr(NULL, $5 , type, constPointerPositions);
       thisCodeFile->AddDataType(type);
-	}
+    }
 
-	if ($6) {
-		t->isRef=true;
-	}
-	
-	// Handle standard array passing declaration
-	if($8 == 0){
-		t->isArray=true;
-		//Find last int as size of array
-		int nb=method->params.GetSize()-1;
-		
-		std::string size_variable_name;
-		
-		for (int j=0;j<nb;j++) {
-			Param &p=*(method->params[j]);
-			if(strcmp("int", p.GetType()->GetName())==0){
-				size_variable_name.clear();
-				size_variable_name.append(p.GetName());
-			}
-		}
-		if(size_variable_name.length() == 0){
-			//
-			sprintf(tmp,"Could not find size to marshall array: %s\n", GetToken($7));
-			errormsg(tmp);
-			exit(1);
-		}
-		strcpy(tmpSize, size_variable_name.c_str());
-		UpdateMarshalParam(67,t);
+    if ($6) {
+        t->isRef=true;
+    }
+
+    // Handle standard array passing declaration
+    if($8 == 0){
+        t->isArray=true;
+        //Find last int as size of array
+        int nb=method->params.GetSize()-1;
+
+        std::string size_variable_name;
+
+        for (int j=0;j<nb;j++) {
+            Param &p=*(method->params[j]);
+            if(strcmp("int", p.GetType()->GetName())==0){
+                size_variable_name.clear();
+                size_variable_name.append(p.GetName());
+            }
+        }
+        if(size_variable_name.length() == 0){
+            //
+            sprintf(tmp,"Could not find size to marshall array: %s\n", GetToken($7));
+            errormsg(tmp);
+            exit(1);
+        }
+        strcpy(tmpSize, size_variable_name.c_str());
+        UpdateMarshalParam(67,t);
       type=new TypePtr(NULL, 1, type, constPointerPositions);
       thisCodeFile->AddDataType(type);
-	} else if ($8 != -1) {
-		type=new TypeArray(NULL, GetToken($8) , type);
-		thisCodeFile->AddDataType(type);
-	}
+    } else if ($8 != -1) {
+        type=new TypeArray(NULL, GetToken($8) , type);
+        thisCodeFile->AddDataType(type);
+    }
 
-	t->SetType(type);
-	if ($7 != -1) {
-		strcpy(t->name,GetToken($7));
-	} else {
-		if(strcmp("void", t->GetType()->GetName()) == 0){
-			t->isVoid = true;
-		} else {
-			sprintf(t->name,"V_%d",++counter);
-		}
-	}
+    t->SetType(type);
+    if ($7 != -1) {
+        strcpy(t->name,GetToken($7));
+    } else {
+        if(strcmp("void", t->GetType()->GetName()) == 0){
+            t->isVoid = true;
+        } else {
+            sprintf(t->name,"V_%d",++counter);
+        }
+    }
 
-	t->isConst=(($2==1) || ($4==1));
-	if ($9 >= 0) 
-		t->defaultVal=strdup(GetToken($9));
-} 
+    t->isConst=(($2==1) || ($4==1));
+    if ($9 >= 0)
+        t->defaultVal=strdup(GetToken($9));
+}
 ;
 
 marshal_decl:  /*empty*/
@@ -2006,17 +2008,17 @@ marshal_decl:  /*empty*/
 }
 | '[' marshal_opt_list ']'
 {
-	$$=$2;
+    $$=$2;
 }
 ;
 
 marshal_opt_list: marshal_opt
 {
-	$$=$1;
+    $$=$1;
 }
 | marshal_opt ',' marshal_opt_list
 {
-	$$=$1 | $3 ;
+    $$=$1 | $3 ;
 }
 ;
 
@@ -2028,7 +2030,7 @@ marshal_opt: INPUT
 {
   $$=PARAM_OUT;
 }
-| SIZE '=' expr_decl 
+| SIZE '=' expr_decl
 {
   strcpy(tmpSize,GetToken($3));
   $$=PARAMSIZE;
@@ -2043,25 +2045,25 @@ marshal_opt: INPUT
 
 cv_qualifier: /*empty*/
 {
-	$$=0;
+    $$=0;
 }
 | CONST_KEYWORD
 {
-	$$=1;
+    $$=1;
 }
 | VOLATILE_KEYWORD
 {
-	$$=2;
+    $$=2;
 }
 ;
 
 argument_name: /*empty*/
 {
-	$$=-1;
+    $$=-1;
 }
 | ID
 {
-	$$=$1;
+    $$=$1;
 }
 ;
 
@@ -2082,10 +2084,10 @@ The expression is used to parse the OD
 */
 
 
-expr_decl: expr_name array_declarator 
+expr_decl: expr_name array_declarator
 {
   if ($2<0) $$=$1;
-  else 
+  else
     {
       sprintf(tmp, "%s%s",GetToken($1),GetToken($2));
       $$=PutToken(tmp);
@@ -2208,13 +2210,13 @@ expr_decl: expr_name array_declarator
 {
   sprintf(tmp,"%s(%s)",GetToken($1),GetToken($3));
   $$=PutToken(tmp);
- 
+
 }
 | '*' expr_decl
 {
   sprintf(tmp,"*%s",GetToken($2));
   $$=PutToken(tmp);
-} 
+}
 | '&' expr_decl
 {
   sprintf(tmp,"&%s",GetToken($2));
@@ -2245,11 +2247,11 @@ number: INTEGER
 expr_name: ID
 {
   $$=$1;
-} 
+}
 | ID SCOPE ID
 {
   sprintf(tmp,"%s::%s",GetToken($1),GetToken($3));
-  $$=PutToken(tmp);  
+  $$=PutToken(tmp);
 }
 ;
 
@@ -2273,7 +2275,7 @@ expr_list:  expr_decl
 
 void Usage()
 {
-  fprintf(stderr,"POP-C++ preprocessor version %s\nparoccpp [-onlyclient | -onlyserver] [POP-C++ source] [C++ source]\n", VERSION);
+  fprintf(stderr,"POP-C++ preprocessor version %s\npopcpp [-onlyclient | -onlyserver] [POP-C++ source] [C++ source]\n", VERSION);
   exit(1);
 }
 
@@ -2310,74 +2312,75 @@ TypeClassStruct *Peek()
 // Update marshall options for a specific parameter
 void UpdateMarshalParam(int flags, Param *t)
 {
-	if (flags!=0) {
-		if (flags & PARAM_IN) t->isInput=true;
-		if (flags & PARAM_OUT) t->isOutput=true;
+    if (flags!=0) {
+        if (flags & PARAM_IN) t->isInput=true;
+        if (flags & PARAM_OUT) t->isOutput=true;
       if (flags & USERPROC) t->marshalProc=strdup(tmpProc);
       if (flags & PARAMSIZE) t->paramSize=strdup(tmpSize);
-	}
+    }
 }
 
 extern FILE *yyin;
 
 int main(int argc, char **argv)
 {
-	bool client=true;
-	bool broker=true;
-	isWarningEnable=true;
-	isImplicitPackEnable=false;
-	isPOPCPPCompilation=false;
-	isAsyncAllocationDisable=false;
+    bool client=true;
+    bool broker=true;
+    isWarningEnable=true;
+    isImplicitPackEnable=false;
+    isPOPCPPCompilation=false;
+    isAsyncAllocationDisable=false;
 
-	if (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL){
-		
-		broker=false;
-	
-	} 	
-	
-	
-	if (paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface")!=NULL) {
-		
-		client=false;
-	
-	}  
-	
-	if (paroc_utils::checkremove(&argc,&argv,"-no-warning")!=NULL) {
-		
-		isWarningEnable=false;
-	
-	}  
+    if (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL){
 
-	if (paroc_utils::checkremove(&argc,&argv,"-popcpp-compilation")!=NULL) {
-		
-		isPOPCPPCompilation=true;
-	
-	}  
-	
-	if (paroc_utils::checkremove(&argc,&argv,"-no-implicit-pack")!=NULL) {
+        broker=false;
 
-		isImplicitPackEnable=false;
-	
-	}
-	if (paroc_utils::checkremove(&argc,&argv,"-no-async-allocation")!=NULL) {
-		isAsyncAllocationDisable=true;
-	
-	}	
+    }
 
-	int ret;
-	indexsource=-1;
-	errorcode=0;
-	if (argc<2){
-		
-		Usage();
-	
-	} else {
-		if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker, isWarningEnable, isImplicitPackEnable, isPOPCPPCompilation, isAsyncAllocationDisable))!=0)	{
-			fprintf(stderr,"Parse POP-C++ code failed (error=%d)\n",ret);
-			exit(ret);
-		}
-	}
-	return (errorcode!=0);
+
+    if (paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface")!=NULL) {
+
+        client=false;
+
+    }
+
+    if (paroc_utils::checkremove(&argc,&argv,"-no-warning")!=NULL) {
+
+        isWarningEnable=false;
+
+    }
+
+    if (paroc_utils::checkremove(&argc,&argv,"-popcpp-compilation")!=NULL) {
+
+        isPOPCPPCompilation=true;
+
+    }
+
+    if (paroc_utils::checkremove(&argc,&argv,"-no-implicit-pack")!=NULL) {
+
+        isImplicitPackEnable=false;
+
+    }
+    if (paroc_utils::checkremove(&argc,&argv,"-async-allocation")!=NULL) {
+        isAsyncAllocationDisable=true;
+
+    }
+
+    int ret;
+    indexsource=-1;
+    errorcode=0;
+
+    if (argc<2){
+
+        Usage();
+
+    } else {
+        if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker, isWarningEnable, isImplicitPackEnable, isPOPCPPCompilation, isAsyncAllocationDisable))!=0) {
+            fprintf(stderr,"Parse POP-C++ code failed (error=%d)\n",ret);
+            exit(ret);
+        }
+    }
+    return (errorcode!=0);
 }
 
 void yyerror(const  char *s)
@@ -2395,158 +2398,170 @@ void errormsg(const  char *s)
 }
 
 int yywrap() {
-	return(1);
+    return(1);
 }
 
 
 int base=1;
 
-int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation, bool isAsyncAllocationDisable)
+int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWarningEnable*/, bool /*isImplicitPackEnable*/, bool isPOPCPPCompilation, bool isAsyncAllocationDisable)
 {
-	if (infile==NULL || *infile=='-'){
-		yyin=stdin;
-	} else {
-      yyin=fopen(infile,"rt");
-      if (yyin==NULL) {
-	   	perror(infile);
-	   	return errno;
-		}
-      strcpy(filename,infile);
-	}
-	
-	linenumber=1;
-	thisCodeFile=new CodeFile(NULL);
-	if (outfile!=NULL) {
-		
-		thisCodeFile->SetOutputName(outfile);	
+    if (!infile || *infile == '-') {
+        yyin = stdin;
+    } else {
+        yyin = fopen(infile, "rt");
 
-	}
-	
+        if (!yyin) {
+            perror(infile);
+            return errno;
+        }
 
-	// Set the code file as core compilation if the compilation flag is present.
-	if(isPOPCPPCompilation)
-		thisCodeFile->SetAsCoreCompilation();
+        strcpy(filename, infile);
+    }
 
-	// Disable asynchronous parallel object allocation if the compilation flag is present.
-	if(isAsyncAllocationDisable)	
-		thisCodeFile->DisableAsyncAllocation();	
-		
-	insideClass=false;
-	othercodes.SetSize(0);
-	startPos=-1;
-	
+    linenumber = 1;
+    thisCodeFile = new CodeFile(NULL);
 
-	int ret=yyparse();
-	if (ret==0) {
-		FILE *outf;
-      if (outfile==NULL || *outfile=='-'){
-     		
-      	outf=stdout;
-      
-      } else {
-			outf=fopen(outfile,"wt");
-	  		if (outf==NULL){
-		      ret=errno;
-		      perror(outfile);
-	   	}
-		}
-      if (outf!=NULL) {
-			CArrayChar output(0,32000);
-			thisCodeFile->GenerateCode(output, client, broker);
-			fwrite((char *)output,1, output.GetSize(),outf);
-      }
-      if (outf!=stdout) {
-			fclose(outf);
-      
-		}
-	}
-  
-	othercodes.SetSize(0);
+    if (outfile) {
+        thisCodeFile->SetOutputName(outfile);
+    }
 
-	if (yyin!=stdin) {
-		
-		fclose(yyin);
-	
-	}
-	delete thisCodeFile;
-	thisCodeFile=NULL;
-	
-	isParclassDeclared = false; 
-	
-	return ret;
-	
+    // Set the code file as core compilation if the compilation flag is present.
+    if(isPOPCPPCompilation)
+        thisCodeFile->SetAsCoreCompilation();
+
+    // Disable asynchronous parallel object allocation if the compilation flag is present.
+    if(isAsyncAllocationDisable)
+        thisCodeFile->DisableAsyncAllocation();
+
+    insideClass = false;
+    othercodes.SetSize(0);
+    startPos = -1;
+
+    int ret = yyparse();
+    if (ret == 0) {
+        FILE *outf;
+        if (!outfile || *outfile=='-'){
+            outf=stdout;
+        } else {
+            outf=fopen(outfile,"wt");
+
+            if (!outf){
+                ret=errno;
+                perror(outfile);
+            }
+        }
+
+        if (outf!=NULL) {
+            CArrayChar output(0, 32000);
+            thisCodeFile->GenerateCode(output, client, broker);
+            fwrite((char *)output,1, output.GetSize(),outf);
+        }
+
+        if (outf != stdout) {
+            fclose(outf);
+        }
+    }
+
+    othercodes.SetSize(0);
+
+    if (yyin!=stdin) {
+        fclose(yyin);
+    }
+
+    delete thisCodeFile;
+    thisCodeFile = NULL;
+
+    isParclassDeclared = false;
+
+    return ret;
+
 }
 
 
 /* ---- SET normal C++ function return attributes ----- */
 void setReturnParam(int pointer, int ref, int const_virtual)
 {
-	//Old data:  argument_type function_name 
-	strcpy(method->returnparam.name,"_RemoteRet");
+    //Old data:  argument_type function_name
+    strcpy(method->returnparam.name,"_RemoteRet");
 
-	DataType *type=returntype;
-	if (pointer>0)
-	{
-		//type=new TypePtr(NULL, pointer, type);
-		type=new TypePtr(NULL, pointer, type, constPointerPositions);
-		thisCodeFile->AddDataType(type);
-		
-		constPointerPositions.clear(); // empty used struct
-	}
+    DataType *type=returntype;
+    if (pointer>0)
+    {
+        //type=new TypePtr(NULL, pointer, type);
+        type=new TypePtr(NULL, pointer, type, constPointerPositions);
+        thisCodeFile->AddDataType(type);
 
-	if (ref)
-	{
-		method->returnparam.isRef=true;
-	}
-	
-	method->isVirtual=((const_virtual & 1)!=0);
-	method->returnparam.isConst = ((const_virtual & 2)!=0);
-	
-	method->returnparam.SetType(type);
-	
+        constPointerPositions.clear(); // empty used struct
+    }
+
+    if (ref)
+    {
+        method->returnparam.isRef=true;
+    }
+
+    method->isVirtual=((const_virtual & 1)!=0);
+    method->returnparam.isConst = ((const_virtual & 2)!=0);
+
+    method->returnparam.SetType(type);
+
 }
 
 /* ---- POPC methode attributes ---- */
 void setPOPCMethodeModifier(int settings)
 {
-	
-	// TEST Mutex, prallel, seq or CONC (hinden ??)
-	if ((settings & 56)==8) 
-		method->isConcurrent=true;
-	else if ((settings & 56)==32) 
-		method->isConcurrent=false;
-	else if ((settings & 56)==16)
-		method->isMutex= true;
-	else if ((settings & 56)!=0)
-	{
-		errormsg("Multiple seq, conc or mutex keyword");
-		exit(1);
-	}
-	
-	if ((settings & 64)!=0)
-		method->isHidden=true;
-	
-	// TEST SYNC or ASYNC
-	if ((settings & 6)==6) 
-	{
-		errormsg("Multiple sync, async keyword");
-		exit(1);
-	}
-	else if ((settings & 6)==4) method->invoketype=invokeasync;
-	else if ((settings & 6)==2) method->invoketype=invokesync;
-	//else method->invoketype=autoselect;
+
+  //printf("Setting 1 is %d (%d) %s\n", (settings & 128), settings, method->name);
+
+    // TEST Mutex, prallel, seq or CONC (hidden ??)
+    if ((settings & 56) == 8) {
+        method->isConcurrent = true;
+  } else if ((settings & 56) == 32) {
+        method->isConcurrent = false;
+    } else if ((settings & 56) == 16) {
+        method->isMutex = true;
+    } else if ((settings & 56) != 0) {
+        errormsg("Multiple seq, conc or mutex keyword");
+        exit(1);
+    }
+
+  /**
+   * Find a collective method declaration
+   * Set the class as collective and set the collective type of the method
+   * WARNING: Only broadcast is implemented in this version
+   */
+    if((settings & 128) != 0) {
+      currentClass->set_as_collective();
+      method->set_collective(Method::POPC_COLLECTIVE_BROADCAST);
+    }
+
+    if ((settings & 64) != 0) {
+        method->isHidden = true;
+    }
+
+    //printf("Setting 2 is %d %d\n", (settings & 6), settings);
+
+    // TEST SYNC or ASYNC
+    if ((settings & 6) == 6) {
+        errormsg("Multiple sync, async keyword");
+        exit(1);
+    } else if ((settings & 6) == 4) {
+      method->invoketype = invokeasync;
+    } else if ((settings & 6) == 2) {
+      method->invoketype = invokesync;
+    }
 }
 
-void errorGlobalMehtode(bool isGlobal)
+void global_method_error(bool isGlobal)
 {
-	if(isGlobal)
-	{
-		errormsg("inspectors/const member functions are supported in the current version of POP-C++");
-		exit(1);
-	}
-	else
-	{
-		return;
-	}
+    if(isGlobal)
+    {
+        errormsg("inspectors/const member functions are not supported in POP-C++");
+        exit(1);
+    }
+    else
+    {
+        return;
+    }
 }
 

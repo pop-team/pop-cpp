@@ -1,19 +1,19 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-#undef HAVE_DLFCN_H
+#cmakedefine HAVE_DLFCN_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
 /* Define to 1 if you have the `dl' library (-ldl). */
-#undef HAVE_LIBDL
+#cmakedefine HAVE_LIBDL
 
 /* Define to 1 if you have the `nsl' library (-lnsl). */
 #undef HAVE_LIBNSL
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
-#undef HAVE_LIBPTHREAD
+#cmakedefine HAVE_LIBPTHREAD
 
 /* Define to 1 if you have the `socket' library (-lsocket). */
 #undef HAVE_LIBSOCKET
@@ -70,20 +70,19 @@
 /* Dynamic exec */
 #undef POPC_EXTRA_LINK
 
-/* Secure version */
-#undef POPC_SECURE
-
-/* Secure Virtual Version */
-#undef POPC_SECURE_VIRTUAL
-
-/* Virtual version */
-#undef POPC_VIRTUAL
-
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* MPI C++ compiler */
+#cmakedefine MPI_CXX_COMPILER "@MPI_CXX_COMPILER@"
+
 /* Version number of package */
-#undef VERSION
+#cmakedefine VERSION "@VERSION@"
+
+/* */
+#cmakedefine HOST_CPU "@HOST_CPU@"
+
+#cmakedefine HOST_KERNEL "@HOST_KERNEL@"
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */

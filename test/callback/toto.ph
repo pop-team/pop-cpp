@@ -1,7 +1,7 @@
 #ifndef _TOTO_PH
 #define _TOTO_PH
 
-parclass Toto          
+parclass Toto
 {
 
 classuid(1002);

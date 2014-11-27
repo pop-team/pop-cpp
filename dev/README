@@ -1,4 +1,5 @@
 POP-C++ Development directory
+=============================
 
 - This directory contains programs or libraries that are used only for development purpose.
 
@@ -7,4 +8,4 @@ WARNING: This directory must not be included in a POP-C++ release
 Directory structure:
 --------------------
 
-test/	: This sub-directory contains test cases for development. 
+test/	: This sub-directory contains test cases for development.

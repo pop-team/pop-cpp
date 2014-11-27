@@ -1,16 +1,20 @@
-all: app object
+POPCC=../../parser/popcc
+POPCPP=../../parser/popcpp
+POPCPATH=../..
+CROSSCOMPILE=-cxx=FCCpx -Xg -pthread -cpp="FCCpx -E"
+POPCCOMPILE=-noclean -popc-static -popcdir=$(POPCPATH) -popcpp=$(POPCPP)  -verbose
 
-app:
+all: main integer.obj
 
-	popcc -o main integer.ph integer.cc main.cc
+main: main.cc integer.ph integer.cc
+	$(POPCC) $(POPCCOMPILE) -o main integer.ph integer.cc main.cc 
 
-object:
-	popcc -object -o integer.obj integer.cc integer.ph main.cc
-	./integer.obj -listlong > obj.map
+integer.obj: integer.ph integer.cc
+	$(POPCC) $(POPCCOMPILE) -object -o integer.obj integer.cc integer.ph 
 
 clean:
-	rm -f *.o *.obj main obj.map
+	rm -f *.o *.obj main obj.map _popc* popc_mpi_interconnector
 
-run:
-	popcrun obj.map ./main
-
+run: main integer.obj
+	cp ../../interconnector/popc_mpi_interconnector ./
+	mpiexec -np 3 popc_mpi_interconnector -app=./main  

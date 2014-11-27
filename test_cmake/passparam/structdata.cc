@@ -1,1 +1,0 @@
-../../test/passparam/structdata.cc

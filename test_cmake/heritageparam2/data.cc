@@ -1,1 +1,0 @@
-../../test/heritageparam2/data.cc

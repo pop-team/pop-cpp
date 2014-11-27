@@ -3,8 +3,32 @@
 ------------------------------------------------------
 POP-C++
 Internal release note for developers
-ATTENTION : These notes are for internal purpose only. 
+COMMENT: These notes are for internal purpose only. 
 ------------------------------------------------------
+
+-------------
+POP-C++ 2.6.5
+-------------
+ 
+This version has been developed in the Master Thesis project POP-C++ on the K Computer. Therefore, it is specially fit for 
+the K Computer and cluster environment. 
+
+New features:
+- MPI Communication layer
+- MPI/UDS Hybrid Communication layer
+- MPI Interconnector
+- New MPI support
+- XMP support
+- Parallel Object Group
+- Allocators with Allocator Factory
+- New layered architecture
+
+Disabled features: 
+- Socket communications
+- Global and application services
+- Plugin for lib
+
+
 
 -----------
 POP-C++ 2.5
@@ -19,9 +43,3 @@ For POP-C++ development
 - Add different logging level in the runtime (DEBUG, ERROR, CORE, INFO, DEV).
 - Add special flag for POP-C++ compilation itself "-popcpp-compilation". Used for special purpose in the compiling process of 
   POP-C++. 
-  
-  
--------------  
-POP-C++ 2.5.1
--------------
-- Dedicated version developed at RIKEN Institute for the Master thesis of Valentin Clement will be named 2.5.1
