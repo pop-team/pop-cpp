@@ -1,5 +1,5 @@
-#include <qgridview.h>
-#include <qapplication.h>
+// #include <qgridview.h>
+// #include <qapplication.h>
 #include <qpainter.h>
 
 #include <stdio.h>

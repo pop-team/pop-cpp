@@ -2,8 +2,8 @@
 #define WIDGET_H
 
 #include <qimage.h>
-#include <qwidget.h>
-#include <qapplication.h>
+#include <QtWidgets/QtWidgets>
+#include <QtWidgets/QApplication>
 #include <qevent.h>
 
 class Widget : public QWidget {

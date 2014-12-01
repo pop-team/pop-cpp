@@ -59,7 +59,7 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
         case POPC_Allocator::INTERCONNECTOR :
             return new POPC_Allocator_uds_interconnector();
         default:
-            return NULL;
+            return NULL; // TODO lwk security: there should be a safety if this is returned in a constructor: e.g. assert(false)
         }
     }
     // Allocation over TCP/IP socket

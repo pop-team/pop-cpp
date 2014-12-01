@@ -61,6 +61,7 @@ bool POPC_GroupInterface::initialize(int nb) {
     POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
     if(allocator == NULL) {
         std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;
+        // TODO lwk security: is this all ? Should we not exit ?
     }
 
     _popc_combox = allocator->allocate_group(objectname, od, nb);
