@@ -22,12 +22,11 @@
 typedef paroc_combox* (*COMBOX_CREATOR)();
 typedef int (*LOAD_PROTOCOL)(paroc_string &, COMBOX_CREATOR &);
 
-struct combox_factory_struct
-{
-	char *name;
-	int metrics;
+struct combox_factory_struct {
+    char *name;
+    int metrics;
 
-	COMBOX_CREATOR creator;
+    COMBOX_CREATOR creator;
 };
 
 
@@ -37,39 +36,37 @@ struct combox_factory_struct
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_combox_factory
-{
+class paroc_combox_factory {
 protected:
-	paroc_combox_factory();
-	~paroc_combox_factory();
+    paroc_combox_factory();
+    ~paroc_combox_factory();
 
 public:
-	static paroc_combox_factory *GetInstance();
-	void Destroy();
+    static paroc_combox_factory *GetInstance();
+    void Destroy();
 
-	paroc_combox* Create(const char * name);
-	paroc_combox* Create(int index);
+    paroc_combox* Create(const char * name);
+    paroc_combox* Create(int index);
 
-	void GetNames(paroc_string &prots);
-	int GetCount();
+    void GetNames(paroc_string &prots);
+    int GetCount();
 
-	bool Register(const char *name, int metrics, COMBOX_CREATOR creator);
+    bool Register(const char *name, int metrics, COMBOX_CREATOR creator);
 
-	void *LoadPlugin(char *fname,  paroc_string &name, COMBOX_CREATOR &f);
-
-private:
-	static paroc_combox_factory *fact;
+    void *LoadPlugin(char *fname,  paroc_string &name, COMBOX_CREATOR &f);
 
 private:
-	paroc_list<combox_factory_struct> list;
-	paroc_array<void *> plugins;
+    static paroc_combox_factory *fact;
+
+private:
+    paroc_list<combox_factory_struct> list;
+    paroc_array<void *> plugins;
 
 };
 
-class paroc_combox_registration
-{
+class paroc_combox_registration {
 public:
-	paroc_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator);
+    paroc_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator);
 };
 
 #define COMBOX(x) extern paroc_combox_registration x;

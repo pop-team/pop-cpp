@@ -6,25 +6,24 @@
 #include <string.h>
 #include <unistd.h>
 
-int main(int argc, char* argv[]) 
-{
-  printf("Forked process started %s\n", argv[1]);
-  struct sockaddr_un _sock_address;  
-  int _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
-  if(_socket_fd < 0) {
-    perror("socket() failed\n");
-  } else {
-    memset(&_sock_address, 0, sizeof(struct sockaddr_un));    
-    _sock_address.sun_family = AF_UNIX;    
-    strcpy(_sock_address.sun_path, "uds_0.0");  
-    if(connect(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
-      perror("Connect failed");
-      return 1;
+int main(int argc, char* argv[]) {
+    printf("Forked process started %s\n", argv[1]);
+    struct sockaddr_un _sock_address;
+    int _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
+    if(_socket_fd < 0) {
+        perror("socket() failed\n");
     } else {
-      char* data = "message from uds client";
-      int wbytes = write(_socket_fd, data, 25); 
-      printf("%s Write %d - %s\n", argv[1], wbytes, data); 
+        memset(&_sock_address, 0, sizeof(struct sockaddr_un));
+        _sock_address.sun_family = AF_UNIX;
+        strcpy(_sock_address.sun_path, "uds_0.0");
+        if(connect(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
+            perror("Connect failed");
+            return 1;
+        } else {
+            char* data = "message from uds client";
+            int wbytes = write(_socket_fd, data, 25);
+            printf("%s Write %d - %s\n", argv[1], wbytes, data);
+        }
     }
-  } 
-  close(_socket_fd);
+    close(_socket_fd);
 }

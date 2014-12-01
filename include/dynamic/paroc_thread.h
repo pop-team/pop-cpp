@@ -14,30 +14,29 @@
 #define _POPC_THREAD
 #include <pthread.h>
 
-class paroc_thread
-{
+class paroc_thread {
 public:
-	paroc_thread(bool joinable);
-	virtual ~paroc_thread();
+    paroc_thread(bool joinable);
+    virtual ~paroc_thread();
 
-	virtual void start()=0;
-	void join();
-	void cancel();
-	void kill(int sig);
-	bool joinable();
+    virtual void start()=0;
+    void join();
+    void cancel();
+    void kill(int sig);
+    bool joinable();
 
-	int create();
+    int create();
 public:
-	static void *_threadentry(void *param);
-	static void _cleanupentry(void *param);
+    static void *_threadentry(void *param);
+    static void _cleanupentry(void *param);
 
 private:
-	bool isjoinable;
-	bool iscreated;
+    bool isjoinable;
+    bool iscreated;
 
-	pthread_attr_t attr;
-	pthread_t th;
-	static pthread_mutex_t objlock;
+    pthread_attr_t attr;
+    pthread_t th;
+    static pthread_mutex_t objlock;
 };
 
 #endif

@@ -10,7 +10,7 @@
  *
  */
 
- 
+
 #ifndef POPC_CONNECTION_UNIX_DOMAIN_SOCKET_H
 #define POPC_CONNECTION_UNIX_DOMAIN_SOCKET_H
 
@@ -19,22 +19,21 @@
 /**
  * Connection holding a file descriptor referencing a UDS communication
  */
-class popc_connection_uds: public  paroc_connection
-{
+class popc_connection_uds: public  paroc_connection {
 public:
-	popc_connection_uds(paroc_combox *cb);
-	popc_connection_uds(int fd, paroc_combox *cb);
-	popc_connection_uds(int fd, paroc_combox *cb, bool init);
-	popc_connection_uds(popc_connection_uds &me);
+    popc_connection_uds(paroc_combox *cb);
+    popc_connection_uds(int fd, paroc_combox *cb);
+    popc_connection_uds(int fd, paroc_combox *cb, bool init);
+    popc_connection_uds(popc_connection_uds &me);
 
-	virtual paroc_connection *Clone();
-  virtual void reset() {};	
-  
-  void set_fd(int fd);
-  int get_fd();
+    virtual paroc_connection *Clone();
+    virtual void reset() {};
+
+    void set_fd(int fd);
+    int get_fd();
 
 private:
-	int _socket_fd;
+    int _socket_fd;
 };
 
 #endif /* POPC_CONNECTION_UNIX_DOMAIN_SOCKET_H */

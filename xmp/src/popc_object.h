@@ -10,19 +10,19 @@
  *
  *
  */
- 
+
 #ifndef POPC_OBJECT_H_
 #define POPC_OBJECT_H_
 
 class POPC_Object {
 public:
-  POPC_Object();
-  virtual ~POPC_Object();
-  
-  
-protected: 
-  virtual int get_rank();  
-  virtual int get_group_size();
+    POPC_Object();
+    virtual ~POPC_Object();
+
+
+protected:
+    virtual int get_rank();
+    virtual int get_group_size();
 };
 
 #endif /* POPC_OBJECT_H_ */

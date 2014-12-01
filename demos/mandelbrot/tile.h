@@ -3,11 +3,11 @@
 
 class Tile {
 private:
-	int x, y, w, h;
-	void *widget;
+    int x, y, w, h;
+    void *widget;
 public:
-	Tile(int ax, int ay, int aw, int ah);
-	void newRow(int row, unsigned int *v);
+    Tile(int ax, int ay, int aw, int ah);
+    void newRow(int row, unsigned int *v);
 };
 
 void initApp(int &argc, char **argv);

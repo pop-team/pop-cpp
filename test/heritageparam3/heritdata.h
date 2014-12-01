@@ -3,9 +3,8 @@
 #include "data.h"
 
 
-class HeritData :  public Data
-{
-  public:
+class HeritData :  public Data {
+public:
     HeritData();
     ~HeritData();
     int GetInternalData();
@@ -17,8 +16,8 @@ class HeritData :  public Data
     virtual void Serialize(POPBuffer &buf, bool pack);
 
 
-  private:
+private:
     int myData;
     double toUseMemorySpace[100000];
 };
-#endif    
+#endif

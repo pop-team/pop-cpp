@@ -5,8 +5,8 @@
  *
  * @author Valentin Clement
  * @date 2012/12/04
- * @brief Declaration of the base class POPC_AllocatorFactory. The allocator factory allows to provide the right allocator for 
- *        parallel object allocation depending the lower layer (SSH, MPI, POP-C++ MPI Interconnector ...). 
+ * @brief Declaration of the base class POPC_AllocatorFactory. The allocator factory allows to provide the right allocator for
+ *        parallel object allocation depending the lower layer (SSH, MPI, POP-C++ MPI Interconnector ...).
  *
  *
  */
@@ -20,17 +20,17 @@
 #include "paroc_combox.h"
 
 class POPC_Allocator {
-public: 
-  enum POPC_Protocol { UDS, TCPIP, MPI, SHM }; 
-  enum POPC_AllocationMechanism { LOCAL, SSH, INTERCONNECTOR, PSEUDODYNAMIC };   
-  
-  POPC_Allocator() {} ; 
-  virtual ~POPC_Allocator() {} ;        
-  virtual POPString allocate(POPString& objectname, paroc_od& od) = 0; 
-  virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb) = 0;   
-  virtual POPC_Protocol get_protocol() = 0; 
-  virtual POPC_AllocationMechanism get_mechanism() = 0;  
-  
+public:
+    enum POPC_Protocol { UDS, TCPIP, MPI, SHM };
+    enum POPC_AllocationMechanism { LOCAL, SSH, INTERCONNECTOR, PSEUDODYNAMIC };
+
+    POPC_Allocator() {} ;
+    virtual ~POPC_Allocator() {} ;
+    virtual POPString allocate(POPString& objectname, paroc_od& od) = 0;
+    virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb) = 0;
+    virtual POPC_Protocol get_protocol() = 0;
+    virtual POPC_AllocationMechanism get_mechanism() = 0;
+
 };
 
 #endif /* POPC_ALLOCATOR_H_ */

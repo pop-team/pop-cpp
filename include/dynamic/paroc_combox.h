@@ -23,30 +23,29 @@ class paroc_buffer_factory;
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_connection
-{
+class paroc_connection {
 public:
-	paroc_connection(paroc_combox *com);
-	paroc_connection(paroc_combox *com, bool init);
-	paroc_connection(paroc_combox *com, paroc_buffer_factory *f);
-	virtual ~paroc_connection();
-	
-	virtual bool is_initial_connection();
+    paroc_connection(paroc_combox *com);
+    paroc_connection(paroc_combox *com, bool init);
+    paroc_connection(paroc_combox *com, paroc_buffer_factory *f);
+    virtual ~paroc_connection();
 
-	virtual void SetBufferFactory(paroc_buffer_factory *fact);
-	virtual paroc_buffer_factory *GetBufferFactory();
+    virtual bool is_initial_connection();
 
-	paroc_combox *GetCombox();
+    virtual void SetBufferFactory(paroc_buffer_factory *fact);
+    virtual paroc_buffer_factory *GetBufferFactory();
 
-	virtual paroc_connection *Clone()=0;
-	virtual void reset()=0;
-	
-	
+    paroc_combox *GetCombox();
+
+    virtual paroc_connection *Clone()=0;
+    virtual void reset()=0;
+
+
 
 protected:
-	paroc_buffer_factory * fact;
-	paroc_combox *combox;
-  bool _is_initial_connection;
+    paroc_buffer_factory * fact;
+    paroc_combox *combox;
+    bool _is_initial_connection;
 };
 
 
@@ -60,57 +59,56 @@ typedef bool (*COMBOX_CALLBACK)(void *, paroc_connection *);
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_combox
-{
+class paroc_combox {
 public:
-	paroc_combox();
+    paroc_combox();
 protected:
-	virtual ~paroc_combox();
+    virtual ~paroc_combox();
 
 public:
-	virtual bool Create(int port, bool server)=0;
-	virtual bool Create(const char *address, bool server)=0;
-	virtual bool Connect(const char *url)=0;
+    virtual bool Create(int port, bool server)=0;
+    virtual bool Create(const char *address, bool server)=0;
+    virtual bool Connect(const char *url)=0;
 
-	virtual int Send(const char *s,int len)=0;
-	virtual int Send(const char *s,int len, paroc_connection *connection)=0;
-	virtual bool SendAck(paroc_connection *conn);
+    virtual int Send(const char *s,int len)=0;
+    virtual int Send(const char *s,int len, paroc_connection *connection)=0;
+    virtual bool SendAck(paroc_connection *conn);
 
-	virtual int Recv(char *s,int len)=0;
-	virtual int Recv(char *s,int len, paroc_connection *connection)=0;
-	virtual bool RecvAck(paroc_connection *conn=0);
+    virtual int Recv(char *s,int len)=0;
+    virtual int Recv(char *s,int len, paroc_connection *connection)=0;
+    virtual bool RecvAck(paroc_connection *conn=0);
 
-	virtual paroc_connection *Wait()=0;
-	
-	virtual paroc_connection* get_connection()=0;
+    virtual paroc_connection *Wait()=0;
 
-	virtual void Close()=0;
+    virtual paroc_connection* get_connection()=0;
 
-	void SetTimeout(int millisec);
-	int  GetTimeout();
+    virtual void Close()=0;
 
-	virtual bool GetUrl(paroc_string & accesspoint)=0;
-	virtual bool GetProtocol(paroc_string & protocolName)=0;
+    void SetTimeout(int millisec);
+    int  GetTimeout();
 
-	virtual void Destroy();
+    virtual bool GetUrl(paroc_string & accesspoint)=0;
+    virtual bool GetProtocol(paroc_string & protocolName)=0;
 
-	bool SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg);
+    virtual void Destroy();
 
-	void SetBufferFactory(paroc_buffer_factory *fact);
-	paroc_buffer_factory *GetBufferFactory();
-	
-  static const char* PROTOCOL_SEPARATOR;	
+    bool SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg);
 
-protected:
-	virtual bool OnNewConnection(paroc_connection *conn);
-	virtual bool OnCloseConnection(paroc_connection *conn);
+    void SetBufferFactory(paroc_buffer_factory *fact);
+    paroc_buffer_factory *GetBufferFactory();
+
+    static const char* PROTOCOL_SEPARATOR;
 
 protected:
-	int timeout;
-	COMBOX_CALLBACK cblist[2];
-	void *cbdata[2];
+    virtual bool OnNewConnection(paroc_connection *conn);
+    virtual bool OnCloseConnection(paroc_connection *conn);
 
-	paroc_buffer_factory *defaultFact;
+protected:
+    int timeout;
+    COMBOX_CALLBACK cblist[2];
+    void *cbdata[2];
+
+    paroc_buffer_factory *defaultFact;
 
 };
 

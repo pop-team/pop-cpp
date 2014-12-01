@@ -3,9 +3,8 @@
 #include "data.h"
 
 
-class ClassData : public POPBase
-{
-  public:
+class ClassData : public POPBase {
+public:
     ClassData();
     ~ClassData();
     Data GetInternalData();
@@ -15,8 +14,8 @@ class ClassData : public POPBase
     virtual void Serialize(POPBuffer &buf, bool pack);
 
 
-  private:
+private:
     Data theData;
     int myData;
 };
-#endif    
+#endif

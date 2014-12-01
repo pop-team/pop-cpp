@@ -10,7 +10,7 @@
  *
  *
  */
- 
+
 #include "popc_object.h"
 
 #include <mpi.h>
@@ -18,15 +18,13 @@
 /**
  * Base constructor
  */
-POPC_Object::POPC_Object()
-{
+POPC_Object::POPC_Object() {
 }
 
 /**
  * Base destructor
  */
-POPC_Object::~POPC_Object()
-{
+POPC_Object::~POPC_Object() {
 }
 
 
@@ -34,16 +32,14 @@ POPC_Object::~POPC_Object()
  * Return the rank of the object in the group
  * @return Integer value representing the rank of the object in its group
  */
-int POPC_Object::get_rank() 
-{
-  return MPI::COMM_WORLD.Get_rank();
+int POPC_Object::get_rank() {
+    return MPI::COMM_WORLD.Get_rank();
 }
 
 /**
  * Return the size of the group in which the object is included
  * @return Integer value representing the size of the object's group
  */
-int POPC_Object::get_group_size() 
-{
-  return MPI::COMM_WORLD.Get_size();
+int POPC_Object::get_group_size() {
+    return MPI::COMM_WORLD.Get_size();
 }

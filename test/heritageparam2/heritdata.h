@@ -3,19 +3,18 @@
 #include "data.h"
 
 
-class HeritData : /*public POPBase,*/ public Data
-{
+class HeritData : /*public POPBase,*/ public Data {
 public:
-	HeritData();
-	~HeritData();
-	int GetInternalData();
-	void SetInternalData(int d);
-	int GetMyData();
-	void SetMyData(int d);
-	virtual void Serialize(POPBuffer &buf, bool pack);
+    HeritData();
+    ~HeritData();
+    int GetInternalData();
+    void SetInternalData(int d);
+    int GetMyData();
+    void SetMyData(int d);
+    virtual void Serialize(POPBuffer &buf, bool pack);
 
 
 private:
-	int myData;
+    int myData;
 };
 #endif

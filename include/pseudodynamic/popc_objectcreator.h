@@ -1,8 +1,8 @@
 /**
  * Copyright 2012 GRID & Cloud Computing Group, University of applied Sciences of western Switzerland
- * @author	Valentin Clement
- * @date 	2012/09/27
- * @brief	
+ * @author  Valentin Clement
+ * @date    2012/09/27
+ * @brief
  *
  */
 
@@ -11,9 +11,9 @@
 
 
 class POPC_ObjectCreator {
- public:
- protected:
- private:
+public:
+protected:
+private:
 
 };
 

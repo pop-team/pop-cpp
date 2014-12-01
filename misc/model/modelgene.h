@@ -2,36 +2,35 @@
 typedef float  real;
 typedef paroc_array<real> CRealArray;
 typedef paroc_array<CRealArray *> CPtrArrayArray;
-typedef paroc_array<int> 	CIntArray;
+typedef paroc_array<int>    CIntArray;
 
-class ModelGenetic
-{
+class ModelGenetic {
 public:
-	ModelGenetic(int pop, int cross_rate, int mutation_rate);
-	~ModelGenetic();
-	bool Init(int NStep, int NTask, real *Complexities, int *fromstep, int *tostep);
-	void Normalize();
-	int Solve(int maxepoch);
-	real GetResults(CRealArray &ret);
+    ModelGenetic(int pop, int cross_rate, int mutation_rate);
+    ~ModelGenetic();
+    bool Init(int NStep, int NTask, real *Complexities, int *fromstep, int *tostep);
+    void Normalize();
+    int Solve(int maxepoch);
+    real GetResults(CRealArray &ret);
 
-	void ListTaskPower();
+    void ListTaskPower();
 
-	bool CrossOver(int indv);
-	bool Mutation(int indv);
+    bool CrossOver(int indv);
+    bool Mutation(int indv);
 protected:
-	real EvalFitness(CRealArray &indv);
+    real EvalFitness(CRealArray &indv);
 
-	CPtrArrayArray population;
-	int actualsize;
-	int keepbests;
+    CPtrArrayArray population;
+    int actualsize;
+    int keepbests;
 
-	CRealArray complexities;
-	paroc_array<int> startStep, endStep;
+    CRealArray complexities;
+    paroc_array<int> startStep, endStep;
 
-	int Np; //population size
-	int Nt;  //Number of tasks
-	int Ns; //Number of steps
-	int crossoverrate;
-	int mutationrate;
+    int Np; //population size
+    int Nt;  //Number of tasks
+    int Ns; //Number of steps
+    int crossoverrate;
+    int mutationrate;
 };
 

@@ -5,9 +5,9 @@
  * Creation date : -
  *
  * Modifications :
- * Authors		Date			Comment
- * clementval	March 2012	Add Enum support
- * clementval	April 2012	Add namespace support to the parser
+ * Authors      Date            Comment
+ * clementval   March 2012  Add Enum support
+ * clementval   April 2012  Add namespace support to the parser
  */
 
 #ifndef PARSER_H
@@ -87,18 +87,21 @@ typedef paroc_array<DataType *> CArrayDataType;
  *
  *
  */
-class CodeData
-{
+class CodeData {
 public:
-	CodeData(CodeFile *file);
-	virtual ~CodeData();
+    CodeData(CodeFile *file);
+    virtual ~CodeData();
 
-	virtual int Type() { return -1;};
+    virtual int Type() {
+        return -1;
+    };
 
-	virtual void GenerateCode(CArrayChar &output);
-	CodeFile *GetCodeFile() { return codeFile;}
+    virtual void GenerateCode(CArrayChar &output);
+    CodeFile *GetCodeFile() {
+        return codeFile;
+    }
 protected:
-	CodeFile *codeFile;
+    CodeFile *codeFile;
 };
 
 /**
@@ -107,20 +110,21 @@ protected:
  *
  *
  */
-class OtherCode: public CodeData
-{
+class OtherCode: public CodeData {
 public:
-	OtherCode(CodeFile *file);
-	virtual int Type() { return TYPE_OTHERCODE; };
+    OtherCode(CodeFile *file);
+    virtual int Type() {
+        return TYPE_OTHERCODE;
+    };
 
-	virtual void GenerateCode(CArrayChar &output);
+    virtual void GenerateCode(CArrayChar &output);
 
 
-	void AddCode(char *newcode);
-	void AddCode(char *, int n);
-	void AddCode(CArrayChar &newcode);
+    void AddCode(char *newcode);
+    void AddCode(char *, int n);
+    void AddCode(CArrayChar &newcode);
 protected:
-	CArrayChar code;
+    CArrayChar code;
 };
 
 /**
@@ -129,21 +133,22 @@ protected:
  *
  *
  */
-class PackObject: public CodeData
-{
+class PackObject: public CodeData {
 public:
-	PackObject(CodeFile *file);
-	virtual int Type() { return TYPE_PACKOBJECT; };
-	virtual void GenerateCode(CArrayChar &output);
-	void AddObject(string64 objname);
-	int GetNumObject();
+    PackObject(CodeFile *file);
+    virtual int Type() {
+        return TYPE_PACKOBJECT;
+    };
+    virtual void GenerateCode(CArrayChar &output);
+    void AddObject(string64 objname);
+    int GetNumObject();
 
-	void SetStartLine(int l);
-	void SetEndLine(int l);
+    void SetStartLine(int l);
+    void SetEndLine(int l);
 
 protected:
-	CArrayString objects;
-	int startline, endline;
+    CArrayString objects;
+    int startline, endline;
 };
 
 
@@ -153,60 +158,59 @@ protected:
  *
  *
  */
-class CodeFile
-{
+class CodeFile {
 public:
-	CodeFile(char *fname);
-	~CodeFile();
-	void AddCodeData(CodeData *code);
-	void EmptyCodeData();
-	void GenerateCode(CArrayChar &output, bool client=true, bool broker=true/*, bool isPOPCPPCompilation=false*/);
-	CArrayCodeData *GetCodes();
-	bool HasClass();
-	char *GetFileName();
-	void SetFileName(char *name);
+    CodeFile(char *fname);
+    ~CodeFile();
+    void AddCodeData(CodeData *code);
+    void EmptyCodeData();
+    void GenerateCode(CArrayChar &output, bool client=true, bool broker=true/*, bool isPOPCPPCompilation=false*/);
+    CArrayCodeData *GetCodes();
+    bool HasClass();
+    char *GetFileName();
+    void SetFileName(char *name);
 
-	char *GetOutputName();
-	void SetOutputName(char *name);
+    char *GetOutputName();
+    void SetOutputName(char *name);
 
-	Class *FindClass(char *clname);
-	/**
-	     * @brief Returns the class list
-	     * @param classlist Output
-	 */
-	void FindAllClass(CArrayClass &classlist);
-	/**
-	 * @brief Finds out if a class is in bases and adds it if not found.
-	 * @param t Class to search
-	 * @param bases Base
-	 * @param virtualBaseOnly
-	 */
-	void FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseOnly);
+    Class *FindClass(char *clname);
+    /**
+         * @brief Returns the class list
+         * @param classlist Output
+     */
+    void FindAllClass(CArrayClass &classlist);
+    /**
+     * @brief Finds out if a class is in bases and adds it if not found.
+     * @param t Class to search
+     * @param bases Base
+     * @param virtualBaseOnly
+     */
+    void FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseOnly);
 
-	DataType *FindDataType(const char *name);
-	void AddDataType(DataType *type);
-	void RemoveDataType(DataType *type);
+    DataType *FindDataType(const char *name);
+    void AddDataType(DataType *type);
+    void RemoveDataType(DataType *type);
 
-	void SetAsCoreCompilation();
-	bool IsCoreCompilation();
+    void SetAsCoreCompilation();
+    bool IsCoreCompilation();
 
-	void DisableAsyncAllocation();
-	bool IsAsyncAllocationDisable();
+    void DisableAsyncAllocation();
+    bool IsAsyncAllocationDisable();
 
 
-	static bool SameFile(char *file1, char *file2);
+    static bool SameFile(char *file1, char *file2);
 
 
 protected:
-	char *filename;
-	char *outfile;
-	bool isCoreCompilation;
-	bool isAsyncAllocationDisable;
-	CArrayCodeData codes;
-	CArrayClass classlist;
+    char *filename;
+    char *outfile;
+    bool isCoreCompilation;
+    bool isAsyncAllocationDisable;
+    CArrayCodeData codes;
+    CArrayClass classlist;
 
-	CArrayDataType datatypes;
-	CArrayDataType temptypes;
+    CArrayDataType datatypes;
+    CArrayDataType temptypes;
 
 };
 
@@ -219,57 +223,56 @@ protected:
  *
  * It seems that this class is also used to represent a class attribute.
  */
-class Param
-{
+class Param {
 public:
-	Param(DataType *ptype);
-	Param();
-	virtual ~Param();
-	char *Parse(char *str);
-	bool Match(Param *p);
+    Param(DataType *ptype);
+    Param();
+    virtual ~Param();
+    char *Parse(char *str);
+    bool Match(Param *p);
 
-	bool IsPointer();
-	bool IsRef();
-	bool IsConst();
-	bool InParam();
-	bool IsArray();
-	bool IsVoid();
-	bool OutParam();
+    bool IsPointer();
+    bool IsRef();
+    bool IsConst();
+    bool InParam();
+    bool IsArray();
+    bool IsVoid();
+    bool OutParam();
 
-	void SetType(DataType *type);
+    void SetType(DataType *type);
 
-	DataType *GetType();
+    DataType *GetType();
 
-	char *GetName();
-	char *GetDefaultValue();
+    char *GetName();
+    char *GetDefaultValue();
 
-	int  GetAttr();
+    int  GetAttr();
 
-	bool CanMarshal();
+    bool CanMarshal();
 
-	bool DeclareParam(char *output, bool header);
-	bool DeclareVariable(char *output, bool &reformat, bool allocmem);
-	bool DeclareVariable(char *output);
+    bool DeclareParam(char *output, bool header);
+    bool DeclareVariable(char *output, bool &reformat, bool allocmem);
+    bool DeclareVariable(char *output);
 
-	virtual bool Marshal(char *bufname, bool reformat,bool inf_side, CArrayChar &output);
-	virtual bool UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_side, CArrayChar &output);
-	virtual bool UserProc(char *code);
+    virtual bool Marshal(char *bufname, bool reformat,bool inf_side, CArrayChar &output);
+    virtual bool UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_side, CArrayChar &output);
+    virtual bool UserProc(char *code);
 
-	bool isConst;
-	bool isRef;
-	bool isArray;
-	bool isVoid;
-	char name[64];
-	DataType *mytype;
-	//  char *cardinal;
-	char *paramSize;
-	char *marshalProc;
-	char *defaultVal;
+    bool isConst;
+    bool isRef;
+    bool isArray;
+    bool isVoid;
+    char name[64];
+    DataType *mytype;
+    //  char *cardinal;
+    char *paramSize;
+    char *marshalProc;
+    char *defaultVal;
 
-	bool isInput;
-	bool isOutput;
+    bool isInput;
+    bool isOutput;
 
-	int attr;
+    int attr;
 };
 
 /**
@@ -278,16 +281,15 @@ public:
  *
  *
  */
-class ObjDesc
-{
+class ObjDesc {
 public:
-	ObjDesc();
-	~ObjDesc();
+    ObjDesc();
+    ~ObjDesc();
 
-	void Generate(char *code);
-	void SetCode(char *code);
+    void Generate(char *code);
+    void SetCode(char *code);
 protected:
-	char *odstr;
+    char *odstr;
 };
 
 
@@ -297,26 +299,27 @@ protected:
  *
  *
  */
-class ClassMember
-{
+class ClassMember {
 public:
-	ClassMember(Class *cl, AccessType myaccess);
-	virtual ~ClassMember();
+    ClassMember(Class *cl, AccessType myaccess);
+    virtual ~ClassMember();
 
-	virtual int Type() { return -1; };
+    virtual int Type() {
+        return -1;
+    };
 
-	virtual void GenerateClient(CArrayChar &output);
-	virtual void GenerateHeader(CArrayChar &output, bool interface);
-	virtual void generate_header_pog(CArrayChar &output, bool interface);
+    virtual void GenerateClient(CArrayChar &output);
+    virtual void GenerateHeader(CArrayChar &output, bool interface);
+    virtual void generate_header_pog(CArrayChar &output, bool interface);
 
-	void SetLineInfo(int linenum);
+    void SetLineInfo(int linenum);
 
-	AccessType GetMyAccess();
-	Class *GetClass();
+    AccessType GetMyAccess();
+    Class *GetClass();
 protected:
-	AccessType accessType;
-	Class *myclass;
-	int line;
+    AccessType accessType;
+    Class *myclass;
+    int line;
 };
 
 /**
@@ -325,18 +328,19 @@ protected:
  *
  *
  */
-class Attribute: public ClassMember
-{
+class Attribute: public ClassMember {
 public:
-	Attribute(Class *cl,AccessType myaccess);
-	virtual int Type() { return TYPE_ATTRIBUTE; };
+    Attribute(Class *cl,AccessType myaccess);
+    virtual int Type() {
+        return TYPE_ATTRIBUTE;
+    };
 
-	virtual void GenerateHeader(CArrayChar &output, bool interface);
+    virtual void GenerateHeader(CArrayChar &output, bool interface);
 
-	Param *NewAttribute();
+    Param *NewAttribute();
 
 protected:
-	CArrayParam attributes;
+    CArrayParam attributes;
 };
 
 
@@ -344,65 +348,62 @@ protected:
  * @class Enumeration
  * @brief This class is holding enum type information
  */
-class Enumeration: public ClassMember
-{
+class Enumeration: public ClassMember {
 public:
-	Enumeration(Class *cl, AccessType myaccess);
-	~Enumeration();
-	virtual void GenerateHeader(CArrayChar &output, bool interface);
+    Enumeration(Class *cl, AccessType myaccess);
+    ~Enumeration();
+    virtual void GenerateHeader(CArrayChar &output, bool interface);
 
-	void setName(std::string value);
-	void setArgs(std::string value);
+    void setName(std::string value);
+    void setArgs(std::string value);
 
 private:
-	std::string name;
-	std::string args;
+    std::string name;
+    std::string args;
 };
 
 /**
  * @class Structure
  * @brief This class is holding struct type information
  */
-class Structure: public ClassMember
-{
+class Structure: public ClassMember {
 public:
-	Structure(Class *cl, AccessType myaccess);
-	~Structure();
-	virtual void GenerateHeader(CArrayChar &output, bool interface);
+    Structure(Class *cl, AccessType myaccess);
+    ~Structure();
+    virtual void GenerateHeader(CArrayChar &output, bool interface);
 
-	void setName(std::string value);
-	void setObjects(std::string value);
-	void setInnerDecl(std::string value);
+    void setName(std::string value);
+    void setObjects(std::string value);
+    void setInnerDecl(std::string value);
 
 private:
-	std::string name;
-	std::string objects;
-	std::string innerdecl;
+    std::string name;
+    std::string objects;
+    std::string innerdecl;
 };
 
 /**
  * @class TypeDefinition
  * @Brief This class is holding typedef information
  */
-class TypeDefinition: public ClassMember
-{
+class TypeDefinition: public ClassMember {
 public:
-	TypeDefinition(Class *cl, AccessType myaccess);
-	~TypeDefinition();
-	virtual void GenerateHeader(CArrayChar &output, bool interface);
+    TypeDefinition(Class *cl, AccessType myaccess);
+    ~TypeDefinition();
+    virtual void GenerateHeader(CArrayChar &output, bool interface);
 
-	void setName(std::string name);
-	void setBaseType(std::string basetype);
-	void setAsPtr();
-	bool isPtr();
-	void setAsArray();
-	bool isArray();
+    void setName(std::string name);
+    void setBaseType(std::string basetype);
+    void setAsPtr();
+    bool isPtr();
+    void setAsArray();
+    bool isArray();
 
 private:
-	bool ptr;
-	bool array;
-	std::string name;
-	std::string basetype;
+    bool ptr;
+    bool array;
+    std::string name;
+    std::string basetype;
 };
 
 
@@ -412,16 +413,17 @@ private:
  * @brief (to be written)
  *
  */
-class Directive: public ClassMember
-{
+class Directive: public ClassMember {
 public:
-	Directive(Class *cl, char *directive);
-	~Directive();
+    Directive(Class *cl, char *directive);
+    ~Directive();
 
-	virtual int Type() { return TYPE_DIRECTIVE; };
-	virtual void GenerateHeader(CArrayChar &output, bool interface);
+    virtual int Type() {
+        return TYPE_DIRECTIVE;
+    };
+    virtual void GenerateHeader(CArrayChar &output, bool interface);
 private:
-	char *code;
+    char *code;
 };
 
 /**
@@ -429,76 +431,79 @@ private:
  * @brief  A C++ class representing a method, used by the parser.
  *
  */
-class Method: public ClassMember
-{
+class Method: public ClassMember {
 public:
-	Method(Class *cl, AccessType myaccess);
-	~Method();
+    Method(Class *cl, AccessType myaccess);
+    ~Method();
 
-	static const int POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID;
-	static const int POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE;
-	static const char* POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME;
+    static const int POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID;
+    static const int POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE;
+    static const char* POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME;
 
-	virtual int Type() { return TYPE_METHOD; };
+    virtual int Type() {
+        return TYPE_METHOD;
+    };
 
-	int CheckMarshal();
+    int CheckMarshal();
 
-	virtual void GenerateClient(CArrayChar &output);
-	virtual void GenerateHeader(CArrayChar &output, bool interface);
-	virtual void generate_header_pog(CArrayChar &output, bool interface);
-	virtual void GenerateBrokerHeader(CArrayChar &output);
-	virtual void generate_broker_header_pog(CArrayChar &output);
-	virtual void GenerateBroker(CArrayChar &output);
+    virtual void GenerateClient(CArrayChar &output);
+    virtual void GenerateHeader(CArrayChar &output, bool interface);
+    virtual void generate_header_pog(CArrayChar &output, bool interface);
+    virtual void GenerateBrokerHeader(CArrayChar &output);
+    virtual void generate_broker_header_pog(CArrayChar &output);
+    virtual void GenerateBroker(CArrayChar &output);
 
-	virtual int MethodType() { return METHOD_NORMAL; };
+    virtual int MethodType() {
+        return METHOD_NORMAL;
+    };
 
-	bool operator == (Method &other);
-
-
-	char *Parse(char *str);
-
-	Param *AddNewParam();
-
-	bool hasInput();
-	bool hasOutput();
-
-	bool isVirtual;
-	bool isPureVirtual;
-	bool isGlobalConst; // add by david
+    bool operator == (Method &other);
 
 
-	enum CollectiveType { POPC_COLLECTIVE_BROADCAST, POPC_COLLECTIVE_GATHER, POPC_COLLECTIVE_SCATTER, POPC_COLLECTIVE_REDUCE };
-  void set_collective(CollectiveType type);
-  bool is_collective();
+    char *Parse(char *str);
 
-	bool isConcurrent;
-	bool isMutex;
-	bool isHidden;
+    Param *AddNewParam();
 
-	CArrayString mutex;
+    bool hasInput();
+    bool hasOutput();
 
-	InvokeType invoketype;
+    bool isVirtual;
+    bool isPureVirtual;
+    bool isGlobalConst; // add by david
 
-	char name[64];
-	int id;
-	CArrayParam params;
-	Param returnparam;
+
+    enum CollectiveType { POPC_COLLECTIVE_BROADCAST, POPC_COLLECTIVE_GATHER, POPC_COLLECTIVE_SCATTER, POPC_COLLECTIVE_REDUCE };
+    void set_collective(CollectiveType type);
+    bool is_collective();
+
+    bool isConcurrent;
+    bool isMutex;
+    bool isHidden;
+
+    CArrayString mutex;
+
+    InvokeType invoketype;
+
+    char name[64];
+    int id;
+    CArrayParam params;
+    Param returnparam;
 
 protected:
-	virtual void GenerateReturn(CArrayChar &output, bool header, bool interface);
-	virtual void GenerateReturn(CArrayChar &output, bool header);
-	virtual void GeneratePostfix(CArrayChar &output, bool header);
-	virtual void GenerateName(CArrayChar &output, bool header);
-	virtual void GenerateArguments(CArrayChar &output, bool header);
+    virtual void GenerateReturn(CArrayChar &output, bool header, bool interface);
+    virtual void GenerateReturn(CArrayChar &output, bool header);
+    virtual void GeneratePostfix(CArrayChar &output, bool header);
+    virtual void GenerateName(CArrayChar &output, bool header);
+    virtual void GenerateArguments(CArrayChar &output, bool header);
 
-	virtual void GenerateClientPrefixBody(CArrayChar &output);
+    virtual void GenerateClientPrefixBody(CArrayChar &output);
 
 private:
-	bool _is_collective;
-	bool _is_broadcast;
-	bool _is_scatter;
-	bool _is_gather;
-	bool _is_reduce;
+    bool _is_collective;
+    bool _is_broadcast;
+    bool _is_scatter;
+    bool _is_gather;
+    bool _is_reduce;
 
 };
 /**
@@ -507,48 +512,54 @@ private:
  *
  *
  */
-class Constructor: public Method
-{
+class Constructor: public Method {
 public:
-	Constructor(Class *cl, AccessType myaccess);
-	virtual int MethodType() { return METHOD_CONSTRUCTOR; };
+    Constructor(Class *cl, AccessType myaccess);
+    virtual int MethodType() {
+        return METHOD_CONSTRUCTOR;
+    };
 
-	virtual void GenerateHeader(CArrayChar &output, bool interface);
-	virtual void generate_header_pog(CArrayChar &output, bool interface);
+    virtual void GenerateHeader(CArrayChar &output, bool interface);
+    virtual void generate_header_pog(CArrayChar &output, bool interface);
 
-	bool isDefault();
+    bool isDefault();
 
-	ObjDesc &GetOD();
+    ObjDesc &GetOD();
 
-  void set_id(int value);
-  int get_id();
+    void set_id(int value);
+    int get_id();
 protected:
-	virtual void GenerateReturn(CArrayChar &output, bool header, bool interface) {  Method::GenerateReturn(output, header, interface); };
-	virtual void GenerateReturn(CArrayChar &output, bool header);
-	virtual void GeneratePostfix(CArrayChar &output, bool header);
-	virtual void GenerateClientPrefixBody(CArrayChar &output);
+    virtual void GenerateReturn(CArrayChar &output, bool header, bool interface) {
+        Method::GenerateReturn(output, header, interface);
+    };
+    virtual void GenerateReturn(CArrayChar &output, bool header);
+    virtual void GeneratePostfix(CArrayChar &output, bool header);
+    virtual void GenerateClientPrefixBody(CArrayChar &output);
 
-	ObjDesc od; //Only used for constructor method
+    ObjDesc od; //Only used for constructor method
 
 private:
-  int identifier;
+    int identifier;
 };
 /**
  * @class Destructor
  * @brief  A C++ class representing destructor method, used by the parser.
  *
  */
-class Destructor: public Method
-{
+class Destructor: public Method {
 public:
-	Destructor(Class *cl, AccessType myaccess);
+    Destructor(Class *cl, AccessType myaccess);
 
-	virtual int MethodType() { return METHOD_DESTRUCTOR; };
+    virtual int MethodType() {
+        return METHOD_DESTRUCTOR;
+    };
 
-	virtual void GenerateClient(CArrayChar &output);
+    virtual void GenerateClient(CArrayChar &output);
 protected:
-	virtual void GenerateReturn(CArrayChar &output, bool header, bool interface) {  Method::GenerateReturn(output, header, interface); };
-	virtual void GenerateReturn(CArrayChar &output, bool header);
+    virtual void GenerateReturn(CArrayChar &output, bool header, bool interface) {
+        Method::GenerateReturn(output, header, interface);
+    };
+    virtual void GenerateReturn(CArrayChar &output, bool header);
 };
 
 /**
@@ -557,13 +568,12 @@ protected:
  *
  *
  */
-class BaseClass
-{
+class BaseClass {
 public:
-	BaseClass(Class *name, AccessType basemode, bool onlyVirtual);
-	bool baseVirtual;
-	AccessType type;
-	Class *base;
+    BaseClass(Class *name, AccessType basemode, bool onlyVirtual);
+    bool baseVirtual;
+    AccessType type;
+    Class *base;
 };
 
 
@@ -573,103 +583,104 @@ public:
  *
  *
  */
-class Class: public CodeData, public DataType
-{
+class Class: public CodeData, public DataType {
 public:
-	Class(char *clname, CodeFile *file);
-	~Class();
+    Class(char *clname, CodeFile *file);
+    ~Class();
 
-	virtual bool IsParClass();
-	virtual int CanMarshal();
-	virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-	virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual bool IsParClass();
+    virtual int CanMarshal();
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
 
-	virtual int Type() { return TYPE_CLASS;};
-	virtual void GenerateCode(CArrayChar &output/*, bool isPOPCPPCompilation*/);
+    virtual int Type() {
+        return TYPE_CLASS;
+    };
+    virtual void GenerateCode(CArrayChar &output/*, bool isPOPCPPCompilation*/);
 
-	void SetFileInfo(char *file);
-	char *GetFileInfo();
-	void SetStartLine(int num);
-	void SetEndLine(int  num);
+    void SetFileInfo(char *file);
+    char *GetFileInfo();
+    void SetStartLine(int num);
+    void SetEndLine(int  num);
 
-	char *Parse(char *str);
-	void AddMember(ClassMember *t);
+    char *Parse(char *str);
+    void AddMember(ClassMember *t);
 
-	void SetClassID(char *id);
-	void SetPureVirtual(bool val);
-	bool IsPureVirtual();
-	void SetBasePureVirtual(bool val);
-	bool IsBasePureVirtual();
-
-
-	static unsigned IDFromString(char *str);
-
-	bool hasMethod(Method &x);
-	bool methodInBaseClass(Method &x);
-	bool findPureVirtual(CArrayMethod &lst);
-	//void findPureVirtual(CArrayMethod &lst);
+    void SetClassID(char *id);
+    void SetPureVirtual(bool val);
+    bool IsPureVirtual();
+    void SetBasePureVirtual(bool val);
+    bool IsBasePureVirtual();
 
 
-	bool GenerateClient(CArrayChar &code);
-	bool GenerateHeader(CArrayChar &code, bool interface);
-	bool GenerateBrokerHeader(CArrayChar & code);
-	bool GenerateBroker(CArrayChar & code);
+    static unsigned IDFromString(char *str);
 
-  bool generate_header_pog(CArrayChar &code, bool interface);
-  bool generate_broker_header_pog(CArrayChar &code);
-
-	char classid[64];
-
-	CArrayBaseClass baseClass;
-	CArrayClassMember memberList;
-
-	void SetNamespace(char* value);
-	std::string GetNamespace();
-
-	void SetAsCoreCompilation();
-	bool IsCoreCompilation();
-	void EnableWarning();
-	bool IsWarningEnable();
-	void DisableAsyncAllocation();
-	bool IsAsyncAllocationDisable();
-	void set_as_collective();
-	bool is_collective();
+    bool hasMethod(Method &x);
+    bool methodInBaseClass(Method &x);
+    bool findPureVirtual(CArrayMethod &lst);
+    //void findPureVirtual(CArrayMethod &lst);
 
 
-  static const char* POG_BASE_INTERFACE_NAME;
-  static const char* POG_BASE_OBJECT_NAME;
-  static const char* POG_OBJECT_POSTFIX;
-  static const char* POG_BASE_BROKER_NAME;
-  static const char* POG_BROKER_POSTFIX;
+    bool GenerateClient(CArrayChar &code);
+    bool GenerateHeader(CArrayChar &code, bool interface);
+    bool GenerateBrokerHeader(CArrayChar & code);
+    bool GenerateBroker(CArrayChar & code);
+
+    bool generate_header_pog(CArrayChar &code, bool interface);
+    bool generate_broker_header_pog(CArrayChar &code);
+
+    char classid[64];
+
+    CArrayBaseClass baseClass;
+    CArrayClassMember memberList;
+
+    void SetNamespace(char* value);
+    std::string GetNamespace();
+
+    void SetAsCoreCompilation();
+    bool IsCoreCompilation();
+    void EnableWarning();
+    bool IsWarningEnable();
+    void DisableAsyncAllocation();
+    bool IsAsyncAllocationDisable();
+    void set_as_collective();
+    bool is_collective();
+
+
+    static const char* POG_BASE_INTERFACE_NAME;
+    static const char* POG_BASE_OBJECT_NAME;
+    static const char* POG_OBJECT_POSTFIX;
+    static const char* POG_BASE_BROKER_NAME;
+    static const char* POG_BROKER_POSTFIX;
 
 public:
-	static char interface_base[1024];
-	static char broker_base[1024];
-	static char object_base[1024];
+    static char interface_base[1024];
+    static char broker_base[1024];
+    static char object_base[1024];
 
 protected:
-	Constructor constructor;
+    Constructor constructor;
 
-	char *myFile;
-	bool initDone;
-	int endid;
-	int startline, endline;
+    char *myFile;
+    bool initDone;
+    int endid;
+    int startline, endline;
 
-	bool noConstructor;
-	bool pureVirtual;
-	bool basePureVirtual;
-	bool isCoreCompilation;
-	bool hasWarningEnable;
-	bool isAsyncAllocationDisable;
-	bool _is_collective;
+    bool noConstructor;
+    bool pureVirtual;
+    bool basePureVirtual;
+    bool isCoreCompilation;
+    bool hasWarningEnable;
+    bool isAsyncAllocationDisable;
+    bool _is_collective;
 
-	char *my_interface_base;
-	char *my_object_base;
-	char *my_broker_base;
-	std::string strnamespace;
+    char *my_interface_base;
+    char *my_object_base;
+    char *my_broker_base;
+    std::string strnamespace;
 
 private:
-  int constrcutor_id;
+    int constrcutor_id;
 };
 
 

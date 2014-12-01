@@ -2,15 +2,14 @@
 #define _DATA_H_
 
 
-class Data
-{
-  public:
+class Data {
+public:
     Data();
     ~Data();
     int GetInternalData();
     void SetInternalData(int d);
 
-  private:
+private:
     int theData;
 };
-#endif    
+#endif

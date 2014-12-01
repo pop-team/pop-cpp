@@ -1,7 +1,7 @@
 /*
- * POP-C++ Version 2.0.3 
+ * POP-C++ Version 2.0.3
  *
- * Copyright (C) 2012 Grid & Cloud Computing Group, College of Engineering 
+ * Copyright (C) 2012 Grid & Cloud Computing Group, College of Engineering
  * and Architecture of Fribourg, Switzerland
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * POP-C++ is developed by the GRID & Cloud Computing Group 
+ * POP-C++ is developed by the GRID & Cloud Computing Group
  * http://gridgroup.hefr.ch
  *
  */
@@ -25,13 +25,13 @@
 /**
  * File: popc_log.h
  * Author: Valentin Clement
- * Description: Define a proper macro and interface to produce log from the POP-C++ runtime. 
+ * Description: Define a proper macro and interface to produce log from the POP-C++ runtime.
  * Creation date: 2012/07/05
- * 
+ *
  * Modifications :
- * Authors		Date			Comment
- * clementval	2012/07/05	First version of this header file. POPC_CORE, POPC_ERROR, POPC_DEBUG, popc_log
- * 
+ * Authors      Date            Comment
+ * clementval   2012/07/05  First version of this header file. POPC_CORE, POPC_ERROR, POPC_DEBUG, popc_log
+ *
  */
 
 #ifndef POPC_LOGGER_H

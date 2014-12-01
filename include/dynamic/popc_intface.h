@@ -9,14 +9,14 @@
  *
  *
  */
- 
+
 #ifndef POPC_INTFACE_H
 #define POPC_INTFACE_H
 
 #ifdef __WIN32__
-    #include "popc_intface_win.h"
+#include "popc_intface_win.h"
 #else
-    #include "popc_intface_lin.h"
+#include "popc_intface_lin.h"
 #endif
 
 // functions below are derivated from <unistd.h>
@@ -53,7 +53,7 @@ popc_pid_t popc_fork(void);
 
 //
 
-char * popc_getcwd( char *, popc_size_t);
+char * popc_getcwd(char *, popc_size_t);
 
 //
 
@@ -69,7 +69,7 @@ popc_pid_t popc_getpid(void);
 
 //
 
-int	popc_isatty(int);
+int popc_isatty(int);
 
 //
 
@@ -81,7 +81,7 @@ int popc_read(int, void *, int);
 
 //
 
-int popc_setpgid( popc_pid_t, popc_pid_t);
+int popc_setpgid(popc_pid_t, popc_pid_t);
 
 //
 
@@ -121,7 +121,7 @@ char * popc_strtok_r(char *, const char *, char **);
 
 //#include <sys/wait.h>
 
-popc_pid_t popc_wait( int *);
+popc_pid_t popc_wait(int *);
 
 //
 
@@ -255,19 +255,19 @@ int popc_socket(int, int, int);
 //
 // arpa/inet.h
 
-uint32_t	popc_htonl(uint32_t);
+uint32_t    popc_htonl(uint32_t);
 
 //
 
-uint16_t	popc_htons(uint16_t);
+uint16_t    popc_htons(uint16_t);
 
 //
 
-uint32_t	popc_ntohl(uint32_t);
+uint32_t    popc_ntohl(uint32_t);
 
 //
 
-uint16_t	popc_ntohs(uint16_t);
+uint16_t    popc_ntohs(uint16_t);
 
 int popc_sysinfo(int command, char *buf, long count);
 
@@ -301,7 +301,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]);
 
 //setenv
 #ifndef __LINUX__
-int popc_setenv (const char *name, const char *value, int replace);
+int popc_setenv(const char *name, const char *value, int replace);
 #endif
 
 #endif

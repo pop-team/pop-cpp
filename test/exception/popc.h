@@ -1,6 +1,6 @@
 #ifndef _PAROC_
 #define parclass class
-#define seq 
+#define seq
 #define async
 #define sync
 #define conc
