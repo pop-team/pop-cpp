@@ -179,6 +179,25 @@ add_custom_target (distclean @echo cleaning for source distribution)
    *~
   )
 
+  # These 3 custom targets (lint, check and indent) can be use to facilitate the code maintenance
+  add_custom_target(lint
+    COMMENT "Check C++ lint rules with the lint tool provided by Google"
+    COMMAND find . -name \"*.h\" -print -o -name \"*.cpp\" -print | xargs tools/cpplint.py --filter=-whitespace,-legal,-build,-runtime/references,-runtime/explicit,-readability/todo,-readability/streams,-readability/function
+  )
+
+  # If you use vim use: setlocal errorformat=[%f:%l]\ ->\ %m,[%f:%l]:%m
+  # to jump automatically between errors
+  add_custom_target(check
+    COMMENT "Check C++ code statically with cppcheck"
+    COMMAND cppcheck . --force --enable=all -q
+  )
+
+  add_custom_target(indent
+    COMMENT "Indent the code automatically with aspell"
+    COMMAND find . -name \"*.h\" -print -o -name \"*.cpp\" -print | xargs astyle -nToO
+  )
+
+
   if(POPCPP_COMPILER)
     set(EXTRACLEANED
       parser/*.cmake

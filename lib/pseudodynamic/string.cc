@@ -14,6 +14,8 @@
 #include "paroc_string.h"
 #include "paroc_exception.h"
 
+// TODO lwk refactor: maybe rename this file paroc_string.cc or popstring.cc for clarity
+
 paroc_string::paroc_string()
 {
 	data=NULL;
