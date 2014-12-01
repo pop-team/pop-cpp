@@ -52,7 +52,7 @@ class POPSynchronizer: public paroc_condition {
 public:
     void raise() {
         broadcast();
-    };
+    }
 };
 
 #endif

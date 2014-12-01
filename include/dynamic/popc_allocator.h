@@ -24,13 +24,12 @@ public:
     enum POPC_Protocol { UDS, TCPIP, MPI, SHM };
     enum POPC_AllocationMechanism { LOCAL, SSH, INTERCONNECTOR, PSEUDODYNAMIC };
 
-    POPC_Allocator() {} ;
-    virtual ~POPC_Allocator() {} ;
+    POPC_Allocator() {}
+    virtual ~POPC_Allocator() {}
     virtual POPString allocate(POPString& objectname, paroc_od& od) = 0;
     virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb) = 0;
     virtual POPC_Protocol get_protocol() = 0;
     virtual POPC_AllocationMechanism get_mechanism() = 0;
-
 };
 
 #endif /* POPC_ALLOCATOR_H_ */

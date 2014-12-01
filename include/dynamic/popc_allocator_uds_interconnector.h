@@ -27,10 +27,10 @@ public:
     virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb);
     virtual POPC_Protocol get_protocol() {
         return POPC_Allocator::UDS;
-    };
+    }
     virtual POPC_AllocationMechanism get_mechanism() {
         return POPC_Allocator::INTERCONNECTOR;
-    };
+    }
 
 };
 

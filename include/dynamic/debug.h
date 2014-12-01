@@ -27,9 +27,9 @@
 
 #define DEBUGIF printdebugif
 
-inline int printdebug(const char *format,...) {};
-inline int printndebug(int n, const char*format,...) {};
-inline int printdebugif(int cond, const char *format,...) {};
+inline int printdebug(const char *format,...) {}
+inline int printndebug(int n, const char*format,...) {}
+inline int printdebugif(int cond, const char *format,...) {}
 
 #endif //__GNUC__
 

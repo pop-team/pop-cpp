@@ -623,7 +623,7 @@ int main(int argc, char* argv[]) {
 
                     // Allocate on the local node
                     char* tmp = new char[15];
-                    snprintf(tmp, 15, "uds_%d.%d", rank, next_object_id);
+                    snprintf(tmp, sizeof(tmp), "uds_%d.%d", rank, next_object_id);
                     next_object_id++;
 
                     popc_combox_uds receiver;
@@ -643,12 +643,12 @@ int main(int argc, char* argv[]) {
                     std::string _receiveraddress("-callback=");
                     _receiveraddress.append(receiver_address);
                     char *localrank = new char[20];
-                    snprintf(localrank, 20, "-local_rank=%d", rank);
+                    snprintf(localrank, sizeof(localrank), "-local_rank=%d", rank);
                     char *coreoption = new char[20];
                     if(usercore != -1) {
-                        snprintf(coreoption, 20, "-core=%d", usercore);
+                        snprintf(coreoption, sizeof(coreoption), "-core=%d", usercore);
                     } else {
-                        snprintf(coreoption, 20, "-core=%d", core);
+                        snprintf(coreoption, sizeof(coreoption), "-core=%d", core);
                         core++;
                         if(core == nbcore) {
                             core = 0;
@@ -769,7 +769,7 @@ int main(int argc, char* argv[]) {
 
                         // Allocate on the local node
                         char* tmp = new char[15];
-                        snprintf(tmp, 15, "uds_%d.%d", rank, next_object_id);
+                        snprintf(tmp, sizeof(tmp), "uds_%d.%d", rank, next_object_id);
                         next_object_id++;
 
                         popc_combox_uds receiver;
@@ -789,14 +789,14 @@ int main(int argc, char* argv[]) {
                         std::string _receiveraddress("-callback=");
                         _receiveraddress.append(receiver_address);
                         char *localrank = new char[20];
-                        snprintf(localrank, 20, "-local_rank=%d", rank);
+                        snprintf(localrank, sizeof(localrank), "-local_rank=%d", rank);
                         char *coreoption = new char[20];
                         if(usercore != -1) {
                             // Use user defined core distribution
-                            snprintf(coreoption, 20, "-core=%d", usercore);
+                            snprintf(coreoption, sizeof(coreoption), "-core=%d", usercore);
                         } else {
                             // Use round robin distribution on core
-                            snprintf(coreoption, 20, "-core=%d", core);
+                            snprintf(coreoption, sizeof(coreoption), "-core=%d", core);
                             core++;
                             if(core == nbcore) {
                                 core = 0;
@@ -957,7 +957,7 @@ int main(int argc, char* argv[]) {
                         paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
                         client = combox_factory->Create("uds");
                         char* address = new char[15];
-                        snprintf(address, 15, "uds_%d.%d", rank, dest_id);
+                        snprintf(address, sizeof(address), "uds_%d.%d", rank, dest_id);
 
                         // Save the combox for further communication
                         connectionmap[pair<int, int>(source, dest_id)] = client;

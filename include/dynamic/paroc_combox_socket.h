@@ -33,7 +33,7 @@ public:
     paroc_connection_sock(paroc_connection_sock &me);
 
     virtual paroc_connection *Clone();
-    virtual void reset() {};
+    virtual void reset() {}
 
     int sockfd;
 };
@@ -53,7 +53,7 @@ public:
     virtual bool Create(int port=0, bool server=false);
     virtual bool Create(const char* /*address*/, bool /*server*/) {
         return false;
-    };
+    }
 
     virtual bool Connect(const char *url);
 
@@ -64,7 +64,7 @@ public:
             return NULL;
         }
         return peer;
-    };
+    }
 
 
     virtual int Recv(char *s,int len);

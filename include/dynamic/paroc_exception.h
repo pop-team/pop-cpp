@@ -58,7 +58,7 @@ class paroc_exception: public paroc_base, public std::exception {
 public:
     paroc_exception(int code);
     paroc_exception();
-    ~paroc_exception()throw() {};
+    ~paroc_exception()throw() {}
 
     paroc_exception & operator = (paroc_exception &e);
     static void paroc_throw(int code, const char *reason=NULL);

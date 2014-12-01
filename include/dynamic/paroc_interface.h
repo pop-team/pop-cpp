@@ -149,7 +149,7 @@ public:
 protected:
     virtual const char *ClassName() {
         return "paroc_interface";
-    };
+    }
     virtual void paroc_Dispatch(paroc_buffer *buf);
     virtual void paroc_Response(paroc_buffer *buf);
 

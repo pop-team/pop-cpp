@@ -23,7 +23,7 @@
  */
 class paroc_base {
 public:
-    virtual ~paroc_base() {};
+    virtual ~paroc_base() {}
     virtual void Serialize(paroc_buffer &buf, bool pack)=0;
 };
 

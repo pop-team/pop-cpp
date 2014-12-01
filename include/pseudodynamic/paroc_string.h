@@ -41,7 +41,7 @@ public:
     const char *operator =(const char *x);
     inline const char *c_str() {
         return data;
-    };
+    }
     const paroc_string & operator =(const paroc_string &x);
     void operator +=(const char *x);
     paroc_string operator + (const paroc_string &x);

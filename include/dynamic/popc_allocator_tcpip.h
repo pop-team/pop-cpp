@@ -27,10 +27,10 @@ public:
     virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb);
     virtual POPC_Protocol get_protocol() {
         return POPC_Allocator::TCPIP;
-    };
+    }
     virtual POPC_AllocationMechanism get_mechanism() {
         return POPC_Allocator::LOCAL;
-    };
+    }
 
 };
 
@@ -43,10 +43,10 @@ public:
     virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb);
     virtual POPC_Protocol get_protocol() {
         return POPC_Allocator::TCPIP;
-    };
+    }
     virtual POPC_AllocationMechanism get_mechanism() {
         return POPC_Allocator::SSH;
-    };
+    }
 };
 
 #endif /* POPC_ALLOCATOR_TCPIP_H_ */

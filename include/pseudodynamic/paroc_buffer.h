@@ -66,46 +66,46 @@ public:
 
     inline int GetType() const {
         return type;
-    };
+    }
     inline int GetClassID() const {
         return id[0];
-    };
+    }
     inline int GetMethodID() const {
         return id[1];
-    };
+    }
     inline int GetSemantics() const {
         return id[2];
-    };
+    }
 
     inline int GetExceptionCode() const {
         return exception;
-    };
+    }
     inline const char *GetMethodName() const {
         return methodname;
-    };
+    }
 
 
 
     inline void SetType(int msgtype) {
         type=msgtype;
-    };
+    }
 
     inline void SetClassID(int classid) {
         id[0]=classid;
-    };
+    }
     inline void SetMethodID(int methodid) {
         id[1]=methodid;
-    };
+    }
     inline void SetSemantics(int semantics) {
         id[2]=semantics;
-    };
+    }
     inline void SetExceptionCode(int code) {
         exception=code;
-    };
+    }
 
     inline void SetMethodName(const char* name) {
         methodname=name;
-    };
+    }
 
 private:
     int type;

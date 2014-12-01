@@ -27,7 +27,7 @@ public:
     popc_connection_uds(popc_connection_uds &me);
 
     virtual paroc_connection *Clone();
-    virtual void reset() {};
+    virtual void reset() {}
 
     void set_fd(int fd);
     int get_fd();

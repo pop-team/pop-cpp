@@ -30,10 +30,10 @@ void XMPWorker::init_xmp() {
     _XMP_init_array_comm(_XMP_DESC_c, 0);
     _XMP_init_array_nodes(_XMP_DESC_c);
 
-    _XMP_alloc_array((void * *)(&(_XMP_ADDR_b)), _XMP_DESC_b, (unsigned long long *)(&(_XMP_GTOL_acc_b_1)), (unsigned long long *)(&(_XMP_GTOL_acc_b_0)));
+    _XMP_alloc_array((void **)(&(_XMP_ADDR_b)), _XMP_DESC_b, (unsigned long long *)(&(_XMP_GTOL_acc_b_1)), (unsigned long long *)(&(_XMP_GTOL_acc_b_0)));
     std::cout << _XMP_GTOL_acc_b_1  << "/" << _XMP_GTOL_acc_b_0 << std::endl;
 
-    _XMP_alloc_array((void * *)(&(_XMP_ADDR_c)), _XMP_DESC_c, (unsigned long long *)(&(_XMP_GTOL_acc_c_1)), (unsigned long long *)(&(_XMP_GTOL_acc_c_0)));
+    _XMP_alloc_array((void **)(&(_XMP_ADDR_c)), _XMP_DESC_c, (unsigned long long *)(&(_XMP_GTOL_acc_c_1)), (unsigned long long *)(&(_XMP_GTOL_acc_c_0)));
     std::cout << _XMP_GTOL_acc_c_1  << "/" << _XMP_GTOL_acc_c_0 << std::endl;
 #endif
 }
