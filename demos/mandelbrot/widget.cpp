@@ -1,10 +1,11 @@
-#include <qimage.h>
-#include <qwidget.h>
-#include <qapplication.h>
-#include <qevent.h>
-#include <qgridview.h>
-#include <qthread.h>
-#include <qpainter.h>
+#include <QImage>
+#include <QWidget>
+#include <QtWidgets/QApplication>
+#include <QEvent>
+#include <QGridLayout>
+#include <QThread>
+#include <QPainter>
+#include <QPaintEvent>
 
 
 #include "tile.h"
@@ -13,10 +14,12 @@
 
 
 Widget::Widget(int w, int h, QApplication *a)
-    : QWidget(0, 0, WStaticContents) {
+    // : QWidget(0, 0, Qt::WA_StaticContents) {
+    : QWidget(),
+    image(w, h, QImage::Format_RGB32)
+    {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setFixedSize(w, h);
-    image.create(w, h, 32);
     image.fill(qRgba(0, 0, 0, 0));
     app = a;
 }

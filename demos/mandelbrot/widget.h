@@ -1,10 +1,10 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include <qimage.h>
-#include <qwidget.h>
-#include <qapplication.h>
-#include <qevent.h>
+#include <QImage>
+#include <QApplication>
+#include <QWidget>
+#include <QEvent>
 
 class Widget : public QWidget {
     Q_OBJECT

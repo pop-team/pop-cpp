@@ -1,6 +1,7 @@
-#include <qgridview.h>
-#include <qapplication.h>
-#include <qpainter.h>
+#include <QGridLayout>
+#include <QFrame>
+#include <QtWidgets/QApplication>
+#include <QtGui/QPainter>
 
 #include <stdio.h>
 
@@ -8,7 +9,7 @@
 #include "widget.h"
 
 
-class Grid : public QGridView {
+class Grid : public QGridLayout {
     void paintCell(QPainter *, int, int) {}
 };
 
@@ -26,6 +27,7 @@ void initFrame(int dw, int dh, int dispn) {
     int w = dw/dispn, h = dh/dispn;
     frame = new Grid();
 
+/* TODO
     frame->setCaption(QObject::tr("Mandelbrot Fractal"));
     frame->setFrameShape(QFrame::NoFrame);
     frame->setNumRows(dispn);
@@ -36,6 +38,7 @@ void initFrame(int dw, int dh, int dispn) {
     app->setMainWidget(frame);
     frame->show();
     app->processEvents(1);
+    */
 }
 
 
@@ -53,9 +56,10 @@ Tile::Tile(int ax, int ay, int aw, int ah) {
     h = ah;
     widget = (void *) rw;
 
-    frame->addChild(rw, ax, ay);
+    // TODO frame->addChild(rw, ax, ay);
     rw->show();
-    app->processEvents(1);
+    // app->processEvents(1);
+    app->processEvents();
 }
 
 
