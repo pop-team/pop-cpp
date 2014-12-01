@@ -193,8 +193,8 @@ add_custom_target (distclean @echo cleaning for source distribution)
   )
 
   add_custom_target(indent
-    COMMENT "Indent the code automatically with aspell"
-    COMMAND find . -name \"*.h\" -print -o -name \"*.cpp\" -print | xargs astyle -nToO
+    COMMENT "Indent the code automatically with astyle"
+    COMMAND find . -name \"*.h\" -print -o -name \"*.cpp\" -print | xargs astyle -jnUc -A2
   )
 
 

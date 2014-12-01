@@ -18,36 +18,35 @@ class paroc_buffer_factory;
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_connection
-{
+class paroc_connection {
 public:
-  static const int POPC_CONNECTION_NULL_FD;
-  
-	paroc_connection(paroc_combox *com);
-	paroc_connection(paroc_combox *com, paroc_buffer_factory *f);
-	virtual ~paroc_connection();
+    static const int POPC_CONNECTION_NULL_FD;
 
-	virtual void SetBufferFactory(paroc_buffer_factory *fact);
-	virtual paroc_buffer_factory *GetBufferFactory();
-	virtual void reset();
+    paroc_connection(paroc_combox *com);
+    paroc_connection(paroc_combox *com, paroc_buffer_factory *f);
+    virtual ~paroc_connection();
 
-	paroc_combox *GetCombox();
+    virtual void SetBufferFactory(paroc_buffer_factory *fact);
+    virtual paroc_buffer_factory *GetBufferFactory();
+    virtual void reset();
 
-	virtual paroc_connection *Clone()=0;
+    paroc_combox *GetCombox();
 
-	bool is_connection_init();
-	void set_as_connection_init();
-	bool is_wait_unlock();
-	void set_as_wait_unlock();
+    virtual paroc_connection *Clone()=0;
+
+    bool is_connection_init();
+    void set_as_connection_init();
+    bool is_wait_unlock();
+    void set_as_wait_unlock();
 
 protected:
-	paroc_buffer_factory *fact;
-	paroc_combox *combox;
-	
-	
-private: 
-  bool _is_connection_init;	
-  bool _is_wait_unlock;
+    paroc_buffer_factory *fact;
+    paroc_combox *combox;
+
+
+private:
+    bool _is_connection_init;
+    bool _is_wait_unlock;
 };
 
 
@@ -61,64 +60,63 @@ typedef bool (*COMBOX_CALLBACK)(void *, paroc_connection *);
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_combox
-{
+class paroc_combox {
 public:
-	paroc_combox();
+    paroc_combox();
 protected:
-	virtual ~paroc_combox();
+    virtual ~paroc_combox();
 
 public:
-  enum COMBOX_TYPE { POLLING, REQUESTBYREQUEST }; 
+    enum COMBOX_TYPE { POLLING, REQUESTBYREQUEST };
 
-	virtual bool Create(char* host, int port, bool server)=0;
-	virtual bool Connect(const char *url)=0;
-	virtual bool connect_and_die(std::string &url)=0;
+    virtual bool Create(char* host, int port, bool server)=0;
+    virtual bool Connect(const char *url)=0;
+    virtual bool connect_and_die(std::string &url)=0;
 
-	virtual paroc_connection* get_connection()=0; // Will be modified later
-	virtual bool disconnect(paroc_connection *connection) = 0;
+    virtual paroc_connection* get_connection()=0; // Will be modified later
+    virtual bool disconnect(paroc_connection *connection) = 0;
 
-	virtual int Send(const char *s,int len)=0;
-	virtual int Send(const char *s,int len, paroc_connection *conn, bool unlock)=0;
-	virtual bool SendAck(paroc_connection *conn);
+    virtual int Send(const char *s,int len)=0;
+    virtual int Send(const char *s,int len, paroc_connection *conn, bool unlock)=0;
+    virtual bool SendAck(paroc_connection *conn);
 
-	virtual int Recv(char *s,int len, bool unlock)=0;
-	virtual int Recv(char *s,int len, paroc_connection *&peer, bool unlock)=0;
-	virtual bool RecvAck(paroc_connection *conn=0);
+    virtual int Recv(char *s,int len, bool unlock)=0;
+    virtual int Recv(char *s,int len, paroc_connection *&peer, bool unlock)=0;
+    virtual bool RecvAck(paroc_connection *conn=0);
 
-	virtual paroc_connection *Wait()=0;
-	
-	virtual bool is_server()=0;
+    virtual paroc_connection *Wait()=0;
 
-	virtual void Close()=0;
+    virtual bool is_server()=0;
 
-	void SetTimeout(int millisec);
-	int  GetTimeout();
+    virtual void Close()=0;
 
-	virtual bool GetUrl(paroc_string & accesspoint) = 0;
-	virtual bool GetProtocol(paroc_string & protocolName) = 0;
-	virtual paroc_connection* CreateConnection(int fd) = 0;
+    void SetTimeout(int millisec);
+    int  GetTimeout();
 
-	virtual void Destroy();
+    virtual bool GetUrl(paroc_string & accesspoint) = 0;
+    virtual bool GetProtocol(paroc_string & protocolName) = 0;
+    virtual paroc_connection* CreateConnection(int fd) = 0;
 
-	bool SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg);
+    virtual void Destroy();
 
-	void SetBufferFactory(paroc_buffer_factory *fact);
-	paroc_buffer_factory *GetBufferFactory();
-	
+    bool SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg);
+
+    void SetBufferFactory(paroc_buffer_factory *fact);
+    paroc_buffer_factory *GetBufferFactory();
 
 
-protected:
-	virtual bool OnNewConnection(paroc_connection *conn);
-	virtual bool OnCloseConnection(paroc_connection *conn);
 
 protected:
-	int timeout;
-	COMBOX_CALLBACK cblist[2];
-	void *cbdata[2];
+    virtual bool OnNewConnection(paroc_connection *conn);
+    virtual bool OnCloseConnection(paroc_connection *conn);
+
+protected:
+    int timeout;
+    COMBOX_CALLBACK cblist[2];
+    void *cbdata[2];
 
 
-	paroc_buffer_factory *defaultFact;
+    paroc_buffer_factory *defaultFact;
 };
 
 #endif // INCLUDE_POPC_COMBOX_H_

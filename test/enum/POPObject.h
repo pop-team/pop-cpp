@@ -2,13 +2,12 @@
 #define POPOBJECT_PH_
 
 
-class POPObject
-{
+class POPObject {
 public:
-   enum Days;
-	POPObject();
-	~POPObject();
-	void fromSyncSeq(int sem);
+    enum Days;
+    POPObject();
+    ~POPObject();
+    void fromSyncSeq(int sem);
 };
 
 #endif /*POPOBJECT_PH_*/

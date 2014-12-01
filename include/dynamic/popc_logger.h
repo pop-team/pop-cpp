@@ -5,7 +5,7 @@
  *
  * @author Valenti Clement
  * @date 2012/07/05
- * @brief Define a proper function and interface to produce log from the POP-C++ runtime. 
+ * @brief Define a proper function and interface to produce log from the POP-C++ runtime.
  *
  *
  */

@@ -2,7 +2,7 @@
  * Special header redefining mandatory function of the XMP runtime
  * These functions needs to be redefined without the GCC hack constructor/destructor
  *
- * 
+ *
  *
  */
 

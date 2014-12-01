@@ -19,9 +19,9 @@ DESCRIPTION: factory for xdr formatted buffers
 class paroc_buffer_xdr_factory:public paroc_buffer_factory {
 public:
 
-	paroc_buffer_xdr_factory();
-	virtual paroc_buffer* CreateBuffer();
-	virtual bool GetBufferName(paroc_string & bufferName);
+    paroc_buffer_xdr_factory();
+    virtual paroc_buffer* CreateBuffer();
+    virtual bool GetBufferName(paroc_string & bufferName);
 
 };
 

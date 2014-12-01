@@ -50,33 +50,32 @@ DESCRIPTION: POP-C++ exception. All runtime exceptions are thrown as paroc_excep
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_exception: public paroc_base, public std::exception
-{
+class paroc_exception: public paroc_base, public std::exception {
 public:
-	paroc_exception(int code);
-	paroc_exception();
-	~paroc_exception()throw(){};
-	
-	paroc_exception & operator = (paroc_exception &e);
-	static void paroc_throw(int code, const char *reason=NULL);
-	static void paroc_throw(const char *reason=NULL);
-	static void paroc_throw_errno(const char *reason=NULL);
-	static paroc_exception *create(int code, const char *reason=NULL);
+    paroc_exception(int code);
+    paroc_exception();
+    ~paroc_exception()throw() {};
 
-	virtual void Serialize(paroc_buffer &buf, bool pack);
+    paroc_exception & operator = (paroc_exception &e);
+    static void paroc_throw(int code, const char *reason=NULL);
+    static void paroc_throw(const char *reason=NULL);
+    static void paroc_throw_errno(const char *reason=NULL);
+    static paroc_exception *create(int code, const char *reason=NULL);
 
-	const paroc_string Extra()const;
-	void SetExtra(const char* str);
-	int Code()const;
-	void Print()const;
-	
-	// Redefine the virtual what method of exception
-	const char* what() const throw();
+    virtual void Serialize(paroc_buffer &buf, bool pack);
+
+    const paroc_string Extra()const;
+    void SetExtra(const char* str);
+    int Code()const;
+    void Print()const;
+
+    // Redefine the virtual what method of exception
+    const char* what() const throw();
 
 protected:
-	
-	paroc_string info;
-	int errcode;
+
+    paroc_string info;
+    int errcode;
 };
 
 typedef paroc_exception POPException;

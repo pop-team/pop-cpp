@@ -1,18 +1,17 @@
 #ifndef _X_H_
 #define _X_H_
 
-class X : public POPBase
-{
+class X : public POPBase {
 public:
-  X();
-  ~X();
-  int GetIdent();
-  void SetIdent(int i);
-  virtual void Serialize(POPBuffer &buf, bool pack);
+    X();
+    ~X();
+    int GetIdent();
+    void SetIdent(int i);
+    virtual void Serialize(POPBuffer &buf, bool pack);
 
 
 private:
-  int ident;
+    int ident;
 };
 
 #endif

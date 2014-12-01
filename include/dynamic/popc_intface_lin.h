@@ -14,18 +14,18 @@
 
 // definitions for access ()
 
-#define	R_OK	4		/* Test for read permission.  */
-#define	W_OK	2		/* Test for write permission.  */
-#define	X_OK	1		/* Test for execute permission.  */
-#define	F_OK	0		/* Test for existence.  */
+#define R_OK    4       /* Test for read permission.  */
+#define W_OK    2       /* Test for write permission.  */
+#define X_OK    1       /* Test for execute permission.  */
+#define F_OK    0       /* Test for existence.  */
 
 
 // definitions for process
 
-#define popc_pid_t	int
+#define popc_pid_t  int
 
 
-// 
+//
 
 #define popc_size_t int
 
@@ -48,9 +48,8 @@
 
 /* Internet address.  */
 typedef uint32_t popc_in_addr_t;
-struct popc_in_addr
-{
-  popc_in_addr_t s_addr;
+struct popc_in_addr {
+    popc_in_addr_t s_addr;
 };
 
 
@@ -59,13 +58,13 @@ struct popc_in_addr
 
 #include <sys/time.h>
 
-#define popc_timeval	timeval
+#define popc_timeval    timeval
 
 #define popc_timezone  __timezone_ptr_t
 
 
 
-	
+
 // pthread
 
 #include <pthread.h>
@@ -75,8 +74,8 @@ struct popc_in_addr
 
 
 //signal
-	
-typedef void(* popc_sighandler_t) (int);
+
+typedef void(* popc_sighandler_t)(int);
 
 #define popc_SIGHUP   1
 #define popc_SIGINT   2
@@ -84,7 +83,7 @@ typedef void(* popc_sighandler_t) (int);
 #define popc_SIGINT   2
 #define popc_SIGQUIT   3
 #define popc_SIGILL   4
-#define popc_SIGABRT	   6
+#define popc_SIGABRT       6
 #define popc_SIGKILL   9
 #define popc_SIGPIPE   13
 #define popc_SIGCHLD   17
@@ -109,20 +108,20 @@ port exists with mingw where the normal inclusion. "h"
 
 */
 
-#include <dirent.h>  
+#include <dirent.h>
 
 
 // dlfcn
 
 #include <dlfcn.h>
 // bits
-#define RTLD_LOCAL	0
-#define RTLD_LAZY	0x00001
-#define RTLD_NOW	0x00002
+#define RTLD_LOCAL  0
+#define RTLD_LAZY   0x00001
+#define RTLD_NOW    0x00002
 
-#define F_GETFL		3
-#define F_SETFL		4
-#define O_NONBLOCK	  04000
+#define F_GETFL     3
+#define F_SETFL     4
+#define O_NONBLOCK    04000
 
 
 // xdr
@@ -141,9 +140,9 @@ port exists with mingw where the normal inclusion. "h"
 
 #include <fcntl.h>
 
-#define O_RDONLY	     00
-#define O_WRONLY	     01
-#define O_CREAT		   0100	/* not fcntl */
+#define O_RDONLY         00
+#define O_WRONLY         01
+#define O_CREAT        0100 /* not fcntl */
 //#define S_IRWXU 00700
 //#define S_IRGRP 00040
 
@@ -154,7 +153,7 @@ port exists with mingw where the normal inclusion. "h"
 
 #include <sys/sysinfo.h>
 
-#define popc_clock_t	 unsigned int
+#define popc_clock_t     unsigned int
 
 
 #define popc_tms tms

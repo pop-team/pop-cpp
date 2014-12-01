@@ -17,25 +17,24 @@ MODIFICATIONS: PK&VC:25.2.2011 add definition of POPGetHost
 
 class AppCoreService;
 
-class paroc_utils
-{
+class paroc_utils {
 public:
-	static char *checkremove(int *argc, char ***argv, const char *opt);
-	static bool isEqual(const char *s1, const char *s2);
-	static bool isncaseEqual(const char *s1, const char *s2);
-	static bool MatchWildcard(const char *str, const char *wildcard);
-	static void FindAbsolutePath(const char *fname, char *abspath);   
+    static char *checkremove(int *argc, char ***argv, const char *opt);
+    static bool isEqual(const char *s1, const char *s2);
+    static bool isncaseEqual(const char *s1, const char *s2);
+    static bool MatchWildcard(const char *str, const char *wildcard);
+    static void FindAbsolutePath(const char *fname, char *abspath);
 #ifdef _POPC_
-  static bool SameContact(const char *contact1, const char *contact2);
-  static bool IsRemoteDest(const char *dest);
-  static int GetPortFromURL(const char *url);
-  static const char *GetIPFromURL(const char *url);
-  static const char* GetCurrentUser();
-	static paroc_string MakeContact(const char *host, int port);
-  static bool isIPv4Address(POPString value); 
-  static bool isValidName(POPString value);
-	static float benchmark_power();
-	static int InitCodeService(char *fileconf, AppCoreService *service);
+    static bool SameContact(const char *contact1, const char *contact2);
+    static bool IsRemoteDest(const char *dest);
+    static int GetPortFromURL(const char *url);
+    static const char *GetIPFromURL(const char *url);
+    static const char* GetCurrentUser();
+    static paroc_string MakeContact(const char *host, int port);
+    static bool isIPv4Address(POPString value);
+    static bool isValidName(POPString value);
+    static float benchmark_power();
+    static int InitCodeService(char *fileconf, AppCoreService *service);
 #endif
 };
 

@@ -13,20 +13,19 @@
 #ifndef PAROCTIMER_H
 #define PAROCTIMER_H
 
-class Timer
-{
+class Timer {
 public:
-	Timer();
-	void Start();
-	void Stop();
-	void Reset();
-	double Elapsed();
+    Timer();
+    void Start();
+    void Stop();
+    void Reset();
+    double Elapsed();
 protected:
-	virtual double GetCurrentTime();
+    virtual double GetCurrentTime();
 
-	double start_point;
-	double elapsed;
-	bool isRunning;
+    double start_point;
+    double elapsed;
+    bool isRunning;
 };
 
 #endif

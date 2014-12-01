@@ -5,8 +5,8 @@
  *
  * @author Valentin Clement
  * @date 2012/12/04
- * @brief Declaration of the class POPC_AllocatorFactory. The allocator factory allows to provide the right allocator for 
- *        parallel object allocation depending the lower layer (SSH, MPI, POP-C++ MPI Interconnector ...). 
+ * @brief Declaration of the class POPC_AllocatorFactory. The allocator factory allows to provide the right allocator for
+ *        parallel object allocation depending the lower layer (SSH, MPI, POP-C++ MPI Interconnector ...).
  *
  *
  */
@@ -18,15 +18,15 @@
 
 
 class POPC_AllocatorFactory {
-private: 
-  POPC_AllocatorFactory();
-  ~POPC_AllocatorFactory();  
-  static POPC_AllocatorFactory* instance; 
-    
-public: 
-  static POPC_AllocatorFactory* get_instance();  
-  POPC_Allocator* get_allocator(POPC_Allocator::POPC_Protocol protocol, 
-    POPC_Allocator::POPC_AllocationMechanism alloc_mechanism);
+private:
+    POPC_AllocatorFactory();
+    ~POPC_AllocatorFactory();
+    static POPC_AllocatorFactory* instance;
+
+public:
+    static POPC_AllocatorFactory* get_instance();
+    POPC_Allocator* get_allocator(POPC_Allocator::POPC_Protocol protocol,
+                                  POPC_Allocator::POPC_AllocationMechanism alloc_mechanism);
 
 };
 

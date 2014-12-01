@@ -22,15 +22,13 @@
 /**
  * Allocator over MPI with pseudo-dynamic allocation mechanism constructor
  */
-POPC_Allocator_mpi_pseudo::POPC_Allocator_mpi_pseudo()
-{
+POPC_Allocator_mpi_pseudo::POPC_Allocator_mpi_pseudo() {
 }
 
 /**
  * Allocator over MPI with pseudo-dynamic allocation mechanism destructor
  */
-POPC_Allocator_mpi_pseudo::~POPC_Allocator_mpi_pseudo()
-{
+POPC_Allocator_mpi_pseudo::~POPC_Allocator_mpi_pseudo() {
 }
 
 /**
@@ -39,13 +37,12 @@ POPC_Allocator_mpi_pseudo::~POPC_Allocator_mpi_pseudo()
  * @param od          Object description for the allocation process
  * @return A POPString object representing the access-point of the allocated parallel object.
  */
-POPString POPC_Allocator_mpi_pseudo::allocate(POPString& /*objectname*/, paroc_od& /*od*/)
-{
-  POPString objectaddress;
+POPString POPC_Allocator_mpi_pseudo::allocate(POPString& /*objectname*/, paroc_od& /*od*/) {
+    POPString objectaddress;
 
-  /* TODO Allocation process here */
+    /* TODO Allocation process here */
 
-  return objectaddress;
+    return objectaddress;
 }
 
 /**
@@ -55,9 +52,8 @@ POPString POPC_Allocator_mpi_pseudo::allocate(POPString& /*objectname*/, paroc_o
  * @param nb          Number of objects to allocate
  * @return A pointer to a combox or an array of combox connected with the group
  */
-paroc_combox* POPC_Allocator_mpi_pseudo::allocate_group(POPString& /*objectname*/, paroc_od& /*od*/, int /*nb*/)
-{
-  /* TODO Allocation process here */
+paroc_combox* POPC_Allocator_mpi_pseudo::allocate_group(POPString& /*objectname*/, paroc_od& /*od*/, int /*nb*/) {
+    /* TODO Allocation process here */
 
-  return NULL;
+    return NULL;
 }

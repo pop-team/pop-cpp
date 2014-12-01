@@ -23,19 +23,18 @@ class paroc_buffer;
  * @brief Buffer factory abstraction, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  */
-class paroc_buffer_factory
-{
+class paroc_buffer_factory {
 public:
-	paroc_buffer_factory();
+    paroc_buffer_factory();
 protected:
-	virtual ~paroc_buffer_factory();
+    virtual ~paroc_buffer_factory();
 
 public:
-	virtual void Destroy();
+    virtual void Destroy();
 
-	virtual paroc_buffer* CreateBuffer()=0;
+    virtual paroc_buffer* CreateBuffer()=0;
 
-	virtual bool GetBufferName(paroc_string & bufferName)=0;
+    virtual bool GetBufferName(paroc_string & bufferName)=0;
 };
 
 #endif // POPC_BUFFER_FACTORY_H

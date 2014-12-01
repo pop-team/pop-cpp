@@ -6,11 +6,11 @@
 class POPObject {
 
 public:
-	POPObject();
-	~POPObject();
-	
-	void transferPOPBaseData(const POPData d);	
-		
+    POPObject();
+    ~POPObject();
+
+    void transferPOPBaseData(const POPData d);
+
 private:
 
 };

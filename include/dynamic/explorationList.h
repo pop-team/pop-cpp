@@ -34,26 +34,26 @@ typedef map<paroc_string, neighborsList> explorationList;
  *  Class representing a list of exploration of nodes. This class must inherit
  *  from POPBase to be passed in the network.
  */
-class ExplorationList: public POPBase{
-    public :
-        // Default constructor
-        ExplorationList();
-        
-        // Destructor
-        ~ExplorationList();
-        
-        // Inherited method to serialize the object
-        virtual void Serialize(POPBuffer &buf, bool pack);
-        
-        // Method used to add a list of nodes in the list
-        void         addListNode(paroc_string nodeId, 
-                                 list<paroc_string> neighbors);
-        // Method indicating if a node (identified by its nodeId) is present
-        // or not in the list
-        bool         isIn(paroc_string nodeId);
+class ExplorationList: public POPBase {
+public :
+    // Default constructor
+    ExplorationList();
 
-    private :
-        explorationList visitedNodes; // The exploration list of visited nodes
+    // Destructor
+    ~ExplorationList();
+
+    // Inherited method to serialize the object
+    virtual void Serialize(POPBuffer &buf, bool pack);
+
+    // Method used to add a list of nodes in the list
+    void         addListNode(paroc_string nodeId,
+                             list<paroc_string> neighbors);
+    // Method indicating if a node (identified by its nodeId) is present
+    // or not in the list
+    bool         isIn(paroc_string nodeId);
+
+private :
+    explorationList visitedNodes; // The exploration list of visited nodes
 };
 
 int explo_log(const char *format,...);

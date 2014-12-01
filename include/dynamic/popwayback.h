@@ -2,18 +2,18 @@
  *
  * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
  * http://gridgroup.hefr.ch/popc
- * 
- * 
+ *
+ *
  * @author Valentin Clement
  * @date 2010/10/07
  * @brief This object is used to store a path to a specific object
- * 
- * 
+ *
+ *
  * UPDATES:
- * Authors		Date			  Comment
- * clementval 2010/10/07  First declaration of this object 
+ * Authors      Date              Comment
+ * clementval 2010/10/07  First declaration of this object
  * clementval 2010/10/22  Add doxygen comment
- * 
+ *
  */
 
 #ifndef _POPC_WAYBACK_H
@@ -31,26 +31,26 @@
  */
 class POPWayback : public POPBase {
 public:
-  POPWayback();  //POPWayback constructor
-  ~POPWayback(); //POPWayback destructor
-   
-  //Operator
-	const POPWayback & operator=(const POPWayback &x);
+    POPWayback();  //POPWayback constructor
+    ~POPWayback(); //POPWayback destructor
 
-  //Specialized methods
-  paroc_string getAsString() const;      //Get the object as a formatted string value
-  void insertNode(paroc_string nodeId);  //Insert a node a the end of the way back
-  paroc_string getNextNode() const;      //Return the next node in the object
-  void deleteNextNode();                 //Delete the next node in the object
-  bool isLastNode() const;         //Check if it's the lasr node in the way back
-  bool isEmpty() const;            //Check if the way back is empty
+    //Operator
+    const POPWayback & operator=(const POPWayback &x);
+
+    //Specialized methods
+    paroc_string getAsString() const;      //Get the object as a formatted string value
+    void insertNode(paroc_string nodeId);  //Insert a node a the end of the way back
+    paroc_string getNextNode() const;      //Return the next node in the object
+    void deleteNextNode();                 //Delete the next node in the object
+    bool isLastNode() const;         //Check if it's the lasr node in the way back
+    bool isEmpty() const;            //Check if the way back is empty
 
 
-  //Inherited method to serialize the object
-  virtual void Serialize(POPBuffer &buf, bool pack); 
+    //Inherited method to serialize the object
+    virtual void Serialize(POPBuffer &buf, bool pack);
 
-private: 
-   std::list<paroc_string> _lst_wb;   //List containing the path to a specific node
+private:
+    std::list<paroc_string> _lst_wb;   //List containing the path to a specific node
 
 };
 

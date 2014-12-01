@@ -18,20 +18,19 @@ DESCRIPTION: event queue that store/wait/retrieve an event
  * @author Tuan Anh Nguyen
  *
  */
-class EventQueue
-{
+class EventQueue {
 public:
-	EventQueue();
-	~EventQueue();
-	void PostEvent(int e);
-	int  WaitEvent(int e=ANY_EVENT, int timeout=-1);
-	//timeout=0: return imediately if the event did not occur,
-	// -1: disable timeout control,
-	//otherwise, timeout in "timeout" miliseconds
+    EventQueue();
+    ~EventQueue();
+    void PostEvent(int e);
+    int  WaitEvent(int e=ANY_EVENT, int timeout=-1);
+    //timeout=0: return imediately if the event did not occur,
+    // -1: disable timeout control,
+    //otherwise, timeout in "timeout" miliseconds
 
 protected:
-	paroc_condition cond;
-	paroc_list<int> queue;
+    paroc_condition cond;
+    paroc_list<int> queue;
 
 };
 
