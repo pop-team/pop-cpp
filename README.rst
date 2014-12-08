@@ -50,15 +50,15 @@ If you have kept the default options this should give you something like:
 
 .. code::
 
-  POPC_LOCATION=/usr/local
-  export POPC_LOCATION=/usr/local
+  POPC_LOCATION=/usr/local/popc
+  export POPC_LOCATION=/usr/local/popc
   PATH=$PATH:$POPC_LOCATION/bin:$POPC_LOCATION/sbin
 
 The next thing to do is to start the job manager of POP-C++ with
 
 .. code::
 
-  /usr/local/sbin/SXXpopc start
+  /usr/local/popc/sbin/SXXpopc start
 
 TESTING YOUR INSTALLATION
 -------------------------
