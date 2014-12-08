@@ -46,6 +46,7 @@ You can configure the POP-C++ Global Services by answering "y" to this question.
 If you answered "y" at the 1st question, you will be asked if you want to make a simple installation. The simple installation will set the default parameters. If you want to parameterize the POP-C++ Global Services, answer "n".
 
 **Do not forget to add these lines to your .bashrc file or equivalent :**
+If you have kept the default options this should give you something like:
 
 .. code::
 
