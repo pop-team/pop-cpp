@@ -1,0 +1,43 @@
+# Ignore CMake generated files
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
+# Ignore files configured by cmake
+config.h
+services/popcobjrun
+
+# There is no reason at all to save object files
+*.o
+
+# Ignore common generated files in lib/dynamic
+# TODO: These files should not be generated here
+lib/dynamic/*.a
+
+# Ignore configured scripts
+scripts/popc-runtime-env.in
+scripts/popc-runtime-env.sh
+scripts/popc-user-env.csh
+scripts/popc-user-env.sh
+scripts/popc_script_setup
+scripts/popc_setup
+scripts/popcrun
+
+#Ignore generated files in the parser
+parser/parser.tab.cc
+parser/parser.tab.h
+parser/parser.yy.cc
+parser/popcc.cc
+parser/popcc
+parser/popcpp
+
+# Clean tests
+!test/*/Makefile
+test/*/main
+test/*/*.map
+test/*/_popc*
+dev/test/*/_popc*
+dev/test/*/*/_popc*
+__cmd_to_execute__
