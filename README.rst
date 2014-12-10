@@ -83,7 +83,7 @@ You can execute the test suite by running the "runtests" script with the "-all" 
 
 RESOURCES
 ---------
-* The POP-C++ wiki on GitHub wiki1_
-* The old POP-C++ wiki wiki2_
-.._wiki1: https://github.com/pop-team/pop-cpp/wiki
-.._wiki2: http://gridgroup.hefr.ch/popc/doku.php/main_page
+* The POP-C++ wiki on GitHub
+`<https://github.com/pop-team/pop-cpp/wiki>`_
+* The old POP-C++ wiki
+`<http://gridgroup.hefr.ch/popc/doku.php/main_page>`_
