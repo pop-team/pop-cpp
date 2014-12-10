@@ -10,8 +10,15 @@ In order to install properly POP-C++ from source, you will need following softwa
 
 * C++ compiler
 * GNU make
-* Flex / Bison. (optional: for parser modification only)
+* Cmake
+* Flex / Bison.
 * zlib
+
+On Ubuntu or debian the installation of dependencies can be easily done with:
+
+.. code::
+
+  sudo apt-get install g++ cmake flex bison 
 
 COMPILE POP-C++ SOURCE CODE
 ---------------------------
@@ -45,6 +52,9 @@ You can configure the POP-C++ Global Services by answering "y" to this question.
 
 If you answered "y" at the 1st question, you will be asked if you want to make a simple installation. The simple installation will set the default parameters. If you want to parameterize the POP-C++ Global Services, answer "n".
 
+STARTING POP-C++
+----------------
+
 **Do not forget to add these lines to your .bashrc file or equivalent :**
 If you have kept the default options this should give you something like:
 
@@ -70,3 +80,10 @@ You can execute the test suite by running the "runtests" script with the "-all" 
 .. code::
 
   user@computer$ ./runtests -all
+
+RESOURCES
+---------
+* The POP-C++ wiki on GitHub wiki1_
+* The old POP-C++ wiki wiki2_
+.._wiki1: https://github.com/pop-team/pop-cpp/wiki
+.._wiki2: http://gridgroup.hefr.ch/popc/doku.php/main_page
