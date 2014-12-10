@@ -8,16 +8,16 @@
  */
 
 parclass POPObject {
-	classuid(1500);
+    classuid(1500);
 
 public:
-	POPObject() @{ od.url("localhost"); };
-	~POPObject();
-	sync seq int getCounter();
-	async seq void increment();
+    POPObject() @{ od.url("localhost"); };
+    ~POPObject();
+    sync seq int getCounter();
+    async seq void increment();
 private:
-	int counter;
-	
+    int counter;
+
 };
 
 

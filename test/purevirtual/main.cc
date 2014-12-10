@@ -3,10 +3,9 @@
 
 #include <stdio.h>
 
-int main(int argc, char** argv)
-{
-	printf("Start pure virtual test ...\n");
-	Child c;
-	c.method_pv();
-	printf("Test finished ...\n");
+int main(int argc, char** argv) {
+    printf("Start pure virtual test ...\n");
+    Child c;
+    c.method_pv();
+    printf("Test finished ...\n");
 }

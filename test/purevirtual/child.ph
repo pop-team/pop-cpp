@@ -6,13 +6,13 @@
 
 #include <stdio.h>
 
-parclass Child: public Mother
-{
+parclass Child:
+public Mother {
 public:
-	classuid(1201);
-	Child() @{ od.url("localhost"); };
-	~Child();
-	sync seq void method_pv();
+    classuid(1201);
+    Child() @{ od.url("localhost"); };
+    ~Child();
+    sync seq void method_pv();
 };
 
 #endif /* CHILD_H */

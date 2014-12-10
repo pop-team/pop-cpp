@@ -2,21 +2,20 @@
 #define _PAROBJECT_PH_
 #include "popintvector.h"
 
-parclass ParObject
-{
+parclass ParObject {
 
-	classuid(1001);
+    classuid(1001);
 
 public:
-	ParObject() @{od.url("localhost");};
-	ParObject (POPString machine) @{od.url(machine);};
-	ParObject(float f) @{od.power(f);};
-	~ ParObject ();
+    ParObject() @{od.url("localhost");};
+    ParObject(POPString machine) @{od.url(machine);};
+    ParObject(float f) @{od.power(f);};
+    ~ ParObject();
 
-	seq async void SetData(POPintVector data);
-	seq sync POPintVector GetData();
+    seq async void SetData(POPintVector data);
+    seq sync POPintVector GetData();
 
 private:
-	POPintVector theData;
+    POPintVector theData;
 };
 #endif

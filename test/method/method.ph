@@ -1,23 +1,22 @@
 #include "timer.h"
 
-parclass TestMethod
-{
+parclass TestMethod {
 public:
-	TestMethod()@{od.url("localhost");};
-	async conc void TestConc1();
-	async conc void TestConc2();
-	async conc void TestConc3();
-	async seq void TestSeq1();
-	async seq void TestSeq2();
-	async seq void TestSeq3();
+    TestMethod()@{od.url("localhost");};
+    async conc void TestConc1();
+    async conc void TestConc2();
+    async conc void TestConc3();
+    async seq void TestSeq1();
+    async seq void TestSeq2();
+    async seq void TestSeq3();
 
-	async mutex void TestMutex();
+    async mutex void TestMutex();
 
-	sync mutex void TestFinal();
+    sync mutex void TestFinal();
 
-	classuid(1001);
+    classuid(1001);
 
 private:
-	Timer timer;
+    Timer timer;
 
 };

@@ -27,111 +27,102 @@
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_system.h"
 
-bool NewConnection(void *dat, paroc_connection *conn)
-{
-  paroc_broker *br=(paroc_broker *)dat;
-  return br->OnNewConnection(conn);
+bool NewConnection(void *dat, paroc_connection *conn) {
+    paroc_broker *br=(paroc_broker *)dat;
+    return br->OnNewConnection(conn);
 }
 
 
-bool CloseConnection(void *dat, paroc_connection *conn)
-{
-  paroc_broker *br = (paroc_broker*)dat;
-  return br->OnCloseConnection(conn);
+bool CloseConnection(void *dat, paroc_connection *conn) {
+    paroc_broker *br = (paroc_broker*)dat;
+    return br->OnCloseConnection(conn);
 }
 
 
-void paroc_broker::ReceiveThread(paroc_combox *server) // Receive request and put request in the FIFO
-{
+void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and put request in the FIFO
     server->SetCallback(COMBOX_NEW, NewConnection, this);
     server->SetCallback(COMBOX_CLOSE, CloseConnection, this);
 
-    while (state==POPC_STATE_RUNNING)
-    {
+    while(state==POPC_STATE_RUNNING) {
         paroc_request req;
         req.data=NULL;
-        try
-        {
-            if (!ReceiveRequest(server, req)) break;
+        try {
+            if(!ReceiveRequest(server, req)) {
+                break;
+            }
 
-            if (ParocCall(req))
-            {
-                if (req.data!=NULL) req.data->Destroy();
+            if(ParocCall(req)) {
+                if(req.data!=NULL) {
+                    req.data->Destroy();
+                }
                 execCond.broadcast();
                 continue;
             }
             RegisterRequest(req);
-        }
-        catch (...)
-        {
-            if (req.data != NULL)
-              req.data->Destroy();
+        } catch(...) {
+            if(req.data != NULL) {
+                req.data->Destroy();
+            }
             execCond.broadcast();
             break;
 
         }
     }
-        //printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
+    //printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
     server->Close();
 }
 
 
-bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req)
-{
+bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
     server->SetTimeout(-1);
-    while (1) {
-            paroc_connection *conn = server->Wait();
-            if (conn == NULL) {
-                    execCond.broadcast();
-                    return false;
-            }
+    while(1) {
+        paroc_connection *conn = server->Wait();
+        if(conn == NULL) {
+            execCond.broadcast();
+            return false;
+        }
 
-            if (conn->is_initial_connection()){
-              continue;
-            }
+        if(conn->is_initial_connection()) {
+            continue;
+        }
 
-            paroc_buffer_factory *fact = conn->GetBufferFactory();
-            req.data = fact->CreateBuffer();
+        paroc_buffer_factory *fact = conn->GetBufferFactory();
+        req.data = fact->CreateBuffer();
 
-            if (req.data->Recv(conn)) {
-                    req.from = conn;
-                    const paroc_message_header &h = req.data->GetHeader();
-                    req.methodId[0] = h.GetClassID();
-                    req.methodId[1] = h.GetMethodID();
+        if(req.data->Recv(conn)) {
+            req.from = conn;
+            const paroc_message_header &h = req.data->GetHeader();
+            req.methodId[0] = h.GetClassID();
+            req.methodId[1] = h.GetMethodID();
 
-                    if ( !((req.methodId[2]=h.GetSemantics()) & INVOKE_SYNC) ) {
+            if(!((req.methodId[2]=h.GetSemantics()) & INVOKE_SYNC)) {
 #ifdef OD_DISCONNECT
-                            if (checkConnection) {
-                                    server->SendAck(conn);
-                            }
+                if(checkConnection) {
+                    server->SendAck(conn);
+                }
 #endif
-                    }
-                    return true;
             }
+            return true;
+        }
 
-            req.data->Destroy();
+        req.data->Destroy();
     }
 }
 
 
-void paroc_broker::RegisterRequest(paroc_request &req)
-{
+void paroc_broker::RegisterRequest(paroc_request &req) {
     //Check if mutex is waiting/executing...
     int type=req.methodId[2];
     req.from=(type & INVOKE_SYNC)? req.from->Clone() : NULL;
 
-    if (type & INVOKE_CONC)
-    {
+    if(type & INVOKE_CONC) {
         mutexCond.lock();
-        if (mutexCount<=0)
-        {
+        if(mutexCount<=0) {
             ServeRequest(req);
             mutexCond.unlock();
             return;
         }
-    }
-    else if (type & INVOKE_MUTEX)
-    {
+    } else if(type & INVOKE_MUTEX) {
         mutexCond.lock();
         mutexCount++;
         mutexCond.unlock();
@@ -144,67 +135,65 @@ void paroc_broker::RegisterRequest(paroc_request &req)
     execCond.broadcast();
     execCond.unlock();
 
-    if (type & INVOKE_CONC)
-    {
+    if(type & INVOKE_CONC) {
         concPendings++;
         mutexCond.unlock();
     }
 
-    if (count>=POPC_QUEUE_NORMAL)
-    {
-      //To many requests: Slowdown the receive thread...
-      int step=(count/POPC_QUEUE_NORMAL);
-      long t=step*step*step;
-      //if (count>POPC_QUEUE_NORMAL+5)
+    if(count>=POPC_QUEUE_NORMAL) {
+        //To many requests: Slowdown the receive thread...
+        int step=(count/POPC_QUEUE_NORMAL);
+        long t=step*step*step;
+        //if (count>POPC_QUEUE_NORMAL+5)
         //rprintf(" Warning: too many requests (unserved requests: %d)\n",count);
-      if (count<=POPC_QUEUE_MAX) popc_usleep(10*t);
-      else
-      {
-        while (request_fifo.GetCount()>POPC_QUEUE_MAX) popc_usleep(t*10);
-      }
+        if(count<=POPC_QUEUE_MAX) {
+            popc_usleep(10*t);
+        } else {
+            while(request_fifo.GetCount()>POPC_QUEUE_MAX) {
+                popc_usleep(t*10);
+            }
+        }
     }
 }
 
-bool paroc_broker::OnNewConnection(paroc_connection *conn)
-{
+bool paroc_broker::OnNewConnection(paroc_connection *conn) {
     //  if (state!=POPC_STATE_RUNNING) return false;
-    if (obj!=NULL) obj->AddRef();
+    if(obj!=NULL) {
+        obj->AddRef();
+    }
     return true;
 }
 
 /**
  * This method is called when a connection with an interface is closed.
  */
-bool paroc_broker::OnCloseConnection(paroc_connection *conn)
-{
-    if (obj!=NULL) {
+bool paroc_broker::OnCloseConnection(paroc_connection *conn) {
+    if(obj!=NULL) {
         int ret=obj->DecRef();
-        if (ret<=0)
+        if(ret<=0) {
             execCond.broadcast();
+        }
     }
     return true;
 }
 
 
-paroc_object * paroc_broker::GetObject()
-{
+paroc_object * paroc_broker::GetObject() {
     return obj;
 }
 
-bool  paroc_broker::ParocCall(paroc_request &req)
-{
-    if (req.methodId[1]>=10) {
+bool  paroc_broker::ParocCall(paroc_request &req) {
+    if(req.methodId[1]>=10) {
         return false;
     }
 
     unsigned *methodid=req.methodId;
     paroc_buffer *buf=req.data;
 
-    switch (methodid[1]){
+    switch(methodid[1]) {
     case 0:
         // BindStatus call
-        if (methodid[2] & INVOKE_SYNC)
-        {
+        if(methodid[2] & INVOKE_SYNC) {
             paroc_message_header h(0, 0, INVOKE_SYNC ,"BindStatus");
             buf->Reset();
             buf->SetHeader(h);
@@ -212,14 +201,13 @@ bool  paroc_broker::ParocCall(paroc_request &req)
             POPString enclist;
             paroc_buffer_factory_finder *finder = paroc_buffer_factory_finder::GetInstance();
             int count = finder->GetFactoryCount();
-            for (int i = 0; i < count; i++)
-            {
+            for(int i = 0; i < count; i++) {
                 POPString t;
-                if (finder->GetBufferName(i, t))
-                {
+                if(finder->GetBufferName(i, t)) {
                     enclist += t;
-                    if (i < count-1)
-                      enclist += " ";
+                    if(i < count-1) {
+                        enclist += " ";
+                    }
                 }
             }
             buf->Push("code","int",1);
@@ -234,13 +222,13 @@ bool  paroc_broker::ParocCall(paroc_request &req)
             buf->Send(req.from);
         }
         break;
-    case 1:
-    {
+    case 1: {
         //AddRef call...
-        if (obj==NULL) return false;
+        if(obj==NULL) {
+            return false;
+        }
         int ret=obj->AddRef();
-        if (methodid[2] & INVOKE_SYNC)
-        {
+        if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
             paroc_message_header h("AddRef");
             buf->SetHeader(h);
@@ -253,15 +241,15 @@ bool  paroc_broker::ParocCall(paroc_request &req)
         execCond.broadcast();
     }
     break;
-    case 2:
-    {
-    // Decrement reference
+    case 2: {
+        // Decrement reference
 
-        if (obj == NULL)
-          return false;
+        if(obj == NULL) {
+            return false;
+        }
         int ret = obj->DecRef();
 
-        if (methodid[2] & INVOKE_SYNC) {
+        if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
             paroc_message_header h("DecRef");
             buf->SetHeader(h);
@@ -276,8 +264,7 @@ bool  paroc_broker::ParocCall(paroc_request &req)
     }
 
 
-    case 3:
-    {
+    case 3: {
         //GetEncoding call...
         POPString enc;
         buf->Push("encoding","POPString",1);
@@ -285,13 +272,13 @@ bool  paroc_broker::ParocCall(paroc_request &req)
         buf->Pop();
         paroc_buffer_factory *fact=paroc_buffer_factory_finder::GetInstance()->FindFactory(enc);
         bool ret;
-        if (fact) {
+        if(fact) {
             req.from->SetBufferFactory(fact);
             ret = true;
         } else {
-          ret = false;
+            ret = false;
         }
-        if (methodid[2] & INVOKE_SYNC) {
+        if(methodid[2] & INVOKE_SYNC) {
             paroc_message_header h("Encoding");
             buf->SetHeader(h);
             buf->Reset();
@@ -302,21 +289,20 @@ bool  paroc_broker::ParocCall(paroc_request &req)
         }
         break;
     }
-    case 4:
-    {
+    case 4: {
         // Kill call
-        if (obj && obj->CanKill()) {
-                    printf("Object exit by killcall\n");
+        if(obj && obj->CanKill()) {
+            printf("Object exit by killcall\n");
             exit(1);
         }
         break;
     }
-    case 5:
-    {
+    case 5: {
         // ObjectAlive call
-        if (!obj)
-          return false;
-        if (methodid[2] & INVOKE_SYNC) {
+        if(!obj) {
+            return false;
+        }
+        if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
             paroc_message_header h("ObjectActive");
             buf->SetHeader(h);
@@ -330,12 +316,12 @@ bool  paroc_broker::ParocCall(paroc_request &req)
         break;
     }
 #ifdef OD_DISCONNECT
-    case 6:
-    {
+    case 6: {
         //ObjectAlive call
-        if (obj==NULL) return false;
-        if (methodid[2] & INVOKE_SYNC)
-        {
+        if(obj==NULL) {
+            return false;
+        }
+        if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
             paroc_message_header h("ObjectAlive");
             h.SetClassID(0);

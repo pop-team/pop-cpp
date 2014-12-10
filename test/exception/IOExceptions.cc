@@ -17,34 +17,31 @@
 */
 #include "IOExceptions.h"
 
-IOException::IOException(const std::string& message, const std::string& position)
-{
-	if (position=="")
-  {
-		msg = "At unknown position: " + message;
-	} else
-  {
-		msg = position + ": " + message;
-	}
+IOException::IOException(const std::string& message, const std::string& position) {
+    if(position=="") {
+        msg = "At unknown position: " + message;
+    } else {
+        msg = position + ": " + message;
+    }
 #ifdef LINUX
-	void* tracearray[25]; //maximal size for backtrace: 25 pointers
-	size_t tracesize = backtrace(tracearray, 25); //obtains backtrace for current thread
-	char** symbols = backtrace_symbols(tracearray, tracesize); //translate pointers to strings
-	msg += "\n\n\033[01;30m**** backtrace ****\n"; //we use ASCII color codes to make the backtrace less visible/aggressive
-	for (unsigned int ii=1; ii<tracesize; ii++)
-		msg += "\tat " + string(symbols[ii]) + "\n";
-	msg += "\033[0m"; //back to normal color
-	free(symbols);
+    void* tracearray[25]; //maximal size for backtrace: 25 pointers
+    size_t tracesize = backtrace(tracearray, 25); //obtains backtrace for current thread
+    char** symbols = backtrace_symbols(tracearray, tracesize); //translate pointers to strings
+    msg += "\n\n\033[01;30m**** backtrace ****\n"; //we use ASCII color codes to make the backtrace less visible/aggressive
+    for(unsigned int ii=1; ii<tracesize; ii++) {
+        msg += "\tat " + string(symbols[ii]) + "\n";
+    }
+    msg += "\033[0m"; //back to normal color
+    free(symbols);
 #endif
 
 }
 
-IOException::~IOException() throw(){
+IOException::~IOException() throw() {
 }
 
 
-const char* IOException::what() const throw()
-{
-	return msg.c_str();
+const char* IOException::what() const throw() {
+    return msg.c_str();
 }
 

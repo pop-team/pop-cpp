@@ -18,14 +18,14 @@
 #include <unistd.h>
 
 // Default constructor
-POPCSearchNodeInfo::POPCSearchNodeInfo(){}
+POPCSearchNodeInfo::POPCSearchNodeInfo() {}
 
 // Destructor
-POPCSearchNodeInfo::~POPCSearchNodeInfo(){}
+POPCSearchNodeInfo::~POPCSearchNodeInfo() {}
 
 // method used to pass the object in the grid
-void POPCSearchNodeInfo::Serialize(POPBuffer &buf, bool pack){
-    if(pack){ // marshalling all the information
+void POPCSearchNodeInfo::Serialize(POPBuffer &buf, bool pack) {
+    if(pack) { // marshalling all the information
         buf.Pack(&nodeId, 1);
         buf.Pack(&operatingSystem, 1);
         buf.Pack(&power, 1);
@@ -36,7 +36,7 @@ void POPCSearchNodeInfo::Serialize(POPBuffer &buf, bool pack){
         buf.Pack(&protocol, 1);
         buf.Pack(&encoding, 1);
         buf.Pack(&pki,1);
-    }else{ // unmarshalling all the information
+    } else { // unmarshalling all the information
         buf.UnPack(&nodeId, 1);
         buf.UnPack(&operatingSystem, 1);
         buf.UnPack(&power, 1);
@@ -50,47 +50,47 @@ void POPCSearchNodeInfo::Serialize(POPBuffer &buf, bool pack){
     }
 }
 
-POPString POPCSearchNodeInfo::getPOPCSearchNodeId(){
+POPString POPCSearchNodeInfo::getPOPCSearchNodeId() {
     return nodeId;
 }
 
-POPString POPCSearchNodeInfo::getPKI(){
-   return pki;
+POPString POPCSearchNodeInfo::getPKI() {
+    return pki;
 }
 
 // Default constructor
-POPCSearchNodeInfos::POPCSearchNodeInfos(){}
+POPCSearchNodeInfos::POPCSearchNodeInfos() {}
 
 // Default destructor
-POPCSearchNodeInfos::~POPCSearchNodeInfos(){}
+POPCSearchNodeInfos::~POPCSearchNodeInfos() {}
 
 // method used to pass the object in the grid
-void POPCSearchNodeInfos::Serialize(POPBuffer &buf, bool pack){
-    if(pack){
+void POPCSearchNodeInfos::Serialize(POPBuffer &buf, bool pack) {
+    if(pack) {
         // marshalling all the 'DNodeInfo' contained in the list '_DNodeInfos'
         list<POPCSearchNodeInfo>::iterator i;
 
         int nElts = _nodeInfos.size();
         buf.Pack(&nElts, 1);
-        for(i = _nodeInfos.begin(); i != _nodeInfos.end(); i++){
+        for(i = _nodeInfos.begin(); i != _nodeInfos.end(); i++) {
             i->Serialize(buf, true);
         }
-    }else{
+    } else {
         // unmarshalling all the 'DNodeInfo' in the list '_DNodeInfos)
         int nElts;
         buf.UnPack(&nElts, 1);
         int i;
-        for(i=0; i<nElts; i++){
+        for(i=0; i<nElts; i++) {
             POPCSearchNodeInfo info;
             info.Serialize(buf, false);
             _nodeInfos.push_back(info);
         }
     }
 }
-void POPCSearchNodeInfos::addANodeInfo(POPCSearchNodeInfo node){
+void POPCSearchNodeInfos::addANodeInfo(POPCSearchNodeInfo node) {
     _nodeInfos.push_back(node);
 }
-list<POPCSearchNodeInfo> POPCSearchNodeInfos::getNodeInfos(){
+list<POPCSearchNodeInfo> POPCSearchNodeInfos::getNodeInfos() {
     return _nodeInfos;
 }
 

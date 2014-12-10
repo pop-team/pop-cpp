@@ -2,20 +2,19 @@
 #define _PAROBJECT_PH
 #include "data.h"
 
-parclass ParObject
-{
-	classuid(1000);
+parclass ParObject {
+    classuid(1000);
 
 public:
-	ParObject() @{od.url("localhost");};
-	ParObject (POPString machine) @{od.url(machine);};
-	ParObject(float f) @{od.power(f);};
-	~ParObject ();
+    ParObject() @{od.url("localhost");};
+    ParObject(POPString machine) @{od.url(machine);};
+    ParObject(float f) @{od.power(f);};
+    ~ParObject();
 
-	seq async void SetData(Data data);
-	seq sync Data GetData();
+    seq async void SetData(Data data);
+    seq sync Data GetData();
 
 private:
-	Data theData;
+    Data theData;
 };
 #endif

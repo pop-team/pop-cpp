@@ -2,29 +2,24 @@
 #include "integer.ph"
 #include <unistd.h>
 
-Integer::Integer()
-{
-	printf("Creation of object Integer with accesspoint %s\n", GetAccessPoint().GetAccessString());
+Integer::Integer() {
+    printf("Creation of object Integer with accesspoint %s\n", GetAccessPoint().GetAccessString());
 }
 
-Integer::~Integer()
-{
-	printf("Destroying Integer object %s\n", GetAccessPoint().GetAccessString());
+Integer::~Integer() {
+    printf("Destroying Integer object %s\n", GetAccessPoint().GetAccessString());
 }
 
-void Integer::Set(int val)
-{
-	data=val;
+void Integer::Set(int val) {
+    data=val;
 }
 
-int Integer::Get()
-{
-	return data;
+int Integer::Get() {
+    return data;
 }
 
-void Integer::Add(Integer &other)
-{
-	data += other.Get();
+void Integer::Add(Integer &other) {
+    data += other.Get();
 }
 
-@pack( Integer);
+@pack(Integer);

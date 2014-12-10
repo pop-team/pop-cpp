@@ -2,18 +2,17 @@
 #define CLASSA_H
 #include "classB.ph"
 
-parclass ClassA
-{
-	classuid(1000);
+parclass ClassA {
+    classuid(1000);
 
 public:
-	ClassA(int anid);
-	~ClassA();
+    ClassA(int anid);
+    ~ClassA();
 
-	sync seq ClassA saveReference();
+    sync seq ClassA saveReference();
 
 private:
-	ClassB * myRef;
-	int id;
+    ClassB * myRef;
+    int id;
 };
 #endif

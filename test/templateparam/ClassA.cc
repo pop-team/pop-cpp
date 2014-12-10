@@ -4,14 +4,20 @@
 #include <stdio.h>
 #include "ClassA.h"
 
-template <class C> ClassA<C>::ClassA() {printf("TemplateParam: Contructing ClassA object\n");}
+template <class C> ClassA<C>::ClassA() {
+    printf("TemplateParam: Contructing ClassA object\n");
+}
 
-template <class C> ClassA<C>::~ClassA() {printf("TemplateParam: Destroying ClassA object\n");}
+template <class C> ClassA<C>::~ClassA() {
+    printf("TemplateParam: Destroying ClassA object\n");
+}
 
-template <class C> C* ClassA<C>::GetData()
-{return &x;}
+template <class C> C* ClassA<C>::GetData() {
+    return &x;
+}
 
-template <class C> void ClassA<C>::SetData(C d)
-{x = d;}
+template <class C> void ClassA<C>::SetData(C d) {
+    x = d;
+}
 
 #endif

@@ -5,7 +5,11 @@ Data::Data() {}
 
 Data::~Data() {}
 
-void Data::SetInternalData(int d) {theData = d;}
+void Data::SetInternalData(int d) {
+    theData = d;
+}
 
-int Data::GetInternalData() {return theData;}
+int Data::GetInternalData() {
+    return theData;
+}
 

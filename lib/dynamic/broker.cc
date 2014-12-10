@@ -29,66 +29,58 @@
 #define TIMEOUT 1800
 
 #define MINMETHODID 2
-paroc_request::paroc_request()
-{
-	from=NULL;
-	data=NULL;
-	userdata=NULL;
+paroc_request::paroc_request() {
+    from=NULL;
+    data=NULL;
+    userdata=NULL;
 }
 
-paroc_request::paroc_request(const paroc_request &r)
-{
-	from=r.from;
-	memcpy(methodId,r.methodId,3*sizeof(unsigned));
-	data=r.data;
-	userdata=r.userdata;
+paroc_request::paroc_request(const paroc_request &r) {
+    from=r.from;
+    memcpy(methodId,r.methodId,3*sizeof(unsigned));
+    data=r.data;
+    userdata=r.userdata;
 }
 
 
-void paroc_request::operator =(const paroc_request &r)
-{
-	from=r.from;
-	memcpy(methodId,r.methodId,3*sizeof(unsigned));
-	data=r.data;
-	userdata=r.userdata;
+void paroc_request::operator =(const paroc_request &r) {
+    from=r.from;
+    memcpy(methodId,r.methodId,3*sizeof(unsigned));
+    data=r.data;
+    userdata=r.userdata;
 }
 
-void broker_interupt(int sig)
-{
+void broker_interupt(int sig) {
 #ifndef __WIN32__
-	printf("Interrupt on thread id %lu\n",(unsigned long)pthread_self());
+    printf("Interrupt on thread id %lu\n",(unsigned long)pthread_self());
 #else
-        printf("Interrupt on thread id %lu\n",(unsigned long)GetCurrentThreadId());
+    printf("Interrupt on thread id %lu\n",(unsigned long)GetCurrentThreadId());
 #endif
 }
 
 
-class paroc_receivethread: public paroc_thread
-{
+class paroc_receivethread: public paroc_thread {
 public:
-	paroc_receivethread(paroc_broker *br, paroc_combox *com);
-	~paroc_receivethread();
-	virtual void start();
+    paroc_receivethread(paroc_broker *br, paroc_combox *com);
+    ~paroc_receivethread();
+    virtual void start();
 protected:
-	paroc_broker *broker;
-	paroc_combox *comm;
+    paroc_broker *broker;
+    paroc_combox *comm;
 };
 
-paroc_receivethread::paroc_receivethread(paroc_broker *br, paroc_combox *combox): paroc_thread(true)
-{
-	broker=br;
-	comm=combox;
+paroc_receivethread::paroc_receivethread(paroc_broker *br, paroc_combox *combox): paroc_thread(true) {
+    broker=br;
+    comm=combox;
 }
-paroc_receivethread::~paroc_receivethread()
-{
+paroc_receivethread::~paroc_receivethread() {
 }
 
-void paroc_receivethread::start()
-{
+void paroc_receivethread::start() {
 #ifndef __WIN32__
-	popc_signal(popc_SIGHUP,broker_interupt);
+    popc_signal(popc_SIGHUP,broker_interupt);
 #endif
-	broker->ReceiveThread(comm);
+    broker->ReceiveThread(comm);
 }
 
 //===paroc_object: base class for all parallel object-server side
@@ -102,84 +94,81 @@ paroc_accesspoint paroc_broker::accesspoint;
 POPString paroc_broker::classname;
 
 
-void broker_killed(int sig)
-{
-	printf("FATAL: SIGNAL %d on %s@%s\n",sig, (const char *)paroc_broker::classname,paroc_broker::accesspoint.GetAccessString());
-	exit(1);
+void broker_killed(int sig) {
+    printf("FATAL: SIGNAL %d on %s@%s\n",sig, (const char *)paroc_broker::classname,paroc_broker::accesspoint.GetAccessString());
+    exit(1);
 }
 
 
-paroc_broker::paroc_broker()
-{
-	obj=NULL;
-	state=POPC_STATE_RUNNING;
-	instanceCount=0;
-	mutexCount=0;
-	concPendings=0;
+paroc_broker::paroc_broker() {
+    obj=NULL;
+    state=POPC_STATE_RUNNING;
+    instanceCount=0;
+    mutexCount=0;
+    concPendings=0;
 }
 
-paroc_broker::~paroc_broker()
-{
-	int n=comboxArray.GetSize();
-	for (int i=0;i<n;i++) comboxArray[i]->Destroy();
-	if (obj!=NULL)
-	{
-		delete obj;
-	}
+paroc_broker::~paroc_broker() {
+    int n=comboxArray.GetSize();
+    for(int i=0; i<n; i++) {
+        comboxArray[i]->Destroy();
+    }
+    if(obj!=NULL) {
+        delete obj;
+    }
 }
 
-void paroc_broker::AddMethodInfo(unsigned cid, paroc_method_info *methods, int sz)
-{
-	if (sz<=0 || methods==NULL) return;
-	paroc_class_info &t=methodnames.AddHeadNew();
-	t.cid=cid;
-	t.methods=methods;
-	t.sz=sz;
+void paroc_broker::AddMethodInfo(unsigned cid, paroc_method_info *methods, int sz) {
+    if(sz<=0 || methods==NULL) {
+        return;
+    }
+    paroc_class_info &t=methodnames.AddHeadNew();
+    t.cid=cid;
+    t.methods=methods;
+    t.sz=sz;
 }
 
-const char *paroc_broker::FindMethodName(unsigned classID, unsigned methodID)
-{
-	POSITION pos=methodnames.GetHeadPosition();
-	while (pos!=NULL)
-	{
-		paroc_class_info &t=methodnames.GetNext(pos);
-		if (t.cid==classID)
-		{
-			paroc_method_info *m=t.methods;
-			int n=t.sz;
-			for (int i=0;i<n;i++, m++) if (m->mid==methodID) return m->name;
-		}
-	}
-	return NULL;
+const char *paroc_broker::FindMethodName(unsigned classID, unsigned methodID) {
+    POSITION pos=methodnames.GetHeadPosition();
+    while(pos!=NULL) {
+        paroc_class_info &t=methodnames.GetNext(pos);
+        if(t.cid==classID) {
+            paroc_method_info *m=t.methods;
+            int n=t.sz;
+            for(int i=0; i<n; i++, m++) if(m->mid==methodID) {
+                    return m->name;
+                }
+        }
+    }
+    return NULL;
 }
 
-bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned &methodID)
-{
-	if (name==NULL) return false;
+bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned &methodID) {
+    if(name==NULL) {
+        return false;
+    }
 
-	POSITION pos=methodnames.GetHeadPosition();
-	while (pos!=NULL)
-	{
-		paroc_class_info &t=methodnames.GetNext(pos);
-		paroc_method_info *m=t.methods;
-		int n=t.sz;
-		for (int i=0;i<n;i++, m++) if (paroc_utils::isEqual(name,m->name))
-			{
-				methodID=m->mid;
-				classID=t.cid;
-				return true;
-			}
-	}
-	return false;
+    POSITION pos=methodnames.GetHeadPosition();
+    while(pos!=NULL) {
+        paroc_class_info &t=methodnames.GetNext(pos);
+        paroc_method_info *m=t.methods;
+        int n=t.sz;
+        for(int i=0; i<n; i++, m++) if(paroc_utils::isEqual(name,m->name)) {
+                methodID=m->mid;
+                classID=t.cid;
+                return true;
+            }
+    }
+    return false;
 }
 
 
-int paroc_broker::Run(){
+int paroc_broker::Run() {
     //Create threads for each protocols for receiving requests....
 
     paroc_array<paroc_receivethread *> ptArray;
     int comboxCount = comboxArray.GetSize();
-    if (comboxCount <= 0) {
+    if(comboxCount <= 0) {
         return -1;
     }
 
@@ -187,47 +176,50 @@ int paroc_broker::Run(){
     ptArray.SetSize(comboxCount);
     int i;
 
-    for (i = 0; i < comboxCount; i++) {
+    for(i = 0; i < comboxCount; i++) {
         ptArray[i] = new paroc_receivethread(this, comboxArray[i]);
         int ret = ptArray[i]->create();
-        if (ret != 0) {
+        if(ret != 0) {
             return errno;
         }
     }
 
-    if (obj == NULL) {
+    if(obj == NULL) {
         popc_alarm(TIMEOUT);
     }
 
-    while (state == POPC_STATE_RUNNING) {
+    while(state == POPC_STATE_RUNNING) {
         try {
             paroc_request req;
-            if (!GetRequest(req)) break;
-            ServeRequest(req);
-            if (req.methodId[2] & INVOKE_CONSTRUCTOR){
-                popc_alarm(0);
-                if (obj == NULL)
-                    break;
+            if(!GetRequest(req)) {
+                break;
             }
-        } catch (...){
+            ServeRequest(req);
+            if(req.methodId[2] & INVOKE_CONSTRUCTOR) {
+                popc_alarm(0);
+                if(obj == NULL) {
+                    break;
+                }
+            }
+        } catch(...) {
             UnhandledException();
         }
     }
 
 
-    if (obj!=NULL && state==POPC_STATE_RUNNING){
+    if(obj!=NULL && state==POPC_STATE_RUNNING) {
         paroc_mutex_locker test(execCond);
 
         //Wait for all invocations terminated....
-        while (instanceCount > 0 || !request_fifo.IsEmpty()){
+        while(instanceCount > 0 || !request_fifo.IsEmpty()) {
             execCond.wait();
         }
     }
 
     state = POPC_STATE_EXIT;
 
-    for (i = 0; i < comboxCount; i++) {
-        if (WakeupReceiveThread(comboxArray[i])) {
+    for(i = 0; i < comboxCount; i++) {
+        if(WakeupReceiveThread(comboxArray[i])) {
             delete ptArray[i];
         } else {
             ptArray[i]->cancel();
@@ -236,109 +228,110 @@ int paroc_broker::Run(){
     return 0;
 }
 
-bool paroc_broker::Initialize(int *argc, char ***argv)
-{
-	if (paroc_utils::checkremove(argc, argv, "-runlocal"))  paroc_od::defaultLocalJob=true;
+bool paroc_broker::Initialize(int *argc, char ***argv) {
+    if(paroc_utils::checkremove(argc, argv, "-runlocal")) {
+        paroc_od::defaultLocalJob=true;
+    }
 
-        char *address = paroc_utils::checkremove(argc,argv,"-address=");
+    char *address = paroc_utils::checkremove(argc,argv,"-address=");
 
-	paroc_combox_factory  *ff = paroc_combox_factory::GetInstance();
-	int comboxCount = ff->GetCount();
-	comboxArray.SetSize(comboxCount);
-	POPString protocolName;
-	POPString url;
+    paroc_combox_factory  *ff = paroc_combox_factory::GetInstance();
+    int comboxCount = ff->GetCount();
+    comboxArray.SetSize(comboxCount);
+    POPString protocolName;
+    POPString url;
 
-	int count=0;
-	for (int i = 0;i < comboxCount;i++) {
-		comboxArray[count] = ff->Create(i);
-		if (comboxArray[count] == NULL) {
-			printf("Fail to create combox #%d",i);
-		}
-		else count++;
-	}
+    int count=0;
+    for(int i = 0; i < comboxCount; i++) {
+        comboxArray[count] = ff->Create(i);
+        if(comboxArray[count] == NULL) {
+            printf("Fail to create combox #%d",i);
+        } else {
+            count++;
+        }
+    }
 
-	if (comboxCount!=count)
-	{
-		comboxCount=count;
-		comboxArray.SetSize(comboxCount);
-	}
+    if(comboxCount!=count) {
+        comboxCount=count;
+        comboxArray.SetSize(comboxCount);
+    }
 
-	if (comboxCount<=0) return false;
+    if(comboxCount<=0) {
+        return false;
+    }
 
-	for (int i=0; i<comboxCount; i++)
-	{
-		paroc_combox * pc = comboxArray[i];
-		pc->GetProtocol(protocolName);
+    for(int i=0; i<comboxCount; i++) {
+        paroc_combox * pc = comboxArray[i];
+        pc->GetProtocol(protocolName);
 
-		char argument[1024];
-		sprintf(argument, "-%s_port=", (const char *)protocolName);
-		char *portstr=paroc_utils::checkremove(argc,argv,argument);
-		if (portstr!=NULL)
-		{
-                    int port;
-                    if (sscanf(portstr,"%d",&port)!=1) return false;
-                    if (!pc->Create(port, true))
-                    {
-                            paroc_system::perror("Broker");
-                            return false;
-                    }
-		}
-		else
-		{
+        char argument[1024];
+        sprintf(argument, "-%s_port=", (const char *)protocolName);
+        char *portstr=paroc_utils::checkremove(argc,argv,argument);
+        if(portstr!=NULL) {
+            int port;
+            if(sscanf(portstr,"%d",&port)!=1) {
+                return false;
+            }
+            if(!pc->Create(port, true)) {
+                paroc_system::perror("Broker");
+                return false;
+            }
+        } else {
 #ifdef DEFINE_UDS_SUPPORT
-                    if(!pc->Create(address, true)){
+            if(!pc->Create(address, true)) {
 #else
-                    if(!pc->Create(0, true)){
+            if(!pc->Create(0, true)) {
 #endif
-                            paroc_system::perror("Broker");
-                            return false;
-                    }
-		}
+                paroc_system::perror("Broker");
+                return false;
+            }
+        }
 
 
-		POPString ap;
-		pc->GetUrl(ap);
-		url+=ap;
-		if (i<comboxCount-1) url+=PROTO_DELIMIT_CHAR;
-	}
+        POPString ap;
+        pc->GetUrl(ap);
+        url+=ap;
+        if(i<comboxCount-1) {
+            url+=PROTO_DELIMIT_CHAR;
+        }
+    }
 
-	accesspoint.SetAccessString(url.GetString());
+    accesspoint.SetAccessString(url.GetString());
 
-	char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
-	if (tmp!=NULL && classname!=NULL)
-	{
-		paroc_request r;
-		paroc_buffer_raw tmp;
-		r.data=&tmp;
-		if (!FindMethodInfo(classname,r.methodId[0],r.methodId[1]) || r.methodId[1]!=10)
-		{
-			printf("POP-C++ Error: [CORE] Broker cannot not find default constructor\n");
-			return false;
-		}
-		r.methodId[2]=INVOKE_CONSTRUCTOR;
-		if (!DoInvoke(r)) return false;
-	}
+    char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
+    if(tmp!=NULL && classname!=NULL) {
+        paroc_request r;
+        paroc_buffer_raw tmp;
+        r.data=&tmp;
+        if(!FindMethodInfo(classname,r.methodId[0],r.methodId[1]) || r.methodId[1]!=10) {
+            printf("POP-C++ Error: [CORE] Broker cannot not find default constructor\n");
+            return false;
+        }
+        r.methodId[2]=INVOKE_CONSTRUCTOR;
+        if(!DoInvoke(r)) {
+            return false;
+        }
+    }
 
-	paroc_object::argc=*argc;
-	paroc_object::argv=*argv;
+    paroc_object::argc=*argc;
+    paroc_object::argv=*argv;
 
-	popc_signal(popc_SIGTERM, broker_killed);
-	popc_signal(popc_SIGINT, broker_killed);
-	popc_signal(popc_SIGILL, broker_killed);
-	popc_signal(popc_SIGABRT, broker_killed);
+    popc_signal(popc_SIGTERM, broker_killed);
+    popc_signal(popc_SIGINT, broker_killed);
+    popc_signal(popc_SIGILL, broker_killed);
+    popc_signal(popc_SIGABRT, broker_killed);
 #ifndef __WIN32__
-	popc_signal(popc_SIGQUIT, broker_killed);
-	popc_signal(popc_SIGPIPE, popc_SIG_IGN);
+    popc_signal(popc_SIGQUIT, broker_killed);
+    popc_signal(popc_SIGPIPE, popc_SIG_IGN);
 #endif
 
 
-	return true;
+    return true;
 }
 
 
 
-bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
-{
+bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
 
     paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
     POPString url, prot;
@@ -348,33 +341,35 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
     mycombox->GetUrl(url);
 
     char *str=url.GetString();
-    if (str==NULL) return false;
+    if(str==NULL) {
+        return false;
+    }
 
     char *ptr;
     char *tok = popc_strtok_r(str," \t\n\r",&ptr);
-    while (tok != NULL && !ok) {
+    while(tok != NULL && !ok) {
         paroc_combox *tmp = combox_factory->Create(prot);
         tmp->SetTimeout(100000);
         std::string address(tok);
-        if(address.find("uds://") == 0){
+        if(address.find("uds://") == 0) {
             address = address.substr(6);
         }
         paroc_buffer_factory* buffer_factory = tmp->GetBufferFactory();
         paroc_buffer* buffer = buffer_factory->CreateBuffer();
 #ifdef DEFINE_UDS_SUPPORT
-        if (tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
+        if(tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
 #else
-        if (tmp->Create(0, false) && tmp->Connect(tok)) {
+        if(tmp->Create(0, false) && tmp->Connect(tok)) {
 #endif
             try {
                 paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
                 buffer->Reset();
                 buffer->SetHeader(h);
                 paroc_connection* connection = tmp->get_connection();
-                if (!buffer->Send((*tmp), connection)) {
+                if(!buffer->Send((*tmp), connection)) {
                     ok = false;
                 } else {
-                    if (!buffer->Recv((*tmp), connection)) {
+                    if(!buffer->Recv((*tmp), connection)) {
                         ok = false;
                     }
                     bool ret;
@@ -383,7 +378,7 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox)
                     buffer->Pop();
                     ok = !ret;
                 }
-            } catch (...) {
+            } catch(...) {
                 ok = true;
             }
         }

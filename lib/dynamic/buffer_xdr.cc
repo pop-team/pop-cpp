@@ -22,25 +22,23 @@
 #include "paroc_buffer_xdr.h"
 #include "paroc_exception.h"
 
-paroc_buffer_xdr::paroc_buffer_xdr(): packeddata(0,1024)
-{
+paroc_buffer_xdr::paroc_buffer_xdr(): packeddata(0,1024) {
     Reset();
 }
 
-paroc_buffer_xdr::~paroc_buffer_xdr()
-{
+paroc_buffer_xdr::~paroc_buffer_xdr() {
 }
 
-void paroc_buffer_xdr::Reset()
-{
+void paroc_buffer_xdr::Reset() {
     unpackpos=20;
     packeddata.RemoveAll();
     packeddata.SetSize(unpackpos);
 }
 
-void paroc_buffer_xdr::Pack(const int *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::Pack(const int *data, int n) {
+    if(n<=0) {
+        return;
+    }
     int oldsize=packeddata.GetSize();
     packeddata.SetSize(n*4+oldsize);
     char *dest=packeddata+oldsize;
@@ -51,9 +49,10 @@ void paroc_buffer_xdr::Pack(const int *data, int n)
     xdr_destroy(&xdr);
 
 }
-void paroc_buffer_xdr::UnPack(int *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::UnPack(int *data, int n) {
+    if(n<=0) {
+        return;
+    }
     char *dest=packeddata+unpackpos;
 
     int sz=4*n;
@@ -68,9 +67,10 @@ void paroc_buffer_xdr::UnPack(int *data, int n)
     unpackpos+=sz;
 }
 
-void paroc_buffer_xdr::Pack(const unsigned *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::Pack(const unsigned *data, int n) {
+    if(n<=0) {
+        return;
+    }
     int oldsize=packeddata.GetSize();
     packeddata.SetSize(n*4+oldsize);
     char *dest=packeddata+oldsize;
@@ -81,9 +81,10 @@ void paroc_buffer_xdr::Pack(const unsigned *data, int n)
     xdr_destroy(&xdr);
 
 }
-void paroc_buffer_xdr::UnPack(unsigned *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::UnPack(unsigned *data, int n) {
+    if(n<=0) {
+        return;
+    }
 
     int sz=4*n;
     CheckUnPack(sz);
@@ -97,9 +98,10 @@ void paroc_buffer_xdr::UnPack(unsigned *data, int n)
     unpackpos+=sz;
 }
 
-void paroc_buffer_xdr::Pack(const long *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::Pack(const long *data, int n) {
+    if(n<=0) {
+        return;
+    }
     int oldsize=packeddata.GetSize();
     packeddata.SetSize(n*4+oldsize);
     char *dest=packeddata+oldsize;
@@ -110,9 +112,10 @@ void paroc_buffer_xdr::Pack(const long *data, int n)
     xdr_destroy(&xdr);
 }
 
-void paroc_buffer_xdr::UnPack(long *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::UnPack(long *data, int n) {
+    if(n<=0) {
+        return;
+    }
     char *dest=packeddata+unpackpos;
 
     int sz=4*n;
@@ -126,9 +129,10 @@ void paroc_buffer_xdr::UnPack(long *data, int n)
     unpackpos+=sz;
 }
 
-void paroc_buffer_xdr::Pack(const unsigned long *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::Pack(const unsigned long *data, int n) {
+    if(n<=0) {
+        return;
+    }
     int oldsize=packeddata.GetSize();
     packeddata.SetSize(n*4+oldsize);
     char *dest=packeddata+oldsize;
@@ -139,9 +143,10 @@ void paroc_buffer_xdr::Pack(const unsigned long *data, int n)
     xdr_destroy(&xdr);
 }
 
-void paroc_buffer_xdr::UnPack(unsigned long *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::UnPack(unsigned long *data, int n) {
+    if(n<=0) {
+        return;
+    }
     char *dest=packeddata+unpackpos;
 
     int sz=n*4;
@@ -155,11 +160,12 @@ void paroc_buffer_xdr::UnPack(unsigned long *data, int n)
     unpackpos+=sz;
 }
 
-void paroc_buffer_xdr::Pack(const short *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::Pack(const short *data, int n) {
+    if(n<=0) {
+        return;
+    }
     int oldsize=packeddata.GetSize();
-    packeddata.SetSize( ((n-1)/2+1)*4+oldsize);
+    packeddata.SetSize(((n-1)/2+1)*4+oldsize);
     char *dest=packeddata+oldsize;
 
     XDR xdr;
@@ -169,9 +175,10 @@ void paroc_buffer_xdr::Pack(const short *data, int n)
 
 }
 
-void paroc_buffer_xdr::UnPack(short *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::UnPack(short *data, int n) {
+    if(n<=0) {
+        return;
+    }
     char *dest=packeddata+unpackpos;
 
     int sz=2*n;
@@ -185,11 +192,12 @@ void paroc_buffer_xdr::UnPack(short *data, int n)
 
 }
 
-void paroc_buffer_xdr::Pack(const unsigned short *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::Pack(const unsigned short *data, int n) {
+    if(n<=0) {
+        return;
+    }
     int oldsize=packeddata.GetSize();
-    packeddata.SetSize( ((n-1)/2+1)*4+oldsize);
+    packeddata.SetSize(((n-1)/2+1)*4+oldsize);
     char *dest=packeddata+oldsize;
 
     XDR xdr;
@@ -198,9 +206,10 @@ void paroc_buffer_xdr::Pack(const unsigned short *data, int n)
     xdr_destroy(&xdr);
 }
 
-void paroc_buffer_xdr::UnPack(unsigned short *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::UnPack(unsigned short *data, int n) {
+    if(n<=0) {
+        return;
+    }
     char *dest=packeddata+unpackpos;
 
     int sz=2*n;
@@ -214,28 +223,28 @@ void paroc_buffer_xdr::UnPack(unsigned short *data, int n)
     unpackpos+=((n-1)/2+1)*4;
 }
 
-void paroc_buffer_xdr::Pack(const bool *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::Pack(const bool *data, int n) {
+    if(n<=0) {
+        return;
+    }
     int t=packeddata.GetSize();
     packeddata.SetSize(t+((n-1)/4+1)*4);
     char *dat=((char *)packeddata)+t;
-    while (n-->0)
-    {
+    while(n-->0) {
         *dat=(*data==true);
-        dat++; data++;
+        dat++;
+        data++;
     }
 }
-void paroc_buffer_xdr::UnPack(bool *data, int n)
-{
-    if (n <= 0) {
-      return;
+void paroc_buffer_xdr::UnPack(bool *data, int n) {
+    if(n <= 0) {
+        return;
     }
     CheckUnPack(n);
-  packeddata.GetSize();
+    packeddata.GetSize();
 
     char *dat = ((char *)packeddata) + unpackpos;
-    while (n-->0) {
+    while(n-->0) {
         *data = (*dat != 0);
         dat++;
         data++;
@@ -243,36 +252,37 @@ void paroc_buffer_xdr::UnPack(bool *data, int n)
     unpackpos += ((n-1)/4+1) * 4;
 }
 
-void paroc_buffer_xdr::Pack(const char *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::Pack(const char *data, int n) {
+    if(n<=0) {
+        return;
+    }
     int t=packeddata.GetSize();
     packeddata.SetSize(t+((n-1)/4+1)*4);
-    memcpy(( (char *)packeddata)+t,data,n);
+    memcpy(((char *)packeddata)+t,data,n);
 }
 
-void paroc_buffer_xdr::UnPack(char *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::UnPack(char *data, int n) {
+    if(n<=0) {
+        return;
+    }
     CheckUnPack(n);
-  packeddata.GetSize();
+    packeddata.GetSize();
     memcpy(data, ((char *)packeddata)+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
 
-void paroc_buffer_xdr::Pack(const unsigned char *data, int n)
-{
+void paroc_buffer_xdr::Pack(const unsigned char *data, int n) {
     Pack((char *)data,n);
 }
 
-void paroc_buffer_xdr::UnPack(unsigned char *data, int n)
-{
+void paroc_buffer_xdr::UnPack(unsigned char *data, int n) {
     UnPack((char *)data,n);
 }
 
-void paroc_buffer_xdr::Pack(const float *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::Pack(const float *data, int n) {
+    if(n<=0) {
+        return;
+    }
     int oldsize=packeddata.GetSize();
     packeddata.SetSize(n*4+oldsize);
     char *dest=packeddata+oldsize;
@@ -283,9 +293,10 @@ void paroc_buffer_xdr::Pack(const float *data, int n)
     xdr_destroy(&xdr);
 }
 
-void paroc_buffer_xdr::UnPack(float *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::UnPack(float *data, int n) {
+    if(n<=0) {
+        return;
+    }
     char *dest=packeddata+unpackpos;
 
     int sz=n*4;
@@ -300,9 +311,10 @@ void paroc_buffer_xdr::UnPack(float *data, int n)
 
 }
 
-void paroc_buffer_xdr::Pack(const double *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::Pack(const double *data, int n) {
+    if(n<=0) {
+        return;
+    }
     int oldsize=packeddata.GetSize();
     packeddata.SetSize(n*8+oldsize);
     char *dest=packeddata+oldsize;
@@ -313,9 +325,10 @@ void paroc_buffer_xdr::Pack(const double *data, int n)
     xdr_destroy(&xdr);
 }
 
-void paroc_buffer_xdr::UnPack(double *data, int n)
-{
-    if (n<=0) return;
+void paroc_buffer_xdr::UnPack(double *data, int n) {
+    if(n<=0) {
+        return;
+    }
     char *dest=packeddata+unpackpos;
 
     int sz=8*n;
@@ -329,13 +342,11 @@ void paroc_buffer_xdr::UnPack(double *data, int n)
     unpackpos+=sz;
 }
 
-void paroc_buffer_xdr::Pack(const signed char *data, int n)
-{
+void paroc_buffer_xdr::Pack(const signed char *data, int n) {
     Pack((char *)data,n);
 }
 
-void paroc_buffer_xdr::UnPack(signed char *data, int n)
-{
+void paroc_buffer_xdr::UnPack(signed char *data, int n) {
     UnPack((char *)data,n);
 }
 
@@ -550,17 +561,17 @@ void paroc_buffer_xdr::UnPack(long double *data, int n)
 // }
 
 
-void paroc_buffer_xdr::CheckUnPack(int sz)
-{
-    if (sz+unpackpos > packeddata.GetSize()) paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+void paroc_buffer_xdr::CheckUnPack(int sz) {
+    if(sz+unpackpos > packeddata.GetSize()) {
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+    }
 }
 
-bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
-{
+bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
     char *dat=(char *)packeddata;
 
-    if (dat == NULL) {
+    if(dat == NULL) {
         printf("fail 1\n");
         return false;
     }
@@ -574,21 +585,21 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
     h[0] = popc_htonl(n);
     h[1] = popc_htonl(type);
 
-    switch (type) {
-        case TYPE_REQUEST:
-            h[2] = popc_htonl(header.GetClassID());
-            h[3] = popc_htonl(header.GetMethodID());
-            h[4] = popc_htonl(header.GetSemantics());
-            break;
-        case TYPE_EXCEPTION:
-            h[2] = popc_htonl(header.GetExceptionCode());
-            break;
-        case TYPE_RESPONSE:
-            h[2] = popc_htonl(header.GetClassID());
-            h[3] = popc_htonl(header.GetMethodID());
-            break;
-        default:
-            return false;
+    switch(type) {
+    case TYPE_REQUEST:
+        h[2] = popc_htonl(header.GetClassID());
+        h[3] = popc_htonl(header.GetMethodID());
+        h[4] = popc_htonl(header.GetSemantics());
+        break;
+    case TYPE_EXCEPTION:
+        h[2] = popc_htonl(header.GetExceptionCode());
+        break;
+    case TYPE_RESPONSE:
+        h[2] = popc_htonl(header.GetClassID());
+        h[3] = popc_htonl(header.GetMethodID());
+        break;
+    default:
+        return false;
     }
 
     memcpy(dat, h, 20);
@@ -599,8 +610,7 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn)
 /**
  *
  */
-bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
-{
+bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     int h[5];
     int n, i;
 
@@ -608,37 +618,37 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
     char *dat = (char *)h;
     n = 20;
     do {
-        if ((i = s.Recv(dat, n, conn)) <= 0) {
+        if((i = s.Recv(dat, n, conn)) <= 0) {
             return false;
         }
         n -= i;
         dat += i;
-    } while (n);
+    } while(n);
 
     Reset();
     n = popc_ntohl(h[0]);
-    if (n < 20) {
+    if(n < 20) {
         printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
         return false;
     }
 
     int type = popc_ntohl(h[1]);
     header.SetType(type);
-    switch (type) {
-        case TYPE_REQUEST:
-            header.SetClassID(popc_ntohl(h[2]));
-            header.SetMethodID(popc_ntohl(h[3]));
-            header.SetSemantics(popc_ntohl(h[4]));
-            break;
-        case TYPE_EXCEPTION:
-            header.SetExceptionCode(popc_ntohl(h[2]));
-            break;
-        case TYPE_RESPONSE:
-            header.SetClassID(popc_ntohl(h[2]));
-            header.SetMethodID(popc_ntohl(h[3]));
-            break;
-        default:
-            return false;
+    switch(type) {
+    case TYPE_REQUEST:
+        header.SetClassID(popc_ntohl(h[2]));
+        header.SetMethodID(popc_ntohl(h[3]));
+        header.SetSemantics(popc_ntohl(h[4]));
+        break;
+    case TYPE_EXCEPTION:
+        header.SetExceptionCode(popc_ntohl(h[2]));
+        break;
+    case TYPE_RESPONSE:
+        header.SetClassID(popc_ntohl(h[2]));
+        header.SetMethodID(popc_ntohl(h[3]));
+        break;
+    default:
+        return false;
     }
 
     packeddata.SetSize(n);
@@ -647,8 +657,8 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
 
     i = 0;
 
-    while (n) {
-        if ((i = s.Recv(dat,n, conn)) <= 0) {
+    while(n) {
+        if((i = s.Recv(dat,n, conn)) <= 0) {
             return false;
         }
         dat += i;
@@ -658,16 +668,14 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn)
     return true;
 }
 
-int paroc_buffer_xdr::get_size()
-{
-  return packeddata.GetSize();
+int paroc_buffer_xdr::get_size() {
+    return packeddata.GetSize();
 }
 
-char* paroc_buffer_xdr::get_load()
-{
+char* paroc_buffer_xdr::get_load() {
     char *dat = (char*)packeddata;
 
-    if (!dat) {
+    if(!dat) {
         return NULL;
     }
 
@@ -680,22 +688,22 @@ char* paroc_buffer_xdr::get_load()
     h[0]=popc_htonl(n);
     h[1]=popc_htonl(type);
 
-    switch (type) {
-        case TYPE_REQUEST:
-            h[2]=popc_htonl(header.GetClassID());
-            h[3]=popc_htonl(header.GetMethodID());
-            h[4]=popc_htonl(header.GetSemantics());
-            break;
-        case TYPE_EXCEPTION:
-            h[2]=popc_htonl(header.GetExceptionCode());
-            break;
-        case TYPE_RESPONSE:
-            h[2]=popc_htonl(header.GetClassID());
-            h[3]=popc_htonl(header.GetMethodID());
-            break;
-        default:
-            printf("fail 2\n");
-            return NULL;
+    switch(type) {
+    case TYPE_REQUEST:
+        h[2]=popc_htonl(header.GetClassID());
+        h[3]=popc_htonl(header.GetMethodID());
+        h[4]=popc_htonl(header.GetSemantics());
+        break;
+    case TYPE_EXCEPTION:
+        h[2]=popc_htonl(header.GetExceptionCode());
+        break;
+    case TYPE_RESPONSE:
+        h[2]=popc_htonl(header.GetClassID());
+        h[3]=popc_htonl(header.GetMethodID());
+        break;
+    default:
+        printf("fail 2\n");
+        return NULL;
     }
 
     memcpy(dat, h, 20);
@@ -703,8 +711,7 @@ char* paroc_buffer_xdr::get_load()
     return (char *) packeddata;
 }
 
-void paroc_buffer_xdr::load(char* data, int length)
-{
+void paroc_buffer_xdr::load(char* data, int length) {
     int h[5];
 
     Reset();
@@ -712,7 +719,7 @@ void paroc_buffer_xdr::load(char* data, int length)
     memcpy(h, packeddata, 20);
 
     int n = popc_ntohl(h[0]);
-    if (n < 20) {
+    if(n < 20) {
         printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
         return;
     }
@@ -720,21 +727,21 @@ void paroc_buffer_xdr::load(char* data, int length)
     int type = popc_ntohl(h[1]);
     header.SetType(type);
 
-    switch (type) {
-        case TYPE_REQUEST:
-            header.SetClassID(popc_ntohl(h[2]));
-            header.SetMethodID(popc_ntohl(h[3]));
-            header.SetSemantics(popc_ntohl(h[4]));
-            break;
-        case TYPE_EXCEPTION:
-            header.SetExceptionCode(popc_ntohl(h[2]));
-            break;
-        case TYPE_RESPONSE:
-            header.SetClassID(popc_ntohl(h[2]));
-            header.SetMethodID(popc_ntohl(h[3]));
-            break;
-        default:
-            return;
+    switch(type) {
+    case TYPE_REQUEST:
+        header.SetClassID(popc_ntohl(h[2]));
+        header.SetMethodID(popc_ntohl(h[3]));
+        header.SetSemantics(popc_ntohl(h[4]));
+        break;
+    case TYPE_EXCEPTION:
+        header.SetExceptionCode(popc_ntohl(h[2]));
+        break;
+    case TYPE_RESPONSE:
+        header.SetClassID(popc_ntohl(h[2]));
+        header.SetMethodID(popc_ntohl(h[3]));
+        break;
+    default:
+        return;
     }
 
     packeddata.SetSize(length);
@@ -743,29 +750,29 @@ void paroc_buffer_xdr::load(char* data, int length)
 
 #ifdef OD_DISCONNECT
 bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
-    while (true) {
+    while(true) {
         paroc_connection * t = (paroc_connection *) s.Wait();
-        if (!t) {
+        if(!t) {
             paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
         }
 
-        if (!Recv(s, t)){
+        if(!Recv(s, t)) {
             paroc_exception::paroc_throw(errno);
         }
 
-        if (header.GetType() == TYPE_RESPONSE) {
-            if (header.GetClassID() == 0 && header.GetMethodID() == 6) {
+        if(header.GetType() == TYPE_RESPONSE) {
+            if(header.GetClassID() == 0 && header.GetMethodID() == 6) {
                 return true;
             } else {
                 paroc_message_header h = header;
                 int unpackposold = unpackpos;
                 paroc_array<char> packeddataold = packeddata;
                 paroc_connection * t = (paroc_connection *) s.Wait();
-                if (!t) {
+                if(!t) {
                     paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
                 }
 
-                if (!Recv(s, t)){
+                if(!Recv(s, t)) {
                     paroc_exception::paroc_throw(errno);
                 }
 

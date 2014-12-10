@@ -4,11 +4,10 @@
 #include <timer.h>
 #include "structdata.h"
 
-parclass POPCobject
-{
-  classuid(1500);
+parclass POPCobject {
+    classuid(1500);
 
-  public:
+public:
     POPCobject() @{od.url("localhost");};
     ~POPCobject();
 

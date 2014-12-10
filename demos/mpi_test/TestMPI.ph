@@ -4,15 +4,15 @@
 parclass TestMPI {
 
 public:
-  classuid(12355);
+    classuid(12355);
 
-  TestMPI() @{od.url("localhost");};
-  async void ExecuteMPI();
-  async void Set (int v);
-  sync int Get();
+    TestMPI() @{od.url("localhost");};
+    async void ExecuteMPI();
+    async void Set(int v);
+    sync int Get();
 
 private:
-	int val;
+    int val;
 
 };
 #endif

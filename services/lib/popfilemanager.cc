@@ -25,7 +25,7 @@
  */
 POPFileManager::POPFileManager(const POPString &challenge, bool deamon, POPString host) : paroc_service_base(challenge) {
     popfile_log("[POPFILEMANAGER] POPFileManager created.");
-    if(deamon){
+    if(deamon) {
         Start();
     }
 }
@@ -33,7 +33,7 @@ POPFileManager::POPFileManager(const POPString &challenge, bool deamon, POPStrin
 /**
  * Destructor of the POPFileManager
  */
-POPFileManager::~POPFileManager(){
+POPFileManager::~POPFileManager() {
 
 }
 
@@ -42,13 +42,12 @@ POPFileManager::~POPFileManager(){
  * @param absolutePath  The absolute path and filename of the strip file to create
  * @return TRUE if the file was created successfully. FALSE in all others cases.
  */
-bool POPFileManager::createStrip(POPString absolutePath)
-{
+bool POPFileManager::createStrip(POPString absolutePath) {
     popfile_log("[POPFILEMANAGER] Creating strip: %s", absolutePath.GetString());
     std::ofstream strip;
     strip.open(absolutePath.GetString());
 
-    if(strip.is_open()){
+    if(strip.is_open()) {
         strip.close();
         popfile_log("[POPFILEMANAGER] Strip created on local storage: %s", absolutePath.GetString());
         return true;
@@ -64,11 +63,10 @@ bool POPFileManager::createStrip(POPString absolutePath)
  * @param data          Actual data to write to the strip
  * @return void
  */
-void POPFileManager::writeToStrip(POPString stringName, POPString data)
-{
+void POPFileManager::writeToStrip(POPString stringName, POPString data) {
     std::ofstream strip;
-    strip.open (stringName.GetString(), std::ios::out | std::ios::app);
-    if(strip.is_open()){
+    strip.open(stringName.GetString(), std::ios::out | std::ios::app);
+    if(strip.is_open()) {
         strip << data.GetString();
         strip.close();
     } else {
@@ -84,8 +82,7 @@ void POPFileManager::writeToStrip(POPString stringName, POPString data)
  * @param ap            Access point of thre remote PFM
  * @return void
  */
-void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, paroc_accesspoint ap)
-{
+void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, paroc_accesspoint ap) {
     POPFileManager remote(ap);
     remote.writeToStrip(stringName, data);
 }
@@ -98,20 +95,19 @@ void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, pa
  * @param offset        Site to read
  * @return Data retrieved from the strip
  */
-POPString POPFileManager::readFromStrip(POPString stripName, long start, long offset)
-{
+POPString POPFileManager::readFromStrip(POPString stripName, long start, long offset) {
     int length=0;
     std::ifstream strip;
     strip.open(stripName.GetString(), ios::binary);
 
-    strip.seekg (0, ios::end);      // Seek to end
+    strip.seekg(0, ios::end);       // Seek to end
     length = strip.tellg();         // Get length of the strip
-    if(start >= length){
+    if(start >= length) {
         POPString p;
         return p;
     }
 
-    strip.seekg (0, ios::beg);
+    strip.seekg(0, ios::beg);
     int crt_pos = strip.tellg();
     strip.seekg(start, ios::cur);
     char* buffer;
@@ -130,8 +126,7 @@ POPString POPFileManager::readFromStrip(POPString stripName, long start, long of
  * @param Access Point of the POPCSearchNode
  * @return void
  */
-void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap)
-{
+void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap) {
     psn_ap = ap;
 }
 
@@ -140,20 +135,20 @@ void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap)
  * Get list of neighbors as a string and create AP
  * @return void
  */
-void POPFileManager::getNeighborsFromPSN(){
+void POPFileManager::getNeighborsFromPSN() {
     POPCSearchNode psn(psn_ap);
     POPString neighborsList = psn.getNeighborsAsString();
     std::string lstNeighbors = neighborsList.GetString();
 
     std::size_t found=lstNeighbors.find_first_of(";");
 
-    while (found!=std::string::npos){
+    while(found!=std::string::npos) {
         std::string ap = lstNeighbors.substr(0, found);
         lstNeighbors = lstNeighbors.substr(found+1);
 
         std::size_t port_separator = ap.find_last_of(":");
 
-        if(port_separator != std::string::npos){
+        if(port_separator != std::string::npos) {
             ap = ap.substr(0, port_separator+1);
             ap.append("2712");
             paroc_accesspoint neighborAP;
@@ -178,12 +173,12 @@ void POPFileManager::getNeighborsFromPSN(){
  * @param local         If TRUE, there is a local strip
  * @return The actual number of strip created
  */
-int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates, POPString* stripNames, POPString stripPrefix, bool local){
+int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates, POPString* stripNames, POPString stripPrefix, bool local) {
     int index=0;
     int maxStrip = nb;
 
     // If a local strip is already present. Set the index to the next empty places.
-    if(local){
+    if(local) {
         index=1;
         nb -= 1;
     }
@@ -191,7 +186,7 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
     str_stripname.append("_strip");
     popfile_log("[POPFILEMANAGER] Look for %d nodes for strips", nb);
 
-    for(std::list<paroc_accesspoint>::iterator it = pfm_neighbors.begin(); it != pfm_neighbors.end(); it++){
+    for(std::list<paroc_accesspoint>::iterator it = pfm_neighbors.begin(); it != pfm_neighbors.end(); it++) {
         popfile_log("[POPFILEMANAGER] Check creation of strip on %s", (*it).GetAccessString());
         POPFileManager tmpPfm((*it));
         std::string strip = str_stripname;
@@ -200,12 +195,12 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
         strip.append(intconverter.str());
         POPString stripname(strip.c_str());
 
-        if(tmpPfm.createStrip(stripname)){
+        if(tmpPfm.createStrip(stripname)) {
             candidates[index] = (*it);      //store accesspoint of the node on which the strip is created
             stripNames[index] = stripname;  //store the strip name
             popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.GetString());
             index++;
-            if(index == maxStrip){
+            if(index == maxStrip) {
                 break;
             }
         }
@@ -219,19 +214,18 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
  * @param String with format
  * @return Error information
  */
-int popfile_log(const char *format,...)
-{
+int popfile_log(const char *format,...) {
     char *tmp=getenv("POPC_TEMP");
     char logfile[256];
 
-    if (tmp){
+    if(tmp) {
         sprintf(logfile,"%s/popfile_log",tmp);
     } else {
         strcpy(logfile, "/tmp/popfile.log");
     }
 
     FILE *f=fopen(logfile,"a");
-    if (!f) {
+    if(!f) {
         return 1;
     }
 

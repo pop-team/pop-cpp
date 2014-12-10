@@ -6,15 +6,12 @@
 
 #define MIN_CLASSID 1000
 
-CodeData::CodeData(CodeFile *file)
-{
-	codeFile=file;
+CodeData::CodeData(CodeFile *file) {
+    codeFile=file;
 }
 
-CodeData::~CodeData()
-{
+CodeData::~CodeData() {
 }
 
-void CodeData::GenerateCode(CArrayChar& /*output*/)
-{
+void CodeData::GenerateCode(CArrayChar& /*output*/) {
 }

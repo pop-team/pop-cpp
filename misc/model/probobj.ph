@@ -5,29 +5,28 @@
 parclass ProbObj;
 typedef paroc_list<ProbObj *> CProbList;
 
-parclass ProbObj
-{
+parclass ProbObj {
 public:
-	ProbObj();
-	~ProbObj();
-	conc async void Exec();
+    ProbObj();
+    ~ProbObj();
+    conc async void Exec();
 
-	void IncreaseDependencyCounter();
-	virtual void AddNext(ProbObj &p);
+    void IncreaseDependencyCounter();
+    virtual void AddNext(ProbObj &p);
 
-	void ResetCounter();
+    void ResetCounter();
 
-	classuid(5);
+    classuid(5);
 
 protected:
-	virtual void TriggerNexts();
-	virtual void Solve();
+    virtual void TriggerNexts();
+    virtual void Solve();
 protected:
-	int count, savedcounter;
-//	float flops;
-//	float time;
+    int count, savedcounter;
+//  float flops;
+//  float time;
 
-	CProbList nexts;
+    CProbList nexts;
 };
 
 

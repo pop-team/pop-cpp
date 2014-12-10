@@ -27,15 +27,16 @@
 
 bool CheckIfPacked(const char *objname);
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     char *rcore=paroc_utils::checkremove(&argc,&argv,"-core=");
-    if (rcore) {
+    if(rcore) {
         paroc_system::processor_set(atoi(rcore));
     }
 
 #ifdef UC_LINUX
-    else paroc_system::processor_set(0);
+    else {
+        paroc_system::processor_set(0);
+    }
 #endif
 
     paroc_system sys;
@@ -49,7 +50,7 @@ int main(int argc, char **argv)
     char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");
     paroc_combox *callback = NULL;
     int status=0;
-    if (address != NULL) {
+    if(address != NULL) {
         paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
 #ifdef DEFINE_UDS_SUPPORT
         callback = combox_factory->Create("uds");
@@ -70,15 +71,15 @@ int main(int argc, char **argv)
     paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
     paroc_broker *broker = paroc_broker_factory::Create(&argc, &argv);
 
-    if (!broker) {
+    if(!broker) {
         status = 1;
-    } else if (!broker->Initialize(&argc, &argv)) {
+    } else if(!broker->Initialize(&argc, &argv)) {
         printf("Fail to initialize the broker for class %s\n",(const char *)paroc_broker::classname);
         status = 1;
     }
 
     // Send ack via callback
-    if (callback != NULL) {
+    if(callback != NULL) {
         paroc_buffer *buffer = callback->GetBufferFactory()->CreateBuffer();
         paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
         buffer->SetHeader(h);
@@ -96,28 +97,28 @@ int main(int argc, char **argv)
         buffer->Destroy();
         callback->Destroy();
 
-        if (!ret) {
+        if(!ret) {
             printf("POP-C++ Error: fail to send accesspoint via callback\n");
             delete broker;
             return 1;
         }
-    } else if (status == 0) {
+    } else if(status == 0) {
         fprintf(stdout, "%s\n", (const char *)paroc_broker::accesspoint.GetAccessString());
     }
 
     // set the current working directory
     char *cwd = paroc_utils::checkremove(&argc,&argv,"-cwd=");
-    if (cwd!=NULL) {
-        if (popc_chdir(cwd) != 0) {
+    if(cwd!=NULL) {
+        if(popc_chdir(cwd) != 0) {
             printf("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
         }
     }
 
     // Start the broker
-    if (status == 0) {
+    if(status == 0) {
         broker->Run();
         delete broker;
-    } else if (broker != NULL) {
+    } else if(broker != NULL) {
         delete broker;
     }
 

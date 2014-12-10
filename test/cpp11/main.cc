@@ -4,7 +4,7 @@
 
 void MethodCall();
 
-int main (int argc, char **argv){
+int main(int argc, char **argv) {
     printf("Method: Starting test..\n");
 
     MethodCall();
@@ -15,7 +15,7 @@ int main (int argc, char **argv){
     return 0;
 }
 
-void MethodCall(){
+void MethodCall() {
     TestMethod t;
     sleep(1);
 

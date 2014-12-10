@@ -8,16 +8,16 @@
  */
 
 parclass POPObject {
-	classuid(1500);
+    classuid(1500);
 
 public:
-	POPObject()@{od.url("localhost");od.executable("./POPObject.obj");};
-	~POPObject();
+    POPObject()@{od.url("localhost"); od.executable("./POPObject.obj");};
+    ~POPObject();
 
-	sync seq void displayArray(int length, int array[]);
-	
+    sync seq void displayArray(int length, int array[]);
+
 private:
-	
+
 };
 
 

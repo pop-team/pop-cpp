@@ -2,17 +2,16 @@
 #include "classA.ph"
 
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 
 
-	ClassA objectA(2);
-	ClassB objectB(1);
+    ClassA objectA(2);
+    ClassB objectB(1);
 
-	objectA.doSmth();
-	objectB.doSmth();
-	objectA.saveRef(objectB);
-	
-	return 0;
+    objectA.doSmth();
+    objectB.doSmth();
+    objectA.saveRef(objectB);
+
+    return 0;
 
 }

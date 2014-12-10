@@ -3,33 +3,31 @@
 
 parclass ClassB;
 
-parclass ClassA
-{
-	classuid(1000);
+parclass ClassA {
+    classuid(1000);
 
 public:
-	ClassA(int anid);
-	~ClassA();
+    ClassA(int anid);
+    ~ClassA();
 
-	sync seq void doSmth();
-	sync seq void saveRef(ClassB &ref);	
-	
+    sync seq void doSmth();
+    sync seq void saveRef(ClassB &ref);
+
 private:
-	ClassB* myRef;
-	int id;
+    ClassB* myRef;
+    int id;
 };
 
 
-parclass ClassB
-{
-	classuid(1001);
+parclass ClassB {
+    classuid(1001);
 public:
-	ClassB(int anid);
-	~ClassB();
-	
-	sync seq void doSmth();
+    ClassB(int anid);
+    ~ClassB();
+
+    sync seq void doSmth();
 
 private:
-	int id;
+    int id;
 };
 #endif

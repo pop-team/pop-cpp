@@ -5,7 +5,7 @@
  * Creation date : -
  *
  * Modifications :
- * Authors		Date			Comment
+ * Authors      Date            Comment
  */
 
 
@@ -19,18 +19,16 @@
 
 typedef char long_string[CODE_MAX_STRING_SIZE];
 
-struct codedata
-{
-	codedata() {};
-	long_string platform;
-	long_string codefile;
+struct codedata {
+    codedata() {};
+    long_string platform;
+    long_string codefile;
 };
 
-struct codedb
-{
-	codedb() {};
-	long_string objname;
-	paroc_array<codedata> platform;
+struct codedb {
+    codedb() {};
+    long_string objname;
+    paroc_array<codedata> platform;
 };
 
 typedef paroc_array<codedb> CodeDBArray;
@@ -44,44 +42,44 @@ typedef paroc_array<codedb> CodeDBArray;
  * This service is used by the resource discovery service to acquire information of supported platform of the parallel object.
  * @sa paroc_service_base
  */
-parclass CodeMgr: virtual public paroc_service_base
-{
+parclass CodeMgr:
+virtual public paroc_service_base {
 public:
-	/** @brief Constructor
-	 * @param challenge challenge string which will be required on stopping the service
-	*/
-	CodeMgr(const POPString &challenge) @{od.runLocal(true); od.service(true);};
-	~CodeMgr();
+    /** @brief Constructor
+     * @param challenge challenge string which will be required on stopping the service
+    */
+    CodeMgr(const POPString &challenge) @{od.runLocal(true); od.service(true);};
+    ~CodeMgr();
 
 
-	/** @brief  Register code to the CodeMgr service (seq, async)
-	 * @param objname name of the object
-	 * @param platform executable platform
-	 * @param codefile URL or absolute path to the executable
-	*/
-	seq sync void RegisterCode(const POPString &objname, const POPString &platform, const POPString &codefile);
+    /** @brief  Register code to the CodeMgr service (seq, async)
+     * @param objname name of the object
+     * @param platform executable platform
+     * @param codefile URL or absolute path to the executable
+    */
+    seq sync void RegisterCode(const POPString &objname, const POPString &platform, const POPString &codefile);
 
 
-	/** @brief  Query location of object code for a specific platform (seq,sync)
-	 * @param objname name of the object
-	 * @param platform executable platform
-	 * @param codefile stores URL to the executable on success
-	 * @return Return true if the executable is available
-	*/
-	seq sync int QueryCode(const POPString &objname, const POPString &platform, [out] POPString &codefile);
+    /** @brief  Query location of object code for a specific platform (seq,sync)
+     * @param objname name of the object
+     * @param platform executable platform
+     * @param codefile stores URL to the executable on success
+     * @return Return true if the executable is available
+    */
+    seq sync int QueryCode(const POPString &objname, const POPString &platform, [out] POPString &codefile);
 
 
-	/** @brief  Get list of supported platforms for a specific object (seq,sync)
-	 * @param objname name of the object
-	 * @param platform stores list of platform separated by a space
-	 * @return Return number of supported platform stored in platform
-	*/
-	seq sync int GetPlatform(const POPString &objname, [out]  POPString &platform);
+    /** @brief  Get list of supported platforms for a specific object (seq,sync)
+     * @param objname name of the object
+     * @param platform stores list of platform separated by a space
+     * @return Return number of supported platform stored in platform
+    */
+    seq sync int GetPlatform(const POPString &objname, [out]  POPString &platform);
 
-	classuid(2);
+    classuid(2);
 
 protected:
-	CodeDBArray info;
+    CodeDBArray info;
 };
 
 

@@ -3,9 +3,9 @@
  * Author : Valentin Clement (clementval)
  * Description : Implementation of a small timer to unlock the resource discovery when used with timeout 0
  * Creation date : 05/2010
- * 
+ *
  * Modifications :
- * Authors		Date			Comment
+ * Authors      Date            Comment
  */
 
 #include "nodethread.h"
@@ -18,36 +18,36 @@
 
 /**
  * NodeThread constructor
- * @param timeout	Time in seconds before unlocking
- * @param node		The POPCSearchNode associated with this thread
- * @param reqid	The request identifier associated with this thread
+ * @param timeout   Time in seconds before unlocking
+ * @param node      The POPCSearchNode associated with this thread
+ * @param reqid The request identifier associated with this thread
  */
-NodeThread::NodeThread(int timeout, const paroc_accesspoint &node, std::string reqid) : 
-	_timeout(timeout), _node(node), _running(true), _unlock(true), _reqid(reqid), paroc_thread(true) {}
-	
-/** 
+NodeThread::NodeThread(int timeout, const paroc_accesspoint &node, std::string reqid) :
+    _timeout(timeout), _node(node), _running(true), _unlock(true), _reqid(reqid), paroc_thread(true) {}
+
+/**
  * Start a timer and contact de POPCSearchNode when it's finished
  */
-void NodeThread::start(){
-	POPCSearchNode n(_node);
-	Timer t;
-	t.Start();
-	while(_running){
-		popc_usleep(100000);
-		if(t.Elapsed() > _timeout){
-			t.Stop();
-			_running = false;
-		}
-	}
-	if(_unlock){
-		POPString r(_reqid.c_str());
-		n.unlockDiscovery(r);
-	}
+void NodeThread::start() {
+    POPCSearchNode n(_node);
+    Timer t;
+    t.Start();
+    while(_running) {
+        popc_usleep(100000);
+        if(t.Elapsed() > _timeout) {
+            t.Stop();
+            _running = false;
+        }
+    }
+    if(_unlock) {
+        POPString r(_reqid.c_str());
+        n.unlockDiscovery(r);
+    }
 }
-/** 
- * Stop the timer and 
+/**
+ * Stop the timer and
  */
-void NodeThread::stop(){
-	_unlock = false;
-	_running = false;
+void NodeThread::stop() {
+    _unlock = false;
+    _running = false;
 }

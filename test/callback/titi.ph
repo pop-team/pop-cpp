@@ -2,20 +2,19 @@
 #define _TITI_PH
 #include "toto.ph"
 
-parclass Titi
-{
+parclass Titi {
 
-classuid(1001);
+    classuid(1001);
 
 public:
-  Titi() @{od.url("localhost");};
+    Titi() @{od.url("localhost");};
 
-  ~Titi();
+    ~Titi();
 
-  seq sync void SetIdent(int i);
-  seq sync void ComputeIdent(Toto &t);
+    seq sync void SetIdent(int i);
+    seq sync void ComputeIdent(Toto &t);
 
 private:
-  int ident;
+    int ident;
 };
 #endif

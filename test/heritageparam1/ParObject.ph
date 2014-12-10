@@ -2,21 +2,20 @@
 #define _PAROBJECT_PH_
 #include "heritdata.h"
 
-parclass ParObject
-{
+parclass ParObject {
 
-	classuid(1001);
+    classuid(1001);
 
 public:
-	ParObject() @{od.url("localhost");};
-	ParObject (POPString machine) @{od.url(machine);};
-	ParObject(float f) @{od.power(f);};
-	~ ParObject ();
+    ParObject() @{od.url("localhost");};
+    ParObject(POPString machine) @{od.url(machine);};
+    ParObject(float f) @{od.power(f);};
+    ~ ParObject();
 
-	seq async void SetData(HeritData data);
-	seq sync HeritData GetData();
+    seq async void SetData(HeritData data);
+    seq sync HeritData GetData();
 
 private:
-	HeritData theData;
+    HeritData theData;
 };
 #endif

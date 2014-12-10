@@ -4,18 +4,18 @@
 /**
  * @author clementval
  * @date 2012.09.04
- * This program tests 
+ * This program tests
  */
 
 parclass POPObject {
-	classuid(1500);
+    classuid(1500);
 
 public:
-	POPObject() @{ od.url("localhost"); od.executable("./POPObject.obj");};
-	~POPObject();
+    POPObject() @{ od.url("localhost"); od.executable("./POPObject.obj");};
+    ~POPObject();
 
-	sync seq void displayArray(int length, char array[]);
-	
+    sync seq void displayArray(int length, char array[]);
+
 };
 
 

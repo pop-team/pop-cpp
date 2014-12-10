@@ -3,19 +3,19 @@
 
 
 parclass POPObject {
-	classuid(1500);
+    classuid(1500);
 
 public:
-	POPObject() @{ od.search(0, 0, 0); };
-	~POPObject();
+    POPObject() @{ od.search(0, 0, 0); };
+    ~POPObject();
 
-	
+
 private:
-	struct product{
-		double weight;
-		int id;
-	} apple, banana;
-	
+    struct product{
+        double weight;
+        int id;
+    } apple, banana;
+
 };
 
 

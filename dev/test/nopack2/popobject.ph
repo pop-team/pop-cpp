@@ -8,17 +8,17 @@
  */
 
 parclass POPObject {
-	classuid(1500);
+    classuid(1500);
 
 public:
-	POPObject() @{ od.url("localhost"); };
-	~POPObject();
-	
-	sync seq void createSecondObject();
+    POPObject() @{ od.url("localhost"); };
+    ~POPObject();
 
-	
+    sync seq void createSecondObject();
+
+
 private:
-	
+
 };
 
 

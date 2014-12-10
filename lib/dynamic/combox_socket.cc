@@ -20,7 +20,7 @@
 #include "popc_intface.h"
 
 #ifndef __WIN32__
-  #include <fcntl.h>
+#include <fcntl.h>
 #endif
 
 #include "paroc_combox_socket.h"
@@ -32,31 +32,26 @@
 #define POLLPRI 0x002
 #define POLLOUT 0x004
 
-paroc_connection_sock::paroc_connection_sock(paroc_combox *cb): paroc_connection(cb)
-{
+paroc_connection_sock::paroc_connection_sock(paroc_combox *cb): paroc_connection(cb) {
     sockfd=-1;
 #ifndef __WIN32__
     popc_signal(popc_SIGPIPE, popc_SIG_IGN);
 #endif
 }
 
-paroc_connection_sock::paroc_connection_sock(int fd, paroc_combox *cb): paroc_connection(cb)
-{
+paroc_connection_sock::paroc_connection_sock(int fd, paroc_combox *cb): paroc_connection(cb) {
     sockfd=fd;
 }
 
-paroc_connection_sock::paroc_connection_sock(paroc_connection_sock &me): paroc_connection(me.GetCombox(), me.GetBufferFactory())
-{
+paroc_connection_sock::paroc_connection_sock(paroc_connection_sock &me): paroc_connection(me.GetCombox(), me.GetBufferFactory()) {
     sockfd=me.sockfd;
 }
 
-paroc_connection *paroc_connection_sock::Clone()
-{
+paroc_connection *paroc_connection_sock::Clone() {
     return new paroc_connection_sock(*this);
 }
 
-paroc_combox_socket::paroc_combox_socket()
-{
+paroc_combox_socket::paroc_combox_socket() {
     peer=NULL;
     sockfd=-1;
     index=0;
@@ -65,13 +60,11 @@ paroc_combox_socket::paroc_combox_socket()
     isServer=false;
 }
 
-paroc_combox_socket::~paroc_combox_socket()
-{
+paroc_combox_socket::~paroc_combox_socket() {
     Close();
 }
 
-bool paroc_combox_socket::Create(int port, bool server)
-{
+bool paroc_combox_socket::Create(int port, bool server) {
     Close();
     isServer=server;
 
@@ -91,22 +84,21 @@ bool paroc_combox_socket::Create(int port, bool server)
     type= SOCK_STREAM;
     sockfd=popc_socket(PF_INET,type,protocol);
 
-    if (sockfd<0) return false;
-    if (port>0)
-    {
+    if(sockfd<0) {
+        return false;
+    }
+    if(port>0) {
         sockaddr_in sin;
         memset(&sin,0,sizeof(sin));
         sin.sin_family=AF_INET;
         sin.sin_addr.s_addr=INADDR_ANY;
         sin.sin_port=popc_htons(port);
         SetOpt(SOL_SOCKET,SO_REUSEADDR,(char*)&sin,sizeof(sin)); // lwk : Added this line to allow reuse an earlier socket with the same address
-        if (popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin))!=0)
-        {
+        if(popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin))!=0) {
             return false;
         }
     }
-    if (server)
-    {
+    if(server) {
 #ifndef __WIN32__
         pollarray.SetSize(1);
         pollarray[0].fd=sockfd;
@@ -132,15 +124,13 @@ bool paroc_combox_socket::Create(int port, bool server)
         sin.sin_addr.s_addr=INADDR_ANY;
         sin.sin_port=htons(0);
 
-        if (popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin)) == SOCKET_ERROR)
-        {
+        if(popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin)) == SOCKET_ERROR) {
             printf("bind error\n");
             WSACleanup();
             return false;
         }
 
-        if(popc_listen(sockfd,10) == SOCKET_ERROR)
-        {
+        if(popc_listen(sockfd,10) == SOCKET_ERROR) {
             printf("listen error\n");
             WSACleanup();
             return false;
@@ -150,43 +140,37 @@ bool paroc_combox_socket::Create(int port, bool server)
 #else
         return (popc_listen(sockfd,10)==0);
 #endif
-    }
-    else
-    {
+    } else {
         peer=CreateConnection(-1);
     }
     return true;
 }
 
 
-bool paroc_combox_socket::Connect(const char *url)
-{
-    if (url==NULL)
-    {
+bool paroc_combox_socket::Connect(const char *url) {
+    if(url==NULL) {
 #ifdef __WIN32__
-    errno=WSAEDESTADDRREQ;
+        errno=WSAEDESTADDRREQ;
 #else
-    errno=EDESTADDRREQ;
+        errno=EDESTADDRREQ;
 #endif
         return false;
     }
 
     char *host;
-    while (isspace(*url)) url++;
-
-    if (strncmp(url,"socket://",9)==0)
-    {
-        host=popc_strdup(url+9);
+    while(isspace(*url)) {
+        url++;
     }
-    else
-    {
+
+    if(strncmp(url,"socket://",9)==0) {
+        host=popc_strdup(url+9);
+    } else {
         host=popc_strdup(url);
     }
 
     char *s=strchr(host,':');
     int port;
-    if (s==NULL || sscanf(s+1,"%d",&port)!=1)
-    {
+    if(s==NULL || sscanf(s+1,"%d",&port)!=1) {
         free(host);
         return false;
     }
@@ -195,107 +179,102 @@ bool paroc_combox_socket::Connect(const char *url)
     bool ret = Connect(host,port);
     free(host);
 
-    if (ret) {
+    if(ret) {
         peer->sockfd=sockfd;
     }
     return ret;
 }
 
-int paroc_combox_socket::Send(const char *s,int len)
-{
+int paroc_combox_socket::Send(const char *s,int len) {
     int n=0;
     int count=0;
-    while (len>0)
-    {
+    while(len>0) {
 #ifndef __WIN32__
         n=write(sockfd,s,len);
 #else
         n=send(sockfd,s,len,0);
 #endif
-        if (n>0)
-        {
+        if(n>0) {
             count+=n;
             s+=n;
             len-=n;
-        }
-        else if (errno!=EINTR) break;
-    }
-    return count;
-}
-
-int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn)
-{
-    if (conn==NULL){
-        return Send(s,len);
-    }
-
-    int fd=((paroc_connection_sock *)conn)->sockfd;
-
-    if (fd<0){
-        return -1;
-    }
-
-    int n=0;
-    int count=0;
-    while (len>0)
-    {
-#ifndef __WIN32__
-        n=write(fd,s,len);//vanhieu.nguyen
-#else
-        n=send(fd,s,len,0);
-#endif
-        if (n>0) {
-            count+=n;
-            s+=n;
-            len-=n;
-        } else if (errno!=EINTR) {
+        } else if(errno!=EINTR) {
             break;
         }
     }
     return count;
 }
 
-int paroc_combox_socket::Recv(char *s,int len)
-{
+int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn) {
+    if(conn==NULL) {
+        return Send(s,len);
+    }
+
+    int fd=((paroc_connection_sock *)conn)->sockfd;
+
+    if(fd<0) {
+        return -1;
+    }
+
+    int n=0;
+    int count=0;
+    while(len>0) {
+#ifndef __WIN32__
+        n=write(fd,s,len);//vanhieu.nguyen
+#else
+        n=send(fd,s,len,0);
+#endif
+        if(n>0) {
+            count+=n;
+            s+=n;
+            len-=n;
+        } else if(errno!=EINTR) {
+            break;
+        }
+    }
+    return count;
+}
+
+int paroc_combox_socket::Recv(char *s,int len) {
     int fd, n;
     isCanceled=false;
-    do
-    {
+    do {
         paroc_connection_sock *t=(paroc_connection_sock *)Wait();
-        if (t==NULL) return -1;
+        if(t==NULL) {
+            return -1;
+        }
 
         fd=t->sockfd;
 #ifndef __WIN32__
-        while ((n=read(fd,s,len))==-1 && errno==EINTR);
+        while((n=read(fd,s,len))==-1 && errno==EINTR);
 #else
-        while ((n=read(fd,s,len))==-1 && GetLastError()== WSAEINTR);
+        while((n=read(fd,s,len))==-1 && GetLastError()== WSAEINTR);
 #endif
-        if (n<=0) {
-            if (CloseSock(fd)) {
+        if(n<=0) {
+            if(CloseSock(fd)) {
                 continue;
             }
 
             return -1;
         }
-    } while (n<=0);
+    } while(n<=0);
 
-    if (!n) {
+    if(!n) {
         errno=EIO;
     }
 
     return n;
 }
 
-int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer)
-{
+int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
     int fd, n;
     paroc_connection_sock *t;
     isCanceled=false;
 
     do {
-        if (!iopeer){
+        if(!iopeer) {
             t=(paroc_connection_sock *)Wait();
-            if (!t) {
+            if(!t) {
                 return -1;
             }
 
@@ -304,35 +283,35 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer)
             fd=((paroc_connection_sock *)iopeer)->sockfd;
         }
 
-        if (fd<0) {
+        if(fd<0) {
             return -1;
         }
 
 #ifndef __WIN32__
-        while ( (n=read(fd,s,len))<0 && errno==EINTR);
+        while((n=read(fd,s,len))<0 && errno==EINTR);
 #else
-        while ( (n=recv(fd,s,len,0))<0 && GetLastError()== WSAEINTR);
+        while((n=recv(fd,s,len,0))<0 && GetLastError()== WSAEINTR);
 #endif
 
 #ifndef __WIN32__
         if(n==0)
 #else
-        if (GetLastError()==WSAECONNRESET)
+        if(GetLastError()==WSAECONNRESET)
 #endif
         {
-            if (CloseSock(fd) && iopeer==NULL) {
+            if(CloseSock(fd) && iopeer==NULL) {
                 continue;
             }
 
             return -1;
         }
-    } while (n<=0);
+    } while(n<=0);
 
-    if (!iopeer){
+    if(!iopeer) {
         iopeer=t;
     }
 
-    if (n<=0){
+    if(n<=0) {
         errno=EIO;
     }
 
@@ -341,52 +320,50 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer)
 
 //TODO This function's code is simply terrible, the windows and linux part
 //must be separated completely
-paroc_connection* paroc_combox_socket::Wait()
-{
+paroc_connection* paroc_combox_socket::Wait() {
 #ifdef __WIN32__
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
     int tmpfdset;
 #endif
-    if (sockfd<0 || isCanceled){
+    if(sockfd<0 || isCanceled) {
         isCanceled=false;
         return NULL;
     }
 
-    if (isServer) {
+    if(isServer) {
 #ifndef __WIN32__
         pollfd *tmpfd;
 #endif
-        while (1) {
-            if (nready>0) {
+        while(1) {
+            if(nready>0) {
 #ifndef __WIN32__
                 int n=pollarray.GetSize();
                 tmpfd=pollarray+index;
-                for (int i=index;i>=0;i--, tmpfd--) {
-                    if (tmpfd->revents!=0) {
-                    nready--;
-                    index=i-1;
-                    tmpfd->revents=0;
+                for(int i=index; i>=0; i--, tmpfd--) {
+                    if(tmpfd->revents!=0) {
+                        nready--;
+                        index=i-1;
+                        tmpfd->revents=0;
 #else
                 FD_ZERO(&readfds);
                 readfds = activefdset;
                 int n = readfds.fd_count;
-                for (int i=n-1;i>=0;i--)
-                {
+                for(int i=n-1; i>=0; i--) {
                     if(readfds.fd_array[i] == tmpfdset) {
                         nready--;
 #endif
                         if(i==0) {
-                        //Accept new connection....
+                            //Accept new connection....
                             sockaddr addr;
                             socklen_t addrlen=sizeof(addr);
                             int s;
 #ifndef __WIN32__
-                            while ((s=popc_accept(sockfd,&addr,&addrlen))<0 && errno==EINTR);
+                            while((s=popc_accept(sockfd,&addr,&addrlen))<0 && errno==EINTR);
 #else
-                            while ((s=popc_accept(sockfd,&addr,&addrlen))<0 && GetLastError()== WSAEINTR);
+                            while((s=popc_accept(sockfd,&addr,&addrlen))<0 && GetLastError()== WSAEINTR);
 #endif
-                            if (s<0) {
+                            if(s<0) {
                                 return NULL;
                             }
 #ifndef __WIN32__
@@ -410,8 +387,8 @@ paroc_connection* paroc_combox_socket::Wait()
                             connarray[activefdset.fd_count-1]=CreateConnection(s);
                             bool ret=OnNewConnection(connarray[activefdset.fd_count-1]);
 #endif
-                            if (!ret){
-                              return NULL;
+                            if(!ret) {
+                                return NULL;
                             }
                         } else {
                             return connarray[i];
@@ -433,7 +410,7 @@ paroc_connection* paroc_combox_socket::Wait()
                 int n = readfds.fd_count;
 
                 timeval tv;
-                if(timeout < 0){
+                if(timeout < 0) {
                     tv.tv_sec = 1000000;
                 } else {
                     tv.tv_sec = timeout / 1000;
@@ -442,27 +419,29 @@ paroc_connection* paroc_combox_socket::Wait()
 
                 nready = select(highsockfd+1, &readfds, (fd_set *)0, (fd_set *)0, &tv);
                 for(int tmp = 0; tmp < n; tmp++) {
-                    if(FD_ISSET(readfds.fd_array[tmp], &readfds))
+                    if(FD_ISSET(readfds.fd_array[tmp], &readfds)) {
                         tmpfdset = readfds.fd_array[tmp];
+                    }
                 }
 #endif
-            }  while (nready<0 && errno==EINTR && sockfd>=0);
+            }  while(nready<0 && errno==EINTR && sockfd>=0);
 
-            if (nready<=0) {
-                if (nready==0)
-                  errno=ETIMEDOUT;
+            if(nready<=0) {
+                if(nready==0) {
+                    errno=ETIMEDOUT;
+                }
                 return NULL;
             }
         }
     } else {
-        if (timeout>=0) {
+        if(timeout>=0) {
             int t;
 #ifndef __WIN32__
             pollfd tmpfd;
             tmpfd.fd=sockfd;
             tmpfd.events=POLLIN;
             tmpfd.revents=0;
-            while ((t=poll(&tmpfd,1,timeout))==-1 && errno==EINTR);
+            while((t=poll(&tmpfd,1,timeout))==-1 && errno==EINTR);
 #else
             fd_set tempfds;
             FD_ZERO(&tempfds);
@@ -472,11 +451,12 @@ paroc_connection* paroc_combox_socket::Wait()
             tv.tv_sec = timeout / 1000;
             tv.tv_usec = timeout % 1000;
 
-            while ((t=select(highsockfd+1, &tempfds, (fd_set *)0, (fd_set *)0, &tv))==-1 && GetLastError()== WSAEINTR);
+            while((t=select(highsockfd+1, &tempfds, (fd_set *)0, (fd_set *)0, &tv))==-1 && GetLastError()== WSAEINTR);
 #endif
-            if (t<=0) {
-                if (t==0)
-                  errno=ETIMEDOUT;
+            if(t<=0) {
+                if(t==0) {
+                    errno=ETIMEDOUT;
+                }
                 return NULL;
             }
         }
@@ -484,51 +464,57 @@ paroc_connection* paroc_combox_socket::Wait()
     }
 }
 
-void paroc_combox_socket::Close()
-{
+void paroc_combox_socket::Close() {
     int fd=sockfd;
 #ifdef __WIN32__
-        highsockfd = -1;
+    highsockfd = -1;
 #endif
     sockfd=-1;
     nready=0;
     index=-1;
 
-    if (isServer)
-    {
+    if(isServer) {
 #ifndef __WIN32__
         int n=pollarray.GetSize();
-        for (int i=0;i<n;i++) if (fd!=pollarray[i].fd) OnCloseConnection(connarray[i]);
-        for (int i=0;i<n;i++) popc_close(pollarray[i].fd);
+        for(int i=0; i<n; i++) if(fd!=pollarray[i].fd) {
+                OnCloseConnection(connarray[i]);
+            }
+        for(int i=0; i<n; i++) {
+            popc_close(pollarray[i].fd);
+        }
         pollarray.RemoveAll();
 #else
         int n=activefdset.fd_count;
-        for (int i=0;i<n;i++) if (fd!=activefdset.fd_array[i]) {/*FD_CLR(activefdset.fd_array[i], &activefdset);*/OnCloseConnection(connarray[i]);}
+        for(int i=0; i<n; i++) if(fd!=activefdset.fd_array[i]) {
+                /*FD_CLR(activefdset.fd_array[i], &activefdset);*/OnCloseConnection(connarray[i]);
+            }
         FD_ZERO(&activefdset);
         FD_ZERO(&readfds);
 #endif
 
-        for (int i=0;i<n;i++) delete connarray[i];
+        for(int i=0; i<n; i++) {
+            delete connarray[i];
+        }
         connarray.RemoveAll();
     } else {
-        if (peer!=NULL){
+        if(peer!=NULL) {
             OnCloseConnection(peer);
             delete peer;
             peer=NULL;
         }
 
-        if (fd>=0) popc_close(fd);
+        if(fd>=0) {
+            popc_close(fd);
+        }
     }
 }
 
-bool paroc_combox_socket::GetProtocol(POPString & protocolName)
-{
+bool paroc_combox_socket::GetProtocol(POPString & protocolName) {
     protocolName="socket";
     return true;
 }
 
-bool paroc_combox_socket::GetUrl(POPString & accesspoint)
-{
+bool paroc_combox_socket::GetUrl(POPString & accesspoint) {
     POPString prot;
     GetProtocol(prot);
     int port=GetPort();
@@ -539,34 +525,32 @@ bool paroc_combox_socket::GetUrl(POPString & accesspoint)
     return true;
 }
 
-bool paroc_combox_socket::CloseSock(int fd)
-{
-    if (isServer)
-    {
+bool paroc_combox_socket::CloseSock(int fd) {
+    if(isServer) {
 #ifndef __WIN32__
         int n=pollarray.GetSize();
         pollfd *t=pollarray;
-        for (int i=0;i<n;i++, t++) if (t->fd==fd)
+        for(int i=0; i<n; i++, t++) if(t->fd==fd)
 #else
         int n = activefdset.fd_count;
-        for (int i=0;i<n;i++) if (activefdset.fd_array[i]==fd)
+        for(int i=0; i<n; i++) if(activefdset.fd_array[i]==fd)
 #endif
-        {
-            isCanceled=!OnCloseConnection(connarray[i]);
-            delete connarray[i];
-            connarray.RemoveAt(i);
+            {
+                isCanceled=!OnCloseConnection(connarray[i]);
+                delete connarray[i];
+                connarray.RemoveAt(i);
 #ifdef __WIN32__
-            FD_CLR(activefdset.fd_array[i], &activefdset);
+                FD_CLR(activefdset.fd_array[i], &activefdset);
 #else
-            pollarray.RemoveAt(i);
-            if (isCanceled) errno=ECANCELED;
+                pollarray.RemoveAt(i);
+                if(isCanceled) {
+                    errno=ECANCELED;
+                }
 #endif
-            popc_close(fd);
-            return !isCanceled;
-        }
-    }
-    else if (peer!=NULL && fd==sockfd)
-    {
+                popc_close(fd);
+                return !isCanceled;
+            }
+    } else if(peer!=NULL && fd==sockfd) {
         isCanceled=true;
         popc_close(fd);
         sockfd=-1;
@@ -575,28 +559,26 @@ bool paroc_combox_socket::CloseSock(int fd)
     return false;
 }
 
-bool paroc_combox_socket::Connect(const char *host,int port)
-{
+bool paroc_combox_socket::Connect(const char *host,int port) {
     hostent *phe;
     sockaddr_in sin;
 #ifdef __WIN32__
-        WSADATA wsaData;
-        WSAStartup(MAKEWORD(2, 2), &wsaData);
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
     memset((char *)&sin,0,sizeof(sin));
     sin.sin_family=AF_INET;
-    if ( (phe=gethostbyname(host)) !=NULL)
+    if((phe=gethostbyname(host)) !=NULL) {
         memcpy((char *)&sin.sin_addr,phe->h_addr,phe->h_length);
-    else if (static_cast<int>((sin.sin_addr.s_addr=popc_inet_addr(host)))==-1) return false;
+    } else if(static_cast<int>((sin.sin_addr.s_addr=popc_inet_addr(host)))==-1) {
+        return false;
+    }
 
     sin.sin_port=popc_htons(port);
 
-    if (timeout<=0)
-    {
+    if(timeout<=0) {
         return (popc_connect(sockfd,(sockaddr*)&sin,sizeof(sin))==0);
-    }
-    else
-    {
+    } else {
 #ifndef __WIN32__
         int flag=fcntl(sockfd,F_GETFL,0);
         int newflag=flag | O_NONBLOCK;
@@ -608,18 +590,16 @@ bool paroc_combox_socket::Connect(const char *host,int port)
         int ret=popc_connect(sockfd,(sockaddr*)&sin,sizeof(sin));
         int err=errno;
 #ifndef __WIN32__
-        if (ret==-1 && errno==EINPROGRESS)
-        {
+        if(ret==-1 && errno==EINPROGRESS) {
             int t;
             struct pollfd me;
             me.fd=sockfd;
             me.events=POLLOUT;
             me.revents=0;
             //Linux: poll function
-            while ((t=poll(&me,1,timeout))==-1 && errno==EINTR);
+            while((t=poll(&me,1,timeout))==-1 && errno==EINTR);
 #else
-        if (ret==-1 /*&& GetLastError()== WSAEINPROGRESS*/)
-        {
+        if(ret==-1 /*&& GetLastError()== WSAEINPROGRESS*/) {
             fd_set tmpwritefds;
             FD_ZERO(&tmpwritefds);
             FD_SET(sockfd, &tmpwritefds);
@@ -629,20 +609,19 @@ bool paroc_combox_socket::Connect(const char *host,int port)
             tv.tv_usec = timeout % 1000;
 
             //Win: select function
-            while ((t=select(sockfd+1, (fd_set *)0, &tmpwritefds, (fd_set *)0, &tv))==-1 && GetLastError()== WSAEINTR);
+            while((t=select(sockfd+1, (fd_set *)0, &tmpwritefds, (fd_set *)0, &tv))==-1 && GetLastError()== WSAEINTR);
 #endif
-            if (t!=1)
-            {
+            if(t!=1) {
                 err=ETIMEDOUT;
-            }
-            else
-            {
+            } else {
                 socklen_t len=sizeof(int);
-                if (GetOpt(SOL_SOCKET,SO_ERROR,(char *)(&err),len)==0)
-                {
-                    if (err==0) ret=0;
+                if(GetOpt(SOL_SOCKET,SO_ERROR,(char *)(&err),len)==0) {
+                    if(err==0) {
+                        ret=0;
+                    }
+                } else {
+                    err=errno;
                 }
-                else err=errno;
             }
         }
 #ifndef __WIN32__
@@ -654,35 +633,32 @@ bool paroc_combox_socket::Connect(const char *host,int port)
         ioctlsocket(sockfd, FIONBIO, &ul);
 #endif
 
-        if (ret!=0) errno=err;
+        if(ret!=0) {
+            errno=err;
+        }
         return (ret==0);
     }
 }
 
 
-int paroc_combox_socket::GetSockInfo(sockaddr &info,socklen_t &len)
-{
+int paroc_combox_socket::GetSockInfo(sockaddr &info,socklen_t &len) {
     return popc_getsockname(sockfd,&info,&len);
 }
 
-int paroc_combox_socket::GetPort()
-{
+int paroc_combox_socket::GetPort() {
     sockaddr_in sin;
     socklen_t len=sizeof(sin);
     GetSockInfo((sockaddr &)sin, len);
-        return popc_ntohs(sin.sin_port);
+    return popc_ntohs(sin.sin_port);
 }
 
-int paroc_combox_socket::GetOpt(int level, int opt, char *buf, socklen_t &len)
-{
+int paroc_combox_socket::GetOpt(int level, int opt, char *buf, socklen_t &len) {
     return popc_getsockopt(sockfd,level,opt,buf,&len);
 }
-int paroc_combox_socket::SetOpt(int level, int opt, char *buf, socklen_t len)
-{
+int paroc_combox_socket::SetOpt(int level, int opt, char *buf, socklen_t len) {
     return setsockopt(sockfd,level,opt,buf,len);
 }
 
-paroc_connection_sock *paroc_combox_socket::CreateConnection(int fd)
-{
+paroc_connection_sock *paroc_combox_socket::CreateConnection(int fd) {
     return new paroc_connection_sock(fd, this);
 }

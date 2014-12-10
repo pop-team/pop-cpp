@@ -5,20 +5,19 @@
 #include "ClassA.cc"
 #include "X.h"
 
-parclass ParObject          
-{
-classuid(1001);
+parclass ParObject {
+    classuid(1001);
 
 public:
-	ParObject() @{od.url("localhost");};
-	ParObject(paroc_string machine) @{od.url(machine);};
-  ~ParObject();
+    ParObject() @{od.url("localhost");};
+    ParObject(paroc_string machine) @{od.url(machine);};
+    ~ParObject();
 
-	seq async void SetTheData(X d);
-	conc sync X GetTheData();
+    seq async void SetTheData(X d);
+    conc sync X GetTheData();
 
 private:
-  ClassA<X> theData;
+    ClassA<X> theData;
 };
 
 #endif

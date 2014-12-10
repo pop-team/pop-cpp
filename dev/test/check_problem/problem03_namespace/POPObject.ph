@@ -2,10 +2,9 @@
 #define POPOBJECT_PH_
 
 
-namespace POPTest{
+namespace POPTest {
 
-parclass POPObject
-{
+parclass POPObject {
     classuid(1500);
 
 public:

@@ -3,9 +3,9 @@
  * Author : Laurent Winkler
  * Description : Declaration of the simple manager for a batch environment
  * Creation date : -
- * 
+ *
  * Modifications :
- * Authors		Date			Comment
+ * Authors      Date            Comment
  */
 
 #ifndef BATCHMANAGER_H
@@ -21,23 +21,23 @@
  * BatchMgr's purpose is to provide an object counter for the node attribution in a batch environment.
  * (see also popcjob.* and popcobjrun.* scripts)
  */
-parclass BatchMgr: virtual public paroc_service_base
-{
+parclass BatchMgr:
+virtual public paroc_service_base {
 public:
-	classuid(6);
-	/** @brief Constructor
-	 * @param challenge challenge string which will be required on stopping the service
-	 */
-	BatchMgr([in] const POPString &challenge) @{ od.runLocal(true); od.service(true);};
-	~BatchMgr();
+    classuid(6);
+    /** @brief Constructor
+     * @param challenge challenge string which will be required on stopping the service
+     */
+    BatchMgr([in] const POPString &challenge) @{ od.runLocal(true); od.service(true);};
+    ~BatchMgr();
 
-	/** @brief Increase the node counter and returns the value
-	 * @return current node
-	 */
-	sync seq int NextNode();
+    /** @brief Increase the node counter and returns the value
+     * @return current node
+     */
+    sync seq int NextNode();
 
 private :
-	int nodeCount;
+    int nodeCount;
 };
 
 #endif

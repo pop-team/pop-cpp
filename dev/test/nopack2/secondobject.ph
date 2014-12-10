@@ -8,17 +8,17 @@
  */
 
 parclass SecondObject {
-	classuid(1501);
+    classuid(1501);
 
 public:
-	SecondObject() @{ od.url("localhost"); };
-	~SecondObject();
-	
-	sync seq int getValue();
-	
+    SecondObject() @{ od.url("localhost"); };
+    ~SecondObject();
+
+    sync seq int getValue();
+
 private:
-	int value;
-	
+    int value;
+
 };
 
 

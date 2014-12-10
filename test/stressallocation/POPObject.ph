@@ -8,12 +8,12 @@
  */
 
 parclass POPObject {
-	classuid(1500);
+    classuid(1500);
 
 public:
-	POPObject() @{ od.url("localhost"); };
-	~POPObject();
-	
+    POPObject() @{ od.url("localhost"); };
+    ~POPObject();
+
 };
 
 

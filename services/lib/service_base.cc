@@ -3,9 +3,9 @@
  * Author : Tuan Anh Nguyen
  * Description : Base service class
  * Creation date : -
- * 
+ *
  * Modifications :
- * Authors		Date			Comment
+ * Authors      Date            Comment
  */
 
 
@@ -19,81 +19,76 @@
 
 #include <strings.h>
 
-paroc_service_base::paroc_service_base(const POPString &challenge):mychallenge(challenge), appservice(paroc_system::appservice)
-{
-	daemonMode=false;
+paroc_service_base::paroc_service_base(const POPString &challenge):mychallenge(challenge), appservice(paroc_system::appservice) {
+    daemonMode=false;
 }
 
-paroc_service_base::paroc_service_base(): appservice(paroc_system::appservice)
-{
-	daemonMode=false;
+paroc_service_base::paroc_service_base(): appservice(paroc_system::appservice) {
+    daemonMode=false;
 }
 
 //Switch to the daemon mode...
-void paroc_service_base::Start()
-{
-	while (GetRefCount()>1) DecRef();
-	daemonMode=true;
+void paroc_service_base::Start() {
+    while(GetRefCount()>1) {
+        DecRef();
+    }
+    daemonMode=true;
 
-	if (!paroc_system::appservice.IsEmpty())
-	{
-		paroc_accesspoint myself=GetAccessPoint();
-		try
-		{
-			ObjectMonitor tmp(paroc_system::appservice);
-			tmp.UnManageObject(myself);
-			paroc_system::appservice.SetAccessString(NULL);
-		}
-		catch (...)
-		{
-			DEBUG("Failed to unregister the service from ObjectMonitor");
-		}
-	}
+    if(!paroc_system::appservice.IsEmpty()) {
+        paroc_accesspoint myself=GetAccessPoint();
+        try {
+            ObjectMonitor tmp(paroc_system::appservice);
+            tmp.UnManageObject(myself);
+            paroc_system::appservice.SetAccessString(NULL);
+        } catch(...) {
+            DEBUG("Failed to unregister the service from ObjectMonitor");
+        }
+    }
 }
 
-void paroc_service_base::Start(const POPString &challenge)
-{
-	if (paroc_utils::isEqual(mychallenge,challenge) || mychallenge==NULL)
-	{
-		while (GetRefCount()>1) DecRef();
-		mychallenge=challenge;
-		Start();
-	}
+void paroc_service_base::Start(const POPString &challenge) {
+    if(paroc_utils::isEqual(mychallenge,challenge) || mychallenge==NULL) {
+        while(GetRefCount()>1) {
+            DecRef();
+        }
+        mychallenge=challenge;
+        Start();
+    }
 
 }
 
-bool paroc_service_base::Stop(const POPString &challenge)
-{
-	if (paroc_utils::isEqual(mychallenge,challenge) || mychallenge==NULL)
-	{
-		daemonMode=false;
-		//      while (DecRef()>0);
-		return true;
-	}
-	return false;
+bool paroc_service_base::Stop(const POPString &challenge) {
+    if(paroc_utils::isEqual(mychallenge,challenge) || mychallenge==NULL) {
+        daemonMode=false;
+        //      while (DecRef()>0);
+        return true;
+    }
+    return false;
 }
 
 //Redefine behaviors of parallel object creation/destruction...
-int paroc_service_base::AddRef()
-{
-	if (daemonMode) return 1;
-	return paroc_object::AddRef();
+int paroc_service_base::AddRef() {
+    if(daemonMode) {
+        return 1;
+    }
+    return paroc_object::AddRef();
 }
 
-int paroc_service_base::DecRef()
-{
-	if (daemonMode) return 1;
-	return paroc_object::DecRef();
+int paroc_service_base::DecRef() {
+    if(daemonMode) {
+        return 1;
+    }
+    return paroc_object::DecRef();
 }
-bool paroc_service_base::CanKill()
-{
-	if (daemonMode) return false;
-	return paroc_object::CanKill();
+bool paroc_service_base::CanKill() {
+    if(daemonMode) {
+        return false;
+    }
+    return paroc_object::CanKill();
 }
 
 
-JobCoreService::JobCoreService(const POPString &challenge): paroc_service_base(challenge)
-{
+JobCoreService::JobCoreService(const POPString &challenge): paroc_service_base(challenge) {
 }
 
 /*

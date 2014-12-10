@@ -24,10 +24,9 @@
 
 #define PROPAGATE_EXCEPTION(a)  catch (a err) { if (request.from!=NULL) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 
-class paroc_invokethread: public paroc_thread
-{
+class paroc_invokethread: public paroc_thread {
 public:
-    paroc_invokethread( paroc_broker *br, paroc_request &myrequest, int *instanceCount, paroc_condition *execCond);
+    paroc_invokethread(paroc_broker *br, paroc_request &myrequest, int *instanceCount, paroc_condition *execCond);
     ~ paroc_invokethread();
     virtual void start();
 
@@ -39,8 +38,7 @@ protected:
     paroc_condition *pcond;
 };
 
-paroc_invokethread::paroc_invokethread( paroc_broker *br, paroc_request &myrequest,  int *instanceCount, paroc_condition *execCond): paroc_thread(false), request(myrequest)
-{
+paroc_invokethread::paroc_invokethread(paroc_broker *br, paroc_request &myrequest,  int *instanceCount, paroc_condition *execCond): paroc_thread(false), request(myrequest) {
     pbroker=br;
     pinstanceCount=instanceCount;
     pcond=execCond;
@@ -49,10 +47,11 @@ paroc_invokethread::paroc_invokethread( paroc_broker *br, paroc_request &myreque
     pcond->unlock();
 }
 
-paroc_invokethread::~paroc_invokethread()
-{
+paroc_invokethread::~paroc_invokethread() {
     request.data->Destroy();
-    if (request.from!=NULL) delete request.from;
+    if(request.from!=NULL) {
+        delete request.from;
+    }
 
     pcond->lock();
     (*pinstanceCount)--;
@@ -60,43 +59,37 @@ paroc_invokethread::~paroc_invokethread()
     pcond->unlock();
 }
 
-void paroc_invokethread::start()
-{
+void paroc_invokethread::start() {
     pbroker->DoInvoke(request);
 }
 
 
 
-bool paroc_broker::GetRequest(paroc_request &req)
-{
+bool paroc_broker::GetRequest(paroc_request &req) {
     paroc_mutex_locker locker(execCond);
 
     //If the queue is empty then wait for the request....
-    while (request_fifo.IsEmpty())
-    {
-        if ((obj!=NULL && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING)
-        {
+    while(request_fifo.IsEmpty()) {
+        if((obj!=NULL && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING) {
             return false;
         }
         execCond.wait(); //Wait for new request
     }
 
     POSITION pos=request_fifo.GetHeadPosition();
-    if (concPendings)
-    {
+    if(concPendings) {
         POSITION pos1=pos;
-        while (pos1!=NULL)
-        {
+        while(pos1!=NULL) {
             POSITION old=pos1;
             paroc_request &tmp=request_fifo.GetNext(pos1);
-            if (tmp.methodId[2] & INVOKE_CONC)
-            {
+            if(tmp.methodId[2] & INVOKE_CONC) {
                 req=tmp;
                 request_fifo.RemoveAt(old);
                 concPendings--;
                 return true;
+            } else if(tmp.methodId[2] & INVOKE_MUTEX) {
+                break;
             }
-            else if (tmp.methodId[2] & INVOKE_MUTEX) break;
         }
     }
 
@@ -104,10 +97,8 @@ bool paroc_broker::GetRequest(paroc_request &req)
     request_fifo.RemoveHead();
 
     //Top request is of type mutex
-    if (req.methodId[2] & INVOKE_MUTEX)
-    {
-        while (instanceCount>0)
-        {
+    if(req.methodId[2] & INVOKE_MUTEX) {
+        while(instanceCount>0) {
             execCond.wait();
         }
     }
@@ -115,61 +106,55 @@ bool paroc_broker::GetRequest(paroc_request &req)
     return true;
 }
 
-void paroc_broker::ServeRequest(paroc_request &req)
-{
+void paroc_broker::ServeRequest(paroc_request &req) {
     int type=req.methodId[2];
-        if (type & INVOKE_CONC)
-    {
+    if(type & INVOKE_CONC) {
         paroc_invokethread *thr= new paroc_invokethread(this,req, &instanceCount,&execCond);
 
         int ret;
         int t=1;
-        while ((ret=thr->create())!=0 && t<3600)
-        {
+        while((ret=thr->create())!=0 && t<3600) {
             printf("WARNING: can not create a new thread. Sleep for %d seconds\n",t);
             popc_sleep(t);
             t=t*2;
         }
 
-        if (ret!=0)
-        {
+        if(ret!=0) {
             //Error: Can not create a new thread and timeout
             paroc_mutex_locker locker(execCond);
             execCond.broadcast();
 
-            if (req.from!=NULL)
-            {
+            if(req.from!=NULL) {
 
                 paroc_exception *e=paroc_exception::create(ret);
                 e->SetExtra(classname+"@"+accesspoint.GetAccessString());
                 paroc_buffer::SendException(*req.data, req.from, *e);
                 delete e;
-            }
-            else
+            } else {
                 printf("ERROR: fail to create a new thread for %s@%s (method:%d:%d)\n",(const char *)classname,accesspoint.GetAccessString(), req.methodId[0], req.methodId[1]);
+            }
             delete thr;
 
         }
-    }
-    else
-    {
+    } else {
         DoInvoke(req);
-                if (type & INVOKE_MUTEX)
-        {
+        if(type & INVOKE_MUTEX) {
             mutexCond.lock();
             mutexCount--;
-            if (mutexCount==0) mutexCond.broadcast();
+            if(mutexCount==0) {
+                mutexCond.broadcast();
+            }
             mutexCond.unlock();
         }
         req.data->Destroy();
-        if (req.from!=NULL) delete req.from;
+        if(req.from!=NULL) {
+            delete req.from;
+        }
     }
 }
 
-void paroc_broker::UnhandledException()
-{
-    if (!paroc_system::appservice.IsEmpty())
-    {
+void paroc_broker::UnhandledException() {
+    if(!paroc_system::appservice.IsEmpty()) {
         //char tmp[1024];
         printf("Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
 //      sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
@@ -181,11 +166,11 @@ void paroc_broker::UnhandledException()
     }
 }
 
-bool paroc_broker::DoInvoke(paroc_request &request)
-{
-    try
-    {
-            if (!Invoke(request.methodId, *request.data, request.from) )  paroc_exception::paroc_throw(OBJECT_MISMATCH_METHOD);
+bool paroc_broker::DoInvoke(paroc_request &request) {
+    try {
+        if(!Invoke(request.methodId, *request.data, request.from)) {
+            paroc_exception::paroc_throw(OBJECT_MISMATCH_METHOD);
+        }
     }
 
     PROPAGATE_EXCEPTION(int)
@@ -208,80 +193,72 @@ bool paroc_broker::DoInvoke(paroc_request &request)
     PROPAGATE_EXCEPTION(paroc_interface)
 
     PROPAGATE_EXCEPTION(char *)
-    catch (paroc_exception *e)
-    {
-        if (request.from!=NULL)
-        {
+    catch(paroc_exception *e) {
+        if(request.from!=NULL) {
             POPString extra=e->Extra();
-            if (e->Extra().Length()==0)
-            {
+            if(e->Extra().Length()==0) {
                 extra= classname + "@" + accesspoint.GetAccessString();
+            } else {
+                extra=classname + "@" + accesspoint.GetAccessString() + ": " + extra;
             }
-            else extra=classname + "@" + accesspoint.GetAccessString() + ": " + extra;
             e->SetExtra(extra);
             paroc_buffer::SendException(*request.data,request.from,*e);
+        } else {
+            UnhandledException();
         }
-        else UnhandledException();
         delete e;
-    }
-    catch (paroc_exception e)
-    {
-        if (request.from!=NULL)
-        {
+    } catch(paroc_exception e) {
+        if(request.from!=NULL) {
 
             POPString extra=e.Extra();
-            if (e.Extra().Length()==0)
-            {
+            if(e.Extra().Length()==0) {
                 extra=classname+"@"+accesspoint.GetAccessString();
+            } else {
+                extra=classname+"@"+accesspoint.GetAccessString()+": "+extra;
             }
-            else extra=classname+"@"+accesspoint.GetAccessString()+": "+extra;
             e.SetExtra(extra);
             paroc_buffer::SendException(*request.data, request.from, e);
+        } else {
+            UnhandledException();
         }
-        else UnhandledException();
-    }
-    catch (std::exception *e)
-    {
-        if (request.from != NULL) {
+    } catch(std::exception *e) {
+        if(request.from != NULL) {
             paroc_exception  *pe=paroc_exception::create(STD_EXCEPTION);
             pe->SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
             paroc_buffer::SendException(*request.data, request.from, *pe);
             delete e;
             delete pe;
+        } else {
+            UnhandledException();
         }
-        else UnhandledException();
-    }
-    catch (std::exception e) {
-        if (request.from != NULL) {
+    } catch(std::exception e) {
+        if(request.from != NULL) {
             paroc_exception *pe = paroc_exception::create(STD_EXCEPTION);
             pe->SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
             paroc_buffer::SendException(*request.data, request.from, *pe);
             delete pe;
+        } else {
+            UnhandledException();
         }
-        else UnhandledException();
-    }
-    catch (...)
-    {
-        if (request.from!=NULL)
-        {
+    } catch(...) {
+        if(request.from!=NULL) {
             paroc_exception  *e=paroc_exception::create(UNKNOWN_EXCEPTION);
             e->SetExtra(classname+"@"+accesspoint.GetAccessString());
             paroc_buffer::SendException(*request.data, request.from, *e);
             delete e;
+        } else {
+            UnhandledException();
         }
-        else UnhandledException();
     }
 
-    if (obj==NULL || obj->GetRefCount()<=0)
-    {
+    if(obj==NULL || obj->GetRefCount()<=0) {
         return false;
     }
-        return true;
+    return true;
 }
 
 
-bool paroc_broker::Invoke(unsigned method[3], paroc_buffer &buf, paroc_connection *peer)
-{
+bool paroc_broker::Invoke(unsigned method[3], paroc_buffer &buf, paroc_connection *peer) {
     paroc_request req;
     req.from=peer;
     memcpy(req.methodId,method, 3*sizeof(unsigned));

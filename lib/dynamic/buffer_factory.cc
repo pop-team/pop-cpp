@@ -9,24 +9,21 @@
  *
  *
  */
- 
-/* 
-  Deeply need refactoring: 
+
+/*
+  Deeply need refactoring:
     POPC_BufferFactory instead of paroc_buffer_factory
- */ 
+ */
 
 #include "paroc_buffer_factory.h"
 
-paroc_buffer_factory::paroc_buffer_factory()
-{
+paroc_buffer_factory::paroc_buffer_factory() {
 }
 
-paroc_buffer_factory::~paroc_buffer_factory()
-{
+paroc_buffer_factory::~paroc_buffer_factory() {
 }
 
-void paroc_buffer_factory::Destroy()
-{
-	delete this;
+void paroc_buffer_factory::Destroy() {
+    delete this;
 }
 

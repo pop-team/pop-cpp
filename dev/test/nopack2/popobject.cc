@@ -9,18 +9,15 @@
  * This program tests compilation without the @pack directive. Compilation should work and print a warning message.
  */
 
-POPObject::POPObject()
-{	
-   cout << "POPObject created on machine:" << GetAccessPoint().GetAccessString() << popcendl;
+POPObject::POPObject() {
+    cout << "POPObject created on machine:" << GetAccessPoint().GetAccessString() << popcendl;
 }
 
-POPObject::~POPObject()
-{
-   cout << "POPObject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+POPObject::~POPObject() {
+    cout << "POPObject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
 }
 
-void POPObject::createSecondObject()
-{
-	SecondObject second;
-	cout << "Get value from SecondObject: " << second.getValue() << popcendl;
+void POPObject::createSecondObject() {
+    SecondObject second;
+    cout << "Get value from SecondObject: " << second.getValue() << popcendl;
 }

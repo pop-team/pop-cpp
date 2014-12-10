@@ -3,9 +3,9 @@
  * Author : Tuan Anh Nguyen
  * Description : Implementation of buffer factory for SUN-XDR
  * Creation date : -
- * 
+ *
  * Modifications :
- * Authors		Date			Comment
+ * Authors      Date            Comment
  */
 
 
@@ -20,13 +20,13 @@ paroc_buffer_xdr_factory::paroc_buffer_xdr_factory() {
 }
 
 paroc_buffer * paroc_buffer_xdr_factory::CreateBuffer() {
-	paroc_buffer * bufXDR=new paroc_buffer_xdr();
-	return bufXDR;
+    paroc_buffer * bufXDR=new paroc_buffer_xdr();
+    return bufXDR;
 }
 
 bool paroc_buffer_xdr_factory::GetBufferName(POPString & bufferName) {
-	bufferName="xdr";
-	return true;
+    bufferName="xdr";
+    return true;
 }
 
 

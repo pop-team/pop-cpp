@@ -3,9 +3,9 @@
  * Author : Tuan Anh Nguyen
  * Description : Implementation of raw message factory
  * Creation date : -
- * 
+ *
  * Modifications :
- * Authors		Date			Comment
+ * Authors      Date            Comment
  */
 
 
@@ -20,13 +20,13 @@ paroc_buffer_raw_factory::paroc_buffer_raw_factory() {
 }
 
 paroc_buffer * paroc_buffer_raw_factory::CreateBuffer() {
-	paroc_buffer * bufRAW=new paroc_buffer_raw();
-	return bufRAW;
+    paroc_buffer * bufRAW=new paroc_buffer_raw();
+    return bufRAW;
 }
 
 bool paroc_buffer_raw_factory::GetBufferName(POPString & bufferName) {
-	bufferName="raw";
-	return true;
+    bufferName="raw";
+    return true;
 }
 
 

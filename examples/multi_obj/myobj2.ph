@@ -3,18 +3,17 @@
 #include <string.h>
 #include <unistd.h>
 
-parclass MyObj2
-{
+parclass MyObj2 {
 public:
-	MyObj2(POPString machine) ;
-	~MyObj2();
+    MyObj2(POPString machine) ;
+    ~MyObj2();
 
-	seq sync void Set(int val);
-	conc int Get();
+    seq sync void Set(int val);
+    conc int Get();
 
 private:
-	int data;
-	classuid(2222);
+    int data;
+    classuid(2222);
 };
 
 #endif

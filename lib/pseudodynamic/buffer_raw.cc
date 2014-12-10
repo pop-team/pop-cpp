@@ -3,9 +3,9 @@
  * Author : Tuan Anh Nguyen
  * Description : Implementation of raw message buffer
  * Creation date : -
- * 
+ *
  * Modifications :
- * Authors		Date			Comment
+ * Authors      Date            Comment
  */
 
 
@@ -15,171 +15,148 @@
 #include "paroc_buffer_raw.h"
 #include "paroc_exception.h"
 
-paroc_buffer_raw::paroc_buffer_raw(): packeddata(0,1024)
-{
-	Reset();
+paroc_buffer_raw::paroc_buffer_raw(): packeddata(0,1024) {
+    Reset();
 }
 
-paroc_buffer_raw::~paroc_buffer_raw()
-{
+paroc_buffer_raw::~paroc_buffer_raw() {
 }
 
-void paroc_buffer_raw::Reset()
-{
-	unpackpos=20;
-	//packeddata.RemoveAll();
-	packeddata.SetSize(20);
+void paroc_buffer_raw::Reset() {
+    unpackpos=20;
+    //packeddata.RemoveAll();
+    packeddata.SetSize(20);
 }
 
 
-void paroc_buffer_raw::Pack(const char *data, int n)
-{
-	if (n<=0) return;
-	int t=packeddata.GetSize();
-	packeddata.SetSize(t+((n-1)/4+1)*4);
-	memcpy(( (char *)packeddata)+t,data,n);
+void paroc_buffer_raw::Pack(const char *data, int n) {
+    if(n<=0) {
+        return;
+    }
+    int t=packeddata.GetSize();
+    packeddata.SetSize(t+((n-1)/4+1)*4);
+    memcpy(((char *)packeddata)+t,data,n);
 }
 
-void paroc_buffer_raw::UnPack(char *data, int n)
-{
-	if (n<=0) return;
-	//CheckUnPack(n); // Error with this check in 64 bits
-	int t;
-   t=packeddata.GetSize();
-	memcpy(data, ((char *)packeddata)+unpackpos,n);
-	unpackpos+=((n-1)/4+1)*4;
+void paroc_buffer_raw::UnPack(char *data, int n) {
+    if(n<=0) {
+        return;
+    }
+    //CheckUnPack(n); // Error with this check in 64 bits
+    int t;
+    t=packeddata.GetSize();
+    memcpy(data, ((char *)packeddata)+unpackpos,n);
+    unpackpos+=((n-1)/4+1)*4;
 }
 
-void paroc_buffer_raw::Pack(const int *data, int n)
-{
-	Pack((const char *)data,n*sizeof(int));
+void paroc_buffer_raw::Pack(const int *data, int n) {
+    Pack((const char *)data,n*sizeof(int));
 }
 
-void paroc_buffer_raw::UnPack(int *data, int n)
-{
-	UnPack((char *)data,n*sizeof(int));
+void paroc_buffer_raw::UnPack(int *data, int n) {
+    UnPack((char *)data,n*sizeof(int));
 }
 
-void paroc_buffer_raw::Pack(const unsigned *data, int n)
-{
-	Pack((const char *)data,n*sizeof(unsigned));
+void paroc_buffer_raw::Pack(const unsigned *data, int n) {
+    Pack((const char *)data,n*sizeof(unsigned));
 
 }
-void paroc_buffer_raw::UnPack(unsigned *data, int n)
-{
-	UnPack((char *)data,n*sizeof(unsigned));
+void paroc_buffer_raw::UnPack(unsigned *data, int n) {
+    UnPack((char *)data,n*sizeof(unsigned));
 }
 
-void paroc_buffer_raw::Pack(const long *data, int n)
-{
-	Pack((const char *)data,n*sizeof(long));
+void paroc_buffer_raw::Pack(const long *data, int n) {
+    Pack((const char *)data,n*sizeof(long));
 }
 
-void paroc_buffer_raw::UnPack(long *data, int n)
-{
-	UnPack((char *)data,n*sizeof(long));
+void paroc_buffer_raw::UnPack(long *data, int n) {
+    UnPack((char *)data,n*sizeof(long));
 }
 
-void paroc_buffer_raw::Pack(const unsigned long *data, int n)
-{
-	Pack((const char *)data,n*sizeof(unsigned long));
+void paroc_buffer_raw::Pack(const unsigned long *data, int n) {
+    Pack((const char *)data,n*sizeof(unsigned long));
 }
 
-void paroc_buffer_raw::UnPack(unsigned long *data, int n)
-{
-	UnPack((char *)data,n*sizeof(unsigned long));
+void paroc_buffer_raw::UnPack(unsigned long *data, int n) {
+    UnPack((char *)data,n*sizeof(unsigned long));
 }
 
-void paroc_buffer_raw::Pack(const short *data, int n)
-{
-	Pack((const char *)data,n*sizeof(short));
+void paroc_buffer_raw::Pack(const short *data, int n) {
+    Pack((const char *)data,n*sizeof(short));
 }
 
-void paroc_buffer_raw::UnPack(short *data, int n)
-{
-	UnPack((char *)data,n*sizeof(short));
+void paroc_buffer_raw::UnPack(short *data, int n) {
+    UnPack((char *)data,n*sizeof(short));
 }
 
-void paroc_buffer_raw::Pack(const unsigned short *data, int n)
-{
-	Pack((const char *)data,n*sizeof(unsigned short));
+void paroc_buffer_raw::Pack(const unsigned short *data, int n) {
+    Pack((const char *)data,n*sizeof(unsigned short));
 }
 
-void paroc_buffer_raw::UnPack(unsigned short *data, int n)
-{
-	UnPack((char *)data,n*sizeof(unsigned short));
+void paroc_buffer_raw::UnPack(unsigned short *data, int n) {
+    UnPack((char *)data,n*sizeof(unsigned short));
 }
 
-void paroc_buffer_raw::Pack(const bool *data, int n)
-{
-	Pack((const char *)data,n*sizeof(bool));
+void paroc_buffer_raw::Pack(const bool *data, int n) {
+    Pack((const char *)data,n*sizeof(bool));
 }
 
-void paroc_buffer_raw::UnPack(bool *data, int n)
-{
-	UnPack((char *)data,n*sizeof(bool));
+void paroc_buffer_raw::UnPack(bool *data, int n) {
+    UnPack((char *)data,n*sizeof(bool));
 }
 
 
-void paroc_buffer_raw::Pack(const unsigned char *data, int n)
-{
-	Pack((char *)data,n);
+void paroc_buffer_raw::Pack(const unsigned char *data, int n) {
+    Pack((char *)data,n);
 }
 
-void paroc_buffer_raw::UnPack(unsigned char *data, int n)
-{
-	UnPack((char *)data,n);
+void paroc_buffer_raw::UnPack(unsigned char *data, int n) {
+    UnPack((char *)data,n);
 }
 
-void paroc_buffer_raw::Pack(const float *data, int n)
-{
-	Pack((char *)data,n*sizeof(float));
+void paroc_buffer_raw::Pack(const float *data, int n) {
+    Pack((char *)data,n*sizeof(float));
 }
 
-void paroc_buffer_raw::UnPack(float *data, int n)
-{
-	UnPack((char *)data,n*sizeof(float));
+void paroc_buffer_raw::UnPack(float *data, int n) {
+    UnPack((char *)data,n*sizeof(float));
 }
 
-void paroc_buffer_raw::Pack(const double *data, int n)
-{
-	Pack((char *)data,n*sizeof(double));
+void paroc_buffer_raw::Pack(const double *data, int n) {
+    Pack((char *)data,n*sizeof(double));
 }
 
-void paroc_buffer_raw::UnPack(double *data, int n)
-{
-	UnPack((char *)data,n*sizeof(double));
+void paroc_buffer_raw::UnPack(double *data, int n) {
+    UnPack((char *)data,n*sizeof(double));
 }
 
 // added by lwk
-void paroc_buffer_raw::Pack(const signed char *data, int n)
-{
-	Pack((char *)data,n); // TODO lwk: Check that this cast is not problematic
+void paroc_buffer_raw::Pack(const signed char *data, int n) {
+    Pack((char *)data,n); // TODO lwk: Check that this cast is not problematic
 }
 
-void paroc_buffer_raw::UnPack(signed char *data, int n)
-{
-	UnPack((char *)data,n);
+void paroc_buffer_raw::UnPack(signed char *data, int n) {
+    UnPack((char *)data,n);
 }
 
 /*void paroc_buffer_raw::Pack(const long long *data, int n)
 {
-	Pack((char *)data,n*sizeof(long long));
+    Pack((char *)data,n*sizeof(long long));
 }
 
 void paroc_buffer_raw::UnPack(long long *data, int n)
 {
-	UnPack((char *)data,n*sizeof(long long));
+    UnPack((char *)data,n*sizeof(long long));
 }
 
 void paroc_buffer_raw::Pack(const long double *data, int n)
 {
-	Pack((char *)data,n*sizeof(long double));
+    Pack((char *)data,n*sizeof(long double));
 }
 
 void paroc_buffer_raw::UnPack(long double *data, int n)
 {
-	UnPack((char *)data,n*sizeof(long double));
+    UnPack((char *)data,n*sizeof(long double));
 }*/
 
 
@@ -205,11 +182,11 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //     {
 //       UnPack(&len,1);
 //       if (len)
-// 	{
-// 	  tmpstr.SetSize(len);
-// 	  UnPack(tmpstr,len);
-// 	  list->SetAccessString(tmpstr);
-// 	}
+//  {
+//    tmpstr.SetSize(len);
+//    UnPack(tmpstr,len);
+//    list->SetAccessString(tmpstr);
+//  }
 //       else list->SetAccessString(NULL);
 //     }
 // }
@@ -235,11 +212,11 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //     {
 //       UnPack(&len,1);
 //       if (len>0)
-// 	{
-// 	  tmpstr.SetSize(len);
-// 	  UnPack(tmpstr,len);
-// 	  (*list)=(char *)tmpstr;
-// 	}
+//  {
+//    tmpstr.SetSize(len);
+//    UnPack(tmpstr,len);
+//    (*list)=(char *)tmpstr;
+//  }
 //       else (*list)=NULL;
 //     }
 // }
@@ -336,10 +313,10 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //       inf->SetOD(myod);
 
 //       if (ref>0)
-// 	{
-// 	  inf->Bind(entry);
-// 	  inf->DecRef();
-// 	}
+//  {
+//    inf->Bind(entry);
+//    inf->DecRef();
+//  }
 //     }
 // }
 
@@ -372,177 +349,175 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 // }
 
 
-void paroc_buffer_raw::CheckUnPack(int sz)
-{
-	if (sz+unpackpos > packeddata.GetSize()) 
-	  paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+void paroc_buffer_raw::CheckUnPack(int sz) {
+    if(sz+unpackpos > packeddata.GetSize()) {
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+    }
 }
 
-bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn)
-{
-  // Send the header first as 20 bytes packet
-  printf("RAW: Send\n");
+bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
+    // Send the header first as 20 bytes packet
+    printf("RAW: Send\n");
 
-	char *data = (char *)packeddata;
-	if (data == NULL) 
-	  return false;
-	  
-	int n = packeddata.GetSize();
-	int h[5];
-	memset(h, 0, 5 * sizeof(int));
+    char *data = (char *)packeddata;
+    if(data == NULL) {
+        return false;
+    }
 
-	int type = header.GetType();
+    int n = packeddata.GetSize();
+    int h[5];
+    memset(h, 0, 5 * sizeof(int));
 
-  printf("RAW: Set message size to %d\n", n);    
-	h[0] = n;
-	h[1] = type;
+    int type = header.GetType();
 
-	switch (type) {
-  	case TYPE_REQUEST:
-	  	h[2]=header.GetClassID();
-		  h[3]=header.GetMethodID();
-  		h[4]=header.GetSemantics();
-	  	break;
-  	case TYPE_EXCEPTION:
-	  	h[2]=header.GetExceptionCode();
-		  break;
-  	case TYPE_RESPONSE:
-	  	h[2]=header.GetClassID();
-  		h[3]=header.GetMethodID();
-	  	break;
-  	default:
-	  	return false;
- 	}
- 	
- 	memcpy(data, h, 20);
-	
-	// MPI mod - beg
-	char* data_header = new char[20];
-	memcpy(data_header, h, 20);
-	
-	if(s.Send(data_header, 20, conn, true)) {
-	  printf("Error while sending header\n");
-	  return false;
-	}
-  // MPI mod - end
-  
-  data += 20;
-  n -= 20;
-  if(n > 0){
-    printf("RAW: Send message size is %d: %s\n", n, (char*)packeddata);  
-    if (s.Send(data, n, conn, false) < 0) {
-		  DEBUG("Fail to send a message!");
-  		return false;
-	  }
-  }
+    printf("RAW: Set message size to %d\n", n);
+    h[0] = n;
+    h[1] = type;
 
-  return true;
+    switch(type) {
+    case TYPE_REQUEST:
+        h[2]=header.GetClassID();
+        h[3]=header.GetMethodID();
+        h[4]=header.GetSemantics();
+        break;
+    case TYPE_EXCEPTION:
+        h[2]=header.GetExceptionCode();
+        break;
+    case TYPE_RESPONSE:
+        h[2]=header.GetClassID();
+        h[3]=header.GetMethodID();
+        break;
+    default:
+        return false;
+    }
+
+    memcpy(data, h, 20);
+
+    // MPI mod - beg
+    char* data_header = new char[20];
+    memcpy(data_header, h, 20);
+
+    if(s.Send(data_header, 20, conn, true)) {
+        printf("Error while sending header\n");
+        return false;
+    }
+    // MPI mod - end
+
+    data += 20;
+    n -= 20;
+    if(n > 0) {
+        printf("RAW: Send message size is %d: %s\n", n, (char*)packeddata);
+        if(s.Send(data, n, conn, false) < 0) {
+            DEBUG("Fail to send a message!");
+            return false;
+        }
+    }
+
+    return true;
 }
 
-  // Propagation of exceptions back to caller...
+// Propagation of exceptions back to caller...
 
-bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn)
-{
+bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
 
-  printf("RAW: Recv\n");
-	int h[5];
-	int n, i;
+    printf("RAW: Recv\n");
+    int h[5];
+    int n, i;
 
-	//Recv the header...
+    //Recv the header...
 
-	char *data_header = (char *)h;
-  int ret = s.Recv(data_header, 20, conn, true);
-  printf("RAW: header received\n");
-/*	n = 20;
-	do {
-		if ((i = s.Recv(dat,n, conn)) <= 0) {
-			return false;
-		}
-		n -= i;
-		dat += i;
-	} while (n);*/
+    char *data_header = (char *)h;
+    int ret = s.Recv(data_header, 20, conn, true);
+    printf("RAW: header received\n");
+    /*  n = 20;
+        do {
+            if ((i = s.Recv(dat,n, conn)) <= 0) {
+                return false;
+            }
+            n -= i;
+            dat += i;
+        } while (n);*/
 
-	Reset();
-	n = h[0];
-	
-	
-	if (n<20) {
-		DEBUG("Bad message header(size error:%d)",n);
-		return false;
-	}
+    Reset();
+    n = h[0];
 
-	int type = h[1];
-	header.SetType(type);
-	switch (type) {
-	  case TYPE_REQUEST:
-		  header.SetClassID(h[2]);
-  		header.SetMethodID(h[3]);
-	  	header.SetSemantics(h[4]);
-		  break;
-  	case TYPE_EXCEPTION:
-	  	header.SetExceptionCode(h[2]);
-		  break;
-  	case TYPE_RESPONSE:
-	  	header.SetClassID(h[2]);
-		  header.SetMethodID(h[3]);
-		  break;
-	  default:
-		  return false;
-	}
 
-	packeddata.SetSize(n);
-	n -= 20;
-	
-  if(n > 0){
-  	data_header = (char *)packeddata+20;	
-  	printf("RAW: ready to receive %d\n", n);
-		ret = s.Recv(data_header, n, conn, false);
-  	printf("RAW: received %d\n", n);	
-	}
-/*
-	i = 0;
-	while (n > 0) {
-		if ((i = s.Recv(dat,n, conn)) <= 0) {
-			return false;
-		}
-		dat += i;
-		n -= i;
-	}*/
-	return true;
+    if(n<20) {
+        DEBUG("Bad message header(size error:%d)",n);
+        return false;
+    }
+
+    int type = h[1];
+    header.SetType(type);
+    switch(type) {
+    case TYPE_REQUEST:
+        header.SetClassID(h[2]);
+        header.SetMethodID(h[3]);
+        header.SetSemantics(h[4]);
+        break;
+    case TYPE_EXCEPTION:
+        header.SetExceptionCode(h[2]);
+        break;
+    case TYPE_RESPONSE:
+        header.SetClassID(h[2]);
+        header.SetMethodID(h[3]);
+        break;
+    default:
+        return false;
+    }
+
+    packeddata.SetSize(n);
+    n -= 20;
+
+    if(n > 0) {
+        data_header = (char *)packeddata+20;
+        printf("RAW: ready to receive %d\n", n);
+        ret = s.Recv(data_header, n, conn, false);
+        printf("RAW: received %d\n", n);
+    }
+    /*
+        i = 0;
+        while (n > 0) {
+            if ((i = s.Recv(dat,n, conn)) <= 0) {
+                return false;
+            }
+            dat += i;
+            n -= i;
+        }*/
+    return true;
 }
 
 #ifdef OD_DISCONNECT
-bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn)
-{
-	while (true) {
-		paroc_connection* t = (paroc_connection*) s.Wait();
-		if (t == NULL) {
-			paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive\n");
-		}
-		if (!Recv(s, t)) {
-			paroc_exception::paroc_throw(errno);
-		}
-		if (header.GetType() == TYPE_RESPONSE) {
-			if (header.GetClassID() == 0 && header.GetMethodID() == 6) {
-				return true;
-			} else {
-				paroc_message_header h = header;
-				int unpackposold = unpackpos;
-				paroc_array<char> packeddataold = packeddata;
-				paroc_connection * t = (paroc_connection *) s.Wait();
-				if (t == NULL) {
-					paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive\n");
-				}
-				if (!Recv(s, t)) {
-					paroc_exception::paroc_throw(errno);
-				}
-				Reset();
-				header = h;
-				unpackpos = unpackposold;
-				packeddata = packeddataold;
-				return false;
-			}
-		}
-	}
+bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
+    while(true) {
+        paroc_connection* t = (paroc_connection*) s.Wait();
+        if(t == NULL) {
+            paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive\n");
+        }
+        if(!Recv(s, t)) {
+            paroc_exception::paroc_throw(errno);
+        }
+        if(header.GetType() == TYPE_RESPONSE) {
+            if(header.GetClassID() == 0 && header.GetMethodID() == 6) {
+                return true;
+            } else {
+                paroc_message_header h = header;
+                int unpackposold = unpackpos;
+                paroc_array<char> packeddataold = packeddata;
+                paroc_connection * t = (paroc_connection *) s.Wait();
+                if(t == NULL) {
+                    paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive\n");
+                }
+                if(!Recv(s, t)) {
+                    paroc_exception::paroc_throw(errno);
+                }
+                Reset();
+                header = h;
+                unpackpos = unpackposold;
+                packeddata = packeddataold;
+                return false;
+            }
+        }
+    }
 }
 #endif

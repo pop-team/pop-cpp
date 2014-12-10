@@ -3,9 +3,9 @@
  * Author : Tuan Anh Nguyen
  * Description : Declaration of the remote log service
  * Creation date : -
- * 
+ *
  * Modifications :
- * Authors		Date			Comment
+ * Authors      Date            Comment
  */
 
 #ifndef REMOTELOG_H
@@ -20,24 +20,24 @@
  * @ingroup runtime
  * RemoteLog is an application-scope service which allows remote objects to send back message to the user's console.
  */
-parclass RemoteLog: virtual public paroc_service_base
-{
+parclass RemoteLog:
+virtual public paroc_service_base {
 public:
 
-	/** @brief Constructor
-	 * @param challenge challenge string which will be required on stopping the service
-	*/
-	RemoteLog([in] const POPString &challenge) @{ od.runLocal(true); od.service(true);};
-	~RemoteLog();
+    /** @brief Constructor
+     * @param challenge challenge string which will be required on stopping the service
+    */
+    RemoteLog([in] const POPString &challenge) @{ od.runLocal(true); od.service(true);};
+    ~RemoteLog();
 
-	/** @brief Write a message to the user's console
-	 * @param info the user message (null terminated string)
-	*/
-	async seq void Log([in] const POPString &info);
+    /** @brief Write a message to the user's console
+     * @param info the user message (null terminated string)
+    */
+    async seq void Log([in] const POPString &info);
 
-   async seq void LogPJ([in]const POPString &appID, [in] const POPString &info);
+    async seq void LogPJ([in]const POPString &appID, [in] const POPString &info);
 
-	classuid(3);
+    classuid(3);
 };
 
 #endif

@@ -1,7 +1,6 @@
 #include "timer.h"
 
-parclass TestMethod
-{
+parclass TestMethod {
 public:
     TestMethod()@{od.url("localhost");};
 

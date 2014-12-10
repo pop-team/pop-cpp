@@ -16,13 +16,13 @@ char array[Size];
 
 } //end of anonymous namespace
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     try {
         cout << "Big data: Starting test..." << popcendl;
 
-        for (int i = 0; i < Size; i++)
+        for(int i = 0; i < Size; i++) {
             array[i] = 'a';
+        }
 
         POPObject o;
         o.displayArray(Size, array);
@@ -33,7 +33,7 @@ int main(int argc, char** argv)
         assert(array[60495998] == 'w');
 
         cout << "big data succeed !" << popcendl;
-    } catch (POPException e) {
+    } catch(POPException e) {
         printf("big data test failed: error no.%d, destroying objects:\n", e.Code());
         return 1;
     }

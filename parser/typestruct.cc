@@ -5,44 +5,36 @@
 //#include <stdio.h>
 //#include <string.h>
 
-TypeStruct::TypeStruct(char *name): DataType(name)
-{
+TypeStruct::TypeStruct(char *name): DataType(name) {
 }
 
-TypeStruct::~TypeStruct()
-{
+TypeStruct::~TypeStruct() {
     POSITION pos=attr_names.GetHeadPosition();
 
-    while (pos!=NULL)
-    {
+    while(pos!=NULL) {
         char *tmp=attr_names.GetNext(pos);
         free(tmp);
     }
 }
 
-void TypeStruct::Add(DataType *elem, char *ename)
-{
+void TypeStruct::Add(DataType *elem, char *ename) {
     assert(ename!=NULL);
     attr_types.AddTail(elem);
     ename=popc_strdup(ename);
     attr_names.AddTail(ename);
 }
 
-int TypeStruct::CanMarshal()
-{
-    if (IsMarked())
-    {
+int TypeStruct::CanMarshal() {
+    if(IsMarked()) {
         Mark(false);
         return 0;
     }
     Mark(true);
 
     POSITION pos=attr_types.GetHeadPosition();
-    while (pos!=NULL)
-    {
+    while(pos!=NULL) {
         DataType *tmp=attr_types.GetNext(pos);
-        if (tmp->CanMarshal()!=1)
-        {
+        if(tmp->CanMarshal()!=1) {
             Mark(false);
             return 0;
         }
@@ -51,18 +43,18 @@ int TypeStruct::CanMarshal()
     return 1;
 }
 
-void TypeStruct::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output)
-{
+void TypeStruct::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
     POSITION pos=attr_types.GetHeadPosition();
     POSITION pos1=attr_names.GetHeadPosition();
     char paramname[256], tmpcode[1024];
 
-    if (!FindVarName(varname,paramname)) strcpy(paramname,"unknown");
+    if(!FindVarName(varname,paramname)) {
+        strcpy(paramname,"unknown");
+    }
     sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", 1);\n",bufname,paramname, GetName());
     output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-    while (pos!=NULL)
-    {
+    while(pos!=NULL) {
         DataType *tmp=attr_types.GetNext(pos);
         char *tname=attr_names.GetNext(pos1);
         sprintf(tmpcode,"%s.%s",varname,tname);
@@ -73,18 +65,18 @@ void TypeStruct::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CAr
 
 }
 
-void TypeStruct::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output)
-{
+void TypeStruct::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
     POSITION pos=attr_types.GetHeadPosition();
     POSITION pos1=attr_names.GetHeadPosition();
     char paramname[256], tmpcode[1024];
 
-    if (!FindVarName(varname,paramname)) strcpy(paramname,"unknown");
+    if(!FindVarName(varname,paramname)) {
+        strcpy(paramname,"unknown");
+    }
     sprintf(tmpcode,"%s.Push(\"%s\",\"%s\",1);\n",bufname,paramname, GetName());
     output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-    while (pos!=NULL)
-    {
+    while(pos!=NULL) {
         DataType *tmp=attr_types.GetNext(pos);
         char *tname=attr_names.GetNext(pos1);
 
@@ -95,7 +87,6 @@ void TypeStruct::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, C
     output.InsertAt(-1,tmpcode,strlen(tmpcode));
 }
 
-bool TypeStruct::IsPrototype()
-{
+bool TypeStruct::IsPrototype() {
     return (attr_types.GetCount()==0);
 }

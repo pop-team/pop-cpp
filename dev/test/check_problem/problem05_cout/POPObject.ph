@@ -2,16 +2,15 @@
 #define POPOBJECT_PH_
 
 
-parclass POPObject
-{
-	classuid(1500);
+parclass POPObject {
+    classuid(1500);
 
 public:
-	POPObject() @{ od.search(0, 0, 0); };
-	~POPObject();
-	
-	sync seq void dummyMethod(bool dummy);	
-		
+    POPObject() @{ od.search(0, 0, 0); };
+    ~POPObject();
+
+    sync seq void dummyMethod(bool dummy);
+
 private:
 
 };
