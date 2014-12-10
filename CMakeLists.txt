@@ -42,6 +42,7 @@ check_library_exists(pthread pthread_create "" HAVE_LIBPTHREAD)
 # Define user specific option. Disable by default.
 option(MPI_SUPPORT "MPI Support" OFF)
 option(XMP_SUPPORT "XMP Support" OFF)
+set(POPCPP_EXTRA_FLAGS "" CACHE STRING "Flags to add to the POP-C++ compiler")
 
 # Set MPI support implicitly if XMP support is required
 if(XMP_SUPPORT)

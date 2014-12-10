@@ -32,6 +32,7 @@ public:
     static bool isncaseEqual(const char *s1, const char *s2);
     static bool MatchWildcard(const char *str, const char *wildcard);
     static void FindAbsolutePath(const char *fname, char *abspath);
+    static void Assert(bool a);
 
 
 #ifdef _POPC_

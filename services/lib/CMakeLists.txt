@@ -14,7 +14,7 @@ endif(WIN32)
 
 set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc${EXECUTABLE_EXTENSION})
 set(CMAKE_POPCPP_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcpp${EXECUTABLE_EXTENSION})
-set(POPCPP_FLAGS -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_POPCPP_COMPILER})
+set(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_POPCPP_COMPILER})
 
 set(POPCPP_COMPILER_FLAGS -o)
 set(POPCPP_Object_COMPILER_FLAGS -object -o)

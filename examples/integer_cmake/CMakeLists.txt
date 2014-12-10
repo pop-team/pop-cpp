@@ -21,7 +21,7 @@ SET(CMAKE_VERBOSE_MAKEFILE on)
 # Using standard CMake macro
 #ADD_EXECUTABLE(integer integer_h.ph integer_c.cc)
 
-SET(POPCPP_FLAGS -object -o)
+SET(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -object -o)
 
 # Using special Macro
 ADD_PARALLEL_OBJECT(integer.obj integer_h.ph integer_c.cc)
