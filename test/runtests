@@ -19,7 +19,7 @@ then
     echo Starting test suite...
     echo ""
     rm -rf $RESULTS
-    for test in `ls -F -d * | grep -v asynccreation | grep -v runtests | grep -v runtests_short | grep -v stressallocation`
+    for test in `ls -F -d * | grep -v asynccreation | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v CMake`
     do
         echo "---------------------------------------------------------------------------"
         echo "*** $test test ($NUMBEROFTEST) **"
