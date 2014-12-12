@@ -1,0 +1,1 @@
+popcc -verbose -xmp -popc-static -o main main.cpp pop_xmp_object.ph pop_xmp_object.cpp
