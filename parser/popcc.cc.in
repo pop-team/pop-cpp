@@ -436,6 +436,9 @@ int main(int argc, char *argv[]) {
     bool enablempi = (paroc_utils::checkremove(&argc, &argv, "-mpi") != NULL);
     bool enableadvanced = (paroc_utils::checkremove(&argc, &argv, "-advanced") != NULL);
     bool enablepsdyn = (paroc_utils::checkremove(&argc, &argv, "-pseudo-dynamic") != NULL);
+    if(enablepsdyn){
+      enablempi = true;
+    }
 
     // Check for POP-C++ installation directory
     if((tmp = paroc_utils::checkremove(&argc, &argv, "-popcdir=")) != NULL) {
@@ -499,7 +502,7 @@ int main(int argc, char *argv[]) {
         strcpy(parocld, parocxx);
     }
 
-    if(enablexmp || enablempi) {
+    if((enablexmp || enablempi) && !enablepsdyn) {
         enableadvanced = true;
     }
 
@@ -699,7 +702,7 @@ int main(int argc, char *argv[]) {
 #endif
 
             // Link with advanced POP-C++ library
-            if(enablexmp || enableadvanced || enablempi) {
+            if((enablexmp || enableadvanced || enablempi) && !enablepsdyn) {
                 if(paroc_static || staticlib) {
                     sprintf(buf, "%s/lib/dynamic/libpopc_advanced.a", parocdir);
                 } else {
