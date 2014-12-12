@@ -15,15 +15,15 @@
 
 #include <signal.h>
 
-POPC_MPIConnection::POPC_MPIConnection() : _has_communicator(false), _is_connected(false), paroc_connection(NULL), _connection_index(0), _is_asynchronous(false), _tag_set(false) {
+POPC_MPIConnection::POPC_MPIConnection() : paroc_connection(NULL), _is_connected(false),  _has_communicator(false), _connection_index(0), _is_asynchronous(false), _tag_set(false) {
 
 }
 
-POPC_MPIConnection::POPC_MPIConnection(paroc_combox *cb): _has_communicator(false), _is_connected(false), paroc_connection(cb), _connection_index(0), _is_asynchronous(false), _tag_set(false) {
+POPC_MPIConnection::POPC_MPIConnection(paroc_combox *cb): paroc_connection(cb), _is_connected(false), _has_communicator(false),  _connection_index(0), _is_asynchronous(false), _tag_set(false) {
     signal(SIGPIPE, SIG_IGN);
 }
 
-POPC_MPIConnection::POPC_MPIConnection(POPC_MPIConnection &me): _has_communicator(false), _is_connected(false), _connection_index(0), _is_asynchronous(false), _tag_set(false), paroc_connection(me.GetCombox(), me.GetBufferFactory()) {
+POPC_MPIConnection::POPC_MPIConnection(POPC_MPIConnection &me): paroc_connection(me.GetCombox(), me.GetBufferFactory()), _is_connected(false), _has_communicator(false), _connection_index(0), _is_asynchronous(false), _tag_set(false) {
     set_communicator(me.get_communicator());
     set_connection_index(me.get_connection_index());
 }

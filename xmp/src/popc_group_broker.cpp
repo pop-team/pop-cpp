@@ -73,6 +73,7 @@ void POPC_GroupBroker::add_method_info(unsigned classuid, popc_method_info *meth
  * @param _popc_buffer      Buffer containing parameter and used to send the result of the call
  * @param _popc_connection  Connection used to send the result of the call
  */
-bool POPC_GroupBroker::invoke(unsigned method[3], paroc_buffer &_popc_buffer, paroc_connection *_popc_connection) {
+bool POPC_GroupBroker::invoke(unsigned* /* method[3]*/, paroc_buffer&/*_popc_buffer*/, paroc_connection* /*_popc_connection*/) {
     printf("Invoke in base broker\n");
+    return true;
 }

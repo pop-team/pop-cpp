@@ -27,8 +27,8 @@
  * Base constructor
  * A POPC_GroupInterface object is always created empty.
  */
-POPC_GroupInterface::POPC_GroupInterface() : _popc_is_initialized(false), _popc_is_finalized(false), _popc_nb_parallel_object(0),
-    _popc_default_rank_for_single_call(0) {
+POPC_GroupInterface::POPC_GroupInterface() : _popc_default_rank_for_single_call(0), _popc_is_initialized(false), _popc_is_finalized(false), _popc_nb_parallel_object(0)
+     {
 }
 
 
