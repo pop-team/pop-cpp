@@ -13,10 +13,10 @@
 #define POPC_COMBOX_UNIX_DOMAIN_SOCKET_H
 
 //#include "popc_intface.h"
-//#include <sys/types.h>
-//#include <sys/socket.h>
-//#include <sys/un.h>
-//#include <poll.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <poll.h>
 #include <ctype.h>
 
 #include <paroc_array.h>
