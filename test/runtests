@@ -3,8 +3,8 @@
 RESULTS=tests_results
 NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
-
-SXXLOCATION=/usr/local/sbin
+EXCLUDEDTEST="asynccreation\|runtests\|runtests_short\|stressallocation\|CMake\|xmp1\|xmp2\|xmp3\|xmp4\|xmp-raw\|static1\|cpp11"
+SXXLOCATION=/usr/local/popc/sbin
 
 if [ "x" != "x$POPC_LOCATION" ]
 then
@@ -19,7 +19,7 @@ then
     echo Starting test suite...
     echo ""
     rm -rf $RESULTS
-    for test in `ls -F -d * | grep -v asynccreation | grep -v runtests | grep -v runtests_short | grep -v stressallocation | grep -v CMake`
+    for test in `ls -F -d * | grep -v $EXCLUDEDTEST`
     do
         echo "---------------------------------------------------------------------------"
         echo "*** $test test ($NUMBEROFTEST) **"
@@ -99,4 +99,4 @@ else
     fi
 fi
 
-$SXXLOCATION/SXXpopc kill
+$SXXLOCATION/SXXpopc kill 2&> /dev/null
