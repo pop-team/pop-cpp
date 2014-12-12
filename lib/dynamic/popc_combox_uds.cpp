@@ -46,7 +46,7 @@ popc_combox_uds::~popc_combox_uds() {
  * @param server  FALSE for a client combox and TRUE for a server combox
  * @return FALSE in any cases
  */
-bool popc_combox_uds::Create(int port, bool server) {
+bool popc_combox_uds::Create(int , bool) {
     return false;
 }
 
@@ -103,7 +103,7 @@ bool popc_combox_uds::Create(const char* address, bool server) {
  * @param url Path to the file representing the socket to connect to.
  * @return TRUE if the connection is successful. FALSE in any other cases.
  */
-bool popc_combox_uds::Connect(const char *url) {
+bool popc_combox_uds::Connect(const char*) {
     if(connect(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
         printf("Connect failed: %s\n",_uds_address.c_str());
         perror("Connect failed");
@@ -131,7 +131,7 @@ paroc_connection* popc_combox_uds::get_connection() {
 /**
  * Send bytes to another combox without connection. NOT USED IN UDS COMBOX
  */
-int popc_combox_uds::Send(const char *s,int len) {
+int popc_combox_uds::Send(const char*,int) {
     return 0;
 }
 
@@ -158,7 +158,7 @@ int popc_combox_uds::Send(const char *s, int len, paroc_connection *connection) 
 /**
  * Receive bytes from another combox without connection. NOT USED IN UDS COMBOX
  */
-int popc_combox_uds::Recv(char *s,int len) {
+int popc_combox_uds::Recv(char*,int) {
     return 0;
 }
 
