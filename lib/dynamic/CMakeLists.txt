@@ -43,7 +43,7 @@ add_library(popc_common
     buffer_raw_factory.cc
     buffer_utils.cc
     buffer_xdr_factory.cc
-    #popc_buffer_xdr_mpi.cpp
+    popc_buffer_xdr_mpi.cpp
     debug.cc
     event.cc
     exception.cc
@@ -51,8 +51,8 @@ add_library(popc_common
     memspool.cc
     mutex.cc
     od.cc
-    #popc_combox_uds.cpp
-    #popc_connection_uds.cpp
+    popc_combox_uds.cpp
+    popc_connection_uds.cpp
     popwayback.cc
     string.cc
     thread.cc
