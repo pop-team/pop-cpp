@@ -239,8 +239,7 @@ void paroc_buffer_xdr::UnPack(bool *data, int n) {
         return;
     }
     CheckUnPack(n);
-    int t;
-    t=packeddata.GetSize();
+    packeddata.GetSize();
 
     char *dat=((char *)packeddata)+unpackpos;
     while(n-->0) {
@@ -265,8 +264,7 @@ void paroc_buffer_xdr::UnPack(char *data, int n) {
         return;
     }
     CheckUnPack(n);
-    int t;
-    t=packeddata.GetSize();
+    packeddata.GetSize();
     memcpy(data, ((char *)packeddata)+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
@@ -652,7 +650,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
 
 
     int h[5];
-    int n, i;
+    int n;
 
     // Recv the header
     char *data_header = (char*)h;
@@ -660,7 +658,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
 
     // Receiving the real data
 //  printf("XDR: recv header\n");
-    int ret = s.Recv(data_header, 20, conn, true);
+    s.Recv(data_header, 20, conn, true);
     Reset();
     /* for(int i = 0; i < 5; i++) {
        memcpy(&h[i], data_header+(i*4), 4);
@@ -705,7 +703,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     if(n > 0) {
         data_header = (char *)packeddata+20;
         //printf("XDR: %s ready to receive %d\n",(isServer) ? "server":"client",  n);
-        ret = s.Recv(data_header, n, conn, false);
+        s.Recv(data_header, n, conn, false);
         //printf("XDR: %s received %d\n",(isServer) ? "server":"client",  n);
     }
 

@@ -24,37 +24,6 @@
 
 #include "popc_logger.h"
 
-int popc_logger(LOGLEVEL level, const char *format,...) {
-    /*  char *tmp=getenv("POPC_TEMP");
-        char logfile[256];
-        if (tmp!=NULL) sprintf(logfile,"%s/popc_log",tmp);
-        else strcpy(logfile, "/tmp/popc_log.log");
-        FILE *f=fopen(logfile,"a");
-        if (f==NULL) return 1;
-        time_t t=time(NULL);
-        fprintf(f, "%s", ctime(&t));
-        va_list ap;
-        va_start(ap, format);
-        switch(level){
-            case ERROR:
-            fprintf(f, "%s", LEVEL_ERROR_PREFIX);
-            break;
-            case DEBUG:
-            fprintf(f, "%s", LEVEL_DEBUG_PREFIX);
-            break;
-            case INFO:
-            fprintf(f, "%s", LEVEL_INFO_PREFIX);
-            break;
-            case DEV:
-            fprintf(f, "%s", LEVEL_DEV_PREFIX);
-            break;
-            case CORE:
-            fprintf(f, "%s", LEVEL_CORE_PREFIX);
-            break;
-        }
-        vfprintf(f, format, ap);
-        fprintf(f,"%s","\n");
-        va_end(ap);
-        fclose(f);*/
+int popc_logger(LOGLEVEL /*level*/, const char * /*format*/,...) {
     return 0;
 }

@@ -180,13 +180,13 @@ paroc_buffer_factory_finder::~paroc_buffer_factory_finder() {
 }
 
 
-void * paroc_buffer_factory_finder::LoadPlugin(char *fname, paroc_buffer_factory * &f) {
+void * paroc_buffer_factory_finder::LoadPlugin(char* fname, paroc_buffer_factory * &f) {
 #ifdef HAVE_LIBDL
     void *handle=dlopen(fname,RTLD_LAZY| RTLD_LOCAL);
     if(handle==NULL) {
         return NULL;
     }
-    //  DEBUG("Module loaded: %s",fname);
+    //DEBUG("Module loaded: %s",fname);
 
     paroc_buffer_factory * (*creator)();
     creator = (paroc_buffer_factory * (*)())dlsym(handle,"ParocBufferFactory");
@@ -203,6 +203,8 @@ void * paroc_buffer_factory_finder::LoadPlugin(char *fname, paroc_buffer_factory
     }
     return handle;
 #else
+    (void)(f);
+    (void)(fname);
     return NULL;
 #endif
 }

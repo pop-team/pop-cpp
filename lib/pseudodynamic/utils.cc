@@ -145,16 +145,14 @@ void paroc_utils::FindAbsolutePath(const char *fname, char *abspath) {
         return;
     }
     char olddir[1024];
-    char *trsh;
-    trsh=getcwd(olddir,1024);
+    getcwd(olddir,1024);
     *t=0;
-    int ret;
-    ret=chdir(fname);
+    chdir(fname);
     *t='/';
     if(getcwd(dir,1024)==NULL) {
         *dir=0;
     }
-    ret=chdir(olddir);
+    chdir(olddir);
     sprintf(abspath,"%s/%s",dir,t+1);
 }
 

@@ -85,7 +85,7 @@ bool paroc_combox::SendAck(paroc_connection *conn) {
     return true;
 }
 
-bool paroc_combox::RecvAck(paroc_connection *conn) {
+bool paroc_combox::RecvAck(paroc_connection * /*conn*/) {
     paroc_connection * connex = Wait();
     if(connex == NULL) {
         paroc_exception::paroc_throw(ACK_NOT_RECEIVED, "[paroc_combox_socket.cc]");
@@ -120,6 +120,7 @@ bool paroc_combox::SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg) 
 
     cblist[idx] = cb;
     cbdata[idx] = arg;
+    return true;
 }
 
 void paroc_combox::SetBufferFactory(paroc_buffer_factory *fact) {

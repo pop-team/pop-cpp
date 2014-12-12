@@ -60,14 +60,11 @@ paroc_combox_socket::~paroc_combox_socket() {
     Close();
 }
 
-bool paroc_combox_socket::Create(char* host, int port, bool server) {
+bool paroc_combox_socket::Create(char* /*host*/, int port, bool server) {
     Close();
     _isServer = server;
 
-    protoent *ppe;
-    char prot[] = "tcp";
     int type, protocol;
-    char tmpbuf[2048];
 
     protocol = PROTO_TCP;
 
@@ -119,8 +116,6 @@ bool paroc_combox_socket::Connect(const char *url) {
         url++;
     }
 
-    const char searchPattern[]="socket://";
-    char * searchResult;
     if(strncmp(url,"socket://",9)==0) {
         host=strdup(url+9);
     } else {
@@ -160,7 +155,7 @@ int paroc_combox_socket::Send(const char *s,int len) {
     return count;
 }
 
-int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn, bool unlock) {
+int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn, bool /*unlock*/) {
     if(conn==NULL) {
         return Send(s,len);
     }
@@ -184,7 +179,7 @@ int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn, boo
     return count;
 }
 
-int paroc_combox_socket::Recv(char *s,int len, bool unlock) {
+int paroc_combox_socket::Recv(char *s,int len, bool /*unlock*/) {
     int fd, n;
     isCanceled=false;
     do {
@@ -208,7 +203,7 @@ int paroc_combox_socket::Recv(char *s,int len, bool unlock) {
     return n;
 }
 
-int paroc_combox_socket::Recv(char *s,int len, paroc_connection *&iopeer, bool unlock) {
+int paroc_combox_socket::Recv(char *s,int len, paroc_connection *&iopeer, bool /*unlock*/) {
     int fd, n;
     paroc_connection_sock *t;
     isCanceled=false;
@@ -397,8 +392,8 @@ bool paroc_combox_socket::CloseSock(int fd) {
 }
 
 
-bool paroc_combox_socket::disconnect(paroc_connection *connection) {
-
+bool paroc_combox_socket::disconnect(paroc_connection * /*connection*/) {
+  return true;
 }
 
 bool paroc_combox_socket::is_server() {
@@ -408,15 +403,12 @@ bool paroc_combox_socket::is_server() {
 bool paroc_combox_socket::Connect(const char *host,int port) {
     hostent *phe;
     sockaddr_in sin;
-    int s,type;
-    char tmpbuf[2048];
-    int herrno;
 
     memset((char *)&sin,0,sizeof(sin));
     sin.sin_family=AF_INET;
-    if((phe=popc_gethostbyname(host)) !=NULL) {
+    if((phe=gethostbyname(host)) !=NULL) {
         memcpy((char *)&sin.sin_addr,phe->h_addr,phe->h_length);
-    } else if((sin.sin_addr.s_addr=inet_addr(host))==-1) {
+    } else if((signed)(sin.sin_addr.s_addr=inet_addr(host))==-1) {
         return false;
     }
     sin.sin_port=htons(port);

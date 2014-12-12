@@ -194,6 +194,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
 }
 
 bool paroc_broker::OnNewConnection(paroc_connection *conn) {
+    (void)(conn);
     if(obj != NULL) {
         obj->AddRef();
     }
@@ -204,6 +205,7 @@ bool paroc_broker::OnNewConnection(paroc_connection *conn) {
  * This method is called when a connection with an interface is closed.
  */
 bool paroc_broker::OnCloseConnection(paroc_connection *conn) {
+  (void)(conn);
     if(obj != NULL) {
         int ret = obj->DecRef();
         if(ret <= 0) {
@@ -230,8 +232,8 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     case 0: // BindStatus call
         if(methodid[2] & INVOKE_SYNC) {
             //printf("BindStatus\n");
-            paroc_buffer_factory *bufferFactory;
-            bufferFactory = req.from->GetBufferFactory();
+            //paroc_buffer_factory *bufferFactory;
+            //bufferFactory = req.from->GetBufferFactory();
             paroc_message_header h("BindStatus");
             buf->Reset();
             buf->SetHeader(h);

@@ -101,8 +101,7 @@ int RunCmd(char **argv, char *env[], int *status) {
     }
 #endif
     if(status!=NULL) {
-        int id;
-        id=waitpid(pid, status, 0);
+        waitpid(pid, status, 0);
     }
     return 0;
 }
@@ -114,7 +113,7 @@ int paroc_interface::batchindex=0;
 int paroc_interface::batchsize=0;
 paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
 
-paroc_interface::paroc_interface() : _ssh_tunneling(false), __paroc_combox(NULL), __paroc_buf(NULL) {
+paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL), _ssh_tunneling(false) {
 //  printf("INTERFACE: Create without anything\n");
 
     if(od.isSecureSet()) {
@@ -123,7 +122,7 @@ paroc_interface::paroc_interface() : _ssh_tunneling(false), __paroc_combox(NULL)
     //printf("INTERFACE: End of constructor\n");
 }
 
-paroc_interface::paroc_interface(const paroc_accesspoint &p) : _ssh_tunneling(false), __paroc_combox(NULL), __paroc_buf(NULL) {
+paroc_interface::paroc_interface(const paroc_accesspoint &p) : __paroc_combox(NULL), __paroc_buf(NULL), _ssh_tunneling(false) {
 //  printf("INTERFACE: Create with AP\n");
 
     // For SSH tunneling
@@ -131,8 +130,8 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) : _ssh_tunneling(fa
         accesspoint.SetAsService();
     }
 
-    if(!p.IsEmpty());
-    Bind(p);
+    if(!p.IsEmpty())
+      Bind(p);
 
     if(p.GetNoAddRef()) {
         DecRef();
@@ -143,7 +142,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) : _ssh_tunneling(fa
 
 
 
-paroc_interface::paroc_interface(const paroc_interface &inf) : _ssh_tunneling(false), __paroc_combox(NULL), __paroc_buf(NULL) {
+paroc_interface::paroc_interface(const paroc_interface &inf) : __paroc_combox(NULL), __paroc_buf(NULL), _ssh_tunneling(false) {
     //printf("INTERFACE: Create with interface\n");
     paroc_accesspoint infAP = inf.GetAccessPoint();
 
@@ -157,7 +156,7 @@ paroc_interface::paroc_interface(const paroc_interface &inf) : _ssh_tunneling(fa
     Bind(inf.GetAccessPoint());
 }
 
-paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) : _ssh_tunneling(false), __paroc_combox(combox), __paroc_buf(buffer) {
+paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) : __paroc_combox(combox), __paroc_buf(buffer), _ssh_tunneling(false) {
     //printf("INTERFACE: Create with combox & buffer\n");
     if(combox!=NULL) {
         POPString url;
@@ -809,7 +808,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
     paroc_exception::paroc_throw(POPC_NO_ENCODING, ClassName());
 }
 
-int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od) {
+int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint & /*jobserv*/, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int /*howmany*/, const paroc_od& od) {
     if(codefile==NULL) {
         return ENOENT;
     }
@@ -824,7 +823,6 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     const char *argv[1024];
     char *tmp;
 
-    bool isManual = od.getIsManual();
 
 #ifdef OD_DISCONNECT
     bool checkConnection=od.getCheckConnection();
@@ -832,13 +830,11 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 
     POPString ruser;
     POPString rcore;
-    const char *rport=NULL;
     POPString batch;
     POPString cwd;
 
     if(hostname != NULL && (tmp = (char*)strchr(hostname, ':')) != NULL) {
         *tmp = 0;
-        rport = tmp + 1;
     }
     od.getUser(ruser);
     od.getCore(rcore);
@@ -863,7 +859,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
             }
         }
     }
-    /*   else {
+       else {
         char tmpstr[100];
         tmp=getenv("POPC_LOCATION");
         if (tmp!=NULL) sprintf(tmpstr,"%s/services/popcobjrun.%s",tmp,(const char*)batch);
@@ -963,7 +959,6 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 
     argv[n]=NULL;
 
-    int ret=0, err=0;
 
 
     /**
@@ -1053,7 +1048,6 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
         paroc_exception::paroc_throw(err, classname);
     }*/
 
-    err = errno;
 
     // Put together the accesspoints of the brokers
     /*std::string tmp_accesspoint;
@@ -1169,8 +1163,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf) {
 
 /* ################################################################################################
  *                                 SSH TUNNELING FUNCTION
-/* ################################################################################################
-
+*/
 
 
 
@@ -1278,7 +1271,7 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
  * @param local_port Local port of the SSH Tunnel
  * @return TRUE if the SSH Tunnel is alive, FALSE if the SSH Tunnel is not alive
  */
-bool paroc_interface::IsTunnelAlive(const char *user, const char *dest_ip, int dest_port, int local_port) {
+bool paroc_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, int dest_port, int local_port) {
     std::ostringstream cmd;
     int BUF_SIZE=6;
     char res[BUF_SIZE];

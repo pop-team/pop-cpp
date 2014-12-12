@@ -43,8 +43,7 @@ void paroc_buffer_raw::UnPack(char *data, int n) {
         return;
     }
     //CheckUnPack(n); // Error with this check in 64 bits
-    int t;
-    t=packeddata.GetSize();
+    packeddata.GetSize();
     memcpy(data, ((char *)packeddata)+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
@@ -422,12 +421,12 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
 
     printf("RAW: Recv\n");
     int h[5];
-    int n, i;
+    int n;
 
     //Recv the header...
 
     char *data_header = (char *)h;
-    int ret = s.Recv(data_header, 20, conn, true);
+    s.Recv(data_header, 20, conn, true);
     printf("RAW: header received\n");
     /*  n = 20;
         do {
@@ -472,7 +471,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     if(n > 0) {
         data_header = (char *)packeddata+20;
         printf("RAW: ready to receive %d\n", n);
-        ret = s.Recv(data_header, n, conn, false);
+        s.Recv(data_header, n, conn, false);
         printf("RAW: received %d\n", n);
     }
     /*

@@ -107,7 +107,7 @@ void paroc_accesspoint::SetPKI(POPString pki){
  * Check if the access point is in secure mode
  * @return TRUE if the access point is in secure mode
  */
-const bool paroc_accesspoint::IsSecure() const {
+bool paroc_accesspoint::IsSecure() const {
     if(_security==SECURE) {
         return true;
     }
@@ -128,7 +128,7 @@ void paroc_accesspoint::SetSecure() {
  * Return true is the accesspoint is reffered to a service
  * @return TRUE if the parallel object pointed by the access point is a service
  */
-const bool paroc_accesspoint::IsService() const {
+bool paroc_accesspoint::IsService() const {
     return _service;
 }
 
@@ -136,7 +136,7 @@ const bool paroc_accesspoint::IsService() const {
 /**
  * Get the boolean value that says if the creation of an interface with this access point must increment the internal counter
  */
-const bool paroc_accesspoint::GetNoAddRef() const {
+bool paroc_accesspoint::GetNoAddRef() const {
     return _noaddref;
 }
 

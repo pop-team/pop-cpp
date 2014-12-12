@@ -34,7 +34,7 @@ const int popc_combox_mpi::POPC_COMBOX_MPI_INITIAL_RSIZE = 10;
 const int popc_combox_mpi::POPC_COMBOX_MPI_HEADER_SIZE = 20;
 
 
-popc_combox_mpi::popc_combox_mpi() : peer(NULL), index(0), nready(0), isCanceled(false), _is_server(false), _current_tag(0) {
+popc_combox_mpi::popc_combox_mpi() : _is_server(false), isCanceled(false), peer(NULL), index(0), nready(0),  _current_tag(0) {
 }
 
 popc_combox_mpi::~popc_combox_mpi() {
@@ -47,15 +47,14 @@ popc_combox_mpi::~popc_combox_mpi() {
 /**
  * Create a new MPI Combox. Server combox will open a MPI port to receive new connection.
  */
-bool popc_combox_mpi::Create(char* host, int port, bool server) {
+bool popc_combox_mpi::Create(char* /*host*/, int /*port*/, bool server) {
     _have_to_get_lock = false;
     _is_server = server;
     if(_is_server) {
         // If MPI_Init was not called yet, we will call it now
         if(!MPI::Is_initialized()) {
             // Init MPI for multithread support
-            int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
-            int provided_support = MPI::Init_thread(required_support);
+            MPI::Init();
         }
     }
     _node_id = MPI::COMM_WORLD.Get_rank();
@@ -128,11 +127,12 @@ bool popc_combox_mpi::connect_and_die(std::string &url) {
     tmp_buffer->Reset();
     tmp_buffer->SetHeader(h);
     tmp_buffer->Send(connection);
+    return true;
 }
 
 
 
-int popc_combox_mpi::Send(const char *s, int length) {
+int popc_combox_mpi::Send(const char * /*s*/, int /*length*/) {
     if(peer == NULL) {
         return 0;
     }
@@ -173,7 +173,7 @@ int popc_combox_mpi::Send(const char *s, int length, paroc_connection *conn, boo
     return 0;
 }
 
-int popc_combox_mpi::Recv(char *s, int length, bool unlock) {
+int popc_combox_mpi::Recv(char *s, int length, bool /*unlock*/) {
     if(peer == NULL) {
         return -1;
     }
@@ -184,7 +184,6 @@ int popc_combox_mpi::Recv(char *s, int length, bool unlock) {
 
 int popc_combox_mpi::Recv(char *s, int length, paroc_connection *&iopeer, bool unlock) {
     MPI::Intercomm communicator;
-    POPC_MPIConnection *connection;
     int tag = 0;
 
     // Receiving the data
@@ -260,15 +259,15 @@ bool popc_combox_mpi::GetUrl(POPString& accesspoint) {
 /**
  * Not used in MPI connection
  */
-bool popc_combox_mpi::Connect(const char *host, int port) {
+bool popc_combox_mpi::Connect(const char * /*host*/, int /*port*/) {
     return true;
 }
 
 /**
  *
  */
-bool popc_combox_mpi::disconnect(paroc_connection *connection) {
-
+bool popc_combox_mpi::disconnect(paroc_connection * /*connection*/) {
+  return true;
 }
 
 /**
@@ -284,7 +283,7 @@ bool popc_combox_mpi::is_server() {
  * @param fd  Not used in this combox
  * @return  A pointer to the newly created connection
  */
-paroc_connection* popc_combox_mpi::CreateConnection(int fd) {
+paroc_connection* popc_combox_mpi::CreateConnection(int /*fd*/) {
     return new POPC_MPIConnection(this);
 }
 

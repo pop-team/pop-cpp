@@ -27,15 +27,14 @@ void EventQueue::PostEvent(int e) {
 }
 
 int EventQueue::WaitEvent(int e, int timeout) {
-    struct timespec abstimeout;
-
+//    struct timespec abstimeout;
     cond.lock();
 
     if(timeout>0) {
         struct timeval now;
         gettimeofday(&now, NULL);
-        abstimeout.tv_sec = now.tv_sec + timeout/1000;
-        abstimeout.tv_nsec = (now.tv_usec + (timeout%1000)*1000)* 1000;
+//        abstimeout.tv_sec = now.tv_sec + timeout/1000;
+//        abstimeout.tv_nsec = (now.tv_usec + (timeout%1000)*1000)* 1000;
     }
     bool done=false;
     while(!done) {

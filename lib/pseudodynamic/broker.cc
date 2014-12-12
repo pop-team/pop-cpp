@@ -48,7 +48,7 @@ void paroc_request::operator =(const paroc_request &r) {
 }
 
 void broker_interupt(int sig) {
-    printf("Interrupt on thread id %lu\n",(unsigned long)pthread_self());
+    printf("Interrupt on thread id %lu. %d\n",(unsigned long)pthread_self(), sig);
 }
 
 
@@ -380,6 +380,6 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *server) {
             }
             tok = strtok_r(NULL, " \t\n\r", &ptr);
         }*/
-
+  return true;
 }
 

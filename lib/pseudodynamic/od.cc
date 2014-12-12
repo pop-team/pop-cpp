@@ -217,7 +217,7 @@ bool paroc_od::isSearchSet() const {
 
 
 //Used to specify if the used protocol is secure
-void paroc_od::secure(int foo) {
+void paroc_od::secure(int /*foo*/) {
     secureSet=true;
 }
 

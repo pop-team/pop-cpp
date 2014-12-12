@@ -227,7 +227,7 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
     if(name==NULL || creator==NULL) {
         return false;
     }
-    combox_factory_struct t;
+    //combox_factory_struct t;
 
     POSITION pos=list.GetHeadPosition();
     POSITION insertpos=NULL;
@@ -239,7 +239,7 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
             return false;
         }
 
-        if(metrics<t.metrics && insertpos==NULL) {
+        if(metrics < t.metrics && insertpos==NULL) {
             insertpos=old;
         }
     }
@@ -258,7 +258,7 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
     return true;
 }
 
-void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CREATOR &f) {
+void * paroc_combox_factory::LoadPlugin(char * /*fname*/,  POPString & /*name*/, COMBOX_CREATOR & /*f*/) {
 #ifdef HAVE_LIBDL
     void *handle=dlopen(fname,RTLD_LAZY| RTLD_LOCAL);
     if(handle==NULL) {

@@ -11,7 +11,7 @@
 #include "paroc_buffer_utils.h"
 #include "paroc_exception.h"
 
-void marshalstring(paroc_buffer &buf, char *str, int maxsize, int flag, paroc_memspool *temp) {
+void marshalstring(paroc_buffer &buf, char *str, int maxsize, int flag, paroc_memspool * /*temp*/) {
     if(flag & FLAG_MARSHAL) {
         int n=(str!=NULL) ?  strlen(str)+1 : 0;
         if(n>maxsize) {
@@ -37,7 +37,7 @@ void marshalstring(paroc_buffer &buf, char *str, int maxsize, int flag, paroc_me
     }
 }
 
-template <class T> void packarray(paroc_buffer &buf, T *param, int size, int flag, paroc_memspool *temp) {
+template <class T> void packarray(paroc_buffer &buf, T *param, int size, int flag, paroc_memspool * /*temp*/) {
     if(flag & FLAG_MARSHAL) {
         int n=(param!=0) ?  size : 0;
         buf.Pack(&n,1);
@@ -68,6 +68,6 @@ template void packarray<double> (paroc_buffer &buf, double *param, int size, int
 template void packarray<float> (paroc_buffer &buf, float *param, int size, int flags, paroc_memspool *tmp);
 //template void packarray<paroc_interface> (paroc_buffer &buf, paroc_interface *param, int size, int flags, paroc_memspool *tmp);
 
-void marshalnull(paroc_buffer &buf, void * & param, int hint, int flags, paroc_memspool *tmp) {
+void marshalnull(paroc_buffer & /*buf*/, void * & param, int /*hint*/, int /*flags*/, paroc_memspool * /*tmp*/) {
     param=NULL;
 }

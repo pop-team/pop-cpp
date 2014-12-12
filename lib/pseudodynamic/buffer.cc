@@ -17,7 +17,7 @@
 
 
 #define METH_VECT_PACK(type) \
-void paroc_buffer::Pack(std::vector<type> *vect, int n)\
+void paroc_buffer::Pack(std::vector<type> *vect, int /*n*/)\
 {\
     int s=vect->size();\
     Pack(&s,1);\
@@ -25,7 +25,7 @@ void paroc_buffer::Pack(std::vector<type> *vect, int n)\
 }
 
 #define METH_VECT_UNPACK(type) \
-void paroc_buffer::UnPack(std::vector<type> *vect, int n)\
+void paroc_buffer::UnPack(std::vector<type> *vect, int /*n*/)\
 {\
     int s=0;\
     UnPack(&s,1);\
@@ -99,7 +99,7 @@ const paroc_message_header & paroc_buffer::GetHeader() const {
     return header;
 }
 
-void paroc_buffer::Push(const char *paramname, const char *paramtype, int nelem) {
+void paroc_buffer::Push(const char* /*paramname*/, const char* /*paramtype*/, int /*nelem*/) {
 }
 
 void paroc_buffer::Pop() {

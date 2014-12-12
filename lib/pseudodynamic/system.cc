@@ -289,7 +289,7 @@ POPString paroc_system::GetDefaultInterface() {
     return POPString(iface);
 }
 
-bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
+bool paroc_system::GetIPFromInterface(POPString &/*iface*/, POPString &/*str_ip*/) {
     /*struct ifaddrs *addrs, *iap;
     struct sockaddr_in *sa;
     char str_ip_local[32];
@@ -409,7 +409,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     return false;
 }
 
-void paroc_system::Finalize(bool normal_exit) {
+void paroc_system::Finalize(bool /*normal_exit*/) {
     //printf("Finalize the application %s\n", normal_exit ? "true" : "false");
     /*  if (mgr != NULL) {
         //printf("mgr not null\n");
