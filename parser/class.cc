@@ -1,5 +1,4 @@
-/**
- * File : class.cc
+/** File : class.cc
  * Author : Tuan Anh Nguyen
  * Description : POP-C++ parser/compiler Class object
  * Creation date : -
@@ -84,6 +83,7 @@ Class::~Class() {
 /*
 parclass is also a data type
  */
+
 
 bool Class::IsParClass() {
     return true;
@@ -618,6 +618,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
 
         //sprintf(str,"\n  void _popc_constructor();", name);
         //code.InsertAt(-1, str, strlen(str));
+    
 
         sprintf(str, "\n  virtual char* get_class_name() { return (char*)\"%s\"; };\n", name);
         code.InsertAt(-1, str, strlen(str));
@@ -686,6 +687,9 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
         }
     }
 
+    //Add the declaration of the __POPThis variable for support of the "this" keyword
+    sprintf(str,"\npublic:\n  %s* __POPThis_%s; \n", name, name);
+    code.InsertAt(-1,str,strlen(str));
     strcpy(str,"\n};\n");
     code.InsertAt(-1,str, strlen(str));
 
