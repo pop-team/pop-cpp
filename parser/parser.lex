@@ -238,8 +238,11 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     bool constructor = paroc_utils::isEqual(clname,tmp);
     sprintf(newyytext,"%s_popcobject%s", clname, yytext+len);
     othercodes.InsertAt(-1,newyytext,strlen(newyytext));
-    //Create the string to be inserted in every paroc_object constructor
-    sprintf(thisBuf, "__POPThis_%s=new %s(GetAccessPointForThis());", clname, clname);
+    Class *cl = thisCodeFile->FindClass(clname);
+    if(!cl->is_collective()){
+      //Create the string to be inserted in every paroc_object constructor
+      sprintf(thisBuf, "__POPThis_%s=new %s(GetAccessPointForThis());", clname, clname);
+    }
     
 
   if (constructor) {
@@ -584,7 +587,7 @@ this {
                 othercodes.InsertAt(-1,"__POPThis_",strlen("__POPThis_"));
                 othercodes.InsertAt(-1,cl->GetName(),strlen(cl->GetName()));
                 insertNormalThis = false;
-            }
+            } 
         }
         
         if(insertNormalThis)
