@@ -26,12 +26,12 @@ public:
     bool IsEmpty() const;
     bool operator ==(const paroc_accesspoint &p) const;
     paroc_accesspoint & operator =(const paroc_accesspoint &p);
-    const bool IsSecure() const;
+    bool IsSecure() const;
     void SetSecure();
-    const bool IsService() const;
+    bool IsService() const;
     void SetAsService();
     void SetNoAddRef() ;
-    const bool GetNoAddRef() const;
+    bool GetNoAddRef() const;
     virtual void Serialize(paroc_buffer &buf, bool pack);
 
 private:

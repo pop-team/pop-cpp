@@ -48,7 +48,8 @@ public:
 
     virtual bool Connect(const char *url);
     virtual bool connect_and_die(std::string &url) {
-        return true;
+      (void)(url);  
+      return true;
     }
 
     virtual paroc_connection* get_connection();

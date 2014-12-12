@@ -37,8 +37,8 @@ public:
     void insertNode(paroc_string nodeId);  //Insert a node a the end of the way back
     paroc_string getNextNode() const;      //Return the next node in the object
     void deleteNextNode();                 //Delete the next node in the object
-    const bool isLastNode() const;         //Check if it's the lasr node in the way back
-    const bool isEmpty() const;            //Check if the way back is empty
+    bool isLastNode() const;         //Check if it's the lasr node in the way back
+    bool isEmpty() const;            //Check if the way back is empty
 
 
     //Inherited method to serialize the object

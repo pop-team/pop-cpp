@@ -20,10 +20,8 @@
 //#include <iostream>
 //#include <sstream>
 
-//#define cout paroc_system::_popc_cout.str(""); \
-paroc_system::_popc_cout
-//#define popcendl std::endl; \
-rprintf(paroc_system::_popc_cout.str().c_str())
+//#define cout paroc_system::_popc_cout.str(""); paroc_system::_popc_cout
+//#define popcendl std::endl; rprintf(paroc_system::_popc_cout.str().c_str())
 //End of add
 
 /**
