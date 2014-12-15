@@ -1,10 +1,10 @@
 all: app object
 
 app:
-	popcc -noclean -o main POPObject.ph POPObject.cc main.cc
+	popcc -o main POPObject.ph POPObject.cc main.cc
 
 object:
-	popcc -noclean -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
+	popcc -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
 	./POPObject.obj -listlong > obj.map
 
 clean:
