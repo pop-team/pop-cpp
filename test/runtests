@@ -3,7 +3,7 @@
 RESULTS=tests_results
 NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
-EXCLUDEDTEST="asynccreation\|runtests\|runtests_short\|stressallocation\|CMake\|xmp1\|xmp2\|xmp3\|xmp4\|xmp-raw\|static1\|cpp11"
+EXCLUDEDTEST="asynccreation\|runtests\|runtests_short\|stressallocation\|CMake\|xmp1\|xmp2\|xmp3\|xmp4\|xmp-raw\|static1"
 SXXLOCATION=/usr/local/popc/sbin
 
 if [ "x" != "x$POPC_LOCATION" ]
