@@ -24,6 +24,11 @@ private:
     static POPC_AllocatorFactory* instance;
 
 public:
+    static const char* PREFIX_UDS;
+    static const char* PREFIX_TCP;
+    static const char* PREFIX_MPI;
+    static const char* PREFIX_SHM;
+
     static POPC_AllocatorFactory* get_instance();
     POPC_Allocator* get_allocator(POPC_Allocator::POPC_Protocol protocol,
                                   POPC_Allocator::POPC_AllocationMechanism alloc_mechanism);
