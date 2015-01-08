@@ -1,0 +1,55 @@
+TestObject createdTest with synchronous methods
+Concurrent method (call1) starts
+Concurrent method (call1) ends (execution time 100000 ns)
+Concurrent method (call2) starts
+Concurrent method (call2) ends (execution time 80000 ns)
+Concurrent method (call3) starts
+Concurrent method (call3) ends (execution time 0 ns)
+Mutex method (-----) starts
+Mutex method (-----) ends (execution time 0 ns)
+Sequential method (call1) starts
+Sequential method (call1) ends (execution time 100000 ns)
+Sequential method (call2) starts
+Sequential method (call2) ends (execution time 80000 ns)
+Sequential method (call3) starts
+Sequential method (call3) ends (execution time 0 ns)
+Mutex method (-----) starts
+Mutex method (-----) ends (execution time 0 ns)
+Mutex method (call1) starts
+Mutex method (call1) ends (execution time 100000 ns)
+Mutex method (call2) starts
+Mutex method (call2) ends (execution time 80000 ns)
+Mutex method (call3) starts
+Mutex method (call3) ends (execution time 0 ns)
+Mutex method (-----) starts
+Mutex method (-----) ends (execution time 0 ns)
+Test with asynchronous methods
+Concurrent method (call1) starts
+Concurrent method (call2) starts
+Concurrent method (call1) ends (execution time 150000 ns)
+Concurrent method (call2) ends (execution time 80000 ns)
+Concurrent method (call3) starts
+Concurrent method (call3) ends (execution time 40000 ns)
+Mutex method (-----) starts
+Mutex method (-----) ends (execution time 0 ns)
+Sequential method (call1) starts
+Concurrent method (call3) starts
+Concurrent method (call3) ends (execution time 10000 ns)
+Sequential method (call1) ends (execution time 100000 ns)
+Sequential method (call2) starts
+Sequential method (call2) ends (execution time 80000 ns)
+Sequential method (call4) starts
+Sequential method (call4) ends (execution time 0 ns)
+Mutex method (-----) starts
+Mutex method (-----) ends (execution time 0 ns)
+Mutex method (call1) starts
+Mutex method (call1) ends (execution time 100000 ns)
+Sequential method (call2) starts
+Sequential method (call2) ends (execution time 80000 ns)
+Mutex method (call3) starts
+Mutex method (call3) ends (execution time 80000 ns)
+Concurrent method (call4) starts
+Concurrent method (call4) ends (execution time 80000 ns)
+Mutex method (call5) starts
+Mutex method (call5) ends (execution time 0 ns)
+TestObject destroyed

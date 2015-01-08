@@ -1,0 +1,13 @@
+===============================================================================
+* sequential
+===============================================================================
+* Created by Laurent Winkler to test the call order of methods (async, sync, conc, mutex and sequetial)
+* Date : December 2014
+********************************************************************************
+
+This program tests the call order of POP-C++ methods
+
+usage :
+
+popcrun obj.map ./main
+

@@ -99,4 +99,5 @@ else
     fi
 fi
 
+$SXXLOCATION/SXXpopc stop 2&> /dev/null
 $SXXLOCATION/SXXpopc kill 2&> /dev/null
