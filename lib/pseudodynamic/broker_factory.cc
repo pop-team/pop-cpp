@@ -172,16 +172,12 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
         open("/dev/null",O_WRONLY);
         open("/dev/null",O_WRONLY);
 #endif
-
     }
 
     return objbroker;
 }
 
 
-/**
- *
- */
 void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
     if(!longformat) {
         printf("List of parallel object classes:\n====\n");

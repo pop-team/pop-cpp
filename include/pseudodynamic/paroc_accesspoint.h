@@ -1,28 +1,31 @@
 /**
- * File : accesspoint.h
- * Author : Tuan Anh Nguyen
- * Description : abstract network access point for parallel objects, used by POP-C++ runtime.
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief abstract network access point for parallel objects, used by POP-C++ runtime.
+ *
+ * UPDATES:
+ * Authors      Date               Comment
  * clementval  2011/9/13   Add the method GetNoAddRef() and the variable _noaddref to be able to handle the THIS keyword correctly
  */
 
 #ifndef POPC_ACCESSPOINT_H
 #define POPC_ACCESSPOINT_H
-
 #include "paroc_base.h"
-#include <mpi.h>
 
 class paroc_accesspoint: public paroc_base {
 public:
     paroc_accesspoint();
+    //  paroc_accesspoint(const char *hostport);
     paroc_accesspoint(const paroc_accesspoint &p);
     ~paroc_accesspoint();
 
+
     void SetAccessString(const char *hostport);
-    const char *GetAccessString() const;
+    char *GetAccessString() const;
     bool IsEmpty() const;
     bool operator ==(const paroc_accesspoint &p) const;
     paroc_accesspoint & operator =(const paroc_accesspoint &p);
@@ -32,8 +35,8 @@ public:
     void SetAsService();
     void SetNoAddRef() ;
     bool GetNoAddRef() const;
-    virtual void Serialize(paroc_buffer &buf, bool pack);
 
+    virtual void Serialize(paroc_buffer &buf, bool pack);
 private:
     char *endpoint;
     bool _service;
@@ -42,4 +45,4 @@ private:
     enum security { NONSECURE, SECURE };
 };
 
-#endif /* POPC_ACCESSPOINT_H */
+#endif

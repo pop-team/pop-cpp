@@ -1,11 +1,16 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: POP-C++ communication abstraction
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief POP-C++ communication abstraction
+ *
  */
 
-#ifndef INCLUDE_POPC_COMBOX_H_
-#define INCLUDE_POPC_COMBOX_H_
+#ifndef POPC_COMBOX_H_
+#define POPC_COMBOX_H_
 
 #include "paroc_string.h"
 #include "paroc_buffer_factory_finder.h"
@@ -115,8 +120,10 @@ protected:
     COMBOX_CALLBACK cblist[2];
     void *cbdata[2];
 
-
     paroc_buffer_factory *defaultFact;
+
 };
+
+
 
 #endif // INCLUDE_POPC_COMBOX_H_

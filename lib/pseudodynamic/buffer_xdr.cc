@@ -46,7 +46,6 @@ void paroc_buffer_xdr::Pack(const int *data, int n) {
 
 }
 void paroc_buffer_xdr::UnPack(int *data, int n) {
-
     if(n<=0) {
         return;
     }
@@ -60,6 +59,7 @@ void paroc_buffer_xdr::UnPack(int *data, int n) {
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
     xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int);
     xdr_destroy(&xdr);
+
     unpackpos+=sz;
 }
 
@@ -95,7 +95,6 @@ void paroc_buffer_xdr::UnPack(unsigned *data, int n) {
 }
 
 void paroc_buffer_xdr::Pack(const long *data, int n) {
-
     if(n<=0) {
         return;
     }
@@ -127,7 +126,6 @@ void paroc_buffer_xdr::UnPack(long *data, int n) {
 }
 
 void paroc_buffer_xdr::Pack(const unsigned long *data, int n) {
-
     if(n<=0) {
         return;
     }

@@ -1,10 +1,17 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: utilities used by the runtime
-MODIFICATIONS: PK&VC:25.2.2011 add definition of POPGetHost
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief utilities used by the runtime
+ *
+ *
+ * UPDATES:
+ * Author Date        Description
+ * PK     2011/02/25  Add definition of POPGetHost
  */
-
 
 #ifndef POPC_UTILS_H
 #define POPC_UTILS_H
@@ -19,11 +26,15 @@ class AppCoreService;
 
 class paroc_utils {
 public:
+
     static char *checkremove(int *argc, char ***argv, const char *opt);
     static bool isEqual(const char *s1, const char *s2);
     static bool isncaseEqual(const char *s1, const char *s2);
     static bool MatchWildcard(const char *str, const char *wildcard);
     static void FindAbsolutePath(const char *fname, char *abspath);
+    static void Assert(bool a);
+
+
 #ifdef _POPC_
     static bool SameContact(const char *contact1, const char *contact2);
     static bool IsRemoteDest(const char *dest);
@@ -34,16 +45,19 @@ public:
     static bool isIPv4Address(POPString value);
     static bool isValidName(POPString value);
     static float benchmark_power();
-    static int InitCodeService(char *fileconf, AppCoreService *service);
-#endif
-};
 
+    static int InitCodeService(char *fileconf, AppCoreService *service);
+
+#endif
+
+};
 typedef paroc_utils POPUtils;
 
 #ifdef _POPC_
-//int rprintf(const char *format,...);
+int rprintf(const char *format,...);
 
 #ifndef _POPC_RUNTIME_
+#define printf rprintf
 #define POPGetHost() (const char*)POPSystem::GetHost()
 #endif
 

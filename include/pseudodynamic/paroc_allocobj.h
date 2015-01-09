@@ -1,3 +1,14 @@
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of the batch creation mechanism of parallel objects, used by POP-C++ runtime
+ *
+ */
+
 #ifndef POPC_ALLOCOBJ_H
 #define POPC_ALLOCOBJ_H
 #include <paroc_mutex.h>

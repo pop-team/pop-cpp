@@ -16,8 +16,9 @@
 #include "paroc_accesspoint.h"
 #include "paroc_utils.h"
 
-//paroc_accesspoint class
-
+/**
+ * Accesspoint constructor
+ */
 paroc_accesspoint::paroc_accesspoint() {
     endpoint=NULL;
     _security=NONSECURE;
@@ -25,6 +26,9 @@ paroc_accesspoint::paroc_accesspoint() {
     _noaddref=false;
 }
 
+/**
+ * Accesspoint copy constructor
+ */
 paroc_accesspoint::paroc_accesspoint(const paroc_accesspoint &p) {
     endpoint=NULL;
     SetAccessString(p.GetAccessString());
@@ -39,12 +43,19 @@ paroc_accesspoint::paroc_accesspoint(const paroc_accesspoint &p) {
     _noaddref=GetNoAddRef();
 }
 
+/**
+ * Accesspoint destructor
+ */
 paroc_accesspoint::~paroc_accesspoint() {
     if(endpoint!=NULL) {
         free(endpoint);
     }
 }
 
+/**
+ * Set the different access in a string format. Each access is separated by a whit space.
+ * @param hostport  Access string to set as mai access
+ */
 void paroc_accesspoint::SetAccessString(const char *hostport) {
     if(endpoint!=hostport) {
         if(endpoint!=NULL) {
@@ -151,6 +162,9 @@ void paroc_accesspoint::SetAsService() {
 void paroc_accesspoint::SetNoAddRef() {
     _noaddref = true;
 }
+
+
+
 
 
 void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack) {

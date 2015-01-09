@@ -1,7 +1,13 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: buffer in XDR format used for heterogeneous platform communication
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief buffer in XDR format used for heterogeneous platform communication
+ *
+ *
  */
 
 #ifndef _POPC_BUFFER_XDR_H
@@ -22,6 +28,8 @@ public:
     ~paroc_buffer_xdr();
     virtual void Reset();
 
+    using paroc_buffer::Pack;
+    using paroc_buffer::UnPack;
     virtual void Pack(const int *data, int n);
     virtual void UnPack(int *data, int n);
 

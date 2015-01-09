@@ -1,7 +1,12 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: factory that creates a proper combox from the given name
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief factory that creates a proper combox from the given name
+ *
  */
 
 #ifndef POPC_COMBOX_FACTORY_H
@@ -11,7 +16,6 @@ DESCRIPTION: factory that creates a proper combox from the given name
 #include "paroc_list.h"
 #include "paroc_string.h"
 #include "paroc_array.h"
-
 
 /*This abstract class declares an interface creating abstract combox*/
 

@@ -235,15 +235,15 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 
     char *address = paroc_utils::checkremove(argc,argv,"-address=");
 
-    paroc_combox_factory  *ff = paroc_combox_factory::GetInstance();
-    int comboxCount = ff->GetCount();
+    paroc_combox_factory  *comboxFactory = paroc_combox_factory::GetInstance();
+    int comboxCount = comboxFactory->GetCount();
     comboxArray.SetSize(comboxCount);
     POPString protocolName;
     POPString url;
 
     int count=0;
     for(int i = 0; i < comboxCount; i++) {
-        comboxArray[count] = ff->Create(i);
+        comboxArray[count] = comboxFactory->Create(i);
         if(comboxArray[count] == NULL) {
             printf("Fail to create combox #%d",i);
         } else {

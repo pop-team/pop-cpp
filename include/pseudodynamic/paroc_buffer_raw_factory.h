@@ -1,8 +1,15 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: factory for raw buffer
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief factory for raw buffer
+ *
+ *
  */
+
 
 #ifndef POPC_BUFFER_RAW_FACTORY_H
 #define POPC_BUFFER_RAW_FACTORY_H

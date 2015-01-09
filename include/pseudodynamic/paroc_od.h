@@ -1,13 +1,19 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: parallel object description data and interface
-
-UPDATES :
-Authors     Date            Comment
-clementval  2010/05/06  All code added for the semester project begin with this comment //Added by clementval
-clementval  2010/05/06  Add object description for search parameter
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief parallel object description data and interface
+ *
+ * UPDATES :
+ * Authors      Date              Comment
+ * clementval   2010/05/06  All code added for the semester project begin with this comment //Added by clementval
+ * clementval 2010/05/06    Add object description for search parameter
+ *
  */
+
 
 
 #ifndef _POPC_OD_H

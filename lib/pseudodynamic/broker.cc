@@ -1,12 +1,15 @@
 /**
- * File : broker.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of parallel object broker: general part
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of parallel object broker: General part.
+ *
+ *
  */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -18,9 +21,8 @@
 #include "paroc_event.h"
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_buffer_raw.h"
-
-#include "paroc_thread.h"
 #include "paroc_utils.h"
+#include "paroc_thread.h"
 #include "paroc_system.h"
 
 #define TIMEOUT 1800
@@ -91,7 +93,6 @@ void broker_killed(int sig) {
 }
 
 
-
 paroc_broker::paroc_broker() {
     obj=NULL;
     state=POPC_STATE_RUNNING;
@@ -158,7 +159,6 @@ bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned 
 int paroc_broker::Run() {
 
     //Create threads for each protocols for receiving requests
-
     paroc_array<paroc_receivethread *> ptArray;
     int comboxCount = comboxArray.GetSize();
     if(comboxCount <= 0) {
@@ -166,7 +166,6 @@ int paroc_broker::Run() {
     }
 
     state = POPC_STATE_RUNNING;
-
     ptArray.SetSize(comboxCount);
     int i;
 
@@ -177,7 +176,6 @@ int paroc_broker::Run() {
             return errno;
         }
     }
-
 
     if(obj == NULL) {
         alarm(TIMEOUT);
@@ -207,12 +205,12 @@ int paroc_broker::Run() {
         //printf("BROKER: Will exit broker2\n");
         // Wait for all invocations to terminiate normally
         while(instanceCount > 0 || !request_fifo.IsEmpty()) {
-            //printf("BROKER: Will exit broker3\n");
             execCond.wait();
         }
     }
 
     state = POPC_STATE_EXIT;
+
     for(i=0; i < comboxCount; i++) {
         if(WakeupReceiveThread(comboxArray[i])) {
             delete ptArray[i];
@@ -228,7 +226,6 @@ int paroc_broker::Run() {
     return 0;
 }
 
-
 bool paroc_broker::Initialize(int *argc, char ***argv) {
     if(paroc_utils::checkremove(argc, argv, "-runlocal")) {
         paroc_od::defaultLocalJob = true;
@@ -242,12 +239,10 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     paroc_combox_factory  *comboxFactory = paroc_combox_factory::GetInstance();
     int comboxCount = comboxFactory->GetCount();
     comboxArray.SetSize(comboxCount);
-
     POPString protocolName;
     POPString url;
 
     int count=0;
-
     for(int i=0; i<comboxCount; i++) {
         comboxArray[count] = comboxFactory->Create(i);
         if(comboxArray[count] == NULL) {
@@ -301,9 +296,6 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     }
 
     accesspoint.SetAccessString(url.GetString());
-
-// printf("Broker accessstring:%s\n", accesspoint.GetAccessString());
-
 
     char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
     if(tmp!=NULL && classname!=NULL) {
