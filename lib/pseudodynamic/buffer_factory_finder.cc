@@ -1,27 +1,27 @@
 /**
- * File : buffer_factory_finder.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of buffer factory finder
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of buffer factory finder.
+ *
+ *
  */
 
-#include <stdio.h>
+/*
+  Deeply need refactoring:
+    POPC_BufferFactoryFinder instead of paroc_buffer_factory_finder
+ */
+
+#include "popc_intface.h"
 
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_buffer_xdr_factory.h"
 #include "paroc_buffer_raw_factory.h"
 #include "paroc_utils.h"
 #include "config.h"
-
-#include <sys/types.h>
-#include <dirent.h>
-
-#include <string.h>
-#include <stdlib.h>
-
 
 #ifdef HAVE_LIBDL
 #include <dlfcn.h>
@@ -49,7 +49,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
 
     char *module = getenv("POPC_LOADABLE_MODULES");
     if(module != NULL) {
-        char *libs = strdup(module);
+        char *libs = popc_strdup(module);
         char *mod = strtok(module,":");
         while(mod != NULL && size < MAX_FACTORY) {
             metrics[size] = 1;
@@ -60,7 +60,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
                 for(int j = 0; j < size; j++) {
                     if(plugins[size] == plugins[j]) {
                         loaded = true;
-                        dlclose(plugins[size]);
+                        popc_dlclose(plugins[size]);
                         break;
                     }
                 }
@@ -110,7 +110,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
                     for(int j = 0; j < size; j++) {
                         if(plugins[size] == plugins[j]) {
                             loaded = true;
-                            dlclose(plugins[size]);
+                            popc_dlclose(plugins[size]);
                             break;
                         }
                     }
@@ -138,7 +138,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
                         bool loaded=false;
                         for(int j=0; j<size; j++) if(plugins[size]==plugins[j]) {
                                 loaded=true;
-                                dlclose(plugins[size]);
+                                popc_dlclose(plugins[size]);
                                 break;
                             }
 
@@ -154,8 +154,9 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
     }
 
     //Now sorting...
-    for(int i=0; i<size; i++)
-        for(int j=size-1; j>i; j--) if(metrics[j]<metrics[j-1]) {
+    for(int i=0; i<size; i++) {
+        for(int j=size-1; j>i; j--) {
+            if(metrics[j]<metrics[j-1]) {
                 int t=metrics[j];
                 metrics[j]=metrics[j-1];
                 metrics[j-1]=t;
@@ -163,7 +164,8 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
                 bfArray[j]=bfArray[j-1];
                 bfArray[j-1]=f;
             }
-
+        }
+    }
 }
 
 paroc_buffer_factory_finder::~paroc_buffer_factory_finder() {
@@ -173,38 +175,40 @@ paroc_buffer_factory_finder::~paroc_buffer_factory_finder() {
     }
 
 #ifdef HAVE_LIBDL
-    for(int i=0; i<size; i++) if(plugins[i]!=NULL) {
-            dlclose(plugins[i]);
+    for(int i=0; i<size; i++) {
+        if(plugins[i]!=NULL) {
+            popc_dlclose(plugins[i]);
         }
+    }
 #endif
 }
 
 
-void * paroc_buffer_factory_finder::LoadPlugin(char* fname, paroc_buffer_factory * &f) {
+void * paroc_buffer_factory_finder::LoadPlugin(char *fname, paroc_buffer_factory * &f) {
 #ifdef HAVE_LIBDL
-    void *handle=dlopen(fname,RTLD_LAZY| RTLD_LOCAL);
-    if(handle==NULL) {
+    void *handle=popc_dlopen(fname,RTLD_LAZY| RTLD_LOCAL);
+    if(!handle) {
         return NULL;
     }
-    //DEBUG("Module loaded: %s",fname);
 
     paroc_buffer_factory * (*creator)();
-    creator = (paroc_buffer_factory * (*)())dlsym(handle,"ParocBufferFactory");
+    creator = (paroc_buffer_factory * (*)())popc_dlsym(handle,"ParocBufferFactory");
     if(creator != NULL) {
         f = creator();
-        if(f == NULL) {
-            dlclose(handle);
+        if(!f) {
+            popc_dlclose(handle);
             return NULL;
         }
     } else {
-        printf("POP-C++ Error: [CORE]:%s: %s",fname,dlerror());
-        dlclose(handle);
+        printf("POP-C++ Error: [CORE]:%s: %s",fname,popc_dlerror());
+        popc_dlclose(handle);
         return NULL;
     }
+
     return handle;
 #else
-    (void)(f);
-    (void)(fname);
+    ((void)fname);  //Silence warning
+    ((void)f);      //Silence warning
     return NULL;
 #endif
 }
@@ -212,7 +216,6 @@ void * paroc_buffer_factory_finder::LoadPlugin(char* fname, paroc_buffer_factory
 
 
 paroc_buffer_factory_finder* paroc_buffer_factory_finder::GetInstance() {
-
     if(bff==NULL) {
         bff=new paroc_buffer_factory_finder();
         return paroc_buffer_factory_finder::bff;
@@ -241,9 +244,9 @@ bool paroc_buffer_factory_finder::GetBufferName(int index, POPString & bufferNam
 
 
 paroc_buffer_factory* paroc_buffer_factory_finder::FindFactory(const POPString bufferName) {
-
     int i;
     POPString s;
+
     for(i=0; i < size; i++) {
         bfArray[i]->GetBufferName(s);
         if(paroc_utils::isEqual(s, bufferName)) {

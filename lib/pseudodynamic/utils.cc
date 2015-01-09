@@ -145,21 +145,21 @@ void paroc_utils::FindAbsolutePath(const char *fname, char *abspath) {
     char dir[1024];
 
     if(t==NULL) {
-        if(getcwd(dir,1024)==NULL) {
+        if(popc_getcwd(dir,1024)==NULL) {
             *dir=0;
         }
         sprintf(abspath,"%s/%s",dir,fname);
         return;
     }
     char olddir[1024];
-    getcwd(olddir,1024);
+    popc_getcwd(olddir,1024);
     *t=0;
-    chdir(fname);
+    popc_chdir(fname);
     *t='/';
-    if(getcwd(dir,1024)==NULL) {
+    if(popc_getcwd(dir,1024)==NULL) {
         *dir=0;
     }
-    chdir(olddir);
+    popc_chdir(olddir);
     sprintf(abspath,"%s/%s",dir,t+1);
 }
 
@@ -182,12 +182,12 @@ bool paroc_utils::SameContact(const char *contact1, const char *contact2) {
     POPString str2(contact2);
     char *token, *ptr;
 
-    token=strtok_r(str2.GetString()," \n\r\t",&ptr);
+    token=popc_strtok_r(str2.GetString()," \n\r\t",&ptr);
     while(token!=NULL) {
         if(strstr(contact1,token)!=NULL) {
             return true;
         }
-        token=strtok_r(NULL," \n\r\t",&ptr);
+        token=popc_strtok_r(NULL," \n\r\t",&ptr);
     }
     return false;
 }
@@ -200,7 +200,7 @@ bool paroc_utils::IsRemoteDest(const char *dest) {
     POPString ip = paroc_system::GetIP();
 
     char host[256];
-    gethostname(host, 256);
+    popc_gethostname(host, 256);
 
     //Three string to test with
     std::string _local("127.0.0.1");

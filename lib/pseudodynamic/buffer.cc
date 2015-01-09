@@ -1,11 +1,19 @@
 /**
- * File : buffer.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of message buffer base class
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of message buffer base class.
+ *
+ *
+ */
+
+/*
+  Deeply need refactoring:
+    POPC_Buffer instead of paroc_buffer
+    POPC_MessageHeader instead of paroc_message_header (put implementation in a separate file)
  */
 
 #include <string.h>
@@ -13,8 +21,8 @@
 #include "paroc_interface.h"
 #include "paroc_buffer.h"
 #include "paroc_array.h"
+#include "paroc_system.h"
 #include "paroc_exception.h"
-
 
 #define METH_VECT_PACK(type) \
 void paroc_buffer::Pack(std::vector<type> *vect, int /*n*/)\
@@ -79,11 +87,6 @@ void paroc_message_header::operator =(const  paroc_message_header &dat) {
 }
 
 //Message envelop
-
-
-// Constant initialization
-const int paroc_buffer::POPC_BUFFER_HEADER_SIZE = 20;
-
 
 paroc_buffer::paroc_buffer() {
 }
@@ -200,6 +203,7 @@ bool paroc_buffer::Send(paroc_connection *conn) {
 
 bool paroc_buffer::Recv(paroc_connection *conn) {
     if(conn == NULL) {
+        printf("conn==NULL\n");
         return false;
     }
     paroc_combox *combox = conn->GetCombox();
@@ -392,6 +396,3 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
 void paroc_buffer::Destroy() {
     delete this;
 }
-
-
-

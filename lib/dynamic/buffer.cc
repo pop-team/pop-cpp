@@ -27,7 +27,7 @@
 #define METH_VECT_PACK(type) \
 void paroc_buffer::Pack( std::vector<type> *vect, int /*n*/)\
 {\
-    int s = static_cast<int>(vect->size());\
+    int s=vect->size();\
     Pack(&s,1);\
     Pack((type*)&(*vect)[0],s);\
 }
@@ -46,7 +46,6 @@ void paroc_buffer::UnPack( std::vector<type> *vect, int /*n*/)\
 
 paroc_message_header::paroc_message_header(int classid, int methodid, int semantics, const char *metname) {
     type=TYPE_REQUEST;
-
     id[0]=classid;
     id[1]=methodid;
     id[2]=semantics;

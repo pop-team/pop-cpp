@@ -1,17 +1,21 @@
 /**
- * File : combox_factory.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of the communication box factory
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of the communication box factory.
+ *
+ *
  */
 
+/*
+  Deeply need refactoring:
+    POPC_ComboxFactory instead of paroc_combox_factory
+ */
 
-#include <string.h>
-#include <sys/types.h>
-#include <dirent.h>
+#include "popc_intface.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -54,7 +58,7 @@ paroc_combox_factory::paroc_combox_factory() {
 
     char *module=getenv("POPC_COMBOX_MODULES");
     if(module!=NULL) {
-        char *libs=strdup(module);
+        char *libs=popc_strdup(module);
         char *mod=strtok(libs,": ");
         while(mod!=NULL) {
             void *h=LoadPlugin(mod, name, creator);
@@ -135,11 +139,12 @@ paroc_combox_factory::paroc_combox_factory() {
                         if(h!=NULL) {
                             bool loaded=false;
                             int n=plugins.GetSize();
-                            for(int j=0; j<n; j++) if(h==plugins[j]) {
+                            for(int j = 0; j < n; j++) {
+                                if(h == plugins[j]) {
                                     loaded=true;
                                     break;
                                 }
-
+                            }
                             if(!loaded) {
                                 plugins.InsertAt(-1,h);
                                 Register(name,metrics,creator);
@@ -228,7 +233,6 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
         return false;
     }
     //combox_factory_struct t;
-
     POSITION pos=list.GetHeadPosition();
     POSITION insertpos=NULL;
 
@@ -245,12 +249,12 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
     }
     if(insertpos==NULL) {
         combox_factory_struct &el=list.AddTailNew();
-        el.name=strdup(name);
+        el.name = popc_strdup(name);
         el.metrics=metrics;
         el.creator=creator;
     } else {
         combox_factory_struct el;
-        el.name=strdup(name);
+        el.name = popc_strdup(name);
         el.metrics=metrics;
         el.creator=creator;
         list.InsertBefore(insertpos, el);
@@ -258,20 +262,18 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
     return true;
 }
 
-void * paroc_combox_factory::LoadPlugin(char * /*fname*/,  POPString & /*name*/, COMBOX_CREATOR & /*f*/) {
+void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CREATOR &f) {
 #ifdef HAVE_LIBDL
-    void *handle=dlopen(fname,RTLD_LAZY| RTLD_LOCAL);
+    void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);
     if(handle==NULL) {
         DEBUG("ERROR:%s: %s",fname,dlerror());
         return NULL;
     }
-//  DEBUG("Module loaded: %s",fname);
 
     LOAD_PROTOCOL func;
-    func=(LOAD_PROTOCOL)dlsym(handle,"LoadProtocol");
+    func = (LOAD_PROTOCOL)popc_dlsym(handle, "LoadProtocol");
     if(func==NULL || func(name,f)!=0) {
-        DEBUG("Fail to create the combox from %s", fname);
-        dlclose(handle);
+        popc_dlclose(handle);
         return NULL;
     }
     return handle;

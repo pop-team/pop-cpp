@@ -1,23 +1,27 @@
 /**
- * File : od.cc
- * Author : Tuan Anh Nguyen
- * Description : parallel object description implementation
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
- * clementval  05/2010     Add od.search support
- * clementval  10/2010     Add od.service support
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Parallel object description implementation.
+ *
+ *
  */
 
+/*
+  Deeply need refactoring:
+    POPC_ObjectDescription instead of paroc_od
+ */
+
+#include "popc_intface.h"
 #include "paroc_od.h"
 #include "paroc_utils.h"
-
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
+//#include <unistd.h>
+//#include <string.h>
+//#include <stdlib.h>
+//#include <stdio.h>
 
 bool paroc_od::defaultLocalJob=false;
 
@@ -32,14 +36,16 @@ paroc_od::paroc_od() {
     if(batchSystem!=NULL) {
         hostname=batchSystem;    // To avoid letting the hostname empty
     }
-    isLocalJob=defaultLocalJob;
+    isLocalJob = defaultLocalJob;
     sameDirectory(true); // Set the working directory to the current one by default
     secureSet=false;
     searchSet=false;
     serviceSet=false;
-    max_depth=100;
-    max_size=0;
-    wait_time=0;
+    max_depth = 100;
+    max_size = 0;
+    wait_time = 0;
+    node_value = -1;
+    core_value = -1;
 }
 
 paroc_od::~paroc_od() {
@@ -62,6 +68,39 @@ void paroc_od::service(bool serv) {
  */
 bool paroc_od::isServiceSet() const {
     return serviceSet;
+}
+
+/**
+ * Get the node identifier
+ * @return Node value defined by the developer or -1 is no node value was defined
+ */
+int paroc_od::get_node() const {
+    return node_value;
+}
+
+
+/**
+ * Get the core identifier
+ * @return Core value defined by the developer or -1 is no core value was defined
+ */
+int paroc_od::get_core() const {
+    return core_value;
+}
+
+/**
+ * Define the node on which the parallel object should be allocated
+ * @param An integer value between 0 and N-1. N is the number of available nodes.
+ */
+void paroc_od::node(int value) {
+    node_value = value;
+}
+
+/**
+ * Define the core on which the parallel object should be allocated
+ * @param value An integer value between 0 and N-1. N is the number of available core.
+ */
+void paroc_od::core(int value) {
+    core_value = value;
 }
 
 void paroc_od::power(float require, float min) {
@@ -110,34 +149,28 @@ void paroc_od::url(const char *str) {
         strcpy(h,tmpstr+1);
     }
     // Read if core specified
-    if(h!=NULL&&(tmpstr=strchr(h,'{'))!=NULL) {
+    if(h != NULL && (tmpstr=strchr(h, '{')) != NULL) {
         *tmpstr=0;
         char * tmpstr2;
-        if((tmpstr2=strchr(tmpstr+1,'}'))!=NULL) {
-            *tmpstr2=0;
-            hostcore=tmpstr+1;
+        if((tmpstr2 = strchr(tmpstr+1, '}')) != NULL) {
+            *tmpstr2 = 0;
+            hostcore = tmpstr+1;
+        } else {
+            printf("Error in object description. user@ip(core):port\n");
         }
 
     }
-    hostname=h;
-    if(!strcmp(hostname,"localhost")) {
+    hostname = h;
+    if(!strcmp(hostname, "localhost")) {
         runLocal(true);
     }
 }
 
 void paroc_od::url(const char *h, const char *arch) {
-    hostarch=arch;
+    hostarch = arch;
     url(h);
 }
 
-/*void paroc_od::url(std::string h)
-{
-    url((const char*)h.c_str());
-}*/
-/*void paroc_od::url(std::string h, std::string arch)
-{
-    url((const char*)h.c_str(),(const char*)arch.c_str());
-}*/
 void paroc_od::joburl(const char *jobservice) {
     jobcontact=jobservice;
 }
@@ -179,8 +212,8 @@ void paroc_od::directory(const char *h) {
 void paroc_od::sameDirectory(bool a) {
     if(a) {
         char tmp[256];
-        if(getcwd(tmp,sizeof(tmp))!=NULL) {
-            cwd=tmp;
+        if(popc_getcwd(tmp, sizeof(tmp)) != NULL) {
+            cwd = tmp;
         }
     }
 }
@@ -277,6 +310,7 @@ void paroc_od::getExecutable(POPString &exec) const {
 }
 
 void paroc_od::getProtocol(POPString &myproto) const {
+    //DEBUG("Set protocol in OD %s\n", myproto.GetString());
     myproto=proto;
 }
 
@@ -489,7 +523,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
 
         //Pack additional attributes
-        int count=keys.GetCount();
+        int count = keys.GetCount();
         buf.Push("attributes","paroc_list",count);
 
         buf.Push("count","int",1);
@@ -607,10 +641,10 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         encoding(t);
 
         //Unpack additional attributes
-        int count;
-        buf.Push("attributes","paroc_list",count);
+        int count = 0;
+        buf.Push("attributes", "paroc_list", count);
 
-        buf.Push("count","int",1);
+        buf.Push("count", "int", 1);
         buf.UnPack(&count,1);
         buf.Pop();
         keys.RemoveAll();

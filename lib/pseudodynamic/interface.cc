@@ -46,8 +46,7 @@
 #define POPC_CONNECT_TIMEOUT 10000
 #endif
 
-int RunCmd(char **argv, char *env[], int *status) {
-
+int RunCmd(int argc, char **argv, char *env[], int *status) {
     char *file=NULL;
 
     POPString str;

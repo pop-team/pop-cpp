@@ -75,6 +75,13 @@ public:
      * @param h machine ip or name
      */
     void url(const char *h);
+
+    void node(int value);
+    void core(int value);
+
+
+
+
     /**
     * @brief Specifies the address requirement for the target machine (no JobMgr used)
     * Syntaxe : user@ip{core}:port
@@ -128,6 +135,9 @@ public:
     void getJobURL(paroc_string &joburl) const;
     void getExecutable(paroc_string &exec) const;
 
+    int get_node() const;
+    int get_core() const;
+
     void getProtocol(paroc_string &proto) const;
     void getEncoding(paroc_string &encode) const;
     bool getIsManual() const;
@@ -166,6 +176,10 @@ protected:
     float net, min_net;
     float time;
     bool isManual;
+
+    int node_value;
+    int core_value;
+
     paroc_string cwd;
 
     paroc_string hostname; /*only for use with od.url*/

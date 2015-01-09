@@ -1,27 +1,33 @@
 /**
- * File : string.cc
- * Author : Tuan Anh Nguyen
- * Description : POP-C++ null terminated string implementation
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief System stuffs and declarations used by the runtime.
+ *
+ *
  */
 
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
+/*
+  Should check to use std::string
+  Deeply need refactoring:
+    POPC_String instead of paroc_string
+ */
+#include "popc_intface.h"
+
+//#include <string.h>
+//#include <stdlib.h>
+//#include <errno.h>
 #include "paroc_string.h"
 #include "paroc_exception.h"
-
-// TODO lwk refactor: maybe rename this file paroc_string.cc or popstring.cc for clarity
-
 paroc_string::paroc_string() {
     data=NULL;
 }
 
 paroc_string::paroc_string(const char *x) {
-    data= (x==NULL)? NULL : strdup(x);
+    data= (x==NULL)? NULL : popc_strdup(x);
 }
 
 paroc_string::paroc_string(const char *x, int n) {
@@ -35,11 +41,11 @@ paroc_string::paroc_string(const char *x, int n) {
 }
 
 paroc_string::paroc_string(std::string x) {
-    data= (x.c_str()==NULL)? NULL : strdup(x.c_str());
+    data= (x.c_str()==NULL)? NULL : popc_strdup(x.c_str());
 }
 
 paroc_string::paroc_string(const paroc_string &x) {
-    data= (x==NULL)? NULL : strdup(x);
+    data= (x==NULL)? NULL : popc_strdup(x);
 }
 
 paroc_string::~paroc_string() {
@@ -63,7 +69,7 @@ const char * paroc_string::operator =(const char *x) {
         if(data!=NULL) {
             free(data);
         }
-        data=(x==NULL)? NULL: strdup(x);
+        data=(x==NULL)? NULL: popc_strdup(x);
     }
     return data;
 }
@@ -73,7 +79,7 @@ const paroc_string &paroc_string::operator =(const paroc_string &x) {
         if(data!=NULL) {
             free(data);
         }
-        data=(x==NULL)? NULL: strdup(x);
+        data=(x==NULL)? NULL: popc_strdup(x);
     }
     return (*this);
 }

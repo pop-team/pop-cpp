@@ -1,28 +1,31 @@
 /**
- * File : broker_receive.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of parallel object broker : receive stuffs
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
- * P.Kuonen     March 2011      suppress warning message "too many requests"
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of parallel object broker : receive requests.
+ *
+ *
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <assert.h>
+/*
+  Deeply need refactoring:
+    POPC_Broker instead of paroc_broker
+ */
+
+#include "popc_intface.h"
+
 #include <iostream>
 #include <fstream>
 
 #include "paroc_broker.h"
 #include "paroc_interface.h"
 #include "paroc_event.h"
-#include "paroc_system.h"
 #include "paroc_buffer_factory.h"
 #include "paroc_buffer_factory_finder.h"
+#include "paroc_system.h"
 
 bool NewConnection(void *dat, paroc_connection *conn) {
     paroc_broker *br = (paroc_broker *)dat;
@@ -171,7 +174,6 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
     execCond.broadcast();
     execCond.unlock();
 
-
     if(type & INVOKE_CONC) {
         concPendings++;
         mutexCond.unlock();
@@ -184,17 +186,16 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
         //if (count>POPC_QUEUE_NORMAL+5)
         //rprintf(" Warning: too many requests (unserved requests: %d)\n",count);
         if(count<=POPC_QUEUE_MAX) {
-            usleep(10*t);
+            popc_usleep(10*t);
         } else {
             while(request_fifo.GetCount()>POPC_QUEUE_MAX) {
-                usleep(t*10);
+                popc_usleep(t*10);
             }
         }
     }
 }
 
 bool paroc_broker::OnNewConnection(paroc_connection *conn) {
-    (void)(conn);
     if(obj != NULL) {
         obj->AddRef();
     }
@@ -205,7 +206,6 @@ bool paroc_broker::OnNewConnection(paroc_connection *conn) {
  * This method is called when a connection with an interface is closed.
  */
 bool paroc_broker::OnCloseConnection(paroc_connection *conn) {
-  (void)(conn);
     if(obj != NULL) {
         int ret = obj->DecRef();
         if(ret <= 0) {
@@ -221,7 +221,6 @@ paroc_object * paroc_broker::GetObject() {
 }
 
 bool paroc_broker::ParocCall(paroc_request &req) {
-//  printf("BROKER: Is ParocCall ? %d\n", req.methodId[1]);
     if(req.methodId[1] >= 10) {
         return false;
     }
@@ -229,11 +228,9 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     unsigned* methodid = req.methodId;
     paroc_buffer *buf = req.data;
     switch(methodid[1]) {
-    case 0: // BindStatus call
+    case 0: 
+        // BindStatus call
         if(methodid[2] & INVOKE_SYNC) {
-            //printf("BindStatus\n");
-            //paroc_buffer_factory *bufferFactory;
-            //bufferFactory = req.from->GetBufferFactory();
             paroc_message_header h("BindStatus");
             buf->Reset();
             buf->SetHeader(h);
@@ -264,11 +261,9 @@ bool paroc_broker::ParocCall(paroc_request &req) {
             buf->Pop();
 
             buf->Send(req.from);
-            //printf("BindStatus end\n");
         }
         break;
     case 1: {
-
         //AddRef call...
         if(obj == NULL) {
             return false;
@@ -284,7 +279,6 @@ bool paroc_broker::ParocCall(paroc_request &req) {
             buf->Pop();
 
             buf->Send(req.from);
-            //printf("AddRef %d\n", ret);
         }
         execCond.broadcast();
     }
@@ -303,9 +297,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
             buf->Push("refcount","int",1);
             buf->Pack(&ret,1);
             buf->Pop();
-
             buf->Send(req.from);
-            //printf("DecRef %d\t %s\n", ret, paroc_broker::accesspoint.GetAccessString());
         }
         execCond.broadcast();
         break;
@@ -317,9 +309,8 @@ bool paroc_broker::ParocCall(paroc_request &req) {
         buf->UnPack(&enc,1);
         buf->Pop();
         paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(enc);
-//      printf("negotiate encoding ... %s\n", enc.GetString());
         bool ret;
-        if(fact != NULL) {
+        if(fact) {
             req.from->SetBufferFactory(fact);
             ret = true;
         } else {
@@ -338,15 +329,15 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     }
     case 4: {
         //Kill call...
-        if(obj!=NULL && obj->CanKill()) {
-            DEBUG("EXIT BY KILL NOW");
+        if(obj && obj->CanKill()) {
+            printf("Object exit by killcall\n");
             exit(1);
         }
         break;
     }
     case 5: {
         //ObjectAlive call
-        if(obj==NULL) {
+        if(!obj) {
             return false;
         }
         if(methodid[2] & INVOKE_SYNC) {

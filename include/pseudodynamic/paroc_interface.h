@@ -8,7 +8,9 @@
  * @brief interface base declaration for parclass objects
  *
  * UPDATES:
- * Authors      Date            Comment
+ * Authors      Date              Comment
+ * clementval 2011/09/13  Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
+ * clementval 2012/08/22  Add thread variable for asynchronous parallel object allocation
  */
 
 #ifndef _POPC_INTERFACE_CORE_H
@@ -38,7 +40,7 @@
  * @param argv Command and arguments
  * @param env
  * @return Zero */
-int RunCmd(char **argv, char *env[], int *status=NULL);
+int RunCmd(int argc, char **argv, char *env[], int *status=NULL);
 
 
 /**
@@ -131,7 +133,7 @@ public:
 
 
     /**
-     * Asynchronous Parallel Object Creation (APOC)
+     * Asynchronous Parallel Object Allocation (APOA)
      * Thread used for asynchronous allocation of the parallel object. Do not change its name as it is used in the POP-C++ parser
      * to generate code.
      */
@@ -139,12 +141,15 @@ public:
 
     //Find a resource that satisfies the Qos and allocate an object on it
     void Allocate();
+    void allocate_only();
 
     paroc_od od;
+
+    paroc_od get_object_description();
 protected:
     virtual const char *ClassName() {
         return "paroc_interface";
-    };
+    }
     virtual void paroc_Dispatch(paroc_buffer *buf);
     virtual void paroc_Response(paroc_buffer *buf);
 
@@ -153,13 +158,12 @@ protected:
 
     paroc_combox *__paroc_combox;
     paroc_buffer *__paroc_buf;
-    paroc_connection *__paroc_connection;
-
     paroc_accesspoint accesspoint;
 
     paroc_mutex _paroc_imutex;
 
 private:
+
     /**
      * POP-C++ Secure version with SSH tunneling
      * The followings variables are used for SSH Tunneling between the interface and the broker.
@@ -179,12 +183,13 @@ private:
     int KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port);
     bool IsTunnelAlive(const char *user, const char *dest_ip, int dest_port, int local_port);
 
-    int popc_interface_log(const char *log);  //write log in file
-    char log[600];                               //buffer for log
+    int popc_interface_log(const char *log); //write log in file
+    char log[600];                              //buffer for log
 
 public:
     static int batchindex;
     static int batchsize;
+
 
 private:
     static paroc_accesspoint *batchaccesspoint;

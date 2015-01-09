@@ -1,26 +1,26 @@
 /**
- * File : broker_serve.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of parallel object broker : serve request stuffs
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of parallel object broker: serve request stuffs.
+ *
+ *
  */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <assert.h>
+/*
+  Deeply need refactoring:
+    POPC_Broker instead of paroc_broker
+ */
+#include "popc_intface.h"
+
 #include "paroc_broker.h"
 #include "paroc_interface.h"
 #include "paroc_event.h"
-
 #include "paroc_thread.h"
 #include "paroc_system.h"
-#include "paroc_utils.h"
-
 
 #define PROPAGATE_EXCEPTION(a)  catch (a err) { if (request.from!=NULL) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 
@@ -68,6 +68,7 @@ void paroc_invokethread::start() {
 bool paroc_broker::GetRequest(paroc_request &req) {
     paroc_mutex_locker locker(execCond);
     //If the queue is empty then wait for the request....
+    //If the queue is empty then wait for the request....
     while(request_fifo.IsEmpty()) {
         if((obj!=NULL && obj->GetRefCount()<=0) || state != POPC_STATE_RUNNING) {
             return false;
@@ -113,7 +114,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
         int t=1;
         while((ret=thr->create())!=0 && t<3600) {
             printf("WARNING: can not create a new thread. Sleep for %d seconds\n",t);
-            sleep(t);
+            popc_sleep(t);
             t=t*2;
         }
 
@@ -135,7 +136,6 @@ void paroc_broker::ServeRequest(paroc_request &req) {
 
         }
     } else {
-
         DoInvoke(req);
         if(type & INVOKE_MUTEX) {
             mutexCond.lock();
@@ -154,8 +154,9 @@ void paroc_broker::ServeRequest(paroc_request &req) {
 
 void paroc_broker::UnhandledException() {
     if(!paroc_system::appservice.IsEmpty()) {
-        char tmp[1024];
-        sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
+        //char tmp[1024];
+        printf("Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
+//      sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
         /*AppCoreService app(paroc_system::appservice);
         app.Log(tmp);
         app.UnManageObject(paroc_broker::accesspoint);

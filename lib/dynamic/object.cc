@@ -17,8 +17,6 @@
 
 #include "paroc_object.h"
 #include "paroc_mutex.h"
-
-
 #include "paroc_interface.h"
 #include "paroc_event.h"
 #include "paroc_broker.h"
@@ -29,11 +27,9 @@ char **paroc_object::argv=NULL;
 
 paroc_object::paroc_object() {
     refcount=1;
-
-
     if(!paroc_system::appservice.IsEmpty()) {
-
         paroc_accesspoint myself=GetAccessPoint();
+// TODO LWK: This was added in the pseudodyn version: see if works
         try {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.ManageObject(myself);
@@ -45,6 +41,7 @@ paroc_object::paroc_object() {
 }
 
 paroc_object::~paroc_object() {
+// TODO LWK: This was added in the pseudodyn version: see if works
 
     if(!paroc_system::appservice.IsEmpty()) {
         paroc_accesspoint myself=GetAccessPoint();
@@ -87,7 +84,6 @@ int paroc_object::DecRef() {
     refcount--;
     return refcount;
 }
-
 
 bool  paroc_object::CanKill() {
     return  true;

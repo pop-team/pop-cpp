@@ -39,6 +39,9 @@ bool CloseConnection(void *dat, paroc_connection *conn) {
 }
 
 
+/**
+ * Receive request and put request in the FIFO
+ */
 void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and put request in the FIFO
     server->SetCallback(COMBOX_NEW, NewConnection, this);
     server->SetCallback(COMBOX_CLOSE, CloseConnection, this);
@@ -65,7 +68,6 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
             }
             execCond.broadcast();
             break;
-
         }
     }
     //printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
@@ -128,6 +130,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
         mutexCond.unlock();
     }
 
+    // Adding the request to the request queue
     execCond.lock();
     request_fifo.AddTail(req);
     int count=request_fifo.GetCount();
@@ -157,7 +160,6 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
 }
 
 bool paroc_broker::OnNewConnection(paroc_connection *conn) {
-    //  if (state!=POPC_STATE_RUNNING) return false;
     if(obj!=NULL) {
         obj->AddRef();
     }
@@ -189,7 +191,6 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
 
     unsigned *methodid=req.methodId;
     paroc_buffer *buf=req.data;
-
     switch(methodid[1]) {
     case 0:
         // BindStatus call
@@ -210,15 +211,19 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
                     }
                 }
             }
+
             buf->Push("code","int",1);
             buf->Pack(&status,1);
             buf->Pop();
+
             buf->Push("platform","POPString",1);
             buf->Pack(&paroc_system::platform,1);
             buf->Pop();
+
             buf->Push("info","POPString",1);
             buf->Pack(&enclist,1);
             buf->Pop();
+
             buf->Send(req.from);
         }
         break;
@@ -236,6 +241,7 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
             buf->Push("refcount","int",1);
             buf->Pack(&ret,1);
             buf->Pop();
+
             buf->Send(req.from);
         }
         execCond.broadcast();
@@ -243,12 +249,10 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
     break;
     case 2: {
         // Decrement reference
-
         if(obj == NULL) {
             return false;
         }
         int ret = obj->DecRef();
-
         if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
             paroc_message_header h("DecRef");
@@ -262,8 +266,6 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
         execCond.broadcast();
         break;
     }
-
-
     case 3: {
         //GetEncoding call...
         POPString enc;
@@ -329,7 +331,6 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
             buf->SetHeader(h);
             buf->Send(req.from);
         }
-
         break;
     }
 #endif

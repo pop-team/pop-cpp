@@ -1,20 +1,29 @@
 /**
- * File : mutex.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of the mutual exclusive execution
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of the mutual exclusive execution.
+ *
+ *
  */
 
-#include <stdio.h>
+/*
+  Should look inside the std for similar implementation. Must be more efficient.
+  Deeply need refactoring:
+    POPC_Mutex instead of paroc_mutex
+    POPC_MutexLocker instead of paroc_mutex_locker
+ */
+#include "popc_intface.h"
+
+//#include <stdio.h>
 
 #include "paroc_mutex.h"
-#include <sys/time.h>
+//#include <sys/time.h>
 
 /*
-POP-C++ mutex implementation....
 */
 
 paroc_mutex::paroc_mutex() {
@@ -26,6 +35,7 @@ paroc_mutex::paroc_mutex() {
     pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
 #endif
     if(pthread_mutex_init(&_mutex,&attr)!=0) {
+        //DEBUG("Multithread initialization fail\n");
         pthread_mutexattr_destroy(&attr);
         return;
     }
@@ -75,7 +85,7 @@ bool paroc_condition::wait(int timeout) {
     } else {
         struct timespec abstimeout;
         struct timeval now;
-        gettimeofday(&now, NULL);
+        popc_gettimeofday(&now, NULL);
         abstimeout.tv_sec = now.tv_sec + timeout/1000;
         abstimeout.tv_nsec = (now.tv_usec + (timeout%1000)*1000)* 1000;
         int ret=pthread_cond_timedwait(&_cond,&_mutex,&abstimeout);

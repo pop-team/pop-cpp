@@ -73,8 +73,16 @@ public:
     virtual void Pack(const long double *data, int n);
     virtual void UnPack(long double *data, int n);*/
 
+    using paroc_buffer::Send;  // TODO lwk: can we remove this ?
     virtual bool Send(paroc_combox &s, paroc_connection *conn);
+    using paroc_buffer::Recv;
     virtual bool Recv(paroc_combox &s, paroc_connection *conn);
+
+    virtual int get_size();
+    virtual char* get_load();
+    virtual void load(char* data, int length);
+
+
 
 #ifdef OD_DISCONNECT
     virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0);

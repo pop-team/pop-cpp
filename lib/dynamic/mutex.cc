@@ -94,6 +94,11 @@ bool paroc_condition::wait(int timeout) {
 
 }
 
+/*
+POP-C++ locker implementation....
+*/
+
+
 
 paroc_mutex_locker::paroc_mutex_locker(paroc_mutex &_mutex) {
     pmutex=&_mutex;

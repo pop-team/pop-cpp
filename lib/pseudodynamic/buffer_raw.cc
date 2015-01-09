@@ -356,20 +356,17 @@ void paroc_buffer_raw::CheckUnPack(int sz) {
 
 bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     // Send the header first as 20 bytes packet
-    printf("RAW: Send\n");
+    char *dat = (char *)packeddata;
 
-    char *data = (char *)packeddata;
-    if(data == NULL) {
+    if(dat == NULL) {
         return false;
     }
-
     int n = packeddata.GetSize();
     int h[5];
     memset(h, 0, 5 * sizeof(int));
 
     int type = header.GetType();
 
-    printf("RAW: Set message size to %d\n", n);
     h[0] = n;
     h[1] = type;
 
@@ -439,10 +436,8 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
 
     Reset();
     n = h[0];
-
-
     if(n<20) {
-        DEBUG("Bad message header(size error:%d)",n);
+        printf("POP-C++ Error: [CORE] - Buffer RAW - bad message header (size error:%d)\n", n);
         return false;
     }
 
