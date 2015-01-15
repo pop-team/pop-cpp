@@ -179,25 +179,6 @@ add_subdirectory(services)
    *~
   )
 
-  # These 3 custom targets (lint, check and indent) can be use to facilitate the code maintenance
-  add_custom_target(lint
-    COMMENT "Check C++ lint rules with the lint tool provided by Google"
-    COMMAND find . -name \"*.h\" -o -name \"*.cpp\" -o -name \"*.cc\" | xargs scripts/cpplint.py --filter=-whitespace,-legal,-build,-runtime/references,-runtime/explicit,-readability/todo,-readability/streams,-readability/function,-runtime/int
-  )
-
-  # If you use vim use: setlocal errorformat=[%f:%l]\ ->\ %m,[%f:%l]:%m
-  # to jump automatically between errors
-  add_custom_target(check
-    COMMENT "Check C++ code statically with cppcheck"
-    COMMAND cppcheck . --force --enable=all -q
-  )
-
-  add_custom_target(indent
-    COMMENT "Indent the code automatically with astyle"
-    COMMAND find . -name \"*.h\" -o -name \"*.cpp\" -o -name \"*.cc\" -o -name \"*.cc.in\" -o -name \"*.ph\" | xargs astyle -jnUc -A2
-  )
-
-
   if(POPCPP_COMPILER)
     set(EXTRACLEANED
       parser/*.cmake
@@ -220,3 +201,21 @@ add_subdirectory(services)
       COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test/runtests -all
       COMMENT "run all tests"
       )
+
+  # These 3 custom targets (lint, check and indent) can be used to facilitate the code maintenance
+  add_custom_target(lint
+    COMMENT "Check C++ lint rules with the lint tool provided by Google"
+    COMMAND find . -name \"*.h\" -o -name \"*.cpp\" -o -name \"*.cc\" | xargs scripts/cpplint.py --filter=-whitespace,-legal,-build,-runtime/references,-runtime/explicit,-readability/todo,-readability/streams,-readability/function,-runtime/int
+  )
+
+  # If you use vim use: setlocal errorformat=[%f:%l]\ ->\ %m,[%f:%l]:%m
+  # to jump automatically between errors
+  add_custom_target(check
+    COMMENT "Check C++ code statically with cppcheck"
+    COMMAND cppcheck . --force --enable=all -q
+  )
+
+  add_custom_target(indent
+    COMMENT "Indent the code automatically with astyle"
+    COMMAND find . -name \"*.h\" -o -name \"*.cpp\" -o -name \"*.cc\" -o -name \"*.cc.in\" -o -name \"*.ph\" | xargs astyle -jnUc -A2
+  )
