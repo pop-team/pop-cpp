@@ -5,6 +5,8 @@ NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
 EXCLUDEDTEST="asynccreation\|runtests\|runtests_short\|stressallocation\|CMake\|xmp1\|xmp2\|xmp3\|xmp4\|xmp-raw\|static1"
 SXXLOCATION=/usr/local/popc/sbin
+TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+CWD=$( pwd )
 
 if [ "x" != "x$POPC_LOCATION" ]
 then
@@ -19,10 +21,11 @@ then
     echo Starting test suite...
     echo ""
     rm -rf $RESULTS
-    for test in `ls -F -d * | grep -v $EXCLUDEDTEST`
+    for test in `ls -F -d $TEST_DIR/* | grep -v $EXCLUDEDTEST`
     do
+        test_name=$( basename $test )
         echo "---------------------------------------------------------------------------"
-        echo "*** $test test ($NUMBEROFTEST) **"
+        echo "*** $test_name test ($NUMBEROFTEST) **"
         echo "---------------------------------------------------------------------------"
         cd $test
         rm -rf $RESULTS
@@ -38,7 +41,7 @@ then
             echo "$test failed" >> ../$RESULTS
         fi
         make clean
-        cd ..
+        cd $CWD
         echo ""
     done
     echo "---------------------------------------------------------------------------"
@@ -49,6 +52,7 @@ then
     if [ "$NUMBEROFSUCCESS" = "$NUMBEROFTEST" ]
     then
         echo "ALL TESTS SUCCEED! You are ready to use POP-C++!"
+        echo "Warning: Take caution with test results, read test output for additional information"
     fi
     rm -rf $RESULTS
 else
@@ -72,9 +76,11 @@ else
         echo ""
         exit
     else
-        if [ -d $1 ]
+        selected_test=$TEST_DIR/$1
+
+        if [ -d $selected_test ]
         then
-            cd $1
+            cd $selected_test
             echo ""
             echo "Start of \"$1\" test"
             echo ""
@@ -85,16 +91,14 @@ else
             echo "---------------------------------------------------------------------------"
             make run
             make clean
-            cd ..
+            cd $CWD
             echo ""
             echo "End of \"$1\" test"
-
         else
             echo ""
             echo "The test \"$1\" does not exist !!"
             echo ""
-            ./runtests1 -h
-
+            $0 -h
         fi
     fi
 fi
