@@ -140,7 +140,7 @@ if(NOT POPCPP_COMPILER)
         Makefile
         core core.*
         gmon.out
-        popcc.cc
+        popcc.h
         *~)
 
     ADD_CUSTOM_COMMAND(

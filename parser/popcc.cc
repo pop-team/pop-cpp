@@ -144,20 +144,17 @@ void prepare_source(char *src, char *dest, const popc_options& options) {
 std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1, char* tmpfile2, char** cmd, const popc_options& options){
     std::size_t count = 0;
     cmd[count++] = preprocessor;
-    char **t1 = cmd + 1;
-    for(char **t2 = pre_opt; *t2 != NULL; t2++, t1++) {
-        *t1 = *t2;
-        count++;
+
+    for(char **t2 = pre_opt; *t2 != NULL; t2++) {
+        cmd[count++] = *t2;
     }
-    *t1 = tmpfile1;
-    t1++;
-    count++;
+    cmd[count++] = tmpfile1;
 
     // Preprocessor output
     if(!options.usepipe) {
-        *t1++ = option_output;
-        *t1++ = tmpfile2;
-        count += 2;
+        cmd[count++] = option_output;
+        cmd[count++] = tmpfile2;
+
         if(options.verbose) {
             printf("C++ preprocessing: ");
             for(std::size_t i = 0; i < count; i++) {
@@ -165,8 +162,10 @@ std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1
             }
             printf("\n");
         }
+
         RunCmd(count, cmd);
     }
+
     return count;
 }
 
@@ -248,15 +247,12 @@ int cxx_compiler(char* cpp, char** cpp_opt, char* source, char* dest, char* tmpf
         count++;
     }
 
-    *t1 = option_compile;
-    t1++;
+    *t1++ = option_compile;
     count++;
 
-    *t1 = (paroc) ? tmpfile3 : source;
-    t1++;
+    *t1++ = (paroc) ? tmpfile3 : source;
     count++;
-    *t1 = option_output;
-    t1++;
+    *t1++ = option_output;
     count++;
 
     if(dest == NULL) {
