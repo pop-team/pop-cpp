@@ -105,8 +105,8 @@ public:
     bool OnCloseConnection(paroc_connection *conn);
 
 
-    bool ParocCall(paroc_request &req);//Remote call of Paroc methods
-    paroc_object * GetObject();
+    bool ParocCall(paroc_request &req);           //Remote call of Paroc methods
+    paroc_object * GetObject();                   // Get the associated object
 
 #ifdef OD_DISCONNECT
     bool checkConnection;
@@ -114,32 +114,29 @@ public:
 
 public:
     //Methods to serve the request
-
-    bool GetRequest(paroc_request &req);
-    void ServeRequest(paroc_request &req);
-    void UnhandledException();
-
-    virtual bool DoInvoke(paroc_request &request);
+    bool GetRequest(paroc_request &req);            // Get a request from the fifo queue
+    void ServeRequest(paroc_request &req);          // Get the request and do the invocation
+    void UnhandledException();                      // Handle for unknown exception
+    virtual bool DoInvoke(paroc_request &request);  // Invoke the method on the associated object
 
 protected:
 
     paroc_method_map_list methodnames;
 
-    paroc_condition mutexCond;
-    int mutexCount;
-    int concPendings;
+    paroc_condition mutexCond;  // Lock condition for mutex call
+    int mutexCount;             // Number of mutex call pending
+    int concPendings;           // Number of concurrent call pending
 
     paroc_array<paroc_combox*> comboxArray;
 
-    paroc_object *obj;
-    paroc_request_fifo_list request_fifo;
+    paroc_object *obj;                    // Real object associated with this broker
+    paroc_request_fifo_list request_fifo; // Queue storing the request received by the broker
     paroc_condition execCond;
-    int instanceCount;
+    int instanceCount;  //
     int addrefcount;     //Count the number of add ref on an object
     int decrefcount;     //Count the number of dec ref on an object
     int connclosecount;  //Count the number of connection close on an object
     int state; // 0=Running, 1=Terminate, 2= Abort
-
 };
 
 #define POPC_STATE_RUNNING 0

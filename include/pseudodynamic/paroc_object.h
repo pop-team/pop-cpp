@@ -23,7 +23,7 @@
 //Added by clementval
 #include <iostream>
 #include <sstream>
-//#include <iostream>
+
 #define cout paroc_system::_popc_cout.str(""); \
              paroc_system::_popc_cout
 #define popcendl std::endl; \

@@ -53,7 +53,7 @@ paroc_combox_socket::paroc_combox_socket() {
     index=0;
     nready=0;
     isCanceled=false;
-    _isServer=false;
+    isServer=false;
 }
 
 paroc_combox_socket::~paroc_combox_socket() {
@@ -62,7 +62,7 @@ paroc_combox_socket::~paroc_combox_socket() {
 
 bool paroc_combox_socket::Create(char* /*host*/, int port, bool server) {
     Close();
-    _isServer = server;
+    isServer = server;
 
     int type, protocol;
 
@@ -247,7 +247,7 @@ paroc_connection* paroc_combox_socket::Wait() {
         return NULL;
     }
 
-    if(_isServer) {
+    if(isServer) {
         pollfd *tmpfd;
         while(1) {
             if(nready > 0) {
@@ -325,7 +325,7 @@ void paroc_combox_socket::Close() {
     nready=0;
     index=-1;
 
-    if(_isServer) {
+    if(isServer) {
         int n=pollarray.GetSize();
         for(int i=0; i<n; i++) if(fd!=pollarray[i].fd) {
                 OnCloseConnection(connarray[i]);
@@ -368,7 +368,7 @@ bool paroc_combox_socket::GetUrl(POPString & accesspoint) {
 }
 
 bool paroc_combox_socket::CloseSock(int fd) {
-    if(_isServer) {
+    if(isServer) {
         int n=pollarray.GetSize();
         pollfd *t=pollarray;
         for(int i=0; i<n; i++, t++) if(t->fd==fd) {
@@ -397,7 +397,7 @@ bool paroc_combox_socket::disconnect(paroc_connection * /*connection*/) {
 }
 
 bool paroc_combox_socket::is_server() {
-    return _isServer;
+    return isServer;
 }
 
 bool paroc_combox_socket::Connect(const char *host,int port) {

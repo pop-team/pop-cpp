@@ -1,16 +1,21 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: socket declaration of combox
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief socket declaration of combox
+ *
  */
 
 #ifndef POPC_COMBOX_SOCKET_H
 #define POPC_COMBOX_SOCKET_H
-
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <poll.h>
-#include <ctype.h>
+#include "popc_intface.h"
+//#include <sys/types.h>
+//#include <sys/socket.h>
+//#include <poll.h>
+//#include <ctype.h>
 
 #include <paroc_array.h>
 
@@ -65,8 +70,6 @@ public:
 
     virtual void Close();
 
-
-
     /**
      * @brief Returns URL of object
      * @param accesspoint Returned URL (protocol://host:port)
@@ -90,13 +93,17 @@ protected:
 
 protected:
     int sockfd;
-    bool _isServer;
+    bool isServer;
     bool isCanceled;
-
+#ifdef __WIN32__
+    int highsockfd;
+    fd_set readfds, activefdset;
+#else
+    paroc_array<pollfd> pollarray;
+#endif
     paroc_connection_sock *peer;
 
     //Only used by combox server...
-    paroc_array<pollfd> pollarray;
     paroc_array<paroc_connection_sock *> connarray;
     int index;
     int nready;

@@ -42,7 +42,7 @@
 #define EXCEPTION_POPC_STD 14
 
 
-//bit FLAGS values customized marshalling/demarshalling procedure....
+// bit FLAGS values customized marshalling/demarshalling procedure
 #define FLAG_MARSHAL  2
 #define FLAG_INPUT  1
 
