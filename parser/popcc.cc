@@ -23,20 +23,20 @@
 char arch[256];
 
 struct popc_options {
-    bool verbose;
-    bool noclean;
-    bool nowarning;
-    bool popcppcompilation;
-    bool noimplicitpack;
-    bool asyncallocation;
-    bool xmp;
-    bool mpi;
-    bool usepipe;
-    bool advanced;
-    bool kcomputer;
-    bool nobroker;
-    bool nointerface;
-    bool psdyn;
+    bool verbose = false;
+    bool noclean = false;
+    bool nowarning = false;
+    bool popcppcompilation = false;
+    bool noimplicitpack = false;
+    bool asyncallocation = false;
+    bool xmp = false;
+    bool mpi = false;
+    bool usepipe = false;
+    bool advanced = false;
+    bool kcomputer = false;
+    bool nobroker = false;
+    bool nointerface = false;
+    bool psdyn = false;
 };
 
 void Usage() {
@@ -155,12 +155,9 @@ std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1
 
     // Preprocessor output
     if(!options.usepipe) {
-        *t1 = option_output;
-        t1++;
-        count++;
-        *t1 = tmpfile2;
-        t1++;
-        count++;
+        *t1++ = option_output;
+        *t1++ = tmpfile2;
+        count += 2;
         if(options.verbose) {
             printf("C++ preprocessing: ");
             for(std::size_t i = 0; i < count; i++) {
@@ -386,17 +383,6 @@ bool FindLib(char *libpaths[1024], int count, const char *libname, char libfile[
 
 int main(int argc, char *argv[]) {
     popc_options options;
-
-    options.verbose = false;
-    options.noclean = false;
-    options.nowarning = false;
-    options.popcppcompilation= false;
-    options.noimplicitpack = false;
-    options.asyncallocation = false;
-    options.xmp = false;
-    options.usepipe = false;
-    options.kcomputer = false;
-    options.psdyn = false;
 
 #ifndef HOST_CPU
     sprintf(arch, "%s", "unknown");
