@@ -691,7 +691,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
         header.SetMethodID(ntohl(h[3]));
         break;
     default:
-        printf("XDR: header type no-type %d\n", MPI::COMM_WORLD.Get_rank());
+        //printf("XDR: header type no-type %d\n", MPI::COMM_WORLD.Get_rank());
         return false;
     }
 

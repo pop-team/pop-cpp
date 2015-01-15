@@ -1,13 +1,19 @@
 /**
- * File : buffer_raw.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of raw message buffer
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of raw message buffer.
+ *
+ *
  */
 
+/*
+  Deeply need refactoring:
+    POPC_BufferRAW instead of paroc_buffer_raw
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -355,7 +361,7 @@ void paroc_buffer_raw::CheckUnPack(int sz) {
 }
 
 bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
-    // Send the header first as 20 bytes packet
+    // Pack the header (20 bytes)
     char *dat = (char *)packeddata;
 
     if(dat == NULL) {
@@ -386,8 +392,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     default:
         return false;
     }
-
-    memcpy(data, h, 20);
+    memcpy(dat, h, 20);
 
     // MPI mod - beg
     char* data_header = new char[20];
@@ -399,11 +404,11 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     }
     // MPI mod - end
 
-    data += 20;
+    dat += 20;
     n -= 20;
     if(n > 0) {
         printf("RAW: Send message size is %d: %s\n", n, (char*)packeddata);
-        if(s.Send(data, n, conn, false) < 0) {
+        if(s.Send(dat, n, conn, false) < 0) {
             DEBUG("Fail to send a message!");
             return false;
         }
@@ -413,10 +418,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
 }
 
 // Propagation of exceptions back to caller...
-
 bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
-
-    printf("RAW: Recv\n");
     int h[5];
     int n;
 

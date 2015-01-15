@@ -72,7 +72,7 @@ void paroc_accesspoint::SetAccessString(const char *hostport) {
         }
     }
 }
-const char* paroc_accesspoint::GetAccessString() const {
+char* paroc_accesspoint::GetAccessString() const {
     return endpoint;
 }
 

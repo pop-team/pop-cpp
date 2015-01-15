@@ -137,7 +137,7 @@ void paroc_buffer_raw::UnPack(double *data, int n) {
 
 // added by lwk
 void paroc_buffer_raw::Pack(const signed char *data, int n) {
-    Pack((char *)data,n);
+    Pack((char *)data,n); // TODO lwk: Check that this cast is not problematic
 }
 
 void paroc_buffer_raw::UnPack(signed char *data, int n) {

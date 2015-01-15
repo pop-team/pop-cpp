@@ -195,7 +195,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
     }
 }
 
-bool paroc_broker::OnNewConnection(paroc_connection *conn) {
+bool paroc_broker::OnNewConnection(paroc_connection * /*conn*/) {
     if(obj != NULL) {
         obj->AddRef();
     }
@@ -205,7 +205,7 @@ bool paroc_broker::OnNewConnection(paroc_connection *conn) {
 /**
  * This method is called when a connection with an interface is closed.
  */
-bool paroc_broker::OnCloseConnection(paroc_connection *conn) {
+bool paroc_broker::OnCloseConnection(paroc_connection * /*conn*/) {
     if(obj != NULL) {
         int ret = obj->DecRef();
         if(ret <= 0) {

@@ -263,6 +263,9 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
 }
 
 void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CREATOR &f) {
+	(void) fname;
+	(void) name;
+	(void) f;
 #ifdef HAVE_LIBDL
     void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);
     if(handle==NULL) {
