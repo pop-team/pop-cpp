@@ -1,7 +1,7 @@
 /**
  *
  * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
- * http://gridgroup.hefr.ch
+ * http://gridgroup.hefr.ch/popc
  *
  * @author Valenti Clement
  * @date 2012/07/05

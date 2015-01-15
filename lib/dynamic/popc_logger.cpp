@@ -23,6 +23,10 @@
  */
 
 #include "popc_logger.h"
+#include <stdio.h>
+#include <stdlib.h> 
+#include <string.h>
+#include <time.h>
 
 int popc_logger(LOGLEVEL level, const char *format,...) {
     char *tmp=getenv("POPC_TEMP");
