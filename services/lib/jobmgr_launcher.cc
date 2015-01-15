@@ -136,13 +136,13 @@ int main(int argc, char **argv) {
     try {
         if(stop) {
 #ifdef POPC_SECURE_VIRTUAL
-            printf("Stoping POP-C++ %s [Virtual Secure] Global Services\n", VERSION);
+            printf("Stopping POP-C++ %s [Virtual Secure] Global Services\n", VERSION);
 #elif defined POPC_SECURE
-            printf("Stoping POP-C++ %s [Secure] Global Services\n", VERSION);
+            printf("Stopping POP-C++ %s [Secure] Global Services\n", VERSION);
 #elif defined POPC_VIRTUAL
-            printf("Stoping POP-C++ %s [Virtual] Global Services\n", VERSION);
+            printf("Stopping POP-C++ %s [Virtual] Global Services\n", VERSION);
 #else
-            printf("Stoping POP-C++ %s [Standard] Global Services\n", VERSION);
+            printf("Stopping POP-C++ %s [Standard] Global Services\n", VERSION);
 #endif
 
             paroc_accesspoint jobmgr_ap;
