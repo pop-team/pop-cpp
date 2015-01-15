@@ -315,7 +315,11 @@ void paroc_interface::allocate_only() {
     od.getURL(hostname);
     od.getBatch(batch);
     od.getProtocol(protocol);
-    std::string str_protocol(protocol.GetString());
+
+    std::string str_protocol;
+    if(protocol.GetString()){
+        str_protocol = protocol.GetString();
+    }
 
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
