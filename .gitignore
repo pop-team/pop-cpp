@@ -29,7 +29,6 @@ scripts/popcrun
 parser/parser.tab.cc
 parser/parser.tab.h
 parser/parser.yy.cc
-parser/popcc.cc
 parser/popcc
 parser/popcpp
 

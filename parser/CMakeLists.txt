@@ -106,7 +106,7 @@ add_executable(popcc
     ${POPCPP_LIB_PATH}/utils.cc
     ${intface_file})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/popcc.cc.in ${CMAKE_CURRENT_SOURCE_DIR}/popcc.cc)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/popcc.h.in ${CMAKE_CURRENT_SOURCE_DIR}/popcc.h)
 
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "parser.tab.h;parser.tab.cc;parser.yy.cc;")
 

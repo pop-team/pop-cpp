@@ -11,8 +11,8 @@
  * 2012/11/09
  */
 
+#include "popcc.h"          //Contains macros defined by CMake
 #include "popc_intface.h"
-
 #include "config.h"
 #include "paroc_utils.h"
 
@@ -367,25 +367,25 @@ int main(int argc, char *argv[]) {
     char popcpp[1024];
 
 #ifndef POPC_CXX
-    char parocxx[1024] = "@CMAKE_CXX_COMPILER@";
-    char parocld[1024] = "@CMAKE_CXX_COMPILER@";
+    char parocxx[1024] = POPC_CXX_COMPILER;
+    char parocld[1024] = POPC_CXX_COMPILER;
 #else
     char parocxx[1024] = POPC_CXX;
     char parocld[1024] = POPC_CXX;
 #endif
 
     // For MPI and XMP support
-    char mpicxx[1024] = "@MPI_CXX_COMPILER@";
-    char mpicpp[1024] = "@MPI_CXX_COMPILER@ -E";
+    char mpicxx[1024] = POPC_MPI_CXX_COMPILER;
+    char mpicpp[1024] = POPC_MPI_CXX_COMPILER " -E";
 
 #ifndef POPC_CPP
-    char cpp[1024] = "@CMAKE_CXX_COMPILER@ -E";
+    char cpp[1024] = POPC_CXX_COMPILER " -E";
 #else
     char cpp[1024] = POPC_CPP;
 #endif
 
     // POP-C++ installation directory
-    char parocdir[1024] = "@CMAKE_INSTALL_PREFIX@";
+    char parocdir[1024] = POPC_INSTALL_PREFIX;
     char *link_cmd[1024];
 
     int link_count = 0;
