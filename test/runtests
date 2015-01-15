@@ -1,11 +1,11 @@
 #!/bin/bash
 
-RESULTS=tests_results
 NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
 EXCLUDEDTEST="asynccreation\|runtests\|runtests_short\|stressallocation\|CMake\|xmp1\|xmp2\|xmp3\|xmp4\|xmp-raw\|static1"
 SXXLOCATION=/usr/local/popc/sbin
 TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+RESULTS=$TEST_DIR/tests_results
 CWD=$( pwd )
 
 if [ "x" != "x$POPC_LOCATION" ]
@@ -28,17 +28,16 @@ then
         echo "*** $test_name test ($NUMBEROFTEST) **"
         echo "---------------------------------------------------------------------------"
         cd $test
-        rm -rf $RESULTS
         ((NUMBEROFTEST++))
         make clean
         make
         make run
         if [ "$?" = "0" ]
         then
-            echo "$test succeed" >> ../$RESULTS
+            echo "$test succeed" >> $RESULTS
             ((NUMBEROFSUCCESS++))
         else
-            echo "$test failed" >> ../$RESULTS
+            echo "$test failed" >> $RESULTS
         fi
         make clean
         cd $CWD
