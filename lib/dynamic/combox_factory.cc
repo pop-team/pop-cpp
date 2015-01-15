@@ -40,14 +40,15 @@ paroc_combox * combox_socket_creator() {
 }
 
 paroc_combox* combox_uds_creator() {
-    return new popc_combox_uds;
+ //   return new popc_combox_uds;
 }
 
 paroc_combox_factory *paroc_combox_factory::fact=NULL;
 
 
 paroc_combox_factory::paroc_combox_factory() {
-    Register("uds", 0, combox_uds_creator);
+//Note(BW): UDS initialization by the broker fails, therefore, disabled for now
+//    Register("uds", 0, combox_uds_creator);
     Register("socket", 0, combox_socket_creator);
 
     //Load combox from plugins....
