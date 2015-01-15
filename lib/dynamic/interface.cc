@@ -25,7 +25,6 @@
 #include <sstream>
 
 #include "paroc_interface.h"
-
 #include "popc_allocator_factory.h"
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_broker.h"
@@ -159,6 +158,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) {
     __paroc_combox = NULL;
     __paroc_buf = NULL;
 
+    // For SSH tunneling
     if(p.IsService()) {
         accesspoint.SetAsService();
     }
@@ -207,10 +207,12 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
     }
 }
 
+
 /**
  * Interface destructor
  */
 paroc_interface::~paroc_interface() {
+    //printf("Destroy interface %s\n", ClassName());
     Release();
 }
 
@@ -250,8 +252,9 @@ const paroc_od & paroc_interface::GetOD() const {
 const paroc_accesspoint &  paroc_interface::GetAccessPoint() const {
     return accesspoint;
 }
+
 /**
- * Get the accesspoint of the parallel object and set the _noaddref variavle to TRUE
+ * Get the accesspoint of the parallel object and set the _noaddref variable to TRUE
  */
 const paroc_accesspoint &  paroc_interface::GetAccessPointForThis() {
     accesspoint.SetNoAddRef();
@@ -378,7 +381,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
 
     accesspoint = dest;
 
-    //Choose the protocol and then bind...
+    //Choose the protocol and then bind
     POPString prots=dest.GetAccessString();
     POPString od_prots;
     od.getProtocol(od_prots);
@@ -533,6 +536,8 @@ void paroc_interface::Bind(const char *dest) {
         POPString info;
         POPString peerplatform;
         BindStatus(status, peerplatform, info);
+        //printf("INTERFACE: Got bind status %d\n", status);
+
         switch(status) {
         case BIND_OK:
             //TODO should be recovered at least in a usage with TCP/IP sockets
@@ -555,6 +560,7 @@ void paroc_interface::Bind(const char *dest) {
         }
 
         default:
+            //printf("INTERFACE: Unknown binding status");
             Release();
             paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName());
         }
@@ -589,6 +595,7 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
           if (hostname == NULL) hostname=paroc_system::GetHost();
 
           od.getExecutable(codefile);
+
           //Hostname existed
           if (codefile == NULL) {
               //Lookup local code manager for the binary source....
@@ -618,6 +625,7 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
 
 
 void paroc_interface::Release() {
+
     if(__paroc_combox != NULL) {
         // Decrement reference when the interface release its resources
         //paroc_connection* connection = __paroc_combox->get_connection();
@@ -649,6 +657,9 @@ bool paroc_interface::isBinded() {
     return true;
 }
 
+
+
+
 // ParocCall
 void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info) {
     if(!__paroc_combox || !__paroc_buf) {
@@ -667,6 +678,7 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
     __paroc_buf->Push("code","int",1);
     __paroc_buf->UnPack(&code,1);
     __paroc_buf->Pop();
+
     __paroc_buf->Push("platform","POPString",1);
     __paroc_buf->UnPack(&platform,1);
     __paroc_buf->Pop();
@@ -674,6 +686,7 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
     __paroc_buf->Push("info","POPString",1);
     __paroc_buf->UnPack(&info,1);
     __paroc_buf->Pop();
+//  printf("INTERFACE: request bindstatus done\n");
 }
 
 
@@ -830,9 +843,7 @@ bool paroc_interface::RecvCtrl() {
             __paroc_combox->SetTimeout(oldTimeout);
             paroc_exception::paroc_throw(errno);
         }
-
         __paroc_combox->SetTimeout(time_alive);
-
         if(!__paroc_buf->RecvCtrl(*__paroc_combox)) {
             __paroc_combox->SetTimeout(oldTimeout);
             return true;
