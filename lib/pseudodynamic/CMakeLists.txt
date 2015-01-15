@@ -42,12 +42,12 @@ add_library(popc_common_psdyn
     popc_combox_mpi.cc
     popc_connection_mpi.cpp
     popc_logger.cpp
+    popwayback.cc
     string.cc
     system.cc
     thread.cc
     timer.cc
     utils.cc
-    popwayback.cc
 )
 
 SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)

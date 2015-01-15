@@ -141,11 +141,11 @@ public:
 
     //Find a resource that satisfies the Qos and allocate an object on it
     void Allocate();
-    void allocate_only();
+    // void allocate_only();
 
     paroc_od od;
 
-    paroc_od get_object_description();
+    // paroc_od get_object_description();
 protected:
     virtual const char *ClassName() {
         return "paroc_interface";
@@ -158,6 +158,8 @@ protected:
 
     paroc_combox *__paroc_combox;
     paroc_buffer *__paroc_buf;
+    paroc_connection *__paroc_connection;
+
     paroc_accesspoint accesspoint;
 
     paroc_mutex _paroc_imutex;

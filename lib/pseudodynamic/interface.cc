@@ -47,6 +47,7 @@
 #endif
 
 int RunCmd(int argc, char **argv, char *env[], int *status) {
+    (void)argc;
     char *file=NULL;
 
     POPString str;

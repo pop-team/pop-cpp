@@ -20,7 +20,7 @@
 #include "paroc_interface.h"
 #include "paroc_event.h"
 #include "paroc_broker.h"
-#include "objectmonitor.ph"
+#include "paroc_system.h"
 
 int paroc_object::argc=0;
 char **paroc_object::argv=NULL;
@@ -29,20 +29,20 @@ paroc_object::paroc_object() {
     refcount=1;
     if(!paroc_system::appservice.IsEmpty()) {
         paroc_accesspoint myself=GetAccessPoint();
-// TODO LWK: This was added in the pseudodyn version: see if works
+	/* Note: no call to dynamical objects are possible
         try {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.ManageObject(myself);
         } catch(...) {
             rprintf("Can not register %s@%s to ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
         }
+        */
     }
 
 }
 
 paroc_object::~paroc_object() {
-// TODO LWK: This was added in the pseudodyn version: see if works
-
+/* Note: no call to dynamical objects are possible
     if(!paroc_system::appservice.IsEmpty()) {
         paroc_accesspoint myself=GetAccessPoint();
         try {
@@ -53,6 +53,7 @@ paroc_object::~paroc_object() {
             //rprintf("Can not unregister %s@%s from ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
         }
     }
+    */
 
 }
 
