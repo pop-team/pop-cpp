@@ -184,7 +184,7 @@ add_subdirectory(services)
       parser/*.cmake
       parser/CMakeFiles
       parser/Makefile
-      parser/popcc.cc
+      parser/popcc.h
     )
   else(POPCPP_COMPILER)
     set(EXTRACLEANED "")
