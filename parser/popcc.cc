@@ -117,6 +117,18 @@ void PrepareSource(char *src, char *dest, bool advanced) {
     fclose(sf);
 }
 
+//These are used to build command line arguments for subsequent executions
+static char option_output[] = "-o";
+static char option_compile[] = "-c";
+static char option_nointerface[] = "-parclass-nointerface";
+static char option_nobroker[] = "-parclass-nobroker";
+static char option_nowarning[] = "-no-warning";
+static char option_popccpcompilation[] = "-popcpp-compilation";
+static char option_noimplicitpack[] = "-no-implicit-pack";
+static char option_asyncallocation[] = "-async-allocation";
+static char option_xmp[] = "-xmp";
+static char option_advanced[] = "-advanced";
+
 //TODO This function needs a MAJOR rewriting and cleaning
 
 char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp, bool noasyncallocation, bool /*kcomputer*/, bool collective, bool advanced) {
@@ -127,16 +139,6 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
     char tmpfile1[1024];
     char tmpfile2[1024];
     char tmpfile3[1024];
-    char output_opt[] = "-o";
-    char compile_opt[] = "-c";
-    char noclient[] = "-parclass-nointerface";
-    char nobroker[] = "-parclass-nobroker";
-    char nowarning[] = "-no-warning";
-    char popccpcompilationtab[] = "-popcpp-compilation";
-    char noimplicitpack[] = "-no-implicit-pack";
-    char noasyncallocationtab[] = "-async-allocation";
-    char xmpoption[] = "-xmp";
-    char advancedoption[] = "-advanced";
 
     bool paroc = false;
     static char output[1024];
@@ -199,11 +201,9 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
         // Preprocessor output
         if(!usepipe) {
             //printf("Kcomputer flag %s\n", kcomputer ? "true" : "false");
-            if(*output_opt != 0) {
-                *t1 = output_opt;
-                t1++;
-                count++;
-            }
+            *t1 = option_output;
+            t1++;
+            count++;
             *t1 = tmpfile2;
             t1++;
             count++;
@@ -223,28 +223,28 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
         cmd1[2] = tmpfile3;
         int countparoc=3;
         if(!client) {
-            cmd1[countparoc++] = noclient;
+            cmd1[countparoc++] = option_nointerface;
         }
         if(!broker) {
-            cmd1[countparoc++] = nobroker;
+            cmd1[countparoc++] = option_nobroker;
         }
         if(warning) {
-            cmd1[countparoc++] = nowarning;
+            cmd1[countparoc++] = option_nowarning;
         }
         if(popcppcomp) {
-            cmd1[countparoc++] = popccpcompilationtab;
+            cmd1[countparoc++] = option_popccpcompilation;
         }
         if(noasyncallocation) {
-            cmd1[countparoc++] = noasyncallocationtab;
+            cmd1[countparoc++] = option_asyncallocation;
         }
         if(implicitpack) {
-            cmd1[countparoc++] = noimplicitpack;
+            cmd1[countparoc++] = option_noimplicitpack;
         }
         if(collective) {
-            cmd1[countparoc++] = xmpoption;
+            cmd1[countparoc++] = option_xmp;
         }
         if(advanced) {
-            cmd1[countparoc++] = advancedoption;
+            cmd1[countparoc++] = option_advanced;
         }
 
         if(!usepipe) {
@@ -291,14 +291,14 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
         count++;
     }
 
-    *t1 = compile_opt;
+    *t1 = option_compile;
     t1++;
     count++;
 
     *t1 = (paroc) ? tmpfile3 : source;
     t1++;
     count++;
-    *t1 = output_opt;
+    *t1 = option_output;
     t1++;
     count++;
 
