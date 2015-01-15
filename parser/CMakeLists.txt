@@ -2,12 +2,16 @@ cmake_minimum_required(VERSION 2.6)
 
 project(POPC_PARSER)
 
-include(CheckIncludeFile)
-include(CheckLibraryExists)
-
 # Add more warnings
 add_definitions(-Wall -Wextra -Werror)
 
+# Activate C++11
+add_definitions(-std=c++11)
+
+# Disable warning for generated files to compile
+add_definitions(-Wno-deprecated-register)
+
+# Check for config.h
 if(NOT POPCPP_COMPILER)
     message(STATUS "Configuring POP-C++ Compiler separately than library project.")
     if(NOT EXISTS "../config.h")
@@ -70,6 +74,12 @@ elseif(WIN32)
     set(intface_file ${POPCPP_LIB_PATH}/popc_intface_windows.cc)
 endif(UNIX)
 
+# Configure the config for paths
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/popcc.h.in ${CMAKE_CURRENT_SOURCE_DIR}/popcc.h)
+
+#Create executables
+
+#Build popcpp executables
 add_executable(popcpp
     parser.cc
     parser_common.cc
@@ -106,10 +116,6 @@ add_executable(popcc
     ${POPCPP_LIB_PATH}/utils.cc
     ${intface_file})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/popcc.h.in ${CMAKE_CURRENT_SOURCE_DIR}/popcc.h)
-
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "parser.tab.h;parser.tab.cc;parser.yy.cc;")
-
 # Install programs in the bin folder
 if(UNIX)
     install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popcc DESTINATION bin)
@@ -118,6 +124,9 @@ elseif(WIN32)
     install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popcc.exe DESTINATION bin)
     install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/popcpp.exe DESTINATION bin)
 endif(UNIX)
+
+# Configure cleaning
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "parser.tab.h;parser.tab.cc;parser.yy.cc;")
 
 if(NOT POPCPP_COMPILER)
     ADD_CUSTOM_TARGET (distclean @echo cleaning for source distribution)
