@@ -22,13 +22,22 @@
 
 char arch[256];
 
-bool verbose=false;
-bool noclean=false;
-bool nowarning=false;
-bool popcppcompilationflag=false;
-bool noimplicitpack=false;
-bool noasyncallocation=false;
-bool enablexmp=false;
+struct popc_options {
+    bool verbose;
+    bool noclean;
+    bool nowarning;
+    bool popcppcompilation;
+    bool noimplicitpack;
+    bool asyncallocation;
+    bool xmp;
+    bool mpi;
+    bool usepipe;
+    bool advanced;
+    bool kcomputer;
+    bool nobroker;
+    bool nointerface;
+    bool psdyn;
+};
 
 void Usage() {
     fprintf(stderr,"\nPOP-C++ version %s on %s\n", VERSION, arch);
@@ -50,7 +59,7 @@ void Usage() {
     fprintf(stderr,"   -popcdir:                POP-C++ installed directory\n");
     fprintf(stderr,"   -noclean:                Do not clean temporary files\n");
     fprintf(stderr,"   -no-warning:             Do not print warning on stdout\n");
-    //fprintf(stderr,"   -no-implicit-pack:     Do not pack parclass implicitly if no @pack directive is present\n");
+    fprintf(stderr,"   -no-implicit-pack:     Do not pack parclass implicitly if no @pack directive is present\n");
 
     fprintf(stderr,"   -async-allocation:       Use asynchronous mechanism to allocate a parallel object\n");
     fprintf(stderr,"   -verbose:                Print out additional information\n");
@@ -98,7 +107,7 @@ static char option_advanced[] = "-advanced";
 /**
  * Prepare POP-C++ source file. Generate _popc1_ files.
  */
-void prepare_source(char *src, char *dest, bool advanced) {
+void prepare_source(char *src, char *dest, const popc_options& options) {
     FILE *sf = fopen(src, "r+t");
     if(sf == NULL) {
         perror(src);
@@ -111,7 +120,7 @@ void prepare_source(char *src, char *dest, bool advanced) {
     }
 
     char buf[1024];
-    if(advanced) {
+    if(options.advanced) {
         fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n#include \"popc_advanced_header.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
     } else {
         fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
@@ -132,7 +141,7 @@ void prepare_source(char *src, char *dest, bool advanced) {
 /**
  * Run the C++ preprocessor
  */
-std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1, char* tmpfile2, bool usepipe, char** cmd){
+std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1, char* tmpfile2, char** cmd, const popc_options& options){
     std::size_t count = 0;
     cmd[count++] = preprocessor;
     char **t1 = cmd + 1;
@@ -145,15 +154,14 @@ std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1
     count++;
 
     // Preprocessor output
-    if(!usepipe) {
-        //printf("Kcomputer flag %s\n", kcomputer ? "true" : "false");
+    if(!options.usepipe) {
         *t1 = option_output;
         t1++;
         count++;
         *t1 = tmpfile2;
         t1++;
         count++;
-        if(verbose) {
+        if(options.verbose) {
             printf("C++ preprocessing: ");
             for(std::size_t i = 0; i < count; i++) {
                 printf("%s ", cmd[i]);
@@ -165,7 +173,7 @@ std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1
     return count;
 }
 
-int popc_preprocessor(char* popcpp, char* tmpfile1, char* tmpfile2, char* tmpfile3, bool client, bool broker, bool warning, bool popcppcomp, bool implicitpack, bool collective, bool advanced, bool usepipe, bool noasyncallocation, char** cmd, std::size_t count){
+int popc_preprocessor(char* popcpp, char* tmpfile1, char* tmpfile2, char* tmpfile3, char** cmd, std::size_t count, const popc_options& options){
     // Run POP-C++ preprocessor (popcpp)
     char *popc_preprocessor_command[1000];
     std::size_t countparoc=0;
@@ -173,34 +181,34 @@ int popc_preprocessor(char* popcpp, char* tmpfile1, char* tmpfile2, char* tmpfil
     popc_preprocessor_command[countparoc++] = tmpfile2;
     popc_preprocessor_command[countparoc++] = tmpfile3;
 
-    if(!client) {
+    if(options.nointerface) {
         popc_preprocessor_command[countparoc++] = option_nointerface;
     }
-    if(!broker) {
+    if(options.nobroker) {
         popc_preprocessor_command[countparoc++] = option_nobroker;
     }
-    if(warning) {
+    if(options.nowarning) {
         popc_preprocessor_command[countparoc++] = option_nowarning;
     }
-    if(popcppcomp) {
+    if(options.popcppcompilation) {
         popc_preprocessor_command[countparoc++] = option_popccpcompilation;
     }
-    if(noasyncallocation) {
+    if(options.asyncallocation) {
         popc_preprocessor_command[countparoc++] = option_asyncallocation;
     }
-    if(implicitpack) {
+    if(options.noimplicitpack) {
         popc_preprocessor_command[countparoc++] = option_noimplicitpack;
     }
-    if(collective) {
+    if(options.xmp) {
         popc_preprocessor_command[countparoc++] = option_xmp;
     }
-    if(advanced) {
+    if(options.advanced) {
         popc_preprocessor_command[countparoc++] = option_advanced;
     }
 
     int ret = 0;
-    if(!usepipe) {
-        if(verbose) {
+    if(!options.usepipe) {
+        if(options.verbose) {
             printf("POP-C++ parsing: ");
             for(std::size_t i = 0; i < countparoc; i++) {
                 printf("%s ", popc_preprocessor_command[i]);
@@ -208,11 +216,11 @@ int popc_preprocessor(char* popcpp, char* tmpfile1, char* tmpfile2, char* tmpfil
             printf("\n");
         }
         ret = RunCmd(countparoc, popc_preprocessor_command);
-        if(!noclean) {
+        if(!options.noclean) {
             popc_unlink(tmpfile2);
         }
     } else {
-        if(verbose) {
+        if(options.verbose) {
             printf("C++ preprocessing: ");
             for(std::size_t i = 0; i < count; i++) {
                 printf("%s ", cmd[i]);
@@ -231,7 +239,7 @@ int popc_preprocessor(char* popcpp, char* tmpfile1, char* tmpfile2, char* tmpfil
 }
 
 // Run C++ compiler
-int cxx_compiler(char* cpp, char** cpp_opt, char* source, char* dest, char* tmpfile3, char* str, bool paroc, int ret){
+int cxx_compiler(char* cpp, char** cpp_opt, char* source, char* dest, char* tmpfile3, char* str, bool paroc, int ret, const popc_options& options){
     static char output[1024];
 
     char *cmd[1000];
@@ -271,7 +279,7 @@ int cxx_compiler(char* cpp, char** cpp_opt, char* source, char* dest, char* tmpf
     count++;
 
     if(ret == 0) {
-        if(verbose) {
+        if(options.verbose) {
             printf("C++ compilation: ");
             for(std::size_t i = 0; i < count; i++) {
                 printf("%s ", cmd[i]);
@@ -284,7 +292,7 @@ int cxx_compiler(char* cpp, char** cpp_opt, char* source, char* dest, char* tmpf
     return ret;
 }
 
-char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, bool usepipe, bool client, bool broker, bool warning, bool implicitpack, bool popcppcomp, bool noasyncallocation, bool /*kcomputer*/, bool collective, bool advanced) {
+char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, const popc_options& options) {
     char *cmd[1000];
     char sdir[1024];
     char tmpfile1[1024];
@@ -314,7 +322,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 
     // Check the extension of the header file. .ph or .pc are accepted as POP-C++ header file extensions.
     bool paroc_extension = (strcmp(str, ".ph") == 0 || strcmp(str,".pc") == 0);
-    if(verbose) {
+    if(options.verbose) {
         printf("-- Compilation of source file %s\n", fname);
     }
 
@@ -322,7 +330,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
         //TODO Generation of the various file names should be reviewed
         sprintf(tmpfile1, "%s_popc1_%s", sdir, fname);
 
-        if(usepipe) {
+        if(options.usepipe) {
             sprintf(tmpfile2, "-");
         } else {
             sprintf(tmpfile2, "%s_popc2_%s", sdir, fname);
@@ -335,25 +343,24 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
         }
 
         // Prepare the source and generate _popc1_ files
-        prepare_source(source, tmpfile1, advanced);
+        prepare_source(source, tmpfile1, options);
 
         //Run the C++ preprocessor
-        std::size_t count = cxx_preprocessor(preprocessor, pre_opt, tmpfile1, tmpfile2, usepipe, cmd);
+        std::size_t count = cxx_preprocessor(preprocessor, pre_opt, tmpfile1, tmpfile2, cmd, options);
 
         //Run the POPC++ preprocessor
-        ret = popc_preprocessor(popcpp, tmpfile1, tmpfile2, tmpfile3,
-            client, broker, warning, popcppcomp, implicitpack, collective, advanced, usepipe, noasyncallocation, cmd, count);
+        ret = popc_preprocessor(popcpp, tmpfile1, tmpfile2, tmpfile3, cmd, count, options);
 
         paroc = true;
     }
 
-    if(!noclean) {
+    if(!options.noclean) {
         popc_unlink(tmpfile1);
     }
 
-    ret = cxx_compiler(cpp, cpp_opt, source, dest, tmpfile3, str, paroc, ret);
+    ret = cxx_compiler(cpp, cpp_opt, source, dest, tmpfile3, str, paroc, ret, options);
 
-    if(!noclean && paroc) {
+    if(!options.noclean && paroc) {
         popc_unlink(tmpfile3);
     }
 
@@ -375,8 +382,21 @@ bool FindLib(char *libpaths[1024], int count, const char *libname, char libfile[
 }
 
 //This function parses all the arguments
-//Note(BW): This is quite a mess actually. A simple option would help greatly.
+//and dispatch them to all the programs that forms the toolchain
+
 int main(int argc, char *argv[]) {
+    popc_options options;
+
+    options.verbose = false;
+    options.noclean = false;
+    options.nowarning = false;
+    options.popcppcompilation= false;
+    options.noimplicitpack = false;
+    options.asyncallocation = false;
+    options.xmp = false;
+    options.usepipe = false;
+    options.kcomputer = false;
+    options.psdyn = false;
 
 #ifndef HOST_CPU
     sprintf(arch, "%s", "unknown");
@@ -446,24 +466,23 @@ int main(int argc, char *argv[]) {
     }
 
     // Check for POP-C++ options
-    noclean = (paroc_utils::checkremove(&argc, &argv, "-noclean") != NULL);
-    bool warning = (paroc_utils::checkremove(&argc, &argv, "-no-warning") != NULL);
-    bool popcppcomp = (paroc_utils::checkremove(&argc, &argv, "-popcpp-compilation") != NULL);
-    bool implicitpack = (paroc_utils::checkremove(&argc, &argv, "-no-implicit-pack") != NULL);
-    bool asyncallocation = (paroc_utils::checkremove(&argc, &argv, "-async-allocation") != NULL);
-    bool broker = (paroc_utils::checkremove(&argc, &argv, "-parclass-nobroker") == NULL);
-    bool client = (paroc_utils::checkremove(&argc, &argv, "-parclass-nointerface") == NULL);
-    bool usepipe = false;
+    options.noclean = (paroc_utils::checkremove(&argc, &argv, "-noclean") != NULL);
+    options.nowarning = (paroc_utils::checkremove(&argc, &argv, "-no-warning") != NULL);
+    options.popcppcompilation = (paroc_utils::checkremove(&argc, &argv, "-popcpp-compilation") != NULL);
+    options.noimplicitpack = (paroc_utils::checkremove(&argc, &argv, "-no-implicit-pack") != NULL);
+    options.asyncallocation = (paroc_utils::checkremove(&argc, &argv, "-async-allocation") != NULL);
+    options.nobroker = (paroc_utils::checkremove(&argc, &argv, "-parclass-nobroker") != NULL);
+    options.nointerface = (paroc_utils::checkremove(&argc, &argv, "-parclass-nointerface") != NULL);
 #ifndef __WIN32__
-    usepipe = (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
+    options.usepipe = (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
 #endif
-    bool kcomputer = (paroc_utils::checkremove(&argc, &argv, "-kcomputer") == NULL);
-    bool enablexmp = (paroc_utils::checkremove(&argc, &argv, "-xmp") != NULL);
-    bool enablempi = (paroc_utils::checkremove(&argc, &argv, "-mpi") != NULL);
-    bool enableadvanced = (paroc_utils::checkremove(&argc, &argv, "-advanced") != NULL);
-    bool enablepsdyn = (paroc_utils::checkremove(&argc, &argv, "-pseudo-dynamic") != NULL);
-    if(enablepsdyn){
-      enablempi = true;
+    options.kcomputer = (paroc_utils::checkremove(&argc, &argv, "-kcomputer") == NULL);
+    options.xmp = (paroc_utils::checkremove(&argc, &argv, "-xmp") != NULL);
+    options.mpi = (paroc_utils::checkremove(&argc, &argv, "-mpi") != NULL);
+    options.advanced = (paroc_utils::checkremove(&argc, &argv, "-advanced") != NULL);
+    options.psdyn = (paroc_utils::checkremove(&argc, &argv, "-pseudo-dynamic") != NULL);
+    if(options.psdyn){
+      options.mpi = true;
     }
 
     // Check for POP-C++ installation directory
@@ -502,7 +521,7 @@ int main(int argc, char *argv[]) {
     // Check change for the C++ preprocessor
     if((tmp = paroc_utils::checkremove(&argc, &argv, "-cpp=")) != NULL) {
         strcpy(cpp, tmp);
-    } else if(enablexmp || enablempi) {
+    } else if(options.xmp || options.mpi) {
         strcpy(cpp, mpicpp);
     } else if((tmp = getenv("POPC_CPP")) != NULL) {
         strcpy(cpp, tmp);
@@ -511,7 +530,7 @@ int main(int argc, char *argv[]) {
     // Check change for the C++ compiler
     if((tmp = paroc_utils::checkremove(&argc, &argv, "-cxx=")) != NULL) {
         strcpy(parocxx, tmp);
-    } else if(enablexmp || enablempi) {
+    } else if(options.xmp || options.mpi) {
         strcpy(parocxx, mpicxx);
     } else if((tmp = getenv("POPC_CXX")) != NULL) {
         strcpy(parocxx, tmp);
@@ -520,7 +539,7 @@ int main(int argc, char *argv[]) {
     // Check change for the C++ linker
     if((tmp = paroc_utils::checkremove(&argc, &argv, "-popcld=")) != NULL) {
         strcpy(parocld,tmp);
-    } else if(enablexmp || enablempi) {
+    } else if(options.xmp || options.mpi) {
         strcpy(parocld, mpicxx);
     } else if((tmp = getenv("POPC_LD")) != NULL) {
         strcpy(parocld, tmp);
@@ -528,8 +547,8 @@ int main(int argc, char *argv[]) {
         strcpy(parocld, parocxx);
     }
 
-    if((enablexmp || enablempi) && !enablepsdyn) {
-        enableadvanced = true;
+    if((options.xmp || options.mpi) && !options.psdyn) {
+        options.advanced = true;
     }
 
     cpp_count = 0;
@@ -552,7 +571,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Add the library path for compilation
-    if(enablepsdyn) {
+    if(options.psdyn) {
         sprintf(buf, "-L%s/lib/pseudodynamic", parocdir);
     } else {
         sprintf(buf, "-L%s/lib/dynamic", parocdir);
@@ -601,7 +620,7 @@ int main(int argc, char *argv[]) {
             useparocmain=false;
         } else if(strcmp(argv[i], "-verbose") == 0) {
             argv[i][0] = 0;
-            verbose = true;
+            options.verbose = true;
         } else if(strncmp(argv[i], "-I" , 2) == 0) {
             cpp_opts[cpp_count++]=argv[i];
         } else if(strcmp(argv[i], "-shared") == 0) {
@@ -626,7 +645,7 @@ int main(int argc, char *argv[]) {
         cpp_opts[cpp_count++] = popc_strdup("-Dmain=parocmain");
     }
 
-    if(enablepsdyn) {
+    if(options.psdyn) {
         sprintf(buf, "-I%s/include/static", parocdir);
     } else {
         sprintf(buf, "-I%s/include/dynamic", parocdir);
@@ -644,7 +663,7 @@ int main(int argc, char *argv[]) {
     cpp_opts[cpp_count] = NULL;
     cxx_opts[cxx_count] = NULL;
 
-    if(verbose) {
+    if(options.verbose) {
         printf("POP-C++ Compiler - version %s on %s\n", VERSION, arch);
     }
     for(int i = 1; i < argc; i++) {
@@ -654,10 +673,10 @@ int main(int argc, char *argv[]) {
                 if(str != NULL) {
                     bool paroc_extension = (strcmp(str, ".ph") == 0 || strcmp(str, ".pc") == 0);
                     if(paroc_extension || strcmp(str, ".cc") == 0 ||  strcmp(str, ".C") == 0 || strcmp(str, ".cpp")==0) {
-                        if(verbose) {
+                        if(options.verbose) {
                             printf("\n");
                         }
-                        char *outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile)) ? NULL:  outputfile), usepipe, client, broker, warning, implicitpack, popcppcomp, asyncallocation, kcomputer, enablexmp, enableadvanced);
+                        char *outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile)) ? NULL:  outputfile), options);
                         link_cmd[link_count++] = (outf == NULL) ? argv[i] : popc_strdup(outf);
                         continue;
                     }
@@ -678,11 +697,11 @@ int main(int argc, char *argv[]) {
 
     if(!compile) {
         if(useparocmain) {
-            if(enablepsdyn && object) {
+            if(options.psdyn && object) {
                 sprintf(buf, "%s/lib/pseudodynamic/popc_objmain.%s.o", parocdir, "psdyn");
-            } else if(enablepsdyn) {
+            } else if(options.psdyn) {
                 sprintf(buf, "%s/lib/pseudodynamic/paroc_infmain.%s.o", parocdir, "psdyn");
-            } else if((enablexmp || enablempi) && object) {
+            } else if((options.xmp || options.mpi) && object) {
                 sprintf(buf, "%s/lib/dynamic/popc_objmain.%s.o", parocdir, "xmp");
             } else if(object) {
                 sprintf(buf, "%s/lib/dynamic/paroc_objmain.%s.o", parocdir, objmain);
@@ -692,9 +711,9 @@ int main(int argc, char *argv[]) {
             link_cmd[link_count++] = popc_strdup(buf);
         }
         if(!paroc_nolib) {
-            if(enablepsdyn && (paroc_static || staticlib)) {
+            if(options.psdyn && (paroc_static || staticlib)) {
                 sprintf(buf, "%s/lib/pseudodynamic/libpopc_common_psdyn.a", parocdir);
-            } else if(enablepsdyn) {
+            } else if(options.psdyn) {
                 strcpy(buf, "-lpopc_common_psdyn");
             } else if(paroc_static || staticlib) {
                 sprintf(buf, "%s/lib/dynamic/libpopc_common.a", parocdir);
@@ -728,7 +747,7 @@ int main(int argc, char *argv[]) {
 #endif
 
             // Link with advanced POP-C++ library
-            if((enablexmp || enableadvanced || enablempi) && !enablepsdyn) {
+            if((options.xmp || options.advanced || options.mpi) && !options.psdyn) {
                 if(paroc_static || staticlib) {
                     sprintf(buf, "%s/lib/dynamic/libpopc_advanced.a", parocdir);
                 } else {
@@ -738,7 +757,7 @@ int main(int argc, char *argv[]) {
             }
         }
         link_cmd[link_count] = NULL;
-        if(verbose) {
+        if(options.verbose) {
             printf("\nC++ linking: ");
             for(int i = 0; i < link_count; i++) {
                 printf("%s ", link_cmd[i]);
@@ -748,7 +767,7 @@ int main(int argc, char *argv[]) {
         RunCmd(link_count, link_cmd);
     }
 
-    if(verbose) {
+    if(options.verbose) {
         printf("POP-C++ compilation done ...\n\n\n");
     }
     return 0;
