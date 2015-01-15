@@ -143,13 +143,14 @@ void paroc_od::url(const char *str) {
     strcpy(h,str);
 
     // Read if user specified for rsh/ssh
-    if(h!=NULL&&(tmpstr=strchr(h,'@'))!=NULL) {
+    if((tmpstr=strchr(h,'@'))) {
         *tmpstr=0;
         hostuser=h;
         strcpy(h,tmpstr+1);
     }
+
     // Read if core specified
-    if(h != NULL && (tmpstr=strchr(h, '{')) != NULL) {
+    if((tmpstr=strchr(h, '{'))) {
         *tmpstr=0;
         char * tmpstr2;
         if((tmpstr2 = strchr(tmpstr+1, '}')) != NULL) {
@@ -160,6 +161,7 @@ void paroc_od::url(const char *str) {
         }
 
     }
+
     hostname = h;
     if(!strcmp(hostname, "localhost")) {
         runLocal(true);
