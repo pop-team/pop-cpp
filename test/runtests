@@ -13,10 +13,10 @@ then
 SXXLOCATION=$POPC_LOCATION/sbin/
 fi
 
-$SXXLOCATION/SXXpopc killnstart
-
 if [ "$1" = "-all" ]
 then
+    $SXXLOCATION/SXXpopc killnstart
+
     echo ""
     echo Starting test suite...
     echo ""
@@ -55,6 +55,9 @@ then
         echo "Warning: Take caution with test results, read test output for additional information"
     fi
     rm -rf $RESULTS
+
+    $SXXLOCATION/SXXpopc stop 2&> /dev/null
+    $SXXLOCATION/SXXpopc kill 2&> /dev/null
 else
     if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ -z "$1" ]
     then
@@ -80,6 +83,8 @@ else
 
         if [ -d $selected_test ]
         then
+            $SXXLOCATION/SXXpopc killnstart
+
             cd $selected_test
             echo ""
             echo "Start of \"$1\" test"
@@ -94,6 +99,9 @@ else
             cd $CWD
             echo ""
             echo "End of \"$1\" test"
+
+            $SXXLOCATION/SXXpopc stop 2&> /dev/null
+            $SXXLOCATION/SXXpopc kill 2&> /dev/null
         else
             echo ""
             echo "The test \"$1\" does not exist !!"
@@ -102,6 +110,3 @@ else
         fi
     fi
 fi
-
-$SXXLOCATION/SXXpopc stop 2&> /dev/null
-$SXXLOCATION/SXXpopc kill 2&> /dev/null
