@@ -119,7 +119,6 @@ add_subdirectory(scripts)
 add_subdirectory(services)
 
 # Add target to clean the distribution of all CMake generated files
-add_custom_target (distclean @echo cleaning for source distribution)
   set(DISTCLEANED
    cmake.depends
    cmake.check_depends
@@ -210,10 +209,8 @@ add_custom_target (distclean @echo cleaning for source distribution)
     set(EXTRACLEANED "")
   endif(POPCPP_COMPILER)
 
-  add_custom_command(
-    DEPENDS clean
-    COMMENT "distribution clean"
-    COMMAND rm
-    ARGS    -Rf CMakeTmp ${DISTCLEANED} ${EXTRACLEANED}
-    TARGET  distclean
-  )
+  add_custom_target(distclean
+      COMMAND ${CMAKE_BUILD_TOOL} clean
+      COMMAND rm -Rf CMakeTmp ${DISTCLEANED} ${EXTRACLEANED}
+      COMMENT "distribution clean"
+      )
