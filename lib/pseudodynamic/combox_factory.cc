@@ -26,30 +26,48 @@
 #endif
 
 #include "paroc_combox_factory.h"
+//#include "paroc_combox_socket.h"
+//#include "popc_combox_uds.h"
+#include "paroc_utils.h"
+#ifdef MPI_SUPPORT
 #include "popc_combox_mpi.h"
-
+#endif
 
 paroc_combox_registration::paroc_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator) {
     paroc_combox_factory *f = paroc_combox_factory::GetInstance();
     f->Register(name,metrics, creator);
 }
 
-/*paroc_combox * combox_socket_creator()
-{
-    return new paroc_combox_socket;
-}*/
+paroc_combox * combox_socket_creator() {
+    // return new paroc_combox_socket;
+    // TODO LW
+    return NULL;
+}
 
+// TODO LW: Why doesn't the compiler complain about this with Werror ? Could we have different flags here ?
+paroc_combox* combox_uds_creator() {
+ //   return new popc_combox_uds; // TODO LW: This should be uncommented !
+    // TODO LW
+    return NULL;
+}
+
+// Note by LWK: Added MPI_SUPPORT to merge 2 different version of the file (pseudodyn and dynamic)
+#ifdef MPI_SUPPORT
 paroc_combox * combox_mpi_creator() {
     return new popc_combox_mpi;
 }
+#endif
 
 paroc_combox_factory *paroc_combox_factory::fact=NULL;
 
 
 paroc_combox_factory::paroc_combox_factory() {
-
-//  Register("socket",0,combox_socket_creator);
+//Note(BW): UDS initialization by the broker fails, therefore, disabled for now
+//    Register("uds", 0, combox_uds_creator);
+    Register("socket", 0, combox_socket_creator);
+#ifdef MPI_SUPPORT
     Register("mpi", 0, combox_mpi_creator);
+#endif
 
     //Load combox from plugins....
     int metrics=100;
@@ -232,7 +250,7 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
     if(name==NULL || creator==NULL) {
         return false;
     }
-    //combox_factory_struct t;
+
     POSITION pos=list.GetHeadPosition();
     POSITION insertpos=NULL;
 
@@ -263,9 +281,6 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
 }
 
 void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CREATOR &f) {
-	(void) fname;
-	(void) name;
-	(void) f;
 #ifdef HAVE_LIBDL
     void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);
     if(handle==NULL) {
@@ -281,6 +296,9 @@ void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CR
     }
     return handle;
 #else
+	(void) fname;
+	(void) name;
+	(void) f;
     return NULL;
 #endif
 }

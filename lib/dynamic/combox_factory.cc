@@ -39,9 +39,17 @@ paroc_combox * combox_socket_creator() {
     return new paroc_combox_socket;
 }
 
+// TODO LW: Why doesn't the compiler complain about this with Werror ? Could we have different flags here ?
 paroc_combox* combox_uds_creator() {
  //   return new popc_combox_uds;
 }
+
+// Note by LWK: Added MPI_SUPPORT to merge 2 different version of the file (pseudodyn and dynamic)
+#ifdef MPI_SUPPORT
+paroc_combox * combox_mpi_creator() {
+    return new popc_combox_mpi;
+}
+#endif
 
 paroc_combox_factory *paroc_combox_factory::fact=NULL;
 
@@ -50,6 +58,9 @@ paroc_combox_factory::paroc_combox_factory() {
 //Note(BW): UDS initialization by the broker fails, therefore, disabled for now
 //    Register("uds", 0, combox_uds_creator);
     Register("socket", 0, combox_socket_creator);
+#ifdef MPI_SUPPORT
+    Register("mpi", 0, combox_mpi_creator);
+#endif
 
     //Load combox from plugins....
     int metrics=100;
@@ -278,6 +289,9 @@ void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CR
     }
     return handle;
 #else
+	(void) fname;
+	(void) name;
+	(void) f;
     return NULL;
 #endif
 }
