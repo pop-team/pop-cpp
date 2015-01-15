@@ -33,6 +33,7 @@ public:
     paroc_connection_sock(paroc_connection_sock &me);
 
     virtual paroc_connection *Clone();
+    virtual void reset() {}
 
     int sockfd;
 };
@@ -49,22 +50,25 @@ public:
 
     virtual ~paroc_combox_socket();
 
-    virtual bool Create(char* host, int port=0, bool server=false);
-
-    virtual bool Connect(const char *url);
-    virtual bool connect_and_die(std::string &url) {
-      (void)(url);  
-      return true;
+    virtual bool Create(int port=0, bool server=false);
+    virtual bool Create(const char* /*address*/, bool /*server*/) {
+        return false;
     }
 
-    virtual paroc_connection* get_connection();
+    virtual bool Connect(const char *url);
 
     virtual int Send(const char *s,int len);
-    virtual int Send(const char *s,int len, paroc_connection *conn, bool unlock);
+    virtual int Send(const char *s,int len, paroc_connection *connection);
+    virtual paroc_connection* get_connection() {
+        if(!peer) {
+            return NULL;
+        }
+        return peer;
+    }
 
 
-    virtual int Recv(char *s,int len, bool unlock);
-    virtual int Recv(char *s,int len, paroc_connection *&iopeer, bool unlock);
+    virtual int Recv(char *s,int len);
+    virtual int Recv(char *s,int len, paroc_connection *connection);
 
     virtual paroc_connection *Wait();
 
@@ -79,11 +83,9 @@ public:
     virtual bool GetProtocol(paroc_string & protocolName);
 
 protected:
-    virtual paroc_connection *CreateConnection(int fd);
+    virtual paroc_connection_sock *CreateConnection(int fd);
     bool CloseSock(int fd);
     bool Connect(const char *host,int port);
-    virtual bool disconnect(paroc_connection *connection);
-    virtual bool is_server();
 
     int GetSockInfo(sockaddr &info,socklen_t &len);
     int GetPort();
