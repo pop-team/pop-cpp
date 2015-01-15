@@ -31,6 +31,7 @@ parser/parser.tab.h
 parser/parser.yy.cc
 parser/popcc
 parser/popcpp
+parser/popcc.h.in
 
 # Clean tests
 !test/*/Makefile
