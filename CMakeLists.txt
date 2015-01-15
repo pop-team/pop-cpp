@@ -214,3 +214,9 @@ add_subdirectory(services)
       COMMAND rm -Rf CMakeTmp ${DISTCLEANED} ${EXTRACLEANED}
       COMMENT "distribution clean"
       )
+
+  # Custom target to run the tests
+  add_custom_target(tests
+      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test/runtests -all
+      COMMENT "run all tests"
+      )
