@@ -41,6 +41,7 @@ paroc_combox * combox_socket_creator() {
 
 paroc_combox* combox_uds_creator() {
  //   return new popc_combox_uds;
+    return NULL;
 }
 
 paroc_combox_factory *paroc_combox_factory::fact=NULL;
