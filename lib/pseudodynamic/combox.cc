@@ -1,11 +1,20 @@
 /**
- * File : combox.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of the communication box abstraction
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of the communication box abstraction.
+ *
+ *
+ */
+
+/*
+  Deeply need refactoring:
+    POPC_Connection instead of paroc_connector
+    POPC_Combox instead of paroc_combox
+   Need to separate connection and combox implementation in two separate file.
  */
 
 #include <stdio.h>
@@ -33,9 +42,9 @@ paroc_connection::~paroc_connection() {
 
 }
 
-bool paroc_connection::is_connection_init() {
-    return _is_connection_init;
-}
+//bool paroc_connection::is_connection_init() {
+//    return _is_connection_init;
+//}
 
 void paroc_connection::set_as_connection_init() {
     _is_connection_init = true;
@@ -65,9 +74,18 @@ paroc_combox *paroc_connection::GetCombox() {
     return combox;
 }
 
+
+
+/**
+ * COMBOX Implementation
+ */
+
+
 paroc_combox::paroc_combox() {
     defaultFact = paroc_buffer_factory_finder::GetInstance()->FindFactory("xdr");
-    DEBUGIF(defaultFact == NULL, "ERROR: can not find the xdr buffer factory!");
+    if(defaultFact == NULL) {
+        printf("POP-C++ Error: can not find the xdr buffer factory!\n");
+    }
 
     timeout = -1;
     for(int i = 0; i < 2; i++) {
@@ -117,7 +135,6 @@ bool paroc_combox::SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg) 
     if(idx < 0 || idx >= 2) {
         return false;
     }
-
     cblist[idx] = cb;
     cbdata[idx] = arg;
     return true;

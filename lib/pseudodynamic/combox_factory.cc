@@ -13,6 +13,8 @@
 /*
   Deeply need refactoring:
     POPC_ComboxFactory instead of paroc_combox_factory
+
+  Note by LWK: The factory should generate the parent class paroc_combox and not have 3 different methods for uds, mpi and socket
  */
 
 #include "popc_intface.h"
@@ -30,6 +32,7 @@
 //#include "popc_combox_uds.h"
 #include "paroc_utils.h"
 #ifdef MPI_SUPPORT
+// Note by LWK: Added MPI_SUPPORT here to use 1 version of the file for both pseudodyn and dynamic
 #include "popc_combox_mpi.h"
 #endif
 
@@ -51,7 +54,6 @@ paroc_combox* combox_uds_creator() {
     return NULL;
 }
 
-// Note by LWK: Added MPI_SUPPORT to merge 2 different version of the file (pseudodyn and dynamic)
 #ifdef MPI_SUPPORT
 paroc_combox * combox_mpi_creator() {
     return new popc_combox_mpi;
