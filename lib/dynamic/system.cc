@@ -17,7 +17,6 @@
 #include "popc_intface.h"
 
 //#include <stdio.h>
-
 //#include <netdb.h>
 //#include <unistd.h>
 //#include <sys/socket.h>
@@ -372,18 +371,26 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
 }
 
 
+/**
+ * Initialize the base system to run a POP-C++ application
+ * @param   argc    Number of arguments (passed from the main)
+ * @param   argv    Arguments (passed from the main)
+ * @return  TRUE if the system is initialized. FALSE in any others cases.
+ */
 bool paroc_system::Initialize(int *argc,char ***argv) {
+    // Get access point address of the Job Manager
     char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
     if(info==NULL) {
-        printf("Error0\n");
-        return false;
+         return false;
     }
     paroc_system::jobservice.SetAccessString(info);
     paroc_system::jobservice.SetAsService();
 
+    // Get path of the application service executable
     char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
     char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
 
+    // Check if need to run on local node only
     if(paroc_utils::checkremove(argc,argv,"-runlocal")) {
         paroc_od::defaultLocalJob=true;
     }
@@ -446,10 +453,10 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 
     /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
     {
-        printf("error4\n");
         return false;
     }
     else return true;*/
+
 #ifdef DEFINE_UDS_SUPPORT
     return false;
 #else
@@ -481,8 +488,10 @@ void paroc_system::Finalize(bool normalExit) {
                     oldcount=count;
                 }
             } else {
+            //printf("Finalize killall\n");
                 mgr->KillAll();
             }
+          //printf("Finalize stop\n");
             mgr->Stop(challenge);
             delete mgr;
         } catch(paroc_exception *e) {
@@ -506,7 +515,6 @@ AppCoreService *paroc_system::CreateAppCoreService(char *codelocation) {
         tmp[i]=(char)(1+254.0*rand()/(RAND_MAX+1.0));
     }
     tmp[255]='\0';
-
     challenge=tmp;
 
     return new AppCoreService(challenge, false, codelocation);

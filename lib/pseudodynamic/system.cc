@@ -11,23 +11,27 @@
  * P.Kuonen   02/2011      define default IP for version 1.3.1m (see comments 1.3.1m)
  * P.Kuonen   25/3/2011    Cosmetic changes
 
+
+  Deeply need refactoring:
+    POPC_System instead of paroc_system
  */
+#include "popc_intface.h"
 
-#include <stdio.h>
+//#include <stdio.h>
+//#include <netdb.h>
+//#include <unistd.h>
+//#include <sys/socket.h>
+//#include <netinet/in.h>
+//#include <arpa/inet.h>
+//#include <ctype.h>
 
-#include <netdb.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <ctype.h>
 
 #include "paroc_system.h"
-#include "paroc_od.h"
 #include "paroc_buffer_factory_finder.h"
+#include "paroc_utils.h"
 #include "paroc_combox_factory.h"
 #include "paroc_exception.h"
-#include "paroc_utils.h"
+#include "paroc_od.h"
 
 paroc_accesspoint paroc_system::appservice;
 paroc_accesspoint paroc_system::jobservice;
@@ -48,9 +52,10 @@ POPString paroc_system::platform;
 MPI::Intracomm paroc_system::popc_self;
 std::ostringstream paroc_system::_popc_cout;
 
+//V1.3m
 POPString paroc_system::POPC_HostName;
 #define LOCALHOST "localhost"
-
+//End modif
 
 const char *paroc_system::paroc_errstr[17]= {
     "Out of resource",                           // 0
@@ -84,7 +89,6 @@ paroc_system::paroc_system() {
         platform=tmp;
     } else {
         char str[128];
-
 #ifndef POPC_ARCH
         char arch[64], sysname[64];
         //sysinfo(SI_SYSNAME,sysname,64);
@@ -95,7 +99,7 @@ paroc_system::paroc_system() {
 #endif
         platform=str;
     }
-    POPC_HostName = POPString(""); //V1.3m
+    POPC_HostName = POPString("");
 }
 
 
@@ -133,7 +137,7 @@ void paroc_system::perror(const paroc_exception *e) {
     paroc_system::perror((const char*)e->Extra());
 }
 
-
+// V1.3m
 // Try to determine the Host Name of the machine and put it in POPC_Host_Name
 // IF env. variable POPC_HOST is defined THEN use POPC_HOST
 // ELSE IF try to use gethostname() and possibly env. variable POPC_DOMAIN
@@ -144,7 +148,7 @@ POPString paroc_system::GetHost() {
         char str[128];
         char *t=getenv("POPC_HOST");
         if(t==NULL || *t==0) {
-            gethostname(str,127);
+            popc_gethostname(str,127);
             if(strchr(str,'.')==NULL || strstr(str,".local\0")!=NULL) {
                 int len=strlen(str);
                 char *domain=getenv("POPC_DOMAIN");
@@ -167,10 +171,12 @@ POPString paroc_system::GetHost() {
 }
 
 
+// V1.3m
 // Try to determine the IP address of the machine.
 // If fail return the localhost IP = LOCALHOST
 //------------------------------------------------------
 POPString paroc_system::GetIP() {
+#ifndef __WIN32__
     POPString iface,ip;
     char* tmp;
     ip = POPString(LOCALHOST);
@@ -201,20 +207,63 @@ POPString paroc_system::GetIP() {
         }
     }
     return ip;
+#else
+    char ipaddr[64];
+    char hostname[256];
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if(popc_gethostname(hostname,256)!=0) {
+        return paroc_string("127.0.0.1");
+    }
+    struct hostent *hp=gethostbyname(hostname);
+    unsigned ip=(unsigned(127)<<24)+1;
+
+    if(hp==NULL || *(hp->h_addr_list)==NULL) {
+        return paroc_string("127.0.0.1");
+    }
+
+    char **p=hp->h_addr_list;
+    while(*p!=NULL) {
+        memcpy(&ip,*p, sizeof(unsigned));
+        ip=ntohl(ip);
+        if(ip!=(unsigned(127)<<24)+1) {
+            break;
+        }
+        p++;
+    }
+    int n1,n2,n3,n4;
+    n1=ip & 255;
+    ip=ip>>8;
+
+    n2=ip & 255;
+    ip=ip>>8;
+
+    n3=ip & 255;
+    ip=ip>>8;
+
+    n4=ip & 255;
+    sprintf(ipaddr,"%d.%d.%d.%d",n4,n3,n2,n1);
+    WSACleanup();
+    return ipaddr;
+#endif
 }
 
 int paroc_system::GetIP(const char *hostname, int *iplist, int listsize) {
     /* This method should normally not be used to return more than one ip*/
     assert(listsize==1);
+#ifdef __WIN32__
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+#endif
     struct hostent *hp;
     int n;
     char **p;
     int addr;
-    if((int)(addr = inet_addr(hostname)) == -1) {
+    if((int)(addr = popc_inet_addr(hostname)) == -1) {
         hp=gethostbyname(hostname);
     } else {
         if(listsize>0) {
-            *iplist=ntohl(addr);
+            *iplist=popc_ntohl(addr);
             return 1;
         }
         return 0;
@@ -225,36 +274,39 @@ int paroc_system::GetIP(const char *hostname, int *iplist, int listsize) {
     n=0;
     for(p = hp->h_addr_list; *p != 0 && n<listsize; p++) {
         memcpy(iplist, *p, sizeof(int));
-        *iplist=ntohl(*iplist);
+        *iplist=popc_ntohl(*iplist);
         if(*iplist==(int(127)<<24)+1) {
             continue;
         }
         n++;
         iplist++;
     }
-    endhostent();
+    popc_endhostent();
     if(n==0) {
         n=1;
     }
+#ifdef __WIN32__
+    WSACleanup();
+#endif
     return n;
 }
 
 
 int paroc_system::GetIP(int *iplist, int listsize) {
     assert(listsize==1); /* This method cannot return more than one ip*/
-    char* parocip=strdup((const char*)GetIP());
+    char* parocip=popc_strdup((const char*)GetIP());
     int n;
     int addr;
     char *tmp;
-    char *tok=strtok_r(parocip," \n\r\t",&tmp);
+    char *tok=popc_strtok_r(parocip," \n\r\t",&tmp);
     n=0;
     while(tok!=NULL && n<listsize) {
-        if((int)(addr = inet_addr(tok)) != -1) {
-            *iplist=ntohl(addr);
+        if((int)(addr = popc_inet_addr(tok)) != -1) {
+            *iplist=popc_ntohl(addr);
             iplist++;
             n++;
         }
-        tok=strtok_r(NULL," \n\r\t",&tmp);
+        tok=popc_strtok_r(NULL," \n\r\t",&tmp);
     }
     return n;
 }
@@ -302,8 +354,7 @@ bool paroc_system::GetIPFromInterface(POPString &/*iface*/, POPString &/*str_ip*
       if ( iap->ifa_addr &&
            (iap->ifa_flags & IFF_UP) &&
            (iap->ifa_addr->sa_family == AF_INET) &&
-           !strcmp(iap->ifa_name, (const char*)iface) )
-      {
+           !strcmp(iap->ifa_name, (const char*)iface)) {
         sa = (struct sockaddr_in *)(iap->ifa_addr);
         inet_ntop(iap->ifa_addr->sa_family,
                   (void *)&(sa->sin_addr),
@@ -314,7 +365,8 @@ bool paroc_system::GetIPFromInterface(POPString &/*iface*/, POPString &/*str_ip*
         str_ip=str_ip_local;
         freeifaddrs(addrs);
         return true;
-      }}
+      }
+    }
     freeifaddrs(addrs);*/
     return false;
 }
@@ -327,7 +379,6 @@ bool paroc_system::GetIPFromInterface(POPString &/*iface*/, POPString &/*str_ip*
  * @return  TRUE if the system is initialized. FALSE in any others cases.
  */
 bool paroc_system::Initialize(int *argc,char ***argv) {
-//  printf("Initiliaze system\n");
     // Get access point address of the Job Manager
     char *info = paroc_utils::checkremove(argc, argv, "-jobservice=");
     if(info == NULL) {
@@ -338,7 +389,6 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 
     // Get path of the application service executable
     char *application_service_path = paroc_utils::checkremove(argc,argv,"-appservicecode=");
-
     //char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
 
     // Check if need to run on local node only
@@ -400,7 +450,9 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     DEBUGIF(codeconf==NULL,"No code config file\n");
 
     /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
+    {
     return false;
+    }
     else return true; */
 
     //printf("SYSTEM: Init code service\n");
@@ -430,7 +482,7 @@ void paroc_system::Finalize(bool /*normal_exit*/) {
                 loop = 0;
                 timeout = 1;
               }
-              sleep(timeout);
+                    popc_sleep(timeout);
               oldcount = count;
             }
           } else {
@@ -458,8 +510,10 @@ void paroc_system::Finalize(bool /*normal_exit*/) {
     // Create challenge string
     srand(time(NULL));
     char tmp[256];
-    for (int i=0;i<255;i++)
+
+    for(int i=0; i<255; i++) {
         tmp[i]=(char)(1+254.0*rand()/(RAND_MAX+1.0) );
+    }
     tmp[255]='\0';
     challenge=tmp;
 
@@ -469,6 +523,7 @@ void paroc_system::Finalize(bool /*normal_exit*/) {
 
 void paroc_system::processor_set(int cpu) {
 #ifndef __APPLE__
+    // Use glibc to set cpu affinity
     if(cpu < 0) {
         printf("POP-C++ Warning: Cannot set processor to %d<0", cpu);
         exit(EXIT_FAILURE);
