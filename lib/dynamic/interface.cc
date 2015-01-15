@@ -18,6 +18,8 @@
 #include "popc_intface.h"
 
 #include <time.h>
+#include <stdio.h>
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -306,27 +308,37 @@ void paroc_interface::allocate_only() {
     POPString objectaddress;
     POPString hostname;
     POPString batch;
+    POPString protocol;
 
-    bool localFlag=od.IsLocal();
+    bool localFlag = od.IsLocal();
 
     od.getURL(hostname);
     od.getBatch(batch);
+    od.getProtocol(protocol);
+
+    std::string str_protocol;
+    if(protocol.GetString()){
+        str_protocol = protocol.GetString();
+    }
 
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
     POPC_Allocator* allocator = NULL;
-#ifdef DEFINE_UDS_SUPPORT
-    allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
-#else
-    if(localFlag || hostname!=NULL || batch!=NULL) {
-        allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
+
+
+    // for obscure reason, cannot use strcmp here
+    if(str_protocol.compare(POPC_AllocatorFactory::PREFIX_UDS) == 0) {
+        allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
     } else {
-        allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
-        //Get the POPAppID
-        AppCoreService acs(paroc_system::appservice);
-        popAppId = acs.GetPOPCAppID();
+        if(localFlag || hostname!=NULL || batch!=NULL) {
+            allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
+        } else {
+            allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
+            //Get the POPAppID
+            AppCoreService acs(paroc_system::appservice);
+            popAppId = acs.GetPOPCAppID();
+        }
     }
-#endif
 
     if(allocator == NULL) {
         std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;
@@ -466,8 +478,10 @@ void paroc_interface::Bind(const char *dest) {
 
     std::string destination_node;
     bool need_redirection = false;
+    bool need_uds = false;
     int dest_node, dest_id;
     if(pos != std::string::npos) {
+        need_uds = true;
         destination_node = connect_dest.substr(pos+4);
         pos = destination_node.find(".");
         std::string destination_id = destination_node.substr(pos+1);
@@ -505,13 +519,13 @@ void paroc_interface::Bind(const char *dest) {
         paroc_connection* connection = __paroc_combox->get_connection();
         popc_send_request(__paroc_buf, connection);
     } else {
-#ifdef DEFINE_UDS_SUPPORT
-        create_return = __paroc_combox->Create(connect_dest.c_str(), false);
-        connect_return = __paroc_combox->Connect(connect_dest.c_str());
-#else
-        create_return = __paroc_combox->Create(0, false);
-        connect_return = __paroc_combox->Connect(dest);
-#endif
+        if(need_uds) {
+            create_return = __paroc_combox->Create(connect_dest.c_str(), false);
+            connect_return = __paroc_combox->Connect(connect_dest.c_str());
+        } else {
+            create_return = __paroc_combox->Create(0, false);
+            connect_return = __paroc_combox->Connect(dest);
+        }
     }
 
     if(create_return && connect_return) {
@@ -521,6 +535,7 @@ void paroc_interface::Bind(const char *dest) {
         BindStatus(status, peerplatform, info);
         switch(status) {
         case BIND_OK:
+            //TODO should be recovered at least in a usage with TCP/IP sockets
             //NegotiateEncoding(info,peerplatform);
             break;
 
@@ -556,7 +571,7 @@ void paroc_interface::Bind(const char *dest) {
 }
 
 bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
-    /*
+    /* TODO should have been restored for version TCP/IP
       POPString hostname;
       POPString rarch;
       POPString codefile;
@@ -726,8 +741,6 @@ bool paroc_interface::Encoding(POPString encoding) {
     __paroc_buf->Pack(&encoding, 1);
     __paroc_buf->Pop();
 
-    //paroc_Dispatch(__paroc_buf);
-    //paroc_Response(__paroc_buf);
     paroc_connection* connection = __paroc_combox->get_connection();
     popc_send_request(__paroc_buf, connection);
     popc_get_response(__paroc_buf, connection);
@@ -756,7 +769,6 @@ void paroc_interface::Kill() {
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
 
-    //paroc_Dispatch(__paroc_buf);
     paroc_connection* connection = __paroc_combox->get_connection();
     popc_send_request(__paroc_buf, connection);
     __paroc_combox->RecvAck();
@@ -773,8 +785,7 @@ bool paroc_interface::ObjectActive() {
     paroc_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
-    //paroc_Dispatch(__paroc_buf);
-    //paroc_Response(__paroc_buf);
+
     paroc_connection* connection = __paroc_combox->get_connection();
     popc_send_request(__paroc_buf, connection);
     popc_get_response(__paroc_buf, connection);
@@ -881,7 +892,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
 }
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od) {
-    /*
+    /* TODO should have been restored at least for TCP/IP version
       if (codefile==NULL) return ENOENT;
       popc_signal(SIGCHLD, SIG_IGN);
 
@@ -1156,7 +1167,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf) {
 }
 
 /**
- * TODO Comment
+ * Send the current request in the buffer to the endpoint designated by the connection
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Send((*__paroc_combox), conn)) {
@@ -1165,7 +1176,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
 }
 
 /**
- * TODO Comment
+ * Get the response from the endpoint designated by the connection
  */
 void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Recv((*__paroc_combox), conn)) {

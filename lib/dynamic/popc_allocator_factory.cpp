@@ -16,6 +16,10 @@
 #include "popc_allocator_tcpip.h"
 #include "popc_allocator_mpi_pseudo.h"
 
+const char* POPC_AllocatorFactory::PREFIX_UDS = "uds";
+const char* POPC_AllocatorFactory::PREFIX_TCP = "socket";
+const char* POPC_AllocatorFactory::PREFIX_MPI = "mpi";
+const char* POPC_AllocatorFactory::PREFIX_SHM = "shm";
 
 // Unique instance of the allocator factory
 POPC_AllocatorFactory* POPC_AllocatorFactory::instance = NULL;

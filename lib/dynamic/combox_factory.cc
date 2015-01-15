@@ -27,7 +27,7 @@
 
 #include "paroc_combox_factory.h"
 #include "paroc_combox_socket.h"
-//#include "popc_combox_uds.h"
+#include "popc_combox_uds.h"
 #include "paroc_utils.h"
 
 paroc_combox_registration::paroc_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator) {
@@ -40,18 +40,16 @@ paroc_combox * combox_socket_creator() {
 }
 
 paroc_combox* combox_uds_creator() {
-    //return new popc_combox_uds;
+ //   return new popc_combox_uds;
 }
 
 paroc_combox_factory *paroc_combox_factory::fact=NULL;
 
 
 paroc_combox_factory::paroc_combox_factory() {
-#ifdef DEFINE_UDS_SUPPORT
-    Register("uds", 0, combox_uds_creator);
-#else
-    Register("socket", 0, combox_socket_creator);//vanhieu.nguyen
-#endif
+//Note(BW): UDS initialization by the broker fails, therefore, disabled for now
+//    Register("uds", 0, combox_uds_creator);
+    Register("socket", 0, combox_socket_creator);
 
     //Load combox from plugins....
     int metrics=100;
