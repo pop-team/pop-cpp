@@ -1197,6 +1197,7 @@ void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* con
     if(!buf->Recv((*__paroc_combox), conn)) {
         paroc_exception::paroc_throw_errno();
     }
+    //printf("INTERFACE: paroc_response will disconnect the connection\n");
     paroc_buffer::CheckAndThrow(*buf);
 }
 

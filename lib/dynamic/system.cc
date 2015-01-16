@@ -8,6 +8,12 @@
  * @brief System stuffs and declarations used by the runtime.
  *
  *
+ * Modifications :
+ * Authors    Date      Comment
+ * L.Winkler  2008-2009   for version 1.3
+ * P.Kuonen   02/2010     (GetHost, getIp, add POPC_Host_Name, ...) for version 1.3m (see comments 1.3m)
+ * P.Kuonen   02/2011      define default IP for version 1.3.1m (see comments 1.3.1m)
+ * P.Kuonen   25/3/2011    Cosmetic changes
  */
 
 /*

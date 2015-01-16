@@ -274,6 +274,15 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
     }
 }
 
+paroc_od paroc_interface::get_object_description() {
+    return od;
+}
+
+// note by LWK: Added this method in pseudodynamic for simplification reasons: the header files should be identical
+void paroc_interface::allocate_only() {
+    Allocate();
+}
+
 void paroc_interface::Allocate() {
 //  printf("INTERFACE: Allocate start\n");
     Release();
@@ -712,7 +721,8 @@ void paroc_interface::Kill() {
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
 
-    paroc_Dispatch(__paroc_buf);
+    paroc_connection* connection = __paroc_combox->get_connection();
+    popc_send_request(__paroc_buf, connection);
     __paroc_combox->RecvAck();
 
     Release();
@@ -727,8 +737,11 @@ bool paroc_interface::ObjectActive() {
     paroc_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
-    paroc_Dispatch(__paroc_buf); // TODO LWK: Probably rename go popc_send_request
-    paroc_Response(__paroc_buf); // TODO LWK: Probably rename go popc_get_response
+
+    paroc_connection* connection = __paroc_combox->get_connection();
+    popc_send_request(__paroc_buf, connection);
+    popc_get_response(__paroc_buf, connection);
+
     bool ret;
     __paroc_buf->Push("result","bool",1);
     __paroc_buf->UnPack(&ret,1);
@@ -1143,38 +1156,40 @@ void paroc_interface::ApplyCommPattern(const char *pattern, paroc_list<char *> &
     }
 }
 
-/**
- * TODO Comment
- */
-void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn) {
-    if(!buf->Send((*__paroc_combox), conn)) {
+// DEPRECATED
+void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
+    if(!buf->Send(*__paroc_combox)) {
         paroc_exception::paroc_throw_errno();
     }
 }
 
-/**
- * TODO Comment
- */
-void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn) {
-    if(!buf->Recv((*__paroc_combox), conn)) {
+// DEPRECATED
+void paroc_interface::paroc_Response(paroc_buffer *buf) {
+    if(!buf->Recv(*__paroc_combox)) {
+        printf("Throw from response\n");
         paroc_exception::paroc_throw_errno();
     }
     paroc_buffer::CheckAndThrow(*buf);
 }
 
-void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
-    if(!buf->Send((*__paroc_combox), __paroc_connection)) {
+/**
+ * Send the current request in the buffer to the endpoint designated by the connection
+ */
+void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn) {
+    if(!buf->Send((*__paroc_combox), conn)) {
         paroc_exception::paroc_throw_errno();
     }
     //printf("INTERFACE: paroc_dispatch connection %s\n", (__paroc_connection == NULL) ? "is null" : "is not null");
 }
 
-void paroc_interface::paroc_Response(paroc_buffer *buf) {
-    if(!buf->Recv((*__paroc_combox))) {
+/**
+ * Get the response from the endpoint designated by the connection
+ */
+void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn) {
+    if(!buf->Recv((*__paroc_combox), conn)) {
         paroc_exception::paroc_throw_errno();
     }
     //printf("INTERFACE: paroc_response will disconnect the connection\n");
-    __paroc_connection->reset();
     paroc_buffer::CheckAndThrow(*buf);
 }
 
