@@ -12,6 +12,7 @@ include(CMakeForceCompiler)
 
 set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
 
+# Activate some warnings
 add_definitions(-Wall -Wextra -Werror)
 
 add_library(popc_common_psdyn

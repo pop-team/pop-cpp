@@ -20,7 +20,8 @@ set(POPCPP_COMPILER_FLAGS -o)
 set(POPCPP_Object_COMPILER_FLAGS -object -o)
 set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
 
-set(POPCPP_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include/dynamic)
+# TODO LWK: Should be set to include/services very probably
+set(POPCPP_SERVICES_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include/dynamic)
 set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/dynamic)
 set(POPCPP_SERVICES_PATH ${CMAKE_SOURCE_DIR}/services/lib)
 
@@ -32,7 +33,7 @@ set(POPCC_COMMAND_OBJ ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Object_CO
 set(POPCC_COMMAND_EXE ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_COMPILER_FLAGS})
 set(POPCC_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 
-include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_INCLUDE_PATH})
+include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_SERVICES_INCLUDE_PATH})
 link_directories(${CMAKE_SOURCE_DIR}/lib/dynamic)
 
 # Add more warnings
@@ -42,7 +43,7 @@ add_definitions(-Wall -Wextra -Werror)
 function(popcc_compile_ph ph_file)
 add_custom_command(
     OUTPUT ${POPCC_OUTPUT_DIR}/${ph_file}.stub.o
-    COMMAND ${POPCC_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub.o ${CMAKE_CURRENT_SOURCE_DIR}/${ph_file} -I${POPCPP_INCLUDE_PATH}
+    COMMAND ${POPCC_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub.o ${CMAKE_CURRENT_SOURCE_DIR}/${ph_file} -I${POPCPP_SERVICES_INCLUDE_PATH}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${ph_file}
 )
@@ -52,7 +53,7 @@ endfunction(popcc_compile_ph)
 function(popcc_compile_cxx cxx_file)
 add_custom_command(
     OUTPUT ${POPCC_OUTPUT_DIR}/${cxx_file}.o
-    COMMAND ${POPCC_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${CMAKE_CURRENT_SOURCE_DIR}/${cxx_file} -I${POPCPP_INCLUDE_PATH}
+    COMMAND ${POPCC_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${CMAKE_CURRENT_SOURCE_DIR}/${cxx_file} -I${POPCPP_SERVICES_INCLUDE_PATH}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${cxx_file}
 )

@@ -65,9 +65,9 @@ endif(WIN32)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   if(WIN32)
-    set(CMAKE_INSTALL_PREFIX "C:\\popc")
+    set (CMAKE_INSTALL_PREFIX "C:\\popc" CACHE PATH "default install path" FORCE )
   elseif(UNIX)
-    set(CMAKE_INSTALL_PREFIX "/usr/local/popc")
+    set (CMAKE_INSTALL_PREFIX "/usr/local/popc" CACHE PATH "default install path" FORCE )
   endif(WIN32)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
