@@ -43,6 +43,7 @@
 #endif
 
 int RunCmd(int argc, char **argv, char *env[], int *status) {
+    (void)argc;
     char *file=NULL;
 
     POPString str;
@@ -394,6 +395,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     Tokenize(od_prots,pref);
 
     if(pref.IsEmpty()) {
+        //printf("INTERFACE: Bind without preference \n");
         //No preferred protocol in OD specified, try the first protocol in dest
         POSITION pos = accesslist.GetHeadPosition();
         while(pos != NULL) {
@@ -436,6 +438,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
 }
 
 void paroc_interface::Bind(const char *dest) {
+    //printf("INTERFACE: Bind (%s) - %s\n", ClassName(), dest);
     Release();
     if(!dest || *dest==0) {
         return;
@@ -1184,6 +1187,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
     if(!buf->Send((*__paroc_combox), conn)) {
         paroc_exception::paroc_throw_errno();
     }
+    //printf("INTERFACE: paroc_dispatch connection %s\n", (__paroc_connection == NULL) ? "is null" : "is not null");
 }
 
 /**
@@ -1310,7 +1314,7 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
  * @param local_port Local port of the SSH Tunnel
  * @return TRUE if the SSH Tunnel is alive, FALSE if the SSH Tunnel is not alive
  */
-bool paroc_interface::IsTunnelAlive(const char *user, const char *dest_ip, int dest_port, int local_port) {
+bool paroc_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, int dest_port, int local_port) {
     std::ostringstream cmd;
     int BUF_SIZE=6;
     char res[BUF_SIZE];

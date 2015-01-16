@@ -103,23 +103,32 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
 }
 
 paroc_accesspoint paroc_interface::_paroc_nobind;
+
 //binding time out in miliseconds
 int paroc_interface::paroc_bind_timeout=10000;
 int paroc_interface::batchindex=0;
 int paroc_interface::batchsize=0;
 paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
 
-paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL), _ssh_tunneling(false) {
-//  printf("INTERFACE: Create without anything\n");
+//paroc_interface base class
+
+paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
+    // DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
 
     if(od.isSecureSet()) {
         accesspoint.SetSecure();
     }
-    //printf("INTERFACE: End of constructor\n");
+
+    _ssh_tunneling=false;
+    //__paroc_combox = NULL;
+    //__paroc_buf = NULL;
+    //_popc_async_construction_thread=NULL;
 }
 
-paroc_interface::paroc_interface(const paroc_accesspoint &p) : __paroc_combox(NULL), __paroc_buf(NULL), _ssh_tunneling(false) {
-//  printf("INTERFACE: Create with AP\n");
+paroc_interface::paroc_interface(const paroc_accesspoint &p) {
+    _ssh_tunneling = false;
+    __paroc_combox = NULL;
+    __paroc_buf = NULL;
 
     // For SSH tunneling
     if(p.IsService()) {
@@ -136,13 +145,12 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) : __paroc_combox(NU
     }
 }
 
-
-
-
-
-paroc_interface::paroc_interface(const paroc_interface &inf) : __paroc_combox(NULL), __paroc_buf(NULL), _ssh_tunneling(false) {
-    //printf("INTERFACE: Create with interface\n");
+paroc_interface::paroc_interface(const paroc_interface &inf) {
     paroc_accesspoint infAP = inf.GetAccessPoint();
+    _ssh_tunneling=false;
+    __paroc_combox=NULL;
+    __paroc_buf=NULL;
+    //_popc_async_construction_thread=NULL;
 
     if(infAP.IsSecure()) {
         accesspoint.SetSecure();
@@ -190,8 +198,12 @@ paroc_interface & paroc_interface::operator = (const paroc_interface & obj) {
     //  const paroc_accesspoint &res = obj.GetAccessPoint();
 
     Release();
-    const paroc_accesspoint &res = obj.GetAccessPoint();
-    Bind(res);
+    accesspoint = obj.GetAccessPoint();
+    if(GetAccessPoint().GetAccessString()) {
+        Bind(accesspoint);
+        //AddRef();
+    }
+
     return (*this);
 }
 
@@ -255,6 +267,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
             //DecRef();
         }
     }
+
     if(old != NULL) {
         __paroc_buf->Destroy();
         __paroc_buf = old;
@@ -363,7 +376,6 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
 
     //Choose the protocol and then bind
     POPString prots = dest.GetAccessString();
-    DEBUG("Access string %s : %s\n", ClassName(), dest.GetAccessString());
     POPString od_prots;
     od.getProtocol(od_prots);
 
@@ -377,31 +389,28 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     if(pref.IsEmpty()) {
         //printf("INTERFACE: Bind without preference \n");
         //No preferred protocol in OD specified, try the first protocol in dest
-        POSITION position = accesslist.GetHeadPosition();
-        while(position !=NULL) {
-            char *accesspoint = accesslist.GetNext(position);
+        POSITION pos = accesslist.GetHeadPosition();
+        while(pos !=NULL) {
+            char *addr = accesslist.GetNext(pos);
+
             try {
-//        DEBUG("[Interface] Try to bind %s with : %s\n", ClassName(), addr);
-                //printf("INTERFACE: %s Try to bind with : %s\n", ClassName(), accesspoint);
-                Bind(accesspoint);
-                //printf("INTERFACE: %s Bind succeed with: %s\n", ClassName(), accesspoint);
+                Bind(addr);
                 return;
             } catch(paroc_exception *e) {
+                //DEBUG("Can not bind to %s. Try next protocol...",addr);
                 delete e;
                 continue;
             }
         }
     } else {
         //The user specify the protocol in OD, select the preference and match with the access point...
-        POSITION protocol_position = pref.GetHeadPosition();
-        while(protocol_position != NULL) {
-            //printf("INTERFACE: Bind with preference\n");
-            char *myprot = pref.GetNext(protocol_position);
+        POSITION protpos = pref.GetHeadPosition();
+        while(protpos != NULL) {
+            char *myprot = pref.GetNext(protpos);
             //Find access string that match myprot
-            DEBUG("[Interface] protocol wanted for object %s : %s\n",ClassName(),  myprot);
-            POSITION protocol_position = accesslist.GetHeadPosition();
-            while(protocol_position != NULL) {
-                char *addr = accesslist.GetNext(protocol_position);
+            POSITION pos=accesslist.GetHeadPosition();
+            while(pos!=NULL) {
+                char *addr=accesslist.GetNext(pos);
                 char pattern[1024];
                 sprintf(pattern, "%s://*", myprot);
                 if(paroc_utils::MatchWildcard(addr, pattern)) {
@@ -409,7 +418,6 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                         Bind(addr);
                         return;
                     } catch(paroc_exception *e) {
-                        DEBUG("Can not bind to %s. Try next protocol...",addr);
                         delete e;
                         continue;
                     }
@@ -419,35 +427,31 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     }
 
     paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName());
-
 }
 
-/**
- *
- */
 void paroc_interface::Bind(const char *dest) {
     //printf("INTERFACE: Bind (%s) - %s\n", ClassName(), dest);
     Release();
-
-    if(dest == NULL || *dest == 0) {
+    if(!dest || *dest==0) {
         return;
     }
 
 
-    paroc_combox_factory *comboxFactory = paroc_combox_factory::GetInstance();
+    paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
     POPString p;
-    comboxFactory->GetNames(p);
-    if(comboxFactory == NULL) {
+    fact->GetNames(p);
+    if(!fact) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
     }
 
+    // Create combox
+    __paroc_combox = fact->Create("mpi");
 
-    __paroc_combox = comboxFactory->Create("mpi");
-
-    if(__paroc_combox == NULL) {
+    if(!__paroc_combox) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
     }
 
+    // Create associated buffer
     __paroc_buf = __paroc_combox->GetBufferFactory()->CreateBuffer();
     __paroc_combox->SetTimeout(paroc_bind_timeout);
 
@@ -511,7 +515,6 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
 
     POPString objname(ClassName());
     bool localFlag=od.IsLocal();
-
     od.getURL(hostname);
     od.getArch(rarch);
     od.getBatch(batch);
@@ -1276,9 +1279,8 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
     }
     int pid = atoi(buf);
     DEBUG("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
-    if(pid!=0) {
-        kill(pid, SIGKILL);
-    }
+    if(pid!=0)
+       popc_kill(pid, popc_SIGKILL);
     return pid;
  }
 

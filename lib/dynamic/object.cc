@@ -29,7 +29,6 @@ paroc_object::paroc_object() {
     refcount=1;
     if(!paroc_system::appservice.IsEmpty()) {
         paroc_accesspoint myself=GetAccessPoint();
-// TODO LWK: This was added in the pseudodyn version: see if works
         try {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.ManageObject(myself);
@@ -41,8 +40,6 @@ paroc_object::paroc_object() {
 }
 
 paroc_object::~paroc_object() {
-// TODO LWK: This was added in the pseudodyn version: see if works
-
     if(!paroc_system::appservice.IsEmpty()) {
         paroc_accesspoint myself=GetAccessPoint();
         try {
