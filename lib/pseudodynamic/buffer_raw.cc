@@ -398,7 +398,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     char* data_header = new char[20];
     memcpy(data_header, h, 20);
 
-    if(s.Send(data_header, 20, conn, true)) {
+    if(s.Send(data_header, 20, conn)) {
         printf("Error while sending header\n");
         return false;
     }
@@ -408,7 +408,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     n -= 20;
     if(n > 0) {
         printf("RAW: Send message size is %d: %s\n", n, (char*)packeddata);
-        if(s.Send(dat, n, conn, false) < 0) {
+        if(s.Send(dat, n, conn) < 0) {
             DEBUG("Fail to send a message!");
             return false;
         }
@@ -425,7 +425,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     //Recv the header...
 
     char *data_header = (char *)h;
-    s.Recv(data_header, 20, conn, true);
+    s.Recv(data_header, 20, conn);
     printf("RAW: header received\n");
     /*  n = 20;
         do {
@@ -468,7 +468,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     if(n > 0) {
         data_header = (char *)packeddata+20;
         printf("RAW: ready to receive %d\n", n);
-        s.Recv(data_header, n, conn, false);
+        s.Recv(data_header, n, conn);
         printf("RAW: received %d\n", n);
     }
     /*

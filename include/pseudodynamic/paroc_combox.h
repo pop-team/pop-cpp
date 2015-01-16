@@ -25,37 +25,31 @@ class paroc_buffer_factory;
  */
 class paroc_connection {
 public:
-    static const int POPC_CONNECTION_NULL_FD;
-
     paroc_connection(paroc_combox *com);
+    paroc_connection(paroc_combox *com, bool init);
     paroc_connection(paroc_combox *com, paroc_buffer_factory *f);
     virtual ~paroc_connection();
 
+    virtual bool is_initial_connection();
+
     virtual void SetBufferFactory(paroc_buffer_factory *fact);
     virtual paroc_buffer_factory *GetBufferFactory();
-    virtual void reset();
 
     paroc_combox *GetCombox();
 
     virtual paroc_connection *Clone()=0;
+    virtual void reset()=0;
 
-    bool is_connection_init();
-    void set_as_connection_init();
-    bool is_wait_unlock();
-    void set_as_wait_unlock();
+
 
 protected:
-    paroc_buffer_factory *fact;
+    paroc_buffer_factory * fact;
     paroc_combox *combox;
-
-
-private:
-    bool _is_connection_init;
-    bool _is_wait_unlock;
+    bool _is_initial_connection;
 };
 
 
-enum COMBOX_EVENTS { COMBOX_NEW = 0, COMBOX_CLOSE = 1 };
+enum COMBOX_EVENTS {COMBOX_NEW=0, COMBOX_CLOSE=1};
 typedef bool (*COMBOX_CALLBACK)(void *, paroc_connection *);
 
 
@@ -72,35 +66,32 @@ protected:
     virtual ~paroc_combox();
 
 public:
-    enum COMBOX_TYPE { POLLING, REQUESTBYREQUEST };
-
-    virtual bool Create(char* host, int port, bool server)=0;
+    virtual bool Create(int port, bool server)=0;
+    virtual bool Create(const char *address, bool server)=0;
     virtual bool Connect(const char *url)=0;
-    virtual bool connect_and_die(std::string &url)=0;
 
-    virtual paroc_connection* get_connection()=0; // Will be modified later
-    virtual bool disconnect(paroc_connection *connection) = 0;
+    virtual bool connect_and_die(std::string &url)=0;
+    virtual bool is_server()=0;
 
     virtual int Send(const char *s,int len)=0;
-    virtual int Send(const char *s,int len, paroc_connection *conn, bool unlock)=0;
+    virtual int Send(const char *s,int len, paroc_connection *connection)=0;
     virtual bool SendAck(paroc_connection *conn);
 
-    virtual int Recv(char *s,int len, bool unlock)=0;
-    virtual int Recv(char *s,int len, paroc_connection *&peer, bool unlock)=0;
+    virtual int Recv(char *s,int len)=0;
+    virtual int Recv(char *s,int len, paroc_connection *connection)=0;
     virtual bool RecvAck(paroc_connection *conn=0);
 
     virtual paroc_connection *Wait()=0;
 
-    virtual bool is_server()=0;
+    virtual paroc_connection* get_connection()=0;
 
     virtual void Close()=0;
 
     void SetTimeout(int millisec);
     int  GetTimeout();
 
-    virtual bool GetUrl(paroc_string & accesspoint) = 0;
-    virtual bool GetProtocol(paroc_string & protocolName) = 0;
-    virtual paroc_connection* CreateConnection(int fd) = 0;
+    virtual bool GetUrl(paroc_string & accesspoint)=0;
+    virtual bool GetProtocol(paroc_string & protocolName)=0;
 
     virtual void Destroy();
 
@@ -109,7 +100,7 @@ public:
     void SetBufferFactory(paroc_buffer_factory *fact);
     paroc_buffer_factory *GetBufferFactory();
 
-
+    static const char* PROTOCOL_SEPARATOR;
 
 protected:
     virtual bool OnNewConnection(paroc_connection *conn);

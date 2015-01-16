@@ -50,7 +50,7 @@ void paroc_request::operator =(const paroc_request &r) {
     userdata=r.userdata;
 }
 
-void broker_interupt(int sig) {
+void broker_interupt(int /*sig*/) {
 #ifndef __WIN32__
     printf("Interrupt on thread id %lu\n",(unsigned long)pthread_self());
 #else
@@ -225,6 +225,7 @@ int paroc_broker::Run() {
             ptArray[i]->cancel();
         }
     }
+
     return 0;
 }
 

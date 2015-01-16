@@ -96,7 +96,7 @@ bool paroc_combox::SendAck(paroc_connection *conn) {
     return true;
 }
 
-bool paroc_combox::RecvAck(paroc_connection *conn) {
+bool paroc_combox::RecvAck(paroc_connection * /*conn*/) {
     paroc_connection * connex= Wait();
     if(connex==NULL) {
         paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"[paroc_combox_socket.cc]");

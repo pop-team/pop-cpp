@@ -55,12 +55,14 @@ void paroc_broker::ReceiveThread(paroc_combox *server) {
             }
 
             // Is it a connection initialization, then just serve a new request
-            if(request.from->is_connection_init()) {
+            if(request.from->is_initial_connection()) {
+                /* Note LWK: Apparently wait_unlock is never set
                 if(!request.from->is_wait_unlock()) {
                     if(obj != NULL) {
                         obj->AddRef();
                     }
                 }
+                */
                 continue;
             }
 

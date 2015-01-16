@@ -619,7 +619,7 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
     char* data_header = new char[20];
     memcpy(data_header, h, 20);
     //printf("XDR: %s Send header\n", (isServer) ? "server":"client", n);
-    if(s.Send(data_header, 20, conn, true)) {
+    if(s.Send(data_header, 20, conn)) {
         printf("Error while sending header\n");
         return false;
     }
@@ -629,7 +629,7 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
     n -= 20;
     if(n > 0) {
         //printf("XDR: %s Send message size is %d: %s\n", (isServer) ? "server":"client", n, (char*)packeddata);
-        if(s.Send(data, n, conn, false) < 0) {
+        if(s.Send(data, n, conn) < 0) {
             printf("XDR: Fail to send a message!");
             return false;
         }
@@ -656,7 +656,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
 
     // Receiving the real data
 //  printf("XDR: recv header\n");
-    s.Recv(data_header, 20, conn, true);
+    s.Recv(data_header, 20, conn);
     Reset();
     /* for(int i = 0; i < 5; i++) {
        memcpy(&h[i], data_header+(i*4), 4);
@@ -701,7 +701,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     if(n > 0) {
         data_header = (char *)packeddata+20;
         //printf("XDR: %s ready to receive %d\n",(isServer) ? "server":"client",  n);
-        s.Recv(data_header, n, conn, false);
+        s.Recv(data_header, n, conn);
         //printf("XDR: %s received %d\n",(isServer) ? "server":"client",  n);
     }
 

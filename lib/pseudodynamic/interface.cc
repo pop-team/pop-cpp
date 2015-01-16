@@ -450,7 +450,7 @@ void paroc_interface::Bind(const char *dest) {
     __paroc_combox->SetTimeout(paroc_bind_timeout);
 
     //printf("INTERFACE: Interface will create\n");
-    bool combox_create_return = __paroc_combox->Create(NULL, 0, false);
+    bool combox_create_return = __paroc_combox->Create(0, false);
     //printf("INTERFACE: Interface will connect\n");
     bool combox_connect_return = __paroc_combox->Connect(dest);
 
