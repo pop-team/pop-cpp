@@ -20,7 +20,7 @@
 #include "paroc_interface.h"
 #include "paroc_event.h"
 #include "paroc_broker.h"
-#include "objectmonitor.ph" // TODO LWK: is this needed ?
+#include "objectmonitor.ph"
 
 int paroc_object::argc=0;
 char **paroc_object::argv=NULL;

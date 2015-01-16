@@ -8,6 +8,10 @@
  * @brief Implementation of broker factory.
  *
  *
+ * Modifications :
+ * Authors      Date            Comment
+ * clementval  10/27/2011  Set services accesspoint cretaed from String as service accesspoint
+ * P.Kuonen     18.9.2012       Add "POP-C++ error" in error messages (PEKA)
  */
 
 /*
@@ -45,6 +49,7 @@ paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name
 }
 
 paroc_broker *paroc_broker_factory::Create(const char *objname) {
+    // DEBUG("Create broker for %s\n", objname);
     if(brokerlist == NULL || objname == NULL) {
         return NULL;
     }
@@ -136,11 +141,14 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
         return NULL;
     }
 
+    // Create the real Broker object
     paroc_broker *objbroker=Create(object);
     if(objbroker==NULL) {
         printf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
         return NULL;
     }
+
+    // Set the classname for this broker
     paroc_broker::classname=object;
 
     if(nostdio) {

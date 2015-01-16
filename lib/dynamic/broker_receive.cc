@@ -61,6 +61,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
                 execCond.broadcast();
                 continue;
             }
+            // Register the request to be served by the broker serving thread
             RegisterRequest(req);
         } catch(...) {
             if(req.data != NULL) {
@@ -78,7 +79,10 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
 bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
     server->SetTimeout(-1);
     while(1) {
+        // Waiting for a new connection or a new request
         paroc_connection *conn = server->Wait();
+
+        // Trouble with the connection
         if(conn == NULL) {
             execCond.broadcast();
             return false;
@@ -88,6 +92,7 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
             continue;
         }
 
+        // Receiving the real data
         paroc_buffer_factory *fact = conn->GetBufferFactory();
         req.data = fact->CreateBuffer();
 
@@ -109,22 +114,31 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
 
         req.data->Destroy();
     }
+    return false;
 }
 
 
 void paroc_broker::RegisterRequest(paroc_request &req) {
     //Check if mutex is waiting/executing...
     int type=req.methodId[2];
-    req.from=(type & INVOKE_SYNC)? req.from->Clone() : NULL;
 
-    if(type & INVOKE_CONC) {
+    if(type & INVOKE_SYNC) {
+        // Method call is synchronous, a response will be send back so the connection is saved
+        req.from  = req.from->Clone();
+    } else {
+        // Method call is asynchronous so the connection is not needed anymore
+        req.from = NULL;
+    }
+
+
+    if(type & INVOKE_CONC) {    // Method semantic is concurrent so trying to execute if there is no mutex pending
         mutexCond.lock();
         if(mutexCount<=0) {
             ServeRequest(req);
             mutexCond.unlock();
             return;
         }
-    } else if(type & INVOKE_MUTEX) {
+    } else if(type & INVOKE_MUTEX) {  // Method semantic is mutex, adding one to the number of mutex pending
         mutexCond.lock();
         mutexCount++;
         mutexCond.unlock();
@@ -159,7 +173,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
     }
 }
 
-bool paroc_broker::OnNewConnection(paroc_connection *conn) {
+bool paroc_broker::OnNewConnection(paroc_connection * /*conn*/) {
     if(obj!=NULL) {
         obj->AddRef();
     }
@@ -169,7 +183,7 @@ bool paroc_broker::OnNewConnection(paroc_connection *conn) {
 /**
  * This method is called when a connection with an interface is closed.
  */
-bool paroc_broker::OnCloseConnection(paroc_connection *conn) {
+bool paroc_broker::OnCloseConnection(paroc_connection * /*conn*/) {
     if(obj!=NULL) {
         int ret=obj->DecRef();
         if(ret<=0) {
@@ -267,7 +281,7 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
         break;
     }
     case 3: {
-        //GetEncoding call...
+        // Negotiate encoding call
         POPString enc;
         buf->Push("encoding","POPString",1);
         buf->UnPack(&enc,1);
