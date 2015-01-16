@@ -67,7 +67,7 @@ void paroc_invokethread::start() {
 
 bool paroc_broker::GetRequest(paroc_request &req) {
     paroc_mutex_locker locker(execCond);
-    //If the queue is empty then wait for the request....
+
     //If the queue is empty then wait for the request....
     while(request_fifo.IsEmpty()) {
         if((obj!=NULL && obj->GetRefCount()<=0) || state != POPC_STATE_RUNNING) {

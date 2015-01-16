@@ -98,27 +98,6 @@ paroc_accesspoint & paroc_accesspoint::operator =(const paroc_accesspoint &p) {
 
 /**
  * ViSaG : clementval
- * Get the Public Key Identifer of the Node running this object
- * @return The public key of the node running the parallel object pointed by this access point
- */
-/*
-const POPString paroc_accesspoint::GetPKI() const {
-   return endpoint_pki;
-}
-*/
-
-/**
- * ViSaG : clementval
- * Set the public key if the node running the parallel object pointed by this access point
- * @param pki The public key of the node
- */
-/*
-void paroc_accesspoint::SetPKI(POPString pki){
-   endpoint_pki = pki;
-}
-*/
-/**
- * ViSaG : clementval
  * Check if the access point is in secure mode
  * @return TRUE if the access point is in secure mode
  */
