@@ -1,21 +1,29 @@
-/*----paroc_system.h------------------
-AUTHORS: Tuan Anh Nguyen
-DESCRIPTION: system stuffs and declarations used by the runtime
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief system stuffs and declarations used by the runtime
+ *
+ *
 Modified by L.Winkler (2008-2009) for Version 1.3
             P.Kuonen February 2010 (POPC_Host_Name attribut)
             for version 1.3m (see comments 1.3m)
+ */
 
- -----------------------------------*/
 #ifndef _POPC_SYSTEM_H
 #define _POPC_SYSTEM_H
 #include <paroc_accesspoint.h>
 
 #include "paroc_mutex.h"
-
-// if MPI
 #include <mpi.h>
-// endif MPI
 
+#ifndef __WIN32__
+#include <net/if.h>
+#include <ifaddrs.h>
+#endif
 #define DEFAULTPORT  2711
 
 // For set processor

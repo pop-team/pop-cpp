@@ -8,6 +8,9 @@
  * @brief system stuffs and declarations used by the runtime
  *
  *
+Modified by L.Winkler (2008-2009) for Version 1.3
+            P.Kuonen February 2010 (POPC_Host_Name attribut)
+            for version 1.3m (see comments 1.3m)
  */
 
 #ifndef _POPC_SYSTEM_H
