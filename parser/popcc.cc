@@ -235,7 +235,7 @@ int popc_preprocessor(char* popcpp, char* tmpfile1, char* tmpfile2, char* tmpfil
 }
 
 // Run C++ compiler
-int cxx_compiler(char* cpp, char** cpp_opt, char* source, char* dest, char* tmpfile3, char* str, bool paroc, int ret, const popc_options& options){
+int cxx_compiler(char* cpp, char** cpp_opt, char* source, char** dest, char* tmpfile3, char* str, bool paroc, int ret, const popc_options& options){
     static char output[1024];
 
     char *cmd[1000];
@@ -255,7 +255,7 @@ int cxx_compiler(char* cpp, char** cpp_opt, char* source, char* dest, char* tmpf
     *t1++ = option_output;
     count++;
 
-    if(dest == NULL) {
+    if(*dest == NULL) {
         strcpy(output, source);
         str = strrchr(output, '.');
         if(strcmp(str, ".ph") == 0) {
@@ -263,10 +263,10 @@ int cxx_compiler(char* cpp, char** cpp_opt, char* source, char* dest, char* tmpf
         } else {
             strcpy(str, ".o");
         }
-        dest = output;
+        *dest = output;
         *t1 = output;
     } else {
-        *t1 = dest;
+        *t1 = *dest;
     }
     t1++;
     count++;
@@ -351,7 +351,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
         popc_unlink(tmpfile1);
     }
 
-    ret = cxx_compiler(cpp, cpp_opt, source, dest, tmpfile3, str, paroc, ret, options);
+    ret = cxx_compiler(cpp, cpp_opt, source, &dest, tmpfile3, str, paroc, ret, options);
 
     if(!options.noclean && paroc) {
         popc_unlink(tmpfile3);
