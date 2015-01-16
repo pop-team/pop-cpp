@@ -24,17 +24,14 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-//#include <errno.h>
-
 
 #include "paroc_interface.h"
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_broker.h"
 #include "paroc_combox_factory.h"
-//#include "paroc_combox.h"
 #include "paroc_system.h"
 #include "paroc_utils.h"
-#include "config.h"
+#include "../../config.h"
 
 #if defined POPC_SECURE || defined POPC_SECURE_VIRTUAL
 #include "popc_security_manager.ph"
@@ -158,8 +155,12 @@ paroc_interface::paroc_interface(const paroc_interface &inf) : __paroc_combox(NU
     Bind(inf.GetAccessPoint());
 }
 
-paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) : __paroc_combox(combox), __paroc_buf(buffer), _ssh_tunneling(false) {
-    //printf("INTERFACE: Create with combox & buffer\n");
+paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
+    _ssh_tunneling=false;
+    __paroc_combox = combox;
+    __paroc_buf = buffer;
+
+    //_popc_async_construction_thread=NULL;
     if(combox!=NULL) {
         POPString url;
         combox->GetUrl(url);
@@ -203,6 +204,11 @@ const paroc_od & paroc_interface::GetOD() const {
 }
 
 
+// const char * paroc_interface::GetResource() const
+// {
+//   return resource;
+// }
+
 const paroc_accesspoint &  paroc_interface::GetAccessPoint() const {
     return accesspoint;
 }
@@ -232,8 +238,6 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         __paroc_buf = __paroc_combox->GetBufferFactory()->CreateBuffer();
     }
 
-
-
     if(pack) {
         int ref = 1;
         buf.Push("refcount", "int", 1);
@@ -245,8 +249,6 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         buf.UnPack(&ref, 1);
         buf.Pop();
         if(ref > 0) {
-            //
-            //    printf("Will bind %s\n", accesspoint.GetAccessString());
             Bind(accesspoint);
             //  printf("binded %s\n", accesspoint.GetAccessString());
             AddRef();
