@@ -96,11 +96,17 @@ paroc_system::paroc_system() {
         char str[128];
 #ifndef POPC_ARCH
         char arch[64], sysname[64];
+#ifndef __WIN32__
         //sysinfo(SI_SYSNAME,sysname,64);
         //sysinfo(SI_ARCHITECTURE,arch,64);
+#endif
         sprintf(str,"%s-%s",sysname,arch);
 #else
+#ifndef __WIN32__
         strcpy(str,POPC_ARCH);
+#else
+        strcpy(str, "win32");
+#endif
 #endif
         platform=str;
     }
@@ -109,12 +115,14 @@ paroc_system::paroc_system() {
 
 
 paroc_system::~paroc_system() {
+#ifndef DEFINE_UDS_SUPPORT
     /*if (mgr!=NULL)
     {
       Finalize(false);
       delete mgr;
     }
     mgr=NULL;*/
+#endif
 
     paroc_combox_factory *pf=paroc_combox_factory::GetInstance();
     paroc_buffer_factory_finder *bf=paroc_buffer_factory_finder::GetInstance();
@@ -557,5 +565,9 @@ void paroc_system::processor_set(int cpu) {
         printf("POP-C++ Warning: Unable to run on cpu %d", cpu);
         exit(EXIT_FAILURE);
     }
+    #else
+    // Apple thread API
+    */
+
 #endif
 }

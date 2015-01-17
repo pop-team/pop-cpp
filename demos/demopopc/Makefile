@@ -1,4 +1,4 @@
-POPCC=../../parser/popcc -pseudo-dynamic
+POPCC=../../parser/popcc
 POPCPP=../../parser/popcpp
 POPCPATH=../..
 # CROSSCOMPILE=-cxx=FCCpx -Xg -pthread -cpp="FCCpx -E"
