@@ -409,7 +409,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     if(n > 0) {
         printf("RAW: Send message size is %d: %s\n", n, (char*)packeddata);
         if(s.Send(dat, n, conn) < 0) {
-            DEBUG("Fail to send a message!");
+        printf("Fail to send a message!\n");
             return false;
         }
     }
@@ -422,10 +422,9 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     int h[5];
     int n;
 
-    //Recv the header...
-
-    char *data_header = (char *)h;
-    s.Recv(data_header, 20, conn);
+    //Recv the header
+    char *dat = (char *)h;
+    s.Recv(dat, 20, conn);
     printf("RAW: header received\n");
     /*  n = 20;
         do {
@@ -466,9 +465,9 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     n -= 20;
 
     if(n > 0) {
-        data_header = (char *)packeddata+20;
+        dat = (char *)packeddata+20;
         printf("RAW: ready to receive %d\n", n);
-        s.Recv(data_header, n, conn);
+        s.Recv(dat, n, conn);
         printf("RAW: received %d\n", n);
     }
     /*
@@ -481,6 +480,50 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
             n -= i;
         }*/
     return true;
+}
+
+int paroc_buffer_raw::get_size() {
+    return packeddata.GetSize();
+}
+
+char* paroc_buffer_raw::get_load() {
+    // Pack the header (20 bytes)
+    char *dat = (char *)packeddata;
+
+    if(dat == NULL) {
+        return NULL;
+    }
+    int n = packeddata.GetSize();
+    int h[5];
+    memset(h,0, 5 * sizeof(int));
+
+    int type = header.GetType();
+
+    h[0] = n;
+    h[1] = type;
+
+    switch(type) {
+    case TYPE_REQUEST:
+        h[2] = header.GetClassID();
+        h[3] = header.GetMethodID();
+        h[4] = header.GetSemantics();
+        break;
+    case TYPE_EXCEPTION:
+        h[2] = header.GetExceptionCode();
+        break;
+    case TYPE_RESPONSE:
+        h[2] = header.GetClassID();
+        h[3] = header.GetMethodID();
+        break;
+    default:
+        return NULL;
+    }
+    memcpy(dat, h, 20);
+    return (char *)packeddata;
+}
+
+void paroc_buffer_raw::load(char* data, int length) {
+    memcpy(packeddata, data, length);
 }
 
 #ifdef OD_DISCONNECT

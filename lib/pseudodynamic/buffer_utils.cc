@@ -1,11 +1,13 @@
 /**
- * File : buffer_utils.cc
- * Author : Tuan Anh Nguyen
- * Description : Additional methods for marshalling
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Additional methods for marshalling.
+ *
+ *
  */
 
 #include "paroc_buffer_utils.h"
@@ -37,7 +39,8 @@ void marshalstring(paroc_buffer &buf, char *str, int maxsize, int flag, paroc_me
     }
 }
 
-template <class T> void packarray(paroc_buffer &buf, T *param, int size, int flag, paroc_memspool * /*temp*/) {
+template <class T>
+void packarray(paroc_buffer &buf, T *param, int size, int flag, paroc_memspool * /*temp*/) {
     if(flag & FLAG_MARSHAL) {
         int n=(param!=0) ?  size : 0;
         buf.Pack(&n,1);
@@ -56,7 +59,7 @@ template <class T> void packarray(paroc_buffer &buf, T *param, int size, int fla
 
 }
 
-
+//TODO This should probably be removed
 template void packarray<char> (paroc_buffer &buf, char *param, int size, int flags, paroc_memspool *tmp);
 template void packarray<unsigned char> (paroc_buffer &buf, unsigned char *param, int size, int flags, paroc_memspool *tmp);
 template void packarray<int> (paroc_buffer &buf, int  *param, int size, int flags, paroc_memspool *tmp);
