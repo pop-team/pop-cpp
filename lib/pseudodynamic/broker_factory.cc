@@ -213,6 +213,7 @@ void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
     }
 }
 
+/* note: this coded existed in the pseudodynamic version of the code but is now disabled.
 void paroc_broker_factory::PrintBrokersMPI(const char *abspath) {
     if(brokerlist!=NULL) {
         POSITION pos=brokerlist->GetHeadPosition();
@@ -224,3 +225,5 @@ void paroc_broker_factory::PrintBrokersMPI(const char *abspath) {
         }
     }
 }
+
+*/

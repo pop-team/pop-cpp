@@ -212,3 +212,18 @@ void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
         printf("====\nArchitecture=%s\n",(const char *)paroc_system::platform);
     }
 }
+
+/* note: this coded existed in the pseudodynamic version of the code but is now disabled.
+void paroc_broker_factory::PrintBrokersMPI(const char *abspath) {
+    if(brokerlist!=NULL) {
+        POSITION pos=brokerlist->GetHeadPosition();
+        while(pos!=NULL) {
+            paroc_broker_init &t=brokerlist->GetNext(pos);
+            if(!(paroc_broker_factory::CheckIfPacked!=NULL && !paroc_broker_factory::CheckIfPacked(t.objname))) {
+                printf("-host localhost -np 1 %s -mpi -object=%s\n", abspath, (const char *)t.objname);
+            }
+        }
+    }
+}
+
+*/

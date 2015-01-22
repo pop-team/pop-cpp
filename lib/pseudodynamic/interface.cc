@@ -321,8 +321,8 @@ void paroc_interface::allocate_only() {
 void paroc_interface::Allocate() {
 //  printf("INTERFACE: Allocate start\n");
     Release();
-    POPString p;
-    od.getProtocol(p);
+    POPString protocol;
+    od.getProtocol(protocol);
     paroc_accesspoint jobcontact, objaccess, remotejobcontact;
 
     // With the actual code, batchsize is always zero
