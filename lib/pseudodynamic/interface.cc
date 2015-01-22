@@ -1,8 +1,12 @@
 /**
- * File : interface.cc
- * Author : Tuan Anh Nguyen
- * Description : base implementation of the parallel object interface class
- * Creation date : -
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Base implementation of the parallel object interface class.
+ *
  *
  * Modifications :
  * Authors      Date            Comment
@@ -60,6 +64,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
 #endif
 
 #ifndef UC_LINUX
+#ifndef __WIN32__
     int pid=popc_fork();
     if(pid==-1) {
         int err=errno;
@@ -85,6 +90,33 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
         popc__exit(-1);
     }
 #else
+    argv[argc] = 0;
+    char command_line[1024]="";
+
+    strcat(command_line,"sh ");
+    for(int i =0; i<argc; i++) {
+        strcat(command_line,argv[i]);
+        strcat(command_line," ");
+    }
+
+    STARTUPINFO sInfoSource;
+    PROCESS_INFORMATION pInfoSource;
+
+    ZeroMemory(&sInfoSource, sizeof(sInfoSource));
+    sInfoSource.cb = sizeof(sInfoSource);
+
+    if(!CreateProcess(NULL, command_line, NULL, NULL, FALSE, 0, NULL, NULL, &sInfoSource, &pInfoSource)) {
+        printf("CreateProcess failed (%d).\n", GetLastError());
+        return -1;
+    }
+
+    WaitForSingleObject(pInfoSource.hProcess,INFINITE);
+
+    CloseHandle(pInfoSource.hThread);
+    CloseHandle(pInfoSource.hProcess);
+#endif
+#else
+#ifndef __WIN32__
     int pid=popc_vfork();
     if(pid==-1) {
         int err=errno;
@@ -96,9 +128,12 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
         popc__exit(-1);
     }
 #endif
+#endif
+#ifndef __WIN32__
     if(status!=NULL) {
         popc_waitpid(pid, status, 0);
     }
+#endif
     return 0;
 }
 
@@ -795,38 +830,43 @@ bool paroc_interface::RecvCtrl() {
 
 void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatform) {
 //  printf("INTERFACE: Negotiate encoding start\n");
-    POPString preferred_encoding;
-    od.getEncoding(preferred_encoding);
-    paroc_list<char *> encoding_preference, encoding_available;
-    Tokenize(preferred_encoding, encoding_preference);
-    Tokenize(enclist, encoding_available);
+    POPString pref;
+    od.getEncoding(pref);
+    paroc_list<char *> enc_pref, enc_avail;
+    Tokenize(pref, enc_pref);
+    Tokenize(enclist,enc_avail);
 
-    POPString current_encoding;
-    __paroc_combox->GetBufferFactory()->GetBufferName(current_encoding);
+    POPString cur_enc;
+    __paroc_combox->GetBufferFactory()->GetBufferName(cur_enc);
 
-    if(encoding_preference.IsEmpty()) {
-        POSITION pos = encoding_available.GetHeadPosition();
-        while(pos != NULL) {
-            char *enc = encoding_available.GetNext(pos);
+    if(enc_pref.IsEmpty()) {
+        POSITION pos=enc_avail.GetHeadPosition();
+        while(pos) {
+            char *enc=enc_avail.GetNext(pos);
+
             if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform, paroc_system::platform)) {
                 continue;
             }
-            if(paroc_utils::isncaseEqual(enc, current_encoding) || Encoding(enc)) {
+
+            if(paroc_utils::isncaseEqual(enc, cur_enc) || Encoding(enc)) {
                 return;
             }
         }
     } else {
-        POSITION prefpos = encoding_preference.GetHeadPosition();
+        POSITION prefpos = enc_pref.GetHeadPosition();
         while(prefpos) {
-            char *test = encoding_preference.GetNext(prefpos);
-            POSITION pos = encoding_available.GetHeadPosition();
-            while(pos != NULL) {
-                char *enc = encoding_available.GetNext(pos);
+            char *test = enc_pref.GetNext(prefpos);
+
+            POSITION pos=enc_avail.GetHeadPosition();
+            while(pos) {
+                char *enc=enc_avail.GetNext(pos);
+
                 if(paroc_utils::MatchWildcard(enc,test)) {
                     if(paroc_utils::isncaseEqual(enc, "raw") && !paroc_utils::isEqual(peerplatform,paroc_system::platform)) {
                         continue;
                     }
-                    if(paroc_utils::isncaseEqual(enc, current_encoding) || Encoding(enc)) {
+
+                    if(paroc_utils::isncaseEqual(enc, cur_enc) || Encoding(enc)) {
                         return;
                     }
                 }

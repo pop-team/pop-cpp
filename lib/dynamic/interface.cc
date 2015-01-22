@@ -8,6 +8,11 @@
  * @brief Base implementation of the parallel object interface class.
  *
  *
+ * Modifications :
+ * Authors      Date            Comment
+ * clementval  ViSaG pro.  Add support for POP-C++ Virtual-Secure version
+ * P.Kuonen    2011/3/25   Cosmetic on printed error messages
+ * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
  */
 
 /*
@@ -858,6 +863,7 @@ bool paroc_interface::RecvCtrl() {
 #endif
 
 void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatform) {
+//  printf("INTERFACE: Negotiate encoding start\n");
     POPString pref;
     od.getEncoding(pref);
     paroc_list<char *> enc_pref, enc_avail;
@@ -913,7 +919,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
       while (isspace(*codefile)) codefile++;
 
       char tmpstr[10240];
-      char *argv[1024];
+      const char *argv[1024];
       char *tmp;
 
       bool isManual=od.getIsManual();
@@ -1301,6 +1307,7 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
         return -2;
     }
     int pid = atoi(buf);
+    // DEBUG("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
     /*if(pid!=0)
        popc_kill(pid, popc_SIGKILL);*/
     return pid;

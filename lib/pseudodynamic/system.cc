@@ -469,6 +469,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     }
 
     char *codeconf = paroc_utils::checkremove(argc,argv,"-codeconf=");
+    (void) codeconf; // Added this to avoid warning
 
 // DEBUGIF(codeconf==NULL,"No code config file\n");
 

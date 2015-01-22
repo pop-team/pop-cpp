@@ -29,7 +29,7 @@
 
 #include "paroc_combox_factory.h"
 #include "paroc_combox_socket.h"
-#include "popc_combox_uds.h"
+//#include "popc_combox_uds.h"
 #include "paroc_utils.h"
 #ifdef MPI_SUPPORT
 // Note by LWK: Added MPI_SUPPORT here to use 1 version of the file for both pseudodyn and dynamic
@@ -47,6 +47,7 @@ paroc_combox * combox_socket_creator() {
 
 // TODO LW: Why doesn't the compiler complain about this with Werror ? Could we have different flags here ?
 paroc_combox* combox_uds_creator() {
+ //   return new popc_combox_uds; // TODO LW: This should be uncommented !
  //   return new popc_combox_uds;
     return NULL;
 }

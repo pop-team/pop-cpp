@@ -96,8 +96,8 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
     /**
      * Display the information about the parallel object executable
      */
-    char *tmp = paroc_utils::checkremove(argc,argv,"-printmpi");
-    if(tmp != NULL) {
+    char *tmp1 = paroc_utils::checkremove(argc,argv,"-printmpi");
+    if(tmp1 != NULL) {
         char abspath[1024];
         char *thisfile = getenv("POPC_EXE");
         if(thisfile == NULL) {
@@ -107,7 +107,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
         PrintBrokersMPI(abspath);
         exit(0);
     }
-    tmp = paroc_utils::checkremove(argc,argv,"-list");
+    char *tmp = paroc_utils::checkremove(argc,argv,"-list");
     if(tmp!=NULL) {
         char abspath[1024];
         char *thisfile=getenv("POPC_EXE");

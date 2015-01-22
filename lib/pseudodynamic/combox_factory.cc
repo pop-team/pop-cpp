@@ -28,7 +28,7 @@
 #endif
 
 #include "paroc_combox_factory.h"
-//#include "paroc_combox_socket.h"
+#include "paroc_combox_socket.h"
 //#include "popc_combox_uds.h"
 #include "paroc_utils.h"
 #ifdef MPI_SUPPORT
@@ -42,9 +42,7 @@ paroc_combox_registration::paroc_combox_registration(const char *name, int metri
 }
 
 paroc_combox * combox_socket_creator() {
-    // return new paroc_combox_socket;
-    // TODO LW
-    return NULL;
+    return new paroc_combox_socket;
 }
 
 // TODO LW: Why doesn't the compiler complain about this with Werror ? Could we have different flags here ?

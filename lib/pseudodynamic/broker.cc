@@ -381,7 +381,7 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
             } else {
               tmp->Destroy();
             }
-            tok = strtok_r(NULL, " \t\n\r", &ptr);
+            tok = popc_strtok_r(NULL, " \t\n\r", &ptr);
         }*/
   return true;
 }
