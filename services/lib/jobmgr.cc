@@ -477,7 +477,9 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
         total.bandwidth=atoi(tmpstr);
     }
 
-    memcpy(&limit,&total,sizeof(Resources));
+    //Note(BW): This seems like a bad idea since Resources contains
+    //a class with a vtable (paroc_accesspoint)
+    memcpy(static_cast<void*>(&limit), static_cast<void*>(&total),sizeof(Resources));
 
     if(Query("np",tmpstr)) {
         int n=atoi(tmpstr);
@@ -509,7 +511,10 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 #endif
     }
 
-    memcpy(&available,&total,sizeof(Resources));
+    //Note(BW): This seems like a bad idea since Resources contains
+    //a class with a vtable (paroc_accesspoint)
+    memcpy(static_cast<void*>(&available),static_cast<void*>(&total),sizeof(Resources));
+
     popc_logger(__DEBUG__, "[JM] Total resource power=%g, max per job=%g",total.flops,limit.flops);
 
 

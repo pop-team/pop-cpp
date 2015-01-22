@@ -119,7 +119,6 @@ add_subdirectory(scripts)
 add_subdirectory(services)
 
 # Add target to clean the distribution of all CMake generated files
-add_custom_target (distclean @echo cleaning for source distribution)
   set(DISTCLEANED
    cmake.depends
    cmake.check_depends
@@ -180,7 +179,30 @@ add_custom_target (distclean @echo cleaning for source distribution)
    *~
   )
 
-  # These 3 custom targets (lint, check and indent) can be use to facilitate the code maintenance
+  if(POPCPP_COMPILER)
+    set(EXTRACLEANED
+      parser/*.cmake
+      parser/CMakeFiles
+      parser/Makefile
+      parser/popcc.cc
+    )
+  else(POPCPP_COMPILER)
+    set(EXTRACLEANED "")
+  endif(POPCPP_COMPILER)
+
+  add_custom_target(distclean
+      COMMAND ${CMAKE_BUILD_TOOL} clean
+      COMMAND rm -Rf CMakeTmp ${DISTCLEANED} ${EXTRACLEANED}
+      COMMENT "distribution clean"
+      )
+
+  # Custom target to run the tests
+  add_custom_target(tests
+      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/test/runtests -all
+      COMMENT "run all tests"
+      )
+
+  # These 3 custom targets (lint, check and indent) can be used to facilitate the code maintenance
   add_custom_target(lint
     COMMENT "Check C++ lint rules with the lint tool provided by Google"
     COMMAND find . -name \"*.h\" -o -name \"*.cpp\" -o -name \"*.cc\" | xargs scripts/cpplint.py --filter=-whitespace,-legal,-build,-runtime/references,-runtime/explicit,-readability/todo,-readability/streams,-readability/function,-runtime/int
@@ -196,24 +218,4 @@ add_custom_target (distclean @echo cleaning for source distribution)
   add_custom_target(indent
     COMMENT "Indent the code automatically with astyle"
     COMMAND find . -name \"*.h\" -o -name \"*.cpp\" -o -name \"*.cc\" -o -name \"*.cc.in\" -o -name \"*.ph\" | xargs astyle -jnUc -A2
-  )
-
-
-  if(POPCPP_COMPILER)
-    set(EXTRACLEANED
-      parser/*.cmake
-      parser/CMakeFiles
-      parser/Makefile
-      parser/popcc.cc
-    )
-  else(POPCPP_COMPILER)
-    set(EXTRACLEANED "")
-  endif(POPCPP_COMPILER)
-
-  add_custom_command(
-    DEPENDS clean
-    COMMENT "distribution clean"
-    COMMAND rm
-    ARGS    -Rf CMakeTmp ${DISTCLEANED} ${EXTRACLEANED}
-    TARGET  distclean
   )

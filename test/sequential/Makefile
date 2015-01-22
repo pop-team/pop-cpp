@@ -15,8 +15,8 @@ testobject.obj: testobject.cc testobject.ph
 	./testobject.obj -listlong > obj.map
 
 clean:
-	rm -f *.o *.obj main
-	
+	rm -f *.o *.obj main log.log
+
 run:
 	popcrun obj.map ./main > log.log
 	# Comparing log with expected log
