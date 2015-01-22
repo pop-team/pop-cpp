@@ -404,5 +404,11 @@ bool paroc_utils::isValidName(POPString value) {
     return true;
 }
 
+#else
+
+int rprintf(const char *format,...) {
+    (void) format;
+    return 1;
+}
 
 #endif
