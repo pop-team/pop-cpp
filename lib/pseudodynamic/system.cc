@@ -409,7 +409,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     //printf("SYSTEM: Init code service\n");
     //bool ret = !(codeconf != NULL && !paroc_utils::InitCodeService(codeconf,mgr));
     //printf("SYSTEM: Init code service done\n");
-    return true;
+    return false;
 }
 
 void paroc_system::Finalize(bool /*normal_exit*/) {
