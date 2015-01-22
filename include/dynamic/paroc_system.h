@@ -101,6 +101,7 @@ public:
     static paroc_accesspoint jobservice;
     static int pop_current_local_address;
     static int popc_local_mpi_communicator_rank;
+    // static paroc_accesspoint popcloner;
     static paroc_string platform;
     static std::ostringstream _popc_cout;
 

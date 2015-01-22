@@ -31,7 +31,7 @@
 //#include <ctype.h>
 
 
-#include "paroc_system.h"
+#include "paroc_system_mpi.h"
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_utils.h"
 #include "paroc_combox_factory.h"
@@ -40,21 +40,19 @@
 
 paroc_accesspoint paroc_system::appservice;
 paroc_accesspoint paroc_system::jobservice;
-paroc_accesspoint paroc_system::popcloner;
+int paroc_system::pop_current_local_address;
 
-int paroc_system::current_free_process;
+// paroc_accesspoint paroc_system::popcloner;
+int paroc_system::popc_local_mpi_communicator_rank;
 
-
-bool paroc_system::is_remote_object_process;
-bool paroc_system::mpi_has_to_take_lock;
-
-
-paroc_condition paroc_system::mpi_unlock_wait_cond;
-paroc_condition paroc_system::mpi_go_wait_cond;
+int paroc_system_mpi::current_free_process;
+bool paroc_system_mpi::is_remote_object_process;
+bool paroc_system_mpi::mpi_has_to_take_lock;
+paroc_condition paroc_system_mpi::mpi_unlock_wait_cond;
+paroc_condition paroc_system_mpi::mpi_go_wait_cond;
 
 
 POPString paroc_system::platform;
-MPI::Intracomm paroc_system::popc_self;
 std::ostringstream paroc_system::_popc_cout;
 
 //V1.3m
@@ -547,10 +545,10 @@ void paroc_system::Finalize(bool /*normalExit*/) {
 }*/
 
 
-void paroc_system::processor_set(int cpu) {
+void paroc_system::processor_set(int /*cpu*/) {
 #ifndef __APPLE__
     // Use glibc to set cpu affinity
-    if(cpu < 0) {
+    /*if (cpu < 0) {
         printf("POP-C++ Warning: Cannot set processor to %d<0", cpu);
         exit(EXIT_FAILURE);
     }

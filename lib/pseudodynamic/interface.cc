@@ -33,7 +33,7 @@
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_broker.h"
 #include "paroc_combox_factory.h"
-#include "paroc_system.h"
+#include "paroc_system_mpi.h"
 #include "paroc_utils.h"
 #include "../../config.h"
 

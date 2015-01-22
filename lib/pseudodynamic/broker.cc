@@ -24,7 +24,7 @@
 #include "paroc_buffer_raw.h"
 #include "paroc_utils.h"
 #include "paroc_thread.h"
-#include "paroc_system.h"
+#include "paroc_system_mpi.h"
 
 #define TIMEOUT 1800
 

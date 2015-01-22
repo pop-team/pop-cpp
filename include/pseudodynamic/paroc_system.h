@@ -17,9 +17,6 @@ Modified by L.Winkler (2008-2009) for Version 1.3
 #define _POPC_SYSTEM_H
 #include <paroc_accesspoint.h>
 
-#include "paroc_mutex.h"
-#include <mpi.h>
-
 #ifndef __WIN32__
 #include <net/if.h>
 #include <ifaddrs.h>
@@ -102,23 +99,11 @@ public:
 public:
     static paroc_accesspoint appservice;
     static paroc_accesspoint jobservice;
-
-    static paroc_accesspoint popcloner;
+    static int pop_current_local_address;
+    static int popc_local_mpi_communicator_rank;
+    // static paroc_accesspoint popcloner;
     static paroc_string platform;
     static std::ostringstream _popc_cout;
-
-// if MPI
-
-    static int current_free_process;
-
-    static MPI::Intracomm popc_self;
-    static bool is_remote_object_process;
-    static bool mpi_has_to_take_lock;
-
-    static paroc_condition mpi_unlock_wait_cond;
-    static paroc_condition mpi_go_wait_cond;
-// end if MPI
-
 
 private:
     static const char *paroc_errstr[17];

@@ -15,7 +15,7 @@
 #include "paroc_exception.h"
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_broker.h"
-#include "paroc_system.h"
+#include "paroc_system_mpi.h"
 #include "paroc_utils.h"
 
 // Set processor
@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 #endif
 
     paroc_system app;
-    paroc_system::is_remote_object_process = false;
+    paroc_system_mpi::is_remote_object_process = false;
 
     /**
      *
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
         int provided_support = MPI::Init_thread(required_support);
     }
     printf("ARGS %d %s\n", argc, argv[0]);
-    paroc_system::current_free_process = 2;
+    paroc_system_mpi::current_free_process = 2;
 //  printf("Main %d\n", MPI::COMM_WORLD.Get_rank());
 
     //printf("Start main of POP-C++ application: rank:%d\n", rank);
