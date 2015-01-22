@@ -354,7 +354,10 @@ POPString paroc_system::GetDefaultInterface() {
     return POPString(iface);
 }
 
-bool paroc_system::GetIPFromInterface(POPString &/*iface*/, POPString &/*str_ip*/) {
+bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
+#ifndef __WIN32__
+    (void) iface;
+    (void) str_ip;
     /*struct ifaddrs *addrs, *iap;
     struct sockaddr_in *sa;
     char str_ip_local[32];
@@ -382,6 +385,10 @@ bool paroc_system::GetIPFromInterface(POPString &/*iface*/, POPString &/*str_ip*
     }
     freeifaddrs(addrs);*/
     return false;
+#else
+    (void) iface;
+    (void) str_ip;
+#endif
 }
 
 
@@ -401,7 +408,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     paroc_system::jobservice.SetAsService();
 
     // Get path of the application service executable
-    char *application_service_path = paroc_utils::checkremove(argc,argv,"-appservicecode=");
+    char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
     //char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
 
     // Check if need to run on local node only
@@ -410,57 +417,60 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     }
 
     // Get application service contact address
-    char *application_service_contact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
+    char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
-
-    if(application_service_path == NULL && application_service_contact == NULL) {
+    if(codeser==NULL && appcontact==NULL) {
         return false;
     }
-
     try {
-        if(application_service_contact == NULL) {
-
+        if(appcontact == NULL) {
             char url[1024];
-            strcpy(url, application_service_path);
+            strcpy(url, codeser);
 
+#ifndef DEFINE_UDS_SUPPORT
             // Creating application services
             //mgr = CreateAppCoreService(url);
             //printf("POP-C++ Application Service created %s\n", mgr->GetAccessPoint().GetAccessString());
-
+#endif
         } else {
             challenge=NULL;
             paroc_accesspoint app;
-            app.SetAccessString(application_service_contact);
+            app.SetAccessString(appcontact);
             app.SetAsService();
-            //mgr = new AppCoreService(app);
+#ifndef DEFINE_UDS_SUPPORT
+           //mgr = new AppCoreService(app);
+#endif
         }
-        //paroc_system::appservice = mgr->GetAccessPoint();
+        //paroc_system::appservice=mgr->GetAccessPoint();
         paroc_system::appservice.SetAsService();
-
     } catch(POPException *e) {
         printf("POP-C++ Exception occurs in paroc_system::Initialize\n");
         POPSystem::perror(e);
         delete e;
+#ifndef DEFINE_UDS_SUPPORT
         /*if (mgr!=NULL) {
             mgr->KillAll();
             mgr->Stop(challenge);
             delete mgr;
             mgr=NULL;
         }*/
+#endif
         return false;
     } catch(...) {
-        /*if (mgr!=NULL) {
+ #ifndef DEFINE_UDS_SUPPORT
+       /*if (mgr!=NULL) {
             mgr->KillAll();
             mgr->Stop(challenge);
             delete mgr;
             mgr=NULL;
         }*/
+#endif
         return false;
     }
 
     char *codeconf = paroc_utils::checkremove(argc,argv,"-codeconf=");
 
-    DEBUGIF(codeconf==NULL,"No code config file\n");
+// DEBUGIF(codeconf==NULL,"No code config file\n");
 
     /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
     {
@@ -474,12 +484,13 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     return false;
 }
 
-void paroc_system::Finalize(bool /*normal_exit*/) {
-    //printf("Finalize the application %s\n", normal_exit ? "true" : "false");
+void paroc_system::Finalize(bool /*normalExit*/) {
+#ifndef DEFINE_UDS_SUPPORT
+    //printf("Finalize the application %s\n", normalExit ? "true" : "false");
     /*  if (mgr != NULL) {
         //printf("mgr not null\n");
         try {
-          if (normal_exit) {
+            if(normalExit) {
             // Wait all object to be terminated before exiting
             int timeout = 1;
             int oldcount = 0, count;
@@ -514,6 +525,7 @@ void paroc_system::Finalize(bool /*normal_exit*/) {
         mgr = NULL;
       }*/
     //printf("Finalize the application end\n");
+#endif
 }
 
 

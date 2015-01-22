@@ -373,6 +373,9 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
     }
     freeifaddrs(addrs);
     return false;
+#else
+    (void) iface;
+    (void) str_ip;
 #endif
 }
 
@@ -400,6 +403,8 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     if(paroc_utils::checkremove(argc,argv,"-runlocal")) {
         paroc_od::defaultLocalJob=true;
     }
+
+    // Get application service contact address
     char *appcontact=paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
     if(codeser==NULL && appcontact==NULL) {
