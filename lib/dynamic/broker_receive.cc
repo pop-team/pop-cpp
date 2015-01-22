@@ -54,6 +54,8 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
                 break;
             }
 
+
+            // Is it a POP-C++ core call ? If so serve it right away
             if(ParocCall(req)) {
                 if(req.data!=NULL) {
                     req.data->Destroy();

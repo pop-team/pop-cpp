@@ -19,7 +19,7 @@
     POPC_BrokerFactory instead of paroc_broker_factory
  */
 
-#include <mpi.h>
+// #include <mpi.h>
 #include "popc_intface.h"
 
 //#include <unistd.h>
@@ -95,7 +95,10 @@ bool paroc_broker_factory::test(const char *objname) {
 paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
     /**
      * Display the information about the parallel object executable
+     * note: this bit of code existed in pseudodynamic version and is
+     * kept just in case.
      */
+/*
     char *tmp1 = paroc_utils::checkremove(argc,argv,"-printmpi");
     if(tmp1 != NULL) {
         char abspath[1024];
@@ -107,6 +110,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
         PrintBrokersMPI(abspath);
         exit(0);
     }
+*/
     char *tmp = paroc_utils::checkremove(argc,argv,"-list");
     if(tmp!=NULL) {
         char abspath[1024];
@@ -122,7 +126,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
     char *usage=paroc_utils::checkremove(argc,argv,"-help");
     char *object = paroc_utils::checkremove(argc,argv,"-object=");
     if(usage != NULL || object == NULL) {
-        printf("\n Usage:\n\t%s [-help] [-list | -listlong] [-port=<local port>] [-callback=<host:port>] [-appservice=<host:port>] [-nostdio] [-mpi] -object=<objectname>\n",(*argv)[0]);
+        printf("\n Usage:\n\t%s [-help] [-list | -listlong] [-port=<local port>] [-callback=<host:port>] [-appservice=<host:port>] [-nostdio] -object=<objectname>\n",(*argv)[0]);
         return NULL;
     }
 
