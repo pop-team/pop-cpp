@@ -17,40 +17,15 @@ set(POPCPP_PSEUDODYNAMIC_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/pseudodynam
 add_definitions(-Wall -Wextra -Werror)
 
 add_library(popc_common_psdyn
-    accesspoint.cc
-    allocobj.cc
-    broker.cc
-    broker_factory.cc
     broker_receive.cc
-    broker_serve.cc
-    buffer.cc
-    buffer_factory.cc
-    buffer_factory_finder.cc
     buffer_raw.cc
-    buffer_raw_factory.cc
-    buffer_utils.cc
     buffer_xdr.cc
-    buffer_xdr_factory.cc
-    combox.cc
     combox_factory.cc
-    combox_socket.cc
-    event.cc
-    exception.cc
     interface.cc
-    memspool.cc
-    mutex.cc
     object.cc
-    od.cc
     popc_combox_mpi.cc
     popc_connection_mpi.cpp
-    popc_logger.cpp
-    popwayback.cc
-    string.cc
     system.cc
-    thread.cc
-    timer.cc
-    popc_intface_linux.cc
-    utils.cc
 )
 
 # SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)
@@ -85,34 +60,13 @@ endfunction(popcc_compile_cxx)
 # Note: We need to compile utils.cc here to enable the _POPC_ compilation flag
 #popcc_compile_cxx(utils.cc)
 
-
-# Build the interface (Win/Lin)
-
-if(WIN32)
-    set(intface_cc_file popc_intface_windows.cc)
-    set(intface_o_file popc_intface_windows.o)
-elseif(UNIX)
-    set(intface_cc_file popc_intface_linux.cc)
-    set(intface_o_file popc_intface_linux.o)
-endif(WIN32)
-
-add_custom_command(
-    OUTPUT ${intface_o_file}
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} ${intface_o_file} ${intface_cc_file}
-        ${POPCPP_PSEUDODYNAMIC_INCLUDE_PATH}
-    DEPENDS ${intface_cc_file})
-
 # Final link steps
 
 add_custom_command(
     OUTPUT libpopc_common_psdyn.a
-    COMMAND ar r libpopc_common_psdyn.a ${intface_o_file} ${POPCC_GENERATED_FILES}
-    DEPENDS ${intface_o_file} ${POPCC_GENERATED_FILES}
+    COMMAND ar r libpopc_common_psdyn.a ${POPCC_GENERATED_FILES}
+    DEPENDS ${POPCC_GENERATED_FILES}
     COMMENT "Compile POP-C++ generated lib for popc_common_psdyn")
-
-#add_custom_target(
-#    popc_common_link_psdyn ALL
-#    DEPENDS libpopc_common_psdyn.a ${intface_o_file} ${POPCC_GENERATED_FILES})
 
 # Install all the files
 

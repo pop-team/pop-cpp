@@ -63,9 +63,9 @@ add_custom_command(
     # COMMENT "Generate parser.yy.cc")
 
 if(POPCPP_COMPILER)
-    set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/dynamic)
+    set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/core)
 else(POPCPP_COMPILER)
-    set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/../lib/dynamic)
+    set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/../lib/core)
 endif(POPCPP_COMPILER)
 
 if(UNIX)

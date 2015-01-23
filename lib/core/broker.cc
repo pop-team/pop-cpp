@@ -235,6 +235,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     }
 
     char *address = paroc_utils::checkremove(argc,argv,"-address=");
+    (void)address; // Note: this line avoids a warning
 
     paroc_combox_factory  *comboxFactory = paroc_combox_factory::GetInstance();
     int comboxCount = comboxFactory->GetCount();
