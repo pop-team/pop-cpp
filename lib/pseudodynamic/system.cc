@@ -418,12 +418,8 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get application service contact address
     char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
-<<<<<<< HEAD
     if(codeser==NULL && appcontact==NULL) {
-=======
-    if(application_service_path == NULL && application_service_contact == NULL) {
         printf("Error: missing -appservicecontact=... or -appservicecode=... argument\n");
->>>>>>> 6801e702b1f99fce5bcdccaf97b6a2748dfd96d2
         return false;
     }
     try {
