@@ -400,6 +400,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
     char *info = paroc_utils::checkremove(argc, argv, "-jobservice=");
     if(info == NULL) {
+        printf("Error: missing -jobservice argument\n");
         return false;
     }
     paroc_system::jobservice.SetAccessString(info);
@@ -417,7 +418,12 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get application service contact address
     char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
+<<<<<<< HEAD
     if(codeser==NULL && appcontact==NULL) {
+=======
+    if(application_service_path == NULL && application_service_contact == NULL) {
+        printf("Error: missing -appservicecontact=... or -appservicecode=... argument\n");
+>>>>>>> 6801e702b1f99fce5bcdccaf97b6a2748dfd96d2
         return false;
     }
     try {
@@ -456,6 +462,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         return false;
     } catch(...) {
  #ifndef DEFINE_UDS_SUPPORT
+       printf("Exception occurs in paroc_system::Initialize\n");
        /*if (mgr!=NULL) {
             mgr->KillAll();
             mgr->Stop(challenge);
