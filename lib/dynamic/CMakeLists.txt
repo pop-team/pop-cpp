@@ -51,12 +51,14 @@ add_custom_command(OUTPUT paroc_infmain.std.o
     COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_infmain.std.o paroc_infmain.std.cc
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
     DEPENDS paroc_infmain.std.cc
+    DEPENDS popcc
     COMMENT "Compile POP-C++ Master main")
 
 add_custom_command(OUTPUT paroc_objmain.std.o
     COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_objmain.std.o paroc_objmain.std.cc
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
     DEPENDS paroc_objmain.std.cc
+    DEPENDS popcc
     COMMENT "Compile POP-C++ Object main")
 
 add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o)

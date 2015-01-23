@@ -54,6 +54,7 @@ function(popcc_compile_cxx cxx_file)
 add_custom_command(
     OUTPUT ${POPCC_OUTPUT_DIR}/${cxx_file}.o
     COMMAND ${POPCC_PARCLASS_SERVICE_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${cxx_file} ${POPCPP_PSEUDODYNAMIC_INCLUDE_PATH}
+    DEPENDS popcc
     DEPENDS ${cxx_file})
 endfunction(popcc_compile_cxx)
 

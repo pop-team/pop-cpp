@@ -45,6 +45,7 @@ add_custom_command(
     COMMAND ${POPCC_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub.o ${CMAKE_CURRENT_SOURCE_DIR}/${ph_file} ${POPCPP_SERVICES_INCLUDE_PATH}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${ph_file}
+    DEPENDS popcc
 )
 endfunction(popcc_compile_ph)
 
@@ -55,6 +56,7 @@ add_custom_command(
     COMMAND ${POPCC_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${CMAKE_CURRENT_SOURCE_DIR}/${cxx_file} ${POPCPP_SERVICES_INCLUDE_PATH}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${cxx_file}
+    DEPENDS popcc
 )
 endfunction(popcc_compile_cxx)
 
@@ -67,6 +69,7 @@ add_custom_target(
         -L${POPCPP_LIB_PATH} -L${POPCPP_SERVICES_PATH} ${POPCC_OUTPUT_DIR}/libpopc_services.a
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${POPCC_OUTPUT_DIR}/libpopc_services.a
+    DEPENDS popcc
 )
 endfunction(popcc_compile_exec)
 
