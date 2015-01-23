@@ -144,7 +144,7 @@ add_custom_command(
     DEPENDS ${POPCC_GENERATED_FILES}
     COMMENT "Compile POP-C++ generated lib for popc_services")
 
-add_custom_target(abpopc_services ALL DEPENDS ${POPCC_GENERATED_FILES} ${POPCC_OUTPUT_DIR}/libpopc_services.a)
+#add_custom_target(abpopc_services ALL DEPENDS ${POPCC_GENERATED_FILES} ${POPCC_OUTPUT_DIR}/libpopc_services.a)
 
 # Compile executables
 

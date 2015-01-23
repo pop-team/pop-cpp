@@ -94,6 +94,7 @@ endif(POPCPP_COMPILER)
 
 include_directories(include/dynamic)
 if(MPI_SUPPORT)
+  include_directories(${MPI_CXX_INCLUDE_PATH})
   include_directories(include/pseudodynamic)
 endif(MPI_SUPPORT)
 

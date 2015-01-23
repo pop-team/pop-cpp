@@ -10,9 +10,9 @@ if(NOT DEFINED POPCPP_MPI_COMPILER_FLAGS)
     set(POPCPP_MPI_COMPILER_FLAGS -o)
 endif(NOT DEFINED POPCPP_MPI_COMPILER_FLAGS)
 
-set(POPCPP_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include/dynamic)
+set(POPCPP_INTERCONNECTOR_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/dynamic;-I${CMAKE_SOURCE_DIR}/include/core")
 set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/dynamic)
-include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_INCLUDE_PATH})
+# include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_INCLUDE_PATH})
 link_directories(${CMAKE_SOURCE_DIR}/lib/dynamic)
 
 # Add more warnings
@@ -20,11 +20,11 @@ add_definitions(-Wall -Wextra -Werror)
 
 add_custom_target(popc_mpi_interconnector ALL
     COMMAND ${MPI_CXX_COMPILER} ${POPCPP_MPI_COMPILER_FLAGS} popc_mpi_interconnector popc_mpi_interconnector.cpp
-        -I${POPCPP_INCLUDE_PATH} ${POPCPP_LIB_PATH}/libpopc_common.a -lpthread
+        ${POPCPP_INTERCONNECTOR_INCLUDE_PATH} ${POPCPP_LIB_PATH}/libpopc_common.a -lpthread
     DEPENDS popc_mpi_interconnector.cpp)
 
 add_custom_target(openmpi_check_support ALL
-    COMMAND ${MPI_CXX_COMPILER} ${POPCPP_MPI_COMPILER_FLAGS} openmpi_check_support openmpi_check_support.cpp -I${POPCPP_INCLUDE_PATH}
+    COMMAND ${MPI_CXX_COMPILER} ${POPCPP_MPI_COMPILER_FLAGS} openmpi_check_support openmpi_check_support.cpp ${POPCPP_INTERCONNECTOR_INCLUDE_PATH}
         ${POPCPP_LIB_PATH}/libpopc_common.a
     DEPENDS openmpi_check_support.cpp)
 

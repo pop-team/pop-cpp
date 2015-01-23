@@ -6,7 +6,7 @@
 # DATE: 2012/11/14
 #
 
-include_directories(${CMAKE_SOURCE_DIR}/ ${CMAKE_SOURCE_DIR}/include/pseudodynamic ${MPI_CXX_INCLUDE_PATH})
+# include_directories(${CMAKE_SOURCE_DIR}/ ${CMAKE_SOURCE_DIR}/include/pseudodynamic ${MPI_CXX_INCLUDE_PATH})
 
 # include(CMakeForceCompiler)
 
