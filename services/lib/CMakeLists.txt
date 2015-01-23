@@ -20,7 +20,6 @@ set(POPCPP_COMPILER_FLAGS -o)
 set(POPCPP_Object_COMPILER_FLAGS -object -o)
 set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
 
-# TODO LWK: Should be set to include/services very probably
 set(POPCPP_SERVICES_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/dynamic;-I${CMAKE_SOURCE_DIR}/include/core")
 set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/dynamic)
 set(POPCPP_SERVICES_PATH ${CMAKE_SOURCE_DIR}/services/lib)

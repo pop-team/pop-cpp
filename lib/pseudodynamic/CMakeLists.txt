@@ -11,6 +11,7 @@
 # include(CMakeForceCompiler)
 
 set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
+set(POPCPP_PSEUDODYNAMIC_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/pseudodynamic;-I${CMAKE_SOURCE_DIR}/include/core")
 
 # Activate some warnings
 add_definitions(-Wall -Wextra -Werror)
@@ -52,21 +53,21 @@ add_library(popc_common_psdyn
     utils.cc
 )
 
-SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)
+# SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)
 
-TARGET_LINK_LIBRARIES(popc_common_psdyn ${POPCCOMMON})
+# TARGET_LINK_LIBRARIES(popc_common_psdyn ${POPCCOMMON})
 
 add_custom_command(
     OUTPUT paroc_infmain.psdyn.o
     COMMAND ${MPI_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_infmain.psdyn.cc 
-    -I${CMAKE_SOURCE_DIR}/include/pseudodynamic
+    ${POPCPP_PSEUDODYNAMIC_INCLUDE_PATH}
     DEPENDS paroc_infmain.psdyn.cc
     COMMENT "Compile POP-C++ Master main")
 
 add_custom_command(
     OUTPUT popc_objmain.psdyn.o
     COMMAND ${MPI_CXX_COMPILER} ${POPC_MAIN_FLAGS} popc_objmain.psdyn.cc 
-    -I${CMAKE_SOURCE_DIR}/include/pseudodynamic
+    ${POPCPP_PSEUDODYNAMIC_INCLUDE_PATH}
     DEPENDS popc_objmain.psdyn.cc
     COMMENT "Compile POP-C++ Object main")
 
@@ -77,7 +78,7 @@ add_custom_target(popcpp_master_psdyn_main ALL DEPENDS paroc_infmain.psdyn.o)
 function(popcc_compile_cxx cxx_file)
 add_custom_command(
     OUTPUT ${POPCC_OUTPUT_DIR}/${cxx_file}.o
-    COMMAND ${POPCC_PARCLASS_SERVICE_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${cxx_file} -I${POPCPP_INCLUDE_PATH}
+    COMMAND ${POPCC_PARCLASS_SERVICE_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${cxx_file} ${POPCPP_PSEUDODYNAMIC_INCLUDE_PATH}
     DEPENDS ${cxx_file})
 endfunction(popcc_compile_cxx)
 
@@ -98,7 +99,7 @@ endif(WIN32)
 add_custom_command(
     OUTPUT ${intface_o_file}
     COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} ${intface_o_file} ${intface_cc_file}
-        -I${POPCPP_INCLUDE_PATH}
+        ${POPCPP_PSEUDODYNAMIC_INCLUDE_PATH}
     DEPENDS ${intface_cc_file})
 
 # Final link steps

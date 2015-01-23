@@ -42,7 +42,7 @@ check_library_exists(pthread pthread_create "" HAVE_LIBPTHREAD)
 # Define user specific option. Disable by default.
 option(MPI_SUPPORT "MPI Support" OFF)
 option(XMP_SUPPORT "XMP Support" OFF)
-option(POPCPP_EXTRA_FLAGS "Flags to add to the POP-C++ compiler, separated by ';'" "")
+set(POPCPP_EXTRA_FLAGS "" CACHE STRING "Flags to add to the POP-C++ compiler, separated by ';'")
 
 # Set MPI support implicitly if XMP support is required
 if(XMP_SUPPORT)
@@ -100,12 +100,14 @@ endif(MPI_SUPPORT)
 
 # Add subdirectory which inlude a CMakeLists.text file
 add_subdirectory(lib)
-# add_subdirectory(include)
+add_subdirectory(include/core)
+add_subdirectory(include/dynamic)
 
 
 # Instruction to enable the MPI support for POP-C++
 if(MPI_SUPPORT)
   message(STATUS "MPI Support for POP-C++ is enable")
+  add_subdirectory(include/pseudodynamic)
   add_subdirectory(mpi)
   add_subdirectory(interconnector)
 endif(MPI_SUPPORT)
