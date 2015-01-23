@@ -42,7 +42,7 @@ check_library_exists(pthread pthread_create "" HAVE_LIBPTHREAD)
 # Define user specific option. Disable by default.
 option(MPI_SUPPORT "MPI Support" OFF)
 option(XMP_SUPPORT "XMP Support" OFF)
-set(POPCPP_EXTRA_FLAGS "" CACHE STRING "Flags to add to the POP-C++ compiler, separated by ';'")
+option(POPCPP_EXTRA_FLAGS "Flags to add to the POP-C++ compiler, separated by ';'" "")
 
 # Set MPI support implicitly if XMP support is required
 if(XMP_SUPPORT)
@@ -75,15 +75,6 @@ endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 # Set to OFF to configure and compile the POP-C++ compiler/parser separately
 option(POPCPP_COMPILER "POP-C++ Compiler compilation" ON)
 
-# Define variable for MPI compilation
-#if(NOT DEFINED MPI_COMPILER)
-#  set(MPI_COMPILER mpic++)
-#endif(NOT DEFINED MPI_COMPILER)
-
-#if(NOT DEFINED MPI_COMPILER_FLAGS)
-#  set(MPI_COMPILER_FLAGS -o)
-#endif(NOT DEFINED MPI_COMPILER_FLAGS)
-
 if(NOT DEFINED POPC_MAIN_FLAGS)
  set(POPC_MAIN_FLAGS -c)
 endif(NOT DEFINED POPC_MAIN_FLAGS)
@@ -92,15 +83,24 @@ endif(NOT DEFINED POPC_MAIN_FLAGS)
 # Generate the config.h file during the configuration of the project
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/config.h)
 
+include_directories(.) # for config.h
+include_directories(include/core)
+
 # If the POP-C++ Compilation option is on, add the parser directory as a sub folder
 if(POPCPP_COMPILER)
   message(STATUS "POP-C++ Compiler will be build with the same configuration as the library")
   add_subdirectory(parser)
 endif(POPCPP_COMPILER)
 
+include_directories(include/dynamic)
+if(MPI_SUPPORT)
+  include_directories(include/pseudodynamic)
+endif(MPI_SUPPORT)
+
 # Add subdirectory which inlude a CMakeLists.text file
 add_subdirectory(lib)
-add_subdirectory(include)
+# add_subdirectory(include)
+
 
 # Instruction to enable the MPI support for POP-C++
 if(MPI_SUPPORT)
@@ -190,6 +190,7 @@ add_subdirectory(services)
     set(EXTRACLEANED "")
   endif(POPCPP_COMPILER)
 
+# Add extra targets for code maintenance
   add_custom_target(distclean
       COMMAND ${CMAKE_BUILD_TOOL} clean
       COMMAND rm -Rf CMakeTmp ${DISTCLEANED} ${EXTRACLEANED}

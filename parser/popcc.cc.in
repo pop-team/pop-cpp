@@ -601,9 +601,9 @@ int main(int argc, char *argv[]) {
     }
 
     if(enablepsdyn) {
-        sprintf(buf, "-I%s/include/pseudodynamic", parocdir);
+        sprintf(buf, "-I%s/include/core -I%s/include/pseudodynamic", parocdir, parocdir);
     } else {
-        sprintf(buf, "-I%s/include/dynamic", parocdir);
+        sprintf(buf, "-I%s/include/core -I%s/include/dynamic", parocdir, parocdir);
     }
 
     cpp_opts[cpp_count++] = popc_strdup(buf);

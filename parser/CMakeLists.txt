@@ -2,22 +2,22 @@ cmake_minimum_required(VERSION 2.6)
 
 project(POPC_PARSER)
 
-include(CheckIncludeFile)
-include(CheckLibraryExists)
+# include(CheckIncludeFile)
+# include(CheckLibraryExists)
 
 # Add more warnings
 add_definitions(-Wall -Wextra -Werror)
 
-if(NOT POPCPP_COMPILER)
-    message(STATUS "Configuring POP-C++ Compiler separately than library project.")
-    if(NOT EXISTS "../config.h")
-        message(SEND_ERROR "You must configure POP-C++ main project first!")
-    endif(NOT EXISTS "../config.h")
-endif(NOT POPCPP_COMPILER)
+#if(NOT POPCPP_COMPILER)
+    #message(STATUS "Configuring POP-C++ Compiler separately than library project.")
+    #if(NOT EXISTS "../config.h")
+        #message(SEND_ERROR "You must configure POP-C++ main project first!")
+    #endif(NOT EXISTS "../config.h")
+#endif(NOT POPCPP_COMPILER)
 
 # Define user specific option. Disable by default.
-option(MPI_SUPPORT "MPI Support" OFF)
-option(XMP_SUPPORT "XMP Support" OFF)
+#option(MPI_SUPPORT "MPI Support" OFF)
+#option(XMP_SUPPORT "XMP Support" OFF)
 
 # Locate the flex executable
 find_program(FLEX flex DOC "Path to the flex lexical analyser generator.")
@@ -33,30 +33,34 @@ if(NOT DEFINED BISON)
 endif(NOT DEFINED BISON)
 message(STATUS "Bison found at ${BISON}")
 
-if(POPCPP_COMPILER)
-    include_directories(${CMAKE_SOURCE_DIR}/parser/ ${CMAKE_SOURCE_DIR}/include/dynamic ${CMAKE_SOURCE_DIR}/)
-else(POPCPP_COMPILER)
-    include_directories(${CMAKE_SOURCE_DIR}/../ ${CMAKE_SOURCE_DIR}/../include/dynamic)
-endif(POPCPP_COMPILER)
+# if(POPCPP_COMPILER)
+    # include_directories(${CMAKE_SOURCE_DIR}/parser/ ${CMAKE_SOURCE_DIR}/include/dynamic ${CMAKE_SOURCE_DIR}/)
+# else(POPCPP_COMPILER)
+    # include_directories(${CMAKE_SOURCE_DIR}/../ ${CMAKE_SOURCE_DIR}/../include/dynamic)
+# endif(POPCPP_COMPILER)
 
-add_custom_target(gen
+add_custom_command(
+    OUTPUT  parser.yy.cc
+    OUTPUT  parser.tab.cc
+    OUTPUT  parser.tab.h
     COMMAND ${BISON} -y -b parser -d parser.y
     COMMAND mv parser.tab.c parser.tab.cc
     COMMAND ${FLEX} -oparser.yy.cc parser.lex
     DEPENDS parser.y
+    DEPENDS parser.lex
     COMMENT "Generating parser files")
 
-add_custom_command(
-    OUTPUT parser.tab.h
-    COMMENT "Generate parser.tab.h")
+# add_custom_command(
+    # OUTPUT parser.tab.h
+    # COMMENT "Generate parser.tab.h")
 
-add_custom_command(
-    OUTPUT parser.tab.cc
-    COMMENT "Generate parser.tab.cc")
+# add_custom_command(
+    # OUTPUT parser.tab.cc
+    # COMMENT "Generate parser.tab.cc")
 
-add_custom_command(
-    OUTPUT parser.yy.cc
-    COMMENT "Generate parser.yy.cc")
+# add_custom_command(
+    # OUTPUT parser.yy.cc
+    # COMMENT "Generate parser.yy.cc")
 
 if(POPCPP_COMPILER)
     set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/dynamic)
@@ -98,7 +102,7 @@ add_executable(popcpp
     ${intface_file})
 
 # Make sure the lexer/parser are generated
-add_dependencies(popcpp gen)
+# add_dependencies(popcpp parser.yy.cc)
 
 # Build the popcc executable
 add_executable(popcc
