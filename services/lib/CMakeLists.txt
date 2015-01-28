@@ -46,6 +46,7 @@ add_custom_command(
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${ph_file}
     DEPENDS popcc
+    DEPENDS popcpp
 )
 endfunction(popcc_compile_ph)
 
@@ -57,6 +58,7 @@ add_custom_command(
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${cxx_file}
     DEPENDS popcc
+    DEPENDS popcpp
 )
 endfunction(popcc_compile_cxx)
 
@@ -70,6 +72,7 @@ add_custom_target(
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${POPCC_OUTPUT_DIR}/libpopc_services.a
     DEPENDS popcc
+    DEPENDS popcpp
 )
 endfunction(popcc_compile_exec)
 
@@ -82,6 +85,8 @@ add_custom_target(
         -L${POPCPP_LIB_PATH} -L${POPCPP_SERVICES_PATH} ${POPCC_OUTPUT_DIR}/libpopc_services.a
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${POPCC_OUTPUT_DIR}/libpopc_services.a
+    DEPENDS popcc
+    DEPENDS popcpp
 )
 endfunction(popcc_compile_obj)
 

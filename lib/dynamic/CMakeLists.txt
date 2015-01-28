@@ -52,6 +52,7 @@ add_custom_command(OUTPUT paroc_infmain.std.o
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
     DEPENDS paroc_infmain.std.cc
     DEPENDS popcc
+    DEPENDS popcpp
     COMMENT "Compile POP-C++ Master main")
 
 add_custom_command(OUTPUT paroc_objmain.std.o
@@ -59,6 +60,7 @@ add_custom_command(OUTPUT paroc_objmain.std.o
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
     DEPENDS paroc_objmain.std.cc
     DEPENDS popcc
+    DEPENDS popcpp
     COMMENT "Compile POP-C++ Object main")
 
 add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o)
@@ -70,7 +72,9 @@ add_custom_command(
     OUTPUT ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o
     COMMAND ${POPCC_PARCLASS_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o ${ph_file} ${POPCPP_DYNAMIC_INCLUDE_PATH}
     DEPENDS ${ph_file}
-    DEPENDS popcc)
+    DEPENDS popcc
+    DEPENDS popcpp
+)
 endfunction(popcc_compile_ph)
 
 # Compile a cxx file into a .o
@@ -79,7 +83,9 @@ add_custom_command(
     OUTPUT ${POPCC_OUTPUT_DIR}/${cxx_file}.o
     COMMAND ${POPCC_PARCLASS_SERVICE_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${cxx_file} ${POPCPP_DYNAMIC_INCLUDE_PATH}
     DEPENDS ${cxx_file}
-    DEPENDS popcc)
+    DEPENDS popcc
+    DEPENDS popcpp
+)
 endfunction(popcc_compile_cxx)
 
 # Build .ph files
