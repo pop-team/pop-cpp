@@ -168,7 +168,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
 
     if(paroc_extension || strcmp(str, ".cc") == 0 ||  strcmp(str, ".C") == 0 || strcmp(str, ".cpp") == 0) {
         sprintf(tmpfile1, "%s_popc1_%s", sdir, fname);
-
+// TODO LW: These files can be generated many time during compilation with similar names. See what to do
         if(usepipe) {
             sprintf(tmpfile2, "-");
         } else {
@@ -429,7 +429,7 @@ int main(int argc, char *argv[]) {
     bool client = (paroc_utils::checkremove(&argc, &argv, "-parclass-nointerface") == NULL);
     bool usepipe = false;
 #ifndef __WIN32__
-    usepipe = (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
+    usepipe = false; (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
 #endif
     bool kcomputer = (paroc_utils::checkremove(&argc, &argv, "-kcomputer") == NULL);
     bool enablexmp = (paroc_utils::checkremove(&argc, &argv, "-xmp") != NULL);
@@ -600,12 +600,14 @@ int main(int argc, char *argv[]) {
         cpp_opts[cpp_count++] = popc_strdup("-Dmain=parocmain");
     }
 
-    if(enablepsdyn) {
-        sprintf(buf, "-I%s/include/core -I%s/include/pseudodynamic", parocdir, parocdir);
-    } else {
-        sprintf(buf, "-I%s/include/core -I%s/include/dynamic", parocdir, parocdir);
-    }
+    sprintf(buf, "-I%s/include/core", parocdir);
+    cpp_opts[cpp_count++] = popc_strdup(buf);
 
+    if(enablepsdyn) {
+        sprintf(buf, "-I%s/include/pseudodynamic", parocdir);
+    } else {
+        sprintf(buf, "-I%s/include/dynamic", parocdir);
+    }
     cpp_opts[cpp_count++] = popc_strdup(buf);
 
     if(*outputfile != 0) {

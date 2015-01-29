@@ -48,6 +48,8 @@
 #endif
 
 int RunCmd(int argc, char **argv, char *env[], int *status) {
+    // TODO: unused: see what to do (LW)
+
     (void)argc;
     char *file=NULL;
 

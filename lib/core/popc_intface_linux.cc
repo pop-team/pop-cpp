@@ -356,6 +356,21 @@ int popc_strncasecmp(const char * a, const char * b, popc_size_t c) {
 // RunCmd function
 
 int RunCmd(int argc, char *argv[]) {
+/* TODO: See what to use
+    char cmd[1024]="";
+
+    // strcat(cmd,"sh ");
+    for(int i =0; i<argc; i++) {
+        strcat(cmd,argv[i]);
+        strcat(cmd," ");
+    }
+    fprintf(stderr, "Execute %s\n", cmd);
+    system(cmd);
+
+    return 0;
+*/
+
+
     argv[argc] = 0;
     int status;
     int pid = vfork();
