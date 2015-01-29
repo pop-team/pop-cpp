@@ -29,6 +29,10 @@ set(POPCC_PARCLASS_COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parc
 set(POPCC_PARCLASS_SERVICE_COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS})
 set(POPCC_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 
+# SET (POPCCOMMON -Wl,-ldl -Wl)
+
+# TARGET_LINK_LIBRARIES(popc_common ${POPCCOMMON})
+
 add_custom_command(OUTPUT paroc_infmain.std.o
     COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_infmain.std.o paroc_infmain.std.cc
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
@@ -45,8 +49,8 @@ add_custom_command(OUTPUT paroc_objmain.std.o
     DEPENDS popcpp
     COMMENT "Compile POP-C++ Object main")
 
-add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o)
-add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o)
+# add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o)
+# add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o)
 
 # Compile a .ph file into a .ph.stub_client.o
 function(popcc_compile_ph ph_file)
@@ -136,6 +140,31 @@ set(POPCC_GENERATED_FILES
     #COMMENT "Compile POP-C++ generated lib for popc_common")
 
 add_library(popc_common
+    ../core/accesspoint.cc
+    ../core/allocobj.cc
+    ../core/broker.cc
+    ../core/broker_factory.cc
+    ../core/broker_serve.cc
+    ../core/buffer.cc
+    ../core/buffer_factory.cc
+    ../core/buffer_factory_finder.cc
+    ../core/buffer_raw_factory.cc
+    ../core/buffer_utils.cc
+    ../core/buffer_xdr_factory.cc
+    ../core/combox.cc
+    ../core/combox_socket.cc
+    ../core/debug.cc
+    ../core/event.cc
+    ../core/exception.cc
+    ../core/memspool.cc
+    ../core/mutex.cc
+    ../core/od.cc
+    ../core/popc_intface_linux.cc
+    ../core/popwayback.cc
+    ../core/string.cc
+    ../core/thread.cc
+    ../core/timer.cc
+    ../core/utils.cc
     buffer_raw.cc
     popc_buffer_xdr_mpi.cpp
     explorationList.cc
@@ -156,6 +185,7 @@ add_library(popc_common
 # Install all the files
 set(POPCC_INCLUDE_INSTALL include/dynamic)
 set(POPCC_LIB_INSTALL lib/dynamic)
+
 
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/appservice.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/batchmgr.ph DESTINATION ${POPCC_INCLUDE_INSTALL})

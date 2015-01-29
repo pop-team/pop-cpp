@@ -21,7 +21,7 @@ set(POPCPP_Object_COMPILER_FLAGS -object -o)
 set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
 
 set(POPCPP_SERVICES_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/dynamic;-I${CMAKE_SOURCE_DIR}/include/core")
-set(POPCPP_LIB -L${CMAKE_SOURCE_DIR}/lib/core;-L${CMAKE_SOURCE_DIR}/lib/dynamic;-L${CMAKE_SOURCE_DIR}/services/lib;-lpopc_core;-lpopc_common;)
+set(POPCPP_LIB -L${CMAKE_SOURCE_DIR}/lib/dynamic;-L${CMAKE_SOURCE_DIR}/services/lib;-lpopc_common;)
 
 set(POPCPP_LIB_INSTALL lib/dynamic)
 set(POPCPP_SERVICES_INSTALL services)
@@ -73,7 +73,6 @@ add_custom_target(
     DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${POPCC_OUTPUT_DIR}/libpopc_services.a
     DEPENDS popcc
     DEPENDS popcpp
-    DEPENDS popc_core
     DEPENDS popc_common
 )
 endfunction(popcc_compile_exec)
@@ -129,15 +128,15 @@ set(POPCC_GENERATED_STUB
 
 # Compile all C++ files
 
-#popcc_compile_cxx(service_base.cc)
-#popcc_compile_cxx(jobmgr.cc)
-#popcc_compile_cxx(popc_search_node.cc)
-#popcc_compile_cxx(codemgr.cc)
-#popcc_compile_cxx(remotelog.cc)
-#popcc_compile_cxx(objectmonitor.cc)
-#popcc_compile_cxx(batchmgr.cc)
-#popcc_compile_cxx(appservice.cc)
-#popcc_compile_cxx(popfilemanager.cc)
+popcc_compile_cxx(service_base.cc)
+popcc_compile_cxx(jobmgr.cc)
+popcc_compile_cxx(popc_search_node.cc)
+popcc_compile_cxx(codemgr.cc)
+popcc_compile_cxx(remotelog.cc)
+popcc_compile_cxx(objectmonitor.cc)
+popcc_compile_cxx(batchmgr.cc)
+popcc_compile_cxx(appservice.cc)
+popcc_compile_cxx(popfilemanager.cc)
 
 set(POPCC_GENERATED_FILES
     ${POPCC_GENERATED_STUB}
@@ -164,7 +163,7 @@ set(POPCC_GENERATED_FILES
 
 # Compile executables
 
-#popcc_compile_obj(popfilemanager popfilemanager_obj.cc)
+popcc_compile_obj(popfilemanager popfilemanager_obj.cc)
 #popcc_compile_obj(popc_search_node popc_search_node_obj.cc)
 #popcc_compile_obj(jobmgr jobmgr_obj.cc)
 #popcc_compile_obj(appservice appservice_obj.cc)
@@ -174,7 +173,7 @@ set(POPCC_GENERATED_FILES
 
 
 add_library(popc_services
-    ${POPCC_GENERATED_STUB}
+    ${POPCC_GENERATED_FILES}
 )
 set_target_properties(popc_services
     PROPERTIES LINKER_LANGUAGE C

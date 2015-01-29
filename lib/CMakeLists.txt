@@ -6,7 +6,6 @@
 # DATE: 2012/11/14
 #
 
-add_subdirectory(core)
 add_subdirectory(dynamic)
 
 if(MPI_SUPPORT)
