@@ -118,7 +118,6 @@ add_custom_target(aaparoc_stub_services ALL DEPENDS ${POPCC_GENERATED_STUB})
 
 # Compile all C++ files
 
-popcc_compile_cxx(popc_logger.cpp)
 popcc_compile_cxx(service_base.cc)
 popcc_compile_cxx(jobmgr.cc)
 popcc_compile_cxx(popc_search_node.cc)
@@ -140,7 +139,6 @@ set(POPCC_GENERATED_FILES
     ${POPCC_OUTPUT_DIR}/appservice.cc.o
     ${POPCC_OUTPUT_DIR}/batchmgr.cc.o
     ${POPCC_OUTPUT_DIR}/popfilemanager.cc.o
-    ${POPCC_OUTPUT_DIR}/popc_logger.cpp.o
 )
 
 # Generate the static library
