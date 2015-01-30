@@ -26,6 +26,7 @@ add_library(popc_common_psdyn
     popc_combox_mpi.cc
     popc_connection_mpi.cpp
     system.cc
+    utils.cc
 )
 
 # SET (POPCCOMMON -Wl,-ldl -Wl,-lpthread)
@@ -58,9 +59,6 @@ add_custom_command(
     DEPENDS popcpp
     DEPENDS ${cxx_file})
 endfunction(popcc_compile_cxx)
-
-# Note: We need to compile utils.cc here to enable the _POPC_ compilation flag
-#popcc_compile_cxx(utils.cc)
 
 # Final link steps
 
