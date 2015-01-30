@@ -28,13 +28,14 @@
 #include <string.h>
 #include <time.h>
 
-int popc_logger(LOGLEVEL level, const char* file, int line, const char* function, const char *format) {
-    char tmp[256];
-    sprintf(tmp, "%s (%s:%d %s)", format, file, line, function);
-    return popc_logger(level, tmp);
+int popc_logger(LOGLEVEL level, const char *format, ...) {
+    (void)level;
+    (void)format;
+     //TODO remove
+     return 0;
 }
 
-int popc_logger(LOGLEVEL level, const char *format,...) {
+int popc_logger(LOGLEVEL level, const char* file, int line, const char* function, const char *format,...) {
     static const char* LOG_LEVEL_PREFIX[__LAST__] = {
         "[DEBUG]",
         "[INFO]",
@@ -54,6 +55,7 @@ int popc_logger(LOGLEVEL level, const char *format,...) {
     } else {
         strcpy(logfile, "/tmp/popc_log.log");
     }
+
     FILE *f=fopen(logfile,"a");
     if(f==NULL) {
         return 1;
@@ -65,6 +67,7 @@ int popc_logger(LOGLEVEL level, const char *format,...) {
     // Print the message to file
     fprintf(f, "%s ",  LOG_LEVEL_PREFIX[level]);
     vfprintf(f, format, ap);
+    fprintf(f, "(%s:%d %s)", file, line, function);
     fprintf(f, ", %s", ctime(&t));
     //no need to break line since ctime already does it
     //fprintf(f,"%s","\n");
