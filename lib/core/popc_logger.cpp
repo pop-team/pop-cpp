@@ -28,6 +28,12 @@
 #include <string.h>
 #include <time.h>
 
+int popc_logger(LOGLEVEL level, const char* file, int line, const char* function, const char *format) {
+    char tmp[256];
+    sprintf(tmp, "%s (%s:%d %s)", format, file, line, function);
+    return popc_logger(level, tmp);
+}
+
 int popc_logger(LOGLEVEL level, const char *format,...) {
     static const char* LOG_LEVEL_PREFIX[__LAST__] = {
         "[DEBUG]",
@@ -36,6 +42,10 @@ int popc_logger(LOGLEVEL level, const char *format,...) {
         "[WARNING]",
         "[ERROR]"
     };
+
+    // Check if message level in higher than our threshold (hard-coded for now)
+    if(level < __DEBUG__)
+        return 0;
 
     char *tmp=getenv("POPC_TEMP");
     char logfile[256];
@@ -49,17 +59,15 @@ int popc_logger(LOGLEVEL level, const char *format,...) {
         return 1;
     }
     time_t t=time(NULL);
-    fprintf(f, "%s", ctime(&t));
     va_list ap;
     va_start(ap, format);
 
-    if(level >= __DEBUG__){
-        // Print the message to file
-        fprintf(f, "%s", LOG_LEVEL_PREFIX[level]);
-    }
-
+    // Print the message to file
+    fprintf(f, "%s ",  LOG_LEVEL_PREFIX[level]);
     vfprintf(f, format, ap);
-    fprintf(f,"%s","\n");
+    fprintf(f, ", %s", ctime(&t));
+    //no need to break line since ctime already does it
+    //fprintf(f,"%s","\n");
     va_end(ap);
     fclose(f);
     return 0;
