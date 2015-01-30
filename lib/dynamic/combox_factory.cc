@@ -284,7 +284,7 @@ void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CR
 #ifdef HAVE_LIBDL
     void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);
     if(handle == NULL) {
-        DEBUG("ERROR:%s: %s",fname,dlerror());
+        LOG_DEBUG("ERROR:%s: %s",fname,dlerror());
         return NULL;
     }
 

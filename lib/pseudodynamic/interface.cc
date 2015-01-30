@@ -148,7 +148,7 @@ paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
 //paroc_interface base class
 
 paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
-    // DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
 
     if(od.isSecureSet()) {
         accesspoint.SetSecure();
@@ -364,30 +364,30 @@ void paroc_interface::Allocate() {
 
         if(jobcontact.IsEmpty()) {
             char str[1024];
-            DEBUG("INTERFACE - JOBMGR %s", (const char *)paroc_system::GetHost());
+            LOG_DEBUG("INTERFACE - JOBMGR %s", (const char *)paroc_system::GetHost());
             sprintf(str,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
             jobcontact.SetAccessString(str);
         }
 
         /*  try
             {
-                DEBUG("JOBMGR --> connect to %s\n", jobcontact.GetAccessString());
+                LOG_DEBUG("JOBMGR --> connect to %s\n", jobcontact.GetAccessString());
                 JobCoreService resources(jobcontact);
                 int ret;
                 if (batchindex==0 && batchsize>1)
                 {
                     if (batchaccesspoint!=NULL) delete [] batchaccesspoint;
                     batchaccesspoint=new paroc_accesspoint[batchsize];
-                    DEBUG("Create Object : %s\n", ClassName());
+                    LOG_DEBUG("Create Object : %s\n", ClassName());
                 //TODO put an other array than batchaccesspoint
                     ret=resources.CreateObject(paroc_system::appservice,objname,od, batchsize,  batchaccesspoint, batchsize, batchaccesspoint);
                     if (ret==0) objaccess=batchaccesspoint[batchindex++];
-                DEBUG("Return %d", ret);
+                LOG_DEBUG("Return %d", ret);
                 } else{
 
-                    DEBUG("Create Object : %s\n", ClassName());
+                    LOG_DEBUG("Create Object : %s\n", ClassName());
                 ret=resources.CreateObject(paroc_system::appservice,objname,od, 1,  &objaccess, 1, &remotejobcontact);
-                DEBUG("Return %d", ret);
+                LOG_DEBUG("Return %d", ret);
                 }
 
                 if (ret != 0)
@@ -441,7 +441,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                 Bind(addr);
                 return;
             } catch(paroc_exception *e) {
-                //DEBUG("Can not bind to %s. Try next protocol...",addr);
+                LOG_DEBUG("Can not bind to %s. Try next protocol...",addr);
                 delete e;
                 continue;
             }
@@ -541,8 +541,8 @@ void paroc_interface::Bind(const char *dest) {
     } else {
         int code = errno;
 
-        //DEBUG("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
-        //DEBUG("Create socket fails. Reason: %s.",strerror(code));
+        LOG_WARNING("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
+        LOG_WARNING("Create socket fails. Reason: %s.",strerror(code));
         Release();
         paroc_exception::paroc_throw(code, ClassName());
     }
@@ -941,7 +941,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 
             BatchMgr batchman(paroc_system::appservice);
             sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
-            DEBUG("%s",tmpstr);
+            LOG_DEBUG("%s",tmpstr);
             argv[n++]=popc_strdup(tmpstr);
         }
     }*/
@@ -1275,7 +1275,7 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
     do {
         error_code=0;
         local_port = (rand() % SSH_PORT_MOD) + SSH_PORT_FIRST;
-        // DEBUG("SSH TUNNELING ON %s:%d",dest_ip, local_port);
+        LOG_CORE("SSH TUNNELING ON %s:%d",dest_ip, local_port);
         cmd.str("");
         cmd.clear();
 
@@ -1333,7 +1333,7 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
         return -2;
     }
     int pid = atoi(buf);
-    DEBUG("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
+    LOG_WARNING("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
     if(pid!=0)
        popc_kill(pid, popc_SIGKILL);
     return pid;

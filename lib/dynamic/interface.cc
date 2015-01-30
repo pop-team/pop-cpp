@@ -969,7 +969,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 
               BatchMgr batchman(paroc_system::appservice);
               sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
-              DEBUG("%s",tmpstr);
+              LOG_DEBUG("%s",tmpstr);
               argv[n++]=popc_strdup(tmpstr);
           }
       }
@@ -1064,7 +1064,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
       } else {
     #ifndef NDEBUG
           if (getenv("POPC_DEBUG")) {
-              DEBUG("Launching a new object with command : ");
+              LOG_DEBUG("Launching a new object with command : ");
               fprintf(stderr,"--->");
               for (int i=0;i<n;i++) fprintf(stderr,"%s ", argv[i]);
               fprintf(stderr,"\n");
@@ -1082,7 +1082,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
       }
 
       if (ret == -1) {
-          DEBUG("Can not start the object code...");
+          LOG_DEBUG("Can not start the object code...");
           paroc_exception::paroc_throw(err, classname);
       }
 
@@ -1307,7 +1307,7 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
         return -2;
     }
     int pid = atoi(buf);
-    // DEBUG("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
+    LOG_WARNING("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
     /*if(pid!=0)
        popc_kill(pid, popc_SIGKILL);*/
     return pid;

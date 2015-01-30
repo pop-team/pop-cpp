@@ -130,12 +130,13 @@ paroc_system::~paroc_system() {
 
 
 void paroc_system::perror(const char *msg) {
-    //DEBUG("paroc_system::perror : %d",errno);
+    LOG_ERROR("paroc_system::perror : %d",errno);
     if(errno>USER_DEFINE_ERROR && errno<=USER_DEFINE_LASTERROR) {
         if(msg==NULL) {
             msg="POP-C++ Error";
         }
         fprintf(stderr,"%s: %s (errno %d)\n",msg,paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
+        LOG_ERROR("%s: %s (errno %d)",msg,paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
     } else if(errno>USER_DEFINE_LASTERROR) {
         fprintf(stderr,"%s: Unknown error (errno %d)\n",msg, errno);
     } else {
@@ -337,10 +338,10 @@ POPString paroc_system::GetDefaultInterface() {
             if(num < 2) {
                 paroc_exception::paroc_throw_errno();
             }
-            //DEBUG("iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
+            // LOG_DEBUG("iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
 
             if(!strcmp(net_addr,"00000000")) {
-                //DEBUG("Default gateway : %s", iface);
+                LOG_DEBUG("Default gateway : %s", iface);
                 found=true;
             }
         }
@@ -374,7 +375,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
                   (void *)&(sa->sin_addr),
                   str_ip_local,
                   sizeof(str_ip_local) );
-        //DEBUG("The IP of interface %s is %s",iap->ifa_name,str_ip_local);
+        //LOG_DEBUG("The IP of interface %s is %s",iap->ifa_name,str_ip_local);
         //printf("The IP of interface %s is %s\n",iap->ifa_name,str_ip_local);
         str_ip=str_ip_local;
         freeifaddrs(addrs);

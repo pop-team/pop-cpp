@@ -118,7 +118,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         {
              BatchMgr batchman(paroc_system::appservice);
              sprintf(tmpstr,"-batch-node=%d", batchman.NextNode());
-             DEBUG("%s",tmpstr);
+             LOG_DEBUG("%s",tmpstr);
              argv[n++]=popc_strdup(tmpstr);
         }*/
     }

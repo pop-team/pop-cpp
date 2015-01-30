@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
     char *cwd=paroc_utils::checkremove(&argc,&argv,"-cwd=");
     if(cwd!=NULL) {
         if(chdir(cwd)!=0) {
-            DEBUG("current working dir cannot be set set to %s",cwd);
+            LOG_WARNING("current working dir cannot be set set to %s",cwd);
         }
     }// else DEBUG("cwd not set");
 
