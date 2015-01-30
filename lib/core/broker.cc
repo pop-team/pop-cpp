@@ -53,9 +53,9 @@ void paroc_request::operator =(const paroc_request &r) {
 
 void broker_interupt(int /*sig*/) {
 #ifndef __WIN32__
-    popc_logger(__CORE__, "Interrupt on thread id %lu",(unsigned long)pthread_self());
+    LOG_CORE( "Interrupt on thread id %lu",(unsigned long)pthread_self());
 #else
-    popc_logger(__CORE__, "Interrupt on thread id %lu",(unsigned long)GetCurrentThreadId());
+    LOG_CORE( "Interrupt on thread id %lu",(unsigned long)GetCurrentThreadId());
 #endif
 }
 

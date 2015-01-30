@@ -28,12 +28,6 @@ enum LOGLEVEL {
     __LAST__  // Only for dimensioning array
 };
 
-#define LOG_GENERIC(_log_level, _log_msg) {\
-    std::stringstream ss;\
-    ss<<_log_msg;\
-    popc_logger(_log_level, __FILE__, __LINE__, __FUNCTION__, ss.str().c_str());\
-}
-
 #define LOG_DEBUG(_log_msg, ...)   popc_logger(__DEBUG__,   __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
 #define LOG_INFO(_log_msg, ...)    popc_logger(__INFO__,    __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
 #define LOG_CORE(_log_msg, ...)    popc_logger(__CORE__,    __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
@@ -42,7 +36,6 @@ enum LOGLEVEL {
 
 #define LOG_DEBUG_IF(_cond,_log_msg, ...) if(_cond){popc_logger(__DEBUG__, __FILE__, __LINE__, __FUNCTION__, _log_msg, ##__VA_ARGS__);}
 
-int popc_logger(LOGLEVEL level, const char *format,...);
 int popc_logger(LOGLEVEL level, const char* file, int line, const char* function, const char *format, ...);
 
 #endif /* POPC_LOGGER */

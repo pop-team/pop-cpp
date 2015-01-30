@@ -28,13 +28,13 @@
 extern int parocmain(int, char **);
 
 void SignalTerminate(int sig) {
-    popc_logger(__ERROR__, "SIGNAL %d!!!!",sig);
+    LOG_ERROR( "SIGNAL %d!!!!",sig);
     paroc_system::Finalize(false);
     exit(1);
 }
 
 void _paroc_atexit() {
-    popc_logger(__DEBUG__, "_paroc_atexit called %d!!!!");
+    LOG_DEBUG( "_paroc_atexit called %d!!!!");
     paroc_system::Finalize(false);
 }
 

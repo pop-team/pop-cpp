@@ -28,12 +28,6 @@
 #include <string.h>
 #include <time.h>
 
-int popc_logger(LOGLEVEL level, const char *format, ...) {
-    (void)level;
-    (void)format;
-     //TODO remove
-     return 0;
-}
 
 int popc_logger(LOGLEVEL level, const char* file, int line, const char* function, const char *format,...) {
     static const char* LOG_LEVEL_PREFIX[__LAST__] = {

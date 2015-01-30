@@ -28,13 +28,13 @@
 extern int parocmain(int, char **);
 
 void SignalTerminate(int sig) {
-    popc_logger(__ERROR__, "SIGNAL %d!!!!",sig);
+    LOG_ERROR( "SIGNAL %d!!!!",sig);
     paroc_system::Finalize(false);
     exit(1);
 }
 
 void _paroc_atexit() {
-    popc_logger(__DEBUG__, "_paroc_atexit called !!!!");
+    LOG_DEBUG( "_paroc_atexit called !!!!");
     paroc_system::Finalize(false);
 }
 
@@ -72,9 +72,9 @@ int main(int argc, char **argv) {
     popc_signal(popc_SIGINT, SignalTerminate);
 
     if(i < 0) {
-        popc_logger(__DEBUG__, "Call parocmain");
+        LOG_DEBUG( "Call parocmain");
         int ret = parocmain(argc, argv);
-        popc_logger(__DEBUG__, "End of parocmain");
+        LOG_DEBUG( "End of parocmain");
         /**
         * POP-C++ on the K Computer
         * Terminate the MPI Communicators network by sending a termination message to the local MPI Communicator with rank 0
