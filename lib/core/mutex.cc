@@ -21,6 +21,7 @@
 //#include <stdio.h>
 
 #include "paroc_mutex.h"
+#include "popc_logger.h"
 //#include <sys/time.h>
 
 /*
@@ -35,7 +36,7 @@ paroc_mutex::paroc_mutex() {
     pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
 #endif
     if(pthread_mutex_init(&_mutex,&attr)!=0) {
-        //DEBUG("Multithread initialization fail\n");
+        LOG_WARNING("Multithread initialization fail");
         pthread_mutexattr_destroy(&attr);
         return;
     }

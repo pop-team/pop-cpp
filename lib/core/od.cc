@@ -312,7 +312,7 @@ void paroc_od::getExecutable(POPString &exec) const {
 }
 
 void paroc_od::getProtocol(POPString &myproto) const {
-    //DEBUG("Set protocol in OD %s\n", myproto.GetString());
+    LOG_DEBUG("Set protocol in OD %s", myproto.GetString());
     myproto=proto;
 }
 

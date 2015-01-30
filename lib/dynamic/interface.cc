@@ -48,8 +48,6 @@
 #endif
 
 int RunCmd(int argc, char **argv, char *env[], int *status) {
-    // TODO: unused: see what to do (LW)
-
     (void)argc;
     char *file=NULL;
 
@@ -149,7 +147,7 @@ int paroc_interface::paroc_bind_timeout=10000;
 //paroc_interface base class
 
 paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
-    // DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
 
     if(od.isSecureSet()) {
         accesspoint.SetSecure();
@@ -412,7 +410,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                 Bind(addr);
                 return;
             } catch(paroc_exception *e) {
-                //DEBUG("Can not bind to %s. Try next protocol...",addr);
+                LOG_DEBUG("Can not bind to %s. Try next protocol...",addr);
                 delete e;
                 continue;
             }
@@ -577,8 +575,8 @@ void paroc_interface::Bind(const char *dest) {
     } else {
         int code=errno;
 
-        //DEBUG("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
-        //DEBUG("Create socket fails. Reason: %s.",strerror(code));
+        LOG_DEBUG("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
+        LOG_DEBUG("Create socket fails. Reason: %s.",strerror(code));
         Release();
         paroc_exception::paroc_throw(code, ClassName());
     }
@@ -1251,7 +1249,7 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
     do {
         error_code=0;
         local_port = (rand() % SSH_PORT_MOD) + SSH_PORT_FIRST;
-        // DEBUG("SSH TUNNELING ON %s:%d",dest_ip, local_port);
+        LOG_DEBUG("SSH TUNNELING ON %s:%d",dest_ip, local_port);
         cmd.str("");
         cmd.clear();
 

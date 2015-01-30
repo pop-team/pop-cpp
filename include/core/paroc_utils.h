@@ -16,6 +16,7 @@
 #ifndef POPC_UTILS_H
 #define POPC_UTILS_H
 #include "paroc_string.h"
+#include "popc_logger.h"
 
 #define SSH_TUNNEL_ERROR 65280
 #define SSH_PORT_MOD 16383

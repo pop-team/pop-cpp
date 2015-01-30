@@ -50,7 +50,7 @@ paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name
 }
 
 paroc_broker *paroc_broker_factory::Create(const char *objname) {
-    // DEBUG("Create broker for %s\n", objname);
+    LOG_DEBUG("Create broker for %s", objname);
     if(brokerlist == NULL || objname == NULL) {
         return NULL;
     }
@@ -146,7 +146,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
           paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
         } else {
             char tmpstr[256];
-            DEBUG("Jobservice is not specified. Use the default one!");
+            LOG_DEBUG("Jobservice is not specified. Use the default one!");
             sprintf(tmpstr,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
             paroc_system::jobservice.SetAccessString(tmpstr);
           paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
@@ -175,6 +175,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
         popc_close(1);
         popc_close(2);
 
+        // TODO LWK logging: What are we doing here ? Delete code ?
         popc_open("/dev/null",O_RDONLY);
 #ifndef NDEBUG
         char fname[256];

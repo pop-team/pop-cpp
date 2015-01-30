@@ -122,7 +122,7 @@ paroc_system::~paroc_system() {
 
 
 void paroc_system::perror(const char *msg) {
-    //DEBUG("paroc_system::perror : %d",errno);
+    LOG_WARNING("paroc_system::perror : %d",errno);
     if(errno>USER_DEFINE_ERROR && errno<=USER_DEFINE_LASTERROR) {
         if(msg==NULL) {
             msg="POP-C++ Error";
@@ -329,10 +329,10 @@ POPString paroc_system::GetDefaultInterface() {
             if(num < 2) {
                 paroc_exception::paroc_throw_errno();
             }
-            //DEBUG("iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
+            // popc_logger(__DEBUG__, "iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
 
             if(!strcmp(net_addr,"00000000")) {
-                //DEBUG("Default gateway : %s", iface);
+                LOG_DEBUG("Default gateway : %s", iface);
                 found=true;
             }
         }
@@ -364,8 +364,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
                       (void *)&(sa->sin_addr),
                       str_ip_local,
                       sizeof(str_ip_local));
-            //DEBUG("The IP of interface %s is %s",iap->ifa_name,str_ip_local);
-            //printf("The IP of interface %s is %s\n",iap->ifa_name,str_ip_local);
+            LOG_DEBUG("The IP of interface %s is %s",iap->ifa_name,str_ip_local);
             str_ip=str_ip_local;
             freeifaddrs(addrs);
             return true;
@@ -460,7 +459,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 
     char *codeconf=paroc_utils::checkremove(argc,argv,"-codeconf=");
 
-// DEBUGIF(codeconf==NULL,"No code config file\n");
+    LOG_DEBUG_IF(codeconf==NULL,"No code config file");
 
     /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
     {

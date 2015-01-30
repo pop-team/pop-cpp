@@ -216,14 +216,12 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         printf("\n");
     } else {
 #ifndef NDEBUG
-        if(getenv("POPC_DEBUG")) {
-            DEBUG("Launching a new object with command : ");
-            fprintf(stderr,"--->");
-            for(int i=0; i<n; i++) {
-                fprintf(stderr,"%s ", argv[i]);
-            }
-            fprintf(stderr,"\n");
+        std::stringstream ss;
+        ss << "--->";
+        for(int i=0; i<n; i++) {
+            ss << argv[i];
         }
+        LOG_DEBUG("Launching a new object with command : %s", ss.str().c_str());
 #endif
         ret=RunCmd(n,argv,NULL);
         err=errno;
@@ -234,7 +232,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         }
 
     if(ret==-1) {
-        DEBUG("Can not start the object code...");
+        LOG_WARNING("Can not start the object code...");
         paroc_exception::paroc_throw(err, objectname);
     }
 
