@@ -42,6 +42,12 @@ int popc_logger(LOGLEVEL level, const char* file, int line, const char* function
     if(level < __DEBUG__)
         return 0;
 
+    // Use file name without path to avoid having the full user path in logs
+    const char *basename = strrchr(file, '/');
+    if(basename==NULL)
+        basename=file;
+    else basename += 1;
+
     char *tmp=getenv("POPC_TEMP");
     char logfile[256];
     if(tmp!=NULL) {
@@ -61,7 +67,7 @@ int popc_logger(LOGLEVEL level, const char* file, int line, const char* function
     // Print the message to file
     fprintf(f, "%s ",  LOG_LEVEL_PREFIX[level]);
     vfprintf(f, format, ap);
-    fprintf(f, "(%s:%d %s)", file, line, function);
+    fprintf(f, "(%s:%d %s)", basename, line, function);
     fprintf(f, ", %s", ctime(&t));
     //no need to break line since ctime already does it
     //fprintf(f,"%s","\n");

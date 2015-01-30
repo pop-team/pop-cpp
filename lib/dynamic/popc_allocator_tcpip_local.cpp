@@ -219,7 +219,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         std::stringstream ss;
         ss << "--->";
         for(int i=0; i<n; i++) {
-            ss << argv[i];
+            ss << argv[i] << " ";
         }
         LOG_DEBUG("Launching a new object with command : %s", ss.str().c_str());
 #endif
