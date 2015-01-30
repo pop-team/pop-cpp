@@ -183,9 +183,6 @@ private:
     int KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port);
     bool IsTunnelAlive(const char *user, const char *dest_ip, int dest_port, int local_port);
 
-    int popc_interface_log(const char *log); //write log in file
-    char log[600];                              //buffer for log
-
 public:
     static int batchindex;
     static int batchsize;

@@ -1228,7 +1228,7 @@ void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* con
  * @return PID of the SSH Tunnel on success, -1 if the SSH Tunnel can't be created
  */
 int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port) {
-    popc_interface_log("Create tunnel");
+    LOG_CORE("Create tunnel");
     //Save the SSH Tunnel information
     _ssh_user.erase(_ssh_user.begin(), _ssh_user.end());
     _ssh_user.insert(0, user);
@@ -1285,7 +1285,7 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
  * @return PID if the proccess is killed, -1 if the method can't find the SSH Tunnel PID, -2 if the method can't read the PID
  */
 int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port) {
-    popc_interface_log("Kill SSH");
+    LOG_CORE("Kill SSH");
     _ssh_tunneling = false;
     if(dest_ip == NULL) {
         return -1;
@@ -1344,31 +1344,3 @@ bool paroc_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, 
 }
 
 
-/**
- * ViSaG : clementval
- * Write log into the Security Manager log file
- * WARNING : use this method only in development
- */
-int paroc_interface::popc_interface_log(const char *log) {
-    char *tmp=getenv("POPC_TEMP");
-    char logfile[256];
-    if(tmp!=NULL) {
-        sprintf(logfile,"%s/popc_interface_log",tmp);
-    } else {
-        strcpy(logfile, "/tmp/popc_interface.log");
-    }
-
-    FILE *f=fopen(logfile,"a");
-    if(f==NULL) {
-        return 1;
-    }
-    time_t t=time(NULL);
-    fprintf(f, "%s", ctime(&t));
-    /*va_list ap;
-    va_start(ap, log);
-    vfprintf(f, log, ap);*/
-    fprintf(f, "%s\n", log);
-    //va_end(ap);
-    fclose(f);
-    return 0;
-}
