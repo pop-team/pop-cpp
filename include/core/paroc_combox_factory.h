@@ -43,7 +43,7 @@ protected:
 
 public:
     static paroc_combox_factory *GetInstance();
-    void Destroy();
+    void Destroy(); // TODO LW: this method only deletes fact. Check with BW!
 
     paroc_combox* Create(const char * name);
     paroc_combox* Create(int index);

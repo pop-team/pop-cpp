@@ -119,6 +119,7 @@ int paroc_combox::GetTimeout() {
 }
 
 void paroc_combox::Destroy() {
+    // TODO LW: Probably remove this thing and see what to do with Destroy() methods in general
     delete this;
 }
 

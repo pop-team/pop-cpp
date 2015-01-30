@@ -34,6 +34,7 @@ void SignalTerminate(int sig) {
 }
 
 void _paroc_atexit() {
+    popc_logger(__DEBUG__, "_paroc_atexit called %d!!!!\n");
     paroc_system::Finalize(false);
 }
 
