@@ -109,7 +109,7 @@ if(MPI_SUPPORT)
   message(STATUS "MPI Support for POP-C++ is enable")
   add_subdirectory(include/pseudodynamic)
   add_subdirectory(mpi)
-  ## TODO LW: Disabled for now add_subdirectory(interconnector)
+  add_subdirectory(interconnector)
 endif(MPI_SUPPORT)
 
 # Instruction to enable the XMP support for POP-C++

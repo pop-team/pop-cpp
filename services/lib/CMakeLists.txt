@@ -23,9 +23,6 @@ set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
 set(POPCPP_SERVICES_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/dynamic;-I${CMAKE_SOURCE_DIR}/include/core")
 set(POPCPP_LIB -L${CMAKE_SOURCE_DIR}/lib/core;-L${CMAKE_SOURCE_DIR}/lib/dynamic;-L${CMAKE_SOURCE_DIR}/services/lib;-lpopc_common;-lpopc_core;)
 
-set(POPCPP_LIB_INSTALL lib/dynamic)
-set(POPCPP_SERVICES_INSTALL services)
-
 set(POPCC_COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS})
 set(POPCC_COMMAND_OBJ ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Object_COMPILER_FLAGS})
 set(POPCC_COMMAND_EXE ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_COMPILER_FLAGS})
@@ -176,14 +173,16 @@ popcc_compile_exec(localservice_launcher localservice_launcher.cc)
 popcc_compile_exec(jobmgr_launcher jobmgr_launcher.cc)
 
 
-
 add_library(popc_services
     ${POPCC_GENERATED_FILES}
 )
 set_target_properties(popc_services
     PROPERTIES LINKER_LANGUAGE C
 )
+
 # Install executables
+set(POPCPP_LIB_INSTALL lib/dynamic)
+set(POPCPP_SERVICES_INSTALL services)
 
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/popc_search_node${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/jobmgr${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
