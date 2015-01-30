@@ -21,7 +21,6 @@
 
 #include "paroc_combox.h"
 #include "paroc_exception.h"
-#include "debug.h"
 
 #include <string.h>
 

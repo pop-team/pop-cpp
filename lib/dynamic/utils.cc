@@ -30,7 +30,6 @@
 
 
 #include "paroc_utils.h"
-#include "debug.h"
 
 char *paroc_utils::checkremove(int *argc, char ***argv, const char *opt) {
     int i=0;

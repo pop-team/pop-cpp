@@ -79,7 +79,7 @@ int ObjectMonitor::CheckObjects() {
         }
         isActive=active;
 
-        DEBUG("Check parallel objects....%d object alive", objects.GetCount());
+        LOG_DEBUG("Check parallel objects....%d object alive", objects.GetCount());
         return objects.GetCount();
     }
 }

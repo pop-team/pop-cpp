@@ -84,7 +84,6 @@ add_library(popc_core
     CMakeLists.txt
     combox.cc
     combox_socket.cc
-    debug.cc
     event.cc
     exception.cc
     memspool.cc

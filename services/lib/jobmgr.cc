@@ -319,7 +319,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 
     LOG_DEBUG( "MyID=%d:%d",serviceID[0], serviceID[1]);
 
-    DEBUGIF(ret<=0, "[JM] Can not find IP address of %s for resource discovery tracking",str);
+    LOG_DEBUG_IF(ret<=0, "[JM] Can not find IP address of %s for resource discovery tracking",str);
 
 
     int service_timeout=0;
@@ -1096,7 +1096,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
             }
             od.getMemory(require,min);
             if(require>0) {
-                DEBUG("Require memory %f, at least: %f (available: %f)", require, min, available.mem);
+                LOG_DEBUG("Require memory %f, at least: %f (available: %f)", require, min, available.mem);
                 if(min<0) {
                     min=require;
                 }
@@ -1201,7 +1201,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness) {
         if(!od.IsEmpty()) {
             od.getPower(require,min);
             if(require>0) {
-                DEBUG("Require %f, at least: %f (available: %f)", require, min, available.flops);
+                LOG_DEBUG("Require %f, at least: %f (available: %f)", require, min, available.flops);
                 if(min<0) {
                     min=require;
                 }
@@ -1222,7 +1222,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness) {
             }
             od.getMemory(require,min);
             if(require>0) {
-                DEBUG("Require memory %f, at least: %f (available: %f)", require, min, available.mem);
+                LOG_DEBUG("Require memory %f, at least: %f (available: %f)", require, min, available.mem);
                 if(min<0) {
                     min=require;
                 }
@@ -1405,7 +1405,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
         //Check if the next IP is in the trace or not. If not, add...
         try {
             watch.Reset();
-            DEBUG("\tForward request to %s (trace=%d)",(const char *)contact, tracesize);
+            LOG_DEBUG("\tForward request to %s (trace=%d)",(const char *)contact, tracesize);
 
             paroc_accesspoint childaddr;
             childaddr.SetAccessString(contact);
@@ -1531,7 +1531,7 @@ void JobMgr::SelfRegister() {
     }
     lasttime=service_timer.Elapsed()+36000;
 
-    DEBUG("Updating my contact to parent nodes...");
+    LOG_DEBUG("Updating my contact to parent nodes...");
     POSITION pos=parents.GetHeadPosition();
     while(pos!=NULL) {
         paroc_accesspoint &tmp=parents.GetNext(pos);
@@ -1817,14 +1817,12 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     }
     argv[n]=NULL;
 #ifndef NDEBUG
-    if(getenv("POPC_DEBUG")) {
-        DEBUG("Launching a new object with command : ");
-        fprintf(stderr,"--->");
-        for(int i=0; i<n; i++) {
-            fprintf(stderr,"%s ", argv[i]);
-        }
-        fprintf(stderr,"\n");
+    std::stringstream ss;
+    ss << "--->";
+    for(int i=0; i<n; i++) {
+        ss << argv[i] << " ";
     }
+    LOG_DEBUG("Launching a new object with command : %s", ss.str().c_str());
 #endif
     int pid;
     /* Visag add crtPopAppId */
@@ -1945,7 +1943,7 @@ bool JobMgr::CheckPauseList(const paroc_accesspoint &app) {
             if(now> t.until_time) {
                 pause_apps.RemoveAt(old);
             } else if(t.app.IsEmpty() || t.app==app) {
-                DEBUG("CheckPauseList return true (app=%s)",t.app.GetAccessString());
+                LOG_DEBUG("CheckPauseList return true (app=%s)",t.app.GetAccessString());
                 return true;
             }
         }

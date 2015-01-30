@@ -181,7 +181,7 @@ void AppCoreService::LoadAddOn() {
 
         char *tmp=strstr(objfile,"-object=");
         if(tmp==NULL) {
-            DEBUG("No addon service name specified: %s", objfile);
+            LOG_DEBUG("No addon service name specified: %s", objfile);
             continue;
         }
         paroc_accesspoint ap;
@@ -189,18 +189,18 @@ void AppCoreService::LoadAddOn() {
         paroc_od od; // Note : the od is empty !
         sprintf(exec, "%s -constructor",objfile);
         if(paroc_interface::LocalExec(NULL,exec, NULL, jobmgr, GetAccessPoint(), &ap,1,od)!=0) {
-            DEBUG("Fail to start the add-on [%s]", buf);
+            LOG_DEBUG("Fail to start the add-on [%s]", buf);
             continue;
         }
         try {
             paroc_service_base s(ap);
             s.Start(mychallenge);
         } catch(...) {
-            DEBUG("Can not connect to %s",service);
+            LOG_DEBUG("Can not connect to %s",service);
             continue;
         }
         if(tmp!=NULL && sscanf(tmp+8,"%s",service)==1) {
-            DEBUG("Service: %s", service);
+            LOG_DEBUG("Service: %s", service);
             RegisterService(service, ap);
         }
     }

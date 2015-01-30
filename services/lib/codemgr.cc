@@ -20,7 +20,7 @@ CodeMgr::CodeMgr(const POPString &challenge): paroc_service_base(challenge) {
 }
 
 CodeMgr::~CodeMgr() {
-    DEBUG("Now destroy CodeMgr\n");
+    LOG_DEBUG("Now destroy CodeMgr");
 }
 
 void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, const POPString &codefile) {
@@ -54,7 +54,7 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
         }
 
     if(i<n) {
-        DEBUG("Changing (%s, %s) -> %s\n",element->objname,element->platform[i].platform,(const char *)codefile);
+        LOG_DEBUG("Changing (%s, %s) -> %s",element->objname,element->platform[i].platform,(const char *)codefile);
         strcpy(element->platform[i].codefile,codefile);
     } else {
         element->platform.SetSize(n+1);
