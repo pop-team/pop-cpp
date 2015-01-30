@@ -15,6 +15,9 @@ clean:
 	rm -f *.o *.obj main popc_mpi_interconnector
 	
 run:
+	popcrun obj.map ./main 2
+
+run_mpi:
 	cp ../../interconnector/popc_mpi_interconnector ./ 
 	mpiexec -np 5 ./interconnector/popc_mpi_interconnector -app=./main 10 0 0 1 1 2 2 3 3 4 4
 	

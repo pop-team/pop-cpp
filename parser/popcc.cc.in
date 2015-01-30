@@ -675,12 +675,14 @@ int main(int argc, char *argv[]) {
             if(enablepsdyn && (paroc_static || staticlib)) {
                 sprintf(buf, "%s/lib/pseudodynamic/libpopc_common_psdyn.a", parocdir);
             } else if(enablepsdyn) {
+                strcpy(buf, "-lpopc_core");
+                link_cmd[link_count++] = popc_strdup(buf);
                 strcpy(buf, "-lpopc_common_psdyn");
             } else if(paroc_static || staticlib) {
                 sprintf(buf, "%s/lib/dynamic/libpopc_common.a", parocdir);
             } else {
                 // note: apparently the link order should be: -lpopc_core -lpopc_common -lpopc_core due to cross dependancies
-	        strcpy(buf, "-lpopc_core");
+                strcpy(buf, "-lpopc_core");
                 link_cmd[link_count++] = popc_strdup(buf);
 #ifndef __WIN32__
                 strcpy(buf, "-lpopc_common");
@@ -689,7 +691,7 @@ int main(int argc, char *argv[]) {
 #endif
             }
             link_cmd[link_count++] = popc_strdup(buf);
-	    strcpy(buf, "-lpopc_core");
+            strcpy(buf, "-lpopc_core");
             link_cmd[link_count++] = popc_strdup(buf);
 
             char tmplibfile[1024];
