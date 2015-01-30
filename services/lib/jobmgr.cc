@@ -1683,7 +1683,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
 
         //Child process
         popc_execvp(file,argv);
-        popc_logger(__ERROR__, "[JM] Execution of [%s] fail\n",file);
+        popc_logger(__ERROR__, "[JM] Execution of [%s] fail",file);
         popc__exit(-1);
     }
 #else
@@ -1695,7 +1695,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
         return errno;
     } else if(pid==0) {
         execve(file,argv,env);
-        popc_logger(__ERROR__, "[JM] Execution of [%s] fail (popc_vfork)\n",file);
+        popc_logger(__ERROR__, "[JM] Execution of [%s] fail (popc_vfork)",file);
         popc__exit(-1);
     }
 #endif
@@ -1979,7 +1979,7 @@ bool JobMgr::AddRequest(int reqId[3]) {
         memcpy(t.requestID,reqId,3*sizeof(int));
         t.timestamp=service_timer.Elapsed();
         if(tracelist.GetCount()>100) {
-            popc_logger(__INFO__, "[JM] Warning: job trace list is too big (%d items)\n",tracelist.GetCount());
+            popc_logger(__INFO__, "[JM] Warning: job trace list is too big (%d items)",tracelist.GetCount());
         }
         return true;
     }

@@ -21,7 +21,7 @@
 static ObjectMonitor *myObjMonitor=NULL;
 
 static void LocalServiceTerminate(int sig) {
-    popc_logger(__ERROR__, "LOCAL SERVICE SIGNAL %d!!!!\n",sig);
+    popc_logger(__ERROR__, "LOCAL SERVICE SIGNAL %d!!!!",sig);
     if(myObjMonitor!=NULL) {
         myObjMonitor->KillAll();
     }
