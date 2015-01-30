@@ -377,9 +377,9 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
         throw t;
     }
     case EXCEPTION_POPC_STD: {
-        paroc_exception *t=paroc_exception::create(0);
-        t->Serialize(except,false);
-        throw t;
+        paroc_exception t(0);
+        t.Serialize(except,false);
+        throw &t;
     }
     case EXCEPTION_OBJECT: {
         paroc_interface t;

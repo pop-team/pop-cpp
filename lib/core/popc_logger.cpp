@@ -29,6 +29,14 @@
 #include <time.h>
 
 int popc_logger(LOGLEVEL level, const char *format,...) {
+    static const char* LOG_LEVEL_PREFIX[__LAST__] = {
+        "[DEBUG]",
+        "[INFO]",
+        "[CORE]",
+        "[WARNING]",
+        "[ERROR]"
+    };
+
     char *tmp=getenv("POPC_TEMP");
     char logfile[256];
     if(tmp!=NULL) {
@@ -44,23 +52,12 @@ int popc_logger(LOGLEVEL level, const char *format,...) {
     fprintf(f, "%s", ctime(&t));
     va_list ap;
     va_start(ap, format);
-    switch(level) {
-    case __ERROR__:
-        fprintf(f, "%s", LEVEL_ERROR_PREFIX);
-        break;
-    case __DEBUG__:
-        fprintf(f, "%s", LEVEL_DEBUG_PREFIX);
-        break;
-    case __INFO__:
-        fprintf(f, "%s", LEVEL_INFO_PREFIX);
-        break;
-    case __DEV__:
-        fprintf(f, "%s", LEVEL_DEV_PREFIX);
-        break;
-    case __CORE__:
-        fprintf(f, "%s", LEVEL_CORE_PREFIX);
-        break;
+
+    if(level >= __DEBUG__){
+        // Print the message to file
+        fprintf(f, "%s", LOG_LEVEL_PREFIX[level]);
     }
+
     vfprintf(f, format, ap);
     fprintf(f,"%s","\n");
     va_end(ap);

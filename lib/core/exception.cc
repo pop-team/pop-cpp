@@ -41,14 +41,22 @@ void paroc_exception::SetExtra(const char* str) {
     info=str;
 }
 
+void paroc_exception::AddExtra(const char* str) {
+    info += ":";
+    info += str;
+}
+
 int paroc_exception::Code()const {
     return errcode;
 }
 
-void paroc_exception::paroc_throw(int code, const char *reason) {
+void paroc_exception::paroc_throw(int code, const char *reason1, const char *reason2) {
     paroc_exception *e=new paroc_exception(code);
-    if(reason!=NULL) {
-        e->SetExtra(reason);
+    if(reason1!=NULL) {
+        e->SetExtra(reason1);
+    }
+    if(reason2!=NULL) {
+        e->SetExtra(reason2);
     }
     throw e;
 }
@@ -69,13 +77,15 @@ void paroc_exception::paroc_throw_errno(const char *reason) {
     throw e;
 }
 
+/*
 paroc_exception *paroc_exception::create(int code, const char *reason) {
     paroc_exception *e=new paroc_exception(code);
-    if(reason!=NULL) {
+    if(reason1!=NULL) {
         e->SetExtra(reason);
     }
     return e;
 }
+*/
 
 const char* paroc_exception::what() const throw() {
     errno=Code();

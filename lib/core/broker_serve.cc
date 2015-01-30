@@ -125,10 +125,9 @@ void paroc_broker::ServeRequest(paroc_request &req) {
 
             if(req.from!=NULL) {
 
-                paroc_exception *e=paroc_exception::create(ret);
-                e->SetExtra(classname+"@"+accesspoint.GetAccessString());
-                paroc_buffer::SendException(*req.data, req.from, *e);
-                delete e;
+                paroc_exception e(ret);
+                e.SetExtra(classname+"@"+accesspoint.GetAccessString());
+                paroc_buffer::SendException(*req.data, req.from, e);
             } else {
                 printf("ERROR: fail to create a new thread for %s@%s (method:%d:%d)\n",(const char *)classname,accesspoint.GetAccessString(), req.methodId[0], req.methodId[1]);
             }
@@ -222,29 +221,26 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         }
     } catch(std::exception *e) {
         if(request.from != NULL) {
-            paroc_exception  *pe=paroc_exception::create(STD_EXCEPTION);
-            pe->SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
-            paroc_buffer::SendException(*request.data, request.from, *pe);
+            paroc_exception  e2=paroc_exception(STD_EXCEPTION);
+            e2.SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
+            paroc_buffer::SendException(*request.data, request.from, e2);
             delete e;
-            delete pe;
         } else {
             UnhandledException();
         }
     } catch(std::exception e) {
         if(request.from != NULL) {
-            paroc_exception *pe = paroc_exception::create(STD_EXCEPTION);
-            pe->SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
-            paroc_buffer::SendException(*request.data, request.from, *pe);
-            delete pe;
+            paroc_exception  e2=paroc_exception(STD_EXCEPTION);
+            e2.SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
+            paroc_buffer::SendException(*request.data, request.from, e2);
         } else {
             UnhandledException();
         }
     } catch(...) {
         if(request.from!=NULL) {
-            paroc_exception  *e=paroc_exception::create(UNKNOWN_EXCEPTION);
-            e->SetExtra(classname+"@"+accesspoint.GetAccessString());
-            paroc_buffer::SendException(*request.data, request.from, *e);
-            delete e;
+            paroc_exception e2(UNKNOWN_EXCEPTION);
+            e2.SetExtra(classname+"@"+accesspoint.GetAccessString());
+            paroc_buffer::SendException(*request.data, request.from, e2);
         } else {
             UnhandledException();
         }

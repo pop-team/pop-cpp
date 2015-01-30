@@ -16,6 +16,7 @@
  */
 
 #include "popc_intface.h"
+#include "popc_logger.h"
 
 #include "paroc_broker.h"
 #include "paroc_interface.h"
@@ -52,9 +53,9 @@ void paroc_request::operator =(const paroc_request &r) {
 
 void broker_interupt(int /*sig*/) {
 #ifndef __WIN32__
-    printf("Interrupt on thread id %lu\n",(unsigned long)pthread_self());
+    popc_logger(__CORE__, "Interrupt on thread id %lu\n",(unsigned long)pthread_self());
 #else
-    printf("Interrupt on thread id %lu\n",(unsigned long)GetCurrentThreadId());
+    popc_logger(__CORE__, "Interrupt on thread id %lu\n",(unsigned long)GetCurrentThreadId());
 #endif
 }
 

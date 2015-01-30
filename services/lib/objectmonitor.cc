@@ -14,13 +14,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "popc_logger.h"
 #include "objectmonitor.ph"
 
 //static IMPLEMENT_TYPE(ObjectMonitor) *myObjMonitor=NULL;
 static ObjectMonitor *myObjMonitor=NULL;
 
 static void LocalServiceTerminate(int sig) {
-    printf("LOCAL SERVICE SIGNAL %d!!!!\n",sig);
+    popc_logger(__ERROR__, "LOCAL SERVICE SIGNAL %d!!!!\n",sig);
     if(myObjMonitor!=NULL) {
         myObjMonitor->KillAll();
     }

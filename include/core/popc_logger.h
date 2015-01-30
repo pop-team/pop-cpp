@@ -8,6 +8,8 @@
  * @brief Define a proper function and interface to produce log from the POP-C++ runtime.
  *
  *
+ * Modifications
+ * - Refactor the popc_logger, added a static array for error messages (LW Jan 2015)
  */
 
 #ifndef POPC_LOGGER_H
@@ -15,13 +17,15 @@
 
 #include <stdarg.h>
 
-enum LOGLEVEL {__CORE__, __ERROR__, __DEBUG__, __DEV__, __INFO__};
-
-static const char* LEVEL_ERROR_PREFIX = "[ERROR]";
-static const char* LEVEL_DEBUG_PREFIX = "[DEBUG]";
-static const char* LEVEL_INFO_PREFIX = "[INFO]";
-static const char* LEVEL_DEV_PREFIX = "[DEV]";
-static const char* LEVEL_CORE_PREFIX = "[CORE]";
+enum LOGLEVEL {
+    __DEBUG__,
+    //__DEV__, 
+    __INFO__,
+    __CORE__, 
+    __WARNING__,
+    __ERROR__, 
+    __LAST__  // Only for dimensioning array
+};
 
 int popc_logger(LOGLEVEL level, const char *format,...);
 

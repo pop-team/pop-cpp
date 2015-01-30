@@ -17,6 +17,7 @@
 #include "paroc_broker.h"
 #include "paroc_system_mpi.h"
 #include "paroc_utils.h"
+#include "popc_logger.h"
 
 // Set processor
 #include <sched.h>
@@ -27,7 +28,7 @@
 extern int parocmain(int, char **);
 
 void SignalTerminate(int sig) {
-    printf("SIGNAL %d!!!!\n",sig);
+    popc_logger(__ERROR__, "SIGNAL %d!!!!\n",sig);
     paroc_system::Finalize(false);
     exit(1);
 }
