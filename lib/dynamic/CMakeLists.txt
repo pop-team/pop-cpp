@@ -8,8 +8,6 @@
 
 set(POPCPP_DYNAMIC_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/dynamic;-I${CMAKE_SOURCE_DIR}/include/core")
 
-# include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_INCLUDE_PATH})
-
 set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
 
 # Activate some warnings
@@ -49,8 +47,8 @@ add_custom_command(OUTPUT paroc_objmain.std.o
     DEPENDS popcpp
     COMMENT "Compile POP-C++ Object main")
 
-# add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o)
-# add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o)
+add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o)
+add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o)
 
 # Compile a .ph file into a .ph.stub_client.o
 function(popcc_compile_ph ph_file)
@@ -96,7 +94,7 @@ set(POPCC_GENERATED_STUBS
     ${POPCC_OUTPUT_DIR}/batchmgr.ph.stub_client.o
 )
 
-add_custom_target(paroc_stub_parclass ALL DEPENDS ${POPCC_GENERATED_STUBS})
+#add_custom_target(paroc_stub_parclass ALL DEPENDS ${POPCC_GENERATED_STUBS})
 
 # Build CXX files
 
@@ -110,6 +108,8 @@ popcc_compile_cxx(request.cc)
 popcc_compile_cxx(object.cc)
 popcc_compile_cxx(system.cc)
 popcc_compile_cxx(interface.cc)
+popcc_compile_cxx(utils.cc)
+popcc_compile_cxx(benchmark.cc)
 popcc_compile_cxx(popc_allocator_tcpip_local.cpp)
 popcc_compile_cxx(popc_allocator_tcpip_ssh.cpp)
 
@@ -124,6 +124,8 @@ set(POPCC_GENERATED_FILES
     ${POPCC_OUTPUT_DIR}/object.cc.o
     ${POPCC_OUTPUT_DIR}/system.cc.o
     ${POPCC_OUTPUT_DIR}/interface.cc.o
+    ${POPCC_OUTPUT_DIR}/utils.cc.o
+    ${POPCC_OUTPUT_DIR}/benchmark.cc.o
     ${POPCC_OUTPUT_DIR}/popc_allocator_tcpip_local.cpp.o
     ${POPCC_OUTPUT_DIR}/popc_allocator_tcpip_ssh.cpp.o
     ${POPCC_GENERATED_STUBS}
@@ -140,31 +142,6 @@ set(POPCC_GENERATED_FILES
     #COMMENT "Compile POP-C++ generated lib for popc_common")
 
 add_library(popc_common
-    ../core/accesspoint.cc
-    ../core/allocobj.cc
-    ../core/broker.cc
-    ../core/broker_factory.cc
-    ../core/broker_serve.cc
-    ../core/buffer.cc
-    ../core/buffer_factory.cc
-    ../core/buffer_factory_finder.cc
-    ../core/buffer_raw_factory.cc
-    ../core/buffer_utils.cc
-    ../core/buffer_xdr_factory.cc
-    ../core/combox.cc
-    ../core/combox_socket.cc
-    ../core/debug.cc
-    ../core/event.cc
-    ../core/exception.cc
-    ../core/memspool.cc
-    ../core/mutex.cc
-    ../core/od.cc
-    ../core/popc_intface_linux.cc
-    ../core/popwayback.cc
-    ../core/string.cc
-    ../core/thread.cc
-    ../core/timer.cc
-    ../core/utils.cc
     buffer_raw.cc
     popc_buffer_xdr_mpi.cpp
     explorationList.cc
@@ -198,3 +175,5 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/remotelog.ph DESTINATION ${POPCC_INCLU
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.std.o DESTINATION ${POPCC_LIB_INSTALL})
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/paroc_objmain.std.o DESTINATION ${POPCC_LIB_INSTALL})
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common.a DESTINATION ${POPCC_LIB_INSTALL})
+
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "paroc_infmain.std.o;paroc_objmain.std.o")

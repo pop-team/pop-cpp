@@ -21,7 +21,7 @@ set(POPCPP_Object_COMPILER_FLAGS -object -o)
 set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
 
 set(POPCPP_SERVICES_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/dynamic;-I${CMAKE_SOURCE_DIR}/include/core")
-set(POPCPP_LIB -L${CMAKE_SOURCE_DIR}/lib/dynamic;-L${CMAKE_SOURCE_DIR}/services/lib;-lpopc_common;)
+set(POPCPP_LIB -L${CMAKE_SOURCE_DIR}/lib/core;-L${CMAKE_SOURCE_DIR}/lib/dynamic;-L${CMAKE_SOURCE_DIR}/services/lib;-lpopc_common;-lpopc_core;)
 
 set(POPCPP_LIB_INSTALL lib/dynamic)
 set(POPCPP_SERVICES_INSTALL services)
@@ -59,21 +59,24 @@ add_custom_command(
     DEPENDS ${cxx_file}
     DEPENDS popcc
     DEPENDS popcpp
+    DEPENDS popc_core
+    DEPENDS popc_common
 )
 endfunction(popcc_compile_cxx)
 
 # Function to compile and link an executable from a .cc
 function(popcc_compile_exec exec_file cxx_file)
-#popcc_compile_cxx(${cxx_file})
+popcc_compile_cxx(${cxx_file})
 add_custom_target(
     ${exec_file} ALL
-    COMMAND ${POPCC_COMMAND_EXE} ${POPCC_OUTPUT_DIR}/${exec_file} ${POPCC_OUTPUT_DIR}/${cxx_file}.o
-        ${POPCPP_LIB} -lpopc_services
+    COMMAND ${POPCC_COMMAND_EXE} ${POPCC_OUTPUT_DIR}/${exec_file} ${POPCC_OUTPUT_DIR}/${cxx_file}.o -lpopc_services ${POPCPP_LIB}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
-    DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${POPCC_OUTPUT_DIR}/libpopc_services.a
+    DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o
     DEPENDS popcc
     DEPENDS popcpp
+    DEPENDS popc_core
     DEPENDS popc_common
+    DEPENDS popc_services
 )
 endfunction(popcc_compile_exec)
 
@@ -91,12 +94,14 @@ popcc_compile_cxx(${cxx_file})
 #)
 add_custom_target(
     ${exec_file} ALL
-    COMMAND ${POPCC_COMMAND_OBJ} ${POPCC_OUTPUT_DIR}/${exec_file} ${POPCPP_LIB} -lpopc_services ${POPCC_OUTPUT_DIR}/${cxx_file}.o
+    COMMAND ${POPCC_COMMAND_OBJ} ${POPCC_OUTPUT_DIR}/${exec_file} ${POPCC_OUTPUT_DIR}/${cxx_file}.o -lpopc_services ${POPCPP_LIB}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o 
-    DEPENDS libpopc_services.a
     DEPENDS popcc
     DEPENDS popcpp
+    DEPENDS popc_core
+    DEPENDS popc_common
+    DEPENDS popc_services
 )
 endfunction(popcc_compile_obj)
 
@@ -164,11 +169,11 @@ set(POPCC_GENERATED_FILES
 # Compile executables
 
 popcc_compile_obj(popfilemanager popfilemanager_obj.cc)
-#popcc_compile_obj(popc_search_node popc_search_node_obj.cc)
-#popcc_compile_obj(jobmgr jobmgr_obj.cc)
-#popcc_compile_obj(appservice appservice_obj.cc)
-#popcc_compile_exec(localservice_launcher localservice_launcher.cc)
-#popcc_compile_exec(jobmgr_launcher jobmgr_launcher.cc)
+popcc_compile_obj(popc_search_node popc_search_node_obj.cc)
+popcc_compile_obj(jobmgr jobmgr_obj.cc)
+popcc_compile_obj(appservice appservice_obj.cc)
+popcc_compile_exec(localservice_launcher localservice_launcher.cc)
+popcc_compile_exec(jobmgr_launcher jobmgr_launcher.cc)
 
 
 
@@ -186,5 +191,5 @@ install(PROGRAMS ${POPCC_OUTPUT_DIR}/appservice${EXECUTABLE_EXTENSION} DESTINATI
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/localservice_launcher${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/jobmgr_launcher${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/popfilemanager${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
-install(PROGRAMS ${POPCC_OUTPUT_DIR}/libpopc_services.a DESTINATION ${POPCPP_LIB_INSTALL})
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_services.a DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(CODE "execute_process(COMMAND ${CMAKE_INSTALL_PREFIX}/sbin/popc_setup)")

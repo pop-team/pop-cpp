@@ -1,0 +1,106 @@
+#
+# POP-C++
+# Common (dynamic) library build process
+#
+# AUTHOR: Valentin Clement
+# DATE: 2012/11/14
+#
+
+set(POPCPP_DYNAMIC_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/core")
+
+set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
+
+# Activate some warnings
+add_definitions(-Wall -Wextra -Werror)
+
+if(WIN32)
+    set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc.exe)
+    set(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp.exe)
+elseif(UNIX)
+    set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc)
+    set(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp)
+endif(WIN32)
+
+set(POPCPP_Parclass_COMPILER_FLAGS -parclass-nobroker -c -o)
+set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
+set(POPCC_PARCLASS_COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Parclass_COMPILER_FLAGS})
+set(POPCC_PARCLASS_SERVICE_COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS})
+set(POPCC_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
+
+# Build the interface (Win/Lin)
+if(WIN32)
+    set(intface_cc_file popc_intface_windows.cc)
+elseif(UNIX)
+    set(intface_cc_file popc_intface_linux.cc)
+endif(WIN32)
+
+# Compile a .ph file into a .ph.stub_client.o
+function(popcc_compile_ph ph_file)
+add_custom_command(
+    OUTPUT ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o
+    COMMAND ${POPCC_PARCLASS_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o ${ph_file} ${POPCPP_DYNAMIC_INCLUDE_PATH}
+    DEPENDS ${ph_file}
+    DEPENDS popcc
+    DEPENDS popcpp
+)
+endfunction(popcc_compile_ph)
+
+# Compile a cxx file into a .o
+function(popcc_compile_cxx cxx_file)
+add_custom_command(
+    OUTPUT ${POPCC_OUTPUT_DIR}/${cxx_file}.o
+    COMMAND ${POPCC_PARCLASS_SERVICE_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${cxx_file} ${POPCPP_DYNAMIC_INCLUDE_PATH}
+    DEPENDS ${cxx_file}
+    DEPENDS popcc
+    DEPENDS popcpp
+)
+endfunction(popcc_compile_cxx)
+
+# Build .ph files
+
+# popcc_compile_cxx(utils.cc)
+
+set(POPCC_GENERATED_STUBS
+#    ${POPCC_OUTPUT_DIR}/paroc_service_base.ph.stub_client.o
+)
+
+set(POPCC_GENERATED_FILES
+    # ${POPCC_OUTPUT_DIR}/utils.cc.o
+    ${POPCC_GENERATED_STUBS}
+)
+
+add_library(popc_core
+    accesspoint.cc
+    allocobj.cc
+    broker.cc
+    broker_factory.cc
+    broker_serve.cc
+    buffer.cc
+    buffer_factory.cc
+    buffer_factory_finder.cc
+    buffer_raw_factory.cc
+    buffer_utils.cc
+    buffer_xdr_factory.cc
+    CMakeLists.txt
+    combox.cc
+    combox_socket.cc
+    debug.cc
+    event.cc
+    exception.cc
+    memspool.cc
+    mutex.cc
+    od.cc
+    popc_logger.cpp
+    popwayback.cc
+    string.cc
+    thread.cc
+    timer.cc
+    ${intface_cc_file}
+    ${POPCC_GENERATED_FILES}
+)
+
+# Install all the files
+set(POPCC_INCLUDE_INSTALL include/core)
+set(POPCC_LIB_INSTALL lib/core)
+
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_core.a DESTINATION ${POPCC_LIB_INSTALL})

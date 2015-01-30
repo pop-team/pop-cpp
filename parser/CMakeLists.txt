@@ -97,7 +97,7 @@ add_executable(popcpp
     typeseqclass.cc
     typeclassstruct.cc
     typetemplate.cc
-    ${POPCPP_LIB_PATH}/utils.cc
+    ${CMAKE_SOURCE_DIR}/lib/dynamic/utils.cc
     ${POPCPP_LIB_PATH}/debug.cc
     ${intface_file})
 
@@ -107,7 +107,7 @@ add_executable(popcpp
 # Build the popcc executable
 add_executable(popcc
     popcc.cc
-    ${POPCPP_LIB_PATH}/utils.cc
+    ${CMAKE_SOURCE_DIR}/lib/dynamic/utils.cc
     ${intface_file})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/popcc.cc.in ${CMAKE_CURRENT_SOURCE_DIR}/popcc.cc)
