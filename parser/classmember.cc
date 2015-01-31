@@ -894,6 +894,8 @@ void Method::GenerateClient(CArrayChar &output) {
     if(!GetClass()->is_collective()) {
         sprintf(tmpcode, "\n  paroc_mutex_locker __paroc_lock(_paroc_imutex);");
         output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        sprintf(tmpcode, "\n  if(!__paroc_combox)paroc_exception::paroc_throw_errno(\"combox was not initialized\");");
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         sprintf(tmpcode, "\n  paroc_connection* _popc_connection = __paroc_combox->get_connection();\n  __paroc_buf->Reset();\n  paroc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __paroc_buf->SetHeader(__paroc_buf_header);\n", clname, id, invoke_code, name);
         output.InsertAt(-1,tmpcode,strlen(tmpcode));
     } else {
