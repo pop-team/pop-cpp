@@ -745,6 +745,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                                     jobmgr.CancelReservation(reserveIDs+j,1);
                                 }
                         } catch(...) {
+                            LOG_WARNING("Exception while canceling reservations");
                         }
                     }
                 ret=OBJECT_NO_RESOURCE;
@@ -777,7 +778,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                             count+=sz;
                         }
                     } catch(...) {
-                        LOG_ERROR( "[JM] Exception catch in ExecObj");
+                        LOG_ERROR( "[JM] Exception caught in ExecObj");
                     }
                 }
             }
@@ -790,11 +791,12 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 
 
     catch(...) {
+        LOG_WARNING("Exception in JogMgr::CreateObject");
         Pause(localservice, SLEEP_TIME_ON_ERROR);
         ret=POPC_JOBSERVICE_FAIL;
     }
 
-    fprintf(stderr,"Object count=%d, require=%d\n", count, howmany);
+    LOG_INFO("Object count=%d, require=%d\n", count, howmany);
     if(count>=howmany) {
         return 0;
     }
@@ -805,6 +807,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
             paroc_interface obj(objcontacts[i]);
             obj.Kill();
         } catch(...) {
+            LOG_WARNING("Exception while killing objects");
         }
     }
     if(ret==0) {
@@ -1476,7 +1479,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
             }
 
         } catch(...) {
-            LOG_CORE( "[JM] Exception on %s", (const char *)contact);
+            LOG_CORE( "[JM] Exception on contact %s", (const char *)contact);
             if(info.nodetype!=NODE_STATIC) {
                 neighbors.Remove(contact);
                 continue;
@@ -2036,6 +2039,7 @@ bool JobMgr::ObjectAlive(paroc_accesspoint &t) {
         paroc_interface test(t);
         return true;
     } catch(...) {
+        LOG_WARNING("Exception in JobMgr::ObjectAlive");
         return false;
     }
 }

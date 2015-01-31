@@ -41,7 +41,7 @@ void paroc_service_base::Start() {
             tmp.UnManageObject(myself);
             paroc_system::appservice.SetAccessString(NULL);
         } catch(...) {
-            LOG_DEBUG("Failed to unregister the service from ObjectMonitor");
+            LOG_WARNING("Failed to unregister the service from ObjectMonitor");
         }
     }
 }

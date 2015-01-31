@@ -212,11 +212,14 @@ int main(int argc, char **argv) {
                 pfm_ap.SetAccessString("socket://127.0.0.1:2712");
                 POPFileManager pfm(pfm_ap);
                 if(!pfm.Stop(challenge)) {
-                    fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop PFM ...\n");
+                    LOG_ERROR("[POP-C++ Runtime] Bad challenge string. Cannot stop PFM ...");
                 } else {
-                    printf("[POP-C++ Runtime] PFM stopped successfully!\n");
+                    LOG_INFO("[POP-C++ Runtime] PFM stopped successfully!");
                 }
-            } catch(...) {}
+            } catch(...){
+                LOG_WARNING("Exception while creating POPFileManager");
+	    }
+
 
             POPCSearchNode psn(mgr.GetNodeAccessPoint());
             if(!psn.Stop(challenge)) {
@@ -345,7 +348,7 @@ int main(int argc, char **argv) {
             printf("VSJM created [%s]\n", info.GetAccessPoint().GetAccessString());
             psm.setJobMgrRef(info.GetAccessPoint());
         } catch(...) {
-            fprintf(stderr, "Error: Need to stop VSPSN, VPSM and POPCloner\n");
+            LOG_WARNING("Error: Need to stop VSPSN, VPSM and POPCloner");
             //Stop the created PSN
             if(!psn.Stop(challenge)) {
                 fprintf(stderr, "Bad challenge string. Cannot stop VSPSN ...\n");
@@ -378,7 +381,7 @@ int main(int argc, char **argv) {
             VirtualJobMgr info(daemon, virtconf, conf, challenge, host, psn.GetAccessPoint(), cloner.GetAccessPoint(), empty);
             printf("VJM created [%s]\n", info.GetAccessPoint().GetAccessString());
         } catch(...) {
-            fprintf(stderr, "Error: Need to stop VPSN and POPCloner\n");
+            LOG_ERROR("Need to stop VPSN and POPCloner");
             //Stop the created PSN
             if(!psn.Stop(challenge)) {
                 fprintf(stderr, "Bad challenge string. Cannot stop VPSN ...\n");
@@ -399,12 +402,12 @@ int main(int argc, char **argv) {
             printf("SJM created [%s]\n", info.GetAccessPoint().GetAccessString());
             psm.setJobMgrRef(info.GetAccessPoint());
         } catch(...) {
-            fprintf(stderr, "Error: Need to stop SPSN and PSM\n");
+            LOG_ERROR("Need to stop SPSN and PSM");
             //Stop the created PSN
             if(!psn.Stop(challenge)) {
-                fprintf(stderr, "Bad challenge string. Cannot stop SPSN ...\n");
+                LOG_ERROR("Bad challenge string. Cannot stop SPSN ...");
             } else {
-                printf("SPSN stopped successfully!\n");
+                LOG_INFO("SPSN stopped successfully!");
             }
             //Stop the created PSM
             if(!psm.Stop(challenge)) {
@@ -443,7 +446,7 @@ int main(int argc, char **argv) {
         }
     } catch(paroc_exception *e) {
         errno=e->Code();
-        paroc_system::perror("Exception occurs\n");
+        paroc_system::perror("Exception occurs");
         delete e;
         return 1;
     }

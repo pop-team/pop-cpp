@@ -55,7 +55,7 @@ AppCoreService::~AppCoreService() {
         JobMgr jm(paroc_system::jobservice);
         jm.ApplicationEnd(_popcAppId, true);
     } catch(...) {
-
+        LOG_WARNING("Exception while destroying JobMgr");
     }
 
     POSITION pos=servicelist.GetHeadPosition();
@@ -65,6 +65,7 @@ AppCoreService::~AppCoreService() {
         try {
             t.service->Stop(mychallenge);
         } catch(...) {
+            LOG_WARNING("Exception while stopping service");
         }
         delete t.service;
     }
@@ -123,6 +124,7 @@ bool AppCoreService::RegisterService(const POPString &name, const paroc_service_
         t.service=new paroc_service_base(newservice);
         t.name=popc_strdup(name);
     } catch(...) {
+        LOG_WARNING("Exception while creating service");
         return false;
     }
     servicelist.AddTail(t);
@@ -196,7 +198,7 @@ void AppCoreService::LoadAddOn() {
             paroc_service_base s(ap);
             s.Start(mychallenge);
         } catch(...) {
-            LOG_DEBUG("Can not connect to %s",service);
+            LOG_WARNING("Can not connect to %s",service);
             continue;
         }
         if(tmp!=NULL && sscanf(tmp+8,"%s",service)==1) {

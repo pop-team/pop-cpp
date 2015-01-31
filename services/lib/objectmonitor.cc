@@ -51,6 +51,7 @@ void ObjectMonitor::KillAll() {
                 paroc_interface tmp(t);
                 tmp.Kill();
             } catch(...) {
+                LOG_WARNING("Exception while killing objects");
             }
         }
         objects.RemoveAll();
@@ -74,6 +75,7 @@ int ObjectMonitor::CheckObjects() {
                     test.DecRef();
                 }
             } catch(...) {
+                LOG_WARNING("Exception in CheckObjects");
                 objects.RemoveAt(old);
             }
         }
