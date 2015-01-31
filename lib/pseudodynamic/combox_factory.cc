@@ -143,7 +143,7 @@ paroc_combox_factory::paroc_combox_factory() {
                 }
                 fclose(map);
             } else {
-                LOG_DEBUG("WARNING: unable to open plugin mapfile: %s",(const char *)pluginmap);
+                LOG_WARNING("unable to open plugin mapfile: %s",(const char *)pluginmap);
                 DIR *dir=opendir(plugindir);
                 if(dir!=NULL) {
                     dirent *t;

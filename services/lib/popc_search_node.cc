@@ -558,7 +558,7 @@ bool POPCSearchNode::checkResource(Request req) {
 
     if(req.hasExpectedPowerSet()) {
         if(req.getExpectedPower() > getPower()) {
-            LOG_ERROR( "[PSN]ERROR: FAILED FOR EXP POW");
+            LOG_ERROR( "[PSN] FAILED FOR EXP POW");
             return false;
         }
     }
