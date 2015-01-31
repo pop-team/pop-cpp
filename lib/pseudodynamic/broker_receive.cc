@@ -83,6 +83,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
             // Register the request to be served by the broker serving thread
             RegisterRequest(req);
         } catch(...) {
+            LOG_WARNING("Exception in paroc_broker::ReceiveThread");
             if(req.data != NULL) {
                 req.data->Destroy();
             }

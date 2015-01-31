@@ -135,10 +135,9 @@ void paroc_system::perror(const char *msg) {
         if(msg==NULL) {
             msg="POP-C++ Error";
         }
-        fprintf(stderr,"%s: %s (errno %d)\n",msg,paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
         LOG_ERROR("%s: %s (errno %d)",msg,paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
     } else if(errno>USER_DEFINE_LASTERROR) {
-        fprintf(stderr,"%s: Unknown error (errno %d)\n",msg, errno);
+        LOG_ERROR("%s: Unknown error (errno %d)",msg, errno);
     } else {
         ::perror(msg);
     }
@@ -375,8 +374,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
                   (void *)&(sa->sin_addr),
                   str_ip_local,
                   sizeof(str_ip_local) );
-        //LOG_DEBUG("The IP of interface %s is %s",iap->ifa_name,str_ip_local);
-        //printf("The IP of interface %s is %s\n",iap->ifa_name,str_ip_local);
+            LOG_DEBUG("The IP of interface %s is %s",iap->ifa_name,str_ip_local);
         str_ip=str_ip_local;
         freeifaddrs(addrs);
         return true;
@@ -401,7 +399,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
     char *info = paroc_utils::checkremove(argc, argv, "-jobservice=");
     if(info == NULL) {
-        printf("Error: missing -jobservice argument\n");
+        LOG_ERROR("missing -jobservice argument");
         return false;
     }
     paroc_system::jobservice.SetAccessString(info);
@@ -420,7 +418,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
     if(codeser==NULL && appcontact==NULL) {
-        printf("Error: missing -appservicecontact=... or -appservicecode=... argument\n");
+        LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");
         return false;
     }
     try {
@@ -445,7 +443,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         //paroc_system::appservice=mgr->GetAccessPoint();
         paroc_system::appservice.SetAsService();
     } catch(POPException *e) {
-        printf("POP-C++ Exception occurs in paroc_system::Initialize\n");
+        LOG_WARNING("POP-C++ Exception occurs in paroc_system::Initialize");
         POPSystem::perror(e);
         delete e;
 #ifndef DEFINE_UDS_SUPPORT
@@ -459,7 +457,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         return false;
     } catch(...) {
  #ifndef DEFINE_UDS_SUPPORT
-       printf("Exception occurs in paroc_system::Initialize\n");
+       LOG_WARNING("Exception occurs in paroc_system::Initialize");
        /*if (mgr!=NULL) {
             mgr->KillAll();
             mgr->Stop(challenge);
@@ -473,7 +471,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     char *codeconf = paroc_utils::checkremove(argc,argv,"-codeconf=");
     (void) codeconf; // Added this to avoid warning
 
-// DEBUGIF(codeconf==NULL,"No code config file\n");
+    LOG_DEBUG_IF(codeconf==NULL,"No code config file");
 
     /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
     {
@@ -520,10 +518,11 @@ void paroc_system::Finalize(bool /*normalExit*/) {
           mgr->Stop(challenge);
           delete mgr;
         } catch (paroc_exception *e) {
-          paroc_system::perror(e->Extra());
+            LOG_WARNING("POP-C++ error while finalizing the application");
+            paroc_system::perror(e);
           delete e;
         } catch (...) {
-          fprintf(stderr,"POP-C++ error on finalizing the application\n");
+            LOG_WARNING("Error while finalizing the application");
         }
         mgr = NULL;
       }*/

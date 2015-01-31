@@ -107,13 +107,13 @@ int main(int argc, char **argv) {
         //  printf("Will call MPI::Finalize and exit main 1\n");
         // Only for MPI
         if(!MPI::Is_finalized()) {
-            printf("MPI::Finalize\n");
+            LOG_INFO("MPI::Finalize");
             MPI::Finalize();
         }
         // printf("Exit main\n");
         return ret;
     } catch(paroc_exception *e) {
-        // printf("End of main exception caught 1\n");
+        LOG_WARNING("End of main exception caught 1");
         errno = e->Code();
         paroc_system::perror(e);
         delete e;
@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
         }
         return -1;
     } catch(int e) {
-        //printf("End of main exception caught 2\n");
+        LOG_WARNING("End of main exception caught 2");
         errno=e;
         paroc_system::perror("Exception occured\n");
         paroc_system::Finalize(false);
@@ -136,8 +136,7 @@ int main(int argc, char **argv) {
         }
         return -1;
     } catch(...) {
-        //printf("End of main exception caught 3\n");
-        fprintf(stderr,"Unknown exception\n");
+        LOG_WARNING("End of main exception caught 3");
         paroc_system::Finalize(false);
         // printf("Will call MPI::Finalize and exit main\n");
         // Only for MPI

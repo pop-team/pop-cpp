@@ -203,6 +203,7 @@ int paroc_broker::Run() {
                 }
             }
         } catch(...) {
+            LOG_WARNING("Unknown exception in paroc_broker::Run");
             UnhandledException();
         }
     }
@@ -382,6 +383,7 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
                     ok = !ret;
                 }
             } catch(...) {
+                LOG_WARNING("Unknown exception in paroc_broker::WakeUpReceiveThread");
                 ok = true;
             }
         }

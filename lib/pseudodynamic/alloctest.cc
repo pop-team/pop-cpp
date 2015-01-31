@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
         }
         resources.RemoveAll();
     } catch(...) {
-        printf("Exception!\n");
+        LOG_WARNING("Exception in alloctest");
         return 1;
 
     }

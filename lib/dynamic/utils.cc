@@ -356,6 +356,7 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
         }
     } catch(...) {
         fclose(f);
+        LOG_WARNING("Exception while registring code");
         return 0;
     }
     fclose(f);

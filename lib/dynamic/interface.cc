@@ -410,7 +410,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                 Bind(addr);
                 return;
             } catch(paroc_exception *e) {
-                LOG_DEBUG("Can not bind to %s. Try next protocol...",addr);
+                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e->what());
                 delete e;
                 continue;
             }
@@ -431,6 +431,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                         Bind(addr);
                         return;
                     } catch(paroc_exception *e) {
+                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e->what());
                         delete e;
                         continue;
                     }
@@ -575,8 +576,8 @@ void paroc_interface::Bind(const char *dest) {
     } else {
         int code=errno;
 
-        LOG_DEBUG("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
-        LOG_DEBUG("Create socket fails. Reason: %s.",strerror(code));
+        LOG_WARNING("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
+        LOG_WARNING("Create socket fails. Reason: %s.",strerror(code));
         Release();
         paroc_exception::paroc_throw(code, ClassName());
     }

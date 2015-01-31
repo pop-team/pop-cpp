@@ -122,14 +122,14 @@ paroc_system::~paroc_system() {
 
 
 void paroc_system::perror(const char *msg) {
-    LOG_WARNING("paroc_system::perror : %d",errno);
+    LOG_ERROR("paroc_system::perror : %d",errno);
     if(errno>USER_DEFINE_ERROR && errno<=USER_DEFINE_LASTERROR) {
         if(msg==NULL) {
             msg="POP-C++ Error";
         }
-        fprintf(stderr,"%s: %s (errno %d)\n",msg,paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
+        LOG_ERROR("%s: %s (errno %d)",msg,paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
     } else if(errno>USER_DEFINE_LASTERROR) {
-        fprintf(stderr,"%s: Unknown error (errno %d)\n",msg, errno);
+        LOG_ERROR("%s: Unknown error (errno %d)",msg, errno);
     } else {
         ::perror(msg);
     }
@@ -433,7 +433,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         paroc_system::appservice=mgr->GetAccessPoint();
         paroc_system::appservice.SetAsService();
     } catch(POPException *e) {
-        printf("POP-C++ Exception occurs in paroc_system::Initialize\n");
+        LOG_WARNING("POP-C++ Exception occurs in paroc_system::Initialize");
         POPSystem::perror(e);
         delete e;
 #ifndef DEFINE_UDS_SUPPORT
@@ -446,7 +446,9 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 #endif
         return false;
     } catch(...) {
+        LOG_WARNING("Exception occurs in paroc_system::Initialize");
 #ifndef DEFINE_UDS_SUPPORT
+        LOG_WARNING("Exception occurs in paroc_system::Initialize");
         if(mgr!=NULL) {
             mgr->KillAll();
             mgr->Stop(challenge);
@@ -505,10 +507,11 @@ void paroc_system::Finalize(bool normalExit) {
             mgr->Stop(challenge);
             delete mgr;
         } catch(paroc_exception *e) {
-            paroc_system::perror(e->Extra());
+            LOG_WARNING("POP-C++ error while finalizing the application");
+            paroc_system::perror(e);
             delete e;
         } catch(...) {
-            fprintf(stderr,"POP-C++ error on finalizing the application\n");
+            LOG_WARNING("Error while finalizing the application");
         }
         mgr=NULL;
     }
