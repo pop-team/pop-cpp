@@ -350,7 +350,7 @@ void paroc_interface::allocate_only() {
     }
 
     if(allocator == NULL) {
-        std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;
+        LOG_ERROR("[Core] Allocator is NULL");
     }
 
     objectaddress = allocator->allocate(objectname, od);

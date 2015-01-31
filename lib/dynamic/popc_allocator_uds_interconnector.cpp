@@ -194,7 +194,7 @@ paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(POPString& objec
 
 
     if(!_popc_buffer->Send((*_popc_combox), _popc_connection)) {
-        std::cerr << "POP-C++ Error [Core]" << "Problem while sending request" << std::endl;
+        LOG_ERROR("[Core] Problem while sending request");
         paroc_exception::paroc_throw_errno();
     }
 
