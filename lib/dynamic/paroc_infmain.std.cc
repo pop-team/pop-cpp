@@ -23,7 +23,7 @@
 #include <sched.h>
 #define error printf
 #define panic printf
-#define debug(a,b,c) printf((b),(c),(a))
+// #define debug(a,b,c) printf((b),(c),(a))
 
 extern int parocmain(int, char **);
 
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
             char **argv1=argv+i+1;
             int argc1=argc-i-1;
             if(!paroc_system::Initialize(&argc1, &argv1)) {
-                fprintf(stderr,"Initialization of parallel objects fail...\n");
+                LOG_WARNING("Initialization of parallel objects fail...");
                 paroc_system::Finalize(false);
                 return -1;
             }
@@ -126,11 +126,11 @@ int main(int argc, char **argv) {
         return -1;
     } catch(int e) {
         errno=e;
-        paroc_system::perror("Exception occured\n");
+        paroc_system::perror("Exception occured");
         paroc_system::Finalize(false);
         return -1;
     } catch(...) {
-        fprintf(stderr,"Unknown exception\n");
+        LOG_WARNING("Unknown exception");
         paroc_system::Finalize(false);
     }
     return 1;

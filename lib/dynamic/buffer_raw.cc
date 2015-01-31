@@ -20,6 +20,7 @@
 #include "paroc_interface.h"
 #include "paroc_buffer_raw.h"
 #include "paroc_exception.h"
+#include "popc_logger.h"
 
 paroc_buffer_raw::paroc_buffer_raw(): packeddata(0,1024) {
     Reset();
@@ -394,7 +395,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     }
     memcpy(dat, h, 20);
     if(s.Send(dat, n, conn) < 0) {
-        printf("Fail to send a message!\n");
+        LOG_WARNING("Fail to send a message!");
         return false;
     }
     return true;
@@ -419,7 +420,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     Reset();
     n = h[0];
     if(n < 20) {
-        printf("POP-C++ Error: [CORE] - Buffer RAW - bad message header (size error:%d)\n", n);
+        LOG_ERROR("[CORE] - Buffer RAW - bad message header (size error:%d)", n);
         return false;
     }
 

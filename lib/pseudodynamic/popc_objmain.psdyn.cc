@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
             return 1;
         }
     } /* else if (status == 0) {
-        //fprintf(stdout, "%s\n", (const char *)paroc_broker::accesspoint.GetAccessString());
+        //LOG_INFO("%s", (const char *)paroc_broker::accesspoint.GetAccessString());
     }*/
 
     // Set the current working directory
@@ -173,7 +173,7 @@ int main(int argc, char **argv) {
     // Start the broker
     if(status == 0) {
         broker_factory->Run();
-        //printf("Broker started\n");
+        LOG_DEBUG("Broker started");
         delete broker_factory;
     } else if(broker_factory != NULL) {
         delete broker_factory;

@@ -3,6 +3,7 @@
 #ifdef _POPC_
 #include "popc_logger.h"
 #else
+// TODO LW: This should not be here
 #define LOG_INFO(_log_msg, ...)    fprintf(stderr, _log_msg, ##__VA_ARGS__)
 #define LOG_ERROR(_log_msg, ...)   fprintf(stderr, _log_msg, ##__VA_ARGS__)
 #endif

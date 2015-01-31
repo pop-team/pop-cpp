@@ -19,6 +19,7 @@
 #include <signal.h>
 
 #include "popc_combox_uds.h"
+#include "popc_logger.h"
 
 // Constant declaration
 const char* popc_combox_uds::UDS_PROTOCOL_NAME = "uds";
@@ -58,14 +59,14 @@ bool popc_combox_uds::Create(int , bool) {
  * @return TRUE if the combox has been created successfully, FALSE in any other cases.
  */
 bool popc_combox_uds::Create(const char* address, bool server) {
-    //printf("UDS: create %s\n", address);
+    LOG_DEBUG("UDS: create %s", address);
     _is_server = server;
     _uds_address.clear();
     _uds_address.append(address);
 
     _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
     if(_socket_fd < 0) {
-        printf("socket() failed\n");
+        LOG_WARNING("socket() failed");
         return false;
     }
 
@@ -78,13 +79,13 @@ bool popc_combox_uds::Create(const char* address, bool server) {
         unlink(address);
 
         if(bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
-            printf("bind() failed\n");
+            LOG_WARNING("bind() failed");
             return false;
         }
 
 
         if(listen(_socket_fd, 10) != 0) {
-            printf("listen() failed\n");
+            LOG_WARNING("listen() failed");
             return false;
         }
 
@@ -105,7 +106,7 @@ bool popc_combox_uds::Create(const char* address, bool server) {
  */
 bool popc_combox_uds::Connect(const char*) {
     if(connect(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
-        printf("Connect failed: %s\n",_uds_address.c_str());
+        LOG_WARNING("Connect failed: %s",_uds_address.c_str());
         perror("Connect failed");
         return false;
     }
@@ -206,10 +207,10 @@ paroc_connection* popc_combox_uds::Wait() {
         do {
             poll_back = poll(active_connection, _active_connection_nb, _timeout);
             if(_active_connection_nb >= 199) {
-                printf("TOO MANY CONNECTION\n");
+                LOG_WARNING("TOO MANY CONNECTIONS");
             }
         } while((poll_back == -1) && (errno == EINTR));
-        //printf("Poll %s\n", _uds_address.c_str());
+        LOG_DEBUG("Poll %s", _uds_address.c_str());
         if(poll_back > 0) {
             for(int i = 0; i < _active_connection_nb; i++) {
                 if(active_connection[i].revents & POLLIN) {
@@ -229,7 +230,7 @@ paroc_connection* popc_combox_uds::Wait() {
                         }
                     } else {
                         if(active_connection[i].revents & POLLHUP) { // POLLIN and POLLHUP
-                            //printf("write and disconnect\n");
+                            LOG_DEBUG("write and disconnect");
                             int tmpfd = active_connection[i].fd;
                             if(_active_connection_nb == 2) {
                                 _active_connection_nb = 1;
@@ -243,16 +244,16 @@ paroc_connection* popc_combox_uds::Wait() {
                                 active_connection[i].events = active_connection[_active_connection_nb].events;
                                 active_connection[i].revents = active_connection[_active_connection_nb].revents;
                             }
-                            //printf("POLLON %s %d\n", _uds_address.c_str(), active_connection[i].fd);
+                            LOG_DEBUG("POLLON %s %d", _uds_address.c_str(), active_connection[i].fd);
                             return new popc_connection_uds(tmpfd, this);
                         } else { // Just POLLIN
-                            //printf("POLLIN %s %d\n", _uds_address.c_str(), active_connection[i].fd);
+                            LOG_DEBUG("POLLIN %s %d", _uds_address.c_str(), active_connection[i].fd);
                             active_connection[i].revents = 0;
                             return new popc_connection_uds(active_connection[i].fd, this);
                         }
                     }
                 } else if(active_connection[i].revents & POLLHUP) {
-                    //printf("%d fd is disconnected\n", active_connection[i].fd);
+                    LOG_DEBUG("%d fd is disconnected", active_connection[i].fd);
                     if(_active_connection_nb == 2) {
                         _active_connection_nb = 1;
                         active_connection[i].fd = 0;

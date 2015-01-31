@@ -18,6 +18,7 @@
 #include "paroc_combox.h"
 #include "paroc_combox_factory.h"
 #include "paroc_broker.h"
+#include "popc_logger.h"
 
 
 /**
@@ -60,7 +61,7 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
 
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
     if(codefile.Length() <= 0) {
-        printf("POP-C++ Error: Code file executable path is NULL ! Abort !\n");
+        LOG_ERROR("POP-C++ Error: Code file executable path is NULL ! Abort !");
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
     }
 

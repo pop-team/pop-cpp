@@ -293,7 +293,7 @@ int rprintf(const char *format,...) {
     vsnprintf(str,1023, format, ap);
     va_end(ap);
     if(paroc_system::appservice.IsEmpty()) {
-        fprintf(stdout,"%s",str);
+        LOG_INFO("%s",str);
         fflush(stdout);
         return 0;
     }
@@ -302,7 +302,7 @@ int rprintf(const char *format,...) {
         POPString msg(str);
         log.Log(msg);
     } catch(...) {
-        fprintf(stdout,"%s",str);
+        LOG_INFO("%s",str);
         fflush(stdout);
         return 0;
     }

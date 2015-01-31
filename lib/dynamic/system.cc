@@ -169,7 +169,7 @@ POPString paroc_system::GetHost() {
             POPC_HostName=t;
         }
     }
-    //printf("GetHost returns %s\n", (const char*)POPC_HostName);
+    LOG_DEBUG("GetHost returns %s", (const char*)POPC_HostName);
     return POPC_HostName;
 }
 
@@ -194,18 +194,18 @@ POPString paroc_system::GetIP() {
             if(!(GetIPFromInterface(iface,ip))) {
                 // Not found
                 setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
-                printf("POP-C++ Warning: Cannot find an IP for interface %s, using '%s' as IP address.\n",(const char*)iface, LOCALHOST);
+                LOG_WARNING("Cannot find an IP for interface %s, using '%s' as IP address.",(const char*)iface, LOCALHOST);
             }
         } else { // Env. Variable POP_IFACE is not defined
             iface=GetDefaultInterface();
             if(iface.Length()>0) {
                 if(!(GetIPFromInterface(iface,ip))) {
                     setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
-                    printf("POP-C++ Warning: host IP not found, using '%s' as IP address.\n",LOCALHOST);
+                    LOG_WARNING("host IP not found, using '%s' as IP address.",LOCALHOST);
                 }
             } else {
                 setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
-                printf("POP-C++ Warning: no default network interface found, using '%s' as IP address.\n", LOCALHOST);
+                LOG_WARNING("no default network interface found, using '%s' as IP address.", LOCALHOST);
             }
         }
     }
@@ -352,9 +352,9 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
 
     getifaddrs(&addrs);
 
-    //printf("\nLooking for interface: %s --->\n",(const char*)iface);
+    LOG_DEBUG("Looking for interface: %s --->",(const char*)iface);
     for(iap = addrs; iap != NULL; iap = iap->ifa_next) {
-        //printf("name=%s, addr=%p, flag=%d (%d), familly=%d (%d)\n",iap->ifa_name, iap->ifa_addr, iap->ifa_flags, IFF_UP, iap->ifa_addr->sa_family, AF_INET);
+        LOG_DEBUG("name=%s, addr=%p, flag=%d (%d), familly=%d (%d)",iap->ifa_name, iap->ifa_addr, iap->ifa_flags, IFF_UP, iap->ifa_addr->sa_family, AF_INET);
         if(iap->ifa_addr &&
                 (iap->ifa_flags & IFF_UP) &&
                 (iap->ifa_addr->sa_family == AF_INET) &&
@@ -417,7 +417,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
             } else {
                 sprintf(url,"%s -proxy=%s",codeser, proxy);
             }
-            //printf("mgr=CreateAppCoreService(url=%s);\n", url);
+            LOG_DEBUG("mgr=CreateAppCoreService(url=%s);", url);
 #ifndef DEFINE_UDS_SUPPORT
             mgr = CreateAppCoreService(url);
 #endif
@@ -500,10 +500,10 @@ void paroc_system::Finalize(bool normalExit) {
                     oldcount=count;
                 }
             } else {
-            //printf("Finalize killall\n");
+	        LOG_DEBUG("Finalize killall");
                 mgr->KillAll();
             }
-          //printf("Finalize stop\n");
+          LOG_DEBUG("Finalize stop");
             mgr->Stop(challenge);
             delete mgr;
         } catch(paroc_exception *e) {

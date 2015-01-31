@@ -242,7 +242,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     paroc_buffer * tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
 
     if(!tmpbuffer->Recv((*tmpsock), connection)) {
-        printf("cannot receive anything\n");
+        LOG_WARNING("cannot receive anything");
         paroc_exception::paroc_throw_errno();
     }
 

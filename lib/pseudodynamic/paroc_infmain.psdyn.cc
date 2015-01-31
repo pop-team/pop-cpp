@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
             char **argv1 = argv + i + 1;
             int argc1 = argc - i - 1;
             if(!paroc_system::Initialize(&argc1, &argv1)) {
-                fprintf(stderr,"Initialization of parallel objects fail...\n");
+                LOG_WARNING("Initialization of parallel objects fail...");
                 paroc_system::Finalize(false);
                 return -1;
             }

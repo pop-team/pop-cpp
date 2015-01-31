@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 #endif
             callback->Close();
             callback->Destroy();
-            printf("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.\n", address);
+            LOG_INFO("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.", address);
             return 1;
         }
     }
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
     if(!broker) {
         status = 1;
     } else if(!broker->Initialize(&argc, &argv)) {
-        printf("Fail to initialize the broker for class %s\n",(const char *)paroc_broker::classname);
+        LOG_INFO("Fail to initialize the broker for class %s",(const char *)paroc_broker::classname);
         status = 1;
     }
 
@@ -98,19 +98,19 @@ int main(int argc, char **argv) {
         callback->Destroy();
 
         if(!ret) {
-            printf("POP-C++ Error: fail to send accesspoint via callback\n");
+            LOG_ERROR("POP-C++ Error: fail to send accesspoint via callback");
             delete broker;
             return 1;
         }
     } else if(status == 0) {
-        fprintf(stdout, "%s\n", (const char *)paroc_broker::accesspoint.GetAccessString());
+        LOG_INFO("%s", (const char *)paroc_broker::accesspoint.GetAccessString());
     }
 
     // set the current working directory
     char *cwd = paroc_utils::checkremove(&argc,&argv,"-cwd=");
     if(cwd!=NULL) {
         if(popc_chdir(cwd) != 0) {
-            printf("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
+            LOG_ERROR("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);
         }
     }
 
