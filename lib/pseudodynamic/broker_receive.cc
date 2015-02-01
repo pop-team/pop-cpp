@@ -92,7 +92,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
             break;
         }
     }
-    //printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
+    LOG_DEBUG("Exiting receive thread %s", paroc_broker::accesspoint.GetAccessString());
     server->Close();
 }
 
@@ -180,7 +180,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
         int step = (count/POPC_QUEUE_NORMAL);
         long t = step*step*step;
         //if (count>POPC_QUEUE_NORMAL+5)
-        //rprintf(" Warning: too many requests (unserved requests: %d)\n",count);
+        LOG_WARNING(" Warning: too many requests (unserved requests: %d)",count);
         if(count<=POPC_QUEUE_MAX) {
             popc_usleep(10*t);
         } else {
@@ -326,7 +326,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     case 4: {
         // Kill call
         if(obj && obj->CanKill()) {
-            printf("Object exit by killcall\n");
+            LOG_INFO("Object exit by killcall");
             exit(1);
         }
         break;

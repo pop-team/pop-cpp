@@ -389,6 +389,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
     char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
     if(info==NULL) {
+        LOG_ERROR("missing -jobservice argument");
          return false;
     }
     paroc_system::jobservice.SetAccessString(info);
@@ -407,6 +408,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     char *appcontact=paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
     if(codeser==NULL && appcontact==NULL) {
+        LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");
         return false;
     }
     try {

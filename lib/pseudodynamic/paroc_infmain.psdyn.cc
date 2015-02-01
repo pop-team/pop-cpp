@@ -21,9 +21,9 @@
 
 // Set processor
 #include <sched.h>
-#define error printf
-#define panic printf
-#define debug(a,b,c) printf((b),(c),(a))
+//#define error printf
+//#define panic printf
+//#define debug(a,b,c) printf((b),(c),(a))
 
 extern int parocmain(int, char **);
 
@@ -55,11 +55,10 @@ int main(int argc, char **argv) {
         int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
         int provided_support = MPI::Init_thread(required_support);
     }
-    printf("ARGS %d %s\n", argc, argv[0]);
+    LOG_INFO("ARGS %d %s", argc, argv[0]);
     paroc_system_mpi::current_free_process = 2;
-//  printf("Main %d\n", MPI::COMM_WORLD.Get_rank());
+    LOG_DEBUG("Main %d", MPI::COMM_WORLD.Get_rank());
 
-    //printf("Start main of POP-C++ application: rank:%d\n", rank);
     char **argv1 = argv;
     int i;
     for(i = argc - 1; i >= 0; i--) {
@@ -78,7 +77,7 @@ int main(int argc, char **argv) {
     }
 
 
-    //printf("MAIN: Ready to call real application main\n");
+    LOG_DEBUG("MAIN: Ready to call real application main");
 
     /* END OF ADD */
 
@@ -104,13 +103,13 @@ int main(int argc, char **argv) {
     try {
         int ret = parocmain(argc, argv);
         //app.Finalize(ret == 0);
-        //  printf("Will call MPI::Finalize and exit main 1\n");
+        LOG_DEBUG("Will call MPI::Finalize and exit main 1");
         // Only for MPI
         if(!MPI::Is_finalized()) {
             LOG_INFO("MPI::Finalize");
             MPI::Finalize();
         }
-        // printf("Exit main\n");
+        LOG_DEBUG("Exit main");
         return ret;
     } catch(paroc_exception *e) {
         LOG_WARNING("End of main exception caught 1");
@@ -118,7 +117,7 @@ int main(int argc, char **argv) {
         paroc_system::perror(e);
         delete e;
         paroc_system::Finalize(false);
-        // printf("Will call MPI::Finalize and exit main\n");
+        LOG_DEBUG("Will call MPI::Finalize and exit main");
         // Only for MPI
         if(!MPI::Is_finalized()) {
             MPI::Finalize();
@@ -129,7 +128,7 @@ int main(int argc, char **argv) {
         errno=e;
         paroc_system::perror("Exception occured\n");
         paroc_system::Finalize(false);
-        //printf("Will call MPI::Finalize and exit main\n");
+        LOG_DEBUG("Will call MPI::Finalize and exit main");
         // Only for MPI
         if(!MPI::Is_finalized()) {
             MPI::Finalize();
@@ -138,13 +137,13 @@ int main(int argc, char **argv) {
     } catch(...) {
         LOG_WARNING("End of main exception caught 3");
         paroc_system::Finalize(false);
-        // printf("Will call MPI::Finalize and exit main\n");
+        LOG_DEBUG("Will call MPI::Finalize and exit main");
         // Only for MPI
         if(!MPI::Is_finalized()) {
             MPI::Finalize();
         }
     }
-// printf("Will call MPI::Finalize and exit main\n");
+LOG_DEBUG("Will call MPI::Finalize and exit main");
     // Only for MPI
     if(!MPI::Is_finalized()) {
         MPI::Finalize();
