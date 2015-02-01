@@ -23,6 +23,7 @@
 #include "paroc_array.h"
 #include "paroc_system.h"
 #include "paroc_exception.h"
+#include "popc_logger.h"
 
 #define METH_VECT_PACK(type) \
 void paroc_buffer::Pack( std::vector<type> *vect, int /*n*/)\
@@ -203,7 +204,7 @@ bool paroc_buffer::Send(paroc_connection *conn) {
 
 bool paroc_buffer::Recv(paroc_connection *conn) {
     if(conn==NULL) {
-        printf("conn==NULL\n");
+        LOG_INFO("conn==NULL");
         return false;
     }
     paroc_combox *combox=conn->GetCombox();

@@ -155,7 +155,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
 void paroc_broker::UnhandledException() {
     if(!paroc_system::appservice.IsEmpty()) {
         //char tmp[1024];
-        printf("Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
+        LOG_WARNING("Unhandled exception on %s@%s",(const char *)classname, accesspoint.GetAccessString());
 //      sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
         /*AppCoreService app(paroc_system::appservice);
         app.Log(tmp);

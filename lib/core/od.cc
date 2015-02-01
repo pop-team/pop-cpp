@@ -157,7 +157,7 @@ void paroc_od::url(const char *str) {
             *tmpstr2 = 0;
             hostcore = tmpstr+1;
         } else {
-            printf("Error in object description. user@ip(core):port\n");
+            LOG_INFO("Error in object description. user@ip(core):port");
         }
 
     }

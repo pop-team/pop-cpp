@@ -96,7 +96,7 @@ POPString paroc_broker::classname;
 
 
 void broker_killed(int sig) {
-    printf("FATAL: SIGNAL %d on %s@%s\n",sig, (const char *)paroc_broker::classname,paroc_broker::accesspoint.GetAccessString());
+    LOG_ERROR("FATAL: SIGNAL %d on %s@%s",sig, (const char *)paroc_broker::classname,paroc_broker::accesspoint.GetAccessString());
     exit(1);
 }
 
@@ -249,7 +249,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     for(int i = 0; i < comboxCount; i++) {
         comboxArray[count] = comboxFactory->Create(i);
         if(comboxArray[count] == NULL) {
-            printf("Fail to create combox #%d",i);
+            LOG_ERROR("Fail to create combox #%d",i);
         } else {
             count++;
         }
@@ -308,7 +308,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         paroc_buffer_raw tmp;
         r.data=&tmp;
         if(!FindMethodInfo(classname,r.methodId[0],r.methodId[1]) || r.methodId[1]!=10) {
-            printf("POP-C++ Error: [CORE] Broker cannot not find default constructor\n");
+            LOG_ERROR("POP-C++ Error: [CORE] Broker cannot not find default constructor");
             return false;
         }
         r.methodId[2]=INVOKE_CONSTRUCTOR;

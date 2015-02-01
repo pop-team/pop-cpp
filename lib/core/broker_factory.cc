@@ -163,7 +163,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
     // Create the real Broker object
     paroc_broker *objbroker=Create(object);
     if(objbroker==NULL) {
-        printf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
+        LOG_ERROR("POP-C++ Error: %s: unkown object name", (*argv)[1]);
         return NULL;
     }
 
@@ -194,7 +194,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
 
 void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
     if(!longformat) {
-        printf("List of parallel object classes:\n====\n");
+        LOG_INFO("List of parallel object classes:====\n");
     }
     if(brokerlist!=NULL) {
         POSITION pos=brokerlist->GetHeadPosition();
@@ -202,15 +202,15 @@ void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
             paroc_broker_init &t=brokerlist->GetNext(pos);
             if(!(paroc_broker_factory::CheckIfPacked!=NULL && !paroc_broker_factory::CheckIfPacked(t.objname))) {
                 if(longformat) {
-                    printf("%s %s %s\n",(const char *)t.objname, (const char *)paroc_system::platform, abspath);
+                    LOG_INFO("%s %s %s",(const char *)t.objname, (const char *)paroc_system::platform, abspath);
                 } else {
-                    printf("%s\n",(const char *)t.objname);
+                    LOG_INFO("%s",(const char *)t.objname);
                 }
             }
         }
     }
     if(!longformat) {
-        printf("====\nArchitecture=%s\n",(const char *)paroc_system::platform);
+        LOG_INFO("====\nArchitecture=%s",(const char *)paroc_system::platform);
     }
 }
 
@@ -221,7 +221,7 @@ void paroc_broker_factory::PrintBrokersMPI(const char *abspath) {
         while(pos!=NULL) {
             paroc_broker_init &t=brokerlist->GetNext(pos);
             if(!(paroc_broker_factory::CheckIfPacked!=NULL && !paroc_broker_factory::CheckIfPacked(t.objname))) {
-                printf("-host localhost -np 1 %s -mpi -object=%s\n", abspath, (const char *)t.objname);
+                LOG_INFO("-host localhost -np 1 %s -mpi -object=%s", abspath, (const char *)t.objname);
             }
         }
     }

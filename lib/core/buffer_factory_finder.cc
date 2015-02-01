@@ -200,7 +200,7 @@ void * paroc_buffer_factory_finder::LoadPlugin(char *fname, paroc_buffer_factory
             return NULL;
         }
     } else {
-        printf("POP-C++ Error: [CORE]:%s: %s",fname,popc_dlerror());
+        LOG_ERROR("POP-C++ Error: [CORE]:%s: %s",fname,popc_dlerror());
         popc_dlclose(handle);
         return NULL;
     }
