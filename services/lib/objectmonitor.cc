@@ -43,7 +43,7 @@ ObjectMonitor::~ObjectMonitor() {
 
 void ObjectMonitor::KillAll() {
     mutex {
-        printf("POP-C++: End of all parallel objects is being processed\n");
+        LOG_INFO("POP-C++: End of all parallel objects is being processed");
         POSITION pos=objects.GetHeadPosition();
         while(pos!=NULL) {
             paroc_accesspoint &t=objects.GetNext(pos);

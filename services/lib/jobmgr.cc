@@ -345,7 +345,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
     FILE *f=fopen(conf,"rt");
     char val[256];
     if(f==NULL) {
-        printf("Open config file [%s] fail\n",(const char*)conf);
+        LOG_WARNING("Open config file [%s] fail",(const char*)conf);
         paroc_exception::paroc_throw(errno,(const char*)conf);
     }
 
@@ -507,7 +507,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
         if(t!=NULL) {
             localuid=t->pw_uid;
         }
-        printf("localuid=%d\n", localuid);
+        LOG_INFO("localuid=%d", localuid);
 #endif
     }
 

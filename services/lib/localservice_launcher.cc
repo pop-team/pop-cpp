@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
 
         //print out the contact string....
         if(f==NULL) {
-            printf("%s\n",info.GetAccessPoint().GetAccessString());
+            LOG_INFO("%s",info.GetAccessPoint().GetAccessString());
         } else {
             fprintf(f,"%s",info.GetAccessPoint().GetAccessString());
             fclose(f);
