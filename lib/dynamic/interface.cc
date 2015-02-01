@@ -70,7 +70,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
     int pid=popc_fork();
     if(pid==-1) {
         int err=errno;
-        printf("POP-C++ Error: [CORE] Fork fails to execute. Can't run command. errno=%d\n ", errno);
+        LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
         return err;
     } else if(pid==0) {
         int nf=popc_getdtablesize();
@@ -88,7 +88,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
         }
         //Child process
         popc_execvp(file,argv);
-        printf("POP-C++ Error: [CORE] Execution of [%s] fails\n",file);
+        LOG_ERROR("[CORE] Execution of [%s] fails",file);
         popc__exit(-1);
     }
 #else
@@ -108,7 +108,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
     sInfoSource.cb = sizeof(sInfoSource);
 
     if(!CreateProcess(NULL, command_line, NULL, NULL, FALSE, 0, NULL, NULL, &sInfoSource, &pInfoSource)) {
-        printf("CreateProcess failed (%d).\n", GetLastError());
+        LOG_ERROR("CreateProcess failed (%d).", GetLastError());
         return -1;
     }
 
@@ -122,11 +122,11 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
     int pid=popc_vfork();
     if(pid==-1) {
         int err=errno;
-        printf("POP-C++ Error: [CORE] Fork fails to execute! errno=%d\n", errno);
+        LOG_ERROR("[CORE] Fork fails to execute! errno=%d", errno);
         return err;
     } else if(pid==0) {
         execve(file,argv,env);
-        printf("POP-C++ Error: [CORE] Execution of [%s] fail (popc_vfork)\n",file);
+        LOG_ERROR("[CORE] Execution of [%s] fail (popc_vfork)",file);
         popc__exit(-1);
     }
 #endif
@@ -218,7 +218,7 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
  * Interface destructor
  */
 paroc_interface::~paroc_interface() {
-    //printf("Destroy interface %s\n", ClassName());
+    LOG_INFO("Destroy interface %s", ClassName());
     Release();
 }
 
@@ -400,7 +400,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     Tokenize(od_prots,pref);
 
     if(pref.IsEmpty()) {
-        //printf("INTERFACE: Bind without preference \n");
+        LOG_DEBUG("INTERFACE: Bind without preference");
         //No preferred protocol in OD specified, try the first protocol in dest
         POSITION pos = accesslist.GetHeadPosition();
         while(pos != NULL) {
@@ -444,7 +444,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
 }
 
 void paroc_interface::Bind(const char *dest) {
-    //printf("INTERFACE: Bind (%s) - %s\n", ClassName(), dest);
+    LOG_DEBUG("INTERFACE: Bind (%s) - %s", ClassName(), dest);
     Release();
     if(!dest || *dest==0) {
         return;
@@ -512,7 +512,7 @@ void paroc_interface::Bind(const char *dest) {
         char* local_address = new char[15];
         snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
 
-        //printf("Spoof of address %s to %s\n", connect_dest.c_str(), local_address);
+        LOG_DEBUG("Spoof of address %s to %s", connect_dest.c_str(), local_address);
         create_return = __paroc_combox->Create(local_address, false);
         connect_return = __paroc_combox->Connect(local_address);
 
@@ -545,7 +545,7 @@ void paroc_interface::Bind(const char *dest) {
         POPString info;
         POPString peerplatform;
         BindStatus(status, peerplatform, info);
-        //printf("INTERFACE: Got bind status %d\n", status);
+        LOG_DEBUG("INTERFACE: Got bind status %d", status);
 
         switch(status) {
         case BIND_OK:
@@ -558,7 +558,7 @@ void paroc_interface::Bind(const char *dest) {
             paroc_accesspoint old(accesspoint);
             paroc_accesspoint newap;
             newap.SetAccessString(info);
-            printf("Forward current session to %s", (const char *)info);
+            LOG_INFO("Forward current session to %s", (const char *)info);
             Bind(newap);
 
             if(status==BIND_FORWARD_SESSION) {
@@ -569,7 +569,7 @@ void paroc_interface::Bind(const char *dest) {
         }
 
         default:
-            //printf("INTERFACE: Unknown binding status");
+            LOG_WARNING("INTERFACE: Unknown binding status");
             Release();
             paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName());
         }
@@ -695,7 +695,7 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
     __paroc_buf->Push("info","POPString",1);
     __paroc_buf->UnPack(&info,1);
     __paroc_buf->Pop();
-//  printf("INTERFACE: request bindstatus done\n");
+    LOG_DEBUG("INTERFACE: request bindstatus done");
 }
 
 
@@ -750,7 +750,7 @@ bool paroc_interface::Encoding(POPString encoding) {
     paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(encoding);
 
     if(!fact) {
-        printf("POP-C++ Error: [CORE] No encoding factory for %s\n", (const char *)encoding);
+        LOG_ERROR("[CORE] No encoding factory for %s", (const char *)encoding);
         return false;
     }
 
@@ -864,7 +864,7 @@ bool paroc_interface::RecvCtrl() {
 #endif
 
 void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatform) {
-//  printf("INTERFACE: Negotiate encoding start\n");
+    LOG_DEBUG("INTERFACE: Negotiate encoding start");
     POPString pref;
     od.getEncoding(pref);
     paroc_list<char *> enc_pref, enc_avail;
@@ -1178,7 +1178,7 @@ void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
     }
 }
 
-// DEPRECATED
+// DEPRECATED // TODO LW: See what to do
 void paroc_interface::paroc_Response(paroc_buffer *buf) {
     if(!buf->Recv(*__paroc_combox)) {
         printf("Throw from response\n");
@@ -1194,7 +1194,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
     if(!buf->Send((*__paroc_combox), conn)) {
         paroc_exception::paroc_throw_errno();
     }
-    //printf("INTERFACE: paroc_dispatch connection %s\n", (__paroc_connection == NULL) ? "is null" : "is not null");
+    LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == NULL) ? "is null" : "is not null");
 }
 
 /**
@@ -1204,7 +1204,7 @@ void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* con
     if(!buf->Recv((*__paroc_combox), conn)) {
         paroc_exception::paroc_throw_errno();
     }
-    //printf("INTERFACE: paroc_response will disconnect the connection\n");
+    LOG_DEBUG("INTERFACE: paroc_response will disconnect the connection");
     paroc_buffer::CheckAndThrow(*buf);
 }
 

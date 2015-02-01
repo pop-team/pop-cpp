@@ -27,15 +27,16 @@
 #include <stdlib.h> 
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 
 int popc_logger(LOGLEVEL level, const char* file, int line, const char* function, const char *format,...) {
     static const char* LOG_LEVEL_PREFIX[__LAST__] = {
-        "[DEBUG]",
-        "[INFO]",
-        "[CORE]",
-        "[WARNING]",
-        "[ERROR]"
+        "DEBUG",
+        "INFO ",
+        "CORE ",
+        "WARN ",
+        "ERROR"
     };
 
     // Check if message level in higher than our threshold (hard-coded for now)
@@ -51,27 +52,30 @@ int popc_logger(LOGLEVEL level, const char* file, int line, const char* function
     char *tmp=getenv("POPC_TEMP");
     char logfile[256];
     if(tmp!=NULL) {
-        sprintf(logfile,"%s/popc_log",tmp);
+        sprintf(logfile,"%s/popc1.log",tmp); // Check that log is not monopolized by root TODO LW and check 
     } else {
-        strcpy(logfile, "/tmp/popc_log.log");
+        sprintf(logfile, "/tmp/popc.log");
     }
 
+
+    // Time
+    time_t rawtime;
+    time(&rawtime);
+    const tm* timeinfo = localtime (&rawtime);
+    char dd[20];
+    strftime(dd, sizeof(dd), "%Y-%m-%d %H:%M:%S", timeinfo);
+
+    char msg[512];
+    va_list ap;
+    va_start(ap, format);
+    vsprintf(msg, format, ap);
+    va_end(ap);
+    // Print the message to file
     FILE *f=fopen(logfile,"a");
     if(f==NULL) {
         return 1;
     }
-    time_t t=time(NULL);
-    va_list ap;
-    va_start(ap, format);
-
-    // Print the message to file
-    fprintf(f, "%s ",  LOG_LEVEL_PREFIX[level]);
-    vfprintf(f, format, ap);
-    fprintf(f, "(%s:%d %s)", basename, line, function);
-    fprintf(f, ", %s", ctime(&t));
-    //no need to break line since ctime already does it
-    //fprintf(f,"%s","\n");
-    va_end(ap);
+    fprintf(f, "%s %5d %s %s (%s:%d %s)\n", dd, getpid(), LOG_LEVEL_PREFIX[level], msg, basename, line, function);
     fclose(f);
     return 0;
 }
