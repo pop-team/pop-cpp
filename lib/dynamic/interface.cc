@@ -218,7 +218,7 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
  * Interface destructor
  */
 paroc_interface::~paroc_interface() {
-    LOG_INFO("Destroy interface %s", ClassName());
+    LOG_DEBUG("Destroy interface %s", ClassName());
     Release();
 }
 

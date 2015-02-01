@@ -40,6 +40,7 @@ int popc_logger(LOGLEVEL level, const char* file, int line, const char* function
     };
 
     // Check if message level in higher than our threshold (hard-coded for now)
+    // TODO: Implement different logging levels
     if(level < __DEBUG__)
         return 0;
 
@@ -70,9 +71,17 @@ int popc_logger(LOGLEVEL level, const char* file, int line, const char* function
     va_start(ap, format);
     vsprintf(msg, format, ap);
     va_end(ap);
+
+    // Print the message to stderr or stdout
+    if(level >= __CORE__)
+        fprintf(stderr, "%s %5d %s %s (%s:%d %s)\n", dd, getpid(), LOG_LEVEL_PREFIX[level], msg, basename, line, function);
+    else if(level >= __INFO__)
+        fprintf(stdout, "%s\n", msg);
+
     // Print the message to file
     FILE *f=fopen(logfile,"a");
     if(f==NULL) {
+        fprintf(stderr, "ERROR: Impossible to open log file %s\n", logfile);
         return 1;
     }
     fprintf(f, "%s %5d %s %s (%s:%d %s)\n", dd, getpid(), LOG_LEVEL_PREFIX[level], msg, basename, line, function);
