@@ -429,7 +429,7 @@ int main(int argc, char *argv[]) {
     bool client = (paroc_utils::checkremove(&argc, &argv, "-parclass-nointerface") == NULL);
     bool usepipe = false;
 #ifndef __WIN32__
-    usepipe = false; (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
+    usepipe = (paroc_utils::checkremove(&argc, &argv, "-nopipe") == NULL);
 #endif
     bool kcomputer = (paroc_utils::checkremove(&argc, &argv, "-kcomputer") == NULL);
     bool enablexmp = (paroc_utils::checkremove(&argc, &argv, "-xmp") != NULL);
