@@ -17,7 +17,7 @@ testobject.obj: testobject.cc testobject.ph
 clean:
 	rm -f *.o *.obj main log.log
 
-run:
+run: all
 	popcrun obj.map ./main > log.log
 	# Comparing log with expected log
 	diff log.log expected.log
