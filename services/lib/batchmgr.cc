@@ -10,15 +10,12 @@
 
 #include "batchmgr.ph"
 
-BatchMgr::BatchMgr(const POPString &challenge): paroc_service_base(challenge) {
-    nodeCount=0;
-}
-BatchMgr::~BatchMgr() {
+BatchMgr::BatchMgr(const POPString &challenge): paroc_service_base(challenge), nodeCount(0) {
+    //Nothing else to init
 }
 
 int BatchMgr::NextNode() {
     // Return the next node for batch object execution.
     // We start with 1, since the main runs on node 0.
-    nodeCount++;
-    return nodeCount;
+    return ++nodeCount;
 }

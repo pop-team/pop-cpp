@@ -54,13 +54,11 @@ AppCoreService::~AppCoreService() {
     try {
         JobMgr jm(paroc_system::jobservice);
         jm.ApplicationEnd(_popcAppId, true);
-    } catch(...) {
+    } catch(...) {}
 
-    }
-
-    POSITION pos=servicelist.GetHeadPosition();
-    while(pos!=NULL) {
-        ServiceEntry &t=servicelist.GetNext(pos);
+    auto pos=servicelist.GetHeadPosition();
+    while(pos) {
+        auto& t = servicelist.GetNext(pos);
         free(t.name);
         try {
             t.service->Stop(mychallenge);
@@ -75,9 +73,9 @@ bool AppCoreService::QueryService(const POPString &name, paroc_service_base &ser
         return false;
     }
 
-    POSITION pos=servicelist.GetHeadPosition();
-    while(pos!=NULL) {
-        ServiceEntry &t=servicelist.GetNext(pos);
+    auto pos=servicelist.GetHeadPosition();
+    while(pos) {
+        auto& t=servicelist.GetNext(pos);
         if(paroc_utils::isncaseEqual(name,t.name)) {
             service=(*t.service);
             return true;
@@ -91,14 +89,15 @@ bool AppCoreService::QueryService(const POPString &name, paroc_accesspoint &serv
         return false;
     }
 
-    POSITION pos=servicelist.GetHeadPosition();
-    while(pos!=NULL) {
-        ServiceEntry &t=servicelist.GetNext(pos);
+    auto  pos=servicelist.GetHeadPosition();
+    while(pos) {
+        auto& t = servicelist.GetNext(pos);
         if(paroc_utils::isncaseEqual(name,t.name)) {
-            service=(t.service)->GetAccessPoint();
+            service=t.service->GetAccessPoint();
             return true;
         }
     }
+
     return false;
 }
 
@@ -123,10 +122,10 @@ bool AppCoreService::UnregisterService(const POPString &name) {
         return false;
     }
 
-    POSITION pos=servicelist.GetHeadPosition();
-    while(pos!=NULL) {
-        POSITION old=pos;
-        ServiceEntry &t=servicelist.GetNext(pos);
+    auto pos=servicelist.GetHeadPosition();
+    while(pos) {
+        auto old = pos;
+        auto& t = servicelist.GetNext(pos);
         if(paroc_utils::isncaseEqual(name,t.name)) {
             delete t.service;
             free(t.name);
@@ -206,9 +205,6 @@ POPString AppCoreService::GetPOPCAppID() {
     return _popcAppId;
 }
 
-
-
-
 int popc_appservice_log(const char *format,...) {
     char *tmp=getenv("POPC_TEMP");
     char logfile[256];
@@ -231,4 +227,8 @@ int popc_appservice_log(const char *format,...) {
     va_end(ap);
     fclose(f);
     return 0;
+
+
+
+
 }

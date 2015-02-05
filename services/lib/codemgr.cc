@@ -17,6 +17,7 @@
 #include "popc_logger.h"
 
 CodeMgr::CodeMgr(const POPString &challenge): paroc_service_base(challenge) {
+    //Nothing else to init
 }
 
 CodeMgr::~CodeMgr() {
@@ -33,13 +34,15 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
         return;
     }
 
-    int n=info.GetSize();
+    auto n=info.GetSize();
     int i;
-    codedb *element;
-    for(i=0; i<n; i++) if(paroc_utils::isEqual(objname,info[i].objname)) {
+    for(i=0; i<n; i++){
+        if(paroc_utils::isEqual(objname,info[i].objname)) {
             break;
         }
+    }
 
+    codedb *element;
     if(i<n) {
         element=&(info[i]);
     } else {
@@ -49,9 +52,11 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
     }
 
     n=element->platform.GetSize();
-    for(i=0; i<n; i++) if(paroc_utils::isEqual(platform,element->platform[i].platform)) {
+    for(i=0; i<n; i++){
+        if(paroc_utils::isEqual(platform,element->platform[i].platform)) {
             break;
         }
+    }
 
     if(i<n) {
         DEBUG("Changing (%s, %s) -> %s\n",element->objname,element->platform[i].platform,(const char *)codefile);
@@ -64,13 +69,16 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
 }
 
 int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPString &codefile) {
-    codefile=NULL;
-    int n=info.GetSize();
-    int i;
+    codefile=nullptr;
+    auto n=info.GetSize();
     codedb *element;
-    for(i=0; i<n; i++) if(paroc_utils::isEqual(objname,info[i].objname)) {
+
+    int i;
+    for(i=0; i<n; i++){
+        if(paroc_utils::isEqual(objname,info[i].objname)) {
             break;
         }
+    }
 
     if(i>=n) {
         return 0;
@@ -78,28 +86,37 @@ int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPS
 
     element=&(info[i]);
     n=element->platform.GetSize();
-    for(i=0; i<n; i++) if(paroc_utils::MatchWildcard(platform,element->platform[i].platform)) {
+    for(i=0; i<n; i++){
+        if(paroc_utils::MatchWildcard(platform,element->platform[i].platform)) {
             break;
         }
+    }
 
     if(i>=n) {
         return 0;
     }
+
     codefile=element->platform[i].codefile;
+
     return 1;
 }
 
 int CodeMgr::GetPlatform(const POPString &objname, POPString &platform) {
-    platform=NULL;
-    int n=info.GetSize();
+    platform=nullptr;
+    auto n=info.GetSize();
+
     int i;
-    for(i=0; i<n; i++) if(paroc_utils::isEqual(objname,info[i].objname)) {
+    for(i=0; i<n; i++){
+        if(paroc_utils::isEqual(objname,info[i].objname)) {
             break;
         }
+    }
+
     if(i>=n) {
         return 0;
     }
-    codedb &element=info[i];
+
+    auto& element=info[i];
     n=element.platform.GetSize();
     for(i=0; i<n; i++) {
         platform+=element.platform[i].platform;
@@ -107,5 +124,6 @@ int CodeMgr::GetPlatform(const POPString &objname, POPString &platform) {
             platform+=" ";
         }
     }
+
     return n;
 }
