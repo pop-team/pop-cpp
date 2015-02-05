@@ -19,22 +19,8 @@ void MethodCall() {
     TestMethod t;
     sleep(1);
 
-    t.TestConc1();
-    //  sleep(1);
     t.TestSeq1();
-    //  sleep(1);
     t.TestSeq2();
-    //  sleep(1);
-    t.TestConc2();
-
-    //  sleep(1);
-    t.TestMutex();
-
-    t.TestConc3();
-    sleep(1);
-    t.TestSeq3();
-    t.TestConc3();
 
     printf("Wait results...\n");
-//  sleep(120);
 }
