@@ -18,6 +18,9 @@ set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
 # Activate some warnings
 add_definitions(-Wall -Wextra -Werror)
 
+# Compile in C++11 mode
+add_definitions(-std=c++11)
+
 if(WIN32)
     set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc.exe)
     set(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp.exe)

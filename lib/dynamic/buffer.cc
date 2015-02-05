@@ -197,7 +197,7 @@ bool paroc_buffer::Send(paroc_connection *conn) {
     if(conn == NULL) {
         return false;
     }
-    paroc_combox *combox = conn->GetCombox();
+    auto combox = conn->GetCombox();
     return Send(*combox, conn);
 }
 
@@ -206,7 +206,7 @@ bool paroc_buffer::Recv(paroc_connection *conn) {
         printf("conn==NULL\n");
         return false;
     }
-    paroc_combox *combox=conn->GetCombox();
+    auto combox = conn->GetCombox();
     return Recv(*combox, conn);
 }
 
