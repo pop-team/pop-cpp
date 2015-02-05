@@ -339,7 +339,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
         prepare_source(source, tmpfile1, options);
 
         //Run the C++ preprocessor
-        std::size_t count = cxx_preprocessor(preprocessor, pre_opt, tmpfile1, tmpfile2, cmd, options);
+        auto count = cxx_preprocessor(preprocessor, pre_opt, tmpfile1, tmpfile2, cmd, options);
 
         //Run the POPC++ preprocessor
         ret = popc_preprocessor(popcpp, tmpfile1, tmpfile2, tmpfile3, cmd, count, options);
