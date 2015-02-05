@@ -4,8 +4,8 @@ parclass TestMethod {
 public:
     TestMethod()@{od.url("localhost");};
 
-    async seq void TestSeq1();
-    async seq void TestSeq2();
+    seq void TestSeq1();
+    seq void TestSeq2();
 
     classuid(1001);
 
