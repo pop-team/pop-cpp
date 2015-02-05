@@ -97,7 +97,7 @@ void DisplayVersion() {
 /**
  * Prepare POP-C++ source file. Generate _popc1_ files.
  */
-void prepare_source(char *src, char *dest, const popc_options& options) {
+void prepare_source(const char *src, const char *dest, const popc_options& options) {
     FILE *sf = fopen(src, "r+t");
     if(!sf) {
         perror(src);
@@ -109,13 +109,13 @@ void prepare_source(char *src, char *dest, const popc_options& options) {
         exit(1);
     }
 
-    char buf[1024];
     if(options.advanced) {
         fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n#include \"popc_advanced_header.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
     } else {
         fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
     }
 
+    char buf[1024];
     buf[1023] = 0;
     while(fgets(buf, 1023, sf)) {
         if(fputs(buf,df) == EOF) {
@@ -131,7 +131,7 @@ void prepare_source(char *src, char *dest, const popc_options& options) {
 /**
  * Run the C++ preprocessor
  */
-std::size_t cxx_preprocessor(const char *preprocessor, char *pre_opt[], char* tmpfile1, char* tmpfile2, const char** cmd, const popc_options& options){
+std::size_t cxx_preprocessor(const char *preprocessor, const char** pre_opt, const char* tmpfile1, const char* tmpfile2, const char** cmd, const popc_options& options){
     std::size_t count = 0;
     cmd[count++] = preprocessor;
 
@@ -139,7 +139,7 @@ std::size_t cxx_preprocessor(const char *preprocessor, char *pre_opt[], char* tm
         cmd[count++] = "-std=cpp11";
     }
 
-    for(char **t2 = pre_opt; *t2; t2++) {
+    for(auto t2 = pre_opt; *t2; t2++) {
         cmd[count++] = *t2;
     }
     cmd[count++] = tmpfile1;
@@ -230,7 +230,7 @@ int popc_preprocessor(const char* popcpp, const char* tmpfile1, const char* tmpf
 }
 
 // Run C++ compiler
-int cxx_compiler(char* cpp, char** cpp_opt, char* source, char** dest, char* tmpfile3, char* str, bool paroc, int ret, const popc_options& options){
+int cxx_compiler(char* cpp, const char** cpp_opt, const char* source, char** dest, const char* tmpfile3, char* str, bool paroc, int ret, const popc_options& options){
     static char output[1024];
 
     const char *cmd[1000];
@@ -242,7 +242,7 @@ int cxx_compiler(char* cpp, char** cpp_opt, char* source, char** dest, char* tmp
         cmd[count++] = "-std=cpp11";
     }
 
-    for(char **t2 = cpp_opt; *t2; t2++) {
+    for(auto t2 = cpp_opt; *t2; t2++) {
         cmd[count++] = *t2;
     }
 
@@ -279,8 +279,9 @@ int cxx_compiler(char* cpp, char** cpp_opt, char* source, char** dest, char* tmp
     return ret;
 }
 
-char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, const popc_options& options) {
+char *Compile(const char *preprocessor, char *popcpp, char *cpp, const char** pre_opt, const char** cpp_opt, char *source, char *dest, const popc_options& options) {
     const char *cmd[1000];
+
     char sdir[1024];
     char tmpfile1[1024];
     char tmpfile2[1024];
@@ -289,8 +290,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
     bool paroc = false;
     int ret = 0;
 
-    char *fname = strrchr(source, '/');
-
+    auto fname = strrchr(source, '/');
     if(fname) {
         fname++;
         int n = fname - source;
@@ -302,7 +302,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
     }
 
     // Get the extension
-    char *str = strrchr(fname, '.');
+    auto str = strrchr(fname, '.');
     if(!str) {
         return nullptr;
     }
@@ -518,13 +518,13 @@ int main(int argc, char *argv[]) {
         strcpy(parocld, parocxx);
     }
 
-    char *cpp_opts[1000];
+    const char *cpp_opts[1000];
     int cpp_count = 0;
 
-    char *cxx_opts[1000];
+    const char *cxx_opts[1000];
     int cxx_count = 0;
 
-    char *tok = strtok(cpp, " \t");
+    auto tok = strtok(cpp, " \t");
     while((tok = strtok(nullptr, " \t"))) {
         cpp_opts[cpp_count++] = tok;
     }
@@ -652,7 +652,8 @@ int main(int argc, char *argv[]) {
                         if(options.verbose) {
                             printf("\n");
                         }
-                        char *outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile)) ? nullptr :  outputfile), options);
+
+                        auto outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile)) ? nullptr :  outputfile), options);
                         link_cmd[link_count++] = !outf ? argv[i] : popc_strdup(outf);
                         continue;
                     }
