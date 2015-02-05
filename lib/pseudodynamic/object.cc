@@ -1,54 +1,60 @@
 /**
- * File : object.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of the parallel object-object-side
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
- * P.KUONEN    2011/2      ~paroc_object(), suppress error mess.:Can not unregister...
- * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of the parallel object-object-side
+ *
+ *
+ */
+
+/*
+  Deeply need refactoring:
+    POPC_ObjectCore instead of paroc_object
  */
 
 #include "paroc_object.h"
 #include "paroc_mutex.h"
 #include "paroc_interface.h"
 #include "paroc_event.h"
-#include "paroc_system.h"
 #include "paroc_broker.h"
+#include "paroc_system.h"
 
-
-int paroc_object::argc = 0;
-char **paroc_object::argv = NULL;
+int paroc_object::argc=0;
+char **paroc_object::argv=NULL;
 
 paroc_object::paroc_object() {
-    refcount = 1;
+    refcount=1;
     if(!paroc_system::appservice.IsEmpty()) {
         paroc_accesspoint myself=GetAccessPoint();
-        /*try {
+	/* Note: no call to dynamical objects are possible
+        try {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.ManageObject(myself);
-        } catch (...) {
-            printf("Can not register %s@%s to ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
-        }*/
+        } catch(...) {
+            rprintf("Can not register %s@%s to ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
+        }
+        */
     }
+
 }
 
 paroc_object::~paroc_object() {
-    /*if (!paroc_system::appservice.IsEmpty())
-    {
+/* Note: no call to dynamical objects are possible
+    if(!paroc_system::appservice.IsEmpty()) {
         paroc_accesspoint myself=GetAccessPoint();
-        try
-        {
+        try {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.UnManageObject(myself);
+        } catch(...) {
+            // Did not find the object to unregister V1.3.1m: suppress error mess.
+            //rprintf("Can not unregister %s@%s from ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
         }
-        catch (...)
-        {
-      // Did not find the object to unregister V1.3.1m: suppress error mess.
-            //printf("Can not unregister %s@%s from ObjectMonitor service!\n",(const char *)paroc_broker::classname, myself.GetAccessString());
-        }
-    }*/
+    }
+    */
+
 }
 
 const paroc_accesspoint & paroc_object::GetAccessPoint() const {
@@ -80,7 +86,7 @@ int paroc_object::DecRef() {
     return refcount;
 }
 
-bool paroc_object::CanKill() {
+bool  paroc_object::CanKill() {
     return  true;
 }
 

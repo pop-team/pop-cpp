@@ -1,13 +1,19 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: parallel object description data and interface
-
-UPDATES :
-Authors     Date            Comment
-clementval  2010/05/06  All code added for the semester project begin with this comment //Added by clementval
-clementval  2010/05/06  Add object description for search parameter
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief parallel object description data and interface
+ *
+ * UPDATES :
+ * Authors      Date              Comment
+ * clementval   2010/05/06  All code added for the semester project begin with this comment //Added by clementval
+ * clementval 2010/05/06    Add object description for search parameter
+ *
  */
+
 
 
 #ifndef _POPC_OD_H
@@ -69,6 +75,13 @@ public:
      * @param h machine ip or name
      */
     void url(const char *h);
+
+    void node(int value);
+    void core(int value);
+
+
+
+
     /**
     * @brief Specifies the address requirement for the target machine (no JobMgr used)
     * Syntaxe : user@ip{core}:port
@@ -122,6 +135,9 @@ public:
     void getJobURL(paroc_string &joburl) const;
     void getExecutable(paroc_string &exec) const;
 
+    int get_node() const;
+    int get_core() const;
+
     void getProtocol(paroc_string &proto) const;
     void getEncoding(paroc_string &encode) const;
     bool getIsManual() const;
@@ -160,6 +176,10 @@ protected:
     float net, min_net;
     float time;
     bool isManual;
+
+    int node_value;
+    int core_value;
+
     paroc_string cwd;
 
     paroc_string hostname; /*only for use with od.url*/

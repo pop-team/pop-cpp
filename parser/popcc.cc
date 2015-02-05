@@ -628,7 +628,7 @@ int main(int argc, char *argv[]) {
     }
 
     if(options.psdyn) {
-        sprintf(buf, "-I%s/include/static", parocdir);
+        sprintf(buf, "-I%s/include/pseudodynamic", parocdir);
     } else {
         sprintf(buf, "-I%s/include/dynamic", parocdir);
     }

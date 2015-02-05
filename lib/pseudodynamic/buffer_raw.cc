@@ -1,13 +1,19 @@
 /**
- * File : buffer_raw.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of raw message buffer
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of raw message buffer.
+ *
+ *
  */
 
+/*
+  Deeply need refactoring:
+    POPC_BufferRAW instead of paroc_buffer_raw
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -355,21 +361,18 @@ void paroc_buffer_raw::CheckUnPack(int sz) {
 }
 
 bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
-    // Send the header first as 20 bytes packet
-    printf("RAW: Send\n");
+    // Pack the header (20 bytes)
+    char *dat = (char *)packeddata;
 
-    char *data = (char *)packeddata;
-    if(data == NULL) {
+    if(dat == NULL) {
         return false;
     }
-
     int n = packeddata.GetSize();
     int h[5];
     memset(h, 0, 5 * sizeof(int));
 
     int type = header.GetType();
 
-    printf("RAW: Set message size to %d\n", n);
     h[0] = n;
     h[1] = type;
 
@@ -389,25 +392,24 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     default:
         return false;
     }
-
-    memcpy(data, h, 20);
+    memcpy(dat, h, 20);
 
     // MPI mod - beg
     char* data_header = new char[20];
     memcpy(data_header, h, 20);
 
-    if(s.Send(data_header, 20, conn, true)) {
+    if(s.Send(data_header, 20, conn)) {
         printf("Error while sending header\n");
         return false;
     }
     // MPI mod - end
 
-    data += 20;
+    dat += 20;
     n -= 20;
     if(n > 0) {
         printf("RAW: Send message size is %d: %s\n", n, (char*)packeddata);
-        if(s.Send(data, n, conn, false) < 0) {
-            DEBUG("Fail to send a message!");
+        if(s.Send(dat, n, conn) < 0) {
+        printf("Fail to send a message!\n");
             return false;
         }
     }
@@ -416,17 +418,13 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
 }
 
 // Propagation of exceptions back to caller...
-
 bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
-
-    printf("RAW: Recv\n");
     int h[5];
     int n;
 
-    //Recv the header...
-
-    char *data_header = (char *)h;
-    s.Recv(data_header, 20, conn, true);
+    //Recv the header
+    char *dat = (char *)h;
+    s.Recv(dat, 20, conn);
     printf("RAW: header received\n");
     /*  n = 20;
         do {
@@ -439,10 +437,8 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
 
     Reset();
     n = h[0];
-
-
     if(n<20) {
-        DEBUG("Bad message header(size error:%d)",n);
+        printf("POP-C++ Error: [CORE] - Buffer RAW - bad message header (size error:%d)\n", n);
         return false;
     }
 
@@ -469,9 +465,9 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     n -= 20;
 
     if(n > 0) {
-        data_header = (char *)packeddata+20;
+        dat = (char *)packeddata+20;
         printf("RAW: ready to receive %d\n", n);
-        s.Recv(data_header, n, conn, false);
+        s.Recv(dat, n, conn);
         printf("RAW: received %d\n", n);
     }
     /*
@@ -484,6 +480,50 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
             n -= i;
         }*/
     return true;
+}
+
+int paroc_buffer_raw::get_size() {
+    return packeddata.GetSize();
+}
+
+char* paroc_buffer_raw::get_load() {
+    // Pack the header (20 bytes)
+    char *dat = (char *)packeddata;
+
+    if(dat == NULL) {
+        return NULL;
+    }
+    int n = packeddata.GetSize();
+    int h[5];
+    memset(h,0, 5 * sizeof(int));
+
+    int type = header.GetType();
+
+    h[0] = n;
+    h[1] = type;
+
+    switch(type) {
+    case TYPE_REQUEST:
+        h[2] = header.GetClassID();
+        h[3] = header.GetMethodID();
+        h[4] = header.GetSemantics();
+        break;
+    case TYPE_EXCEPTION:
+        h[2] = header.GetExceptionCode();
+        break;
+    case TYPE_RESPONSE:
+        h[2] = header.GetClassID();
+        h[3] = header.GetMethodID();
+        break;
+    default:
+        return NULL;
+    }
+    memcpy(dat, h, 20);
+    return (char *)packeddata;
+}
+
+void paroc_buffer_raw::load(char* data, int length) {
+    memcpy(packeddata, data, length);
 }
 
 #ifdef OD_DISCONNECT

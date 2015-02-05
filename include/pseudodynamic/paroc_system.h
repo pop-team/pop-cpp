@@ -1,21 +1,26 @@
-/*----paroc_system.h------------------
-AUTHORS: Tuan Anh Nguyen
-DESCRIPTION: system stuffs and declarations used by the runtime
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief system stuffs and declarations used by the runtime
+ *
+ *
 Modified by L.Winkler (2008-2009) for Version 1.3
             P.Kuonen February 2010 (POPC_Host_Name attribut)
             for version 1.3m (see comments 1.3m)
+ */
 
- -----------------------------------*/
 #ifndef _POPC_SYSTEM_H
 #define _POPC_SYSTEM_H
 #include <paroc_accesspoint.h>
 
-#include "paroc_mutex.h"
-
-// if MPI
-#include <mpi.h>
-// endif MPI
-
+#ifndef __WIN32__
+#include <net/if.h>
+#include <ifaddrs.h>
+#endif
 #define DEFAULTPORT  2711
 
 // For set processor
@@ -39,7 +44,7 @@ public:
     ~paroc_system();
 
     static bool Initialize(int *argc,char ***argv);//only for the main...
-    static void Finalize(bool normal_exit); //only for the main...
+    static void Finalize(bool normalExit); //only for the main...
 
     /**
      * @brief Returns host of node in string format
@@ -94,23 +99,11 @@ public:
 public:
     static paroc_accesspoint appservice;
     static paroc_accesspoint jobservice;
-
-    static paroc_accesspoint popcloner;
+    static int pop_current_local_address;
+    static int popc_local_mpi_communicator_rank;
+    // static paroc_accesspoint popcloner;
     static paroc_string platform;
     static std::ostringstream _popc_cout;
-
-// if MPI
-
-    static int current_free_process;
-
-    static MPI::Intracomm popc_self;
-    static bool is_remote_object_process;
-    static bool mpi_has_to_take_lock;
-
-    static paroc_condition mpi_unlock_wait_cond;
-    static paroc_condition mpi_go_wait_cond;
-// end if MPI
-
 
 private:
     static const char *paroc_errstr[17];

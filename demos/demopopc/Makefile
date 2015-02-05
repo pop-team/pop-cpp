@@ -1,5 +1,5 @@
-POPCC=../../parser/popcc
-POPCPP=../../parser/popcpp
+POPCC=popcc
+POPCPP=popcpp
 POPCPATH=../..
 # CROSSCOMPILE=-cxx=FCCpx -Xg -pthread -cpp="FCCpx -E"
 # POPCCOMPILE=-popc-static -popcdir=$(POPCPATH) -popcpp=$(POPCPP) $(CROSSCOMPILE)

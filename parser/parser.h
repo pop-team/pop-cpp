@@ -31,7 +31,6 @@ typedef long YYSTYPE; // We force the declaration as long to avoid compilation p
 #define CONC    16
 #define USERPROC 32
 #define PARAMSIZE  64
-//#define OBJ_POSTFIX "__parocobj"
 #define OBJ_POSTFIX "_popcobject"
 #define TMP_CODE_PREFIX "_paroc_"
 

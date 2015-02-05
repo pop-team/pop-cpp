@@ -8,6 +8,9 @@
  * @brief system stuffs and declarations used by the runtime
  *
  *
+Modified by L.Winkler (2008-2009) for Version 1.3
+            P.Kuonen February 2010 (POPC_Host_Name attribut)
+            for version 1.3m (see comments 1.3m)
  */
 
 #ifndef _POPC_SYSTEM_H
@@ -98,6 +101,7 @@ public:
     static paroc_accesspoint jobservice;
     static int pop_current_local_address;
     static int popc_local_mpi_communicator_rank;
+    // static paroc_accesspoint popcloner;
     static paroc_string platform;
     static std::ostringstream _popc_cout;
 

@@ -567,6 +567,12 @@ void paroc_buffer_xdr::CheckUnPack(int sz) {
     }
 }
 
+/**
+ * Send the packed data to the matching combox
+ * @param s
+ * @param conn
+ * @return
+ */
 bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
     char *dat=(char *)packeddata;
@@ -726,7 +732,6 @@ void paroc_buffer_xdr::load(char* data, int length) {
 
     int type = popc_ntohl(h[1]);
     header.SetType(type);
-
     switch(type) {
     case TYPE_REQUEST:
         header.SetClassID(popc_ntohl(h[2]));

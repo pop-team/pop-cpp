@@ -1,15 +1,19 @@
 /**
- * File : debug.cc
- * Author : Tuan Anh Nguyen
- * Description : Methods to print debug line
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Methods to print debug line.
+ *
+ *
  */
 
-#include <stdio.h>
-#include <stdarg.h>
+#include "popc_intface.h"
+
+//#include <stdio.h>
+//#include <stdarg.h>
 #include "debug.h"
 
 #ifndef NDEBUG

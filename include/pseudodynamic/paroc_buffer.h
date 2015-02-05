@@ -1,8 +1,14 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: buffer abstract class used to pack/unpack data.
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Buffer abstract class used to pack/unpack data.
+ *
  */
+
 
 #ifndef _POPC_DATAPACK_MARSHAL_H
 #define _POPC_DATAPACK_MARSHAL_H
@@ -36,7 +42,7 @@ DESCRIPTION: buffer abstract class used to pack/unpack data.
 #define EXCEPTION_POPC_STD 14
 
 
-//bit FLAGS values customized marshalling/demarshalling procedure....
+// bit FLAGS values customized marshalling/demarshalling procedure
 #define FLAG_MARSHAL  2
 #define FLAG_INPUT  1
 
@@ -50,7 +56,6 @@ class paroc_interface;
 class paroc_exception;
 class paroc_combox;
 class paroc_connection;
-
 /**
  * @class paroc_message_header
  * @author Tuan Anh Nguyen
@@ -60,8 +65,8 @@ public:
     paroc_message_header(int classid, int methodid, int semantics, const char *methodname);
     paroc_message_header(const char *methodname);
     paroc_message_header(int exceptioncode, const char *methodname);
-
     paroc_message_header();
+
     void operator =(const  paroc_message_header &dat);
 
     inline int GetType() const {
@@ -76,20 +81,15 @@ public:
     inline int GetSemantics() const {
         return id[2];
     }
-
     inline int GetExceptionCode() const {
         return exception;
     }
     inline const char *GetMethodName() const {
         return methodname;
     }
-
-
-
     inline void SetType(int msgtype) {
         type=msgtype;
     }
-
     inline void SetClassID(int classid) {
         id[0]=classid;
     }
@@ -102,7 +102,6 @@ public:
     inline void SetExceptionCode(int code) {
         exception=code;
     }
-
     inline void SetMethodName(const char* name) {
         methodname=name;
     }
@@ -127,8 +126,6 @@ protected:
     virtual ~paroc_buffer();
 
 public:
-    static const int POPC_BUFFER_HEADER_SIZE;
-
     virtual void Reset()=0;
 
     virtual void SetHeader(const paroc_message_header &data);
@@ -184,6 +181,10 @@ public:
 
     virtual bool Recv(paroc_combox &s, paroc_connection *conn=0)=0;
     virtual bool Recv(paroc_connection *conn);
+
+    virtual int get_size()=0;
+    virtual char* get_load()=0;
+    virtual void load(char* data, int length)=0;
 
 #ifdef OD_DISCONNECT
     virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0)=0;

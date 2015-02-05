@@ -1,14 +1,19 @@
-/*
-File : popwayback.h
-Author : Clement Valentin (clementval)
-Description : This object is used to store a path to a specific object
-Date of creation : 07/10/2010
-
-Modifications :
-------------------
-Author      Date        Description
-clementval  07/10/2010  First declaration of this object
-clementval  22/10/2010  Add doxygen comment
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ *
+ * @author Valentin Clement
+ * @date 2010/10/07
+ * @brief This object is used to store a path to a specific object
+ *
+ *
+ * UPDATES:
+ * Authors      Date              Comment
+ * clementval 2010/10/07  First declaration of this object
+ * clementval 2010/10/22  Add doxygen comment
+ *
 */
 
 #ifndef _POPC_WAYBACK_H

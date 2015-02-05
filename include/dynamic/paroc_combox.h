@@ -70,6 +70,11 @@ public:
     virtual bool Create(const char *address, bool server)=0;
     virtual bool Connect(const char *url)=0;
 
+    // Note: these 2 methods exist only for compatibility between dynamic and pseudodynamic versions of popc
+    // they must never be used in dynamic version
+    virtual bool connect_and_die(std::string &url){(void)url; return true;}
+    virtual bool is_server(){return false;}
+
     virtual int Send(const char *s,int len)=0;
     virtual int Send(const char *s,int len, paroc_connection *connection)=0;
     virtual bool SendAck(paroc_connection *conn);

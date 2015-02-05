@@ -1,7 +1,13 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: broker factory declaration for instantiate brokers
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief broker factory declaration for instantiate brokers
+ *
+ *
  */
 
 #ifndef _POPC_BROKER_FACTORY_H_
@@ -64,7 +70,7 @@ public:
      * @param longformat Print full format or name only
      */
     static void PrintBrokers(const char *abspath, bool longformat);
-    static void PrintBrokersMPI(const char *abspath);
+    // static void PrintBrokersMPI(const char *abspath);
 
     /**
      * @brief Returns true if an object is not on brokerlist

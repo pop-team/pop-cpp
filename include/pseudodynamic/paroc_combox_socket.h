@@ -1,16 +1,21 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: socket declaration of combox
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief socket declaration of combox
+ *
  */
 
 #ifndef POPC_COMBOX_SOCKET_H
 #define POPC_COMBOX_SOCKET_H
-
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <poll.h>
-#include <ctype.h>
+#include "popc_intface.h"
+//#include <sys/types.h>
+//#include <sys/socket.h>
+//#include <poll.h>
+//#include <ctype.h>
 
 #include <paroc_array.h>
 
@@ -28,6 +33,7 @@ public:
     paroc_connection_sock(paroc_connection_sock &me);
 
     virtual paroc_connection *Clone();
+    virtual void reset() {}
 
     int sockfd;
 };
@@ -44,28 +50,29 @@ public:
 
     virtual ~paroc_combox_socket();
 
-    virtual bool Create(char* host, int port=0, bool server=false);
-
-    virtual bool Connect(const char *url);
-    virtual bool connect_and_die(std::string &url) {
-      (void)(url);  
-      return true;
+    virtual bool Create(int port=0, bool server=false);
+    virtual bool Create(const char* /*address*/, bool /*server*/) {
+        return false;
     }
 
-    virtual paroc_connection* get_connection();
+    virtual bool Connect(const char *url);
 
     virtual int Send(const char *s,int len);
-    virtual int Send(const char *s,int len, paroc_connection *conn, bool unlock);
+    virtual int Send(const char *s,int len, paroc_connection *connection);
+    virtual paroc_connection* get_connection() {
+        if(!peer) {
+            return NULL;
+        }
+        return peer;
+    }
 
 
-    virtual int Recv(char *s,int len, bool unlock);
-    virtual int Recv(char *s,int len, paroc_connection *&iopeer, bool unlock);
+    virtual int Recv(char *s,int len);
+    virtual int Recv(char *s,int len, paroc_connection *connection);
 
     virtual paroc_connection *Wait();
 
     virtual void Close();
-
-
 
     /**
      * @brief Returns URL of object
@@ -76,11 +83,9 @@ public:
     virtual bool GetProtocol(paroc_string & protocolName);
 
 protected:
-    virtual paroc_connection *CreateConnection(int fd);
+    virtual paroc_connection_sock *CreateConnection(int fd);
     bool CloseSock(int fd);
     bool Connect(const char *host,int port);
-    virtual bool disconnect(paroc_connection *connection);
-    virtual bool is_server();
 
     int GetSockInfo(sockaddr &info,socklen_t &len);
     int GetPort();
@@ -90,13 +95,17 @@ protected:
 
 protected:
     int sockfd;
-    bool _isServer;
+    bool isServer;
     bool isCanceled;
-
+#ifdef __WIN32__
+    int highsockfd;
+    fd_set readfds, activefdset;
+#else
+    paroc_array<pollfd> pollarray;
+#endif
     paroc_connection_sock *peer;
 
     //Only used by combox server...
-    paroc_array<pollfd> pollarray;
     paroc_array<paroc_connection_sock *> connarray;
     int index;
     int nready;

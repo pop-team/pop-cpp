@@ -13,6 +13,12 @@
 #define POPC_ALLOCOBJ_H
 #include <paroc_mutex.h>
 
+/**
+ * @class paroc_message_header
+ * @author Tuan Anh Nguyen
+ * @brief Implementation of the batch creation mechanism of parallel objects, used by POP-C++ runtime
+ * Note : This class does not seem to be used so far
+ */
 class paroc_allocobj {
 public:
     paroc_allocobj(int count);

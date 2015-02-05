@@ -13,7 +13,7 @@
 #ifndef POPC_BUFFER_FACTORY_H
 #define POPC_BUFFER_FACTORY_H
 
-#include <paroc_buffer.h>
+#include "paroc_buffer.h"
 
 /*This abstract class declares an interface creating abstract buffer*/
 class paroc_buffer;

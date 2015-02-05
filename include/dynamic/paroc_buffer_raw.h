@@ -30,7 +30,7 @@ public:
     /*   virtual void SetType(int type, const char *name); */
     /*   virtual int GetType(); */
 
-    using paroc_buffer::Pack;
+    using paroc_buffer::Pack; // TODO lwk can we remove ? not a good practice
     using paroc_buffer::UnPack;
     virtual void Pack(const int *data, int n);
     virtual void UnPack(int *data, int n);

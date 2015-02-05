@@ -1,24 +1,31 @@
 /**
- * File : utils.cc
- * Author : Tuan Anh Nguyen
- * Description : commonly used stuffs
- * Creation date : 2010/04/19
  *
- * Modifications :
- * Authors      Date            Comment
- * clementval  10/22/2010  Add IsremoteDest() method.
- * clementval  10/24/2010  Add GetCurrentUser(), GetIPFromURL() and GetPortFromURL() methods.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Regroups commonly used functions.
+ *
+ *
  */
+
+/*
+  Deeply need refactoring:
+    POPC_CommonTools instead of paroc_utils
+ */
+
+#include "popc_intface.h"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <unistd.h>
-#include <stdlib.h>
+//#include <string.h>
+//#include <stdarg.h>
+//#include <stdio.h>
+//#include <ctype.h>
+//#include <unistd.h>
+//#include <stdlib.h>
 
 
 
@@ -138,21 +145,21 @@ void paroc_utils::FindAbsolutePath(const char *fname, char *abspath) {
     char dir[1024];
 
     if(t==NULL) {
-        if(getcwd(dir,1024)==NULL) {
+        if(popc_getcwd(dir,1024)==NULL) {
             *dir=0;
         }
         sprintf(abspath,"%s/%s",dir,fname);
         return;
     }
     char olddir[1024];
-    getcwd(olddir,1024);
+    popc_getcwd(olddir,1024);
     *t=0;
-    chdir(fname);
+    popc_chdir(fname);
     *t='/';
-    if(getcwd(dir,1024)==NULL) {
+    if(popc_getcwd(dir,1024)==NULL) {
         *dir=0;
     }
-    chdir(olddir);
+    popc_chdir(olddir);
     sprintf(abspath,"%s/%s",dir,t+1);
 }
 
@@ -175,12 +182,12 @@ bool paroc_utils::SameContact(const char *contact1, const char *contact2) {
     POPString str2(contact2);
     char *token, *ptr;
 
-    token=strtok_r(str2.GetString()," \n\r\t",&ptr);
+    token=popc_strtok_r(str2.GetString()," \n\r\t",&ptr);
     while(token!=NULL) {
         if(strstr(contact1,token)!=NULL) {
             return true;
         }
-        token=strtok_r(NULL," \n\r\t",&ptr);
+        token=popc_strtok_r(NULL," \n\r\t",&ptr);
     }
     return false;
 }
@@ -193,7 +200,7 @@ bool paroc_utils::IsRemoteDest(const char *dest) {
     POPString ip = paroc_system::GetIP();
 
     char host[256];
-    gethostname(host, 256);
+    popc_gethostname(host, 256);
 
     //Three string to test with
     std::string _local("127.0.0.1");
@@ -258,7 +265,13 @@ const char* paroc_utils::GetCurrentUser() {
         return res.str().c_str();
      }*/
     char *username;
+#ifndef __WIN32__
     username = getlogin();
+#else
+    DWORD i = 256;
+    DWORD* temp = &i;
+    GetUserName(username, temp);
+#endif
     return username;
 }
 
@@ -404,5 +417,11 @@ bool paroc_utils::isValidName(POPString value) {
     return true;
 }
 
+#else
+// Note LWK: This function is added as a hack to allow compilation in pseudodynamic
+// TODO LWK: To fix this cleanly we need to add popc objects to pseudodynamic lib
+int rprintf(const char *format,...) {
+    return printf("%s", format);
+}
 
 #endif

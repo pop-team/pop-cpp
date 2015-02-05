@@ -1,19 +1,23 @@
 /**
- * File : buffer_xdr.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of SUN-XDR message buffer
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of SUN-XDR message buffer.
+ *
+ *
  */
 
+/*
+  Deeply need refactoring:
+    POPC_BufferXDR instead of paroc_buffer_xdr
+ */
+#include "popc_intface.h"
 
-#include <string.h>
-#include <arpa/inet.h>
 #include <rpc/types.h>
 #include <rpc/xdr.h>
-
 #include "paroc_interface.h"
 #include "paroc_buffer_xdr.h"
 #include "paroc_exception.h"
@@ -46,7 +50,6 @@ void paroc_buffer_xdr::Pack(const int *data, int n) {
 
 }
 void paroc_buffer_xdr::UnPack(int *data, int n) {
-
     if(n<=0) {
         return;
     }
@@ -60,6 +63,7 @@ void paroc_buffer_xdr::UnPack(int *data, int n) {
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
     xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int);
     xdr_destroy(&xdr);
+
     unpackpos+=sz;
 }
 
@@ -95,7 +99,6 @@ void paroc_buffer_xdr::UnPack(unsigned *data, int n) {
 }
 
 void paroc_buffer_xdr::Pack(const long *data, int n) {
-
     if(n<=0) {
         return;
     }
@@ -127,7 +130,6 @@ void paroc_buffer_xdr::UnPack(long *data, int n) {
 }
 
 void paroc_buffer_xdr::Pack(const unsigned long *data, int n) {
-
     if(n<=0) {
         return;
     }
@@ -572,66 +574,58 @@ void paroc_buffer_xdr::CheckUnPack(int sz) {
  * @return
  */
 bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
-    // Init message
-    /*if(!s.is_server())
-      s.init_send(conn, unlock);   */
-
-
-
     // Pack the header (20 bytes)
-    char *data = (char*) packeddata;
-    if(data == NULL) {
+    char *dat = (char*) packeddata;
+
+    if(dat == NULL) {
+        printf("fail 1\n");
         return false;
     }
 
     int n = packeddata.GetSize();
-    //s.send_data_length(n, conn);
-
-
     int h[5];
     memset(h, 0, 5 * sizeof(int));
 
     int type = header.GetType();
 
-
-    h[0] = htonl(n);
-    h[1] = htonl(type);
+    h[0] = popc_htonl(n);
+    h[1] = popc_htonl(type);
 
     switch(type) {
     case TYPE_REQUEST:
-        h[2] = htonl(header.GetClassID());
-        h[3] = htonl(header.GetMethodID());
-        h[4] = htonl(header.GetSemantics());
+        h[2] = popc_htonl(header.GetClassID());
+        h[3] = popc_htonl(header.GetMethodID());
+        h[4] = popc_htonl(header.GetSemantics());
         break;
     case TYPE_EXCEPTION:
-        h[2] = htonl(header.GetExceptionCode());
+        h[2] = popc_htonl(header.GetExceptionCode());
         break;
     case TYPE_RESPONSE:
-        h[2] = htonl(header.GetClassID());
-        h[3] = htonl(header.GetMethodID());
+        h[2] = popc_htonl(header.GetClassID());
+        h[3] = popc_htonl(header.GetMethodID());
         break;
     default:
         return false;
     }
 
-    memcpy(data, h, 20);
+    memcpy(dat, h, 20);
 
 
     // Send the message header first as it has fixed size
     char* data_header = new char[20];
     memcpy(data_header, h, 20);
     //printf("XDR: %s Send header\n", (isServer) ? "server":"client", n);
-    if(s.Send(data_header, 20, conn, true)) {
+    if(s.Send(data_header, 20, conn)) {
         printf("Error while sending header\n");
         return false;
     }
 
     // If there are data to send, send them
-    data += 20;
+    dat += 20;
     n -= 20;
     if(n > 0) {
         //printf("XDR: %s Send message size is %d: %s\n", (isServer) ? "server":"client", n, (char*)packeddata);
-        if(s.Send(data, n, conn, false) < 0) {
+        if(s.Send(dat, n, conn) < 0) {
             printf("XDR: Fail to send a message!");
             return false;
         }
@@ -642,58 +636,49 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
     return true;
 }
 
-//Propagation of exceptions back to caller...
-
+/**
+ *
+ */
 bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
-    //printf("XDR: Wait to recv the request header\n");
-    //int size = s.receive_data_length(conn);
-
-
     int h[5];
     int n;
 
     // Recv the header
-    char *data_header = (char*)h;
+    char *dat = (char *)h;
 
 
     // Receiving the real data
 //  printf("XDR: recv header\n");
-    s.Recv(data_header, 20, conn, true);
+    s.Recv(dat, 20, conn);
     Reset();
     /* for(int i = 0; i < 5; i++) {
-       memcpy(&h[i], data_header+(i*4), 4);
+       memcpy(&h[i], dat+(i*4), 4);
      }*/
 
 
 
-    n = ntohl(h[0]);
-
-
+    n = popc_ntohl(h[0]);
     if(n < 20) {
-        printf("Bad message header(size error:%d)\n",n);
+        printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
         return false;
     }
 
-    int type = ntohl(h[1]);
+    int type = popc_ntohl(h[1]);
     header.SetType(type);
     switch(type) {
     case TYPE_REQUEST:
-        //printf("XDR: %s header type request\n", (isServer) ? "server":"client");
-        header.SetClassID(ntohl(h[2]));
-        header.SetMethodID(ntohl(h[3]));
-        header.SetSemantics(ntohl(h[4]));
+        header.SetClassID(popc_ntohl(h[2]));
+        header.SetMethodID(popc_ntohl(h[3]));
+        header.SetSemantics(popc_ntohl(h[4]));
         break;
     case TYPE_EXCEPTION:
-        // printf("XDR: %s header type exception\n", (isServer) ? "server":"client");
-        header.SetExceptionCode(ntohl(h[2]));
+        header.SetExceptionCode(popc_ntohl(h[2]));
         break;
     case TYPE_RESPONSE:
-        //printf("XDR: %s header type response\n", (isServer) ? "server":"client");
-        header.SetClassID(ntohl(h[2]));
-        header.SetMethodID(ntohl(h[3]));
+        header.SetClassID(popc_ntohl(h[2]));
+        header.SetMethodID(popc_ntohl(h[3]));
         break;
     default:
-        printf("XDR: header type no-type %d\n", MPI::COMM_WORLD.Get_rank());
         return false;
     }
 
@@ -701,9 +686,9 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     n-=20;
 
     if(n > 0) {
-        data_header = (char *)packeddata+20;
+        dat = (char *)packeddata+20;
         //printf("XDR: %s ready to receive %d\n",(isServer) ? "server":"client",  n);
-        s.Recv(data_header, n, conn, false);
+        s.Recv(dat, n, conn);
         //printf("XDR: %s received %d\n",(isServer) ? "server":"client",  n);
     }
 
@@ -712,23 +697,100 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     return true;
 }
 
+int paroc_buffer_xdr::get_size() {
+    return packeddata.GetSize();
+}
 
+// Note LWK: This method was copied from the dynamic to the pseudodynamic version of the code
+// TODO LWK: Check with Valentin if ok
+char* paroc_buffer_xdr::get_load() {
+    char *dat = (char*)packeddata;
 
+    if(!dat) {
+        return NULL;
+    }
 
+    int n = packeddata.GetSize();
+    int h[5];
+    memset(h,0, 5*sizeof(int));
 
-// Following code only for OD_DISCONNECT
+    int type=header.GetType();
+
+    h[0]=popc_htonl(n);
+    h[1]=popc_htonl(type);
+
+    switch(type) {
+    case TYPE_REQUEST:
+        h[2]=popc_htonl(header.GetClassID());
+        h[3]=popc_htonl(header.GetMethodID());
+        h[4]=popc_htonl(header.GetSemantics());
+        break;
+    case TYPE_EXCEPTION:
+        h[2]=popc_htonl(header.GetExceptionCode());
+        break;
+    case TYPE_RESPONSE:
+        h[2]=popc_htonl(header.GetClassID());
+        h[3]=popc_htonl(header.GetMethodID());
+        break;
+    default:
+        printf("fail 2\n");
+        return NULL;
+    }
+
+    memcpy(dat, h, 20);
+
+    return (char *) packeddata;
+}
+// Note LWK: This method was copied from the dynamic to the pseudodynamic version of the code
+// TODO LWK: Check with Valentin if ok
+void paroc_buffer_xdr::load(char* data, int length) {
+    int h[5];
+
+    Reset();
+    memcpy(packeddata, data, length);
+    memcpy(h, packeddata, 20);
+
+    int n = popc_ntohl(h[0]);
+    if(n < 20) {
+        printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
+        return;
+    }
+
+    int type = popc_ntohl(h[1]);
+    header.SetType(type);
+    switch(type) {
+    case TYPE_REQUEST:
+        header.SetClassID(popc_ntohl(h[2]));
+        header.SetMethodID(popc_ntohl(h[3]));
+        header.SetSemantics(popc_ntohl(h[4]));
+        break;
+    case TYPE_EXCEPTION:
+        header.SetExceptionCode(popc_ntohl(h[2]));
+        break;
+    case TYPE_RESPONSE:
+        header.SetClassID(popc_ntohl(h[2]));
+        header.SetMethodID(popc_ntohl(h[3]));
+        break;
+    default:
+        return;
+    }
+
+    packeddata.SetSize(length);
+}
+
 
 #ifdef OD_DISCONNECT
 bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
         paroc_connection * t = (paroc_connection *) s.Wait();
-        if(t == NULL) {
-            paroc_exception::paroc_throw(9998,
-                                         "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
+        if(!t) {
+            paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
         }
+
         if(!Recv(s, t)) {
             paroc_exception::paroc_throw(errno);
         }
+
         if(header.GetType() == TYPE_RESPONSE) {
             if(header.GetClassID() == 0 && header.GetMethodID() == 6) {
                 return true;
@@ -737,17 +799,19 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 int unpackposold = unpackpos;
                 paroc_array<char> packeddataold = packeddata;
                 paroc_connection * t = (paroc_connection *) s.Wait();
-                if(t == NULL) {
-                    paroc_exception::paroc_throw(9998,
-                                                 "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
+                if(!t) {
+                    paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
                 }
+
                 if(!Recv(s, t)) {
                     paroc_exception::paroc_throw(errno);
                 }
+
                 Reset();
                 header = h;
                 unpackpos = unpackposold;
                 packeddata = packeddataold;
+
                 return false;
             }
         }

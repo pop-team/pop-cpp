@@ -1,13 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
- * http://gridgroup.hefr.ch/popc
- *
- * @author Tuan Anh Nguyen
- * @date 2005/01/01
- * @brief Implementation of the communication box for TCP/IP socket.
- *
- *
+ * Modifications :
+ * Authors      Date            Comment
  */
 
 /*
@@ -98,6 +92,7 @@ bool paroc_combox_socket::Create(int port, bool server) {
             return false;
         }
     }
+
     if(server) {
 #ifndef __WIN32__
         pollarray.SetSize(1);

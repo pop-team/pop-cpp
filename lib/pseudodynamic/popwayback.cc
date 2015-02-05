@@ -1,14 +1,18 @@
 /**
- * File : popwayback.ph
- * Author : Valentin Clement (clementval)
- * Description : Implementation of the POPWayback object
- * Creation date : 2010/10/07
  *
- * Modifications :
- * Authors      Date            Comment
- * clementval  2010/10/07  First implementation of this object
- * clementval  2010/10/22  Add doxygen comment
- * clementval  2010/10/28  Optimize the method insertNode()
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Valentin Clement (clementval)
+ * @date 2010/04/19
+ * @brief Implementation of the POPWayback object.
+ *
+ *
+ */
+
+/*
+  Need refactoring to be in accordance:
+    POPC_Wayback instead of POPWayback
  */
 
 #include "popwayback.h"

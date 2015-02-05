@@ -102,7 +102,6 @@ bool paroc_broker::GetRequest(paroc_request &req) {
             execCond.wait();
         }
     }
-
     return true;
 }
 

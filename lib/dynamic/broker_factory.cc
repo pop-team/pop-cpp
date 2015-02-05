@@ -8,6 +8,10 @@
  * @brief Implementation of broker factory.
  *
  *
+ * Modifications :
+ * Authors      Date            Comment
+ * clementval  10/27/2011  Set services accesspoint cretaed from String as service accesspoint
+ * P.Kuonen     18.9.2012       Add "POP-C++ error" in error messages (PEKA)
  */
 
 /*
@@ -15,6 +19,7 @@
     POPC_BrokerFactory instead of paroc_broker_factory
  */
 
+// #include <mpi.h>
 #include "popc_intface.h"
 
 //#include <unistd.h>
@@ -45,6 +50,7 @@ paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name
 }
 
 paroc_broker *paroc_broker_factory::Create(const char *objname) {
+    // DEBUG("Create broker for %s\n", objname);
     if(brokerlist == NULL || objname == NULL) {
         return NULL;
     }
@@ -87,6 +93,24 @@ bool paroc_broker_factory::test(const char *objname) {
 
 
 paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
+    /**
+     * Display the information about the parallel object executable
+     * note: this bit of code existed in pseudodynamic version and is
+     * kept just in case.
+     */
+/*
+    char *tmp1 = paroc_utils::checkremove(argc,argv,"-printmpi");
+    if(tmp1 != NULL) {
+        char abspath[1024];
+        char *thisfile = getenv("POPC_EXE");
+        if(thisfile == NULL) {
+            thisfile = (*argv)[0];
+        }
+        paroc_utils::FindAbsolutePath(thisfile,abspath);
+        PrintBrokersMPI(abspath);
+        exit(0);
+    }
+*/
     char *tmp=paroc_utils::checkremove(argc,argv,"-list");
     if(tmp!=NULL) {
         char abspath[1024];
@@ -136,11 +160,14 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
         return NULL;
     }
 
+    // Create the real Broker object
     paroc_broker *objbroker=Create(object);
     if(objbroker==NULL) {
         printf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
         return NULL;
     }
+
+    // Set the classname for this broker
     paroc_broker::classname=object;
 
     if(nostdio) {
@@ -185,3 +212,18 @@ void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
         printf("====\nArchitecture=%s\n",(const char *)paroc_system::platform);
     }
 }
+
+/* note: this coded existed in the pseudodynamic version of the code but is now disabled.
+void paroc_broker_factory::PrintBrokersMPI(const char *abspath) {
+    if(brokerlist!=NULL) {
+        POSITION pos=brokerlist->GetHeadPosition();
+        while(pos!=NULL) {
+            paroc_broker_init &t=brokerlist->GetNext(pos);
+            if(!(paroc_broker_factory::CheckIfPacked!=NULL && !paroc_broker_factory::CheckIfPacked(t.objname))) {
+                printf("-host localhost -np 1 %s -mpi -object=%s\n", abspath, (const char *)t.objname);
+            }
+        }
+    }
+}
+
+*/

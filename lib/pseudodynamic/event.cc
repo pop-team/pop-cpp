@@ -8,8 +8,9 @@
  * Authors      Date            Comment
  */
 
-#include <stdio.h>
-#include <sys/time.h>
+#include "popc_intface.h"
+//#include <stdio.h>
+//#include <sys/time.h>
 
 #include "paroc_event.h"
 
@@ -27,14 +28,11 @@ void EventQueue::PostEvent(int e) {
 }
 
 int EventQueue::WaitEvent(int e, int timeout) {
-//    struct timespec abstimeout;
     cond.lock();
 
     if(timeout>0) {
         struct timeval now;
-        gettimeofday(&now, NULL);
-//        abstimeout.tv_sec = now.tv_sec + timeout/1000;
-//        abstimeout.tv_nsec = (now.tv_usec + (timeout%1000)*1000)* 1000;
+        popc_gettimeofday(&now, NULL);
     }
     bool done=false;
     while(!done) {

@@ -66,13 +66,12 @@ void paroc_accesspoint::SetAccessString(const char *hostport) {
             free(endpoint);
         }
         if(hostport!=NULL) {
-            endpoint=popc_strdup(hostport);
+            endpoint=strdup(hostport);
         } else {
             endpoint=NULL;
         }
     }
 }
-
 char* paroc_accesspoint::GetAccessString() const {
     return endpoint;
 }

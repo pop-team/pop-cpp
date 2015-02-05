@@ -1,8 +1,12 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: POP-C++ exception. All runtime exceptions are thrown as paroc_exception.
-
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief POP-C++ exception. All runtime exceptions are thrown as paroc_exception.
+ *
  */
 
 #ifndef POPC_EXCEPTION_H
@@ -54,7 +58,7 @@ class paroc_exception: public paroc_base, public std::exception {
 public:
     paroc_exception(int code);
     paroc_exception();
-    ~paroc_exception()throw() {};
+    ~paroc_exception()throw() {}
 
     paroc_exception & operator = (paroc_exception &e);
     static void paroc_throw(int code, const char *reason=NULL);

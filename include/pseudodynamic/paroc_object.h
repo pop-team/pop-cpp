@@ -1,13 +1,17 @@
 /**
- * File : paroc_object.ph
- * Author : Tuan Anh Nguyen
- * Description : base class for parallel object implementation
- * Creation date : -
  *
- * Modifications :
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief base class for parallel object implementation
+ *
+ * UPDATES :
  * Authors      Date            Comment
  * clementval   2011/01/17  Add COUT support
  * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
+ *
  */
 
 #ifndef _POPC_OBJECTBASE_H
@@ -17,11 +21,13 @@
 #include "paroc_event.h"
 
 //Added by clementval
-//#include <iostream>
-//#include <sstream>
+#include <iostream>
+#include <sstream>
 
-//#define cout paroc_system::_popc_cout.str(""); paroc_system::_popc_cout
-//#define popcendl std::endl; rprintf(paroc_system::_popc_cout.str().c_str())
+#define cout paroc_system::_popc_cout.str(""); \
+             paroc_system::_popc_cout
+#define popcendl std::endl; \
+             rprintf(paroc_system::_popc_cout.str().c_str())
 //End of add
 
 /**
@@ -59,6 +65,9 @@ private:
 
 protected:
     paroc_mutex _paroc_omutex;
+    //Added by clementval
+    //std::ostringstream _popc_cout;
+    //End of add
 };
 
 #endif

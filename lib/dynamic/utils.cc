@@ -417,5 +417,11 @@ bool paroc_utils::isValidName(POPString value) {
     return true;
 }
 
+#else
+// Note LWK: This function is added as a hack to allow compilation in pseudodynamic
+// TODO LWK: To fix this cleanly we need to add popc objects to pseudodynamic lib
+int rprintf(const char *format,...) {
+    return printf("%s", format);
+}
 
 #endif

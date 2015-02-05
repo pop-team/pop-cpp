@@ -27,7 +27,7 @@
 
 #include "paroc_broker.h"
 #include "paroc_utils.h"
-#include "paroc_system.h"
+#include "paroc_system_mpi.h"
 #include "paroc_broker_factory.h"
 #include "paroc_buffer_factory_finder.h"
 
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
             int provided_support = MPI::Init_thread(required_support);
 //      printf("init end\n");
         }
-        paroc_system::is_remote_object_process = true;
+        paroc_system_mpi::is_remote_object_process = true;
         int node_id = MPI::COMM_WORLD.Get_rank();
 
 //    printf("Broker main %d\n", node_id);

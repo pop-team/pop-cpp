@@ -1,14 +1,19 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: POP-C++ memory management
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief POP-C++ memory management
+ *
+ *
  */
 
 #ifndef POPC_MEMSPOOL_H
 #define POPC_MEMSPOOL_H
 
 #include <stdlib.h>
-
 #include "paroc_list.h"
 #include "paroc_interface.h"
 

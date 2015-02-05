@@ -39,6 +39,9 @@ bool CloseConnection(void *dat, paroc_connection *conn) {
 }
 
 
+/**
+ * Receive request and put request in the FIFO
+ */
 void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and put request in the FIFO
     server->SetCallback(COMBOX_NEW, NewConnection, this);
     server->SetCallback(COMBOX_CLOSE, CloseConnection, this);
@@ -51,6 +54,8 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
                 break;
             }
 
+
+            // Is it a POP-C++ core call ? If so serve it right away
             if(ParocCall(req)) {
                 if(req.data!=NULL) {
                     req.data->Destroy();
@@ -58,6 +63,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
                 execCond.broadcast();
                 continue;
             }
+            // Register the request to be served by the broker serving thread
             RegisterRequest(req);
         } catch(...) {
             if(req.data != NULL) {
@@ -65,7 +71,6 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
             }
             execCond.broadcast();
             break;
-
         }
     }
     //printf("Exiting receive thread %s\n", paroc_broker::accesspoint.GetAccessString());
@@ -76,7 +81,10 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
 bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
     server->SetTimeout(-1);
     while(1) {
+        // Waiting for a new connection or a new request
         paroc_connection *conn = server->Wait();
+
+        // Trouble with the connection
         if(conn == NULL) {
             execCond.broadcast();
             return false;
@@ -86,6 +94,7 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
             continue;
         }
 
+        // Receiving the real data
         paroc_buffer_factory *fact = conn->GetBufferFactory();
         req.data = fact->CreateBuffer();
 
@@ -107,27 +116,37 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
 
         req.data->Destroy();
     }
+    return false;
 }
 
 
 void paroc_broker::RegisterRequest(paroc_request &req) {
     //Check if mutex is waiting/executing...
     int type=req.methodId[2];
-    req.from=(type & INVOKE_SYNC)? req.from->Clone() : NULL;
 
-    if(type & INVOKE_CONC) {
+    if(type & INVOKE_SYNC) {
+        // Method call is synchronous, a response will be send back so the connection is saved
+        req.from  = req.from->Clone();
+    } else {
+        // Method call is asynchronous so the connection is not needed anymore
+        req.from = NULL;
+    }
+
+
+    if(type & INVOKE_CONC) {    // Method semantic is concurrent so trying to execute if there is no mutex pending
         mutexCond.lock();
         if(mutexCount<=0) {
             ServeRequest(req);
             mutexCond.unlock();
             return;
         }
-    } else if(type & INVOKE_MUTEX) {
+    } else if(type & INVOKE_MUTEX) {  // Method semantic is mutex, adding one to the number of mutex pending
         mutexCond.lock();
         mutexCount++;
         mutexCond.unlock();
     }
 
+    // Adding the request to the request queue
     execCond.lock();
     request_fifo.AddTail(req);
     int count=request_fifo.GetCount();
@@ -156,8 +175,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
     }
 }
 
-bool paroc_broker::OnNewConnection(paroc_connection *conn) {
-    //  if (state!=POPC_STATE_RUNNING) return false;
+bool paroc_broker::OnNewConnection(paroc_connection * /*conn*/) {
     if(obj!=NULL) {
         obj->AddRef();
     }
@@ -167,7 +185,7 @@ bool paroc_broker::OnNewConnection(paroc_connection *conn) {
 /**
  * This method is called when a connection with an interface is closed.
  */
-bool paroc_broker::OnCloseConnection(paroc_connection *conn) {
+bool paroc_broker::OnCloseConnection(paroc_connection * /*conn*/) {
     if(obj!=NULL) {
         int ret=obj->DecRef();
         if(ret<=0) {
@@ -189,7 +207,6 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
 
     unsigned *methodid=req.methodId;
     paroc_buffer *buf=req.data;
-
     switch(methodid[1]) {
     case 0:
         // BindStatus call
@@ -210,15 +227,19 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
                     }
                 }
             }
+
             buf->Push("code","int",1);
             buf->Pack(&status,1);
             buf->Pop();
+
             buf->Push("platform","POPString",1);
             buf->Pack(&paroc_system::platform,1);
             buf->Pop();
+
             buf->Push("info","POPString",1);
             buf->Pack(&enclist,1);
             buf->Pop();
+
             buf->Send(req.from);
         }
         break;
@@ -236,6 +257,7 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
             buf->Push("refcount","int",1);
             buf->Pack(&ret,1);
             buf->Pop();
+
             buf->Send(req.from);
         }
         execCond.broadcast();
@@ -243,12 +265,10 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
     break;
     case 2: {
         // Decrement reference
-
         if(obj == NULL) {
             return false;
         }
         int ret = obj->DecRef();
-
         if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
             paroc_message_header h("DecRef");
@@ -262,10 +282,8 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
         execCond.broadcast();
         break;
     }
-
-
     case 3: {
-        //GetEncoding call...
+        // Negotiate encoding call
         POPString enc;
         buf->Push("encoding","POPString",1);
         buf->UnPack(&enc,1);
@@ -329,7 +347,6 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
             buf->SetHeader(h);
             buf->Send(req.from);
         }
-
         break;
     }
 #endif

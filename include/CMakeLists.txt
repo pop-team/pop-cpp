@@ -9,4 +9,7 @@
 #
 
 add_subdirectory(dynamic)
-add_subdirectory(pseudodynamic)
+
+if(MPI_SUPPORT)
+    add_subdirectory(pseudodynamic)
+endif(MPI_SUPPORT)

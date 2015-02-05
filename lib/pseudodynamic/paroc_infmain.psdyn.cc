@@ -1,24 +1,22 @@
 /**
- * File : paroc_infmain.std.cc
- * Author : Tuan Anh Nguyen
- * Description : "main" entry for the main program
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief "main" entry for the main program.
+ *
+ *
  */
 
-#include <stdio.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <mpi.h>
+#include "popc_intface.h"
 
 #include "paroc_exception.h"
-#include "paroc_utils.h"
-#include "paroc_system.h"
 #include "paroc_buffer_factory_finder.h"
+#include "paroc_broker.h"
+#include "paroc_system_mpi.h"
+#include "paroc_utils.h"
 
 // Set processor
 #include <sched.h>
@@ -43,8 +41,9 @@ int main(int argc, char **argv) {
 #ifdef UC_LINUX
     paroc_system::processor_set(0);
 #endif
+
     paroc_system app;
-    paroc_system::is_remote_object_process = false;
+    paroc_system_mpi::is_remote_object_process = false;
 
     /**
      *
@@ -55,7 +54,7 @@ int main(int argc, char **argv) {
         int provided_support = MPI::Init_thread(required_support);
     }
     printf("ARGS %d %s\n", argc, argv[0]);
-    paroc_system::current_free_process = 2;
+    paroc_system_mpi::current_free_process = 2;
 //  printf("Main %d\n", MPI::COMM_WORLD.Get_rank());
 
     //printf("Start main of POP-C++ application: rank:%d\n", rank);
@@ -94,11 +93,11 @@ int main(int argc, char **argv) {
     }
 
     atexit(_paroc_atexit);
-    signal(SIGKILL, SignalTerminate);
-    signal(SIGTERM, SignalTerminate);
-    signal(SIGINT, SignalTerminate);
-    signal(SIGQUIT, SignalTerminate);
-    signal(SIGPIPE, SIG_IGN);
+    popc_signal(SIGKILL, SignalTerminate);
+    popc_signal(SIGTERM, SignalTerminate);
+    popc_signal(SIGINT, SignalTerminate);
+    popc_signal(SIGQUIT, SignalTerminate);
+    popc_signal(SIGPIPE, SIG_IGN);
 
     try {
         int ret = parocmain(argc, argv);

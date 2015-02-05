@@ -42,7 +42,7 @@ check_library_exists(pthread pthread_create "" HAVE_LIBPTHREAD)
 # Define user specific option. Disable by default.
 option(MPI_SUPPORT "MPI Support" OFF)
 option(XMP_SUPPORT "XMP Support" OFF)
-set(POPCPP_EXTRA_FLAGS "" CACHE STRING "Flags to add to the POP-C++ compiler")
+set(POPCPP_EXTRA_FLAGS "" CACHE STRING "Flags to add to the POP-C++ compiler, separated by ';'")
 
 # Set MPI support implicitly if XMP support is required
 if(XMP_SUPPORT)
@@ -65,9 +65,9 @@ endif(WIN32)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   if(WIN32)
-    set(CMAKE_INSTALL_PREFIX "C:\\popc")
+    set (CMAKE_INSTALL_PREFIX "C:\\popc" CACHE PATH "default install path" FORCE )
   elseif(UNIX)
-    set(CMAKE_INSTALL_PREFIX "/usr/local/popc")
+    set (CMAKE_INSTALL_PREFIX "/usr/local/popc" CACHE PATH "default install path" FORCE )
   endif(WIN32)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 

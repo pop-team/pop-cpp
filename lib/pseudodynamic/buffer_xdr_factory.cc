@@ -1,13 +1,19 @@
 /**
- * File : buffer_xdr_factory.cc
- * Author : Tuan Anh Nguyen
- * Description : Implementation of buffer factory for SUN-XDR
- * Creation date : -
  *
- * Modifications :
- * Authors      Date            Comment
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief Implementation of buffer factory for SUN-XDR.
+ *
+ *
  */
 
+/*
+  Deeply need refactoring:
+    POPC_BufferXDRFactory instead of paroc_buffer_xdr_factory
+ */
 
 #include <unistd.h>
 #include <stdio.h>

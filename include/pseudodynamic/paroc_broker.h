@@ -1,7 +1,13 @@
-/*
-AUTHORS: Tuan Anh Nguyen
-
-DESCRIPTION: broker declaration for parclass objects
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author Tuan Anh Nguyen
+ * @date 2005/01/01
+ * @brief broker declaration for parclass objects
+ *
+ *
  */
 
 #ifndef _POPC_BROKERBASE_H
@@ -22,7 +28,7 @@ DESCRIPTION: broker declaration for parclass objects
 #define POPC_QUEUE_NORMAL 50
 #define POPC_QUEUE_MAX 200
 
-#define IMPLEMENT_TYPE(aparclass) aparclass##__parocobj
+#define IMPLEMENT_TYPE(aparclass) aparclass##_popcobject
 
 #include "paroc_exception.h"
 #include "paroc_buffer.h"
@@ -70,23 +76,22 @@ public:
     paroc_broker();
     virtual ~paroc_broker();
 
+    //To acquire info of method names....
     // This method is used by the compiler to register method names
     void AddMethodInfo(unsigned cid, paroc_method_info *methods, int sz);
 
-
+    //These 2 methods are ussually used for debuging and visualization of class execution....
+    const char *FindMethodName(unsigned classID, unsigned methodID);
+    bool FindMethodInfo(const char *name, unsigned &classID, unsigned &methodID);
 
     virtual bool Invoke(unsigned method[3], paroc_buffer &buf, paroc_connection *peer);
 
     virtual int Run();
 
+    //  static bool Init(int *argc, char ***argv, paroc_array<paroc_combox *> & comboxList);
+
     bool Initialize(int *argc, char ***argv);
-    bool WakeupReceiveThread(paroc_combox *server);
-
-    // These 2 methods are ussually used for debuging and visualization of class execution
-    const char *FindMethodName(unsigned classID, unsigned methodID);
-    bool FindMethodInfo(const char *name, unsigned &classID, unsigned &methodID);
-
-
+    bool WakeupReceiveThread(paroc_combox *mycombox);
 
     static paroc_accesspoint accesspoint;
     static paroc_string classname;
@@ -98,6 +103,7 @@ public:
     void RegisterRequest(paroc_request&);
     bool OnNewConnection(paroc_connection *conn);
     bool OnCloseConnection(paroc_connection *conn);
+
 
     bool ParocCall(paroc_request &req);           // Remote call of Paroc methods
     paroc_object * GetObject();                   // Get the associated object

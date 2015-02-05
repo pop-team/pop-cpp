@@ -1,3 +1,15 @@
+/**
+ *
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * http://gridgroup.hefr.ch/popc
+ *
+ * @author -
+ * @date 2005/01/01
+ * @brief Debugging macro and function
+ *
+ *
+ */
+
 #ifndef DEBUG_H
 #define DEBUG_H
 

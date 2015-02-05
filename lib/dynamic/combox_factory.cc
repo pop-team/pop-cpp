@@ -13,6 +13,8 @@
 /*
   Deeply need refactoring:
     POPC_ComboxFactory instead of paroc_combox_factory
+
+  Note by LWK: The factory should generate the parent class paroc_combox and not have 3 different methods for uds, mpi and socket
  */
 
 #include "popc_intface.h"
@@ -27,8 +29,12 @@
 
 #include "paroc_combox_factory.h"
 #include "paroc_combox_socket.h"
-#include "popc_combox_uds.h"
+//#include "popc_combox_uds.h"
 #include "paroc_utils.h"
+#ifdef MPI_SUPPORT
+// Note by LWK: Added MPI_SUPPORT here to use 1 version of the file for both pseudodyn and dynamic
+#include "popc_combox_mpi.h"
+#endif
 
 paroc_combox_registration::paroc_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator) {
     paroc_combox_factory *f=paroc_combox_factory::GetInstance();
@@ -39,10 +45,18 @@ paroc_combox * combox_socket_creator() {
     return new paroc_combox_socket;
 }
 
+// TODO LW: Why doesn't the compiler complain about this with Werror ? Could we have different flags here ?
 paroc_combox* combox_uds_creator() {
+ //   return new popc_combox_uds; // TODO LW: This should be uncommented !
  //   return new popc_combox_uds;
     return NULL;
 }
+
+#ifdef MPI_SUPPORT
+paroc_combox * combox_mpi_creator() {
+    return new popc_combox_mpi;
+}
+#endif
 
 paroc_combox_factory *paroc_combox_factory::fact=NULL;
 
@@ -51,6 +65,9 @@ paroc_combox_factory::paroc_combox_factory() {
 //Note(BW): UDS initialization by the broker fails, therefore, disabled for now
 //    Register("uds", 0, combox_uds_creator);
     Register("socket", 0, combox_socket_creator);
+#ifdef MPI_SUPPORT
+    Register("mpi", 0, combox_mpi_creator);
+#endif
 
     //Load combox from plugins....
     int metrics=100;
@@ -126,6 +143,7 @@ paroc_combox_factory::paroc_combox_factory() {
                 }
                 fclose(map);
             } else {
+                DEBUG("WARNING: unable to open plugin mapfile: %s",(const char *)pluginmap);
                 DIR *dir=opendir(plugindir);
                 if(dir!=NULL) {
                     dirent *t;
@@ -181,6 +199,7 @@ void paroc_combox_factory::Destroy() {
 }
 
 paroc_combox* paroc_combox_factory::Create(const char * name) {
+    DEBUG("Create a combox : %s\n", name);
     if(name == NULL) {
         return NULL;
     }
@@ -214,6 +233,7 @@ void paroc_combox_factory::GetNames(POPString &prots) {
     POSITION pos = list.GetHeadPosition();
     while(pos != NULL) {
         combox_factory_struct &t = list.GetNext(pos);
+        DEBUG("%s\n", t.name);
         prots += t.name;
         if(pos!=NULL) {
             prots += " ";
@@ -226,6 +246,7 @@ int paroc_combox_factory::GetCount() {
 }
 
 bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATOR creator) {
+    DEBUG("[Combox] Register %s\n", name);
     if(name == NULL || creator == NULL) {
         return false;
     }
@@ -263,6 +284,7 @@ void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CR
 #ifdef HAVE_LIBDL
     void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);
     if(handle == NULL) {
+        DEBUG("ERROR:%s: %s",fname,dlerror());
         return NULL;
     }
 
@@ -274,6 +296,9 @@ void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CR
     }
     return handle;
 #else
+	(void) fname;
+	(void) name;
+	(void) f;
     return NULL;
 #endif
 }
