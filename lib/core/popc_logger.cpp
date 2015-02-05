@@ -53,9 +53,11 @@ int popc_logger(LOGLEVEL level, const char* file, int line, const char* function
     char *tmp=getenv("POPC_TEMP");
     char logfile[256];
     if(tmp!=NULL) {
-        sprintf(logfile,"%s/popc1.log",tmp); // Check that log is not monopolized by root TODO LW and check 
+        // note: we need to log in diferent files for each user
+        // to avoid that root or any other user locks the log files
+        sprintf(logfile,"%s/popc.%s.log", tmp, getenv("USER"));
     } else {
-        sprintf(logfile, "/tmp/popc.log");
+        sprintf(logfile, "/tmp/popc.%s.log", getenv("USER"));
     }
 
 
