@@ -120,13 +120,13 @@ bool paroc_combox_socket::Create(int port, bool server) {
         sin.sin_port=htons(0);
 
         if(popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin)) == SOCKET_ERROR) {
-            printf("bind error\n");
+            LOG_ERROR("bind error");
             WSACleanup();
             return false;
         }
 
         if(popc_listen(sockfd,10) == SOCKET_ERROR) {
-            printf("listen error\n");
+            LOG_ERROR("listen error");
             WSACleanup();
             return false;
         }

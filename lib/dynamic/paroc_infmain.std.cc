@@ -23,18 +23,18 @@
 #include <sched.h>
 #define error printf
 #define panic printf
-#define debug(a,b,c) printf((b),(c),(a))
+// #define debug(a,b,c) printf((b),(c),(a))
 
 extern int parocmain(int, char **);
 
 void SignalTerminate(int sig) {
-    popc_logger(__ERROR__, "SIGNAL %d!!!!\n",sig);
+    LOG_ERROR( "SIGNAL %d!!!!",sig);
     paroc_system::Finalize(false);
     exit(1);
 }
 
 void _paroc_atexit() {
-    popc_logger(__DEBUG__, "_paroc_atexit called %d!!!!\n");
+    LOG_WARNING( "_paroc_atexit called !!!!");
     paroc_system::Finalize(false);
 }
 
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
             char **argv1=argv+i+1;
             int argc1=argc-i-1;
             if(!paroc_system::Initialize(&argc1, &argv1)) {
-                fprintf(stderr,"Initialization of parallel objects fail...\n");
+                LOG_WARNING("Initialization of parallel objects fail...");
                 paroc_system::Finalize(false);
                 return -1;
             }
@@ -72,9 +72,9 @@ int main(int argc, char **argv) {
     popc_signal(popc_SIGINT, SignalTerminate);
 
     if(i < 0) {
-        popc_logger(__DEBUG__, "Call parocmain\n");
+        LOG_DEBUG( "Call parocmain");
         int ret = parocmain(argc, argv);
-        popc_logger(__DEBUG__, "End of parocmain\n");
+        LOG_DEBUG( "End of parocmain");
         /**
         * POP-C++ on the K Computer
         * Terminate the MPI Communicators network by sending a termination message to the local MPI Communicator with rank 0
@@ -126,11 +126,11 @@ int main(int argc, char **argv) {
         return -1;
     } catch(int e) {
         errno=e;
-        paroc_system::perror("Exception occured\n");
+        paroc_system::perror("Exception occured");
         paroc_system::Finalize(false);
         return -1;
     } catch(...) {
-        fprintf(stderr,"Unknown exception\n");
+        LOG_WARNING("Unknown exception");
         paroc_system::Finalize(false);
     }
     return 1;

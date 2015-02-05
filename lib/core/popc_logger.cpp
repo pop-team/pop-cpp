@@ -27,40 +27,64 @@
 #include <stdlib.h> 
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
-int popc_logger(LOGLEVEL level, const char *format,...) {
+
+int popc_logger(LOGLEVEL level, const char* file, int line, const char* function, const char *format,...) {
     static const char* LOG_LEVEL_PREFIX[__LAST__] = {
-        "[DEBUG]",
-        "[INFO]",
-        "[CORE]",
-        "[WARNING]",
-        "[ERROR]"
+        "DEBUG",
+        "INFO ",
+        "CORE ",
+        "WARN ",
+        "ERROR"
     };
+
+    // Check if message level in higher than our threshold (hard-coded for now)
+    // TODO: Implement different logging levels
+    if(level < __DEBUG__)
+        return 0;
+
+    // Use file name without path to avoid having the full user path in logs
+    const char *basename = strrchr(file, '/');
+    if(basename==NULL)
+        basename=file;
+    else basename += 1;
 
     char *tmp=getenv("POPC_TEMP");
     char logfile[256];
     if(tmp!=NULL) {
-        sprintf(logfile,"%s/popc_log",tmp);
+        sprintf(logfile,"%s/popc1.log",tmp); // Check that log is not monopolized by root TODO LW and check 
     } else {
-        strcpy(logfile, "/tmp/popc_log.log");
+        sprintf(logfile, "/tmp/popc.log");
     }
-    FILE *f=fopen(logfile,"a");
-    if(f==NULL) {
-        return 1;
-    }
-    time_t t=time(NULL);
-    fprintf(f, "%s", ctime(&t));
+
+
+    // Time
+    time_t rawtime;
+    time(&rawtime);
+    const tm* timeinfo = localtime (&rawtime);
+    char dd[20];
+    strftime(dd, sizeof(dd), "%Y-%m-%d %H:%M:%S", timeinfo);
+
+    char msg[512];
     va_list ap;
     va_start(ap, format);
-
-    if(level >= __DEBUG__){
-        // Print the message to file
-        fprintf(f, "%s", LOG_LEVEL_PREFIX[level]);
-    }
-
-    vfprintf(f, format, ap);
-    fprintf(f,"%s","\n");
+    vsprintf(msg, format, ap);
     va_end(ap);
+
+    // Print the message to stderr or stdout
+    if(level >= __CORE__)
+        fprintf(stderr, "%s %5d %s %s (%s:%d %s)\n", dd, getpid(), LOG_LEVEL_PREFIX[level], msg, basename, line, function);
+    else if(level >= __INFO__)
+        fprintf(stdout, "%s\n", msg);
+
+    // Print the message to file
+    FILE *f=fopen(logfile,"a");
+    if(f==NULL) {
+        fprintf(stderr, "ERROR: Impossible to open log file %s\n", logfile);
+        return 1;
+    }
+    fprintf(f, "%s %5d %s %s (%s:%d %s)\n", dd, getpid(), LOG_LEVEL_PREFIX[level], msg, basename, line, function);
     fclose(f);
     return 0;
 }

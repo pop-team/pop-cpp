@@ -143,7 +143,7 @@ paroc_combox_factory::paroc_combox_factory() {
                 }
                 fclose(map);
             } else {
-                DEBUG("WARNING: unable to open plugin mapfile: %s",(const char *)pluginmap);
+                LOG_WARNING("unable to open plugin mapfile: %s",(const char *)pluginmap);
                 DIR *dir=opendir(plugindir);
                 if(dir!=NULL) {
                     dirent *t;
@@ -199,7 +199,7 @@ void paroc_combox_factory::Destroy() {
 }
 
 paroc_combox* paroc_combox_factory::Create(const char * name) {
-    DEBUG("Create a combox : %s\n", name);
+    LOG_DEBUG("Create a combox : %s", name);
     if(name==NULL) {
         return NULL;
     }
@@ -233,7 +233,7 @@ void paroc_combox_factory::GetNames(POPString &prots) {
     POSITION pos=list.GetHeadPosition();
     while(pos!=NULL) {
         combox_factory_struct &t=list.GetNext(pos);
-        DEBUG("%s\n", t.name);
+        LOG_DEBUG("%s", t.name);
         prots+=t.name;
         if(pos!=NULL) {
             prots+=" ";
@@ -246,7 +246,7 @@ int paroc_combox_factory::GetCount() {
 }
 
 bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATOR creator) {
-    DEBUG("[Combox] Register %s\n", name);
+    LOG_DEBUG("[Combox] Register %s", name);
     if(name==NULL || creator==NULL) {
         return false;
     }
@@ -284,7 +284,7 @@ void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CR
 #ifdef HAVE_LIBDL
     void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);
     if(handle==NULL) {
-        DEBUG("ERROR:%s: %s",fname,dlerror());
+        LOG_ERROR("%s: %s",fname,dlerror());
         return NULL;
     }
 

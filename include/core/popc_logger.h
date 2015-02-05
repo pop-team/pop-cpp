@@ -16,6 +16,7 @@
 #define POPC_LOGGER_H
 
 #include <stdarg.h>
+#include <sstream>
 
 enum LOGLEVEL {
     __DEBUG__,
@@ -27,6 +28,14 @@ enum LOGLEVEL {
     __LAST__  // Only for dimensioning array
 };
 
-int popc_logger(LOGLEVEL level, const char *format,...);
+#define LOG_DEBUG(_log_msg, ...)   popc_logger(__DEBUG__,   __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
+#define LOG_INFO(_log_msg, ...)    popc_logger(__INFO__,    __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
+#define LOG_CORE(_log_msg, ...)    popc_logger(__CORE__,    __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
+#define LOG_WARNING(_log_msg, ...) popc_logger(__WARNING__, __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
+#define LOG_ERROR(_log_msg, ...)   popc_logger(__ERROR__,   __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
+
+#define LOG_DEBUG_IF(_cond,_log_msg, ...) if(_cond){popc_logger(__DEBUG__, __FILE__, __LINE__, __FUNCTION__, _log_msg, ##__VA_ARGS__);}
+
+int popc_logger(LOGLEVEL level, const char* file, int line, const char* function, const char *format, ...);
 
 #endif /* POPC_LOGGER */

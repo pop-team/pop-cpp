@@ -21,20 +21,20 @@
 
 // Set processor
 #include <sched.h>
-#define error printf
-#define panic printf
-#define debug(a,b,c) printf((b),(c),(a))
+//#define error printf
+//#define panic printf
+//#define debug(a,b,c) printf((b),(c),(a))
 
 extern int parocmain(int, char **);
 
 void SignalTerminate(int sig) {
-    popc_logger(__ERROR__, "SIGNAL %d!!!!\n",sig);
+    LOG_ERROR( "SIGNAL %d!!!!",sig);
     paroc_system::Finalize(false);
     exit(1);
 }
 
 void _paroc_atexit() {
-    popc_logger(__DEBUG__, "_paroc_atexit called %d!!!!\n");
+    LOG_WARNING( "_paroc_atexit called %d!!!!");
     paroc_system::Finalize(false);
 }
 
@@ -55,11 +55,10 @@ int main(int argc, char **argv) {
         int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
         int provided_support = MPI::Init_thread(required_support);
     }
-    printf("ARGS %d %s\n", argc, argv[0]);
+    LOG_INFO("ARGS %d %s", argc, argv[0]);
     paroc_system_mpi::current_free_process = 2;
-//  printf("Main %d\n", MPI::COMM_WORLD.Get_rank());
+    LOG_DEBUG("Main %d", MPI::COMM_WORLD.Get_rank());
 
-    //printf("Start main of POP-C++ application: rank:%d\n", rank);
     char **argv1 = argv;
     int i;
     for(i = argc - 1; i >= 0; i--) {
@@ -67,7 +66,7 @@ int main(int argc, char **argv) {
             char **argv1 = argv + i + 1;
             int argc1 = argc - i - 1;
             if(!paroc_system::Initialize(&argc1, &argv1)) {
-                fprintf(stderr,"Initialization of parallel objects fail...\n");
+                LOG_WARNING("Initialization of parallel objects fail...");
                 paroc_system::Finalize(false);
                 return -1;
             }
@@ -78,7 +77,7 @@ int main(int argc, char **argv) {
     }
 
 
-    //printf("MAIN: Ready to call real application main\n");
+    LOG_DEBUG("MAIN: Ready to call real application main");
 
     /* END OF ADD */
 
@@ -104,48 +103,47 @@ int main(int argc, char **argv) {
     try {
         int ret = parocmain(argc, argv);
         //app.Finalize(ret == 0);
-        //  printf("Will call MPI::Finalize and exit main 1\n");
+        LOG_DEBUG("Will call MPI::Finalize and exit main 1");
         // Only for MPI
         if(!MPI::Is_finalized()) {
-            printf("MPI::Finalize\n");
+            LOG_INFO("MPI::Finalize");
             MPI::Finalize();
         }
-        // printf("Exit main\n");
+        LOG_DEBUG("Exit main");
         return ret;
     } catch(paroc_exception *e) {
-        // printf("End of main exception caught 1\n");
+        LOG_WARNING("End of main exception caught 1");
         errno = e->Code();
         paroc_system::perror(e);
         delete e;
         paroc_system::Finalize(false);
-        // printf("Will call MPI::Finalize and exit main\n");
+        LOG_DEBUG("Will call MPI::Finalize and exit main");
         // Only for MPI
         if(!MPI::Is_finalized()) {
             MPI::Finalize();
         }
         return -1;
     } catch(int e) {
-        //printf("End of main exception caught 2\n");
+        LOG_WARNING("End of main exception caught 2");
         errno=e;
         paroc_system::perror("Exception occured\n");
         paroc_system::Finalize(false);
-        //printf("Will call MPI::Finalize and exit main\n");
+        LOG_DEBUG("Will call MPI::Finalize and exit main");
         // Only for MPI
         if(!MPI::Is_finalized()) {
             MPI::Finalize();
         }
         return -1;
     } catch(...) {
-        //printf("End of main exception caught 3\n");
-        fprintf(stderr,"Unknown exception\n");
+        LOG_WARNING("End of main exception caught 3");
         paroc_system::Finalize(false);
-        // printf("Will call MPI::Finalize and exit main\n");
+        LOG_DEBUG("Will call MPI::Finalize and exit main");
         // Only for MPI
         if(!MPI::Is_finalized()) {
             MPI::Finalize();
         }
     }
-// printf("Will call MPI::Finalize and exit main\n");
+LOG_DEBUG("Will call MPI::Finalize and exit main");
     // Only for MPI
     if(!MPI::Is_finalized()) {
         MPI::Finalize();

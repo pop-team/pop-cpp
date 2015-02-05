@@ -118,7 +118,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         {
              BatchMgr batchman(paroc_system::appservice);
              sprintf(tmpstr,"-batch-node=%d", batchman.NextNode());
-             DEBUG("%s",tmpstr);
+             LOG_DEBUG("%s",tmpstr);
              argv[n++]=popc_strdup(tmpstr);
         }*/
     }
@@ -216,14 +216,12 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         printf("\n");
     } else {
 #ifndef NDEBUG
-        if(getenv("POPC_DEBUG")) {
-            DEBUG("Launching a new object with command : ");
-            fprintf(stderr,"--->");
-            for(int i=0; i<n; i++) {
-                fprintf(stderr,"%s ", argv[i]);
-            }
-            fprintf(stderr,"\n");
+        std::stringstream ss;
+        ss << "--->";
+        for(int i=0; i<n; i++) {
+            ss << argv[i] << " ";
         }
+        LOG_DEBUG("Launching a new object with command : %s", ss.str().c_str());
 #endif
         ret=RunCmd(n,argv,NULL);
         err=errno;
@@ -234,7 +232,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         }
 
     if(ret==-1) {
-        DEBUG("Can not start the object code...");
+        LOG_WARNING("Can not start the object code...");
         paroc_exception::paroc_throw(err, objectname);
     }
 
@@ -244,7 +242,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     paroc_buffer * tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
 
     if(!tmpbuffer->Recv((*tmpsock), connection)) {
-        printf("cannot receive anything\n");
+        LOG_WARNING("cannot receive anything");
         paroc_exception::paroc_throw_errno();
     }
 

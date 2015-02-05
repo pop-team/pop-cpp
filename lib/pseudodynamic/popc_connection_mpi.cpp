@@ -99,11 +99,11 @@ void POPC_MPIConnection::unset_current_tag() {
  */
 void POPC_MPIConnection::reset() {
     /*if(_has_communicator){
-      printf("MPI-COMBOX(%s): before MPI.Disconnect()\n", (is_server())?"Server":"Client");
+      LOG_INFO("MPI-COMBOX(%s): before MPI.Disconnect()", (is_server())?"Server":"Client");
       _communicator.Disconnect();
-      printf("MPI-COMBOX(%s): after MPI.Disconnect()\n", (is_server())?"Server":"Client");
+      LOG_INFO("MPI-COMBOX(%s): after MPI.Disconnect()", (is_server())?"Server":"Client");
     } else {
-      printf("MPI-COMBOX(%s): reset() connection as no communicator\n", (is_server())?"Server":"Client");
+      LOG_INFO("MPI-COMBOX(%s): reset() connection as no communicator", (is_server())?"Server":"Client");
     }
     _has_communicator = false; */
 }

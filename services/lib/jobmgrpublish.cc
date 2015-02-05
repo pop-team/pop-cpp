@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
     char slaver[256];
 
     if(paroc_utils::checkremove(&argc,&argv,"-help")!=NULL) {
-        printf("Usage: jobmgrpublish [-help] [jobmgr contact | jobmgr host]\n");
+        LOG_INFO("Usage: jobmgrpublish [-help] [jobmgr contact | jobmgr host]");
         return 0;
     }
 
@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
         job.SetAccessString(master);
         JobMgr info(job);
 
-        printf("Enter a child node contact:\n");
+        LOG_INFO("Enter a child node contact:");
         while(1) {
             if(scanf("%s",slaver)!=1) {
                 break;
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
             info.RegisterNode(node);
         }
     } catch(paroc_exception *e) {
-        fprintf(stderr,"Exception occured. Extra info: %s\n", (const char *)e->Extra());
+        LOG_WARNING("Exception occured. Extra info: %s", (const char *)e->Extra());
         delete e;
     }
     return 0;

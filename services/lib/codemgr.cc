@@ -20,14 +20,14 @@ CodeMgr::CodeMgr(const POPString &challenge): paroc_service_base(challenge) {
 }
 
 CodeMgr::~CodeMgr() {
-    DEBUG("Now destroy CodeMgr\n");
+    LOG_DEBUG("Now destroy CodeMgr");
 }
 
 void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, const POPString &codefile) {
     if(objname.Length() >= CODE_MAX_STRING_SIZE || platform.Length() >= CODE_MAX_STRING_SIZE || codefile.Length() >= CODE_MAX_STRING_SIZE) {
-        popc_logger(__ERROR__, "Could not register code, information longer than %i: %i %i %i",
+        LOG_ERROR( "Could not register code, information longer than %i: %i %i %i",
                     CODE_MAX_STRING_SIZE, objname.Length(), platform.Length(), codefile.Length());
-        popc_logger(__ERROR__, "RegisterCode %s %s %s", objname.c_str(), platform.c_str(), codefile.c_str());
+        LOG_ERROR( "RegisterCode %s %s %s", objname.c_str(), platform.c_str(), codefile.c_str());
 
         //TODO: Throw exception
         return;
@@ -54,7 +54,7 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
         }
 
     if(i<n) {
-        DEBUG("Changing (%s, %s) -> %s\n",element->objname,element->platform[i].platform,(const char *)codefile);
+        LOG_DEBUG("Changing (%s, %s) -> %s",element->objname,element->platform[i].platform,(const char *)codefile);
         strcpy(element->platform[i].codefile,codefile);
     } else {
         element->platform.SetSize(n+1);

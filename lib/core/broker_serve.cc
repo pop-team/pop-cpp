@@ -21,8 +21,9 @@
 #include "paroc_event.h"
 #include "paroc_thread.h"
 #include "paroc_system.h"
+#include "popc_logger.h"
 
-#define PROPAGATE_EXCEPTION(a)  catch (a err) { if (request.from!=NULL) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
+#define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=NULL) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 
 class paroc_invokethread: public paroc_thread {
 public:
@@ -113,7 +114,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
         int ret;
         int t=1;
         while((ret=thr->create())!=0 && t<3600) {
-            printf("WARNING: can not create a new thread. Sleep for %d seconds\n",t);
+            LOG_WARNING("can not create a new thread. Sleep for %d seconds",t);
             popc_sleep(t);
             t=t*2;
         }
@@ -129,7 +130,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
                 e.SetExtra(classname+"@"+accesspoint.GetAccessString());
                 paroc_buffer::SendException(*req.data, req.from, e);
             } else {
-                printf("ERROR: fail to create a new thread for %s@%s (method:%d:%d)\n",(const char *)classname,accesspoint.GetAccessString(), req.methodId[0], req.methodId[1]);
+                LOG_ERROR("fail to create a new thread for %s@%s (method:%d:%d)\n",(const char *)classname,accesspoint.GetAccessString(), req.methodId[0], req.methodId[1]);
             }
             delete thr;
 
@@ -154,7 +155,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
 void paroc_broker::UnhandledException() {
     if(!paroc_system::appservice.IsEmpty()) {
         //char tmp[1024];
-        printf("Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
+        LOG_WARNING("Unhandled exception on %s@%s",(const char *)classname, accesspoint.GetAccessString());
 //      sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
         /*AppCoreService app(paroc_system::appservice);
         app.Log(tmp);
@@ -192,6 +193,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
 
     PROPAGATE_EXCEPTION(char *)
     catch(paroc_exception *e) {
+        LOG_WARNING("POP-C++ exception in paroc_broker::DoInvoke");
         if(request.from!=NULL) {
             POPString extra=e->Extra();
             if(e->Extra().Length()==0) {
@@ -206,6 +208,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         }
         delete e;
     } catch(paroc_exception e) {
+        LOG_WARNING("POP-C++ exception in paroc_broker::DoInvoke");
         if(request.from!=NULL) {
 
             POPString extra=e.Extra();
@@ -220,6 +223,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
             UnhandledException();
         }
     } catch(std::exception *e) {
+        LOG_WARNING("Std exception in paroc_broker::DoInvoke");
         if(request.from != NULL) {
             paroc_exception  e2=paroc_exception(STD_EXCEPTION);
             e2.SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
@@ -229,6 +233,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
             UnhandledException();
         }
     } catch(std::exception e) {
+        LOG_WARNING("Std exception in paroc_broker::DoInvoke");
         if(request.from != NULL) {
             paroc_exception  e2=paroc_exception(STD_EXCEPTION);
             e2.SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
@@ -237,6 +242,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
             UnhandledException();
         }
     } catch(...) {
+        LOG_WARNING("Unknown exception in paroc_broker::DoInvoke");
         if(request.from!=NULL) {
             paroc_exception e2(UNKNOWN_EXCEPTION);
             e2.SetExtra(classname+"@"+accesspoint.GetAccessString());

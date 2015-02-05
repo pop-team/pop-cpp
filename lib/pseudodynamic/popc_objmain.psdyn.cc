@@ -45,29 +45,28 @@ int main(int argc, char **argv) {
 
     // If the application is using MPI Communication support
     if(paroc_utils::checkremove(&argc, &argv, "-mpi") != NULL) {
-        // printf("-mpi found\n");
+        LOG_DEBUG("-mpi found");
         // Init MPI for multithread support
         if(!MPI::Is_initialized()) {
-            // printf("init\n");
+            LOG_DEBUG("init");
             // Init MPI for multithread support
             int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
             int provided_support = MPI::Init_thread(required_support);
-//      printf("init end\n");
+            LOG_DEBUG("init end");
         }
         paroc_system_mpi::is_remote_object_process = true;
         int node_id = MPI::COMM_WORLD.Get_rank();
 
-//    printf("Broker main %d\n", node_id);
+        LOG_DEBUG("Broker main %d", node_id);
         MPI::Status status;
         int dummy;
         MPI::COMM_WORLD.Recv(&dummy, 1, MPI_INT, MPI_ANY_SOURCE, 15, status);
         int source = status.Get_source();
-        //    printf("recv %d\n", dummy);
+        LOG_DEBUG("recv %d", dummy);
         // Send my rank for confirmation
 
         MPI::COMM_WORLD.Send(&node_id, 1, MPI_INT, source, 16);
-//      printf("send %d rank\n", node_id);
-
+        LOG_DEBUG("send %d rank", node_id);
     }
 
 
@@ -114,15 +113,15 @@ int main(int argc, char **argv) {
         status = 1;
     } else if(!broker_factory->Initialize(&argc, &argv)) {
         // Initialize broker
-        printf("Fail to initialize the broker for class %s\n", (const char *)paroc_broker::classname);
+        LOG_ERROR("Fail to initialize the broker for class %s", (const char *)paroc_broker::classname);
         status = 1;
     }
-    //printf("broker: init\n");
+    LOG_DEBUG("broker: init");
 
 
     // Send accesspoint via callback
     if(callback != NULL) {
-        //printf("BROKER: Sending status and accesspoint\n");
+        LOG_DEBUG("BROKER: Sending status and accesspoint");
         char url[1024];
         int len;
 
@@ -138,7 +137,7 @@ int main(int argc, char **argv) {
         buf->Pack(&status, 1);
         buf->Pop();
 
-        //printf("BROKER: status sent %d\n", status);
+        LOG_DEBUG("BROKER: status sent %d", status);
 
         buf->Push("address", "paroc_accesspoint", 1);
         paroc_broker::accesspoint.Serialize(*buf,true);
@@ -153,27 +152,27 @@ int main(int argc, char **argv) {
         callback->Destroy();
 
         if(!ret) {
-            printf("POP-C++ Error: fail to send accesspoint via callback\n");
+            LOG_ERROR("fail to send accesspoint via callback");
             delete broker_factory;
             MPI::Finalize();
             return 1;
         }
     } /* else if (status == 0) {
-        //fprintf(stdout, "%s\n", (const char *)paroc_broker::accesspoint.GetAccessString());
+        //LOG_INFO("%s", (const char *)paroc_broker::accesspoint.GetAccessString());
     }*/
 
     // Set the current working directory
     char *cwd = paroc_utils::checkremove(&argc,&argv,"-cwd=");
     if(cwd != NULL) {
         if(chdir(cwd) != 0) {
-            DEBUG("current working dir cannot be set set to %s",cwd);
+            LOG_DEBUG("current working dir cannot be set set to %s",cwd);
         }
     }
 
     // Start the broker
     if(status == 0) {
         broker_factory->Run();
-        //printf("Broker started\n");
+        LOG_DEBUG("Broker started");
         delete broker_factory;
     } else if(broker_factory != NULL) {
         delete broker_factory;

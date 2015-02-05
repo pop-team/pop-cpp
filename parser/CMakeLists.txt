@@ -98,7 +98,6 @@ add_executable(popcpp
     typeclassstruct.cc
     typetemplate.cc
     ${CMAKE_SOURCE_DIR}/lib/dynamic/utils.cc
-    ${POPCPP_LIB_PATH}/debug.cc
     ${intface_file})
 
 # Make sure the lexer/parser are generated

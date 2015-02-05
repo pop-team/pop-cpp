@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
     if((tmp=paroc_utils::checkremove(&argc,&argv,"-servicepoint="))==NULL) {
         if(stop) {
-            fprintf(stderr,"Local service point to stop is missing\n");
+            LOG_WARNING("Local service point to stop is missing");
             Usage();
         } else {
             sprintf(host,"%s:2711",(const char *)paroc_system::GetHost());
@@ -48,19 +48,19 @@ int main(int argc, char **argv) {
         if(stop) {
             paroc_accesspoint pt;
             pt.SetAccessString(host);
-            fprintf(stderr,"Connecting to %s...\n" ,host);
+            LOG_INFO("Connecting to %s..." ,host);
             AppCoreService mgr(pt);
             if(mgr.Stop(challenge)) {
-                fprintf(stderr,"...Stopped\n");
+                LOG_INFO("...Stopped");
             } else {
-                fprintf(stderr,"...fail to stop. Please check the challenge string!\n");
+                LOG_WARNING("...fail to stop. Please check the challenge string!");
             }
             return 0;
         }
 
         if((tmp=paroc_utils::checkremove(&argc,&argv,"-code="))==NULL) {
             if((tmp=getenv("POPC_LOCATION"))==NULL) {
-                fprintf(stderr,"Error: local service code file is not specified\n");
+                LOG_ERROR("local service code file is not specified");
                 Usage();
             }
 #ifdef POPC_GLOBUS
@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
 
         //print out the contact string....
         if(f==NULL) {
-            printf("%s\n",info.GetAccessPoint().GetAccessString());
+            LOG_INFO("%s",info.GetAccessPoint().GetAccessString());
         } else {
             fprintf(f,"%s",info.GetAccessPoint().GetAccessString());
             fclose(f);
@@ -106,11 +106,11 @@ int main(int argc, char **argv) {
 
     } catch(int e) {
         errno=e;
-        perror("Exception occured\n");
+        LOG_ERROR("Exception in localservice_launcher");
         return 1;
     } catch(paroc_exception *e) {
         errno=e->Code();
-        perror("Paroc exception occured\n");
+        LOG_ERROR("POP-C++ exception in localservice_launcher");
         delete e;
         return 1;
     }

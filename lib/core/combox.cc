@@ -21,7 +21,7 @@
 
 #include "paroc_combox.h"
 #include "paroc_exception.h"
-#include "debug.h"
+#include "popc_logger.h"
 
 #include <string.h>
 
@@ -77,7 +77,7 @@ const char* paroc_combox::PROTOCOL_SEPARATOR = "://";
 paroc_combox::paroc_combox() {
     defaultFact = paroc_buffer_factory_finder::GetInstance()->FindFactory("xdr");
     if(defaultFact == NULL) {
-        printf("POP-C++ Error: can not find the xdr buffer factory!\n");
+        LOG_ERROR("POP-C++ Error: can not find the xdr buffer factory!");
     }
 
     timeout = -1;

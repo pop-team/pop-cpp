@@ -24,5 +24,6 @@
 #include <paroc_buffer_utils.h>
 #include <paroc_system.h>
 #include <paroc_utils.h>
+#include <popc_logger.h>
 
 #endif

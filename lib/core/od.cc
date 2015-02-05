@@ -157,7 +157,7 @@ void paroc_od::url(const char *str) {
             *tmpstr2 = 0;
             hostcore = tmpstr+1;
         } else {
-            printf("Error in object description. user@ip(core):port\n");
+            LOG_INFO("Error in object description. user@ip(core):port");
         }
 
     }
@@ -312,7 +312,7 @@ void paroc_od::getExecutable(POPString &exec) const {
 }
 
 void paroc_od::getProtocol(POPString &myproto) const {
-    //DEBUG("Set protocol in OD %s\n", myproto.GetString());
+    LOG_DEBUG("Set protocol in OD %s", myproto.GetString());
     myproto=proto;
 }
 

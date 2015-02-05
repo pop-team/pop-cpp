@@ -1,5 +1,13 @@
 #include "popc_intface.h"
 
+#ifdef _POPC_
+#include "popc_logger.h"
+#else
+// TODO LW: This should not be here
+#define LOG_INFO(_log_msg, ...)    fprintf(stderr, _log_msg, ##__VA_ARGS__)
+#define LOG_ERROR(_log_msg, ...)   fprintf(stderr, _log_msg, ##__VA_ARGS__)
+#endif
+
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
@@ -364,7 +372,7 @@ int RunCmd(int argc, char *argv[]) {
         strcat(cmd,argv[i]);
         strcat(cmd," ");
     }
-    fprintf(stderr, "Execute %s\n", cmd);
+    LOG_INFO("Execute %s\n", cmd);
     system(cmd);
 
     return 0;
@@ -379,7 +387,7 @@ int RunCmd(int argc, char *argv[]) {
         _exit(1);
     } else if(pid == 0) {
         execvp(argv[0], argv);
-        fprintf(stderr, "POP-C++ Error: %s not found\n", argv[0]);
+        LOG_ERROR( "POP-C++ Error: %s not found\n", argv[0]);
         _exit(1);
     }
     wait(&status);
@@ -407,7 +415,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]) {
         close(p[0]);
         dup2(p[1],1);
         execvp(argv1[0],argv1);
-        fprintf(stderr,"POP-C++ Error: %s not found\n",argv1[0]);
+        LOG_ERROR("POP-C++ Error: %s not found\n",argv1[0]);
         _exit(1);
     }
 
@@ -421,7 +429,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]) {
         close(p[1]);
         dup2(p[0],0);
         execvp(argv2[0],argv2);
-        fprintf(stderr,"POP-C++ Error: %s not found\n",argv2[0]);
+        LOG_ERROR("POP-C++ Error: %s not found\n",argv2[0]);
         _exit(1);
     }
     close(p[0]);

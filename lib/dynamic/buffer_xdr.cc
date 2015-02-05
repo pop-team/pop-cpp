@@ -578,7 +578,7 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
     char *dat=(char *)packeddata;
 
     if(dat == NULL) {
-        printf("fail 1\n");
+        LOG_ERROR("fail 1");
         return false;
     }
 
@@ -634,7 +634,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     Reset();
     n = popc_ntohl(h[0]);
     if(n < 20) {
-        printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
+        LOG_ERROR("[CORE] XDR Buffer - Bad message header (size error:%d)", n);
         return false;
     }
 
@@ -708,7 +708,7 @@ char* paroc_buffer_xdr::get_load() {
         h[3]=popc_htonl(header.GetMethodID());
         break;
     default:
-        printf("fail 2\n");
+        LOG_ERROR("fail 2");
         return NULL;
     }
 
@@ -726,7 +726,7 @@ void paroc_buffer_xdr::load(char* data, int length) {
 
     int n = popc_ntohl(h[0]);
     if(n < 20) {
-        printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
+        LOG_ERROR("[CORE] XDR Buffer - Bad message header (size error:%d)", n);
         return;
     }
 

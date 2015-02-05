@@ -23,8 +23,6 @@
 
 #include <typeinfo>
 
-#include "debug.h"
-
 template<class T> inline void paroc_construct_element(T *data, int n) {
     for(; n-->0; data++) {
         new(data) T;    // Calls the constructor

@@ -136,13 +136,13 @@ int main(int argc, char **argv) {
     try {
         if(stop) {
 #ifdef POPC_SECURE_VIRTUAL
-            printf("Stopping POP-C++ %s [Virtual Secure] Global Services\n", VERSION);
+            LOG_INFO("Stopping POP-C++ %s [Virtual Secure] Global Services", VERSION);
 #elif defined POPC_SECURE
-            printf("Stopping POP-C++ %s [Secure] Global Services\n", VERSION);
+            LOG_INFO("Stopping POP-C++ %s [Secure] Global Services", VERSION);
 #elif defined POPC_VIRTUAL
-            printf("Stopping POP-C++ %s [Virtual] Global Services\n", VERSION);
+            LOG_INFO("Stopping POP-C++ %s [Virtual] Global Services", VERSION);
 #else
-            printf("Stopping POP-C++ %s [Standard] Global Services\n", VERSION);
+            LOG_INFO("Stopping POP-C++ %s [Standard] Global Services", VERSION);
 #endif
 
             paroc_accesspoint jobmgr_ap;
@@ -155,55 +155,55 @@ int main(int argc, char **argv) {
             VirtSecureJobMgr mgr(jobmgr_ap);
             VirtSecurePOPCSearchNode vspsn(mgr.GetNodeAccessPoint());
             if(!vspsn.Stop(challenge)) {
-                fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop VSPSN ...\n");
+                LOG_ERROR("[POP-C++ Runtime] Bad challenge string. Cannot stop VSPSN ...");
             } else {
-                printf("[POP-C++ Runtime] VSPSN stopped successfully!\n");
+                LOG_INFO("[POP-C++ Runtime] VSPSN stopped successfully!");
             }
 
             VirtualPOPCSecurityManager vpsm(mgr.getPSMRef());
             if(!vpsm.Stop(challenge)) {
-                fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop VPSM ...\n");
+                LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop VPSM ...");
             } else {
-                printf("[POP-C++ Runtime] VPSM stopped successfully!\n");
+                LOG_INFO("[POP-C++ Runtime] VPSM stopped successfully!");
             }
 
             POPCloner pc(mgr.getPOPClonerRef());
             if(!pc.Stop(challenge)) {
-                fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop POPCloner ...\n");
+                LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop POPCloner ...");
             } else {
-                printf("[POP-C++ Runtime] POPCloner stopped successfully!\n");
+                LOG_INFO("[POP-C++ Runtime] POPCloner stopped successfully!");
             }
 
 #elif defined POPC_VIRTUAL
             VirtualJobMgr mgr(jobmgr_ap);
             VirtualPOPCSearchNode vpsn(mgr.GetNodeAccessPoint());
             if(!vpsn.Stop(challenge)) {
-                fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop VPSN ...\n");
+                LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop VPSN ...");
             } else {
-                printf("[POP-C++ Runtime] VPSN stopped successfully!\n");
+                LOG_INFO("[POP-C++ Runtime] VPSN stopped successfully!");
             }
 
             POPCloner pc(mgr.getPOPClonerRef());
             if(!pc.Stop(challenge)) {
-                fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop POPCloner ...\n");
+                LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop POPCloner ...");
             } else {
-                printf("[POP-C++ Runtime] POPCloner stopped successfully!\n");
+                LOG_INFO("[POP-C++ Runtime] POPCloner stopped successfully!");
             }
 
 #elif defined POPC_SECURE
             SecureJobMgr mgr(jobmgr_ap);
             SecurePOPCSearchNode spsn(mgr.GetNodeAccessPoint());
             if(!spsn.Stop(challenge)) {
-                fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop SPSN ...\n");
+                LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop SPSN ...");
             } else {
-                printf("[POP-C++ Runtime] SPSN stopped successfully!\n");
+                LOG_INFO("[POP-C++ Runtime] SPSN stopped successfully!");
             }
 
             POPCSecurityManager psm(mgr.getPSMRef());
             if(!psm.Stop(challenge)) {
-                fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop PSM ...\n");
+                LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop PSM ...");
             } else {
-                printf("[POP-C++ Runtime] PSM stopped successfully!\n");
+                LOG_INFO("[POP-C++ Runtime] PSM stopped successfully!");
             }
 #else
             JobMgr mgr(jobmgr_ap);
@@ -212,27 +212,30 @@ int main(int argc, char **argv) {
                 pfm_ap.SetAccessString("socket://127.0.0.1:2712");
                 POPFileManager pfm(pfm_ap);
                 if(!pfm.Stop(challenge)) {
-                    fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop PFM ...\n");
+                    LOG_ERROR("[POP-C++ Runtime] Bad challenge string. Cannot stop PFM ...");
                 } else {
-                    printf("[POP-C++ Runtime] PFM stopped successfully!\n");
+                    LOG_INFO("[POP-C++ Runtime] PFM stopped successfully!");
                 }
-            } catch(...) {}
+            } catch(...){
+                LOG_WARNING("Exception while creating POPFileManager");
+	    }
+
 
             POPCSearchNode psn(mgr.GetNodeAccessPoint());
             if(!psn.Stop(challenge)) {
-                fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop PSN ...\n");
+                LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop PSN ...");
             } else {
-                printf("[POP-C++ Runtime] PSN stopped successfully!\n");
+                LOG_INFO("[POP-C++ Runtime] PSN stopped successfully!");
             }
 #endif
 
 
             if(!mgr.Stop(challenge)) {
-                fprintf(stderr, "[POP-C++ Runtime] Bad challenge string. Cannot stop JM ...\n");
+                LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop JM ...");
                 return 1;
             }
 
-            printf("[POP-C++ Runtime] JobMgr stopped successfully!\n");
+            LOG_INFO("[POP-C++ Runtime] JobMgr stopped successfully!");
             return 0;
         }
 
@@ -240,7 +243,7 @@ int main(int argc, char **argv) {
         if((tmp=paroc_utils::checkremove(&argc,&argv,"-conf="))==NULL && (tmp=getenv("JOBMGR_CONF"))==NULL) {
             char *paroc_location=getenv("POPC_LOCATION");
             if(paroc_location==NULL) {
-                fprintf(stderr,"ERROR: POPC_LOCATION environment variable is not set.\n");
+                LOG_ERROR("POPC_LOCATION environment variable is not set.");
                 Usage();
             }
 
@@ -266,13 +269,13 @@ int main(int argc, char **argv) {
          * Instantiation of the right services
          */
 #ifdef POPC_SECURE_VIRTUAL
-        printf("Starting POP-C++ %s [Virtual Secure] Global Services\n", VERSION);
+        LOG_INFO("Starting POP-C++ %s [Virtual Secure] Global Services", VERSION);
 #elif defined POPC_SECURE
-        printf("Starting POP-C++ %s [Secure] Global Services\n", VERSION);
+        LOG_INFO("Starting POP-C++ %s [Secure] Global Services", VERSION);
 #elif defined POPC_VIRTUAL
-        printf("Starting POP-C++ %s [Virtual] Global Services\n", VERSION);
+        LOG_INFO("Starting POP-C++ %s [Virtual] Global Services", VERSION);
 #else
-        printf("Starting POP-C++ %s [Standard] Global Services\n", VERSION);
+        LOG_INFO("Starting POP-C++ %s [Standard] Global Services", VERSION);
 #endif
 
         /*
@@ -280,11 +283,11 @@ int main(int argc, char **argv) {
          */
 #ifdef POPC_SECURE_VIRTUAL
         VirtSecurePOPCSearchNode psn(challenge, daemon);
-        printf("[POP-C++ Runtime] VSPSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());
+        LOG_INFO("[POP-C++ Runtime] VSPSN Started [%s]", psn.GetAccessPoint().GetAccessString());
 
         //Create the VPSM
         VirtualPOPCSecurityManager psm(challenge, daemon);
-        printf("[POP-C++ Runtime] VPSM Started [%s]\n", psm.GetAccessPoint().GetAccessString());
+        LOG_INFO("[POP-C++ Runtime] VPSM Started [%s]", psm.GetAccessPoint().GetAccessString());
 
         //Give reference to other services
         psm.setPSNRef(psn.GetAccessPoint());
@@ -299,7 +302,7 @@ int main(int argc, char **argv) {
 #elif defined POPC_VIRTUAL
         //Create the VPSN
         VirtualPOPCSearchNode psn(challenge, daemon);
-        printf("[POP-C++ Runtime] VPSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());
+        LOG_INFO("[POP-C++ Runtime] VPSN Started [%s]", psn.GetAccessPoint().GetAccessString());
 
         /*
          * SECURE VERSION
@@ -307,11 +310,11 @@ int main(int argc, char **argv) {
 #elif defined POPC_SECURE
         //Create the PSM
         POPCSecurityManager psm(challenge, daemon);
-        printf("[POP-C++ Runtime] PSM created [%s]\n", psm.GetAccessPoint().GetAccessString());
+        LOG_INFO("[POP-C++ Runtime] PSM created [%s]", psm.GetAccessPoint().GetAccessString());
 
         //Create the SPSN
         SecurePOPCSearchNode psn(challenge, daemon);
-        printf("[POP-C++ Runtime] SPSN [%s]\n", psn.GetAccessPoint().GetAccessString());
+        LOG_INFO("[POP-C++ Runtime] SPSN [%s]", psn.GetAccessPoint().GetAccessString());
 
         //Give references to other services
         psm.setPSNRef(psn.GetAccessPoint());
@@ -326,7 +329,7 @@ int main(int argc, char **argv) {
 
         // Start the POP-C++ Search Node service
         POPCSearchNode psn(challenge, daemon);
-        printf("[POP-C++ Runtime] PSN Started [%s]\n", psn.GetAccessPoint().GetAccessString());
+        LOG_INFO("[POP-C++ Runtime] PSN Started [%s]", psn.GetAccessPoint().GetAccessString());
 #endif
 
 
@@ -335,40 +338,40 @@ int main(int argc, char **argv) {
 #elif defined POPC_SECURE_VIRTUAL
         //Create the POPCloner
         POPCloner cloner(challenge, daemon);
-        printf("POPCloner Started [%s]\n", cloner.GetAccessPoint().GetAccessString());
+        LOG_INFO("POPCloner Started [%s]", cloner.GetAccessPoint().GetAccessString());
         //Save the POPCloner access point in the system
         paroc_system::popcloner = cloner.GetAccessPoint();
 
         try {
             //Create the VJobMgr
             VirtSecureJobMgr info(daemon, virtconf, conf, challenge, host, psn.GetAccessPoint(), cloner.GetAccessPoint(), psm.GetAccessPoint());
-            printf("VSJM created [%s]\n", info.GetAccessPoint().GetAccessString());
+            LOG_INFO("VSJM created [%s]", info.GetAccessPoint().GetAccessString());
             psm.setJobMgrRef(info.GetAccessPoint());
         } catch(...) {
-            fprintf(stderr, "Error: Need to stop VSPSN, VPSM and POPCloner\n");
+            LOG_WARNING("Error: Need to stop VSPSN, VPSM and POPCloner");
             //Stop the created PSN
             if(!psn.Stop(challenge)) {
-                fprintf(stderr, "Bad challenge string. Cannot stop VSPSN ...\n");
+                LOG_WARNING("Bad challenge string. Cannot stop VSPSN ...");
             } else {
-                printf("VSPSN stopped successfully!\n");
+                LOG_INFO("VSPSN stopped successfully!");
             }
             //Stop the created PSM
             if(!psm.Stop(challenge)) {
-                fprintf(stderr, "Bad challenge string. Cannot stop VPSM ...\n");
+                LOG_WARNING("Bad challenge string. Cannot stop VPSM ...");
             } else {
-                printf("VPSM stopped successfully!\n");
+                LOG_INFO("VPSM stopped successfully!");
             }
             //Stop the created POPCloner
             if(!cloner.Stop(challenge)) {
-                fprintf(stderr, "Bad challenge string. Cannot stop POPCloner ...\n");
+                LOG_WARNING("Bad challenge string. Cannot stop POPCloner ...");
             } else {
-                printf("POPCloner stopped successfully!\n");
+                LOG_INFO("POPCloner stopped successfully!");
             }
         }
 #elif defined POPC_VIRTUAL
         //Create the POPCloner
         POPCloner cloner(challenge, daemon);
-        printf("POPCloner Started [%s]\n", cloner.GetAccessPoint().GetAccessString());
+        LOG_INFO("POPCloner Started [%s]", cloner.GetAccessPoint().GetAccessString());
         //Save the POPCloner access point in the system
         paroc_system::popcloner = cloner.GetAccessPoint();
 
@@ -376,41 +379,41 @@ int main(int argc, char **argv) {
             //Create the VJobMgr
             paroc_accesspoint empty;
             VirtualJobMgr info(daemon, virtconf, conf, challenge, host, psn.GetAccessPoint(), cloner.GetAccessPoint(), empty);
-            printf("VJM created [%s]\n", info.GetAccessPoint().GetAccessString());
+            LOG_INFO("VJM created [%s]", info.GetAccessPoint().GetAccessString());
         } catch(...) {
-            fprintf(stderr, "Error: Need to stop VPSN and POPCloner\n");
+            LOG_ERROR("Need to stop VPSN and POPCloner");
             //Stop the created PSN
             if(!psn.Stop(challenge)) {
-                fprintf(stderr, "Bad challenge string. Cannot stop VPSN ...\n");
+                LOG_WARNING("Bad challenge string. Cannot stop VPSN ...");
             } else {
-                printf("VPSN stopped successfully!\n");
+                LOG_INFO("VPSN stopped successfully!");
             }
             //Stop the created POPCloner
             if(!cloner.Stop(challenge)) {
-                fprintf(stderr, "Bad challenge string. Cannot stop POPCloner ...\n");
+                LOG_WARNING("Bad challenge string. Cannot stop POPCloner ...");
             } else {
-                printf("POPCloner stopped successfully!\n");
+                LOG_INFO("POPCloner stopped successfully!");
             }
         }
 #elif defined POPC_SECURE
         try {
             //Create the SJobMgr
             SecureJobMgr info(daemon, conf, challenge, host, psn.GetAccessPoint(), psm.GetAccessPoint());
-            printf("SJM created [%s]\n", info.GetAccessPoint().GetAccessString());
+            LOG_INFO("SJM created [%s]", info.GetAccessPoint().GetAccessString());
             psm.setJobMgrRef(info.GetAccessPoint());
         } catch(...) {
-            fprintf(stderr, "Error: Need to stop SPSN and PSM\n");
+            LOG_ERROR("Need to stop SPSN and PSM");
             //Stop the created PSN
             if(!psn.Stop(challenge)) {
-                fprintf(stderr, "Bad challenge string. Cannot stop SPSN ...\n");
+                LOG_ERROR("Bad challenge string. Cannot stop SPSN ...");
             } else {
-                printf("SPSN stopped successfully!\n");
+                LOG_INFO("SPSN stopped successfully!");
             }
             //Stop the created PSM
             if(!psm.Stop(challenge)) {
-                fprintf(stderr, "Bad challenge string. Cannot stop PSM ...\n");
+                LOG_WARNING("Bad challenge string. Cannot stop PSM ...");
             } else {
-                printf("SPSN stopped successfully!\n");
+                LOG_INFO("SPSN stopped successfully!");
             }
         }
 #else
@@ -419,22 +422,22 @@ int main(int argc, char **argv) {
             paroc_accesspoint empty;
             psn.GetAccessPoint();
             JobMgr info(daemon, conf, challenge, host, psn.GetAccessPoint(), empty);
-            printf("[POP-C++ Runtime] JM created [%s]\n", info.GetAccessPoint().GetAccessString());
+            LOG_INFO("[POP-C++ Runtime] JM created [%s]", info.GetAccessPoint().GetAccessString());
 
             // Start the POPFile manager if no option is specified
             /** TO BE REMOVE FOR 2.5 BUT KEEP FOR 3.0
              if(popfile_service){
                 POPFileManager pfm(challenge, daemon, hostpfm);
-             printf("[POP-C++ Runtime] PFM Started [%s]\n", pfm.GetAccessPoint().GetAccessString());
+             LOG_INFO("[POP-C++ Runtime] PFM Started [%s]", pfm.GetAccessPoint().GetAccessString());
                  pfm.setPSNAccessPoint(psn.GetAccessPoint());
                 pfm.getNeighborsFromPSN();
             } */
         } catch(...) {
-            fprintf(stderr, "Error: Need to stop PSN\n");
+            LOG_WARNING("Error: Need to stop PSN");
             if(!psn.Stop(challenge)) {
-                fprintf(stderr, "Bad challenge string. Cannot stop PSN ...\n");
+                LOG_WARNING("Bad challenge string. Cannot stop PSN ...");
             } else {
-                printf("PSN stopped successfully!\n");
+                LOG_INFO("PSN stopped successfully!");
             }
         }
 #endif
@@ -443,7 +446,7 @@ int main(int argc, char **argv) {
         }
     } catch(paroc_exception *e) {
         errno=e->Code();
-        paroc_system::perror("Exception occurs\n");
+        paroc_system::perror("Exception occurs");
         delete e;
         return 1;
     }
