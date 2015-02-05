@@ -20,7 +20,6 @@ add_library(popc_common_psdyn
     broker_receive.cc
     buffer_raw.cc
     buffer_xdr.cc
-    combox_factory.cc
     interface.cc
     object.cc
     popc_combox_mpi.cc

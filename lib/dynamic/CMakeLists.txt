@@ -100,7 +100,6 @@ set(POPCC_GENERATED_STUBS
 
 popcc_compile_cxx(broker_receive.cc)
 popcc_compile_cxx(buffer_xdr.cc)
-popcc_compile_cxx(combox_factory.cc)
 popcc_compile_cxx(nodethread.cc)
 popcc_compile_cxx(popc_search_node_info.cc)
 popcc_compile_cxx(response.cc)
@@ -116,7 +115,6 @@ popcc_compile_cxx(popc_allocator_tcpip_ssh.cpp)
 set(POPCC_GENERATED_FILES
     ${POPCC_OUTPUT_DIR}/broker_receive.cc.o
     ${POPCC_OUTPUT_DIR}/buffer_xdr.cc.o
-    ${POPCC_OUTPUT_DIR}/combox_factory.cc.o
     ${POPCC_OUTPUT_DIR}/nodethread.cc.o
     ${POPCC_OUTPUT_DIR}/popc_search_node_info.cc.o
     ${POPCC_OUTPUT_DIR}/response.cc.o

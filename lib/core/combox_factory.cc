@@ -37,7 +37,7 @@
 #endif
 
 paroc_combox_registration::paroc_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator) {
-    paroc_combox_factory *f = paroc_combox_factory::GetInstance();
+    paroc_combox_factory *f=paroc_combox_factory::GetInstance();
     f->Register(name,metrics, creator);
 }
 
@@ -48,7 +48,6 @@ paroc_combox * combox_socket_creator() {
 // TODO LW: Why doesn't the compiler complain about this with Werror ? Could we have different flags here ?
 paroc_combox* combox_uds_creator() {
  //   return new popc_combox_uds; // TODO LW: This should be uncommented !
-    // TODO LW
     return NULL;
 }
 
@@ -155,17 +154,17 @@ paroc_combox_factory::paroc_combox_factory() {
                         sprintf(fname,"%s/%s", (const char *)plugindir, t->d_name);
                         void *h=LoadPlugin(fname, name, creator);
                         if(h!=NULL) {
-                            bool loaded=false;
-                            int n=plugins.GetSize();
+                            bool loaded = false;
+                            int n = plugins.GetSize();
                             for(int j = 0; j < n; j++) {
                                 if(h == plugins[j]) {
-                                    loaded=true;
+                                    loaded = true;
                                     break;
                                 }
                             }
                             if(!loaded) {
-                                plugins.InsertAt(-1,h);
-                                Register(name,metrics,creator);
+                                plugins.InsertAt(-1, h);
+                                Register(name, metrics, creator);
                             }
                         }
                     }
@@ -200,13 +199,13 @@ void paroc_combox_factory::Destroy() {
 
 paroc_combox* paroc_combox_factory::Create(const char * name) {
     LOG_DEBUG("Create a combox : %s", name);
-    if(name==NULL) {
+    if(name == NULL) {
         return NULL;
     }
-    POSITION pos=list.GetHeadPosition();
-    while(pos!=NULL) {
-        combox_factory_struct &t=list.GetNext(pos);
-        if(strcmp(name,t.name)==0) {
+    POSITION pos = list.GetHeadPosition();
+    while(pos != NULL) {
+        combox_factory_struct &t = list.GetNext(pos);
+        if(strcmp(name, t.name) == 0) {
             return t.creator();
         }
     }
@@ -229,14 +228,14 @@ paroc_combox* paroc_combox_factory::Create(int index) {
 }
 
 void paroc_combox_factory::GetNames(POPString &prots) {
-    prots="";
-    POSITION pos=list.GetHeadPosition();
-    while(pos!=NULL) {
-        combox_factory_struct &t=list.GetNext(pos);
+    prots = "";
+    POSITION pos = list.GetHeadPosition();
+    while(pos != NULL) {
+        combox_factory_struct &t = list.GetNext(pos);
         LOG_DEBUG("%s", t.name);
-        prots+=t.name;
+        prots += t.name;
         if(pos!=NULL) {
-            prots+=" ";
+            prots += " ";
         }
     }
 }
@@ -247,34 +246,34 @@ int paroc_combox_factory::GetCount() {
 
 bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATOR creator) {
     LOG_DEBUG("[Combox] Register %s", name);
-    if(name==NULL || creator==NULL) {
+    if(name == NULL || creator == NULL) {
         return false;
     }
 
-    POSITION pos=list.GetHeadPosition();
-    POSITION insertpos=NULL;
+    POSITION pos = list.GetHeadPosition();
+    POSITION insertpos = NULL;
 
-    while(pos!=NULL) {
-        POSITION old=pos;
-        combox_factory_struct &t=list.GetNext(pos);
-        if(strcmp(t.name, name)==0) {
+    while(pos != NULL) {
+        POSITION old = pos;
+        combox_factory_struct& t = list.GetNext(pos);
+        if(strcmp(t.name, name) == 0) {
             return false;
         }
 
-        if(metrics < t.metrics && insertpos==NULL) {
-            insertpos=old;
+        if(metrics<t.metrics && insertpos == NULL) {
+            insertpos = old;
         }
     }
-    if(insertpos==NULL) {
-        combox_factory_struct &el=list.AddTailNew();
+    if(insertpos == NULL) {
+        combox_factory_struct &el = list.AddTailNew();
         el.name = popc_strdup(name);
-        el.metrics=metrics;
-        el.creator=creator;
+        el.metrics = metrics;
+        el.creator = creator;
     } else {
         combox_factory_struct el;
         el.name = popc_strdup(name);
-        el.metrics=metrics;
-        el.creator=creator;
+        el.metrics = metrics;
+        el.creator = creator;
         list.InsertBefore(insertpos, el);
     }
     return true;
@@ -283,14 +282,14 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
 void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CREATOR &f) {
 #ifdef HAVE_LIBDL
     void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);
-    if(handle==NULL) {
+    if(handle == NULL) {
         LOG_ERROR("%s: %s",fname,dlerror());
         return NULL;
     }
 
     LOAD_PROTOCOL func;
     func = (LOAD_PROTOCOL)popc_dlsym(handle, "LoadProtocol");
-    if(func==NULL || func(name,f)!=0) {
+    if(func == NULL || func(name, f) != 0) {
         popc_dlclose(handle);
         return NULL;
     }
