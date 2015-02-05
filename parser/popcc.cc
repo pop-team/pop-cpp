@@ -136,7 +136,7 @@ std::size_t cxx_preprocessor(const char *preprocessor, const char** pre_opt, con
     cmd[count++] = preprocessor;
 
     if(options.cpp11){
-        cmd[count++] = "-std=cpp11";
+        cmd[count++] = "-std=c++11";
     }
 
     for(auto t2 = pre_opt; *t2; t2++) {
@@ -239,7 +239,7 @@ int cxx_compiler(char* cpp, const char** cpp_opt, const char* source, char** des
     cmd[count++] = cpp;
 
     if(options.cpp11){
-        cmd[count++] = "-std=cpp11";
+        cmd[count++] = "-std=c++11";
     }
 
     for(auto t2 = cpp_opt; *t2; t2++) {
