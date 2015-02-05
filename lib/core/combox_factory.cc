@@ -142,7 +142,7 @@ paroc_combox_factory::paroc_combox_factory() {
                 }
                 fclose(map);
             } else {
-                LOG_WARNING("unable to open plugin mapfile: %s",(const char *)pluginmap);
+                LOG_DEBUG("unable to open plugin mapfile: %s",(const char *)pluginmap); // note: level set to debug
                 DIR *dir=opendir(plugindir);
                 if(dir!=NULL) {
                     dirent *t;
@@ -281,6 +281,7 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
 
 void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CREATOR &f) {
 #ifdef HAVE_LIBDL
+    LOG_INFO("Load plugin %s", fname);
     void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);
     if(handle == NULL) {
         LOG_ERROR("%s: %s",fname,dlerror());
