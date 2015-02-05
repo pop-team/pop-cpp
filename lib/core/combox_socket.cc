@@ -1,14 +1,8 @@
-/**
- *
- * Modifications :
- * Authors      Date            Comment
- */
 
 /*
-  Deeply need refactoring:
-    POPC_ConnectionTCPIP instead of paroc_connection_sock
-    POPC_ComboxTCPIP instead of paroc_combox_sock
-   Need to separate connection and combox implementation in two separate file.
+ * Note(BW): The complex functions are completely separated between the windows and linux
+ * implementation in order to make them more readable and maintainable. The simple functions
+ * are still contains conditional Linux / Windows code for sake of clarity.
  */
 
 #include "popc_intface.h"
