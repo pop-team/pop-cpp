@@ -50,6 +50,10 @@ char *paroc_utils::checkremove(int *argc, char ***argv, const char *opt) {
     return ret;
 }
 
+bool paroc_utils::check_remove(int *argc, char ***argv, const char *opt) {
+    return checkremove(argc, argv, opt);
+}
+
 bool paroc_utils::isEqual(const char *s1, const char *s2) {
     if(s1==s2) {
         return true;
