@@ -26,6 +26,126 @@
 #define POLLPRI 0x002
 #define POLLOUT 0x004
 
+#ifndef __WIN32__
+
+//Following are the Linux implementations
+
+bool paroc_combox_socket::Create(int port, bool server) {
+    Close();
+    isServer=server;
+
+    auto protocol=PROTO_TCP;
+    auto type= SOCK_STREAM;
+    sockfd=popc_socket(PF_INET,type,protocol);
+
+    if(sockfd<0) {
+        return false;
+    }
+
+    if(port>0) {
+        sockaddr_in sin;
+        memset(&sin,0,sizeof(sin));
+        sin.sin_family=AF_INET;
+        sin.sin_addr.s_addr=INADDR_ANY;
+        sin.sin_port=popc_htons(port);
+        SetOpt(SOL_SOCKET,SO_REUSEADDR,(char*)&sin,sizeof(sin)); // lwk : Added this line to allow reuse an earlier socket with the same address
+
+        if(popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin))) {
+            return false;
+        }
+    }
+
+    if(server) {
+        pollarray.SetSize(1);
+        pollarray[0].fd=sockfd;
+        pollarray[0].events=POLLIN;
+        pollarray[0].revents=0;
+        index=1;
+        nready=0;
+
+        connarray.SetSize(1);
+        connarray[0]=CreateConnection(sockfd);
+
+        return popc_listen(sockfd,10)==0;
+    } else {
+        peer=CreateConnection(-1);
+    }
+
+    return true;
+}
+
+#else
+
+//Following are the Windows implementations
+
+bool paroc_combox_socket::Create(int port, bool server) {
+    Close();
+    isServer=server;
+
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+    auto protocol=PROTO_TCP;
+    auto type= SOCK_STREAM;
+    sockfd=popc_socket(PF_INET,type,protocol);
+
+    if(sockfd<0) {
+        return false;
+    }
+
+    if(port>0) {
+        sockaddr_in sin;
+        memset(&sin,0,sizeof(sin));
+        sin.sin_family=AF_INET;
+        sin.sin_addr.s_addr=INADDR_ANY;
+        sin.sin_port=popc_htons(port);
+        SetOpt(SOL_SOCKET,SO_REUSEADDR,(char*)&sin,sizeof(sin)); // lwk : Added this line to allow reuse an earlier socket with the same address
+        if(popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin))!=0) {
+            return false;
+        }
+    }
+
+    if(server) {
+        FD_ZERO(&activefdset);
+        FD_ZERO(&readfds);
+
+        FD_SET(sockfd, &activefdset);
+        highsockfd = sockfd;
+        nready=0;
+
+        connarray.SetSize(1);
+        connarray[0]=CreateConnection(sockfd);
+
+        sockaddr_in sin;
+        memset(&sin,0,sizeof(sin));
+        sin.sin_family=AF_INET;
+        sin.sin_addr.s_addr=INADDR_ANY;
+        sin.sin_port=htons(0);
+
+        if(popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin)) == SOCKET_ERROR) {
+            LOG_ERROR("bind error");
+            WSACleanup();
+            return false;
+        }
+
+        if(popc_listen(sockfd,10) == SOCKET_ERROR) {
+            LOG_ERROR("listen error");
+            WSACleanup();
+            return false;
+        }
+
+        return true;
+    } else {
+        peer=CreateConnection(-1);
+    }
+
+    return true;
+}
+
+#endif
+
+//Normal implementations that are not separated by arch
+
 paroc_connection_sock::paroc_connection_sock(paroc_combox *cb): paroc_connection(cb) {
     sockfd=-1;
 #ifndef __WIN32__
@@ -57,90 +177,6 @@ paroc_combox_socket::paroc_combox_socket() {
 paroc_combox_socket::~paroc_combox_socket() {
     Close();
 }
-
-bool paroc_combox_socket::Create(int port, bool server) {
-    Close();
-    isServer=server;
-
-//  protoent *ppe;
-//  char prot[]="tcp";
-    int type, protocol;
-//  char tmpbuf[2048];
-    //THESE LINES OF CODE MAKE THEM LESS PORTABLE...
-    protocol=PROTO_TCP;
-//  if ( (ppe=getprotobyname(prot))==0) return false;
-//  else protocol=ppe->p_proto;
-#ifdef __WIN32__
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
-#endif
-
-    type= SOCK_STREAM;
-    sockfd=popc_socket(PF_INET,type,protocol);
-
-    if(sockfd<0) {
-        return false;
-    }
-    if(port>0) {
-        sockaddr_in sin;
-        memset(&sin,0,sizeof(sin));
-        sin.sin_family=AF_INET;
-        sin.sin_addr.s_addr=INADDR_ANY;
-        sin.sin_port=popc_htons(port);
-        SetOpt(SOL_SOCKET,SO_REUSEADDR,(char*)&sin,sizeof(sin)); // lwk : Added this line to allow reuse an earlier socket with the same address
-        if(popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin))!=0) {
-            return false;
-        }
-    }
-
-    if(server) {
-#ifndef __WIN32__
-        pollarray.SetSize(1);
-        pollarray[0].fd=sockfd;
-        pollarray[0].events=POLLIN;
-        pollarray[0].revents=0;
-        index=1;
-        nready=0;
-#else
-        FD_ZERO(&activefdset);
-        FD_ZERO(&readfds);
-
-        FD_SET(sockfd, &activefdset);
-        highsockfd = sockfd;
-        nready=0;
-#endif
-        connarray.SetSize(1);
-        connarray[0]=CreateConnection(sockfd);
-
-#ifdef __WIN32__
-        sockaddr_in sin;
-        memset(&sin,0,sizeof(sin));
-        sin.sin_family=AF_INET;
-        sin.sin_addr.s_addr=INADDR_ANY;
-        sin.sin_port=htons(0);
-
-        if(popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin)) == SOCKET_ERROR) {
-            LOG_ERROR("bind error");
-            WSACleanup();
-            return false;
-        }
-
-        if(popc_listen(sockfd,10) == SOCKET_ERROR) {
-            LOG_ERROR("listen error");
-            WSACleanup();
-            return false;
-        }
-
-        return true;
-#else
-        return (popc_listen(sockfd,10)==0);
-#endif
-    } else {
-        peer=CreateConnection(-1);
-    }
-    return true;
-}
-
 
 bool paroc_combox_socket::Connect(const char *url) {
     if(url==NULL) {
@@ -289,17 +325,22 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
 #endif
 
 #ifndef __WIN32__
-        if(n==0)
-#else
-        if(GetLastError()==WSAECONNRESET)
-#endif
-        {
+        if(n==0){
             if(CloseSock(fd) && iopeer==NULL) {
                 continue;
             }
 
             return -1;
         }
+#else
+        if(GetLastError()==WSAECONNRESET){
+            if(CloseSock(fd) && iopeer==NULL) {
+                continue;
+            }
+
+            return -1;
+        }
+#endif
     } while(n<=0);
 
     if(!iopeer) {
