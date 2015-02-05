@@ -12,13 +12,10 @@
 
 #include "popc_intface.h"
 
-//#include <string.h>
-//#include <arpa/inet.h>
-//#include <rpc/types.h>
-//#include <rpc/xdr.h>
 #include "paroc_interface.h"
 #include "popc_buffer_xdr_mpi.h"
 #include "paroc_exception.h"
+#include "popc_logger.h"
 
 /**
  * Buffer constructor. Start with a stable state.
@@ -375,7 +372,7 @@ bool popc_buffer_xdr_mpi::Send(paroc_combox &s, paroc_connection *conn) {
     char *dat=(char *)packeddata;
 
     if(dat == NULL) {
-        printf("fail 1\n");
+        LOG_ERROR("fail 1");
         return false;
     }
     int n = packeddata.GetSize();
@@ -424,7 +421,7 @@ bool popc_buffer_xdr_mpi::Recv(paroc_combox &s, paroc_connection *conn) {
     Reset();
     n = popc_ntohl(h[0]);
     if(n < 20) {
-        printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
+        LOG_ERROR("[CORE]: XDR Buffer - Bad message header (size error:%d)", n);
         return false;
     }
 
@@ -503,7 +500,7 @@ char* popc_buffer_xdr_mpi::get_load() {
         h[3]=popc_htonl(header.GetMethodID());
         break;
     default:
-        printf("fail 2\n");
+        LOG_ERROR("fail 2");
         return NULL;
     }
     memcpy(dat, h, 20);
@@ -526,7 +523,7 @@ void popc_buffer_xdr_mpi::load(char* data, int length) {
     memcpy(h, packeddata, 20);
     int n = popc_ntohl(h[0]);
     if(n < 20) {
-        printf("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)\n", n);
+        LOG_ERROR("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)", n);
         return;
     }
 

@@ -20,21 +20,17 @@ set(POPCPP_COMPILER_FLAGS -o)
 set(POPCPP_Object_COMPILER_FLAGS -object -o)
 set(POPCPP_ParclassForService_COMPILER_FLAGS -c -o)
 
-# TODO LWK: Should be set to include/services very probably
-set(POPCPP_SERVICES_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include/dynamic)
-set(POPCPP_LIB_PATH ${CMAKE_SOURCE_DIR}/lib/dynamic)
-set(POPCPP_SERVICES_PATH ${CMAKE_SOURCE_DIR}/services/lib)
-
-set(POPCPP_LIB_INSTALL lib/dynamic)
-set(POPCPP_SERVICES_INSTALL services)
+set(POPCPP_SERVICES_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/dynamic;-I${CMAKE_SOURCE_DIR}/include/core")
+set(POPCPP_LIB -L${CMAKE_SOURCE_DIR}/lib/core;-L${CMAKE_SOURCE_DIR}/lib/dynamic;-L${CMAKE_SOURCE_DIR}/services/lib;-lpopc_common;-lpopc_core;)
 
 set(POPCC_COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS})
 set(POPCC_COMMAND_OBJ ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_Object_COMPILER_FLAGS})
 set(POPCC_COMMAND_EXE ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_COMPILER_FLAGS})
 set(POPCC_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 
-include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_SERVICES_INCLUDE_PATH})
-link_directories(${CMAKE_SOURCE_DIR}/lib/dynamic)
+# include_directories(${CMAKE_SOURCE_DIR}/ ${POPCPP_SERVICES_INCLUDE_PATH})
+#link_directories(${CMAKE_SOURCE_DIR}/lib/dynamic)
+#link_directories(${CMAKE_SOURCE_DIR}/lib/core)
 
 # Add more warnings
 add_definitions(-Wall -Wextra -Werror)
@@ -43,9 +39,11 @@ add_definitions(-Wall -Wextra -Werror)
 function(popcc_compile_ph ph_file)
 add_custom_command(
     OUTPUT ${POPCC_OUTPUT_DIR}/${ph_file}.stub.o
-    COMMAND ${POPCC_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub.o ${CMAKE_CURRENT_SOURCE_DIR}/${ph_file} -I${POPCPP_SERVICES_INCLUDE_PATH}
+    COMMAND ${POPCC_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub.o ${CMAKE_CURRENT_SOURCE_DIR}/${ph_file} ${POPCPP_SERVICES_INCLUDE_PATH}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${ph_file}
+    DEPENDS popcc
+    DEPENDS popcpp
 )
 endfunction(popcc_compile_ph)
 
@@ -53,9 +51,13 @@ endfunction(popcc_compile_ph)
 function(popcc_compile_cxx cxx_file)
 add_custom_command(
     OUTPUT ${POPCC_OUTPUT_DIR}/${cxx_file}.o
-    COMMAND ${POPCC_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${CMAKE_CURRENT_SOURCE_DIR}/${cxx_file} -I${POPCPP_SERVICES_INCLUDE_PATH}
+    COMMAND ${POPCC_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${CMAKE_CURRENT_SOURCE_DIR}/${cxx_file} ${POPCPP_SERVICES_INCLUDE_PATH}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
     DEPENDS ${cxx_file}
+    DEPENDS popcc
+    DEPENDS popcpp
+    DEPENDS popc_core
+    DEPENDS popc_common
 )
 endfunction(popcc_compile_cxx)
 
@@ -64,22 +66,39 @@ function(popcc_compile_exec exec_file cxx_file)
 popcc_compile_cxx(${cxx_file})
 add_custom_target(
     ${exec_file} ALL
-    COMMAND ${POPCC_COMMAND_EXE} ${POPCC_OUTPUT_DIR}/${exec_file} ${POPCC_OUTPUT_DIR}/${cxx_file}.o
-        -L${POPCPP_LIB_PATH} -L${POPCPP_SERVICES_PATH} ${POPCC_OUTPUT_DIR}/libpopc_services.a
+    COMMAND ${POPCC_COMMAND_EXE} ${POPCC_OUTPUT_DIR}/${exec_file} ${POPCC_OUTPUT_DIR}/${cxx_file}.o -lpopc_services ${POPCPP_LIB}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
-    DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${POPCC_OUTPUT_DIR}/libpopc_services.a
+    DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o
+    DEPENDS popcc
+    DEPENDS popcpp
+    DEPENDS popc_core
+    DEPENDS popc_common
+    DEPENDS popc_services
 )
 endfunction(popcc_compile_exec)
 
 # Function to compile and link an executable from a _obj.cc
 function(popcc_compile_obj exec_file cxx_file)
 popcc_compile_cxx(${cxx_file})
+#add_executable(
+    #${exec_file}
+    #${POPCC_OUTPUT_DIR}/${cxx_file}.o
+    #${POPCC_OUTPUT_DIR}/lib/core/popc_core
+    #popc_common
+    #popc_services
+    #DEPENDS popcc
+    #DEPENDS popcpp
+#)
 add_custom_target(
     ${exec_file} ALL
-    COMMAND ${POPCC_COMMAND_OBJ} ${POPCC_OUTPUT_DIR}/${exec_file} ${POPCC_OUTPUT_DIR}/${cxx_file}.o
-        -L${POPCPP_LIB_PATH} -L${POPCPP_SERVICES_PATH} ${POPCC_OUTPUT_DIR}/libpopc_services.a
+    COMMAND ${POPCC_COMMAND_OBJ} ${POPCC_OUTPUT_DIR}/${exec_file} ${POPCC_OUTPUT_DIR}/${cxx_file}.o -lpopc_services ${POPCPP_LIB}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
-    DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${POPCC_OUTPUT_DIR}/libpopc_services.a
+    DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o 
+    DEPENDS popcc
+    DEPENDS popcpp
+    DEPENDS popc_core
+    DEPENDS popc_common
+    DEPENDS popc_services
 )
 endfunction(popcc_compile_obj)
 
@@ -107,11 +126,10 @@ set(POPCC_GENERATED_STUB
     ${POPCC_OUTPUT_DIR}/popfilemanager.ph.stub.o
 )
 
-add_custom_target(aaparoc_stub_services ALL DEPENDS ${POPCC_GENERATED_STUB})
+# add_custom_target(aaparoc_stub_services ALL DEPENDS ${POPCC_GENERATED_STUB})
 
 # Compile all C++ files
 
-popcc_compile_cxx(popc_logger.cpp)
 popcc_compile_cxx(service_base.cc)
 popcc_compile_cxx(jobmgr.cc)
 popcc_compile_cxx(popc_search_node.cc)
@@ -133,18 +151,17 @@ set(POPCC_GENERATED_FILES
     ${POPCC_OUTPUT_DIR}/appservice.cc.o
     ${POPCC_OUTPUT_DIR}/batchmgr.cc.o
     ${POPCC_OUTPUT_DIR}/popfilemanager.cc.o
-    ${POPCC_OUTPUT_DIR}/popc_logger.cpp.o
 )
 
 # Generate the static library
 
-add_custom_command(
-    OUTPUT ${POPCC_OUTPUT_DIR}/libpopc_services.a
-    COMMAND ar cru ${POPCC_OUTPUT_DIR}/libpopc_services.a ${POPCC_GENERATED_FILES}
-    DEPENDS ${POPCC_GENERATED_FILES}
-    COMMENT "Compile POP-C++ generated lib for popc_services")
+#add_custom_command(
+    #OUTPUT ${POPCC_OUTPUT_DIR}/libpopc_services.a
+    #COMMAND ar cru ${POPCC_OUTPUT_DIR}/libpopc_services.a ${POPCC_GENERATED_FILES}
+    #DEPENDS ${POPCC_GENERATED_FILES}
+    #COMMENT "Compile POP-C++ generated lib for popc_services")
 
-add_custom_target(abpopc_services ALL DEPENDS ${POPCC_GENERATED_FILES} ${POPCC_OUTPUT_DIR}/libpopc_services.a)
+#add_custom_target(abpopc_services ALL DEPENDS ${POPCC_GENERATED_FILES} ${POPCC_OUTPUT_DIR}/libpopc_services.a)
 
 # Compile executables
 
@@ -155,7 +172,17 @@ popcc_compile_obj(appservice appservice_obj.cc)
 popcc_compile_exec(localservice_launcher localservice_launcher.cc)
 popcc_compile_exec(jobmgr_launcher jobmgr_launcher.cc)
 
+
+add_library(popc_services
+    ${POPCC_GENERATED_FILES}
+)
+set_target_properties(popc_services
+    PROPERTIES LINKER_LANGUAGE C
+)
+
 # Install executables
+set(POPCPP_LIB_INSTALL lib/dynamic)
+set(POPCPP_SERVICES_INSTALL services)
 
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/popc_search_node${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/jobmgr${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
@@ -163,5 +190,5 @@ install(PROGRAMS ${POPCC_OUTPUT_DIR}/appservice${EXECUTABLE_EXTENSION} DESTINATI
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/localservice_launcher${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/jobmgr_launcher${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/popfilemanager${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
-install(PROGRAMS ${POPCC_OUTPUT_DIR}/libpopc_services.a DESTINATION ${POPCPP_LIB_INSTALL})
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_services.a DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(CODE "execute_process(COMMAND ${CMAKE_INSTALL_PREFIX}/sbin/popc_setup)")

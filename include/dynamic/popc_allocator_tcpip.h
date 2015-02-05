@@ -23,7 +23,7 @@ class POPC_Allocator_tcpip_local : public POPC_Allocator {
 public:
     POPC_Allocator_tcpip_local();
     ~POPC_Allocator_tcpip_local();
-    virtual POPString allocate(POPString& objectname, paroc_od& od);
+    virtual POPString allocate(POPString& objectname, paroc_od& od);   // TODO LW: Params must be const
     virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb);
     virtual POPC_Protocol get_protocol() {
         return POPC_Allocator::TCPIP;

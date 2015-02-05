@@ -7,7 +7,6 @@
 #include "parser.tab.h"
 #include "parser.h"
 #include "paroc_utils.h"
-#include "debug.h"
 
   int c;
   int linenumber=0;

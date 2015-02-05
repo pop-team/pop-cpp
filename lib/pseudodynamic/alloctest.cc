@@ -30,13 +30,13 @@ int main(int argc, char **argv) {
         JobMgr jobmgr(job);
         char buf[1024];
         paroc_od *od=new paroc_od;
-        printf("Enter an OD (name values)\n");
+        LOG_INFO("Enter an OD (name values)");
         while(fgets(buf,1023,stdin)!=NULL) {
             if(strncmp(buf,"done",4)==0) {
                 paroc_array<paroc_accesspoint> jobcontacts(howmany);
                 paroc_array <int> reserveIDs(howmany);
                 paroc_array <float> fitness(howmany);
-                printf("Do resource allocation now...\n");
+                LOG_INFO("Do resource allocation now...");
                 int requestInfo[3];
                 int iptrace[MAX_HOPS];
 
@@ -46,23 +46,23 @@ int main(int argc, char **argv) {
 
                 if(jobmgr.AllocResource(paroc_system::appservice, objname, *od, howmany, fitness, jobcontacts, reserveIDs, requestInfo, iptrace,0)) {
                     for(int i=0; i<howmany; i++) {
-                        printf("#%d:\t%s (%d)\n", i+1,jobcontacts[i].GetAccessString(),reserveIDs[i]);
+                        LOG_INFO("#%d:%s (%d)\n", i+1,jobcontacts[i].GetAccessString(),reserveIDs[i]);
                         resources.AddTailNew()=jobcontacts[i];
                         reserve.AddTail(reserveIDs[i]);
                     }
                 } else {
-                    printf("Alloc fail\n");
+                    LOG_ERROR("Alloc fail");
                 }
                 delete od;
                 od=new paroc_od;
-                printf("Enter next OD\n");
+                LOG_DEBUG("Enter next OD");
                 continue;
             }
             int v1,v2=-1;
             char name[256];
             int t=sscanf(buf,"%s %d %d", name,&v1,&v2);
             if(t<2) {
-                printf("POP-C++ Error: Bad OD value\n");
+                LOG_ERROR("POP-C++ Error: Bad OD value");
                 continue;
             }
             if(strcmp(name,"power")==0) {
@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
             } else if(strcmp(name,"np")==0) {
                 howmany=v1;
             } else {
-                printf("POP-C++ Error: Unkown OD name\n");
+                LOG_ERROR("POP-C++ Error: Unkown OD name");
             }
         }
         POSITION pos=resources.GetHeadPosition();
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
         }
         resources.RemoveAll();
     } catch(...) {
-        printf("Exception!\n");
+        LOG_WARNING("Exception in alloctest");
         return 1;
 
     }

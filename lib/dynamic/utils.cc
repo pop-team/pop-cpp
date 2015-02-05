@@ -30,7 +30,6 @@
 
 
 #include "paroc_utils.h"
-#include "debug.h"
 
 char *paroc_utils::checkremove(int *argc, char ***argv, const char *opt) {
     int i=0;
@@ -298,7 +297,7 @@ int rprintf(const char *format,...) {
     vsnprintf(str,1023, format, ap);
     va_end(ap);
     if(paroc_system::appservice.IsEmpty()) {
-        fprintf(stdout,"%s",str);
+        LOG_INFO("%s",str);
         fflush(stdout);
         return 0;
     }
@@ -307,7 +306,7 @@ int rprintf(const char *format,...) {
         POPString msg(str);
         log.Log(msg);
     } catch(...) {
-        fprintf(stdout,"%s",str);
+        LOG_INFO("%s",str);
         fflush(stdout);
         return 0;
     }
@@ -361,6 +360,7 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
         }
     } catch(...) {
         fclose(f);
+        LOG_WARNING("Exception while registring code");
         return 0;
     }
     fclose(f);

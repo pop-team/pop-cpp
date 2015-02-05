@@ -28,16 +28,16 @@ void ProbObj::Exec() {
         Solve();
         ResetCounter();
         TriggerNexts();
-        DEBUG("Solved");
+        LOG_DEBUG("Solved");
     }
 }
 
 void ProbObj::TriggerNexts() {
-    DEBUG("Checking next dependencies\n");
+    LOG_DEBUG("Checking next dependencies");
     POSITION pos=nexts.GetHeadPosition();
     while(pos!=NULL) {
         ProbObj *p=nexts.GetNext(pos);
-        DEBUG("Now solve next\n");
+        LOG_DEBUG("Now solve next");
         assert(p!=NULL);
         p->Exec();
     }

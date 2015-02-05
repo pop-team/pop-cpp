@@ -318,6 +318,7 @@ char *Compile(const char *preprocessor, char *popcpp, char *cpp, const char** pr
         sprintf(tmpfile1, "%s_popc1_%s", sdir, fname);
 
         if(options.usepipe) {
+// TODO LW: These files can be generated many time during compilation with similar names. See what to do
             sprintf(tmpfile2, "-");
         } else {
             sprintf(tmpfile2, "%s_popc2_%s", sdir, fname);
@@ -543,6 +544,10 @@ int main(int argc, char *argv[]) {
         link_cmd[link_count++] = tok;
     }
 
+    sprintf(buf, "-L%s/lib/core", parocdir);
+    link_cmd[link_count] = popc_strdup(buf);
+    link_count++;
+
     // Add the library path for compilation
     if(options.psdyn) {
         sprintf(buf, "-L%s/lib/pseudodynamic", parocdir);
@@ -621,6 +626,9 @@ int main(int argc, char *argv[]) {
         cpp_opts[cpp_count++] = popc_strdup("-Dmain=parocmain");
     }
 
+    sprintf(buf, "-I%s/include/core", parocdir);
+    cpp_opts[cpp_count++] = popc_strdup(buf);
+
     if(options.psdyn) {
         sprintf(buf, "-I%s/include/pseudodynamic", parocdir);
     } else {
@@ -694,16 +702,23 @@ int main(int argc, char *argv[]) {
             if(options.psdyn && (paroc_static || staticlib)) {
                 sprintf(buf, "%s/lib/pseudodynamic/libpopc_common_psdyn.a", parocdir);
             } else if(options.psdyn) {
+                strcpy(buf, "-lpopc_core");
+                link_cmd[link_count++] = popc_strdup(buf);
                 strcpy(buf, "-lpopc_common_psdyn");
             } else if(paroc_static || staticlib) {
                 sprintf(buf, "%s/lib/dynamic/libpopc_common.a", parocdir);
             } else {
+                // note: apparently the link order should be: -lpopc_core -lpopc_common -lpopc_core due to cross dependancies
+                strcpy(buf, "-lpopc_core");
+                link_cmd[link_count++] = popc_strdup(buf);
 #ifndef __WIN32__
                 strcpy(buf, "-lpopc_common");
 #else
                 strcpy(buf, "-lpopc_common -lws2_32 -lxdr");
 #endif
             }
+            link_cmd[link_count++] = popc_strdup(buf);
+            strcpy(buf, "-lpopc_core");
             link_cmd[link_count++] = popc_strdup(buf);
 
             char tmplibfile[1024];

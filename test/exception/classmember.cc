@@ -11,7 +11,6 @@
 
 #include "parser.h"
 #include "paroc_utils.h"
-#include "debug.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>

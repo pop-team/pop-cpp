@@ -54,7 +54,9 @@ AppCoreService::~AppCoreService() {
     try {
         JobMgr jm(paroc_system::jobservice);
         jm.ApplicationEnd(_popcAppId, true);
-    } catch(...) {}
+    } catch(...) {
+        LOG_WARNING("Exception while destroying JobMgr");
+    }
 
     auto pos=servicelist.GetHeadPosition();
     while(pos) {
@@ -63,6 +65,7 @@ AppCoreService::~AppCoreService() {
         try {
             t.service->Stop(mychallenge);
         } catch(...) {
+            LOG_WARNING("Exception while stopping service");
         }
         delete t.service;
     }
@@ -111,6 +114,7 @@ bool AppCoreService::RegisterService(const POPString &name, const paroc_service_
         t.service=new paroc_service_base(newservice);
         t.name=popc_strdup(name);
     } catch(...) {
+        LOG_WARNING("Exception while creating service");
         return false;
     }
     servicelist.AddTail(t);
@@ -169,7 +173,7 @@ void AppCoreService::LoadAddOn() {
 
         char *tmp=strstr(objfile,"-object=");
         if(tmp==NULL) {
-            DEBUG("No addon service name specified: %s", objfile);
+            LOG_DEBUG("No addon service name specified: %s", objfile);
             continue;
         }
         paroc_accesspoint ap;
@@ -177,18 +181,18 @@ void AppCoreService::LoadAddOn() {
         paroc_od od; // Note : the od is empty !
         sprintf(exec, "%s -constructor",objfile);
         if(paroc_interface::LocalExec(NULL,exec, NULL, jobmgr, GetAccessPoint(), &ap,1,od)!=0) {
-            DEBUG("Fail to start the add-on [%s]", buf);
+            LOG_DEBUG("Fail to start the add-on [%s]", buf);
             continue;
         }
         try {
             paroc_service_base s(ap);
             s.Start(mychallenge);
         } catch(...) {
-            DEBUG("Can not connect to %s",service);
+            LOG_WARNING("Can not connect to %s",service);
             continue;
         }
         if(tmp!=NULL && sscanf(tmp+8,"%s",service)==1) {
-            DEBUG("Service: %s", service);
+            LOG_DEBUG("Service: %s", service);
             RegisterService(service, ap);
         }
     }

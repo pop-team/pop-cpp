@@ -12,7 +12,7 @@ echo ""
 exit
 fi
 
-unset POPC_DEBUG
+# unset POPC_DEBUG
 
 if [ -z "$POPC_LOCATION" ]; then
 POPC_LOCATION=@CMAKE_INSTALL_PREFIX@
@@ -53,8 +53,8 @@ for arg in $* ; do
 		localFlag="-runlocal"
     elif [ "$arg" = "-noproxy" ]; then
 		noproxy=1
-	elif [ "$arg" = "-debug" ]; then
-		export POPC_DEBUG="Y"
+	# elif [ "$arg" = "-debug" ]; then
+		# export POPC_DEBUG="Y"
 	elif [ `echo "$arg"|grep "^\-log="` ]; then
 		export LOGGING_FILE=`echo $arg|sed s/-log=//`
 		logging=1

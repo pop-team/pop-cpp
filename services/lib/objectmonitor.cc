@@ -14,13 +14,14 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "popc_logger.h"
 #include "objectmonitor.ph"
 
 //static IMPLEMENT_TYPE(ObjectMonitor) *myObjMonitor=NULL;
 static ObjectMonitor *myObjMonitor=NULL;
 
 static void LocalServiceTerminate(int sig) {
-    printf("LOCAL SERVICE SIGNAL %d!!!!\n",sig);
+    LOG_ERROR( "LOCAL SERVICE SIGNAL %d!!!!",sig);
     if(myObjMonitor!=NULL) {
         myObjMonitor->KillAll();
     }
@@ -42,7 +43,7 @@ ObjectMonitor::~ObjectMonitor() {
 
 void ObjectMonitor::KillAll() {
     mutex {
-        printf("POP-C++: End of all parallel objects is being processed\n");
+        LOG_INFO("POP-C++: End of all parallel objects is being processed");
         POSITION pos=objects.GetHeadPosition();
         while(pos!=NULL) {
             paroc_accesspoint &t=objects.GetNext(pos);
@@ -50,6 +51,7 @@ void ObjectMonitor::KillAll() {
                 paroc_interface tmp(t);
                 tmp.Kill();
             } catch(...) {
+                LOG_WARNING("Exception while killing objects");
             }
         }
         objects.RemoveAll();
@@ -73,12 +75,13 @@ int ObjectMonitor::CheckObjects() {
                     test.DecRef();
                 }
             } catch(...) {
+                LOG_WARNING("Exception in CheckObjects");
                 objects.RemoveAt(old);
             }
         }
         isActive=active;
 
-        DEBUG("Check parallel objects....%d object alive", objects.GetCount());
+        LOG_DEBUG("Check parallel objects....%d object alive", objects.GetCount());
         return objects.GetCount();
     }
 }
@@ -109,6 +112,6 @@ void ObjectMonitor::UnManageObject(paroc_accesspoint &p) {
                 return;
             }
         }
-        //    DEBUG("ObjectMonitor: unable to unmanage ap: %s",newstr);
+        LOG_WARNING("ObjectMonitor: unable to unmanage ap: %s",newstr);
     }
 }

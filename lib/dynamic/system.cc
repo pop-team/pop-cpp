@@ -122,14 +122,14 @@ paroc_system::~paroc_system() {
 
 
 void paroc_system::perror(const char *msg) {
-    //DEBUG("paroc_system::perror : %d",errno);
+    LOG_ERROR("paroc_system::perror : %d",errno);
     if(errno>USER_DEFINE_ERROR && errno<=USER_DEFINE_LASTERROR) {
         if(msg==NULL) {
             msg="POP-C++ Error";
         }
-        fprintf(stderr,"%s: %s (errno %d)\n",msg,paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
+        LOG_ERROR("%s: %s (errno %d)",msg,paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
     } else if(errno>USER_DEFINE_LASTERROR) {
-        fprintf(stderr,"%s: Unknown error (errno %d)\n",msg, errno);
+        LOG_ERROR("%s: Unknown error (errno %d)",msg, errno);
     } else {
         ::perror(msg);
     }
@@ -169,7 +169,7 @@ POPString paroc_system::GetHost() {
             POPC_HostName=t;
         }
     }
-    //printf("GetHost returns %s\n", (const char*)POPC_HostName);
+    LOG_DEBUG("GetHost returns %s", (const char*)POPC_HostName);
     return POPC_HostName;
 }
 
@@ -194,18 +194,18 @@ POPString paroc_system::GetIP() {
             if(!(GetIPFromInterface(iface,ip))) {
                 // Not found
                 setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
-                printf("POP-C++ Warning: Cannot find an IP for interface %s, using '%s' as IP address.\n",(const char*)iface, LOCALHOST);
+                LOG_WARNING("Cannot find an IP for interface %s, using '%s' as IP address.",(const char*)iface, LOCALHOST);
             }
         } else { // Env. Variable POP_IFACE is not defined
             iface=GetDefaultInterface();
             if(iface.Length()>0) {
                 if(!(GetIPFromInterface(iface,ip))) {
                     setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
-                    printf("POP-C++ Warning: host IP not found, using '%s' as IP address.\n",LOCALHOST);
+                    LOG_WARNING("host IP not found, using '%s' as IP address.",LOCALHOST);
                 }
             } else {
                 setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
-                printf("POP-C++ Warning: no default network interface found, using '%s' as IP address.\n", LOCALHOST);
+                LOG_WARNING("no default network interface found, using '%s' as IP address.", LOCALHOST);
             }
         }
     }
@@ -329,10 +329,10 @@ POPString paroc_system::GetDefaultInterface() {
             if(num < 2) {
                 paroc_exception::paroc_throw_errno();
             }
-            //DEBUG("iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
+            // LOG_DEBUG( "iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
 
             if(!strcmp(net_addr,"00000000")) {
-                //DEBUG("Default gateway : %s", iface);
+                LOG_DEBUG("Default gateway : %s", iface);
                 found=true;
             }
         }
@@ -352,9 +352,9 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
 
     getifaddrs(&addrs);
 
-    //printf("\nLooking for interface: %s --->\n",(const char*)iface);
+    LOG_DEBUG("Looking for interface: %s --->",(const char*)iface);
     for(iap = addrs; iap != NULL; iap = iap->ifa_next) {
-        //printf("name=%s, addr=%p, flag=%d (%d), familly=%d (%d)\n",iap->ifa_name, iap->ifa_addr, iap->ifa_flags, IFF_UP, iap->ifa_addr->sa_family, AF_INET);
+        LOG_DEBUG("name=%s, addr=%p, flag=%d (%d), familly=%d (%d)",iap->ifa_name, iap->ifa_addr, iap->ifa_flags, IFF_UP, iap->ifa_addr->sa_family, AF_INET);
         if(iap->ifa_addr &&
                 (iap->ifa_flags & IFF_UP) &&
                 (iap->ifa_addr->sa_family == AF_INET) &&
@@ -364,8 +364,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
                       (void *)&(sa->sin_addr),
                       str_ip_local,
                       sizeof(str_ip_local));
-            //DEBUG("The IP of interface %s is %s",iap->ifa_name,str_ip_local);
-            //printf("The IP of interface %s is %s\n",iap->ifa_name,str_ip_local);
+            LOG_DEBUG("The IP of interface %s is %s",iap->ifa_name,str_ip_local);
             str_ip=str_ip_local;
             freeifaddrs(addrs);
             return true;
@@ -390,6 +389,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
     char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
     if(info==NULL) {
+        LOG_ERROR("missing -jobservice argument");
          return false;
     }
     paroc_system::jobservice.SetAccessString(info);
@@ -408,6 +408,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     char *appcontact=paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
     if(codeser==NULL && appcontact==NULL) {
+        LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");
         return false;
     }
     try {
@@ -418,7 +419,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
             } else {
                 sprintf(url,"%s -proxy=%s",codeser, proxy);
             }
-            //printf("mgr=CreateAppCoreService(url=%s);\n", url);
+            LOG_DEBUG("mgr=CreateAppCoreService(url=%s);", url);
 #ifndef DEFINE_UDS_SUPPORT
             mgr = CreateAppCoreService(url);
 #endif
@@ -434,7 +435,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         paroc_system::appservice=mgr->GetAccessPoint();
         paroc_system::appservice.SetAsService();
     } catch(POPException *e) {
-        printf("POP-C++ Exception occurs in paroc_system::Initialize\n");
+        LOG_WARNING("POP-C++ Exception occurs in paroc_system::Initialize");
         POPSystem::perror(e);
         delete e;
 #ifndef DEFINE_UDS_SUPPORT
@@ -447,7 +448,9 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 #endif
         return false;
     } catch(...) {
+        LOG_WARNING("Exception occurs in paroc_system::Initialize");
 #ifndef DEFINE_UDS_SUPPORT
+        LOG_WARNING("Exception occurs in paroc_system::Initialize");
         if(mgr!=NULL) {
             mgr->KillAll();
             mgr->Stop(challenge);
@@ -460,7 +463,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 
     char *codeconf=paroc_utils::checkremove(argc,argv,"-codeconf=");
 
-// DEBUGIF(codeconf==NULL,"No code config file\n");
+    LOG_DEBUG_IF(codeconf==NULL,"No code config file");
 
     /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
     {
@@ -499,17 +502,18 @@ void paroc_system::Finalize(bool normalExit) {
                     oldcount=count;
                 }
             } else {
-            //printf("Finalize killall\n");
+	        LOG_DEBUG("Finalize killall");
                 mgr->KillAll();
             }
-          //printf("Finalize stop\n");
+          LOG_DEBUG("Finalize stop");
             mgr->Stop(challenge);
             delete mgr;
         } catch(paroc_exception *e) {
-            paroc_system::perror(e->Extra());
+            LOG_WARNING("POP-C++ error while finalizing the application");
+            paroc_system::perror(e);
             delete e;
         } catch(...) {
-            fprintf(stderr,"POP-C++ error on finalizing the application\n");
+            LOG_WARNING("Error while finalizing the application");
         }
         mgr=NULL;
     }

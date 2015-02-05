@@ -20,6 +20,7 @@
 #include "paroc_interface.h"
 #include "paroc_buffer_raw.h"
 #include "paroc_exception.h"
+#include "popc_logger.h"
 
 paroc_buffer_raw::paroc_buffer_raw(): packeddata(0,1024) {
     Reset();
@@ -399,7 +400,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     memcpy(data_header, h, 20);
 
     if(s.Send(data_header, 20, conn)) {
-        printf("Error while sending header\n");
+        LOG_ERROR("Error while sending header");
         return false;
     }
     // MPI mod - end
@@ -407,9 +408,9 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     dat += 20;
     n -= 20;
     if(n > 0) {
-        printf("RAW: Send message size is %d: %s\n", n, (char*)packeddata);
+        LOG_INFO("RAW: Send message size is %d: %s", n, (char*)packeddata);
         if(s.Send(dat, n, conn) < 0) {
-        printf("Fail to send a message!\n");
+        LOG_WARNING("Fail to send a message!");
             return false;
         }
     }
@@ -425,7 +426,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     //Recv the header
     char *dat = (char *)h;
     s.Recv(dat, 20, conn);
-    printf("RAW: header received\n");
+    LOG_INFO("RAW: header received");
     /*  n = 20;
         do {
             if ((i = s.Recv(dat,n, conn)) <= 0) {
@@ -438,7 +439,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     Reset();
     n = h[0];
     if(n<20) {
-        printf("POP-C++ Error: [CORE] - Buffer RAW - bad message header (size error:%d)\n", n);
+        LOG_ERROR("[CORE] - Buffer RAW - bad message header (size error:%d)", n);
         return false;
     }
 
@@ -466,9 +467,9 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
 
     if(n > 0) {
         dat = (char *)packeddata+20;
-        printf("RAW: ready to receive %d\n", n);
+        LOG_INFO("RAW: ready to receive %d", n);
         s.Recv(dat, n, conn);
-        printf("RAW: received %d\n", n);
+        LOG_INFO("RAW: received %d", n);
     }
     /*
         i = 0;
