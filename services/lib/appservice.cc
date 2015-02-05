@@ -70,17 +70,6 @@ AppCoreService::~AppCoreService() {
     }
 }
 
-// bool AppCoreService::QueryService(const POPString &name)
-// {
-//   if (name==NULL) return false;
-
-//   if (paroc_utils::isEqual(name,"CodeMgr")) return true;
-//   if (paroc_utils::isEqual(name,"RemoteLog")) return true;
-//   if (paroc_utils::isEqual(name,"ObjectMonitor")) return true;
-
-//   return false;
-// }
-
 bool AppCoreService::QueryService(const POPString &name, paroc_service_base &service) {
     if(name.Length()<=0) {
         return false;
