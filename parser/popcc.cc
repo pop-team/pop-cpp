@@ -37,6 +37,7 @@ struct popc_options {
     bool nobroker = false;
     bool nointerface = false;
     bool psdyn = false;
+    bool cpp11 = false;
 };
 
 void Usage() {
@@ -59,7 +60,8 @@ void Usage() {
     fprintf(stderr,"   -popcdir:                POP-C++ installed directory\n");
     fprintf(stderr,"   -noclean:                Do not clean temporary files\n");
     fprintf(stderr,"   -no-warning:             Do not print warning on stdout\n");
-    fprintf(stderr,"   -no-implicit-pack:     Do not pack parclass implicitly if no @pack directive is present\n");
+    fprintf(stderr,"   -no-implicit-pack:       Do not pack parclass implicitly if no @pack directive is present\n");
+    fprintf(stderr,"   -cpp11:                  Compile in c++11 mode\n");
 
     fprintf(stderr,"   -async-allocation:       Use asynchronous mechanism to allocate a parallel object\n");
     fprintf(stderr,"   -verbose:                Print out additional information\n");
@@ -93,6 +95,8 @@ void DisplayVersion() {
 }
 
 //These are used to build command line arguments for subsequent executions
+//it is necessary because we pass args as char* not const char* and conversion from
+//const char* to char* is deprecated
 static char option_output[] = "-o";
 static char option_compile[] = "-c";
 static char option_nointerface[] = "-parclass-nointerface";
@@ -103,6 +107,7 @@ static char option_noimplicitpack[] = "-no-implicit-pack";
 static char option_asyncallocation[] = "-async-allocation";
 static char option_xmp[] = "-xmp";
 static char option_advanced[] = "-advanced";
+static char option_cpp11[] = "-std=c++11";
 
 /**
  * Prepare POP-C++ source file. Generate _popc1_ files.
@@ -144,6 +149,10 @@ void prepare_source(char *src, char *dest, const popc_options& options) {
 std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1, char* tmpfile2, char** cmd, const popc_options& options){
     std::size_t count = 0;
     cmd[count++] = preprocessor;
+
+    if(options.cpp11){
+        cmd[count++] = option_cpp11;
+    }
 
     for(char **t2 = pre_opt; *t2 != NULL; t2++) {
         cmd[count++] = *t2;
@@ -238,10 +247,19 @@ int popc_preprocessor(char* popcpp, char* tmpfile1, char* tmpfile2, char* tmpfil
 int cxx_compiler(char* cpp, char** cpp_opt, char* source, char** dest, char* tmpfile3, char* str, bool paroc, int ret, const popc_options& options){
     static char output[1024];
 
+    //TODO Use cmd[count++] scheme
+
     char *cmd[1000];
     cmd[0] = cpp;
+
     char **t1 = cmd + 1;
     std::size_t count = 1;
+
+    if(options.cpp11){
+        *t1++ = option_cpp11;
+        count++;
+    }
+
     for(char **t2 = cpp_opt; *t2 != NULL; t2++, t1++) {
         *t1=*t2;
         count++;
@@ -466,6 +484,8 @@ int main(int argc, char *argv[]) {
     if(options.psdyn){
       options.mpi = true;
     }
+
+    options.cpp11 = (paroc_utils::checkremove(&argc, &argv, "-cpp11") != NULL);
 
     // Check for POP-C++ installation directory
     if((tmp = paroc_utils::checkremove(&argc, &argv, "-popcdir=")) != NULL) {
