@@ -355,7 +355,7 @@ int popc_strncasecmp(const char * a, const char * b, popc_size_t c) {
 
 // RunCmd function
 
-int RunCmd(int argc, char *argv[]) {
+int RunCmd(int argc, const char *argv[]) {
     argv[argc] = 0;
     int status;
     int pid = vfork();
@@ -363,7 +363,7 @@ int RunCmd(int argc, char *argv[]) {
         perror("POP-C++ Error: popcc run command");
         _exit(1);
     } else if(pid == 0) {
-        execvp(argv[0], argv);
+        execvp(argv[0], const_cast<char**>(argv));
         fprintf(stderr, "POP-C++ Error: %s not found\n", argv[0]);
         _exit(1);
     }
@@ -373,7 +373,7 @@ int RunCmd(int argc, char *argv[]) {
 }
 
 // RunPipe function
-int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]) {
+int RunPipe(int argc1, const char *argv1[], int argc2, const char *argv2[]) {
     argv1[argc1] = 0;
     argv2[argc2] = 0;
 
@@ -391,7 +391,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]) {
     } else if(pid1==0) {
         close(p[0]);
         dup2(p[1],1);
-        execvp(argv1[0],argv1);
+        execvp(argv1[0], const_cast<char**>(argv1));
         fprintf(stderr,"POP-C++ Error: %s not found\n",argv1[0]);
         _exit(1);
     }
@@ -405,7 +405,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]) {
     if(pid2 == 0) {
         close(p[1]);
         dup2(p[0],0);
-        execvp(argv2[0],argv2);
+        execvp(argv2[0], const_cast<char**>(argv2));
         fprintf(stderr,"POP-C++ Error: %s not found\n",argv2[0]);
         _exit(1);
     }

@@ -294,10 +294,10 @@ void Verbose(int argc, char *argv[]);
 
 // RunCmd function
 
-int RunCmd(int argc, char *argv[]);
+int RunCmd(int argc, const char *argv[]);
 
 // RunPipe function
-int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]);
+int RunPipe(int argc1, const char *argv1[], int argc2, const char *argv2[]);
 
 //setenv
 #ifndef __LINUX__

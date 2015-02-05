@@ -94,21 +94,6 @@ void DisplayVersion() {
     fprintf(stderr,"POP-C++ version %s on %s\n", VERSION, arch);
 }
 
-//These are used to build command line arguments for subsequent executions
-//it is necessary because we pass args as char* not const char* and conversion from
-//const char* to char* is deprecated
-static char option_output[] = "-o";
-static char option_compile[] = "-c";
-static char option_nointerface[] = "-parclass-nointerface";
-static char option_nobroker[] = "-parclass-nobroker";
-static char option_nowarning[] = "-no-warning";
-static char option_popccpcompilation[] = "-popcpp-compilation";
-static char option_noimplicitpack[] = "-no-implicit-pack";
-static char option_asyncallocation[] = "-async-allocation";
-static char option_xmp[] = "-xmp";
-static char option_advanced[] = "-advanced";
-static char option_cpp11[] = "-std=c++11";
-
 /**
  * Prepare POP-C++ source file. Generate _popc1_ files.
  */
@@ -146,12 +131,12 @@ void prepare_source(char *src, char *dest, const popc_options& options) {
 /**
  * Run the C++ preprocessor
  */
-std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1, char* tmpfile2, char** cmd, const popc_options& options){
+std::size_t cxx_preprocessor(const char *preprocessor, char *pre_opt[], char* tmpfile1, char* tmpfile2, const char** cmd, const popc_options& options){
     std::size_t count = 0;
     cmd[count++] = preprocessor;
 
     if(options.cpp11){
-        cmd[count++] = option_cpp11;
+        cmd[count++] = "-std=cpp11";
     }
 
     for(char **t2 = pre_opt; *t2; t2++) {
@@ -161,7 +146,7 @@ std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1
 
     // Preprocessor output
     if(!options.usepipe) {
-        cmd[count++] = option_output;
+        cmd[count++] = "-o";
         cmd[count++] = tmpfile2;
 
         if(options.verbose) {
@@ -178,37 +163,38 @@ std::size_t cxx_preprocessor(char *preprocessor, char *pre_opt[], char* tmpfile1
     return count;
 }
 
-int popc_preprocessor(char* popcpp, char* tmpfile1, char* tmpfile2, char* tmpfile3, char** cmd, std::size_t count, const popc_options& options){
+int popc_preprocessor(const char* popcpp, const char* tmpfile1, const char* tmpfile2, const char* tmpfile3, const char** cmd, std::size_t count, const popc_options& options){
     // Run POP-C++ preprocessor (popcpp)
-    char *popc_preprocessor_command[1000];
+    const char *popc_preprocessor_command[1000];
     std::size_t countparoc=0;
+
     popc_preprocessor_command[countparoc++] = popcpp;
     popc_preprocessor_command[countparoc++] = tmpfile2;
     popc_preprocessor_command[countparoc++] = tmpfile3;
 
     if(options.nointerface) {
-        popc_preprocessor_command[countparoc++] = option_nointerface;
+        popc_preprocessor_command[countparoc++] = "-parclass-nointerface";
     }
     if(options.nobroker) {
-        popc_preprocessor_command[countparoc++] = option_nobroker;
+        popc_preprocessor_command[countparoc++] = "-parclass-nobroker";
     }
     if(options.nowarning) {
-        popc_preprocessor_command[countparoc++] = option_nowarning;
+        popc_preprocessor_command[countparoc++] = "-no-warning";
     }
     if(options.popcppcompilation) {
-        popc_preprocessor_command[countparoc++] = option_popccpcompilation;
+        popc_preprocessor_command[countparoc++] = "-popcpp-compilation";
     }
     if(options.asyncallocation) {
-        popc_preprocessor_command[countparoc++] = option_asyncallocation;
+        popc_preprocessor_command[countparoc++] = "-async-allocation";
     }
     if(options.noimplicitpack) {
-        popc_preprocessor_command[countparoc++] = option_noimplicitpack;
+        popc_preprocessor_command[countparoc++] = "-no-implicit-pack";
     }
     if(options.xmp) {
-        popc_preprocessor_command[countparoc++] = option_xmp;
+        popc_preprocessor_command[countparoc++] = "-xmp";
     }
     if(options.advanced) {
-        popc_preprocessor_command[countparoc++] = option_advanced;
+        popc_preprocessor_command[countparoc++] = "-advanced";
     }
 
     int ret = 0;
@@ -247,22 +233,22 @@ int popc_preprocessor(char* popcpp, char* tmpfile1, char* tmpfile2, char* tmpfil
 int cxx_compiler(char* cpp, char** cpp_opt, char* source, char** dest, char* tmpfile3, char* str, bool paroc, int ret, const popc_options& options){
     static char output[1024];
 
-    char *cmd[1000];
+    const char *cmd[1000];
     std::size_t count = 0;
 
     cmd[count++] = cpp;
 
     if(options.cpp11){
-        cmd[count++] = option_cpp11;
+        cmd[count++] = "-std=cpp11";
     }
 
     for(char **t2 = cpp_opt; *t2; t2++) {
         cmd[count++] = *t2;
     }
 
-    cmd[count++] = option_compile;
+    cmd[count++] = "-c";
     cmd[count++] = (paroc) ? tmpfile3 : source;
-    cmd[count++] = option_output;
+    cmd[count++] = "-o";
 
     if(!*dest) {
         strcpy(output, source);
@@ -294,7 +280,7 @@ int cxx_compiler(char* cpp, char** cpp_opt, char* source, char** dest, char* tmp
 }
 
 char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char *cpp_opt[], char *source, char *dest, const popc_options& options) {
-    char *cmd[1000];
+    const char *cmd[1000];
     char sdir[1024];
     char tmpfile1[1024];
     char tmpfile2[1024];
@@ -372,7 +358,7 @@ char *Compile(char *preprocessor, char *popcpp, char *cpp, char *pre_opt[], char
     return dest;
 }
 
-bool FindLib(char *libpaths[1024], int count, const char *libname, char libfile[1024]) {
+bool FindLib(const char *libpaths[1024], int count, const char *libname, char libfile[1024]) {
     for(int i = 0; i < count; i++) {
         sprintf(libfile, "%s/lib%s.a", libpaths[i], libname);
         if(popc_access(libfile, F_OK) == 0) {
@@ -548,7 +534,7 @@ int main(int argc, char *argv[]) {
         cxx_opts[cxx_count++] = tok;
     }
 
-    char *link_cmd[1024];
+    const char *link_cmd[1024];
     int link_count = 0;
 
     link_cmd[link_count++] = parocld;
@@ -566,7 +552,7 @@ int main(int argc, char *argv[]) {
 
     link_cmd[link_count++] = popc_strdup(buf);
 
-    char *libpaths[1024];
+    const char *libpaths[1024];
     int libpaths_count = 0;
 
     // Add POP-C++ library path to the lib path
@@ -625,8 +611,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    libpaths[libpaths_count++] = (char*)"/usr/lib";
-    libpaths[libpaths_count++] = (char*)"/lib";
+    libpaths[libpaths_count++] = "/usr/lib";
+    libpaths[libpaths_count++] = "/lib";
 
     sprintf(buf, "-DPOPC_ARCH=\"%s\"", arch);
     cpp_opts[cpp_count++] = popc_strdup(buf);
