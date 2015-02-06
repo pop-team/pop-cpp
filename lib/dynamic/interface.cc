@@ -913,6 +913,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
 }
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od) {
+    LOG_ERROR("This method has been commented"); // Note: No, I do not know who did this or why. TODO LWK
     /* TODO should have been restored at least for TCP/IP version
       if (codefile==NULL) return ENOENT;
       popc_signal(SIGCHLD, SIG_IGN);
@@ -1332,7 +1333,8 @@ bool paroc_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, 
 
     fp = popen(cmd.str().c_str(), "r");
     if(fp == NULL) {
-        return -1;
+        LOG_WARNING("cannot launch %s", cmd.str().c_str());
+        return false;
     }
 
     fgets(res, BUF_SIZE, fp);
@@ -1341,6 +1343,7 @@ bool paroc_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, 
     if(pid != 0) {
         return true;
     }
+    LOG_WARNING("pid=0");
     return false;
 }
 
