@@ -10,7 +10,7 @@ OtherCode::OtherCode(CodeFile *file): CodeData(file), code(0, 8096) {
 void OtherCode::GenerateCode(CArrayChar &output) {
     int n = code.size();
     if(n) {
-        output.InsertAt(-1, (char *)code, n);
+        output.InsertAt(-1, code.data(), n);
     }
 }
 
@@ -26,6 +26,6 @@ void OtherCode::AddCode(char *newcode, int n) {
 void OtherCode::AddCode(CArrayChar &newcode) {
     int n=newcode.size();
     if(n) {
-        code.InsertAt(-1,(char *)newcode,n);
+        code.InsertAt(-1,newcode.data(),n);
     }
 }

@@ -139,7 +139,7 @@ paroc_connection* paroc_combox_socket::Wait() {
         while(1) {
             if(nready>0) {
                 int n=pollarray.size();
-                tmpfd=pollarray+index;
+                tmpfd=pollarray.data()+index;
                 for(int i=index; i>=0; i--, tmpfd--) {
                     if(tmpfd->revents!=0) {
                         nready--;
@@ -177,7 +177,7 @@ paroc_connection* paroc_combox_socket::Wait() {
 
             //Poll for ready fds....
             do {
-                tmpfd=pollarray;
+                tmpfd=pollarray.data();
                 int n=pollarray.size();
                 index=n-1;
                 nready=poll(tmpfd,n,timeout);

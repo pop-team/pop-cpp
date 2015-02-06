@@ -186,19 +186,14 @@ void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseO
     }
 }
 
-
-
-
-
 DataType *CodeFile::FindDataType(const char *name) {
-    int n=datatypes.size();
-    DataType **tmp=datatypes;
-    for(; n>0; n--, tmp++) {
-        if(strcmp(name,(*tmp)->GetName())==0) {
-            return *tmp;
+    for(int i = 0; i < datatypes.size(); ++i){
+        if(strcmp(name, datatypes[i]->GetName())==0) {
+            return datatypes[i];
         }
     }
-    return NULL;
+
+    return nullptr;
 }
 
 void CodeFile::AddDataType(DataType *type) {
@@ -212,13 +207,12 @@ void CodeFile::AddDataType(DataType *type) {
 }
 
 void CodeFile::RemoveDataType(DataType *type) {
-    int n=temptypes.size();
-    DataType **ptr=temptypes;
-    for(int i=0; i<n; i++, ptr++) if(*ptr==type) {
+    for(int i = 0; i < datatypes.size(); ++i){
+        if(datatypes[i] == type){
             temptypes.RemoveAt(i);
         }
+    }
 }
-
 
 bool CodeFile::SameFile(char *file1, char *file2) {
     if(paroc_utils::isEqual(file1,file2)) {

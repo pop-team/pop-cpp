@@ -700,7 +700,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                 jobcontacts[i].SetAccessString(NULL);
             }
 
-            if(!AllocResource(localservice,objname,od, howmany-count, fitness+count, jobcontacts+count, reserveIDs+count, requestInfo,traceip, 0)) {
+            if(!AllocResource(localservice,objname,od, howmany-count, fitness.data()+count, jobcontacts.data()+count, reserveIDs.data()+count, requestInfo,traceip, 0)) {
                 LOG_ERROR( "[JM] AllocResource failed");
                 ret=OBJECT_NO_RESOURCE;
                 break;
@@ -720,11 +720,11 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                             POPString acstr(ac.GetAccessString());
                             JobMgr jobmgr(ac);
 
-                            jobmgr.CancelReservation(reserveIDs+i,1);
+                            jobmgr.CancelReservation(reserveIDs.data()+i,1);
                             for(int j=i+1; j<howmany; j++) if(fitness[j]>0 && paroc_utils::isEqual(acstr,jobcontacts[j].GetAccessString())) {
                                     jobcontacts[j].SetAccessString(NULL);
                                     fitness[j]=0;
-                                    jobmgr.CancelReservation(reserveIDs+j,1);
+                                    jobmgr.CancelReservation(reserveIDs.data()+j,1);
                                 }
                         } catch(...) {
                             LOG_WARNING("Exception while canceling reservations");
@@ -750,12 +750,12 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                                 tmpids[sz++]=reserveIDs[j];
                             }
                         *(remotejobcontacts+count) = jobcontacts[i];
-                        int execRet = jobmgr.ExecObj(objname, od, sz, tmpids, localservice, objcontacts+count);
+                        int execRet = jobmgr.ExecObj(objname, od, sz, tmpids.data(), localservice, objcontacts+count);
                         if(execRet!=0) {
                             //Added by clementval
                             LOG_ERROR( "[JM] EXEC_FAILED");
                             //End of add
-                            jobmgr.CancelReservation(tmpids,sz);
+                            jobmgr.CancelReservation(tmpids.data(),sz);
                         } else {
                             count+=sz;
                         }

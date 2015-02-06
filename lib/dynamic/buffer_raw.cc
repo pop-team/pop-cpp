@@ -42,7 +42,7 @@ void paroc_buffer_raw::Pack(const char *data, int n) {
     }
     int t=packeddata.size();
     packeddata.SetSize(t+((n-1)/4+1)*4);
-    memcpy(((char *)packeddata)+t,data,n);
+    memcpy(packeddata.data()+t,data,n);
 }
 
 void paroc_buffer_raw::UnPack(char *data, int n) {
@@ -51,7 +51,7 @@ void paroc_buffer_raw::UnPack(char *data, int n) {
     }
     //CheckUnPack(n); // Error with this check in 64 bits
     packeddata.size();
-    memcpy(data, ((char *)packeddata)+unpackpos,n);
+    memcpy(data, packeddata.data()+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
 
@@ -363,7 +363,7 @@ void paroc_buffer_raw::CheckUnPack(int sz) {
 
 bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
-    char *dat = (char *)packeddata;
+    char *dat = packeddata.data();
 
     if(dat == NULL) {
         return false;
@@ -444,7 +444,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     }
 
     packeddata.SetSize(n);
-    dat = (char *)packeddata + 20;
+    dat = packeddata.data() + 20;
     n -= 20;
 
     // Recv data if there is some
@@ -465,7 +465,7 @@ int paroc_buffer_raw::get_size() {
 
 char* paroc_buffer_raw::get_load() {
     // Pack the header (20 bytes)
-    char *dat = (char *)packeddata;
+    char *dat = packeddata.data();
 
     if(dat == NULL) {
         return NULL;
@@ -496,11 +496,11 @@ char* paroc_buffer_raw::get_load() {
         return NULL;
     }
     memcpy(dat, h, 20);
-    return (char *)packeddata;
+    return packeddata.data();
 }
 
 void paroc_buffer_raw::load(char* data, int length) {
-    memcpy(packeddata, data, length);
+    memcpy(packeddata.data(), data, length);
 }
 
 #ifdef OD_DISCONNECT

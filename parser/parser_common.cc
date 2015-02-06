@@ -3,15 +3,13 @@
 
 //CodeData implementation
 int CountCodeLines(CArrayChar &code) {
-    int n=code.size();
-    char *tmp=code;
+    //TODO(BW) Once replaced by std::vector, this code should
+    //use std::count
     int l=0;
-    while(n>0) {
-        if(*tmp=='\n') {
-            l++;
+    for(int i = 0; i < code.size(); ++i){
+        if(code[i] == '\n'){
+            ++l;
         }
-        tmp++;
-        n--;
     }
     return l;
 }

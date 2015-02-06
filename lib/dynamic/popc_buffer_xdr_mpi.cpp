@@ -50,7 +50,7 @@ void popc_buffer_xdr_mpi::Pack(const int *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.SetSize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -68,7 +68,7 @@ void popc_buffer_xdr_mpi::UnPack(int *data, int n) {
         return;
     }
 
-    char *dest = packeddata + unpackpos;
+    char *dest = packeddata.data() + unpackpos;
     int sz = 4 * n;
     CheckUnPack(sz);
     XDR xdr;
@@ -84,7 +84,7 @@ void popc_buffer_xdr_mpi::Pack(const unsigned *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.SetSize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -100,7 +100,7 @@ void popc_buffer_xdr_mpi::UnPack(unsigned *data, int n) {
     int sz=4*n;
     CheckUnPack(sz);
 
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
     xdr_vector(&xdr,(char *)data,n,sizeof(unsigned),(xdrproc_t)xdr_u_int);
@@ -115,7 +115,7 @@ void popc_buffer_xdr_mpi::Pack(const long *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.SetSize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -127,7 +127,7 @@ void popc_buffer_xdr_mpi::UnPack(long *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=4*n;
     CheckUnPack(sz);
@@ -146,7 +146,7 @@ void popc_buffer_xdr_mpi::Pack(const unsigned long *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.SetSize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -158,7 +158,7 @@ void popc_buffer_xdr_mpi::UnPack(unsigned long *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=n*4;
     CheckUnPack(sz);
@@ -177,7 +177,7 @@ void popc_buffer_xdr_mpi::Pack(const short *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.SetSize(((n-1)/2+1)*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*2,XDR_ENCODE);
@@ -190,7 +190,7 @@ void popc_buffer_xdr_mpi::UnPack(short *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=2*n;
     CheckUnPack(sz);
@@ -209,7 +209,7 @@ void popc_buffer_xdr_mpi::Pack(const unsigned short *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.SetSize(((n-1)/2+1)*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*2,XDR_ENCODE);
@@ -221,7 +221,7 @@ void popc_buffer_xdr_mpi::UnPack(unsigned short *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=2*n;
     CheckUnPack(sz);
@@ -240,7 +240,7 @@ void popc_buffer_xdr_mpi::Pack(const bool *data, int n) {
     }
     int t=packeddata.size();
     packeddata.SetSize(t+((n-1)/4+1)*4);
-    char *dat=((char *)packeddata)+t;
+    char *dat=packeddata.data()+t;
     while(n-->0) {
         *dat=(*data==true);
         dat++;
@@ -254,7 +254,7 @@ void popc_buffer_xdr_mpi::UnPack(bool *data, int n) {
     CheckUnPack(n);
     packeddata.size();
 
-    char *dat = ((char *)packeddata) + unpackpos;
+    char *dat = packeddata.data() + unpackpos;
     while(n-->0) {
         *data = (*dat != 0);
         dat++;
@@ -269,7 +269,7 @@ void popc_buffer_xdr_mpi::Pack(const char *data, int n) {
     }
     int t=packeddata.size();
     packeddata.SetSize(t+((n-1)/4+1)*4);
-    memcpy(((char *)packeddata)+t,data,n);
+    memcpy(packeddata.data()+t,data,n);
 }
 
 void popc_buffer_xdr_mpi::UnPack(char *data, int n) {
@@ -278,7 +278,7 @@ void popc_buffer_xdr_mpi::UnPack(char *data, int n) {
     }
     CheckUnPack(n);
     packeddata.size();
-    memcpy(data, ((char *)packeddata)+unpackpos,n);
+    memcpy(data, packeddata.data()+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
 
@@ -296,7 +296,7 @@ void popc_buffer_xdr_mpi::Pack(const float *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.SetSize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -308,7 +308,7 @@ void popc_buffer_xdr_mpi::UnPack(float *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=n*4;
     CheckUnPack(sz);
@@ -328,7 +328,7 @@ void popc_buffer_xdr_mpi::Pack(const double *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.SetSize(n*8+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
@@ -340,7 +340,7 @@ void popc_buffer_xdr_mpi::UnPack(double *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=8*n;
     CheckUnPack(sz);
@@ -369,7 +369,7 @@ void popc_buffer_xdr_mpi::CheckUnPack(int sz) {
 
 bool popc_buffer_xdr_mpi::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
-    char *dat=(char *)packeddata;
+    char *dat=packeddata.data();
 
     if(dat == NULL) {
         LOG_ERROR("fail 1");
@@ -445,7 +445,7 @@ bool popc_buffer_xdr_mpi::Recv(paroc_combox &s, paroc_connection *conn) {
     }
 
     packeddata.SetSize(n);
-    dat = (char *)packeddata+20;
+    dat = packeddata.data()+20;
     n -= 20;
 
     i = 0;
@@ -472,7 +472,7 @@ int popc_buffer_xdr_mpi::get_size() {
  * @return Pointer to the actual data in this buffer
  */
 char* popc_buffer_xdr_mpi::get_load() {
-    char *dat = (char*)packeddata;
+    char *dat = packeddata.data();
 
     if(dat == NULL) {
         return NULL;
@@ -505,9 +505,7 @@ char* popc_buffer_xdr_mpi::get_load() {
     }
     memcpy(dat, h, 20);
 
-
-
-    return (char *)packeddata;
+    return packeddata.data();
 }
 
 
@@ -519,8 +517,8 @@ char* popc_buffer_xdr_mpi::get_load() {
 void popc_buffer_xdr_mpi::load(char* data, int length) {
     int h[5];
     Reset();
-    memcpy(packeddata, data, length);
-    memcpy(h, packeddata, 20);
+    memcpy(packeddata.data(), data, length);
+    memcpy(h, packeddata.data(), 20);
     int n = popc_ntohl(h[0]);
     if(n < 20) {
         LOG_ERROR("POP-C++ Error [CORE]: XDR Buffer - Bad message header (size error:%d)", n);
@@ -567,7 +565,7 @@ bool popc_buffer_xdr_mpi::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
             } else {
                 paroc_message_header h = header;
                 int unpackposold = unpackpos;
-                paroc_array<char> packeddataold = packeddata;
+                auto packeddataold = packeddata;
                 paroc_connection * t = (paroc_connection *) s.Wait();
                 if(t == NULL) {
                     paroc_exception::paroc_throw(9998,
