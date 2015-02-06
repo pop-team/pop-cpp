@@ -206,6 +206,12 @@ add_subdirectory(services)
       COMMENT "run all tests"
       )
 
+  # Custom target to run the tests after a full clean build
+  add_custom_target(clean_tests
+      COMMAND make clean && make && printf 'y\\n\\ny\\n' | sudo make install && make tests
+      COMMENT "Full build and run all tests"
+      )
+
   # These 3 custom targets (lint, check and indent) can be used to facilitate the code maintenance
   add_custom_target(lint
     COMMENT "Check C++ lint rules with the lint tool provided by Google"
