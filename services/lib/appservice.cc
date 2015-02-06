@@ -52,10 +52,11 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
 
 AppCoreService::~AppCoreService() {
     try {
+        // Try to end the application on job mgr
         JobMgr jm(paroc_system::jobservice);
         jm.ApplicationEnd(_popcAppId, true);
     } catch(...) {
-        LOG_WARNING("Exception while destroying JobMgr");
+        LOG_WARNING("Exception while ending the application on JobMgr");
     }
 
     auto pos=servicelist.GetHeadPosition();
