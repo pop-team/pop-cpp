@@ -42,9 +42,11 @@ bool paroc_combox_socket::Create(int port, bool server) {
         sin.sin_family=AF_INET;
         sin.sin_addr.s_addr=INADDR_ANY;
         sin.sin_port=popc_htons(port);
-        SetOpt(SOL_SOCKET,SO_REUSEADDR,(char*)&sin,sizeof(sin)); // lwk : Added this line to allow reuse an earlier socket with the same address
 
-        if(popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin))) {
+        // lwk : Added this line to allow reuse an earlier socket with the same address
+        SetOpt(SOL_SOCKET,SO_REUSEADDR, reinterpret_cast<char*>(&sin), sizeof(sin));
+
+        if(popc_bind(sockfd, reinterpret_cast<sockaddr*>(&sin), sizeof(sin))) {
             return false;
         }
     }
@@ -66,6 +68,63 @@ bool paroc_combox_socket::Create(int port, bool server) {
     }
 
     return true;
+}
+
+bool paroc_combox_socket::Connect(const char *host,int port) {
+    sockaddr_in sin;
+    memset(reinterpret_cast<char*>(&sin),0,sizeof(sin));
+    sin.sin_family=AF_INET;
+
+    hostent *phe;
+    if((phe=gethostbyname(host))) {
+        memcpy(reinterpret_cast<char*>(&sin.sin_addr), phe->h_addr, phe->h_length);
+    } else if(static_cast<int>((sin.sin_addr.s_addr=popc_inet_addr(host)))==-1) {
+        return false;
+    }
+
+    sin.sin_port=popc_htons(port);
+
+    if(timeout<=0) {
+        return popc_connect(sockfd, reinterpret_cast<sockaddr*>(&sin), sizeof(sin))==0;
+    } else {
+        auto flag = fcntl(sockfd,F_GETFL,0);
+        auto newflag = flag | O_NONBLOCK;
+        fcntl(sockfd,F_SETFL,newflag);
+
+        auto ret=popc_connect(sockfd, reinterpret_cast<sockaddr*>(&sin), sizeof(sin));
+        auto err=errno;
+
+        if(ret==-1 && errno==EINPROGRESS) {
+            pollfd me;
+            me.fd=sockfd;
+            me.events=POLLOUT;
+            me.revents=0;
+
+            int t;
+            while((t=poll(&me,1,timeout))==-1 && errno==EINTR);
+
+            if(t!=1) {
+                err=ETIMEDOUT;
+            } else {
+                socklen_t len=sizeof(int);
+                if(GetOpt(SOL_SOCKET,SO_ERROR, reinterpret_cast<char*>(&err), len)==0) {
+                    if(!err) {
+                        ret=0;
+                    }
+                } else {
+                    err=errno;
+                }
+            }
+        }
+
+        fcntl(sockfd,F_SETFL,flag);
+
+        if(ret!=0) {
+            errno=err;
+        }
+
+        return ret == 0;
+    }
 }
 
 #else
@@ -93,8 +152,11 @@ bool paroc_combox_socket::Create(int port, bool server) {
         sin.sin_family=AF_INET;
         sin.sin_addr.s_addr=INADDR_ANY;
         sin.sin_port=popc_htons(port);
-        SetOpt(SOL_SOCKET,SO_REUSEADDR,(char*)&sin,sizeof(sin)); // lwk : Added this line to allow reuse an earlier socket with the same address
-        if(popc_bind(sockfd,(sockaddr *)&sin,sizeof(sin))!=0) {
+
+        // lwk : Added this line to allow reuse an earlier socket with the same address
+        SetOpt(SOL_SOCKET,SO_REUSEADDR, reinterpret_cast<char*>(&sin), sizeof(sin));
+
+        if(popc_bind(sockfd, reinterpret_cast<sockaddr*>(&sin), sizeof(sin))) {
             return false;
         }
     }
@@ -134,6 +196,69 @@ bool paroc_combox_socket::Create(int port, bool server) {
     }
 
     return true;
+}
+
+bool paroc_combox_socket::Connect(const char *host,int port) {
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+    sockaddr_in sin;
+    memset(reinterpret_cast<char *>(&sin),0,sizeof(sin));
+    sin.sin_family=AF_INET;
+
+    hostent* phe;
+    if((phe=gethostbyname(host))) {
+        memcpy(reinterpret_cast<char*>(&sin.sin_addr), phe->h_addr, phe->h_length);
+    } else if(static_cast<int>((sin.sin_addr.s_addr=popc_inet_addr(host)))==-1) {
+        return false;
+    }
+
+    sin.sin_port=popc_htons(port);
+
+    if(timeout<=0) {
+        return popc_connect(sockfd, reinterpret_cast<sockaddr*>(&sin), sizeof(sin))==0;
+    } else {
+        unsigned long ul = 1;
+        ioctlsocket(sockfd, FIONBIO, &ul);
+
+        auto ret=popc_connect(sockfd, reinterpret_cast<sockaddr*>(&sin), sizeof(sin));
+        auto err=errno;
+        if(ret==-1 /*&& GetLastError()== WSAEINPROGRESS*/) {
+            fd_set tmpwritefds;
+            FD_ZERO(&tmpwritefds);
+            FD_SET(sockfd, &tmpwritefds);
+
+            timeval tv;
+            tv.tv_sec = timeout / 1000;
+            tv.tv_usec = timeout % 1000;
+
+            int t;
+
+            while((t=select(sockfd+1, (fd_set *)0, &tmpwritefds, (fd_set *)0, &tv))==-1 && GetLastError()== WSAEINTR);
+
+            if(t!=1) {
+                err=ETIMEDOUT;
+            } else {
+                socklen_t len=sizeof(int);
+                if(GetOpt(SOL_SOCKET,SO_ERROR,(char *)(&err),len)==0) {
+                    if(err==0) {
+                        ret=0;
+                    }
+                } else {
+                    err=errno;
+                }
+            }
+        }
+
+        ul = 0;
+        ioctlsocket(sockfd, FIONBIO, &ul);
+
+        if(ret) {
+            errno=err;
+        }
+
+        return ret==0;
+    }
 }
 
 #endif
@@ -182,11 +307,11 @@ bool paroc_combox_socket::Connect(const char *url) {
         return false;
     }
 
-    char *host;
     while(isspace(*url)) {
         url++;
     }
 
+    char *host;
     if(strncmp(url,"socket://",9)==0) {
         host=popc_strdup(url+9);
     } else {
@@ -195,18 +320,21 @@ bool paroc_combox_socket::Connect(const char *url) {
 
     char *s=strchr(host,':');
     int port;
-    if(s==NULL || sscanf(s+1,"%d",&port)!=1) {
+    if(!s || sscanf(s+1,"%d",&port)!=1) {
         free(host);
+
         return false;
     }
+
     *s=0;
 
-    bool ret = Connect(host,port);
+    auto ret = Connect(host,port);
     free(host);
 
     if(ret) {
         peer->sockfd=sockfd;
     }
+
     return ret;
 }
 
@@ -589,86 +717,6 @@ bool paroc_combox_socket::CloseSock(int fd) {
     return false;
 }
 
-bool paroc_combox_socket::Connect(const char *host,int port) {
-    hostent *phe;
-    sockaddr_in sin;
-#ifdef __WIN32__
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
-#endif
-    memset((char *)&sin,0,sizeof(sin));
-    sin.sin_family=AF_INET;
-    if((phe=gethostbyname(host)) !=NULL) {
-        memcpy((char *)&sin.sin_addr,phe->h_addr,phe->h_length);
-    } else if(static_cast<int>((sin.sin_addr.s_addr=popc_inet_addr(host)))==-1) {
-        return false;
-    }
-
-    sin.sin_port=popc_htons(port);
-
-    if(timeout<=0) {
-        return (popc_connect(sockfd,(sockaddr*)&sin,sizeof(sin))==0);
-    } else {
-#ifndef __WIN32__
-        int flag=fcntl(sockfd,F_GETFL,0);
-        int newflag=flag | O_NONBLOCK;
-        fcntl(sockfd,F_SETFL,newflag);
-#else
-        unsigned long ul = 1;
-        ioctlsocket(sockfd, FIONBIO, &ul);
-#endif
-        int ret=popc_connect(sockfd,(sockaddr*)&sin,sizeof(sin));
-        int err=errno;
-#ifndef __WIN32__
-        if(ret==-1 && errno==EINPROGRESS) {
-            int t;
-            struct pollfd me;
-            me.fd=sockfd;
-            me.events=POLLOUT;
-            me.revents=0;
-            //Linux: poll function
-            while((t=poll(&me,1,timeout))==-1 && errno==EINTR);
-#else
-        if(ret==-1 /*&& GetLastError()== WSAEINPROGRESS*/) {
-            fd_set tmpwritefds;
-            FD_ZERO(&tmpwritefds);
-            FD_SET(sockfd, &tmpwritefds);
-            int t;
-            timeval tv;
-            tv.tv_sec = timeout / 1000;
-            tv.tv_usec = timeout % 1000;
-
-            //Win: select function
-            while((t=select(sockfd+1, (fd_set *)0, &tmpwritefds, (fd_set *)0, &tv))==-1 && GetLastError()== WSAEINTR);
-#endif
-            if(t!=1) {
-                err=ETIMEDOUT;
-            } else {
-                socklen_t len=sizeof(int);
-                if(GetOpt(SOL_SOCKET,SO_ERROR,(char *)(&err),len)==0) {
-                    if(err==0) {
-                        ret=0;
-                    }
-                } else {
-                    err=errno;
-                }
-            }
-        }
-#ifndef __WIN32__
-        //Linux:fcntl function
-        fcntl(sockfd,F_SETFL,flag);
-#else
-        //Win:ioctlsocket function
-        ul = 0;
-        ioctlsocket(sockfd, FIONBIO, &ul);
-#endif
-
-        if(ret!=0) {
-            errno=err;
-        }
-        return (ret==0);
-    }
-}
 
 
 int paroc_combox_socket::GetSockInfo(sockaddr &info,socklen_t &len) {
