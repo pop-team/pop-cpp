@@ -23,55 +23,28 @@
 
 #include <typeinfo>
 
-template<class T> inline void paroc_construct_element(T *data, int n) {
+template<typename T>
+inline void paroc_construct_element(T *data, int n) {
     for(; n-->0; data++) {
         new(data) T;    // Calls the constructor
     }
 }
 
-template<class T> inline void paroc_destruct_element(T *data, int n) {
+template<typename T>
+inline void paroc_destruct_element(T *data, int n) {
     for(; n-->0; data++) {
         data->~T();    // Calls the destructor
     }
 }
 
+//Arrays have no destructors, therefore, it necessary to overload
+//these functions
 
-// Do not call const and destr for non-class types (to avoid a waste of time)
-// NOTE(BW): That makes no sense...
-typedef char string64[64];
-inline void paroc_construct_element(string64* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(string64*  /*data*/, int /*n*/) {}
+template<typename X, std::size_t N>
+inline void paroc_construct_element(X (*)[N] /*data*/, int /*n*/) {}
 
-inline void paroc_construct_element(unsigned int* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(unsigned int*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(long* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(long*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(unsigned long* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(unsigned long*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(short* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(short*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(unsigned short* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(unsigned short*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(bool* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(bool*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(char* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(char*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(unsigned char* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(unsigned char*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(float* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(float*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(double* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(double*  /*data*/, int /*n*/) {}
-
+template<typename X, std::size_t N>
+inline void paroc_destruct_element(X (*)[N]  /*data*/, int /*n*/) {}
 
 /**
  * @class paroc_array
