@@ -40,7 +40,7 @@ void paroc_buffer_raw::Pack(const char *data, int n) {
     if(n<=0) {
         return;
     }
-    int t=packeddata.GetSize();
+    int t=packeddata.size();
     packeddata.SetSize(t+((n-1)/4+1)*4);
     memcpy(((char *)packeddata)+t,data,n);
 }
@@ -50,7 +50,7 @@ void paroc_buffer_raw::UnPack(char *data, int n) {
         return;
     }
     //CheckUnPack(n); // Error with this check in 64 bits
-    packeddata.GetSize();
+    packeddata.size();
     memcpy(data, ((char *)packeddata)+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
@@ -356,7 +356,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 
 
 void paroc_buffer_raw::CheckUnPack(int sz) {
-    if(sz+unpackpos > packeddata.GetSize()) {
+    if(sz+unpackpos > packeddata.size()) {
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
     }
 }
@@ -368,7 +368,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     if(dat == NULL) {
         return false;
     }
-    int n = packeddata.GetSize();
+    int n = packeddata.size();
     int h[5];
     memset(h,0, 5 * sizeof(int));
 
@@ -460,7 +460,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
 }
 
 int paroc_buffer_raw::get_size() {
-    return packeddata.GetSize();
+    return packeddata.size();
 }
 
 char* paroc_buffer_raw::get_load() {
@@ -470,7 +470,7 @@ char* paroc_buffer_raw::get_load() {
     if(dat == NULL) {
         return NULL;
     }
-    int n = packeddata.GetSize();
+    int n = packeddata.size();
     int h[5];
     memset(h,0, 5 * sizeof(int));
 

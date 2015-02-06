@@ -138,7 +138,7 @@ paroc_connection* paroc_combox_socket::Wait() {
 
         while(1) {
             if(nready>0) {
-                int n=pollarray.GetSize();
+                int n=pollarray.size();
                 tmpfd=pollarray+index;
                 for(int i=index; i>=0; i--, tmpfd--) {
                     if(tmpfd->revents!=0) {
@@ -178,7 +178,7 @@ paroc_connection* paroc_combox_socket::Wait() {
             //Poll for ready fds....
             do {
                 tmpfd=pollarray;
-                int n=pollarray.GetSize();
+                int n=pollarray.size();
                 index=n-1;
                 nready=poll(tmpfd,n,timeout);
             }  while(nready<0 && errno==EINTR && sockfd>=0);
@@ -219,7 +219,7 @@ void paroc_combox_socket::Close() {
     index=-1;
 
     if(isServer) {
-        for(int i=0; i<pollarray.GetSize(); i++){
+        for(int i=0; i<pollarray.size(); i++){
             if(fd!=pollarray[i].fd) {
                 OnCloseConnection(connarray[i]);
             }
@@ -246,7 +246,7 @@ void paroc_combox_socket::Close() {
 
 bool paroc_combox_socket::CloseSock(int fd) {
     if(isServer) {
-        for(int i=0; i<pollarray.GetSize(); i++){
+        for(int i=0; i<pollarray.size(); i++){
             if(pollarray[i].fd==fd){
                 isCanceled=!OnCloseConnection(connarray[i]);
                 delete connarray[i];

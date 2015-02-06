@@ -427,7 +427,7 @@ void Attribute::GenerateHeader(CArrayChar &output, bool interface) {
     ClassMember::GenerateHeader(output, interface);
 
     char tmp[1024];
-    int n=attributes.GetSize();
+    int n=attributes.size();
     for(int i=0; i<n; i++) {
         Param &p=*(attributes[i]);
         p.DeclareVariable(tmp);
@@ -478,7 +478,7 @@ Method::Method(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), retur
 
 Method::~Method() {
     int n,i;
-    n=params.GetSize();
+    n=params.size();
     for(i=0; i<n; i++) if(params[i]!=NULL) {
             delete params[i];
         }
@@ -492,7 +492,7 @@ int Method::CheckMarshal() {
     if(MethodType()==METHOD_NORMAL && !returnparam.CanMarshal()) {
         return -1;
     }
-    int n=params.GetSize();
+    int n=params.size();
     Class *cl=GetClass();
 
     for(int i=0; i<n; i++) {
@@ -556,7 +556,7 @@ void Method::GenerateArguments(CArrayChar &output, bool header) {
     char tmpcode[10240];
 
     output.InsertAt(-1,"(",1);
-    int nb=params.GetSize();
+    int nb=params.size();
     for(int j=0; j<nb; j++) {
         Param &p=*(params[j]);
         p.DeclareParam(tmpcode, header);
@@ -596,7 +596,7 @@ void Method::GenerateClient(CArrayChar &output) {
     char str[1024];
 
     char *clname=GetClass()->GetName();
-    int j,nb=params.GetSize();
+    int j,nb=params.size();
     //      Param &ret=met.returnparam;
 
     GenerateReturn(output,false);
@@ -758,7 +758,7 @@ void Method::GenerateBroker(CArrayChar &output) {
     Class *cl=GetClass();
     char *clname=cl->GetName();
 
-    int nb=params.GetSize();
+    int nb=params.size();
 
     char brokername[256];
     sprintf(brokername,"%s%sBroker",cl->GetName(),OBJ_POSTFIX);
@@ -879,7 +879,7 @@ Param *Method::AddNewParam() {
 }
 
 bool Method::hasInput() {
-    int np=params.GetSize();
+    int np=params.size();
     Param **pr=params;
     for(int i=0; i<np; i++,pr++) if((*pr)->InParam()) {
             return true;
@@ -894,7 +894,7 @@ bool Method::hasOutput() {
         }
     }
 
-    int np=params.GetSize();
+    int np=params.size();
     Param **pr=params;
     for(int i=0; i<np; i++,pr++) if((*pr)->OutParam()) {
             return true;
@@ -928,8 +928,8 @@ bool Method::operator ==(Method &other) {
         return false;
     }
 
-    int n=params.GetSize();
-    if(n!=other.params.GetSize()) {
+    int n=params.size();
+    if(n!=other.params.size()) {
         return false;
     }
     for(int i=0; i<n; i++) {
@@ -951,7 +951,7 @@ Constructor::Constructor(Class *cl, AccessType myaccess):Method(cl, myaccess) {
 }
 
 bool Constructor::isDefault() {
-    return (params.GetSize()==0);
+    return (params.size()==0);
 }
 
 
@@ -982,7 +982,7 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
     }
 
     CArrayBaseClass &baseClass=GetClass()->baseClass;
-    int n=baseClass.GetSize();
+    int n=baseClass.size();
     if(n) {
         CArrayClass bases;
         bases.SetSize(n);
@@ -993,7 +993,7 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
         CodeFile *prog=cl->GetCodeFile();
         prog->FindAllBaseClass(*cl, bases,true);
 
-        n=bases.GetSize();
+        n=bases.size();
         char tmpcode[10240];
         strcpy(tmpcode," : ");
         for(int j=0; j<n; j++) {
@@ -1011,7 +1011,7 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
 void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
     char tmpcode[10240];
     od.Generate(tmpcode);
-//   if (baseClass.GetSize()>=2)
+//   if (baseClass.size()>=2)
 //     {
 //       sprintf(str,"\n\t%s::Allocate();",baseClass[0]->basename);
 //       strcat(tmpcode,str);
@@ -1022,7 +1022,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
 
     //SEPARATE ALLOCATION FROM INVOCATION.....
     strcpy(tmpcode,"\n_paroc_Construct(");
-    int nb=params.GetSize();
+    int nb=params.size();
     for(int j=0; j<nb; j++) {
         Param &p=*(params[j]);
         strcat(tmpcode,p.GetName());

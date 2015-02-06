@@ -110,7 +110,7 @@ paroc_broker::paroc_broker() {
 }
 
 paroc_broker::~paroc_broker() {
-    int n=comboxArray.GetSize();
+    int n=comboxArray.size();
     for(int i=0; i<n; i++) {
         comboxArray[i]->Destroy();
     }
@@ -168,7 +168,7 @@ int paroc_broker::Run() {
     //Create threads for each protocols for receiving requests....
 
     paroc_array<paroc_receivethread *> ptArray;
-    int comboxCount = comboxArray.GetSize();
+    int comboxCount = comboxArray.size();
     if(comboxCount <= 0) {
         return -1;
     }

@@ -54,12 +54,12 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
 
 Class::~Class() {
     int i,n;
-    n=baseClass.GetSize();
+    n=baseClass.size();
     for(i=0; i<n; i++) if(baseClass[i]!=NULL) {
             delete baseClass[i];
         }
 
-    n=memberList.GetSize();
+    n=memberList.size();
     for(i=0; i<n; i++) if(memberList[i]!=NULL) {
             delete memberList[i];
         }
@@ -172,7 +172,7 @@ void Class::GenerateCode(CArrayChar &output/*, bool isPOPCPPCompilation*/) {
     if(!pureVirtual) {
         CArrayMethod puremethods;
         bool flag = findPureVirtual(puremethods);
-        if(puremethods.GetSize()>0) {
+        if(puremethods.size()>0) {
             SetPureVirtual(true);
             SetBasePureVirtual(flag);
         }
@@ -252,7 +252,7 @@ void Class::SetBasePureVirtual(bool val) {
 }
 
 bool Class::hasMethod(Method &x) {
-    int n=memberList.GetSize();
+    int n=memberList.size();
     for(int i=0; i<n; i++) if(memberList[i]->Type()==TYPE_METHOD) {
             Method &t=*((Method *)memberList[i]);
             if(t==x) {
@@ -263,7 +263,7 @@ bool Class::hasMethod(Method &x) {
 }
 
 bool Class::methodInBaseClass(Method &x) {
-    int n=baseClass.GetSize();
+    int n=baseClass.size();
     for(int i=0; i<n; i++) {
         BaseClass &t=*(baseClass[i]);
         if(t.type!=PUBLIC) {
@@ -283,7 +283,7 @@ bool Class::methodInBaseClass(Method &x) {
 bool Class::findPureVirtual(CArrayMethod &lst) {
     bool returnFlag = true;
 
-    int n=baseClass.GetSize();
+    int n=baseClass.size();
     for(int i=0; i<n; i++) {
         BaseClass &t=*(baseClass[i]);
         if(t.type!=PUBLIC) {
@@ -293,8 +293,8 @@ bool Class::findPureVirtual(CArrayMethod &lst) {
         returnFlag = false;
     }
 
-    n=memberList.GetSize();
-    int m=lst.GetSize();
+    n=memberList.size();
+    int m=lst.size();
     for(int i=0; i<n; i++) if(memberList[i]->Type()==TYPE_METHOD) {
             Method *t=(Method *)(memberList[i]);
             if(t->isPureVirtual) {
@@ -334,7 +334,7 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
         sprintf(tmpcode,"// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", name);
         code.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-        int nb_of_methods = memberList.GetSize();
+        int nb_of_methods = memberList.size();
         for(int i = 0; i < nb_of_methods; i++) {
 
 
@@ -370,7 +370,7 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
         }
     }
 
-    int n = memberList.GetSize();
+    int n = memberList.size();
     for(int i=0; i<n; i++) {
         if(memberList[i]->Type() != TYPE_METHOD || memberList[i]->GetMyAccess() != PUBLIC) {
             continue;
@@ -392,7 +392,7 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
     if(is_collective()) {
         sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  switch(_popc_selected_constructor_id) {", GetName());
         code.InsertAt(-1, tmpcode, strlen(tmpcode));
-        int n = memberList.GetSize();
+        int n = memberList.size();
         for(int i=0; i<n; i++) {
             if(memberList[i]->Type() == TYPE_METHOD) {
                 Method* m = dynamic_cast<Method*>(memberList[i]);
@@ -478,7 +478,7 @@ bool Class::generate_broker_header_pog(CArrayChar &code) {
     // Prepare broker name
     sprintf(brokername, "%s%s", name, Class::POG_BROKER_POSTFIX);
 
-    int n = baseClass.GetSize();
+    int n = baseClass.size();
     if(n == 0) {
         sprintf(tmpcode,"\n\nclass %s: virtual public %s", brokername, Class::POG_BASE_BROKER_NAME);
     } else {
@@ -501,7 +501,7 @@ bool Class::generate_broker_header_pog(CArrayChar &code) {
     strcat(tmpcode,"\nprotected:");
     code.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-    n=memberList.GetSize();
+    n=memberList.size();
     for(i = 0; i < n; i++) {
         if(memberList[i]->GetMyAccess() != PUBLIC || memberList[i]->Type() != TYPE_METHOD) {
             continue;
@@ -555,7 +555,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
     }
 
     sprintf(tmpcode, "class %s ", str);
-    int n = baseClass.GetSize();
+    int n = baseClass.size();
     strcat(tmpcode, " :");
 
     int i;
@@ -596,7 +596,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
     //Generate members
     const char *accessstr[3] = {"\npublic:", "\nprotected:", "\nprivate:"};
     AccessType currentaccess = PUBLIC;
-    n = memberList.GetSize();
+    n = memberList.size();
 
     for(i = 0; i < n; i++) {
         if(interface && memberList[i]->GetMyAccess() != PUBLIC) {
@@ -625,7 +625,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
         sprintf(str, "\n  %s& operator[] (const int index);\n", name);
         code.InsertAt(-1, str, strlen(str));
 
-        /*int n=baseClass.GetSize();
+        /*int n=baseClass.size();
         if (n)
         {
             CArrayClass bases;
@@ -634,7 +634,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
             CodeFile *prog=GetCodeFile();
             prog->FindAllBaseClass(*this, bases,true);
 
-            n=bases.GetSize();
+            n=bases.size();
             strcpy(tmpcode," : ");
             for (int j=0;j<n;j++)
             {
@@ -669,7 +669,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
         sprintf(str,"\n  ~%s() {};",name);
         code.InsertAt(-1, str, strlen(str));
 
-        n = memberList.GetSize();
+        n = memberList.size();
         for(i = 0; i < n; i++) {
             if(memberList[i]->Type() == TYPE_METHOD) {
                 Method* m = dynamic_cast<Method*>(memberList[i]);
@@ -716,7 +716,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
     }
 
     sprintf(tmpcode,"class %s ",str);
-    int n=baseClass.GetSize();
+    int n=baseClass.size();
     strcat(tmpcode," :");
 
     int i;
@@ -758,7 +758,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
     //Generate members
     const char *accessstr[3]= {"\npublic:","\nprotected:","\nprivate:"};
     AccessType currentaccess=PUBLIC;
-    n=memberList.GetSize();
+    n=memberList.size();
 
     for(i=0; i<n; i++) {
         if(interface && memberList[i]->GetMyAccess()!=PUBLIC) {
@@ -800,7 +800,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
         sprintf(str,"\npublic:\n%s(const paroc_accesspoint &p)",name);
         code.InsertAt(-1,str,strlen(str));
 
-        int n=baseClass.GetSize();
+        int n=baseClass.size();
         if(n) {
             CArrayClass bases;
             bases.SetSize(n);
@@ -810,7 +810,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
             CodeFile *prog=GetCodeFile();
             prog->FindAllBaseClass(*this, bases,true);
 
-            n=bases.GetSize();
+            n=bases.size();
             strcpy(tmpcode," : ");
             for(int j=0; j<n; j++) {
                 strcat(tmpcode,bases[j]->GetName());
@@ -900,7 +900,7 @@ bool Class::GenerateBrokerHeader(CArrayChar &code/*, bool isPOPCPPCompilation*/)
     }
     sprintf(brokername,"%s%s",name, Class::POG_BROKER_POSTFIX);
 
-    int n=baseClass.GetSize();
+    int n=baseClass.size();
     if(n==0) {
         sprintf(tmpcode,"\n\nclass %s: virtual public %s",brokername, my_broker_base);
     } else {
@@ -924,7 +924,7 @@ bool Class::GenerateBrokerHeader(CArrayChar &code/*, bool isPOPCPPCompilation*/)
     strcat(tmpcode,"\nprotected:");
     code.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-    n=memberList.GetSize();
+    n=memberList.size();
     for(i=0; i<n; i++) {
         if(memberList[i]->GetMyAccess()!=PUBLIC || memberList[i]->Type()!=TYPE_METHOD) {
             continue;
@@ -998,7 +998,7 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
     char *methodinfoptr = methodinfo;
     *methodinfoptr = 0;
 
-    int n = memberList.GetSize();
+    int n = memberList.size();
     for(i = 0; i < n; i++) {
         if(memberList[i]->GetMyAccess()!=PUBLIC || memberList[i]->Type()!=TYPE_METHOD) {
             continue;
@@ -1040,7 +1040,7 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
     strcpy(str,"\n    default:\n      return false;\n    }\n  }");
     code.InsertAt(-1,str,strlen(str));
 
-    n=baseClass.GetSize();
+    n=baseClass.size();
     for(i=0; i<n; i++) {
         sprintf(str,"\nelse if (%s%s::Invoke(method,__brokerbuf,peer)) return true;", baseClass[i]->base->GetName(), Class::POG_BROKER_POSTFIX);
         code.InsertAt(-1,str,strlen(str));
@@ -1069,7 +1069,7 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
     code.InsertAt(-1,str,strlen(str));
 
     // Generate code for Invoke_xxx(...) to invoke object's method
-    n = memberList.GetSize();
+    n = memberList.size();
     for(i = 0; i < n; i++) {
         if(memberList[i]->GetMyAccess() != PUBLIC || memberList[i]->Type() != TYPE_METHOD) {
             continue;

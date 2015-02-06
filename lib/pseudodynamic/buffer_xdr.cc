@@ -40,7 +40,7 @@ void paroc_buffer_xdr::Pack(const int *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
+    int oldsize=packeddata.size();
     packeddata.SetSize(n*4+oldsize);
     char *dest=packeddata+oldsize;
 
@@ -72,7 +72,7 @@ void paroc_buffer_xdr::Pack(const unsigned *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
+    int oldsize=packeddata.size();
     packeddata.SetSize(n*4+oldsize);
     char *dest=packeddata+oldsize;
 
@@ -103,7 +103,7 @@ void paroc_buffer_xdr::Pack(const long *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
+    int oldsize=packeddata.size();
     packeddata.SetSize(n*4+oldsize);
     char *dest=packeddata+oldsize;
 
@@ -134,7 +134,7 @@ void paroc_buffer_xdr::Pack(const unsigned long *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
+    int oldsize=packeddata.size();
     packeddata.SetSize(n*4+oldsize);
     char *dest=packeddata+oldsize;
 
@@ -165,7 +165,7 @@ void paroc_buffer_xdr::Pack(const short *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
+    int oldsize=packeddata.size();
     packeddata.SetSize(((n-1)/2+1)*4+oldsize);
     char *dest=packeddata+oldsize;
 
@@ -197,7 +197,7 @@ void paroc_buffer_xdr::Pack(const unsigned short *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
+    int oldsize=packeddata.size();
     packeddata.SetSize(((n-1)/2+1)*4+oldsize);
     char *dest=packeddata+oldsize;
 
@@ -228,7 +228,7 @@ void paroc_buffer_xdr::Pack(const bool *data, int n) {
     if(n<=0) {
         return;
     }
-    int t=packeddata.GetSize();
+    int t=packeddata.size();
     packeddata.SetSize(t+((n-1)/4+1)*4);
     char *dat=((char *)packeddata)+t;
     while(n-->0) {
@@ -242,7 +242,7 @@ void paroc_buffer_xdr::UnPack(bool *data, int n) {
         return;
     }
     CheckUnPack(n);
-    packeddata.GetSize();
+    packeddata.size();
 
     char *dat=((char *)packeddata)+unpackpos;
     while(n-->0) {
@@ -257,7 +257,7 @@ void paroc_buffer_xdr::Pack(const char *data, int n) {
     if(n<=0) {
         return;
     }
-    int t=packeddata.GetSize();
+    int t=packeddata.size();
     packeddata.SetSize(t+((n-1)/4+1)*4);
     memcpy(((char *)packeddata)+t,data,n);
 }
@@ -267,7 +267,7 @@ void paroc_buffer_xdr::UnPack(char *data, int n) {
         return;
     }
     CheckUnPack(n);
-    packeddata.GetSize();
+    packeddata.size();
     memcpy(data, ((char *)packeddata)+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
@@ -284,7 +284,7 @@ void paroc_buffer_xdr::Pack(const float *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
+    int oldsize=packeddata.size();
     packeddata.SetSize(n*4+oldsize);
     char *dest=packeddata+oldsize;
 
@@ -316,7 +316,7 @@ void paroc_buffer_xdr::Pack(const double *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
+    int oldsize=packeddata.size();
     packeddata.SetSize(n*8+oldsize);
     char *dest=packeddata+oldsize;
 
@@ -563,7 +563,7 @@ void paroc_buffer_xdr::UnPack(long double *data, int n)
 
 
 void paroc_buffer_xdr::CheckUnPack(int sz) {
-    if(sz+unpackpos > packeddata.GetSize()) {
+    if(sz+unpackpos > packeddata.size()) {
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
     }
 }
@@ -583,7 +583,7 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
         return false;
     }
 
-    int n = packeddata.GetSize();
+    int n = packeddata.size();
     int h[5];
     memset(h, 0, 5 * sizeof(int));
 
@@ -699,7 +699,7 @@ LOG_DEBUG("XDR: recv header");
 }
 
 int paroc_buffer_xdr::get_size() {
-    return packeddata.GetSize();
+    return packeddata.size();
 }
 
 // Note LWK: This method was copied from the dynamic to the pseudodynamic version of the code
@@ -711,7 +711,7 @@ char* paroc_buffer_xdr::get_load() {
         return NULL;
     }
 
-    int n = packeddata.GetSize();
+    int n = packeddata.size();
     int h[5];
     memset(h,0, 5*sizeof(int));
 

@@ -145,7 +145,7 @@ struct TemplateArgument
 startlist: handle_this startlist
 |/*empty*/
 {
-    if (othercodes.GetSize()) {
+    if (othercodes.size()) {
         assert(thisCodeFile != NULL);
         OtherCode *dat = new OtherCode(thisCodeFile);
         dat->AddCode(othercodes);
@@ -330,7 +330,7 @@ handle_eof: EOFCODE
 
                 if(!matched_parclasses.empty()){
                     // Implict add the pack directive
-                    if (othercodes.GetSize() && startPos>0) {
+                    if (othercodes.size() && startPos>0) {
                         assert(thisCodeFile != NULL);
                         OtherCode *dat=new OtherCode(thisCodeFile);
                         dat->AddCode((char *)othercodes,startPos);
@@ -379,11 +379,11 @@ not_care_code: error ';'
 {
   startPos=-1;
   insideClass=false;
-  if (othercodes.GetSize())
+  if (othercodes.size())
     {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode((char *)othercodes,othercodes.GetSize());
+      dat->AddCode((char *)othercodes,othercodes.size());
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
     }
@@ -392,11 +392,11 @@ not_care_code: error ';'
 {
   startPos=-1;
   insideClass=false;
-  if (othercodes.GetSize())
+  if (othercodes.size())
     {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode((char *)othercodes,othercodes.GetSize());
+      dat->AddCode((char *)othercodes,othercodes.size());
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
     }
@@ -405,11 +405,11 @@ not_care_code: error ';'
 {
   startPos=-1;
   insideClass=false;
-  if (othercodes.GetSize())
+  if (othercodes.size())
     {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode((char *)othercodes,othercodes.GetSize());
+      dat->AddCode((char *)othercodes,othercodes.size());
       thisCodeFile->AddCodeData(dat);
       othercodes.SetSize(0);
     }
@@ -429,7 +429,7 @@ pack_directive: pack_header '(' object_list ')'
 
 pack_header: PACK_KEYWORD
 {
-    if (othercodes.GetSize() && startPos>0) {
+    if (othercodes.size() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode((char *)othercodes,startPos);
@@ -903,7 +903,7 @@ class_key: PARCLASS_KEYWORD ID
 {
 
   hadParclass = true;
-    if (othercodes.GetSize() && startPos>0) {
+    if (othercodes.size() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode((char *)othercodes,startPos);
@@ -2454,7 +2454,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
         if (outf!=NULL) {
             CArrayChar output(0, 32000);
             thisCodeFile->GenerateCode(output, client, broker);
-            fwrite((char *)output,1, output.GetSize(),outf);
+            fwrite((char *)output,1, output.size(),outf);
         }
 
         if (outf != stdout) {

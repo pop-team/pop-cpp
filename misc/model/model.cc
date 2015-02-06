@@ -361,7 +361,7 @@ bool DTreeNode::ComputeTimeConstraints() {
 
     CRealArray results;
     model.GetResults(results);
-    assert(results.GetSize()==nstep);
+    assert(results.size()==nstep);
 
     pos=decomposition.GetHeadPosition();
 

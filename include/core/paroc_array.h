@@ -83,7 +83,7 @@ public:
     paroc_array(paroc_array &val);
 
     ~paroc_array();
-    int GetSize();
+    int size();
     void SetSize(int asize);
     inline operator T*();
     paroc_array & operator =(paroc_array & val);
@@ -100,7 +100,7 @@ public:
 
 protected:
     T *data;
-    int size;
+    int m_size;
     int actualsize;
     int growby;
     bool autodelete;
@@ -108,7 +108,7 @@ protected:
 
 template<class T>
 paroc_array<T>::paroc_array(int asize,int grow) {
-    size=actualsize=0;
+    m_size=actualsize=0;
     data=0;
     growby=(grow<0) ? 0 : grow;
     autodelete=true;
@@ -117,12 +117,12 @@ paroc_array<T>::paroc_array(int asize,int grow) {
 
 template<class T>
 paroc_array<T>::paroc_array(paroc_array & val) {
-    size=actualsize=0;
+    m_size=actualsize=0;
     data=0;
     growby=0;
     autodelete=true;
 
-    int n=val.GetSize();
+    int n=val.size();
     SetSize(n);
     if(n>0) {
         memcpy(data,(T *)val, n*sizeof(T));
@@ -135,8 +135,8 @@ paroc_array<T>::~paroc_array() {
 }
 
 template<class T>
-int paroc_array<T>::GetSize() {
-    return size;
+int paroc_array<T>::size() {
+    return m_size;
 }
 
 template<class T>
@@ -145,12 +145,11 @@ void paroc_array<T>::SetSize(int asize) {
         if(asize<0) {
             asize=0;
         }
-        if(asize>size) {
-            paroc_construct_element(data+size,asize-size);
+        if(asize>m_size) {
+            paroc_construct_element(data+m_size,asize-m_size);
         } else if(autodelete) {
-            paroc_destruct_element(data+asize,size-asize);
+            paroc_destruct_element(data+asize,m_size-asize);
         }
-        size=asize;
     } else {
         int newsize=asize+ (growby<=0 ? asize/3: growby);
         T *data1;
@@ -160,9 +159,10 @@ void paroc_array<T>::SetSize(int asize) {
 
         data=data1;
         actualsize=newsize;
-        paroc_construct_element(data+size,asize-size);
-        size=asize;
+        paroc_construct_element(data+m_size,asize-m_size);
     }
+
+    m_size=asize;
 }
 
 template<class T>
@@ -172,7 +172,7 @@ paroc_array<T>::operator T*() {
 
 template<class T>
 paroc_array<T> & paroc_array<T>::operator =(paroc_array & val) {
-    int n=val.GetSize();
+    int n=val.size();
     SetSize(n);
     memcpy(data, (T *)val, n*sizeof(T));
     return *this;
@@ -182,14 +182,14 @@ template<class T>
 void paroc_array<T>::RemoveAll() {
     if(data) {
         if(autodelete) {
-            paroc_destruct_element(data,size);
+            paroc_destruct_element(data,m_size);
         }
 
         free(data);
     }
 
     data=0;
-    size=actualsize=0;
+    m_size=actualsize=0;
 }
 
 template<class T>
@@ -198,11 +198,11 @@ void paroc_array<T>::InsertAt(int index, const T & e,int count) {
         return;
     }
     if(index<0) {
-        index=size;
+        index=size();
     }
-    int t=size-1;
+    int t=size()-1;
 
-    SetSize(index>size ? index+count : size+count);
+    SetSize(index>size() ? index+count : size()+count);
     T *dat=data+t;
     T *dat1=dat+count;
     while(t>=index) {
@@ -225,11 +225,11 @@ void paroc_array<T>::InsertAt(int index,const T * e,int count) {
         return;
     }
     if(index<0) {
-        index=size;
+        index=size();
     }
-    int t=size-1;
+    int t=size()-1;
 
-    SetSize(index>size ? index+count : size+count);
+    SetSize(index>size() ? index+count : size()+count);
     T *dat=data+t;
     T *dat1=dat+count;
     while(t>=index) {
@@ -247,8 +247,8 @@ void paroc_array<T>::InsertAt(int index,const T * e,int count) {
 }
 
 template<class T> void paroc_array<T>::RemoveAt(int index,int count) {
-    if(index+count>size) {
-        count=size-index;
+    if(index+count>size()) {
+        count=size()-index;
     }
     if(count<=0) {
         return;
@@ -256,11 +256,11 @@ template<class T> void paroc_array<T>::RemoveAt(int index,int count) {
     if(autodelete) {
         paroc_destruct_element(data+index,count);
     }
-    for(int i=index+count; i<size; i++) {
+    for(int i=index+count; i<size(); i++) {
         memcpy(data+i-count,data+i,sizeof(T));
     }
 
-    size-=count;
+    m_size-=count;
 }
 
 template<class T> int  paroc_array<T>::Find(T &e, int startIndex) {
@@ -268,7 +268,7 @@ template<class T> int  paroc_array<T>::Find(T &e, int startIndex) {
         startIndex=0;
     }
     T *t=data;
-    for(int i=startIndex; i<size; i++) {
+    for(int i=startIndex; i<size(); i++) {
         if(memcmp(t,&e,sizeof(T))==0) {
             return i;
         }
@@ -279,16 +279,16 @@ template<class T> int  paroc_array<T>::Find(T &e, int startIndex) {
 
 template<class T> void paroc_array<T>::Shrink() {
 
-    if(size<actualsize) {
-        if(size<=0) {
+    if(m_size<actualsize) {
+        if(m_size<=0) {
             RemoveAll();
         } else {
-            T *newData=(T *)realloc(data,sizeof(T)*size);
+            T *newData=(T *)realloc(data,sizeof(T)*size());
             if(newData==0) {
                 throw errno;
             }
             data=newData;
-            actualsize=size;
+            actualsize=m_size;
         }
     }
 }

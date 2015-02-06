@@ -62,7 +62,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 };
 
 "@"{whitespace2}"pack" {
-  startPos=othercodes.GetSize();
+  startPos=othercodes.size();
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PACK_KEYWORD;
 };
@@ -328,7 +328,7 @@ parclass {
   /*  printf(" class keyword\n");*/
   yylval=PutToken(char(100));
   
-  startPos=othercodes.GetSize();
+  startPos=othercodes.size();
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PARCLASS_KEYWORD;
 };

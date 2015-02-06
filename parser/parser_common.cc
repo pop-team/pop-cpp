@@ -3,7 +3,7 @@
 
 //CodeData implementation
 int CountCodeLines(CArrayChar &code) {
-    int n=code.GetSize();
+    int n=code.size();
     char *tmp=code;
     int l=0;
     while(n>0) {

@@ -81,7 +81,7 @@ paroc_combox_factory::paroc_combox_factory() {
             void *h=LoadPlugin(mod, name, creator);
 
             if(h!=NULL) {
-                int n=plugins.GetSize();
+                int n=plugins.size();
                 bool loaded=false;
                 for(int i=0; i<n; i++)
                     if(plugins[i]==h) {
@@ -128,7 +128,7 @@ paroc_combox_factory::paroc_combox_factory() {
                     void *h=LoadPlugin(fname, name, creator);
                     if(h!=NULL) {
                         bool loaded=false;
-                        int n=plugins.GetSize();
+                        int n=plugins.size();
                         for(int j=0; j<n; j++) if(h==plugins[j]) {
                                 loaded=true;
                                 break;
@@ -155,7 +155,7 @@ paroc_combox_factory::paroc_combox_factory() {
                         void *h=LoadPlugin(fname, name, creator);
                         if(h!=NULL) {
                             bool loaded = false;
-                            int n = plugins.GetSize();
+                            int n = plugins.size();
                             for(int j = 0; j < n; j++) {
                                 if(h == plugins[j]) {
                                     loaded = true;

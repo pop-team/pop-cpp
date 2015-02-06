@@ -48,7 +48,7 @@ void CodeFile::AddCodeData(CodeData *code) {
 }
 
 void CodeFile::EmptyCodeData() {
-    int n=codes.GetSize();
+    int n=codes.size();
     for(int i=0; i<n; i++) if(codes[i]!=NULL) {
             delete codes[i];
         }
@@ -56,7 +56,7 @@ void CodeFile::EmptyCodeData() {
 }
 
 void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker) {
-    int m = codes.GetSize();
+    int m = codes.size();
     for(int j = 0; j < m; j++) {
         if(broker || codes[j]->Type() != TYPE_PACKOBJECT) {
             codes[j]->GenerateCode(output);
@@ -83,7 +83,7 @@ CArrayCodeData *CodeFile::GetCodes() {
     return &codes;
 }
 bool CodeFile::HasClass() {
-    return (classlist.GetSize()>0);
+    return (classlist.size()>0);
 }
 
 char *CodeFile::GetFileName() {
@@ -120,7 +120,7 @@ Class *CodeFile::FindClass(char *clname) {
         tmp1--;
     }
 
-    int n=classlist.GetSize();
+    int n=classlist.size();
     for(int i=0; i<n; i++) if(paroc_utils::isEqual(classlist[i]->GetName(),tmp)) {
             return classlist[i];
         }
@@ -132,7 +132,7 @@ void CodeFile::FindAllClass(CArrayClass &list) {
 }
 
 void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseOnly) {
-    int index=bases.GetSize();
+    int index=bases.size();
     CArrayClass tmp;
     if(virtualBaseOnly) {
         tmp=bases;
@@ -145,13 +145,13 @@ void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseO
 
     index=0;
     while(1) {
-        int sz=allbases.GetSize();
-        int n=cl->baseClass.GetSize();
+        int sz=allbases.size();
+        int n=cl->baseClass.size();
         allbases.SetSize(sz+n);
         int actual_n=sz;
 
         if(virtualBaseOnly) {
-            sz1=bases.GetSize();
+            sz1=bases.size();
             actual_n1=sz1;
             bases.SetSize(sz1+n);
         }
@@ -191,7 +191,7 @@ void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseO
 
 
 DataType *CodeFile::FindDataType(const char *name) {
-    int n=datatypes.GetSize();
+    int n=datatypes.size();
     DataType **tmp=datatypes;
     for(; n>0; n--, tmp++) {
         if(strcmp(name,(*tmp)->GetName())==0) {
@@ -212,7 +212,7 @@ void CodeFile::AddDataType(DataType *type) {
 }
 
 void CodeFile::RemoveDataType(DataType *type) {
-    int n=temptypes.GetSize();
+    int n=temptypes.size();
     DataType **ptr=temptypes;
     for(int i=0; i<n; i++, ptr++) if(*ptr==type) {
             temptypes.RemoveAt(i);

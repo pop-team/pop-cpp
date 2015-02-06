@@ -23,7 +23,7 @@ void PackObject::GenerateCode(CArrayChar &output) {
     //New code: BEGIN===================
     strcpy(str,"void paroc_registerbroker() {\n");
     output.InsertAt(-1, str, strlen(str));
-    int n = objects.GetSize();
+    int n = objects.size();
     for(int i = 0; i < n; i++) {
         sprintf(str,"  %s%s::_popc_factory.test(\"%s\");\n", objects[i], Class::POG_BROKER_POSTFIX, objects[i]);
         output.InsertAt(-1,str,strlen(str));
@@ -34,7 +34,7 @@ void PackObject::GenerateCode(CArrayChar &output) {
     // Check if the object broker is packed
     strcpy(str, "bool CheckIfPacked(const char *objname)\n{\n\tif (objname==0) return false;\n");
     output.InsertAt(-1,str,strlen(str));
-    int sz=objects.GetSize();
+    int sz=objects.size();
     for(int j=0; j<sz; j++) {
         sprintf(str,"\n\tif (paroc_utils::isEqual(objname, \"%s\")) return true;",objects[j]);
         output.InsertAt(-1,str,strlen(str));
@@ -55,7 +55,7 @@ void PackObject::GenerateCode(CArrayChar &output) {
 
 
 void PackObject::AddObject(string64 objname) {
-    int n=objects.GetSize();
+    int n=objects.size();
     for(int i=0; i<n; i++) if(paroc_utils::isEqual(objects[i],objname)) {
             return;
         }
@@ -65,7 +65,7 @@ void PackObject::AddObject(string64 objname) {
 }
 
 int PackObject::GetNumObject() {
-    return objects.GetSize();
+    return objects.size();
 }
 
 

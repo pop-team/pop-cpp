@@ -1472,7 +1472,7 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
     }
 
     CArrayBaseClass &baseClass=GetClass()->baseClass;
-    int n=baseClass.GetSize();
+    int n=baseClass.size();
     if(n) {
         CArrayClass bases;
         bases.SetSize(n);
@@ -1483,7 +1483,7 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
         CodeFile *prog=cl->GetCodeFile();
         prog->FindAllBaseClass(*cl, bases,true);
 
-        n=bases.GetSize();
+        n=bases.size();
         char tmpcode[10240];
         strcpy(tmpcode," : ");
         for(int j=0; j<n; j++) {
@@ -1630,7 +1630,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
 
 
         // Place saved constructor arguments
-        /*      int nb = params.GetSize();
+        /*      int nb = params.size();
                 for (int j = 0; j < nb; j++) {
                     Param &p = *(params[j]);
                     sprintf(tmpcode, "_popc_constructor_%d_%s", get_id(), p.GetName());

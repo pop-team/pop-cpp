@@ -4,8 +4,8 @@
 #include "modelgene.h"
 
 int compareIndv(CRealArray **v1, CRealArray **v2) {
-    assert((*v1)!=NULL && (*v2)!=NULL && (*v1)->GetSize()==(*v2)->GetSize());
-    int n=(*v1)->GetSize()-1;
+    assert((*v1)!=NULL && (*v2)!=NULL && (*v1)->size()==(*v2)->size());
+    int n=(*v1)->size()-1;
     if((**v1)[n]<(**v2)[n]) {
         return -1;
     }
@@ -34,7 +34,7 @@ ModelGenetic::ModelGenetic(int pop, int cross_rate, int mutation_rate) {
 }
 
 ModelGenetic::~ModelGenetic() {
-    for(int i=0; i<population.GetSize(); i++) if(population[i]!=NULL) {
+    for(int i=0; i<population.size(); i++) if(population[i]!=NULL) {
             delete population[i];
         }
 }
@@ -53,7 +53,7 @@ bool ModelGenetic::Init(int NStep, int NTask, real *Complexities, int *fromstep,
     }
 
     //Initialize the population....
-    int n=population.GetSize();
+    int n=population.size();
 
     paroc_array<int> tmp;
     tmp.SetSize(Ns);
@@ -304,7 +304,7 @@ bool ModelGenetic::Mutation(int indv) {
 
 
 real ModelGenetic::EvalFitness(CRealArray &indv) {
-    assert(indv.GetSize()==Ns+1);
+    assert(indv.size()==Ns+1);
     real v=0;
     int *startptr=startStep;
     int *endptr=endStep;
