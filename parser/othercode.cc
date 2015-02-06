@@ -4,8 +4,7 @@
 #include <assert.h>
 
 // OtherCode implementation
-OtherCode::OtherCode(CodeFile *file): CodeData(file), code(0, 8096) {
-}
+OtherCode::OtherCode(CodeFile *file): CodeData(file) {}
 
 void OtherCode::GenerateCode(CArrayChar &output) {
     int n = code.size();

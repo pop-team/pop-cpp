@@ -22,19 +22,17 @@
 #include "paroc_exception.h"
 #include "popc_logger.h"
 
-paroc_buffer_raw::paroc_buffer_raw(): packeddata(0,1024) {
+paroc_buffer_raw::paroc_buffer_raw() {
     Reset();
 }
 
-paroc_buffer_raw::~paroc_buffer_raw() {
-}
+paroc_buffer_raw::~paroc_buffer_raw() {}
 
 void paroc_buffer_raw::Reset() {
     unpackpos=20;
     //packeddata.RemoveAll();
     packeddata.SetSize(20);
 }
-
 
 void paroc_buffer_raw::Pack(const char *data, int n) {
     if(n<=0) {

@@ -53,7 +53,7 @@ inline void paroc_destruct_element(X (*)[N]  /*data*/, int /*n*/) {}
  */
 template<class T> class paroc_array {
 public:
-    paroc_array(int asize=0,int grow=0);
+    paroc_array(int asize=0);
     paroc_array(paroc_array &val);
 
     ~paroc_array();
@@ -67,8 +67,6 @@ public:
     void RemoveAt(int index,int count=1);
     int Find(T &e, int startIndex=0);
     void Shrink();
-    void SetGrowby(int g);
-    int  GetGrowby();
 
     T& operator[](std::size_t i){
         return m_data[i];
@@ -90,15 +88,14 @@ protected:
     T *m_data;
     int m_size;
     int actualsize;
-    int growby;
+    int __fake_1;
     bool __fake; //For some obscure reasons, cannot be rmeoved
 };
 
 template<class T>
-paroc_array<T>::paroc_array(int asize,int grow) {
+paroc_array<T>::paroc_array(int asize) {
     m_size=actualsize=0;
     m_data=0;
-    growby=(grow<0) ? 0 : grow;
     SetSize(asize);
 }
 
@@ -106,7 +103,6 @@ template<class T>
 paroc_array<T>::paroc_array(paroc_array & val) {
     m_size=actualsize=0;
     m_data=0;
-    growby=0;
 
     int n=val.size();
     SetSize(n);
@@ -137,7 +133,10 @@ void paroc_array<T>::SetSize(int asize) {
             paroc_destruct_element(m_data+asize,m_size-asize);
         }
     } else {
-        int newsize=asize+ (growby<=0 ? asize/3: growby);
+        int newsize=asize+ asize/3;
+        if(newsize == asize){
+            ++newsize;
+        }
         T *data1;
         if((data1=(T *)realloc(m_data,sizeof(T)*newsize))==0) {
             throw errno;
@@ -269,16 +268,4 @@ template<class T> void paroc_array<T>::Shrink() {
     }
 }
 
-template<class T> void paroc_array<T>::SetGrowby(int g) {
-    if(g>=0) {
-        growby=g;
-    }
-}
-template<class T> int paroc_array<T>::GetGrowby() {
-    return growby;
-}
-
 #endif
-
-
-///new

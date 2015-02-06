@@ -20,7 +20,7 @@
 /**
  * Buffer constructor. Start with a stable state.
  */
-popc_buffer_xdr_mpi::popc_buffer_xdr_mpi(): packeddata(0,1024) {
+popc_buffer_xdr_mpi::popc_buffer_xdr_mpi() {
     Reset();
 }
 

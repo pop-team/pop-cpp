@@ -5,9 +5,7 @@
 
 //PackObject implementation
 
-PackObject::PackObject(CodeFile *file): CodeData(file), objects(0,5) {
-    startline=endline=-1;
-}
+PackObject::PackObject(CodeFile *file): CodeData(file), startline(-1), endline(-1) {}
 
 void PackObject::GenerateCode(CArrayChar &output) {
     char str[1024];

@@ -22,12 +22,11 @@
 #include "paroc_buffer_xdr.h"
 #include "paroc_exception.h"
 
-paroc_buffer_xdr::paroc_buffer_xdr(): packeddata(0,1024) {
+paroc_buffer_xdr::paroc_buffer_xdr() {
     Reset();
 }
 
-paroc_buffer_xdr::~paroc_buffer_xdr() {
-}
+paroc_buffer_xdr::~paroc_buffer_xdr() {}
 
 void paroc_buffer_xdr::Reset() {
     unpackpos=20;
@@ -791,4 +790,5 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
         }
     }
 }
+
 #endif

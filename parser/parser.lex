@@ -18,7 +18,8 @@
   extern CArrayCharPtr searchpath, sources;
   extern CodeFile *thisCodeFile;
 
-  CArrayChar othercodes(0,32536);
+  CArrayChar othercodes;
+  //TODO(BW) othercodes.reserve(32536);
   bool insideClass;
   int startPos=-1;
 
@@ -42,7 +43,7 @@
   bool IsSystemHeader(char *fname);
 
   int ReadUntil(char *sep, char *output, int sz);
-   
+
 %}
 
 DIGIT [0-9]
@@ -58,7 +59,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 %%
 
 {whitespace} {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
 };
 
 "@"{whitespace2}"pack" {
@@ -76,7 +77,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     if (t2!=NULL) {
       *t2=0;
       strcpy(filename, t1);
-      thisCodeFile->SetFileName(filename); 
+      thisCodeFile->SetFileName(filename);
       *t2='"';
     }
   }
@@ -111,9 +112,9 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   sscanf(yytext+1, "%d", &linenumber);
   linenumber++;
   //  printf("LINE DIRECTIVE:line:%d in %s\n", linenumber,filename);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   //  yylval=PutToken(yytext);
-  //  return DIRECTIVE;  
+  //  return DIRECTIVE;
 };
 
 ^"#line"[ \t]*[0-9]+[ \t]+\"[^\"]*\"[^\n]* {
@@ -126,13 +127,13 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     if (t2 != NULL) {
       *t2=0;
       strcpy(filename,t1);
-      if (thisCodeFile->GetFileName()==NULL) {  
-        thisCodeFile->SetFileName(filename); 
+      if (thisCodeFile->GetFileName()==NULL) {
+        thisCodeFile->SetFileName(filename);
       }
       *t2='"';
     }
   }
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
 };
 
 ^"#"[ \t]*[0-9]+[ \t]+\"[^\"]*\"[^\n]* {
@@ -145,13 +146,13 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     if (t2 != NULL) {
       *t2=0;
       strcpy(filename,t1);
-      if (thisCodeFile->GetFileName()==NULL) {  
-        thisCodeFile->SetFileName(filename); 
+      if (thisCodeFile->GetFileName()==NULL) {
+        thisCodeFile->SetFileName(filename);
       }
       *t2='"';
     }
   }
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
 };
 
 
@@ -159,7 +160,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 ^"#"[^\n]* {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   //  yylval=PutToken(yytext);
-  //  return DIRECTIVE;  
+  //  return DIRECTIVE;
 };
 
 "\""("\\\\"|"\\\""|[^"\""])*"\"" {
@@ -186,7 +187,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
   int len=0;
   char *tmp=yytext;
-  while (!isspace(*tmp) && *tmp!=':') 
+  while (!isspace(*tmp) && *tmp!=':')
     {
       clname[len]=*tmp;
       classname[len]=*tmp;
@@ -195,11 +196,11 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     }
   clname[len]=0;
   classname[len]=0;
-  
+
   if (thisCodeFile->FindClass(clname) != NULL) {
     while (isspace(*tmp) || *tmp==':') tmp++;
     //bool constructor=paroc_utils::isEqual(clname,tmp);
-      
+
       char postfix[32]="_popcobject";
       int len=strlen(clname);
       int len1=strlen(postfix);
@@ -220,7 +221,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   char thisBuf[1024];
   int len = 0;
   char *tmp = yytext;
-  
+
   while (!isspace(*tmp) && *tmp!=':') {
     clname[len]=*tmp;
     classname[len]=*tmp;
@@ -242,7 +243,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       //Create the string to be inserted in every paroc_object constructor
       sprintf(thisBuf, "__POPThis_%s=new %s(GetAccessPointForThis());", clname, clname);
     }
-    
+
 
   if (constructor) {
 	  shouldreturn = false;
@@ -253,7 +254,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 	  char buf[10240];
 	  int n = ReadUntil((char*)");{", buf, 10240);
 	  othercodes.InsertAt(-1,buf,n);
-    
+
 	  linenumber+=CountLine(buf);
 	  if (n && buf[n-1]==')'){
       n=ReadUntil((char*)":;{", buf, 10240);
@@ -282,16 +283,16 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 		      othercodes.InsertAt(-1,buf,n);
 		    }
   		  // Extract parametters...
-		  
+
 		    n = ReadUntil((char*)"){;",buf,10240);
 		    othercodes.InsertAt(-1,buf,n);
-        if (!n || buf[n-1]!=')') 
+        if (!n || buf[n-1]!=')')
 		      break;
 
 		    // Extract separators
     		n=ReadUntil((char*)",{;",buf,10240);
 		      othercodes.InsertAt(-1,buf,n);
-  		    if (!n || buf[n-1]!=',') 
+  		    if (!n || buf[n-1]!=',')
 	  	      break;
         }
       }
@@ -302,7 +303,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     strcpy(newyytext,yytext);
     othercodes.InsertAt(-1,yytext,strlen(yytext));
   }
-  
+
   linenumber += CountLine(tmp);
 
   if (shouldreturn) {
@@ -313,7 +314,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
 
 {newline} {
-  linenumber++; 
+  linenumber++;
   othercodes.InsertAt(-1,yytext,strlen(yytext));
 };
 
@@ -327,7 +328,7 @@ parclass {
 
   /*  printf(" class keyword\n");*/
   yylval=PutToken(char(100));
-  
+
   startPos=othercodes.size();
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PARCLASS_KEYWORD;
@@ -355,9 +356,9 @@ namespace {
 broadcast {
 	yylval=PutToken(yytext);
 	othercodes.InsertAt(-1,yytext,strlen(yytext));
-	return BROADCAST;  
+	return BROADCAST;
 };
- 
+
 classuid {
   if (IsSystemHeader(filename))
     {
@@ -367,7 +368,7 @@ classuid {
     }
 
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return CLASSID;
 };
 
@@ -381,7 +382,7 @@ register {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
   return REGISTER_KEYWORD;
-}; 
+};
 
 
 public {
@@ -430,7 +431,7 @@ sync {
       othercodes.InsertAt(-1,yytext,strlen(yytext));
       return SYNC_INVOKE;
     }
-}; 
+};
 
 
 async {
@@ -501,17 +502,17 @@ mutex[ \a\b\v\f\t\r\n]*"{" {
       int len=strlen(yycopy);
       yylval=PutToken((char*)"mutex");
       othercodes.InsertAt(-1,yytext,5);
-      for (char *t=yycopy+len-1;t!=yycopy;t--) unput(*t); 
+      for (char *t=yycopy+len-1;t!=yycopy;t--) unput(*t);
       free(yycopy);
       return ID;
-      
+
       //      othercodes.InsertAt(-1,yytext,strlen(yytext));
     }
   else
     {
       char str[256];
       int len=strlen(yytext)-6;
-      sprintf(str," { paroc_mutex_locker _paroc_mutex%d(_paroc_omutex); ",mutexCount++); 
+      sprintf(str," { paroc_mutex_locker _paroc_mutex%d(_paroc_omutex); ",mutexCount++);
       othercodes.InsertAt(-1,str,strlen(str));
       othercodes.InsertAt(-1,yytext+5,len);
     }
@@ -546,7 +547,7 @@ __hidden {
     }
 
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return HIDDEN;  
+  return HIDDEN;
 };
 
 proc {
@@ -586,17 +587,17 @@ this {
                 othercodes.InsertAt(-1,"__POPThis_",strlen("__POPThis_"));
                 othercodes.InsertAt(-1,cl->GetName(),strlen(cl->GetName()));
                 insertNormalThis = false;
-            } 
+            }
         }
-        
+
         if(insertNormalThis)
             othercodes.InsertAt(-1,yytext,strlen(yytext));
-	
-	
+
+
 	/*
 	yylval=PutToken(yytext);
 	othercodes.InsertAt(-1,"this",strlen("this"));
- 	
+
 	printf("handle at Flex -> ");
 	return THIS_KEYWORD;*/
 }
@@ -604,42 +605,42 @@ this {
 unsigned{whitespace1}int {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 signed{whitespace1}int {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 unsigned{whitespace1}long {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 signed{whitespace1}long {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 signed{whitespace1}char {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 unsigned{whitespace1}char {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
@@ -647,25 +648,25 @@ unsigned{whitespace1}char {
 signed{whitespace1}short {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 unsigned{whitespace1}short {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 typedef {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(TYPEDEF_KEYWORD);
 };
 
 {id} {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));  
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID);
 };
 
@@ -678,7 +679,7 @@ typedef {
 [0-9]*"."[0-9]+([Ee][0-9]+)? {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return (REAL);  
+  return (REAL);
 };
 
 
@@ -691,49 +692,49 @@ typedef {
 "&&" {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return (AND_OP);    
+  return (AND_OP);
 };
 
 "||" {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return (OR_OP);    
+  return (OR_OP);
 };
 
 "==" {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return (EQUAL_OP);    
+  return (EQUAL_OP);
 };
 
 "!=" {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return (NOTEQUAL_OP);    
+  return (NOTEQUAL_OP);
 };
 
 ">=" {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return (GREATEREQUAL_OP);    
+  return (GREATEREQUAL_OP);
 };
 
 "<=" {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return (LESSEQUAL_OP);    
+  return (LESSEQUAL_OP);
 };
 
 "?"{whitespace2}":" {
   yylval=PutToken(yytext);
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return (NONSTRICT_OD_OP);    
+  return (NONSTRICT_OD_OP);
 };
 
 
-"\'"|"\""|"#"|"("|")"|"{"|"}"|"["|"]"|";"|":"|","|"*"|"&"|"~"|"="|"+"|"%"|"@"|"$"|"^"|"-"|"|"|"`"|"!"  { 
+"\'"|"\""|"#"|"("|")"|"{"|"}"|"["|"]"|";"|":"|","|"*"|"&"|"~"|"="|"+"|"%"|"@"|"$"|"^"|"-"|"|"|"`"|"!"  {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return yytext[0]; 
+  return yytext[0];
 };
 
 <<EOF>> {
@@ -741,7 +742,7 @@ typedef {
 };
 . {
   othercodes.InsertAt(-1,yytext,strlen(yytext));
-  return yytext[0];   
+  return yytext[0];
 };
 
 %%
@@ -796,7 +797,7 @@ int ReadUntil(char *sep, char *buf, int sz)
       if (sz==1) *buf=0;
       return 0;
     }
- 
+
   char *tmp=buf;
   int ch=1;
   int bracket=0;
@@ -829,7 +830,7 @@ int ReadUntil(char *sep, char *buf, int sz)
 	  if (bracket>0) ch=1;
 	}
     }
-  
+
   *tmp=0;
   return (tmp-buf);
 }
