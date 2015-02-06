@@ -69,7 +69,6 @@ public:
     void Shrink();
     void SetGrowby(int g);
     int  GetGrowby();
-    void DisableDestructors(bool disable=true);
 
     T& operator[](std::size_t i){
         return m_data[i];
@@ -92,7 +91,7 @@ protected:
     int m_size;
     int actualsize;
     int growby;
-    bool autodelete;
+    bool __fake; //For some obscure reasons, cannot be rmeoved
 };
 
 template<class T>
@@ -100,7 +99,6 @@ paroc_array<T>::paroc_array(int asize,int grow) {
     m_size=actualsize=0;
     m_data=0;
     growby=(grow<0) ? 0 : grow;
-    autodelete=true;
     SetSize(asize);
 }
 
@@ -109,7 +107,6 @@ paroc_array<T>::paroc_array(paroc_array & val) {
     m_size=actualsize=0;
     m_data=0;
     growby=0;
-    autodelete=true;
 
     int n=val.size();
     SetSize(n);
@@ -136,7 +133,7 @@ void paroc_array<T>::SetSize(int asize) {
         }
         if(asize>m_size) {
             paroc_construct_element(m_data+m_size,asize-m_size);
-        } else if(autodelete) {
+        } else {
             paroc_destruct_element(m_data+asize,m_size-asize);
         }
     } else {
@@ -165,10 +162,7 @@ paroc_array<T> & paroc_array<T>::operator =(paroc_array & val) {
 template<class T>
 void paroc_array<T>::RemoveAll() {
     if(m_data) {
-        if(autodelete) {
-            paroc_destruct_element(m_data,m_size);
-        }
-
+        paroc_destruct_element(m_data,m_size);
         free(m_data);
     }
 
@@ -237,9 +231,7 @@ template<class T> void paroc_array<T>::RemoveAt(int index,int count) {
     if(count<=0) {
         return;
     }
-    if(autodelete) {
-        paroc_destruct_element(m_data+index,count);
-    }
+    paroc_destruct_element(m_data+index,count);
     for(int i=index+count; i<size(); i++) {
         memcpy(m_data+i-count,m_data+i,sizeof(T));
     }
@@ -284,10 +276,6 @@ template<class T> void paroc_array<T>::SetGrowby(int g) {
 }
 template<class T> int paroc_array<T>::GetGrowby() {
     return growby;
-}
-
-template<class T>  void paroc_array<T>::DisableDestructors(bool disable) {
-    autodelete=!disable;
 }
 
 #endif
