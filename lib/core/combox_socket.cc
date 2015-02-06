@@ -212,6 +212,38 @@ paroc_connection* paroc_combox_socket::Wait() {
     }
 }
 
+void paroc_combox_socket::Close() {
+    int fd=sockfd;
+    sockfd=-1;
+    nready=0;
+    index=-1;
+
+    if(isServer) {
+        for(int i=0; i<pollarray.GetSize(); i++){
+            if(fd!=pollarray[i].fd) {
+                OnCloseConnection(connarray[i]);
+            }
+
+            popc_close(pollarray[i].fd);
+
+            delete connarray[i];
+        }
+
+        pollarray.RemoveAll();
+        connarray.RemoveAll();
+    } else {
+        if(peer) {
+            OnCloseConnection(peer);
+            delete peer;
+            peer=nullptr;
+        }
+
+        if(fd>=0) {
+            popc_close(fd);
+        }
+    }
+}
+
 #else
 
 //Following are the Windows implementations
@@ -453,6 +485,42 @@ paroc_connection* paroc_combox_socket::Wait() {
     }
 }
 
+void paroc_combox_socket::Close() {
+    int fd=sockfd;
+    highsockfd = -1;
+    sockfd=-1;
+    nready=0;
+    index=-1;
+
+    if(isServer) {
+        int n=activefdset.fd_count;
+        for(int i=0; i<n; i++){
+            if(fd!=activefdset.fd_array[i]) {
+                /*FD_CLR(activefdset.fd_array[i], &activefdset);*/
+                OnCloseConnection(connarray[i]);
+            }
+        }
+
+        FD_ZERO(&activefdset);
+        FD_ZERO(&readfds);
+
+        for(int i=0; i<n; i++) {
+            delete connarray[i];
+        }
+
+        connarray.RemoveAll();
+    } else {
+        if(peer) {
+            OnCloseConnection(peer);
+            delete peer;
+            peer=nullptr;
+        }
+
+        if(fd>=0) {
+            popc_close(fd);
+        }
+    }
+}
 
 #endif
 
@@ -667,51 +735,6 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
     }
 
     return n;
-}
-
-void paroc_combox_socket::Close() {
-    int fd=sockfd;
-#ifdef __WIN32__
-    highsockfd = -1;
-#endif
-    sockfd=-1;
-    nready=0;
-    index=-1;
-
-    if(isServer) {
-#ifndef __WIN32__
-        int n=pollarray.GetSize();
-        for(int i=0; i<n; i++) if(fd!=pollarray[i].fd) {
-                OnCloseConnection(connarray[i]);
-            }
-        for(int i=0; i<n; i++) {
-            popc_close(pollarray[i].fd);
-        }
-        pollarray.RemoveAll();
-#else
-        int n=activefdset.fd_count;
-        for(int i=0; i<n; i++) if(fd!=activefdset.fd_array[i]) {
-                /*FD_CLR(activefdset.fd_array[i], &activefdset);*/OnCloseConnection(connarray[i]);
-            }
-        FD_ZERO(&activefdset);
-        FD_ZERO(&readfds);
-#endif
-
-        for(int i=0; i<n; i++) {
-            delete connarray[i];
-        }
-        connarray.RemoveAll();
-    } else {
-        if(peer!=NULL) {
-            OnCloseConnection(peer);
-            delete peer;
-            peer=NULL;
-        }
-
-        if(fd>=0) {
-            popc_close(fd);
-        }
-    }
 }
 
 bool paroc_combox_socket::GetProtocol(POPString & protocolName) {
