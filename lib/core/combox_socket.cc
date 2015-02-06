@@ -244,6 +244,32 @@ void paroc_combox_socket::Close() {
     }
 }
 
+bool paroc_combox_socket::CloseSock(int fd) {
+    if(isServer) {
+        pollfd* t=pollarray;
+        for(int i=0; i<pollarray.GetSize(); i++, t++){
+            if(t->fd==fd){
+                isCanceled=!OnCloseConnection(connarray[i]);
+                delete connarray[i];
+                connarray.RemoveAt(i);
+                pollarray.RemoveAt(i);
+                if(isCanceled) {
+                    errno=ECANCELED;
+                }
+                popc_close(fd);
+                return !isCanceled;
+            }
+        }
+    } else if(peer && fd==sockfd) {
+        isCanceled=true;
+        popc_close(fd);
+        sockfd=-1;
+        return true;
+    }
+
+    return false;
+}
+
 #else
 
 //Following are the Windows implementations
@@ -522,6 +548,30 @@ void paroc_combox_socket::Close() {
     }
 }
 
+bool paroc_combox_socket::CloseSock(int fd) {
+    if(isServer) {
+        int n = activefdset.fd_count;
+        for(int i=0; i<n; i++){
+            if(activefdset.fd_array[i]==fd){
+                isCanceled=!OnCloseConnection(connarray[i]);
+                delete connarray[i];
+                connarray.RemoveAt(i);
+                FD_CLR(activefdset.fd_array[i], &activefdset);
+
+                popc_close(fd);
+                return !isCanceled;
+            }
+        }
+    } else if(peer && fd==sockfd) {
+        isCanceled=true;
+        popc_close(fd);
+        sockfd=-1;
+        return true;
+    }
+
+    return false;
+}
+
 #endif
 
 //Normal implementations that are not separated by arch
@@ -752,42 +802,6 @@ bool paroc_combox_socket::GetUrl(POPString & accesspoint) {
     accesspoint=elem;
     return true;
 }
-
-bool paroc_combox_socket::CloseSock(int fd) {
-    if(isServer) {
-#ifndef __WIN32__
-        int n=pollarray.GetSize();
-        pollfd *t=pollarray;
-        for(int i=0; i<n; i++, t++) if(t->fd==fd)
-#else
-        int n = activefdset.fd_count;
-        for(int i=0; i<n; i++) if(activefdset.fd_array[i]==fd)
-#endif
-            {
-                isCanceled=!OnCloseConnection(connarray[i]);
-                delete connarray[i];
-                connarray.RemoveAt(i);
-#ifdef __WIN32__
-                FD_CLR(activefdset.fd_array[i], &activefdset);
-#else
-                pollarray.RemoveAt(i);
-                if(isCanceled) {
-                    errno=ECANCELED;
-                }
-#endif
-                popc_close(fd);
-                return !isCanceled;
-            }
-    } else if(peer!=NULL && fd==sockfd) {
-        isCanceled=true;
-        popc_close(fd);
-        sockfd=-1;
-        return true;
-    }
-    return false;
-}
-
-
 
 int paroc_combox_socket::GetSockInfo(sockaddr &info,socklen_t &len) {
     return popc_getsockname(sockfd,&info,&len);
