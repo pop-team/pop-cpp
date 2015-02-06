@@ -680,6 +680,7 @@ LOG_DEBUG("XDR: recv header");
         header.SetMethodID(popc_ntohl(h[3]));
         break;
     default:
+        LOG_ERROR("Unknown type %d", type);
         return false;
     }
 
@@ -785,7 +786,7 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
         paroc_connection * t = (paroc_connection *) s.Wait();
         if(!t) {
-            paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
+            paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive");
         }
 
         if(!Recv(s, t)) {
@@ -801,7 +802,7 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 paroc_array<char> packeddataold = packeddata;
                 paroc_connection * t = (paroc_connection *) s.Wait();
                 if(!t) {
-                    paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
+                    paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive");
                 }
 
                 if(!Recv(s, t)) {

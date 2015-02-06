@@ -382,6 +382,9 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
                     buffer->Pop();
                     ok = !ret;
                 }
+            } catch(std::exception &e) {
+                LOG_WARNING("Exception in paroc_broker::WakeUpReceiveThread: %s", e.what());
+                ok = true;
             } catch(...) {
                 LOG_WARNING("Unknown exception in paroc_broker::WakeUpReceiveThread");
                 ok = true;

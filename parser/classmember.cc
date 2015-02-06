@@ -1273,7 +1273,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             tempcatch[i]='\0';
         }
 
-        sprintf(tempcatch,"\n  } catch(std::exception& e) {\n    printf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what());\n    throw;\n  }\n", name, clname);
+        sprintf(tempcatch,"\n  } catch(std::exception& e) {\n    printf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what());\n    throw;\n  }\n", name, clname); // TODO lwk: message never printed on a remote object (same below)
         strcat(methodcall,tempcatch);
 
 

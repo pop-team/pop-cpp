@@ -414,6 +414,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                 delete e;
                 continue;
             }
+            LOG_DEBUG("Successful bind to %s", addr);
         }
     } else {
         //The user specify the protocol in OD, select the preference and match with the access point...
@@ -440,7 +441,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
         }
     }
 
-    paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName());
+    LOG_WARNING("Cannot find suitable protocol");
+    paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName(), "Cannot find suitable protocol");
 }
 
 void paroc_interface::Bind(const char *dest) {
@@ -467,15 +469,15 @@ void paroc_interface::Bind(const char *dest) {
     // Create combox factory
     paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
     POPString p;
-    fact->GetNames(p);
     if(!fact) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot get instance of factory");
     }
+    fact->GetNames(p);
 
     // Create combox
     __paroc_combox = fact->Create(prot);
     if(!__paroc_combox) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot create factory");
     }
 
     // Create associated buffer
@@ -569,23 +571,23 @@ void paroc_interface::Bind(const char *dest) {
         }
 
         default:
-            LOG_WARNING("INTERFACE: Unknown binding status");
+            LOG_WARNING("Unknown binding status");
             Release();
-            paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName());
+            paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName(), "Unknown binding status");
         }
     } else {
         int code=errno;
 
-        LOG_WARNING("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
-        LOG_WARNING("Create socket fails. Reason: %s.",strerror(code));
+        LOG_WARNING("Fail to connect from [%s] to [%s]. Error code: %s",(const char *)paroc_system::GetHost(),dest,strerror(code));
         Release();
-        paroc_exception::paroc_throw(code, ClassName());
+        paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
 
     __paroc_combox->SetTimeout(-1);
 }
 
 bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
+    LOG_ERROR("Method has been commented"); // Note LWK: I still do not know by whom or for what reason // TODO
     /* TODO should have been restored for version TCP/IP
       POPString hostname;
       POPString rarch;
@@ -838,7 +840,7 @@ bool paroc_interface::RecvCtrl() {
         if(t != NULL) {
             if(!__paroc_buf->Recv(*__paroc_combox,t)) {
                 __paroc_combox->SetTimeout(oldTimeout);
-                paroc_exception::paroc_throw(errno);
+                paroc_exception::paroc_throw("Error in od disconnect 1");
             } else {
                 __paroc_combox->SetTimeout(oldTimeout);
                 return true;
@@ -850,7 +852,7 @@ bool paroc_interface::RecvCtrl() {
 
         if(!__paroc_buf->Send(*__paroc_combox)) {
             __paroc_combox->SetTimeout(oldTimeout);
-            paroc_exception::paroc_throw(errno);
+            paroc_exception::paroc_throw("Error in od disconnect 2");
         }
         __paroc_combox->SetTimeout(time_alive);
         if(!__paroc_buf->RecvCtrl(*__paroc_combox)) {
@@ -909,7 +911,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
         }
     }
 
-    paroc_exception::paroc_throw(POPC_NO_ENCODING, ClassName());
+    paroc_exception::paroc_throw(POPC_NO_ENCODING, ClassName(), "NegociateEncoding failed");
 }
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od) {
@@ -1175,7 +1177,7 @@ void paroc_interface::ApplyCommPattern(const char *pattern, paroc_list<char *> &
 // DEPRECATED
 void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
     if(!buf->Send(*__paroc_combox)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer sent failed (old)");
     }
 }
 
@@ -1183,7 +1185,7 @@ void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
 void paroc_interface::paroc_Response(paroc_buffer *buf) {
     if(!buf->Recv(*__paroc_combox)) {
         printf("Throw from response\n");
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer receive failed (old)");
     }
     paroc_buffer::CheckAndThrow(*buf);
 }
@@ -1193,7 +1195,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf) {
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Send((*__paroc_combox), conn)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer sent failed");
     }
     LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == NULL) ? "is null" : "is not null");
 }
@@ -1203,7 +1205,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
  */
 void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Recv((*__paroc_combox), conn)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer receive failed");
     }
     LOG_DEBUG("INTERFACE: paroc_response will disconnect the connection");
     paroc_buffer::CheckAndThrow(*buf);
@@ -1270,10 +1272,8 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
     if(error_code==0) {
         _ssh_local_port = local_port;
         return local_port;
-    } else {
-        //paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
     }
-
+    LOG_WARNING("CreateSSHTunnel returned with error code %d", error_code);
     return error_code;
 }
 

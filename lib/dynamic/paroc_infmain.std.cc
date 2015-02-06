@@ -82,12 +82,12 @@ int main(int argc, char **argv) {
 #ifdef DEFINE_UDS_SUPPORT
         paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
         if(combox_factory == NULL) {
-            paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain");
+            paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain: combox_factory == NULL");
         }
 
         paroc_combox* allocating_combox = combox_factory->Create("uds");
         if(allocating_combox == NULL) {
-            paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain");
+            paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox == NULL");
         }
 
         paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
         snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
 
         if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
-            paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain");
+            paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox->Create failed");
         }
 
         paroc_message_header header(0, 200001, INVOKE_SYNC, "_terminate");
@@ -105,17 +105,19 @@ int main(int argc, char **argv) {
         paroc_connection* connection = allocating_combox->get_connection();
 
         if(!allocating_buffer->Send((*allocating_combox), connection)) {
-            paroc_exception::paroc_throw_errno();
+            paroc_exception::paroc_throw("allocating_buffer->Send failed");
         }
 #endif
         return ret;
     }
 
     // TODO LW: See what to do with signal handling
-    atexit(_paroc_atexit);
+    atexit(_paroc_atexit); // TODO LWK: Commented this: see if works
 
     try {
         int ret=parocmain(argc,argv);
+        if(ret!=0)
+            LOG_WARNING("main returned error code %d. Finalize method will kill all remaining objects", ret);
         app.Finalize(ret==0);
         return ret;
     } catch(paroc_exception *e) {

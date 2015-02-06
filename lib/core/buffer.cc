@@ -196,6 +196,7 @@ METH_VECT_UNPACK(std::string)
 
 bool paroc_buffer::Send(paroc_connection *conn) {
     if(conn == NULL) {
+        LOG_ERROR("conn==NULL");
         return false;
     }
     auto combox = conn->GetCombox();
@@ -204,7 +205,7 @@ bool paroc_buffer::Send(paroc_connection *conn) {
 
 bool paroc_buffer::Recv(paroc_connection *conn) {
     if(conn==NULL) {
-        LOG_INFO("conn==NULL");
+        LOG_ERROR("conn==NULL");
         return false;
     }
     auto combox = conn->GetCombox();

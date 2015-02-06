@@ -58,7 +58,7 @@ AppCoreService::~AppCoreService() {
     } catch(...) {
         LOG_WARNING("Exception while ending the application on JobMgr");
     }
-
+    
     auto pos=servicelist.GetHeadPosition();
     while(pos) {
         auto& t = servicelist.GetNext(pos);

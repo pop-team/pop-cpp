@@ -372,7 +372,7 @@ int RunCmd(int argc, const char *argv[]) {
         strcat(cmd,argv[i]);
         strcat(cmd," ");
     }
-    LOG_INFO("Execute %s\n", cmd);
+    LOG_INFO("Execute %s", cmd);
     system(cmd);
 
     return 0;
@@ -387,7 +387,7 @@ int RunCmd(int argc, const char *argv[]) {
         _exit(1);
     } else if(pid == 0) {
         execvp(argv[0], const_cast<char**>(argv));
-        LOG_ERROR( "POP-C++ Error: %s not found\n", argv[0]);
+        LOG_ERROR( "POP-C++ Error: %s not found", argv[0]);
         _exit(1);
     }
     wait(&status);
@@ -415,7 +415,7 @@ int RunPipe(int argc1, const char *argv1[], int argc2, const char *argv2[]) {
         close(p[0]);
         dup2(p[1],1);
         execvp(argv1[0], const_cast<char**>(argv1));
-        LOG_ERROR("POP-C++ Error: %s not found\n",argv1[0]);
+        LOG_ERROR("POP-C++ Error: %s not found",argv1[0]);
         _exit(1);
     }
 
@@ -429,7 +429,7 @@ int RunPipe(int argc1, const char *argv1[], int argc2, const char *argv2[]) {
         close(p[1]);
         dup2(p[0],0);
         execvp(argv2[0], const_cast<char**>(argv2));
-        LOG_ERROR("POP-C++ Error: %s not found\n",argv2[0]);
+        LOG_ERROR("POP-C++ Error: %s not found",argv2[0]);
         _exit(1);
     }
     close(p[0]);
