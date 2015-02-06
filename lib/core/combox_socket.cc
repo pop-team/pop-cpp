@@ -127,6 +127,91 @@ bool paroc_combox_socket::Connect(const char *host,int port) {
     }
 }
 
+paroc_connection* paroc_combox_socket::Wait() {
+    if(sockfd<0 || isCanceled) {
+        isCanceled=false;
+        return NULL;
+    }
+
+    if(isServer) {
+        pollfd *tmpfd;
+
+        while(1) {
+            if(nready>0) {
+                int n=pollarray.GetSize();
+                tmpfd=pollarray+index;
+                for(int i=index; i>=0; i--, tmpfd--) {
+                    if(tmpfd->revents!=0) {
+                        nready--;
+                        index=i-1;
+                        tmpfd->revents=0;
+
+                        if(i==0) {
+                            //Accept new connection....
+                            sockaddr addr;
+                            socklen_t addrlen=sizeof(addr);
+                            int s;
+                            while((s=popc_accept(sockfd,&addr,&addrlen))<0 && errno==EINTR);
+                            if(s<0) {
+                                return nullptr;
+                            }
+
+                            pollarray.SetSize(n+1);
+                            pollarray[n].fd=s;
+                            pollarray[n].events=POLLIN;
+                            pollarray[n].revents=0;
+                            connarray.SetSize(n+1);
+                            connarray[n]=CreateConnection(s);
+                            auto ret=OnNewConnection(connarray[n]);
+                            n++;
+
+                            if(!ret) {
+                                return nullptr;
+                            }
+                        } else {
+                            return connarray[i];
+                        }
+                    }
+                }
+            }
+
+            //Poll for ready fds....
+            do {
+                tmpfd=pollarray;
+                int n=pollarray.GetSize();
+                index=n-1;
+                nready=poll(tmpfd,n,timeout);
+            }  while(nready<0 && errno==EINTR && sockfd>=0);
+
+            if(nready<=0) {
+                if(!nready) {
+                    errno=ETIMEDOUT;
+                }
+
+                return nullptr;
+            }
+        }
+    } else {
+        if(timeout>=0) {
+            pollfd tmpfd;
+            tmpfd.fd=sockfd;
+            tmpfd.events=POLLIN;
+            tmpfd.revents=0;
+
+            int t;
+            while((t=poll(&tmpfd,1,timeout))==-1 && errno==EINTR);
+
+            if(t<=0) {
+                if(!t) {
+                    errno=ETIMEDOUT;
+                }
+                return nullptr;
+            }
+        }
+        return peer;
+    }
+}
+
 #else
 
 //Following are the Windows implementations
@@ -260,6 +345,114 @@ bool paroc_combox_socket::Connect(const char *host,int port) {
         return ret==0;
     }
 }
+
+paroc_connection* paroc_combox_socket::Wait() {
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+    int tmpfdset;
+
+    if(sockfd<0 || isCanceled) {
+        isCanceled=false;
+        return NULL;
+    }
+
+    if(isServer) {
+        while(1) {
+            if(nready>0) {
+                FD_ZERO(&readfds);
+                readfds = activefdset;
+                int n = readfds.fd_count;
+                for(int i=n-1; i>=0; i--) {
+                    if(readfds.fd_array[i] == tmpfdset) {
+                        nready--;
+
+                        if(i==0) {
+                            //Accept new connection....
+                            sockaddr addr;
+                            socklen_t addrlen=sizeof(addr);
+
+                            int s;
+                            while((s=popc_accept(sockfd,&addr,&addrlen))<0 && GetLastError()== WSAEINTR);
+
+                            if(s<0) {
+                                return nullptr;
+                            }
+
+                            for(int j = 0; j < readfds.fd_count; j++)
+                                if(readfds.fd_array[j] < s) {
+                                    highsockfd = s;
+                                }
+
+                            FD_SET(s, &activefdset);
+
+                            connarray.SetSize(activefdset.fd_count);
+                            connarray[activefdset.fd_count-1]=CreateConnection(s);
+
+                            auto ret=OnNewConnection(connarray[activefdset.fd_count-1]);
+                            if(!ret) {
+                                return nullptr;
+                            }
+                        } else {
+                            return connarray[i];
+                        }
+                    }
+                }
+            }
+
+            //Poll for ready fds....
+            do {
+                FD_ZERO(&readfds);
+                readfds = activefdset;
+                int n = readfds.fd_count;
+
+                timeval tv;
+                if(timeout < 0) {
+                    tv.tv_sec = 1000000;
+                } else {
+                    tv.tv_sec = timeout / 1000;
+                    tv.tv_usec = timeout % 1000;
+                }
+
+                nready = select(highsockfd+1, &readfds, (fd_set *)0, (fd_set *)0, &tv);
+                for(int tmp = 0; tmp < n; tmp++) {
+                    if(FD_ISSET(readfds.fd_array[tmp], &readfds)) {
+                        tmpfdset = readfds.fd_array[tmp];
+                    }
+                }
+            }  while(nready<0 && errno==EINTR && sockfd>=0);
+
+            if(nready<=0) {
+                if(!nready) {
+                    errno=ETIMEDOUT;
+                }
+                return nullptr;
+            }
+        }
+    } else {
+        if(timeout>=0) {
+            fd_set tempfds;
+            FD_ZERO(&tempfds);
+            highsockfd = sockfd;
+            FD_SET(sockfd, &tempfds);
+
+            timeval tv;
+            tv.tv_sec = timeout / 1000;
+            tv.tv_usec = timeout % 1000;
+
+            int t;
+            while((t=select(highsockfd+1, &tempfds, (fd_set *)0, (fd_set *)0, &tv))==-1 && GetLastError()== WSAEINTR);
+
+            if(t<=0) {
+                if(!t) {
+                    errno=ETIMEDOUT;
+                }
+                return nullptr;
+            }
+        }
+        return peer;
+    }
+}
+
 
 #endif
 
@@ -474,152 +667,6 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
     }
 
     return n;
-}
-
-//TODO This function's code is simply terrible, the windows and linux part
-//must be separated completely
-paroc_connection* paroc_combox_socket::Wait() {
-#ifdef __WIN32__
-    WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
-    int tmpfdset;
-#endif
-    if(sockfd<0 || isCanceled) {
-        isCanceled=false;
-        return NULL;
-    }
-
-    if(isServer) {
-#ifndef __WIN32__
-        pollfd *tmpfd;
-#endif
-        while(1) {
-            if(nready>0) {
-#ifndef __WIN32__
-                int n=pollarray.GetSize();
-                tmpfd=pollarray+index;
-                for(int i=index; i>=0; i--, tmpfd--) {
-                    if(tmpfd->revents!=0) {
-                        nready--;
-                        index=i-1;
-                        tmpfd->revents=0;
-#else
-                FD_ZERO(&readfds);
-                readfds = activefdset;
-                int n = readfds.fd_count;
-                for(int i=n-1; i>=0; i--) {
-                    if(readfds.fd_array[i] == tmpfdset) {
-                        nready--;
-#endif
-                        if(i==0) {
-                            //Accept new connection....
-                            sockaddr addr;
-                            socklen_t addrlen=sizeof(addr);
-                            int s;
-#ifndef __WIN32__
-                            while((s=popc_accept(sockfd,&addr,&addrlen))<0 && errno==EINTR);
-#else
-                            while((s=popc_accept(sockfd,&addr,&addrlen))<0 && GetLastError()== WSAEINTR);
-#endif
-                            if(s<0) {
-                                return NULL;
-                            }
-#ifndef __WIN32__
-                            pollarray.SetSize(n+1);
-                            pollarray[n].fd=s;
-                            pollarray[n].events=POLLIN;
-                            pollarray[n].revents=0;
-                            connarray.SetSize(n+1);
-                            connarray[n]=CreateConnection(s);
-                            bool ret=OnNewConnection(connarray[n]);
-                            n++;
-#else
-                            for(int j = 0; j < readfds.fd_count; j++)
-                                if(readfds.fd_array[j] < s) {
-                                    highsockfd = s;
-                                }
-
-                            FD_SET(s, &activefdset);
-
-                            connarray.SetSize(activefdset.fd_count);
-                            connarray[activefdset.fd_count-1]=CreateConnection(s);
-                            bool ret=OnNewConnection(connarray[activefdset.fd_count-1]);
-#endif
-                            if(!ret) {
-                                return NULL;
-                            }
-                        } else {
-                            return connarray[i];
-                        }
-                    }
-                }
-            }
-
-            //Poll for ready fds....
-            do {
-#ifndef __WIN32__
-                tmpfd=pollarray;
-                int n=pollarray.GetSize();
-                index=n-1;
-                nready=poll(tmpfd,n,timeout);
-#else
-                FD_ZERO(&readfds);
-                readfds = activefdset;
-                int n = readfds.fd_count;
-
-                timeval tv;
-                if(timeout < 0) {
-                    tv.tv_sec = 1000000;
-                } else {
-                    tv.tv_sec = timeout / 1000;
-                    tv.tv_usec = timeout % 1000;
-                }
-
-                nready = select(highsockfd+1, &readfds, (fd_set *)0, (fd_set *)0, &tv);
-                for(int tmp = 0; tmp < n; tmp++) {
-                    if(FD_ISSET(readfds.fd_array[tmp], &readfds)) {
-                        tmpfdset = readfds.fd_array[tmp];
-                    }
-                }
-#endif
-            }  while(nready<0 && errno==EINTR && sockfd>=0);
-
-            if(nready<=0) {
-                if(nready==0) {
-                    errno=ETIMEDOUT;
-                }
-                return NULL;
-            }
-        }
-    } else {
-        if(timeout>=0) {
-            int t;
-#ifndef __WIN32__
-            pollfd tmpfd;
-            tmpfd.fd=sockfd;
-            tmpfd.events=POLLIN;
-            tmpfd.revents=0;
-            while((t=poll(&tmpfd,1,timeout))==-1 && errno==EINTR);
-#else
-            fd_set tempfds;
-            FD_ZERO(&tempfds);
-            highsockfd = sockfd;
-            FD_SET(sockfd, &tempfds);
-            timeval tv;
-            tv.tv_sec = timeout / 1000;
-            tv.tv_usec = timeout % 1000;
-
-            while((t=select(highsockfd+1, &tempfds, (fd_set *)0, (fd_set *)0, &tv))==-1 && GetLastError()== WSAEINTR);
-#endif
-            if(t<=0) {
-                if(t==0) {
-                    errno=ETIMEDOUT;
-                }
-                return NULL;
-            }
-        }
-        return peer;
-    }
 }
 
 void paroc_combox_socket::Close() {
