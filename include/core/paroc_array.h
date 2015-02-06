@@ -59,6 +59,7 @@ public:
     ~paroc_array();
     int size();
     void SetSize(int asize);
+    void resize(int asize);
     paroc_array & operator =(paroc_array & val);
     void RemoveAll();
     void InsertAt(int index,const T & e,int count=1);
@@ -119,6 +120,11 @@ paroc_array<T>::~paroc_array() {
 template<class T>
 int paroc_array<T>::size() {
     return m_size;
+}
+
+template<class T>
+void paroc_array<T>::resize(int asize) {
+    SetSize(asize);
 }
 
 template<class T>

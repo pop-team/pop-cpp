@@ -7,24 +7,19 @@
 OtherCode::OtherCode(CodeFile *file): CodeData(file) {}
 
 void OtherCode::GenerateCode(CArrayChar &output) {
-    int n = code.size();
-    if(n) {
-        output.InsertAt(-1, code.data(), n);
-    }
+    std::copy(code.begin(), code.end(), std::back_inserter(output));
 }
 
 void OtherCode::AddCode(char *newcode) {
-    code.InsertAt(-1, newcode, strlen(newcode));
+    std::copy(newcode, newcode+strlen(newcode), std::back_inserter(code));
 }
+
 void OtherCode::AddCode(char *newcode, int n) {
     if(n>0) {
-        code.InsertAt(-1,newcode,n);
+        std::copy(newcode, newcode+n, std::back_inserter(code));
     }
 }
 
 void OtherCode::AddCode(CArrayChar &newcode) {
-    int n=newcode.size();
-    if(n) {
-        code.InsertAt(-1,newcode.data(),n);
-    }
+    std::copy(newcode.begin(), newcode.end(), std::back_inserter(code));
 }

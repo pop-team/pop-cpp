@@ -77,18 +77,18 @@ void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar
             strcpy(paramname,"unknown");
         }
         sprintf(tmpcode,"\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname,typebase->GetName(),tmpsize);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
 
         sprintf(tmpcode,"\n{for (int _paroc_item=0; _paroc_item < %s; _paroc_item++) { \n", tmpsize);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
         sprintf(tmpvar,"(%s[_paroc_item])",varname);
         typebase->Marshal(tmpvar,bufname, NULL, output);
 
         strcpy(tmpcode,"}\n}\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
 
         sprintf(tmpcode,"%s.Pop();\n",bufname);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
 
     }
 }
@@ -108,18 +108,18 @@ void TypePtr::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayCh
             strcpy(paramname,"unknown");
         }
         sprintf(tmpcode,"\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname,typebase->GetName(),tmpsize);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
 
         sprintf(tmpcode," {\nfor (int _paroc_item=0; _paroc_item < %s; _paroc_item++) { \n", tmpsize);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
         sprintf(tmpvar,"(%s[_paroc_item])",varname);
         typebase->DeMarshal(tmpvar,bufname, NULL, output);
 
         strcpy(tmpcode,"}\n}\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
 
         sprintf(tmpcode,"%s.Pop();\n",bufname);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
     }
 }
 

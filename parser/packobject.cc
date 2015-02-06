@@ -12,41 +12,41 @@ void PackObject::GenerateCode(CArrayChar &output) {
     char *fname = GetCodeFile()->GetFileName();
     if(startline > 0 && fname != NULL) {
         sprintf(str,"\n# %d \"%s\"\n",startline,fname);
-        output.InsertAt(-1,str,strlen(str));
+        std::copy(str, str+strlen(str), std::back_inserter(output));
     }
 
     sprintf(str, "\n// Generate code for pack directive\n");
-    output.InsertAt(-1, str, strlen(str));
+    std::copy(str, str+strlen(str), std::back_inserter(output));
 
     //New code: BEGIN===================
     strcpy(str,"void paroc_registerbroker() {\n");
-    output.InsertAt(-1, str, strlen(str));
+    std::copy(str, str+strlen(str), std::back_inserter(output));
     int n = objects.size();
     for(int i = 0; i < n; i++) {
         sprintf(str,"  %s%s::_popc_factory.test(\"%s\");\n", objects[i], Class::POG_BROKER_POSTFIX, objects[i]);
-        output.InsertAt(-1,str,strlen(str));
+        std::copy(str, str+strlen(str), std::back_inserter(output));
     }
     strcpy(str,"}\n");
-    output.InsertAt(-1, str, strlen(str));
+    std::copy(str, str+strlen(str), std::back_inserter(output));
 
     // Check if the object broker is packed
     strcpy(str, "bool CheckIfPacked(const char *objname)\n{\n\tif (objname==0) return false;\n");
-    output.InsertAt(-1,str,strlen(str));
+    std::copy(str, str+strlen(str), std::back_inserter(output));
     int sz=objects.size();
     for(int j=0; j<sz; j++) {
         sprintf(str,"\n\tif (paroc_utils::isEqual(objname, \"%s\")) return true;",objects[j]);
-        output.InsertAt(-1,str,strlen(str));
+        std::copy(str, str+strlen(str), std::back_inserter(output));
     }
     strcpy(str,"\n\treturn false;\n}\n");
-    output.InsertAt(-1,str,strlen(str));
+    std::copy(str, str+strlen(str), std::back_inserter(output));
     if(endline>0 && fname!=NULL) {
         sprintf(str,"\n# %d \"%s\"\n",endline,fname);
-        output.InsertAt(-1,str,strlen(str));
+        std::copy(str, str+strlen(str), std::back_inserter(output));
     }
 
     if(endline>0 && fname!=NULL) {
         sprintf(str,"\n# %d \"%s\"\n",endline,fname);
-        output.InsertAt(-1,str,strlen(str));
+        std::copy(str, str+strlen(str), std::back_inserter(output));
     }
     return;
 }
@@ -58,7 +58,7 @@ void PackObject::AddObject(string64 objname) {
             return;
         }
 
-    objects.SetSize(n+1);
+    objects.resize(n+1);
     strcpy(objects[n],objname);
 }
 

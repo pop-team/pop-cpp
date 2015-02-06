@@ -50,13 +50,13 @@ void TypeSeqClass::Marshal(char *varname, char *bufname, char* /*sizehelper*/, C
         strcpy(paramname,"unkown");
     }
     sprintf(tmpstr,"%s.Push(\"%s\",\"%s\",1);\n",bufname,paramname, GetName());
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    std::copy(tmpstr,tmpstr+strlen(tmpstr),std::back_inserter(output));
 
     sprintf(tmpstr, "((%s &)(%s)).Serialize(%s, true);\n",GetName(),varname,bufname);
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    std::copy(tmpstr,tmpstr+strlen(tmpstr),std::back_inserter(output));
 
     sprintf(tmpstr,"%s.Pop();\n",bufname);
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    std::copy(tmpstr,tmpstr+strlen(tmpstr),std::back_inserter(output));
 }
 
 void TypeSeqClass::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
@@ -67,11 +67,11 @@ void TypeSeqClass::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/,
         strcpy(paramname,"unkown");
     }
     sprintf(tmpstr,"%s.Push(\"%s\",\"%s\",1);\n",bufname,paramname, GetName());
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    std::copy(tmpstr,tmpstr+strlen(tmpstr),std::back_inserter(output));
 
     sprintf(tmpstr, "((%s &)(%s)).Serialize(%s, false);\n",GetName(),varname,bufname);
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    std::copy(tmpstr,tmpstr+strlen(tmpstr),std::back_inserter(output));
 
     sprintf(tmpstr,"%s.Pop();\n",bufname);
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    std::copy(tmpstr,tmpstr+strlen(tmpstr),std::back_inserter(output));
 }

@@ -87,13 +87,13 @@ void DataType::Marshal(char *varname, char *bufname, char *sizehelper,  CArrayCh
             strcpy(paramname,"unkown");
         }
         sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", %s);\n",bufname,paramname, GetName(), sz);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
 
         sprintf(tmpcode,"%s.Pack(&%s, %s);\n",bufname,varname, sz);
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
 
         sprintf(tmpcode,"%s.Pop();\n",bufname);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
     }
 }
 
@@ -107,13 +107,13 @@ void DataType::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayC
             strcpy(paramname,"unkown");
         }
         sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", %s);\n",bufname,paramname, GetName(), sz);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
 
         sprintf(tmpcode,"%s.UnPack(&%s,%s);\n",bufname,varname, sz);
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
 
         sprintf(tmpcode,"%s.Pop();\n",bufname);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
     }
 }
 
