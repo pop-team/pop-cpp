@@ -110,7 +110,7 @@ void paroc_buffer::Pop() {
 }
 
 void paroc_buffer::Pack(const POPString *list, int n) {
-    if(n<=0 || list==NULL) {
+    if(n<=0 || !list) {
         return;
     }
     for(int i=0; i<n; i++,list++) {
@@ -124,19 +124,23 @@ void paroc_buffer::Pack(const POPString *list, int n) {
 }
 
 void paroc_buffer::UnPack(POPString *list, int n) {
-    if(n<=0 || list==NULL) {
+    if(n<=0 || !list) {
         return;
     }
+
     paroc_array<char> tmpstr;
-    int len;
+
     for(int i=0; i<n; i++,list++) {
+        int len;
         UnPack(&len,1);
         if(len>0) {
             tmpstr.SetSize(len);
             UnPack(tmpstr,len);
-            (*list)=(char *)tmpstr;
+            //TODO(BW) This seems more than wrong to get a pointer to tmpstr->data since
+            //tmpstr will be deleted on exit of the function
+            *list = (char*) tmpstr;
         } else {
-            (*list)=NULL;
+            *list = nullptr;
         }
     }
 }
@@ -218,39 +222,33 @@ except.SetHeader(tmp);\
   except.Pack(&code,1);\
   return except.Send(s);
 
-
-
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,int code) {
     SEND_EXCEPTION(EXCEPTION_INT);
 }
 
-
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,unsigned code) {
     SEND_EXCEPTION(EXCEPTION_UINT);
 }
-
 
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,long code) {
     SEND_EXCEPTION(EXCEPTION_LONG);
 }
 
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,unsigned long code) {
-
     SEND_EXCEPTION(EXCEPTION_ULONG);
 }
 
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,short code) {
     SEND_EXCEPTION(EXCEPTION_SHORT);
 }
+
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,unsigned short code) {
     SEND_EXCEPTION(EXCEPTION_USHORT);
 }
 
-
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,bool code) {
     SEND_EXCEPTION(EXCEPTION_BOOL);
 }
-
 
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,char code) {
     SEND_EXCEPTION(EXCEPTION_CHAR);
@@ -259,8 +257,6 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,char 
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,unsigned char code) {
     SEND_EXCEPTION(EXCEPTION_UCHAR);
 }
-
-
 
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, char *code) {
     except.Reset();
@@ -272,10 +268,10 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, char
 
     return except.Send(s);
 }
+
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,float code) {
     SEND_EXCEPTION(EXCEPTION_FLOAT);
 }
-
 
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,double code) {
     SEND_EXCEPTION(EXCEPTION_DOUBLE);
@@ -392,7 +388,6 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
     }
 }
-
 
 void paroc_buffer::Destroy() {
     delete this;
