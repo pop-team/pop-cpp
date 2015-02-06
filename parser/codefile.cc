@@ -18,14 +18,12 @@ CodeFile::CodeFile(char *fname) {
     isCoreCompilation = false;              // Core compilation is disable by default.
     isAsyncAllocationDisable = false;   // Asynchronous allocation is enable by default.
     filename = (fname == NULL) ? NULL : popc_strdup(fname);
-    codes.SetGrowby(1024);
     outfile=NULL;
     DataType *std;
     for(int i=0; i<MAXSTDTYPES; i++) {
         std=new DataType(DataType::stdType[i]);
         AddDataType(std);
     }
-
 }
 
 CodeFile::~CodeFile() {
@@ -41,18 +39,19 @@ CodeFile::~CodeFile() {
 }
 
 void CodeFile::AddCodeData(CodeData *code) {
-    codes.InsertAt(-1,code);
+    codes.push_back(code);
     if(code->Type()==TYPE_CLASS) {
-        classlist.InsertAt(-1,(Class *)code);
+        classlist.InsertAt(-1, (Class *)code);
     }
 }
 
 void CodeFile::EmptyCodeData() {
-    int n=codes.size();
-    for(int i=0; i<n; i++) if(codes[i]!=NULL) {
-            delete codes[i];
+    for(auto& code : codes){
+        if(code){
+            delete code;
         }
-    codes.SetSize(0);
+    }
+    codes.clear();
 }
 
 void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker) {
@@ -187,9 +186,9 @@ void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseO
 }
 
 DataType *CodeFile::FindDataType(const char *name) {
-    for(int i = 0; i < datatypes.size(); ++i){
-        if(strcmp(name, datatypes[i]->GetName())==0) {
-            return datatypes[i];
+    for(auto& datatype : datatypes){
+        if(strcmp(name, datatype->GetName())==0) {
+            return datatype;
         }
     }
 
@@ -199,19 +198,11 @@ DataType *CodeFile::FindDataType(const char *name) {
 void CodeFile::AddDataType(DataType *type) {
     type->SetOwnerFile(this);
     if(type->GetName()==NULL) {
-        temptypes.InsertAt(-1,type);
+        temptypes.push_back(type);
     } else {
-        datatypes.InsertAt(-1,type);
+        datatypes.push_back(type);
     }
 
-}
-
-void CodeFile::RemoveDataType(DataType *type) {
-    for(int i = 0; i < datatypes.size(); ++i){
-        if(datatypes[i] == type){
-            temptypes.RemoveAt(i);
-        }
-    }
 }
 
 bool CodeFile::SameFile(char *file1, char *file2) {

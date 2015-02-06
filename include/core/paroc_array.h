@@ -37,6 +37,7 @@ template<class T> inline void paroc_destruct_element(T *data, int n) {
 
 
 // Do not call const and destr for non-class types (to avoid a waste of time)
+// NOTE(BW): That makes no sense...
 typedef char string64[64];
 inline void paroc_construct_element(string64* /*data*/, int /*n*/) {}
 inline void paroc_destruct_element(string64*  /*data*/, int /*n*/) {}

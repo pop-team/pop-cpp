@@ -567,13 +567,8 @@ struct_head: STRUCT_KEYWORD ID
     if (type!=NULL){
         t=dynamic_cast<TypeClassStruct *>(type);
         if (t==NULL) {
-      //          thisCodeFile->RemoveDataType(type);
-      //          delete type;
-      t=new TypeClassStruct(tname, false);
-      thisCodeFile->AddDataType(t);
-      //      sprintf(tmp,"data type \"%s\" has been redefined!\n",tname);
-      //      errormsg(tmp);
-      //      exit(1);
+          t=new TypeClassStruct(tname, false);
+          thisCodeFile->AddDataType(t);
         }
     } else {
       t=new TypeClassStruct(tname,false);

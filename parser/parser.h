@@ -73,10 +73,10 @@ typedef std::vector<Param *> CArrayParam;
 typedef paroc_array<Method *> CArrayMethod;
 typedef paroc_array<Class *> CArrayClass;
 typedef paroc_array<BaseClass *> CArrayBaseClass;
-typedef paroc_array<ClassMember *> CArrayClassMember;
-typedef paroc_array<CodeData *> CArrayCodeData;
-typedef paroc_array<CodeFile *> CArrayCodeFile;
-typedef paroc_array<DataType *> CArrayDataType;
+typedef std::vector<ClassMember*> CArrayClassMember;
+typedef std::vector<CodeData *> CArrayCodeData;
+typedef std::vector<CodeFile*> CArrayCodeFile;
+typedef std::vector<DataType*> CArrayDataType;
 
 /**
  * @class CodeData
@@ -186,7 +186,6 @@ public:
 
     DataType *FindDataType(const char *name);
     void AddDataType(DataType *type);
-    void RemoveDataType(DataType *type);
 
     void SetAsCoreCompilation();
     bool IsCoreCompilation();

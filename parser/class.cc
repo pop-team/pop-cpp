@@ -208,7 +208,7 @@ void Class::AddMember(ClassMember *t) {
             met->id=endid++;
         }
     }
-    memberList.InsertAt(-1,t);
+    memberList.push_back(t);
 }
 
 
