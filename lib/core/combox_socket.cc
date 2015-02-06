@@ -246,9 +246,8 @@ void paroc_combox_socket::Close() {
 
 bool paroc_combox_socket::CloseSock(int fd) {
     if(isServer) {
-        pollfd* t=pollarray;
-        for(int i=0; i<pollarray.GetSize(); i++, t++){
-            if(t->fd==fd){
+        for(int i=0; i<pollarray.GetSize(); i++){
+            if(pollarray[i].fd==fd){
                 isCanceled=!OnCloseConnection(connarray[i]);
                 delete connarray[i];
                 connarray.RemoveAt(i);
