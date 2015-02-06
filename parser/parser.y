@@ -957,7 +957,7 @@ base_specifier: ID
         exit(1);
       }
     BaseClass *t=new BaseClass(cl, PUBLIC, false);
-    currentClass->baseClass.InsertAt(-1,t);
+    currentClass->baseClass.push_back(t);
 }
 | access_specifier ID
 {
@@ -972,7 +972,7 @@ base_specifier: ID
         exit(1);
       }
     BaseClass *t=new BaseClass(cl,accessmode,false);
-    currentClass->baseClass.InsertAt(-1,t);
+    currentClass->baseClass.push_back(t);
 }
 | VIRTUAL_KEYWORD access_specifier ID
 {
@@ -989,7 +989,7 @@ base_specifier: ID
       }
 
     BaseClass *t=new BaseClass(cl,accessmode,true);
-    currentClass->baseClass.InsertAt(-1,t);
+    currentClass->baseClass.push_back(t);
 }
 | access_specifier VIRTUAL_KEYWORD ID
 {
@@ -1006,7 +1006,7 @@ base_specifier: ID
       }
 
     BaseClass *t=new BaseClass(cl,accessmode,true);
-    currentClass->baseClass.InsertAt(-1,t);
+    currentClass->baseClass.push_back(t);
 }
 ;
 

@@ -69,10 +69,10 @@ class CodeData;
 class CodeFile;
 class PackObject;
 
-typedef std::vector<Param *> CArrayParam;
-typedef paroc_array<Method *> CArrayMethod;
-typedef paroc_array<Class *> CArrayClass;
-typedef paroc_array<BaseClass *> CArrayBaseClass;
+typedef std::vector<Param*> CArrayParam;
+typedef std::vector<Method*> CArrayMethod;
+typedef std::vector<Class*> CArrayClass;
+typedef std::vector<BaseClass*> CArrayBaseClass;
 typedef std::vector<ClassMember*> CArrayClassMember;
 typedef std::vector<CodeData *> CArrayCodeData;
 typedef std::vector<CodeFile*> CArrayCodeFile;

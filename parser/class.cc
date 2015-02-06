@@ -10,6 +10,8 @@
  * clementval   August 2012 Add asynchronous parallel object allocation (APOA) support
  */
 
+#include <algorithm>
+
 #include "popc_intface.h"
 
 #include "parser.h"
@@ -283,30 +285,29 @@ bool Class::methodInBaseClass(Method &x) {
 bool Class::findPureVirtual(CArrayMethod &lst) {
     bool returnFlag = true;
 
-    int n=baseClass.size();
-    for(int i=0; i<n; i++) {
-        BaseClass &t=*(baseClass[i]);
-        if(t.type!=PUBLIC) {
+    for(auto& bc : baseClass){
+        if(bc->type!=PUBLIC) {
             continue;
         }
-        t.base->findPureVirtual(lst);
+
+        bc->base->findPureVirtual(lst);
         returnFlag = false;
     }
 
-    n=memberList.size();
-    int m=lst.size();
-    for(int i=0; i<n; i++) if(memberList[i]->Type()==TYPE_METHOD) {
-            Method *t=(Method *)(memberList[i]);
+    for(auto& member : memberList){
+        if(member->Type()==TYPE_METHOD) {
+            auto t = (Method *)member;
+
             if(t->isPureVirtual) {
-                lst.InsertAt(-1,t);
-            } else if(m) {
-                for(int j=m-1; j>=0; j--) {
-                    if(*(lst[j]) == (*t)) {
-                        lst.RemoveAt(j);
-                    }
-                }
+                lst.push_back(t);
+            } else {
+                lst.erase(
+                    std::remove_if(lst.begin(), lst.end(), [t](Method* v){ return *v == *t; }),
+                    lst.end());
             }
         }
+    }
+
     return returnFlag;
 }
 
@@ -803,7 +804,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
         int n=baseClass.size();
         if(n) {
             CArrayClass bases;
-            bases.SetSize(n);
+            bases.resize(n);
             for(int i=0; i<n; i++) {
                 bases[i]=baseClass[i]->base;
             }

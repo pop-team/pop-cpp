@@ -1475,7 +1475,7 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
     int n=baseClass.size();
     if(n) {
         CArrayClass bases;
-        bases.SetSize(n);
+        bases.resize(n);
         for(int i=0; i<n; i++) {
             bases[i]=baseClass[i]->base;
         }

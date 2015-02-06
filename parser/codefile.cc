@@ -41,7 +41,7 @@ CodeFile::~CodeFile() {
 void CodeFile::AddCodeData(CodeData *code) {
     codes.push_back(code);
     if(code->Type()==TYPE_CLASS) {
-        classlist.InsertAt(-1, (Class *)code);
+        classlist.push_back((Class *)code);
     }
 }
 
@@ -146,13 +146,13 @@ void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseO
     while(1) {
         int sz=allbases.size();
         int n=cl->baseClass.size();
-        allbases.SetSize(sz+n);
+        allbases.resize(sz+n);
         int actual_n=sz;
 
         if(virtualBaseOnly) {
             sz1=bases.size();
             actual_n1=sz1;
-            bases.SetSize(sz1+n);
+            bases.resize(sz1+n);
         }
 
         for(int i=0; i<n; i++) {
@@ -172,9 +172,9 @@ void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseO
                 }
             }
         }
-        allbases.SetSize(actual_n);
+        allbases.resize(actual_n);
         if(virtualBaseOnly) {
-            bases.SetSize(actual_n1);
+            bases.resize(actual_n1);
         }
         if(index<actual_n) {
             cl=allbases[index];
