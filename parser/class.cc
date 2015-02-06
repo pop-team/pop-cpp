@@ -355,8 +355,8 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
                 sprintf(tmpcode, "typedef struct pthread_args%d\n{\n  %s* ptr_interface;\n", cons->get_id(), name);
                 code.InsertAt(-1, tmpcode, strlen(tmpcode));
 
-                int nb = (*met).params.GetSize();
-                for(int j=0; j<nb; j++)  {
+                auto nb = (*met).params.size();
+                for(std::size_t j=0; j<nb; j++)  {
                     sprintf(tmpcode, "  ");
                     Param &p=*((*met).params[j]);
                     p.DeclareParam(tmpcode, false);
@@ -402,8 +402,8 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
                     code.InsertAt(-1, tmpcode, strlen(tmpcode));
                     strcpy(tmpcode, "\n    _popc_constructor(");
                     code.InsertAt(-1, tmpcode, strlen(tmpcode));
-                    int nb = (*c).params.GetSize();
-                    for(int j=0; j<nb; j++)  {
+                    auto nb = (*c).params.size();
+                    for(std::size_t j=0; j<nb; j++)  {
                         Param &p = *((*c).params[j]);
                         sprintf(tmpcode, "_popc_constructor_%d_%s", (*c).id, p.GetName());
                         if(j < nb-1) {
@@ -617,7 +617,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
 
         //sprintf(str,"\n  void _popc_constructor();", name);
         //code.InsertAt(-1, str, strlen(str));
-    
+
 
         sprintf(str, "\n  virtual char* get_class_name() { return (char*)\"%s\"; };\n", name);
         code.InsertAt(-1, str, strlen(str));
@@ -675,9 +675,8 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
                 Method* m = dynamic_cast<Method*>(memberList[i]);
                 if(m->MethodType() == METHOD_CONSTRUCTOR) {
                     Constructor* t = dynamic_cast<Constructor*>(memberList[i]);
-                    int nb = (*t).params.GetSize();
-                    for(int j = 0; j < nb; j++) {
-                        Param &p = *((*t).params[j]);
+                    for(auto& param : t->params){
+                        Param &p = *param;
                         sprintf(str, "\n  %s _popc_constructor_%d_%s;\n", p.GetType()->GetName(), (*t).id, p.GetName());
                         code.InsertAt(-1, str, strlen(str));
                     }

@@ -1958,27 +1958,27 @@ arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_s
     if($8 == 0){
         t->isArray=true;
         //Find last int as size of array
-        int nb=method->params.GetSize()-1;
 
         std::string size_variable_name;
 
-        for (int j=0;j<nb;j++) {
-            Param &p=*(method->params[j]);
+        for(std::size_t i = 0; i < method->params.size() - 1; ++i){
+            auto& p = *(method->params[i]);
             if(strcmp("int", p.GetType()->GetName())==0){
                 size_variable_name.clear();
                 size_variable_name.append(p.GetName());
             }
         }
+
         if(size_variable_name.length() == 0){
-            //
             sprintf(tmp,"Could not find size to marshall array: %s\n", GetToken($7));
             errormsg(tmp);
             exit(1);
         }
+
         strcpy(tmpSize, size_variable_name.c_str());
         UpdateMarshalParam(67,t);
-      type=new TypePtr(NULL, 1, type, constPointerPositions);
-      thisCodeFile->AddDataType(type);
+        type=new TypePtr(NULL, 1, type, constPointerPositions);
+        thisCodeFile->AddDataType(type);
     } else if ($8 != -1) {
         type=new TypeArray(NULL, GetToken($8) , type);
         thisCodeFile->AddDataType(type);

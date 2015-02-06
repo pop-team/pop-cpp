@@ -16,8 +16,8 @@ TypeTemplate::~TypeTemplate() {
 }
 
 void TypeTemplate::AddTemplate(DataType *eltype, bool isRef) {
-    elements.InsertAt(-1, eltype);
-    refStatus.InsertAt(-1, isRef);
+    elements.push_back(eltype);
+    refStatus.push_back(isRef);
 }
 
 bool TypeTemplate::GetDeclaration(const char *varname, char *output) {
@@ -27,7 +27,7 @@ bool TypeTemplate::GetDeclaration(const char *varname, char *output) {
     output+=strlen(output);
     strcat(output, " < ");
     output+=3;
-    int n=elements.GetSize();
+    int n=elements.size();
     for(int i=0; i<n; i++) {
         if(!elements[i]->GetDeclaration(NULL,output)) {
             return false;
@@ -49,23 +49,28 @@ bool TypeTemplate::GetDeclaration(const char *varname, char *output) {
 
 
 int TypeTemplate::CanMarshal() {
-    int n=elements.GetSize();
-    if(n<1) {
+    if(elements.empty()) {
         return false;
     }
 
-    for(int i=0; i<MAXSTLTYPES; i++)
+    for(int i=0; i<MAXSTLTYPES; i++){
         if(strcmp(name, stlType[i])==0) {
-            for(int i=0; i<elements.GetSize(); i++)if(!elements[i]->CanMarshal()) {
+            for(auto& element : elements){
+                if(!element->CanMarshal()) {
                     return false;
                 }
+            }
+
             return true;
         }
+    }
+
     return false;
 }
 
 void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
-    assert(elements.GetSize()>=1);
+    assert(!elements.empty());
+
     char tmpcode[10240];
     char iterator[256];
     char value[256];
@@ -142,7 +147,8 @@ void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, 
 }
 
 void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
-    assert(elements.GetSize()>=1);
+    assert(!elements.empty());
+
     char tmpcode[10240];
     char iterator[32];
     char value[256];

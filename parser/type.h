@@ -4,8 +4,10 @@
 #define MAXSTDTYPES 24
 #define MAXSTLTYPES 8
 
-#include "parser_common.h"
 #include <vector>
+#include <deque>
+
+#include "parser_common.h"
 
 #define TYPE_BASE 0
 #define TYPE_STRUCT 1
@@ -18,7 +20,7 @@ class CodeFile;
 
 /**
  * @class DataType
- * @brief A C++ class representing a data type, used by the parser.
+  * @brief A C++ class representing a data type, used by the parser.
  *
  *
  */
@@ -292,11 +294,9 @@ public:
     virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
 
 private:
-    paroc_array<DataType *> elements;
-    paroc_array<bool> refStatus;
+    std::vector<DataType*> elements;
+    std::deque<bool> refStatus;
     static char stlType[MAXSTLTYPES][32];
-
-
 };
 
 #endif

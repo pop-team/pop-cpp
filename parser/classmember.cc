@@ -12,6 +12,8 @@
  * vanhieu      July 2013       Modify line #925
  */
 
+#include <deque>
+
 #include "popc_intface.h"
 
 #include "parser.h"
@@ -429,7 +431,7 @@ void ClassMember::GenerateHeader(CArrayChar& output, bool /*interface*/) {
 // END of ClassMember implementation
 
 // Implement Attribute class
-Attribute::Attribute(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), attributes(0,1) {
+Attribute::Attribute(Class *cl, AccessType myaccess): ClassMember(cl, myaccess) {
 }
 
 void Attribute::GenerateHeader(CArrayChar &output, bool interface) {
@@ -439,9 +441,8 @@ void Attribute::GenerateHeader(CArrayChar &output, bool interface) {
     ClassMember::GenerateHeader(output, interface);
 
     char tmp[1024];
-    int n=attributes.GetSize();
-    for(int i=0; i<n; i++) {
-        Param &p=*(attributes[i]);
+    for(auto& attribute : attributes){
+        Param &p=*attribute;
         p.DeclareVariable(tmp);
         output.InsertAt(-1,tmp,strlen(tmp));
     }
@@ -449,7 +450,7 @@ void Attribute::GenerateHeader(CArrayChar &output, bool interface) {
 
 Param *Attribute::NewAttribute() {
     Param *t=new Param;
-    attributes.InsertAt(-1,t);
+    attributes.push_back(t);
     return t;
 }
 
@@ -639,11 +640,11 @@ Method::Method(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), retur
 }
 
 Method::~Method() {
-    int n,i;
-    n=params.GetSize();
-    for(i=0; i<n; i++) if(params[i]!=NULL) {
-            delete params[i];
+    for(auto param : params){
+        if(param){
+            delete param;
         }
+    }
 }
 
 /**
@@ -696,7 +697,7 @@ int Method::CheckMarshal() {
     }
 
     // Get the number of parameter for this method
-    int n=params.GetSize();
+    int n=params.size();
     Class *cl=GetClass();
 
     // Check all the parameters of the method
@@ -791,7 +792,7 @@ void Method::GenerateArguments(CArrayChar &output, bool header) {
     char tmpcode[10240];
 
     output.InsertAt(-1,"(",1);
-    int nb=params.GetSize();
+    int nb=params.size();
     for(int j=0; j<nb; j++) {
         Param &p=*(params[j]);
         p.DeclareParam(tmpcode, header);
@@ -836,7 +837,7 @@ void Method::GenerateClient(CArrayChar &output) {
     char tmpcode[10240];
 
     char *clname = GetClass()->GetName();
-    int j, nb = params.GetSize();
+    int j, nb = params.size();
 
     GenerateReturn(output, false, true);
     GenerateName(output, false);
@@ -1154,14 +1155,12 @@ void Method::GenerateBroker(CArrayChar &output) {
     Class *cl = GetClass();
     char *clname = cl->GetName();
 
-    int nb=params.GetSize();
+    int nb=params.size();
 
     char brokername[256];
     sprintf(brokername, "%s%s", cl->GetName(), Class::POG_BROKER_POSTFIX);
 
-    paroc_array<bool> reformat;
-    reformat.SetSize(nb);
-
+    std::deque<bool> reformat(nb);
 
     // Now generate method wrappers
     char str[1024];
@@ -1345,16 +1344,16 @@ void Method::GenerateBroker(CArrayChar &output) {
 
 Param *Method::AddNewParam() {
     Param *t=new Param;
-    params.InsertAt(-1,t);
+    params.push_back(t);
     return t;
 }
 
 bool Method::hasInput() {
-    int np=params.GetSize();
-    Param **pr=params;
-    for(int i=0; i<np; i++,pr++) if((*pr)->InParam()) {
+    for(auto& param : params){
+        if(param->InParam()){
             return true;
         }
+    }
     return false;
 }
 
@@ -1365,11 +1364,11 @@ bool Method::hasOutput() {
         }
     }
 
-    int np=params.GetSize();
-    Param **pr=params;
-    for(int i=0; i<np; i++,pr++) if((*pr)->OutParam()) {
+    for(auto& param : params){
+        if(param->OutParam()){
             return true;
         }
+    }
     return false;
 }
 
@@ -1399,11 +1398,11 @@ bool Method::operator ==(Method &other) {
         return false;
     }
 
-    int n=params.GetSize();
-    if(n!=other.params.GetSize()) {
+    auto n=params.size();
+    if(n!=other.params.size()) {
         return false;
     }
-    for(int i=0; i<n; i++) {
+    for(std::size_t i=0; i<n; i++) {
         Param &t1=*params[i];
         Param &t2=*other.params[i];
         if(!t1.GetType()->Same(t2.GetType())) {
@@ -1429,7 +1428,7 @@ int Constructor::get_id() {
 }
 
 bool Constructor::isDefault() {
-    return (params.GetSize()==0);
+    return params.empty();
 }
 
 
@@ -1523,9 +1522,8 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
         sprintf(tmpcode,"\n  pthread_args_t_%d *arguments = (pthread_args_t_%d *) malloc(sizeof(pthread_args_t_%d));\n  %s* ptr = static_cast<%s*>(this);\n  arguments->ptr_interface = ptr;\n", get_id(), get_id(), get_id(), GetClass()->GetName(), GetClass()->GetName());
         output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
-        int nb = params.GetSize();
-        for(int j = 0; j < nb; j++) {
-            Param &p = *(params[j]);
+        for(auto& param : params){
+            Param &p = *param;
             sprintf(tmpcode, "  arguments->");
             strcat(tmpcode, p.GetName());
             strcat(tmpcode, " = ");
@@ -1549,8 +1547,8 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
 
         // Generates invocation to the constructor of the remote object
         strcpy(tmpcode,"\n_paroc_Construct(");
-        int nb = params.GetSize();
-        for(int j=0; j<nb; j++) {
+        auto nb = params.size();
+        for(std::size_t j=0; j<nb; j++) {
             Param &p=*(params[j]);
             strcat(tmpcode,p.GetName());
             if(j<nb-1) {
@@ -1571,9 +1569,8 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
         output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         // Save constructor parameters for group initialization
-        int nb = params.GetSize();
-        for(int j=0; j<nb; j++) {
-            Param &p = *(params[j]);
+        for(auto& param : params){
+            Param &p = *param;
             sprintf(tmpcode, "  _popc_constructor_%d_%s = %s;\n", id, p.GetName(), p.GetName());
             output.InsertAt(-1, tmpcode, strlen(tmpcode));
         }
@@ -1597,16 +1594,16 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
         sprintf(tmpcode,"    %s* _this_interface = static_cast<%s*>(arguments->ptr_interface);\n",GetClass()->GetName(), GetClass()->GetName());
         output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
-        int nb = params.GetSize();
-        for(int j = 0; j < nb; j++) {
-            Param &p=*(params[j]);
+        for(auto& param : params){
+            Param &p = *param;
             sprintf(tmpcode, "%s %s = arguments->%s;\n", p.GetType()->GetName(), p.GetName(), p.GetName());
             output.InsertAt(-1, tmpcode, strlen(tmpcode));
         }
 
         sprintf(tmpcode, "    try{\n      _this_interface->Allocate();\n      _this_interface->_paroc_Construct(");
 
-        for(int j=0; j<nb; j++) {
+        auto nb = params.size();
+        for(std::size_t j=0; j<nb; j++) {
             Param &p = *(params[j]);
             strcat(tmpcode,p.GetName());
             if(j<nb-1) {
