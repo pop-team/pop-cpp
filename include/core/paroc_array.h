@@ -180,12 +180,14 @@ paroc_array<T> & paroc_array<T>::operator =(paroc_array & val) {
 
 template<class T>
 void paroc_array<T>::RemoveAll() {
-    if(data!=0) {
+    if(data) {
         if(autodelete) {
             paroc_destruct_element(data,size);
         }
+
         free(data);
     }
+
     data=0;
     size=actualsize=0;
 }
