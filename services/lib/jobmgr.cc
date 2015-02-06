@@ -21,40 +21,22 @@
 
 #include "popc_intface.h"
 
+#include <numeric>
 #include <list>
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <strings.h>
-//#include <unistd.h>
-//#include <signal.h>
-//#include <netdb.h>
-//#include <sys/types.h>
-//#include <sys/wait.h>
-//#include <sys/stat.h>
-//#include <fcntl.h>
-//#include <netinet/in.h>
-//#include <arpa/inet.h>
+#include <cstring>
 
-//#include <assert.h>
 #include "codemgr.ph"
-//#include <sys/times.h>
 #include "timer.h"
-//#include <ctype.h>
-//#include <pwd.h>
 #include "paroc_array.h"
 #include "jobmgr.ph"
 #include "priolist.h"
 #include "paroc_thread.h"
+
 /**
  * ViSaG : clementval
  * Added vor ViSaG
  */
 #include "appservice.ph"
-
-/* ### Added by Wyssen ### */
-#include <cstring>
-/* ### End ### */
-
 
 #define min(a,b) ((a)<(b) ? (a) : (b))
 
@@ -1304,18 +1286,19 @@ bool JobMgr::MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoi
     bool ret=false;
 
     //Sort by the fitness
-    paroc_array<int> index;
-    index.SetSize(howmany);
-    for(int i=0; i<howmany; i++) {
-        index[i]=i;
-    }
+    std::vector<int> index(howmany);
+    std::iota(index.begin(), index.end(), 0);
 
-    for(int i=0; i<howmany; i++)
-        for(int j=howmany-1; j>i; j--) if(fitness[index[j]]>fitness[index[j-1]]) {
+    for(int i=0; i<howmany; i++){
+        for(int j=howmany-1; j>i; j--){
+            if(fitness[index[j]]>fitness[index[j-1]]) {
                 int t=index[j];
                 index[j]=index[j-1];
                 index[j-1]=t;
             }
+        }
+    }
+
     for(int i=howmany-1; i>=0; i--) {
         int pos=index[i];
         float t=fitness[pos];
@@ -1451,8 +1434,10 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                 break;
             }
             JobMgr child(childaddr);
+
             paroc_array<float> oldfitness;
             oldfitness.InsertAt(-1,fitness+good,count);
+
             if(child.AllocResource(localservice,objname,od, count , fitness+good,jobcontacts+good, reserveIDs+good, requestInfo, iptrace, tracesize)) {
                 ret=true;
                 double seconds=watch.Elapsed();
@@ -1492,14 +1477,15 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
     }
 
     if(modelearn) {
-        paroc_array<int> index;
-        index.SetSize(howmany);
+        std::vector<int> index(howmany);
         for(int i=0; i<howmany; i++) {
             index[i]=(fitness[i]<=0)? 1: -1;
         }
+
         int total=0;
         POPString local=GetAccessPoint().GetAccessString();
-        for(int i=0; i<howmany; i++) if(index[i]==-1) {
+        for(int i=0; i<howmany; i++){
+            if(index[i]==-1) {
                 index[i]=1;
                 POPString t(jobcontacts[i].GetAccessString());
                 if(t==NULL || paroc_utils::isEqual(t,local)) {
@@ -1513,11 +1499,13 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                     total++;
                 }
 
-                for(int j=i+1; j<howmany; j++)
+                for(int j=i+1; j<howmany; j++){
                     if(index[j]==-1 && paroc_utils::isEqual(jobcontacts[i].GetAccessString(), jobcontacts[j].GetAccessString())) {
                         index[j]=1;
                     }
+                }
             }
+        }
     }
 
     //Now remove dynamic nodes to keep balance....
