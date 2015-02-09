@@ -6,9 +6,6 @@
 #include <cstring>
 #include <cassert>
 
-typedef std::vector<std::string> CArrayString;
-typedef std::string CArrayChar;
-
 int CountCodeLines(const std::string &code);
 
 #endif

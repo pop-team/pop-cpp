@@ -57,8 +57,8 @@ public:
      * @param sizehelper (not used)
      * @param output output
      */
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
     /**
      * @brief  Prints the declaration line to output
@@ -155,8 +155,8 @@ public:
     //  virtual bool Same(DataType *other);
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
     virtual bool GetDeclaration(const char *varname, char *output);
     virtual bool GetCastType(char *output);
@@ -180,8 +180,8 @@ public:
     ~TypePtr();
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
     virtual bool GetDeclaration(const char *varname, char *output);
     virtual void GetExpandType(char *output);
@@ -207,8 +207,8 @@ public:
     TypeEqual(char *name, DataType *atype);
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
     //  virtual bool Same(DataType *other);
     //  virtual bool Same(char *tname);
@@ -239,8 +239,8 @@ public:
     virtual bool IsPrototype();
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 protected:
     std::vector<std::pair<DataType*, char*>> attributes;
 };
@@ -255,8 +255,8 @@ public:
     void AddBase(DataType *t);
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
     std::vector<DataType*> bases;
 };
 
@@ -273,8 +273,8 @@ public:
     virtual bool IsPrototype();
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
 protected:
     bool isClass;
@@ -290,8 +290,8 @@ public:
     virtual bool GetDeclaration(const char *varname, char *output);
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
 private:
     std::vector<DataType*> elements;

@@ -2,6 +2,6 @@
 
 #include "parser_common.h"
 
-int CountCodeLines(const CArrayChar& code) {
+int CountCodeLines(const std::string& code) {
     return std::count(code.begin(), code.end(), '\n');
 }

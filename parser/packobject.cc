@@ -7,7 +7,7 @@
 
 PackObject::PackObject(CodeFile *file): CodeData(file), startline(-1), endline(-1) {}
 
-void PackObject::GenerateCode(CArrayChar &output) {
+void PackObject::GenerateCode(std::string &output) {
     char str[1024];
     char *fname = GetCodeFile()->GetFileName();
     if(startline > 0 && fname != NULL) {

@@ -12,5 +12,5 @@ CodeData::CodeData(CodeFile *file) {
 CodeData::~CodeData() {
 }
 
-void CodeData::GenerateCode(CArrayChar& /*output*/) {
+void CodeData::GenerateCode(std::string& /*output*/) {
 }

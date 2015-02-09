@@ -97,7 +97,7 @@ int Class::CanMarshal() {
     return 1;
 }
 
-void Class::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
+void Class::Marshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
     char tmpstr[1024];
     char paramname[256];
 
@@ -120,7 +120,7 @@ void Class::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayCh
     output += tmpstr;
 }
 
-void Class::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
+void Class::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
     char tmpstr[1024];
     char paramname[256];
 
@@ -163,7 +163,7 @@ void Class::SetEndLine(int num) {
 }
 
 
-void Class::GenerateCode(CArrayChar &output/*, bool isPOPCPPCompilation*/) {
+void Class::GenerateCode(std::string &output/*, bool isPOPCPPCompilation*/) {
     char str[1024];
 
     // Generate the class uid in fonction of the defined one or generate one from the name of the parclass
@@ -314,7 +314,7 @@ bool Class::findPureVirtual(CArrayMethod &lst) {
     return returnFlag;
 }
 
-bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
+bool Class::GenerateClient(std::string &code/*, bool isPOPCPPCompilation*/) {
     char tmpcode[10240];
 
     if(is_collective()) {
@@ -462,7 +462,7 @@ unsigned Class::IDFromString(char *str) {
 
 }
 
-bool Class::generate_broker_header_pog(CArrayChar &code) {
+bool Class::generate_broker_header_pog(std::string &code) {
     int i;
     char str[1024];
     char tmpcode[10240];
@@ -535,7 +535,7 @@ bool Class::generate_broker_header_pog(CArrayChar &code) {
     return true;
 }
 
-bool Class::generate_header_pog(CArrayChar &code, bool interface) {
+bool Class::generate_header_pog(std::string &code, bool interface) {
     char tmpcode[10240];
     char str[1024];
     char *fname = GetCodeFile()->GetFileName();
@@ -703,7 +703,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
     return true;
 }
 
-bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPCompilation*/) {
+bool Class::GenerateHeader(std::string &code, bool interface/*, bool isPOPCPPCompilation*/) {
     char tmpcode[10240];
     char str[1024];
 
@@ -885,7 +885,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
     return true;
 }
 
-bool Class::GenerateBrokerHeader(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
+bool Class::GenerateBrokerHeader(std::string &code/*, bool isPOPCPPCompilation*/) {
     int i;
     char str[1024];
     char tmpcode[10240];
@@ -960,7 +960,7 @@ bool Class::GenerateBrokerHeader(CArrayChar &code/*, bool isPOPCPPCompilation*/)
     return true;
 }
 
-bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
+bool Class::GenerateBroker(std::string &code/*, bool isPOPCPPCompilation*/) {
     // Generate Broker-derived class for creation objects and the re-implementation of
 
     int i;

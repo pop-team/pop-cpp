@@ -34,7 +34,7 @@ int TypeStruct::CanMarshal() {
     return 1;
 }
 
-void TypeStruct::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
+void TypeStruct::Marshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
     char paramname[256], tmpcode[1024];
 
     if(!FindVarName(varname,paramname)) {
@@ -52,7 +52,7 @@ void TypeStruct::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CAr
     output += tmpcode;
 }
 
-void TypeStruct::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
+void TypeStruct::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
     char paramname[256], tmpcode[1024];
 
     if(!FindVarName(varname,paramname)) {

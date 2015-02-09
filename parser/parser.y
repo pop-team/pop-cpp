@@ -2434,7 +2434,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
         }
 
         if (outf!=NULL) {
-            CArrayChar output;
+            std::string output;
             //TODO(BW) output.reserve(32000);
             thisCodeFile->GenerateCode(output, client, broker);
             fwrite(output.data(), 1, output.size(),outf);

@@ -54,7 +54,7 @@ void CodeFile::EmptyCodeData() {
     codes.clear();
 }
 
-void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker) {
+void CodeFile::GenerateCode(std::string &output, bool client, bool broker) {
     int m = codes.size();
     for(int j = 0; j < m; j++) {
         if(broker || codes[j]->Type() != TYPE_PACKOBJECT) {

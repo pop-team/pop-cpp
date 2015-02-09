@@ -40,7 +40,7 @@ int TypeSeqClass::CanMarshal() {
     return 0;
 }
 
-void TypeSeqClass::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
+void TypeSeqClass::Marshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
     char tmpstr[1024];
     char paramname[256];
 
@@ -57,7 +57,7 @@ void TypeSeqClass::Marshal(char *varname, char *bufname, char* /*sizehelper*/, C
     output += tmpstr;
 }
 
-void TypeSeqClass::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
+void TypeSeqClass::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
     char tmpstr[1024];
     char paramname[256];
 

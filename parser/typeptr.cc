@@ -62,7 +62,7 @@ int TypePtr::CanMarshal() {
     return ret;
 }
 
-void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpvar[1024];
     char *tmpsize=(sizehelper!=NULL)? sizehelper: size;
 
@@ -93,7 +93,7 @@ void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar
     }
 }
 
-void TypePtr::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypePtr::DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpvar[1024];
     char *tmpsize=(sizehelper!=NULL)? sizehelper: size;
 

@@ -68,7 +68,7 @@ int TypeArray::CanMarshal() {
     return ret;
 }
 
-void TypeArray::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypeArray::Marshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpvar[1024];
     char size[1024];
     char *tmpsize;
@@ -114,7 +114,7 @@ void TypeArray::Marshal(char *varname, char *bufname, char *sizehelper, CArrayCh
 
 }
 
-void TypeArray::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypeArray::DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpvar[1024];
     char size[1024];
     char *tmpsize;

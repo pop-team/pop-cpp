@@ -68,7 +68,7 @@ int TypeTemplate::CanMarshal() {
     return false;
 }
 
-void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
+void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
     assert(!elements.empty());
 
     char tmpcode[10240];
@@ -146,7 +146,7 @@ void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, 
     }
 }
 
-void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
+void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
     assert(!elements.empty());
 
     char tmpcode[10240];
