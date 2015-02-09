@@ -17,8 +17,7 @@
 
   extern CodeFile *thisCodeFile;
 
-  CArrayChar othercodes;
-  //TODO(BW) othercodes.reserve(32536);
+  std::string othercodes;
   bool insideClass;
   int startPos=-1;
 
@@ -58,12 +57,12 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 %%
 
 {whitespace} {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
 };
 
 "@"{whitespace2}"pack" {
   startPos=othercodes.size();
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return PACK_KEYWORD;
 };
 
@@ -111,7 +110,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   sscanf(yytext+1, "%d", &linenumber);
   linenumber++;
   //  printf("LINE DIRECTIVE:line:%d in %s\n", linenumber,filename);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   //  yylval=PutToken(yytext);
   //  return DIRECTIVE;
 };
@@ -132,7 +131,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       *t2='"';
     }
   }
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
 };
 
 ^"#"[ \t]*[0-9]+[ \t]+\"[^\"]*\"[^\n]* {
@@ -151,19 +150,19 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       *t2='"';
     }
   }
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
 };
 
 
 
 ^"#"[^\n]* {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   //  yylval=PutToken(yytext);
   //  return DIRECTIVE;
 };
 
 "\""("\\\\"|"\\\""|[^"\""])*"\"" {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   linenumber+=CountLine(yytext);
 
   yylval=PutToken(yytext);
@@ -172,7 +171,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 };
 
 "\'"("\\\\"|"\\\'"|[^"\'"])*"\'" {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   linenumber+=CountLine(yytext);
 
   yylval=PutToken(yytext);
@@ -203,12 +202,12 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       char postfix[32]="_popcobject";
       int len=strlen(clname);
       int len1=strlen(postfix);
-      othercodes.InsertAt(-1,clname,len);
-      othercodes.InsertAt(-1,postfix,len1);
-      othercodes.InsertAt(-1,yytext+len,strlen(yytext)-len);
-      othercodes.InsertAt(-1,postfix,len1);
+      othercodes += std::string(clname, len);
+      othercodes += std::string(postfix,len1);
+      othercodes += std::string(yytext+len,strlen(yytext)-len);
+      othercodes += std::string(postfix,len1);
     } else {
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
     }
     linenumber+=CountLine(tmp);
 };
@@ -236,7 +235,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     }
     bool constructor = paroc_utils::isEqual(clname,tmp);
     sprintf(newyytext,"%s_popcobject%s", clname, yytext+len);
-    othercodes.InsertAt(-1,newyytext,strlen(newyytext));
+    othercodes += newyytext;
     Class *cl = thisCodeFile->FindClass(clname);
     if(!cl->is_collective()){
       //Create the string to be inserted in every paroc_object constructor
@@ -248,16 +247,16 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 	  shouldreturn = false;
 	  char postfix[] = "_popcobject";
 	  int len1 = strlen(postfix);
-	  othercodes.InsertAt(-1, postfix, len1);
+      othercodes += std::string(postfix,len1);
 
 	  char buf[10240];
 	  int n = ReadUntil((char*)");{", buf, 10240);
-	  othercodes.InsertAt(-1,buf,n);
+	  othercodes += std::string(buf, n);
 
 	  linenumber+=CountLine(buf);
 	  if (n && buf[n-1]==')'){
       n=ReadUntil((char*)":;{", buf, 10240);
-	    othercodes.InsertAt(-1,buf,n);
+	    othercodes += std::string(buf, n);
 	    linenumber+=CountLine(buf);
     }
 	  if (n && buf[n-1]==':') {
@@ -275,32 +274,32 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
 	  	  if (thisCodeFile->FindClass(clname)!=NULL) {
 		      char *t=strstr(buf,clname)+ strlen(clname);
-		      othercodes.InsertAt(-1,buf,t-buf);
-		      othercodes.InsertAt(-1,postfix,len1);
-		      othercodes.InsertAt(-1,t,strlen(t));
+              othercodes += std::string(buf, t-buf);
+		      othercodes += std::string(postfix,len1);
+		      othercodes += t;
 		    } else {
-		      othercodes.InsertAt(-1,buf,n);
+		      othercodes += std::string(buf, n);
 		    }
   		  // Extract parametters...
 
 		    n = ReadUntil((char*)"){;",buf,10240);
-		    othercodes.InsertAt(-1,buf,n);
+		    othercodes += std::string(buf, n);
         if (!n || buf[n-1]!=')')
 		      break;
 
 		    // Extract separators
     		n=ReadUntil((char*)",{;",buf,10240);
-		      othercodes.InsertAt(-1,buf,n);
+		      othercodes += std::string(buf, n);
   		    if (!n || buf[n-1]!=',')
 	  	      break;
         }
       }
       // Print the THIS handling string line
-      othercodes.InsertAt(-1, thisBuf, strlen(thisBuf));
+      othercodes += thisBuf;
 	  }
   } else {
     strcpy(newyytext,yytext);
-    othercodes.InsertAt(-1,yytext,strlen(yytext));
+    othercodes += yytext;
   }
 
   linenumber += CountLine(tmp);
@@ -314,14 +313,14 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
 {newline} {
   linenumber++;
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
 };
 
 parclass {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
@@ -329,32 +328,32 @@ parclass {
   yylval=PutToken(char(100));
 
   startPos=othercodes.size();
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return PARCLASS_KEYWORD;
 };
 
 class {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return CLASS_KEYWORD;
 
 };
 
 enum {
 	yylval=PutToken(yytext);
-	othercodes.InsertAt(-1,yytext,strlen(yytext));
+	othercodes += yytext;
 	return ENUM;
 };
 
 namespace {
 	yylval=PutToken(yytext);
-	othercodes.InsertAt(-1,yytext,strlen(yytext));
+	othercodes += yytext;
 	return NAMESPACE;
 };
 
 broadcast {
 	yylval=PutToken(yytext);
-	othercodes.InsertAt(-1,yytext,strlen(yytext));
+	othercodes += yytext;
 	return BROADCAST;
 };
 
@@ -362,59 +361,59 @@ classuid {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return CLASSID;
 };
 
 auto {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return AUTO_KEYWORD;
 };
 
 register {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return REGISTER_KEYWORD;
 };
 
 
 public {
-  if (!insideClass) othercodes.InsertAt(-1,yytext,strlen(yytext));
+  if (!insideClass) othercodes += yytext;
   return PUBLIC_KEYWORD;
 };
 private {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return PRIVATE_KEYWORD;
 };
 protected {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return PROTECTED_KEYWORD;
 };
 
 
 virtual {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return VIRTUAL_KEYWORD;
 };
 
 const {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return CONST_KEYWORD;
 };
 
 struct {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return STRUCT_KEYWORD;
 };
 
 static {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return STATIC_KEYWORD;
 };
 
@@ -422,12 +421,12 @@ sync {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
   else
     {
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return SYNC_INVOKE;
     }
 };
@@ -437,11 +436,11 @@ async {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return ASYNC_INVOKE;
 };
 
@@ -449,11 +448,11 @@ in {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return INPUT;
 };
 
@@ -461,11 +460,11 @@ out {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return OUTPUT;
 };
 
@@ -473,11 +472,11 @@ conc {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return CONCURRENT;
 };
 
@@ -486,11 +485,11 @@ seq {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return SEQUENTIAL;
 };
 
@@ -500,20 +499,20 @@ mutex[ \a\b\v\f\t\r\n]*"{" {
       char *yycopy=strdup(yytext+5);
       int len=strlen(yycopy);
       yylval=PutToken((char*)"mutex");
-      othercodes.InsertAt(-1,yytext,5);
+      othercodes += std::string(yytext, 5);
       for (char *t=yycopy+len-1;t!=yycopy;t--) unput(*t);
       free(yycopy);
       return ID;
 
-      //      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      //      othercodes += yytext;
     }
   else
     {
       char str[256];
       int len=strlen(yytext)-6;
       sprintf(str," { paroc_mutex_locker _paroc_mutex%d(_paroc_omutex); ",mutexCount++);
-      othercodes.InsertAt(-1,str,strlen(str));
-      othercodes.InsertAt(-1,yytext+5,len);
+      othercodes += str;
+      othercodes += std::string(yytext+5,len);
     }
   linenumber+=CountLine(yytext+5);
 };
@@ -522,18 +521,18 @@ mutex {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return MUTEX;
 
 };
 
 "::" {
 
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return SCOPE;
 };
 
@@ -541,11 +540,11 @@ __hidden {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return HIDDEN;
 };
 
@@ -553,24 +552,24 @@ proc {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
   yylval=PutToken(char(USERPROC));
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return PROC;
 };
 size {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      othercodes.InsertAt(-1,yytext,strlen(yytext));
+      othercodes += yytext;
       return ID;
     }
 
   yylval=PutToken(char(PARAMSIZE));
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return SIZE;
 };
 
@@ -583,14 +582,14 @@ this {
         {
             //If the class is a parclass, replace THIS keyword by the interface pointer __POPThis_ClassName
             if(cl->IsParClass()) {
-                othercodes.InsertAt(-1,"__POPThis_",strlen("__POPThis_"));
-                othercodes.InsertAt(-1,cl->GetName(),strlen(cl->GetName()));
+                othercodes += "__POPThis_";
+                othercodes += cl->GetName();
                 insertNormalThis = false;
             }
         }
 
         if(insertNormalThis)
-            othercodes.InsertAt(-1,yytext,strlen(yytext));
+            othercodes += yytext;
 
 
 	/*
@@ -604,42 +603,42 @@ this {
 unsigned{whitespace1}int {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return(ID1);
 };
 
 signed{whitespace1}int {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return(ID1);
 };
 
 unsigned{whitespace1}long {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return(ID1);
 };
 
 signed{whitespace1}long {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return(ID1);
 };
 
 signed{whitespace1}char {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return(ID1);
 };
 
 unsigned{whitespace1}char {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return(ID1);
 };
 
@@ -647,37 +646,37 @@ unsigned{whitespace1}char {
 signed{whitespace1}short {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return(ID1);
 };
 
 unsigned{whitespace1}short {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return(ID1);
 };
 
 typedef {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return(TYPEDEF_KEYWORD);
 };
 
 {id} {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return(ID);
 };
 
 [0-9]+   {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return (INTEGER);
 };
 
 [0-9]*"."[0-9]+([Ee][0-9]+)? {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return (REAL);
 };
 
@@ -690,49 +689,49 @@ typedef {
 
 "&&" {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return (AND_OP);
 };
 
 "||" {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return (OR_OP);
 };
 
 "==" {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return (EQUAL_OP);
 };
 
 "!=" {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return (NOTEQUAL_OP);
 };
 
 ">=" {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return (GREATEREQUAL_OP);
 };
 
 "<=" {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return (LESSEQUAL_OP);
 };
 
 "?"{whitespace2}":" {
   yylval=PutToken(yytext);
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return (NONSTRICT_OD_OP);
 };
 
 
 "\'"|"\""|"#"|"("|")"|"{"|"}"|"["|"]"|";"|":"|","|"*"|"&"|"~"|"="|"+"|"%"|"@"|"$"|"^"|"-"|"|"|"`"|"!"  {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return yytext[0];
 };
 
@@ -740,7 +739,7 @@ typedef {
 	return EOFCODE;
 };
 . {
-  othercodes.InsertAt(-1,yytext,strlen(yytext));
+  othercodes += yytext;
   return yytext[0];
 };
 

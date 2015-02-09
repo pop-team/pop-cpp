@@ -21,6 +21,10 @@ void OtherCode::AddCode(char *newcode, int n) {
     code += std::string(newcode, n);
 }
 
+void OtherCode::AddCode(const char *newcode, int n) {
+    code += std::string(newcode, n);
+}
+
 void OtherCode::AddCode(CArrayChar &newcode) {
     code += std::string(newcode.data(), newcode.size());
 }

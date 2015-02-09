@@ -119,6 +119,7 @@ public:
 
     void AddCode(char *newcode);
     void AddCode(char *, int n);
+    void AddCode(const char *, int n);
     void AddCode(CArrayChar &newcode);
     void AddCode(const std::string& newcode);
 

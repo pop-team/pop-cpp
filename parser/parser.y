@@ -42,7 +42,7 @@ extern char filename[1024];
 
 int indexsource=0;  //the index of source file and the include directive
 
-extern CArrayChar othercodes;
+extern std::string othercodes;
 extern bool insideClass;
 extern int startPos;
 
@@ -363,7 +363,7 @@ handle_eof: EOFCODE
 
 handle_this: THIS_KEYWORD
 {
-    othercodes.InsertAt(-1,"\n",strlen("\n"));
+    othercodes += "\n";
 }
 ;
 
@@ -376,7 +376,7 @@ not_care_code: error ';'
     {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode(othercodes.data(),othercodes.size());
+      dat->AddCode(othercodes);
       thisCodeFile->AddCodeData(dat);
       othercodes.resize(0);
     }
@@ -389,7 +389,7 @@ not_care_code: error ';'
     {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode(othercodes.data(),othercodes.size());
+      dat->AddCode(othercodes);
       thisCodeFile->AddCodeData(dat);
       othercodes.resize(0);
     }
@@ -402,7 +402,7 @@ not_care_code: error ';'
     {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode(othercodes.data(),othercodes.size());
+      dat->AddCode(othercodes);
       thisCodeFile->AddCodeData(dat);
       othercodes.resize(0);
     }
