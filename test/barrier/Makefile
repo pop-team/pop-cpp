@@ -1,4 +1,4 @@
-FLAGS=-g -noclean
+FLAGS=-g
 
 all: main object
 
