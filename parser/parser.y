@@ -1222,14 +1222,11 @@ type_specifier: ID
 {
 
   TypeTemplate *type=new TypeTemplate(GetToken($1));
-  paroc_list<TemplateArgument *> *list=(paroc_list<TemplateArgument *> *)$3;
-  POSITION pos=list->GetHeadPosition();
-  while (pos!=NULL)
-    {
-      TemplateArgument *el=list->GetNext(pos);
+  auto list = reinterpret_cast<std::deque<TemplateArgument*>*>($3);
+  for(auto el : *list){
       type->AddTemplate(el->type, el->isRef);
       delete el;
-    }
+  }
   delete list;
 
   thisCodeFile->AddDataType(type);
@@ -1258,16 +1255,14 @@ type_specifier: ID
 
 template_arguments: template_arg
 {
-  paroc_list<TemplateArgument *> *list=new paroc_list<TemplateArgument *>();
-  TemplateArgument *v=(TemplateArgument *)$1;
-  list->AddHead(v);
+  auto list = new std::deque<TemplateArgument *>();
+  list->push_front(reinterpret_cast<TemplateArgument*>($1));
   $$=(YYSTYPE)list;
 }
 | template_arg ',' template_arguments
 {
-  paroc_list<TemplateArgument *> *list=(paroc_list<TemplateArgument *> *)$3;
-  TemplateArgument *v=(TemplateArgument *)$1;
-  list->AddHead(v);
+  auto list = reinterpret_cast<std::deque<TemplateArgument*>*>($3);
+  list->push_front(reinterpret_cast<TemplateArgument*>($1));
   $$=(YYSTYPE)list;
 }
 ;
