@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <deque>
+#include <utility>
 
 #include "parser_common.h"
 
@@ -241,8 +242,7 @@ public:
     virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
     virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
 protected:
-    paroc_list<DataType *> attr_types;
-    paroc_list<char *> attr_names;
+    std::vector<std::pair<DataType*, char*>> attributes;
 };
 
 /**
