@@ -6,11 +6,9 @@
 #include <cstring>
 #include <cassert>
 
-typedef std::string string64; //TODO(BW) This should be removed I think
-typedef std::vector<string64> CArrayString;
-
+typedef std::vector<std::string> CArrayString;
 typedef std::string CArrayChar;
 
-int CountCodeLines(const CArrayChar &code);
+int CountCodeLines(const std::string &code);
 
 #endif

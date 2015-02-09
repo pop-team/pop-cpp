@@ -115,12 +115,10 @@ public:
         return TYPE_OTHERCODE;
     };
 
-    virtual void GenerateCode(CArrayChar &output);
+    virtual void GenerateCode(std::string& output);
 
-    void AddCode(char *newcode);
-    void AddCode(char *, int n);
+    void AddCode(const char *newcode);
     void AddCode(const char *, int n);
-    void AddCode(CArrayChar &newcode);
     void AddCode(const std::string& newcode);
 
 protected:
@@ -140,7 +138,7 @@ public:
         return TYPE_PACKOBJECT;
     };
     virtual void GenerateCode(CArrayChar &output);
-    void AddObject(string64 objname);
+    void AddObject(const std::string& objname);
     int GetNumObject();
 
     void SetStartLine(int l);

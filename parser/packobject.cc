@@ -52,7 +52,7 @@ void PackObject::GenerateCode(CArrayChar &output) {
 }
 
 
-void PackObject::AddObject(string64 objname) {
+void PackObject::AddObject(const std::string& objname) {
     for(auto& object : objects){
         if(object == objname){
             return;
