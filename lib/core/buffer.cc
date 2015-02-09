@@ -16,11 +16,12 @@
     POPC_MessageHeader instead of paroc_message_header (put implementation in a separate file)
  */
 
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
+#include <vector>
+
 #include "paroc_interface.h"
 #include "paroc_buffer.h"
-#include "paroc_array.h"
 #include "paroc_system.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"
@@ -128,7 +129,7 @@ void paroc_buffer::UnPack(POPString *list, int n) {
         return;
     }
 
-    paroc_array<char> tmpstr;
+    std::vector<char> tmpstr;
 
     for(int i=0; i<n; i++,list++) {
         int len;
@@ -136,8 +137,6 @@ void paroc_buffer::UnPack(POPString *list, int n) {
         if(len>0) {
             tmpstr.resize(len);
             UnPack(tmpstr.data(), len);
-            //TODO(BW) This seems more than wrong to get a pointer to tmpstr->data since
-            //tmpstr will be deleted on exit of the function
             *list = tmpstr.data();
         } else {
             *list = nullptr;
@@ -162,14 +161,15 @@ void paroc_buffer::UnPack(std::string *list, int n) {
     if(n<=0 || list==NULL) {
         return;
     }
-    paroc_array<char> tmpstr;
-    int len;
+    std::vector<char> tmpstr;
+
     for(int i=0; i<n; i++,list++) {
+        int len;
         UnPack(&len,1);
         if(len>0) {
             tmpstr.resize(len);
             UnPack(tmpstr.data(),len);
-            (*list)=tmpstr.data();
+            *list = tmpstr.data();
         } else {
             list->clear();
         }
