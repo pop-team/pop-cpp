@@ -92,7 +92,7 @@ Method *method;
  int AfterParsing(int status, char *classname, char *stubproc, bool gen_stub);
 
 
- paroc_list<TypeClassStruct *>  typestack;
+ std::vector<TypeClassStruct*>  typestack;
  TypeClassStruct *currentstruct;
  void CleanStack();
  void Push(TypeClassStruct *x);
@@ -2266,34 +2266,33 @@ void Usage()
   exit(1);
 }
 
-void CleanStack()
-{
-  if (typestack.GetCount()) fprintf(stderr,"STRUCT list: %d elements\n",typestack.GetCount());
-  currentstruct=NULL;
-  structContainer=NULL;
-  typestack.RemoveAll();
+void CleanStack(){
+  if (typestack.size()) {
+    fprintf(stderr,"STRUCT list: %lu elements\n",typestack.size());
+  }
+  currentstruct=nullptr;
+  structContainer=nullptr;
+  typestack.clear();
 }
 
-void Push(TypeClassStruct *x)
-{
-  typestack.AddHead(x);
+void Push(TypeClassStruct *x){
+  typestack.push_back(x);
 }
 
-TypeClassStruct *Pop()
-{
-  POSITION pos=typestack.GetHeadPosition();
-  if (pos==NULL) return NULL;
-  TypeClassStruct *t=typestack.GetAt(pos);
-  typestack.RemoveHead();
+TypeClassStruct *Pop(){
+  if (typestack.empty()){
+    return nullptr;
+  }
+  auto t = typestack.back();
+  typestack.pop_back();
   return t;
 }
 
-TypeClassStruct *Peek()
-{
-  POSITION pos=typestack.GetHeadPosition();
-  if (pos==NULL) return NULL;
-  TypeClassStruct *t=typestack.GetAt(pos);
-  return t;
+TypeClassStruct *Peek(){
+  if (typestack.empty()){
+    return nullptr;
+  }
+  return typestack.back();
 }
 
 // Update marshall options for a specific parameter
