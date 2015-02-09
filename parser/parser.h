@@ -476,8 +476,6 @@ public:
     bool isMutex;
     bool isHidden;
 
-    CArrayString mutex;
-
     InvokeType invoketype;
 
     char name[64];
