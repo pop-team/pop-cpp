@@ -4,8 +4,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
-
-#include "paroc_list.h"
+#include <cassert>
 
 typedef std::string string64; //TODO(BW) This should be removed I think
 typedef std::vector<string64> CArrayString;

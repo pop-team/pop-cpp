@@ -10,7 +10,7 @@ TypeSeqClass::~TypeSeqClass() {}
  * Add a base class to the current sequential class
  */
 void TypeSeqClass::AddBase(DataType *t) {
-    bases.AddTail(t);
+    bases.push_back(t);
 }
 
 /**
@@ -30,9 +30,7 @@ int TypeSeqClass::CanMarshal() {
     }
 
     Mark(true);
-    POSITION pos=bases.GetHeadPosition();
-    while(pos!=NULL) {
-        DataType *t=bases.GetNext(pos);
+    for(auto t : bases){
         if(t->CanMarshal()) {
             Mark(false);
             return 1;

@@ -257,7 +257,7 @@ public:
     virtual int CanMarshal();
     virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
     virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    paroc_list<DataType *> bases;
+    std::vector<DataType*> bases;
 };
 
 /**
