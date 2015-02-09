@@ -58,7 +58,7 @@ void PackObject::AddObject(string64 objname) {
             return;
         }
 
-    objects.SetSize(n+1);
+    objects.resize(n+1);
     strcpy(objects[n],objname);
 }
 

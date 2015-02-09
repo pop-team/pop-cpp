@@ -58,7 +58,7 @@ public:
 
     ~paroc_array();
     int size();
-    void SetSize(int asize);
+    void resize(int asize);
     paroc_array & operator =(paroc_array & val);
     void RemoveAll();
     void InsertAt(int index,const T & e,int count=1);
@@ -96,7 +96,7 @@ template<class T>
 paroc_array<T>::paroc_array(int asize) {
     m_size=actualsize=0;
     m_data=0;
-    SetSize(asize);
+    resize(asize);
 }
 
 template<class T>
@@ -105,7 +105,7 @@ paroc_array<T>::paroc_array(paroc_array & val) {
     m_data=0;
 
     int n=val.size();
-    SetSize(n);
+    resize(n);
     if(n>0) {
         memcpy(m_data,(T *)val, n*sizeof(T));
     }
@@ -122,7 +122,7 @@ int paroc_array<T>::size() {
 }
 
 template<class T>
-void paroc_array<T>::SetSize(int asize) {
+void paroc_array<T>::resize(int asize) {
     if(asize<=actualsize) {
         if(asize<0) {
             asize=0;
@@ -153,7 +153,7 @@ void paroc_array<T>::SetSize(int asize) {
 template<class T>
 paroc_array<T> & paroc_array<T>::operator =(paroc_array & val) {
     int n=val.size();
-    SetSize(n);
+    resize(n);
     memcpy(m_data, val.m_data, n * sizeof(T));
     return *this;
 }
@@ -179,7 +179,7 @@ void paroc_array<T>::InsertAt(int index, const T & e,int count) {
     }
     int t=size()-1;
 
-    SetSize(index>size() ? index+count : size()+count);
+    resize(index>size() ? index+count : size()+count);
     T *dat=m_data+t;
     T *dat1=dat+count;
     while(t>=index) {
@@ -206,7 +206,7 @@ void paroc_array<T>::InsertAt(int index,const T * e,int count) {
     }
     int t=size()-1;
 
-    SetSize(index>size() ? index+count : size()+count);
+    resize(index>size() ? index+count : size()+count);
     T *dat=m_data+t;
     T *dat1=dat+count;
     while(t>=index) {

@@ -150,7 +150,7 @@ startlist: handle_this startlist
         OtherCode *dat = new OtherCode(thisCodeFile);
         dat->AddCode(othercodes);
         thisCodeFile->AddCodeData(dat);
-        othercodes.SetSize(0);
+        othercodes.resize(0);
     }
 }
 
@@ -158,7 +158,7 @@ startlist: handle_this startlist
 | class_declaration
 {
     insideClass=false;
-    othercodes.SetSize(0);
+    othercodes.resize(0);
     startPos=-1;
 } startlist
 | class_prototype startlist
@@ -335,7 +335,7 @@ handle_eof: EOFCODE
                         OtherCode *dat=new OtherCode(thisCodeFile);
                         dat->AddCode(othercodes.data(),startPos);
                         thisCodeFile->AddCodeData(dat);
-                        othercodes.SetSize(0);
+                        othercodes.resize(0);
                     }
                     startPos=-1;
                     currentPack=new PackObject(thisCodeFile);
@@ -360,7 +360,7 @@ handle_eof: EOFCODE
                     isParclassDeclared = true;
                     currentPack->SetEndLine(linenumber-1);
                     currentPack=NULL;
-                    othercodes.SetSize(0);
+                    othercodes.resize(0);
                     startPos=-1;
                 }
             }
@@ -385,7 +385,7 @@ not_care_code: error ';'
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode(othercodes.data(),othercodes.size());
       thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
+      othercodes.resize(0);
     }
 }
 | error '}'
@@ -398,7 +398,7 @@ not_care_code: error ';'
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode(othercodes.data(),othercodes.size());
       thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
+      othercodes.resize(0);
     }
 }
 | error EOFCODE
@@ -411,7 +411,7 @@ not_care_code: error ';'
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode(othercodes.data(),othercodes.size());
       thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
+      othercodes.resize(0);
     }
   YYACCEPT;
 }
@@ -423,7 +423,7 @@ pack_directive: pack_header '(' object_list ')'
     isParclassDeclared = true;
     currentPack->SetEndLine(linenumber-1);
     currentPack=NULL;
-    othercodes.SetSize(0);
+    othercodes.resize(0);
     startPos=-1;
 };
 
@@ -434,7 +434,7 @@ pack_header: PACK_KEYWORD
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode(othercodes.data(),startPos);
       thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
+      othercodes.resize(0);
     }
     startPos=-1;
     currentPack=new PackObject(thisCodeFile);
@@ -866,7 +866,7 @@ class_prototype: class_key ';'
   dat->AddCode(tmp);
   thisCodeFile->AddCodeData(dat);
 
-  othercodes.SetSize(0);
+  othercodes.resize(0);
 
   currentClass=NULL;
   insideClass=false;
@@ -903,7 +903,7 @@ class_key: PARCLASS_KEYWORD ID
       OtherCode *dat=new OtherCode(thisCodeFile);
       dat->AddCode(othercodes.data(),startPos);
       thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
+      othercodes.resize(0);
     }
     insideClass=true;
     char *clname=GetToken($2);
@@ -2429,7 +2429,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
         thisCodeFile->DisableAsyncAllocation();
 
     insideClass = false;
-    othercodes.SetSize(0);
+    othercodes.resize(0);
     startPos = -1;
 
     int ret = yyparse();
@@ -2458,7 +2458,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
         }
     }
 
-    othercodes.SetSize(0);
+    othercodes.resize(0);
 
     if (yyin!=stdin) {
         fclose(yyin);

@@ -185,7 +185,7 @@ public:
     virtual bool GetDeclaration(const char *varname, char *output);
     virtual void GetExpandType(char *output);
 
-    virtual void SetSize(char *sizestr);
+    virtual void resize(char *sizestr);
 
     virtual int IsPointer();
     virtual DataType *GetBaseType();

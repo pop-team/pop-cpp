@@ -157,7 +157,7 @@ void TypePtr::GetExpandType(char *output) {
 }
 
 
-void TypePtr::SetSize(char *sizestr) {
+void TypePtr::resize(char *sizestr) {
     if(size!=NULL) {
         free(size);
     }

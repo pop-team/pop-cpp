@@ -134,7 +134,7 @@ void paroc_buffer::UnPack(POPString *list, int n) {
         int len;
         UnPack(&len,1);
         if(len>0) {
-            tmpstr.SetSize(len);
+            tmpstr.resize(len);
             UnPack(tmpstr.data(), len);
             //TODO(BW) This seems more than wrong to get a pointer to tmpstr->data since
             //tmpstr will be deleted on exit of the function
@@ -167,7 +167,7 @@ void paroc_buffer::UnPack(std::string *list, int n) {
     for(int i=0; i<n; i++,list++) {
         UnPack(&len,1);
         if(len>0) {
-            tmpstr.SetSize(len);
+            tmpstr.resize(len);
             UnPack(tmpstr.data(),len);
             (*list)=tmpstr.data();
         } else {

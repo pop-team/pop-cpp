@@ -32,7 +32,7 @@ paroc_buffer_raw::~paroc_buffer_raw() {
 void paroc_buffer_raw::Reset() {
     unpackpos=20;
     //packeddata.RemoveAll();
-    packeddata.SetSize(20);
+    packeddata.resize(20);
 }
 
 
@@ -41,7 +41,7 @@ void paroc_buffer_raw::Pack(const char *data, int n) {
         return;
     }
     int t=packeddata.size();
-    packeddata.SetSize(t+((n-1)/4+1)*4);
+    packeddata.resize(t+((n-1)/4+1)*4);
     memcpy(((char *)packeddata)+t,data,n);
 }
 
@@ -189,7 +189,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //       UnPack(&len,1);
 //       if (len)
 //  {
-//    tmpstr.SetSize(len);
+//    tmpstr.resize(len);
 //    UnPack(tmpstr,len);
 //    list->SetAccessString(tmpstr);
 //  }
@@ -219,7 +219,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //       UnPack(&len,1);
 //       if (len>0)
 //  {
-//    tmpstr.SetSize(len);
+//    tmpstr.resize(len);
 //    UnPack(tmpstr,len);
 //    (*list)=(char *)tmpstr;
 //  }
@@ -462,7 +462,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
         return false;
     }
 
-    packeddata.SetSize(n);
+    packeddata.resize(n);
     n -= 20;
 
     if(n > 0) {

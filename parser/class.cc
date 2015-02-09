@@ -630,7 +630,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
         if (n)
         {
             CArrayClass bases;
-            bases.SetSize(n);
+            bases.resize(n);
             for (int i=0;i<n;i++)  bases[i]=baseClass[i]->base;
             CodeFile *prog=GetCodeFile();
             prog->FindAllBaseClass(*this, bases,true);

@@ -174,7 +174,7 @@ int paroc_broker::Run() {
     }
 
     state = POPC_STATE_RUNNING;
-    ptArray.SetSize(comboxCount);
+    ptArray.resize(comboxCount);
     int i;
 
     for(i = 0; i < comboxCount; i++) {
@@ -241,7 +241,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 
     paroc_combox_factory  *comboxFactory = paroc_combox_factory::GetInstance();
     int comboxCount = comboxFactory->GetCount();
-    comboxArray.SetSize(comboxCount);
+    comboxArray.resize(comboxCount);
     POPString protocolName;
     POPString url;
 
@@ -257,7 +257,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 
     if(comboxCount!=count) {
         comboxCount=count;
-        comboxArray.SetSize(comboxCount);
+        comboxArray.resize(comboxCount);
     }
 
     if(comboxCount<=0) {

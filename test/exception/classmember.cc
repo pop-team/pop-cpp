@@ -764,7 +764,7 @@ void Method::GenerateBroker(CArrayChar &output) {
     sprintf(brokername,"%s%sBroker",cl->GetName(),OBJ_POSTFIX);
 
     paroc_array<bool>  reformat;
-    reformat.SetSize(nb);
+    reformat.resize(nb);
 
 
     //Now generate method wrappers...
@@ -985,7 +985,7 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
     int n=baseClass.size();
     if(n) {
         CArrayClass bases;
-        bases.SetSize(n);
+        bases.resize(n);
         for(int i=0; i<n; i++) {
             bases[i]=baseClass[i]->base;
         }

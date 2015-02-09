@@ -52,14 +52,14 @@ bool paroc_combox_socket::Create(int port, bool server) {
     }
 
     if(server) {
-        pollarray.SetSize(1);
+        pollarray.resize(1);
         pollarray[0].fd=sockfd;
         pollarray[0].events=POLLIN;
         pollarray[0].revents=0;
         index=1;
         nready=0;
 
-        connarray.SetSize(1);
+        connarray.resize(1);
         connarray[0]=CreateConnection(sockfd);
 
         return popc_listen(sockfd,10)==0;
@@ -156,11 +156,11 @@ paroc_connection* paroc_combox_socket::Wait() {
                                 return nullptr;
                             }
 
-                            pollarray.SetSize(n+1);
+                            pollarray.resize(n+1);
                             pollarray[n].fd=s;
                             pollarray[n].events=POLLIN;
                             pollarray[n].revents=0;
-                            connarray.SetSize(n+1);
+                            connarray.resize(n+1);
                             connarray[n]=CreateConnection(s);
                             auto ret=OnNewConnection(connarray[n]);
                             n++;
@@ -311,7 +311,7 @@ bool paroc_combox_socket::Create(int port, bool server) {
         highsockfd = sockfd;
         nready=0;
 
-        connarray.SetSize(1);
+        connarray.resize(1);
         connarray[0]=CreateConnection(sockfd);
 
         sockaddr_in sin;
@@ -442,7 +442,7 @@ paroc_connection* paroc_combox_socket::Wait() {
 
                             FD_SET(s, &activefdset);
 
-                            connarray.SetSize(activefdset.fd_count);
+                            connarray.resize(activefdset.fd_count);
                             connarray[activefdset.fd_count-1]=CreateConnection(s);
 
                             auto ret=OnNewConnection(connarray[activefdset.fd_count-1]);
