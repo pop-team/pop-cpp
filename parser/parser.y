@@ -88,7 +88,6 @@ Method *method;
 
  int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation, bool isAsyncAllocationDisable);
  char *CheckAndCreateDir(char *fname,char *name);
- bool CheckAndInsert(CArrayCharPtr &source, CArrayCharPtr &searchpath, char *fname);
 
  int AfterParsing(int status, char *classname, char *stubproc, bool gen_stub);
 

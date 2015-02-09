@@ -15,7 +15,6 @@
   int mutexCount=0;
   int dummyCount=0;
 
-  extern CArrayCharPtr searchpath, sources;
   extern CodeFile *thisCodeFile;
 
   CArrayChar othercodes;

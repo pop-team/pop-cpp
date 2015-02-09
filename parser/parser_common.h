@@ -10,7 +10,6 @@
 typedef std::string string64; //TODO(BW) This should be removed I think
 typedef std::vector<string64> CArrayString;
 
-typedef paroc_array<char *> CArrayCharPtr;
 typedef paroc_array<char> CArrayChar;
 
 int CountCodeLines(CArrayChar &code);
