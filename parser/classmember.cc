@@ -265,13 +265,13 @@ bool Param::Marshal(char *bufname, bool reformat,bool inf_side, CArrayChar &outp
         sprintf(decl, "int __paroc_size1_%s=%s;\n%s.Push(\"%sSize\",\"int\",1);\n%s.Pack(& __paroc_size1_%s,1);\n%s.Pop();\n",name,paramSize,bufname, name, bufname,name, bufname);
         sprintf(sizeinfo,"__paroc_size1_%s",name);
 
-        output.InsertAt(-1,decl,strlen(decl));
+        output += decl;
     }
 
     if(marshalProc!=NULL) {
         char tmpcode[1024];
         sprintf(tmpcode,"%s(%s,%s, %s, %d, 0);\n",marshalProc,bufname,tmpvar, (*sizeinfo==0)? "0" : sizeinfo,flags);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
     } else {
         mytype->Marshal(tmpvar,bufname,(*sizeinfo==0)? NULL : sizeinfo,output);
     }
@@ -302,7 +302,7 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
 
         sprintf(sizeinfo,"__paroc_size2_%s",name);
 
-        output.InsertAt(-1,decl,strlen(decl));
+        output += decl;
 
         //check to alloc the memory
         int nptr=mytype->IsPointer();
@@ -324,14 +324,14 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
                 }
                 sprintf(alloccode, "paroc_container<%s> __paroc_container_%s(__paroc_size2_%s);\n%s=__paroc_container_%s;\n", tmpstr,name,name,name,name);
             }
-            output.InsertAt(-1,alloccode,strlen(alloccode));
+            output += alloccode;
         }
     }
     if(marshalProc!=NULL) {
         char tmpcode[1024];
 
         sprintf(tmpcode,"%s(%s,%s,%s,%d,%s);",marshalProc,bufname,tmpvar, (*sizeinfo==0)?  "0" : sizeinfo,flags,(inf_side ? "0" : "&_internal_mem"));
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
     } else {
         mytype->DeMarshal(tmpvar,bufname,(*sizeinfo==0)? NULL : sizeinfo,output);
     }
@@ -423,7 +423,7 @@ void ClassMember::GenerateHeader(CArrayChar& output, bool /*interface*/) {
     if(line>0 && (fname=myclass->GetFileInfo())!=NULL) {
         char str[1024];
         sprintf(str,"\n# %d \"%s\"\n", line, fname);
-        output.InsertAt(-1,str,strlen(str));
+        output += str;
     }
 
 }
@@ -444,7 +444,7 @@ void Attribute::GenerateHeader(CArrayChar &output, bool interface) {
     for(auto& attribute : attributes){
         Param &p=*attribute;
         p.DeclareVariable(tmp);
-        output.InsertAt(-1,tmp,strlen(tmp));
+        output += tmp;
     }
 }
 
@@ -481,11 +481,11 @@ void Enumeration::setArgs(std::string value) {
 // Generation of the appropriate code for the enum type
 void Enumeration::GenerateHeader(CArrayChar &output, bool interface) {
     ClassMember::GenerateHeader(output, interface);
-    output.InsertAt(-1, "enum ",strlen("enum "));
-    output.InsertAt(-1,name.c_str(),strlen(name.c_str()));
-    output.InsertAt(-1, "{", 1);
-    output.InsertAt(-1, args.c_str(), strlen(args.c_str()));
-    output.InsertAt(-1, "};", 2);
+    output += "enum ";
+    output += name;
+    output += "{";
+    output += args;
+    output += "};";
 }
 
 /**
@@ -524,13 +524,13 @@ void Structure::setInnerDecl(std::string value) {
 // Generation of the appropriate code for the enum type
 void Structure::GenerateHeader(CArrayChar &output, bool interface) {
     ClassMember::GenerateHeader(output, interface);
-    output.InsertAt(-1, "struct ",strlen("struct "));
-    output.InsertAt(-1, name.c_str(),strlen(name.c_str()));
-    output.InsertAt(-1, "{\n", 2);
-    output.InsertAt(-1, innerdecl.c_str(), strlen(innerdecl.c_str()));
-    output.InsertAt(-1, "\n}", 2);
-    output.InsertAt(-1, objects.c_str(), strlen(objects.c_str()));
-    output.InsertAt(-1, ";", 1);
+    output += "struct ";
+    output += name;
+    output += "{\n";
+    output += innerdecl;
+    output += "\n}";
+    output += objects;
+    output += ";";
 }
 
 /**
@@ -577,22 +577,19 @@ bool TypeDefinition::isArray() {
 // Generation of the appropriate code for the enum type
 void TypeDefinition::GenerateHeader(CArrayChar &output, bool interface) {
     ClassMember::GenerateHeader(output, interface);
-    output.InsertAt(-1, "typedef ",strlen("typedef "));
-    output.InsertAt(-1, name.c_str(),strlen(name.c_str()));
+    output += "typedef ";
+    output += name;
     if(isPtr()) {
-        output.InsertAt(-1, " * ", 3);
+        output += " * ";
     } else {
-        output.InsertAt(-1, " ", 1);
+        output += " ";
     }
-    output.InsertAt(-1, basetype.c_str(), strlen(basetype.c_str()));
+    output += basetype;
     if(isArray()) {
-        output.InsertAt(-1, "[]", 2);
+        output += "[]";
     }
-    output.InsertAt(-1, ";", 1);
+    output += ";";
 }
-
-
-
 
 //Directives inside a parallel class
 Directive::Directive(Class *cl, char *directive): ClassMember(cl, PUBLIC) {
@@ -607,9 +604,9 @@ Directive::~Directive() {
 
 void Directive::GenerateHeader(CArrayChar &output, bool /*interface*/) {
     if(code!=NULL) {
-        output.InsertAt(-1,"\n",1);
-        output.InsertAt(-1,code,strlen(code));
-        output.InsertAt(-1,"\n",1);
+        output += "\n";
+        output += code;
+        output += "\n";
     }
 }
 
@@ -725,9 +722,9 @@ void Method::GenerateReturn(CArrayChar &output, bool header, bool interface) {
         return;
     }
     if(header && isVirtual) {
-        output.InsertAt(-1,"virtual ",8);
+        output += "virtual ";
     } else if(!header) {
-        output.InsertAt(-1,"\n",1);
+        output += "\n";
     }
 
     if(returnparam.GetType()->IsParClass() && !returnparam.IsRef()) {
@@ -744,54 +741,51 @@ void Method::GenerateReturn(CArrayChar &output, bool header, bool interface) {
 
     // add by david
     if(returnparam.IsConst()) {
-        const char* tmp_const= "const ";
-        output.InsertAt(-1,tmp_const, strlen(tmp_const));
+        output += "const ";
     }
 
     char tmp[1024];
 
     type->GetDeclaration(NULL,tmp);
     //if (returnparam.IsConst())sprintf(tmp, "const %s", tmp);
-    output.InsertAt(-1,tmp, strlen(tmp));
+    output += tmp;
 
     // add by david
     if(returnparam.IsRef() && !interface) {
 //      if(!returnparam.GetType()->IsParClass())
 //      {
-        const char* tmp_const= "& ";
-        output.InsertAt(-1,tmp_const, strlen(tmp_const));
+        output += "& ";
 //      }
     }
 
-    output.InsertAt(-1," ");
+    output += " ";
 }
 
 void Method::GeneratePostfix(CArrayChar &output, bool header) {
-    // add const add the end of methode - david
+    // add const at the end of methode - david
     if(isGlobalConst) {
-        const char* tmp = " const ";
-        output.InsertAt(-1,tmp, strlen(tmp));
+        output += " const ";
     }
 
     if(header) {
-        output.InsertAt(-1,";",1);
+        output += ";";
     }
 }
 
 void Method::GenerateName(CArrayChar &output, bool header) {
     if(header) {
-        output.InsertAt(-1,name,strlen(name));
+        output += name;
     } else {
         char str[256];
         sprintf(str,"%s::%s",GetClass()->GetName(),name);
-        output.InsertAt(-1,str,strlen(str));
+        output += str;
     }
 }
 
 void Method::GenerateArguments(CArrayChar &output, bool header) {
     char tmpcode[10240];
 
-    output.InsertAt(-1,"(",1);
+    output += "(";
     int nb=params.size();
     for(int j=0; j<nb; j++) {
         Param &p=*(params[j]);
@@ -799,9 +793,9 @@ void Method::GenerateArguments(CArrayChar &output, bool header) {
         if(j<nb-1) {
             strcat(tmpcode,", ");
         }
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
     }
-    output.InsertAt(-1,")",1);
+    output += ")";
 }
 
 
@@ -844,7 +838,7 @@ void Method::GenerateClient(CArrayChar &output) {
     GenerateArguments(output, false);
     GeneratePostfix(output, false);
 
-    output.InsertAt(-1, "\n{", 2);
+    output += "\n{";
 
     GenerateClientPrefixBody(output);
 
@@ -868,7 +862,6 @@ void Method::GenerateClient(CArrayChar &output) {
         }
     }
 
-
     /**
      * Asynchronous Parallel Object Allocation (APOA)
      * The code below is generated to support the APOA in POP-C++ application.
@@ -876,54 +869,48 @@ void Method::GenerateClient(CArrayChar &output) {
      */
     if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && GetClass()->IsAsyncAllocationDisable()) {
         sprintf(tmpcode, "\n  // Waiting for APOA to be done before executing any method\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
         sprintf(tmpcode, "  void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
         char* nameOfRetType = returnparam.GetType()->GetName();
         if(MethodType()==METHOD_NORMAL &&!returnparam.GetType()->Same((char*)"void")) {
             sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    %s *tempObject = 0;\n    return (*tempObject);\n  }\n", nameOfRetType);
         } else  if(MethodType()==METHOD_NORMAL && returnparam.GetType()->Same((char*)"void")) {
             sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    return;\n  }\n");
         }
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
     } // End of APOA Support
-
-
-
-
 
     if(!GetClass()->is_collective()) {
         sprintf(tmpcode, "\n  paroc_mutex_locker __paroc_lock(_paroc_imutex);");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
         sprintf(tmpcode, "\n  if(!__paroc_combox)paroc_exception::paroc_throw_errno(\"combox was not initialized\");");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
         sprintf(tmpcode, "\n  paroc_connection* _popc_connection = __paroc_combox->get_connection();\n  __paroc_buf->Reset();\n  paroc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __paroc_buf->SetHeader(__paroc_buf_header);\n", clname, id, invoke_code, name);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
     } else {
         // Additional code if the method is not collective
         if(!is_collective() && MethodType() != METHOD_CONSTRUCTOR) {
             sprintf(tmpcode, "\n  // Generate additional information for a non collective call");
-            output.InsertAt(-1,tmpcode,strlen(tmpcode));
+            output += tmpcode;
 
             sprintf(tmpcode, "\n  paroc_connection* _popc_connection = _popc_combox->get_connection();\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n  _popc_buffer->SetHeader(_popc_message_header);\n",
                     clname, POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID, POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE, POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME);
-            output.InsertAt(-1, tmpcode, strlen(tmpcode));
+            output += tmpcode;
 
             sprintf(tmpcode, "\n   _popc_buffer->Push(\"rank\", \"int\", 1);\n  _popc_buffer->Pack(&_popc_default_rank_for_single_call, 1);\n  _popc_buffer->Pop();\n");
-            output.InsertAt(-1, tmpcode, strlen(tmpcode));
+            output += tmpcode;
 
             sprintf(tmpcode, "\n  popc_send_request(_popc_buffer, _popc_connection);\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header_call(CLASSUID_%s, %d, %d, \"%s\");", clname, id, invoke_code, name);
-            output.InsertAt(-1, tmpcode, strlen(tmpcode));
+            output += tmpcode;
 
             sprintf(tmpcode, "\n  _popc_buffer->SetHeader(_popc_message_header_call);");
-            output.InsertAt(-1, tmpcode, strlen(tmpcode));
+            output += tmpcode;
         } else {
             sprintf(tmpcode, "\n  paroc_connection* _popc_connection = _popc_combox->get_connection();\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n  _popc_buffer->SetHeader(_popc_message_header);\n", clname, id, invoke_code, name);
-            output.InsertAt(-1,tmpcode,strlen(tmpcode));
+            output += tmpcode;
         }
     }
-
-
 
     // Generate marshalling stub
     for(j=0; j<nb; j++) {
@@ -944,14 +931,14 @@ void Method::GenerateClient(CArrayChar &output) {
     } else {
         strcpy(tmpcode,"\n  popc_send_request(_popc_buffer, _popc_connection);");
     }
-    output.InsertAt(-1,tmpcode,strlen(tmpcode));
+    output += tmpcode;
 
     if(waitreturn) {
 #ifdef OD_DISCONNECT
         strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())paroc_exception::paroc_throw_errno();\n\t}");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
         strcpy(tmpcode,"\n\telse\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 #endif
 
         if(!GetClass()->is_collective()) {
@@ -959,7 +946,7 @@ void Method::GenerateClient(CArrayChar &output) {
         } else {
             strcpy(tmpcode,"\n  popc_recv_response(_popc_buffer, _popc_connection);");
         }
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
         for(j=0; j<nb; j++) {
             Param &p=*(params[j]);
             if(p.OutParam()) {
@@ -974,7 +961,7 @@ void Method::GenerateClient(CArrayChar &output) {
         if(MethodType() == METHOD_NORMAL && !returnparam.GetType()->Same((char*)"void")) {
             bool reformat;
             returnparam.DeclareVariable(tmpcode,reformat,false);
-            output.InsertAt(-1,tmpcode,strlen(tmpcode));
+            output += tmpcode;
 
 
 
@@ -985,7 +972,7 @@ void Method::GenerateClient(CArrayChar &output) {
                 returnparam.UnMarshal((char*)"(*_popc_buffer)", reformat, true, true, output);
                 strcpy(tmpcode,"\n  _popc_buffer->Reset();");
             }
-            output.InsertAt(-1,tmpcode,strlen(tmpcode));
+            output += tmpcode;
 
 
             // Added for new communication support
@@ -996,7 +983,7 @@ void Method::GenerateClient(CArrayChar &output) {
             }
             strcat(tmpcode,returnparam.name);
             strcat(tmpcode,";\n}\n");
-            output.InsertAt(-1,tmpcode,strlen(tmpcode));
+            output += tmpcode;
 
         } else {
             if(!GetClass()->is_collective()) {
@@ -1004,10 +991,10 @@ void Method::GenerateClient(CArrayChar &output) {
             } else {
                 strcpy(tmpcode,"\n  _popc_buffer->Reset();\n");
             }
-            output.InsertAt(-1,tmpcode,strlen(tmpcode));
+            output += tmpcode;
             // Added for new communication support
             strcpy(tmpcode,"\n  _popc_connection->reset();}\n");
-            output.InsertAt(-1,tmpcode,strlen(tmpcode));
+            output += tmpcode;
         }
     } else {
         // Check that we are not waiting for a returning param
@@ -1025,20 +1012,20 @@ void Method::GenerateClient(CArrayChar &output) {
         }
 #ifdef OD_DISCONNECT
         strcpy(tmpcode,"\n\tint time_alive, time_control, oldTime;\nod.getCheckConnection(time_alive, time_control);\n\t");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
         strcpy(tmpcode,"\n\tif(time_alive > 0 && time_control > 0 ){\n\t\toldTime=__paroc_combox->GetTimeout();\n\t\t__paroc_combox->SetTimeout(time_alive);\n\t\t__paroc_combox->RecvAck();\n\t\t__paroc_combox->SetTimeout(oldTime);\n\t}");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 #else
         if(!GetClass()->is_collective()) {
             strcpy(tmpcode,"\n  __paroc_buf->Reset();");
         } else {
             strcpy(tmpcode,"\n  _popc_buffer->Reset();");
         }
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         // Added for new communication support
         strcpy(tmpcode,"_popc_connection->reset();\n}\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 #endif
     }
 }
@@ -1065,7 +1052,7 @@ void Method::generate_header_pog(CArrayChar &output, bool interface) {
     if(!interface && type != METHOD_NORMAL) {
         char str[256];
         sprintf(str, "%s%s", name, Class::POG_OBJECT_POSTFIX);
-        output.InsertAt(-1, str, strlen(str));
+        output += str;
     } else {
         GenerateName(output, true);
     }
@@ -1073,7 +1060,7 @@ void Method::generate_header_pog(CArrayChar &output, bool interface) {
     GenerateArguments(output, true);
 
     if(isPureVirtual && !interface) {
-        output.InsertAt(-1,"=0",2);
+        output += "=0";
     }
 
     GeneratePostfix(output, true);
@@ -1100,14 +1087,14 @@ void Method::GenerateHeader(CArrayChar &output, bool interface) {
     if(!interface && type != METHOD_NORMAL) {
         char str[256];
         sprintf(str, "%s%s", name, OBJ_POSTFIX);
-        output.InsertAt(-1, str, strlen(str));
+        output += str;
     } else {
         GenerateName(output, true);
     }
     GenerateArguments(output, true);
 
     if(isPureVirtual && !interface) {
-        output.InsertAt(-1,"=0",2);
+        output += "=0";
     }
 
     GeneratePostfix(output,true);
@@ -1124,7 +1111,7 @@ void Method::GenerateBrokerHeader(CArrayChar &output) {
 
     char str[1024];
     sprintf(str,"\nvoid Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output);",name , id);
-    output.InsertAt(-1,str,strlen(str));
+    output += str;
 }
 
 void Method::generate_broker_header_pog(CArrayChar &output) {
@@ -1138,7 +1125,7 @@ void Method::generate_broker_header_pog(CArrayChar &output) {
 
     char str[1024];
     sprintf(str,"\n  void Invoke_%s_%d(paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);",name , id);
-    output.InsertAt(-1,str,strlen(str));
+    output += str;
 }
 
 void Method::GenerateBroker(CArrayChar &output) {
@@ -1170,7 +1157,7 @@ void Method::GenerateBroker(CArrayChar &output) {
     } else {
         sprintf(str,"\nvoid %s::Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output)\n{",brokername,name, id);
     }
-    output.InsertAt(-1,str,strlen(str));
+    output += str;
 
     char methodcall[1024];
     bool haveReturn=false;
@@ -1216,7 +1203,7 @@ void Method::GenerateBroker(CArrayChar &output) {
 
         // unmarhall and allocate memory for input arguments first
         strcpy(str,"\n  ");
-        output.InsertAt(-1,str,strlen(str));
+        output += str;
 
         for(int j = 0; j < nb; j++) {
             Param &p = *(params[j]);
@@ -1225,7 +1212,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             }
             char decl[1024];
             if(p.DeclareVariable(decl,reformat[j],false)) {
-                output.InsertAt(-1, decl, strlen(decl));
+                output += decl;
             }
 
             if(GetClass()->is_collective()) {
@@ -1235,7 +1222,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             }
             if(p.marshalProc!=NULL && !have_memspool) {
                 strcpy(str,"\nparoc_memspool _internal_mem;");
-                output.InsertAt(-1,str,strlen(str));
+                output += str;
                 have_memspool=true;
             }
             if(GetClass()->is_collective()) {
@@ -1253,7 +1240,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             if(!p.InParam()  /*&& strcmp(p.GetType()->GetName(), "void") != 0 */) {
                 char decl[1024];
                 p.DeclareVariable(decl,reformat[j],true);
-                output.InsertAt(-1, decl, strlen(decl));
+                output += decl;
             }
 
             if(reformat[j] && !p.IsVoid()) {
@@ -1278,7 +1265,7 @@ void Method::GenerateBroker(CArrayChar &output) {
 
 
         //now....generate the call...
-        output.InsertAt(-1,methodcall,strlen(methodcall));
+        output += methodcall;
 
         /*
 
@@ -1290,7 +1277,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             sprintf(str,"\nif (__interface_output!=0) \n{\n__paroc_buf.Reset();\nparoc_message_header __paroc_buf_header(\"%s\");\n__paroc_buf.SetHeader(__paroc_buf_header);\n", name);
         }
 
-        output.InsertAt(-1,str,strlen(str));
+        output += str;
 
         for(int j=0; j<nb; j++) {
             Param &p=*(params[j]);
@@ -1322,14 +1309,14 @@ void Method::GenerateBroker(CArrayChar &output) {
             } else {
                 sprintf(str, "\n    popc_send_response(_popc_buffer, _popc_connection, %s);", (is_collective()) ? "true" : "false");
             }
-            output.InsertAt(-1,str,strlen(str));
+            output += str;
             strcpy(str, "\n    _popc_connection->reset();\n  }\n}\n");
-            output.InsertAt(-1,str,strlen(str));
+            output += str;
         } else {
             strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n");
-            output.InsertAt(-1,str,strlen(str));
+            output += str;
             strcpy(str,"\nif(__interface_output != 0)\n__interface_output->reset();\n}\n");
-            output.InsertAt(-1,str,strlen(str));
+            output += str;
         }
         // End of mod
     } else {
@@ -1337,7 +1324,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             printf("POP-C++ Warning: %s is an abstract parclass. Be aware that only the final class (parallel object) will keep this semantic.\n", clname);
         }
         strcpy(str,"}\n");  // Close the method braces
-        output.InsertAt(-1,str,strlen(str));
+        output += str;
     }
 
 }
@@ -1444,7 +1431,7 @@ void Constructor::generate_header_pog(CArrayChar &output, bool interface) {
     if(interface) {
         char str[1024];
         strcpy(str,"\nvoid _popc_constructor");
-        output.InsertAt(-1,str,strlen(str));
+        output += str;
         GenerateArguments(output, true);
         GeneratePostfix(output,true);
     }
@@ -1456,7 +1443,7 @@ void Constructor::GenerateHeader(CArrayChar &output, bool interface) {
     if(interface) {
         char str[1024];
         strcpy(str,"\nvoid _paroc_Construct");
-        output.InsertAt(-1,str,strlen(str));
+        output += str;
         GenerateArguments(output, true);
         GeneratePostfix(output,true);
     }
@@ -1467,7 +1454,7 @@ void Constructor::GenerateReturn(CArrayChar& /*output*/, bool /*header*/) {
 
 void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
     if(header) {
-        output.InsertAt(-1,";",1);
+        output += ";";
         return;
     }
 
@@ -1494,7 +1481,7 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
                 strcat(tmpcode,"(_paroc_nobind)");
             }
         }
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
     }
 }
 
@@ -1509,18 +1496,18 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
 
     if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()) {
         strcpy(tmpcode, "\n");
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
         od.Generate(tmpcode);   // Generates the object description
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
 #ifdef __APPLE__
         strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, 1);");
 #else
         strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);");
 #endif
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"\n  pthread_args_t_%d *arguments = (pthread_args_t_%d *) malloc(sizeof(pthread_args_t_%d));\n  %s* ptr = static_cast<%s*>(this);\n  arguments->ptr_interface = ptr;\n", get_id(), get_id(), get_id(), GetClass()->GetName(), GetClass()->GetName());
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
 
         for(auto& param : params){
             Param &p = *param;
@@ -1529,13 +1516,13 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
             strcat(tmpcode, " = ");
             strcat(tmpcode, p.GetName());
             strcat(tmpcode, ";\n");
-            output.InsertAt(-1, tmpcode, strlen(tmpcode));
+            output += tmpcode;
         }
 
         sprintf(tmpcode, "  int ret;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread%d, arguments);\n", GetClass()->GetName(), get_id());
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
         strcpy(tmpcode, "  if(ret != 0) {\n    printf(\"Thread creation failed\\n\");\n    perror(\"pthread_create\");\n    pthread_attr_destroy(&attr);\n    return;\n  }\n  pthread_attr_destroy(&attr);\n");
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
     } else if(!GetClass()->is_collective()) { // End of APOA Support
         /**
          * Standard parallel object allocation
@@ -1543,7 +1530,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
         strcpy(tmpcode, "");
         od.Generate(tmpcode);   // Generates the object description
         strcat(tmpcode,"\nAllocate();");    // Generates call to the Allocate method of paroc_interface
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
 
         // Generates invocation to the constructor of the remote object
         strcpy(tmpcode,"\n_paroc_Construct(");
@@ -1556,48 +1543,48 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
             }
         }
         strcat(tmpcode,");\n");
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
         // End of constructor invocation
     } else {
         // Generate the object description in the interface constructor
         sprintf(tmpcode, "\n  _popc_selected_constructor_id = %d;", id);
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
 
         strcpy(tmpcode, "\n  ");
         od.Generate(tmpcode);
         strcat(tmpcode, "\n");
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
 
         // Save constructor parameters for group initialization
         for(auto& param : params){
             Param &p = *param;
             sprintf(tmpcode, "  _popc_constructor_%d_%s = %s;\n", id, p.GetName(), p.GetName());
-            output.InsertAt(-1, tmpcode, strlen(tmpcode));
+            output += tmpcode;
         }
     }
 
 
     strcpy(tmpcode,"}\n");
-    output.InsertAt(-1, tmpcode, strlen(tmpcode));
+    output += tmpcode;
 
 
     // APOA Code generation
     if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()) {
         sprintf(tmpcode,"\n// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", GetClass()->GetName());
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
         sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg)\n  {\n", GetClass()->GetName(), get_id());
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"    pthread_args_t_%d *arguments = (pthread_args_t_%d*)arg;\n", get_id(), get_id());
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"    %s* _this_interface = static_cast<%s*>(arguments->ptr_interface);\n",GetClass()->GetName(), GetClass()->GetName());
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         for(auto& param : params){
             Param &p = *param;
             sprintf(tmpcode, "%s %s = arguments->%s;\n", p.GetType()->GetName(), p.GetName(), p.GetName());
-            output.InsertAt(-1, tmpcode, strlen(tmpcode));
+            output += tmpcode;
         }
 
         sprintf(tmpcode, "    try{\n      _this_interface->Allocate();\n      _this_interface->_paroc_Construct(");
@@ -1612,20 +1599,20 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
         }
 
         strcat(tmpcode, ");\n");
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode, "    } catch(paroc_exception* ex) {\n      printf(\"Async allocation: %%s\", ex->what()); \n    }\n   free(arg);\n  return 0;\n  }\n}\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
     }
 
 
 
     if(!GetClass()->is_collective()) {
         sprintf(tmpcode, "\nvoid %s::_paroc_Construct", GetClass()->GetName());
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
     } else {
         //sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  _popc_constructor(", GetClass()->GetName());
-        //output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        //output += tmpcode;
 
 
 
@@ -1634,19 +1621,19 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
                 for (int j = 0; j < nb; j++) {
                     Param &p = *(params[j]);
                     sprintf(tmpcode, "_popc_constructor_%d_%s", get_id(), p.GetName());
-                    output.InsertAt(-1, tmpcode, strlen(tmpcode));
+                    output += tmpcode;
                     if (j < nb-1) {
                     strcpy(tmpcode, ", ");
-                    output.InsertAt(-1, tmpcode, strlen(tmpcode));
+                    output += tmpcode;
                 }
                 }
 
 
               strcpy(tmpcode, ");\n}\n");
-              output.InsertAt(-1, tmpcode, strlen(tmpcode));     */
+              output += tmpcode;     */
 
         sprintf(tmpcode,"\nvoid %s::_popc_constructor",GetClass()->GetName());
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
     }
 
     GenerateArguments(output,false);
@@ -1654,7 +1641,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
 
 
     strcpy(tmpcode,"\n{");
-    output.InsertAt(-1, tmpcode, strlen(tmpcode));
+    output += tmpcode;
 }
 
 //Implement Destructor class
@@ -1668,9 +1655,9 @@ void Destructor::GenerateClient(CArrayChar& /*output*/) {
 
 void Destructor::GenerateReturn(CArrayChar &output, bool header) {
     if(header) {
-        output.InsertAt(-1,"~",1);
+        output += "~";
     } else {
-        output.InsertAt(-1,"\n~",2);
+        output += "\n~";
     }
 }
 
