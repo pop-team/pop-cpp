@@ -40,35 +40,29 @@ int yylex();
 extern int linenumber;
 extern char filename[1024];
 
-CArrayCharPtr incl[1000];
-CArrayCharPtr sources;
-CArrayCharPtr searchpath;
-
 int indexsource=0;  //the index of source file and the include directive
 
+extern CArrayChar othercodes;
+extern bool insideClass;
+extern int startPos;
 
- extern CArrayChar othercodes;
- extern bool insideClass;
- extern int startPos;
+CodeFile *thisCodeFile;
+Class *currentClass;
+DataType *currenttype;
+DataType *returntype;
 
+std::vector<bool> constPointerPositions; // counter variables who contains order of conts possition in pointers
 
-    CodeFile *thisCodeFile;
-    Class *currentClass;
-    DataType *currenttype;
-    DataType *returntype;
+TypeClassStruct *seqclass;
 
-    std::vector<bool> constPointerPositions; // counter variables who contains order of conts possition in pointers
+Param *currentparam;
 
-    TypeClassStruct *seqclass;
+PackObject *currentPack;
+Structure *structContainer;
 
-    Param *currentparam;
-
-    PackObject *currentPack;
-    Structure *structContainer;
-
-    TypeDefinition *typeDefContainer;
-    Method *method;
-    // Param *param;
+TypeDefinition *typeDefContainer;
+Method *method;
+// Param *param;
 
  int n,t;
  bool isNamespace = false;
