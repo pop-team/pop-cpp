@@ -23,7 +23,7 @@ void PackObject::GenerateCode(CArrayChar &output) {
     output.InsertAt(-1, str, strlen(str));
     int n = objects.size();
     for(int i = 0; i < n; i++) {
-        sprintf(str,"  %s%s::_popc_factory.test(\"%s\");\n", objects[i], Class::POG_BROKER_POSTFIX, objects[i]);
+        sprintf(str,"  %s%s::_popc_factory.test(\"%s\");\n", objects[i].c_str(), Class::POG_BROKER_POSTFIX, objects[i].c_str());
         output.InsertAt(-1,str,strlen(str));
     }
     strcpy(str,"}\n");
@@ -34,7 +34,7 @@ void PackObject::GenerateCode(CArrayChar &output) {
     output.InsertAt(-1,str,strlen(str));
     int sz=objects.size();
     for(int j=0; j<sz; j++) {
-        sprintf(str,"\n\tif (paroc_utils::isEqual(objname, \"%s\")) return true;",objects[j]);
+        sprintf(str,"\n\tif (paroc_utils::isEqual(objname, \"%s\")) return true;",objects[j].c_str());
         output.InsertAt(-1,str,strlen(str));
     }
     strcpy(str,"\n\treturn false;\n}\n");
@@ -53,19 +53,18 @@ void PackObject::GenerateCode(CArrayChar &output) {
 
 
 void PackObject::AddObject(string64 objname) {
-    int n=objects.size();
-    for(int i=0; i<n; i++) if(paroc_utils::isEqual(objects[i],objname)) {
+    for(auto& object : objects){
+        if(object == objname){
             return;
         }
+    }
 
-    objects.resize(n+1);
-    strcpy(objects[n],objname);
+    objects.push_back(objname);
 }
 
 int PackObject::GetNumObject() {
     return objects.size();
 }
-
 
 void  PackObject::SetStartLine(int l) {
     startline=l;
