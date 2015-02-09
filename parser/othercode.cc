@@ -9,22 +9,22 @@ OtherCode::OtherCode(CodeFile *file): CodeData(file) {}
 void OtherCode::GenerateCode(CArrayChar &output) {
     int n = code.size();
     if(n) {
-        output.InsertAt(-1, code.data(), n);
+        output.InsertAt(-1, code.c_str(), n);
     }
 }
 
 void OtherCode::AddCode(char *newcode) {
-    code.InsertAt(-1, newcode, strlen(newcode));
+    code += std::string(newcode, strlen(newcode));
 }
+
 void OtherCode::AddCode(char *newcode, int n) {
-    if(n>0) {
-        code.InsertAt(-1,newcode,n);
-    }
+    code += std::string(newcode, n);
 }
 
 void OtherCode::AddCode(CArrayChar &newcode) {
-    int n=newcode.size();
-    if(n) {
-        code.InsertAt(-1,newcode.data(),n);
-    }
+    code += std::string(newcode.data(), newcode.size());
+}
+
+void OtherCode::AddCode(const std::string& newcode) {
+    code += newcode;
 }

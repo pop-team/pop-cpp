@@ -110,18 +110,20 @@ protected:
 class OtherCode: public CodeData {
 public:
     OtherCode(CodeFile *file);
+
     virtual int Type() {
         return TYPE_OTHERCODE;
     };
 
     virtual void GenerateCode(CArrayChar &output);
 
-
     void AddCode(char *newcode);
     void AddCode(char *, int n);
     void AddCode(CArrayChar &newcode);
+    void AddCode(const std::string& newcode);
+
 protected:
-    CArrayChar code;
+    std::string code;
 };
 
 /**
