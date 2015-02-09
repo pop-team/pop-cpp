@@ -86,30 +86,30 @@ void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, 
         }
 
         sprintf(tmpcode,"int %s_size=%s.size();\n", iterator, varname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         sprintf(tmpcode,"%s.Push(\"@size\",\"int\",1);\n%s.Pack(&%s_size, 1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode,"%s.Pack((%s*)&(%s)[0], %s_size);\n%s.Pop();\n",bufname, elements[0]->GetName(), varname, iterator, bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
     } else if((strcmp(name, "map")==0 || strcmp(name, "std::map")==0)) {
         sprintf(tmpcode, "int %s_size=%s.size();\n",iterator,varname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode, "%s.Push(\"@size\",\"int\",1);\n%s.Pack(&%s_size,1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         GetDeclaration(NULL,decl);
         sprintf(tmpcode, "for (%s::const_iterator it_%s=%s.begin();it_%s!=%s.end();it_%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         elements[0]->GetDeclaration(NULL,decl);
         sprintf(value,"((%s &)(it_%s->first))", decl, iterator);
@@ -120,7 +120,7 @@ void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, 
         elements[1]->Marshal(value, bufname,NULL, output);
 
         sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
     } else {
 
         elements[0]->GetDeclaration(NULL,decl);
@@ -129,20 +129,20 @@ void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, 
         GetDeclaration(NULL,decl);
 
         sprintf(tmpcode, "int %s_size=%s.size();\n",iterator,varname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode, "%s.Push(\"@size\",\"int\",1);\n%s.Pack(&%s_size,1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode, "for (%s::iterator %s=%s.begin();%s!=%s.end();%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         elements[0]->Marshal(value, bufname,NULL, output);
 
         sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
     }
 }
 
@@ -164,36 +164,36 @@ void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/,
         }
 
         sprintf(tmpcode,"int %s_size=0;\n%s.Push(\"@size\",\"int\", 1);\n%s.UnPack(&%s_size,1);\n%s.Pop();\n",iterator, bufname, bufname, iterator, bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         sprintf(tmpcode,"%s.resize(%s_size);\n", varname, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode,"%s.UnPack((%s*)&%s[0],%s_size);\n%s.Pop();\n",bufname,elements[0]->GetName(),varname,iterator, bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
     } else if((strcmp(name, "map")==0 || strcmp(name, "std::map")==0)) {
 
         sprintf(tmpcode, "int %s_size=0;\n",iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         elements[0]->GetDeclaration(NULL,decl);
         sprintf(tmpcode, "%s %s_key;\n",decl, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         elements[1]->GetDeclaration(NULL,decl);
         sprintf(tmpcode, "%s %s_value;\n",decl, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode, "%s.Push(\"@size\",\"int\",1);\n%s.UnPack(&%s_size,1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode, "%s.clear();\nfor(int i=0;i<%s_size;i++){\n",varname,iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         elements[0]->GetDeclaration(NULL,decl);
         sprintf(value,"((%s &)(%s_key))", decl, iterator);
@@ -203,10 +203,10 @@ void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/,
         elements[1]->DeMarshal(value, bufname,NULL, output);
 
         sprintf(tmpcode, "%s[%s_key]=%s_value;\n",varname,iterator,iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
     } else {
         elements[0]->GetDeclaration(NULL,decl);
@@ -215,16 +215,16 @@ void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/,
         GetDeclaration(NULL,decl);
 
         sprintf(tmpcode, "int %s_size;\n%s.Push(\"@size\",\"int\", 1);\n%s.UnPack(&%s_size,1);\n%s.Pop();\n%s.resize(%s_size);\n", iterator,bufname,bufname, iterator, bufname,varname,iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode, "for (%s::iterator %s=%s.begin();%s!=%s.end();%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         elements[0]->DeMarshal(value, bufname,NULL, output);
 
         sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
     }
 }

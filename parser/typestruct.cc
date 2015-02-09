@@ -52,7 +52,7 @@ void TypeStruct::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CAr
         strcpy(paramname,"unknown");
     }
     sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", 1);\n",bufname,paramname, GetName());
-    std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+    output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
     while(pos!=NULL) {
         DataType *tmp=attr_types.GetNext(pos);
@@ -61,7 +61,7 @@ void TypeStruct::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CAr
         tmp->Marshal(tmpcode,bufname,NULL,output);
     }
     sprintf(tmpcode,"%s.Pop();\n",bufname);
-    std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+    output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
 }
 
@@ -74,7 +74,7 @@ void TypeStruct::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, C
         strcpy(paramname,"unknown");
     }
     sprintf(tmpcode,"%s.Push(\"%s\",\"%s\",1);\n",bufname,paramname, GetName());
-    std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+    output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
     while(pos!=NULL) {
         DataType *tmp=attr_types.GetNext(pos);
@@ -84,7 +84,7 @@ void TypeStruct::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, C
         tmp->DeMarshal(tmpcode,bufname,NULL,output);
     }
     sprintf(tmpcode,"%s.Pop();\n",bufname);
-    std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+    output.InsertAt(-1,tmpcode,strlen(tmpcode));
 }
 
 bool TypeStruct::IsPrototype() {

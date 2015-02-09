@@ -265,13 +265,13 @@ bool Param::Marshal(char *bufname, bool reformat,bool inf_side, CArrayChar &outp
         sprintf(decl, "int __paroc_size1_%s=%s;\n%s.Push(\"%sSize\",\"int\",1);\n%s.Pack(& __paroc_size1_%s,1);\n%s.Pop();\n",name,paramSize,bufname, name, bufname,name, bufname);
         sprintf(sizeinfo,"__paroc_size1_%s",name);
 
-        std::copy(decl,decl+strlen(decl),std::back_inserter(output));
+        output.InsertAt(-1,decl,strlen(decl));
     }
 
     if(marshalProc!=NULL) {
         char tmpcode[1024];
         sprintf(tmpcode,"%s(%s,%s, %s, %d, 0);\n",marshalProc,bufname,tmpvar, (*sizeinfo==0)? "0" : sizeinfo,flags);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
     } else {
         mytype->Marshal(tmpvar,bufname,(*sizeinfo==0)? NULL : sizeinfo,output);
     }
@@ -302,7 +302,7 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
 
         sprintf(sizeinfo,"__paroc_size2_%s",name);
 
-        std::copy(decl,decl+strlen(decl),std::back_inserter(output));
+        output.InsertAt(-1,decl,strlen(decl));
 
         //check to alloc the memory
         int nptr=mytype->IsPointer();
@@ -324,14 +324,14 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
                 }
                 sprintf(alloccode, "paroc_container<%s> __paroc_container_%s(__paroc_size2_%s);\n%s=__paroc_container_%s;\n", tmpstr,name,name,name,name);
             }
-            std::copy(alloccode,alloccode+strlen(alloccode),std::back_inserter(output));
+            output.InsertAt(-1,alloccode,strlen(alloccode));
         }
     }
     if(marshalProc!=NULL) {
         char tmpcode[1024];
 
         sprintf(tmpcode,"%s(%s,%s,%s,%d,%s);",marshalProc,bufname,tmpvar, (*sizeinfo==0)?  "0" : sizeinfo,flags,(inf_side ? "0" : "&_internal_mem"));
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
     } else {
         mytype->DeMarshal(tmpvar,bufname,(*sizeinfo==0)? NULL : sizeinfo,output);
     }
@@ -423,7 +423,7 @@ void ClassMember::GenerateHeader(CArrayChar& output, bool /*interface*/) {
     if(line>0 && (fname=myclass->GetFileInfo())!=NULL) {
         char str[1024];
         sprintf(str,"\n# %d \"%s\"\n", line, fname);
-        std::copy(str, str+strlen(str), std::back_inserter(output));
+        output.InsertAt(-1,str,strlen(str));
     }
 
 }
@@ -444,7 +444,7 @@ void Attribute::GenerateHeader(CArrayChar &output, bool interface) {
     for(auto& attribute : attributes){
         Param &p=*attribute;
         p.DeclareVariable(tmp);
-        std::copy(tmp,tmp+strlen(tmp),std::back_inserter(output));
+        output.InsertAt(-1,tmp,strlen(tmp));
     }
 }
 
@@ -481,13 +481,11 @@ void Enumeration::setArgs(std::string value) {
 // Generation of the appropriate code for the enum type
 void Enumeration::GenerateHeader(CArrayChar &output, bool interface) {
     ClassMember::GenerateHeader(output, interface);
-    std::string enum_str{"enum "};
-    std::copy(enum_str.begin(), enum_str.end(), std::back_inserter(output));
-    std::copy(name.begin(), name.end(), std::back_inserter(output));
-    output.push_back('{');
-    std::copy(args.begin(), args.end(), std::back_inserter(output));
-    output.push_back('}');
-    output.push_back(';');
+    output.InsertAt(-1, "enum ",strlen("enum "));
+    output.InsertAt(-1,name.c_str(),strlen(name.c_str()));
+    output.InsertAt(-1, "{", 1);
+    output.InsertAt(-1, args.c_str(), strlen(args.c_str()));
+    output.InsertAt(-1, "};", 2);
 }
 
 /**
@@ -526,16 +524,13 @@ void Structure::setInnerDecl(std::string value) {
 // Generation of the appropriate code for the enum type
 void Structure::GenerateHeader(CArrayChar &output, bool interface) {
     ClassMember::GenerateHeader(output, interface);
-    std::string struct_str{"struct "};
-    std::copy(struct_str.begin(), struct_str.end(), std::back_inserter(output));
-    std::copy(name.begin(), name.end(), std::back_inserter(output));
-    output.push_back('{');
-    output.push_back('\n');
-    std::copy(innerdecl.begin(), innerdecl.end(), std::back_inserter(output));
-    output.push_back('\n');
-    output.push_back('}');
-    std::copy(objects.begin(), objects.end(), std::back_inserter(output));
-    output.push_back(';');
+    output.InsertAt(-1, "struct ",strlen("struct "));
+    output.InsertAt(-1, name.c_str(),strlen(name.c_str()));
+    output.InsertAt(-1, "{\n", 2);
+    output.InsertAt(-1, innerdecl.c_str(), strlen(innerdecl.c_str()));
+    output.InsertAt(-1, "\n}", 2);
+    output.InsertAt(-1, objects.c_str(), strlen(objects.c_str()));
+    output.InsertAt(-1, ";", 1);
 }
 
 /**
@@ -582,22 +577,18 @@ bool TypeDefinition::isArray() {
 // Generation of the appropriate code for the enum type
 void TypeDefinition::GenerateHeader(CArrayChar &output, bool interface) {
     ClassMember::GenerateHeader(output, interface);
-    std::string tmp{"typedef "};
-    std::copy(tmp.begin(), tmp.end(), std::back_inserter(output));
-    std::copy(name.begin(), name.end(), std::back_inserter(output));
+    output.InsertAt(-1, "typedef ",strlen("typedef "));
+    output.InsertAt(-1, name.c_str(),strlen(name.c_str()));
     if(isPtr()) {
-        output.push_back(' ');
-        output.push_back('*');
-        output.push_back(' ');
+        output.InsertAt(-1, " * ", 3);
     } else {
-        output.push_back(' ');
+        output.InsertAt(-1, " ", 1);
     }
-    std::copy(basetype.begin(), basetype.end(), std::back_inserter(output));
+    output.InsertAt(-1, basetype.c_str(), strlen(basetype.c_str()));
     if(isArray()) {
-        output.push_back('[');
-        output.push_back(']');
+        output.InsertAt(-1, "[]", 2);
     }
-    output.push_back(';');
+    output.InsertAt(-1, ";", 1);
 }
 
 
@@ -609,16 +600,16 @@ Directive::Directive(Class *cl, char *directive): ClassMember(cl, PUBLIC) {
 }
 
 Directive::~Directive() {
-    if(code) {
+    if(code!=NULL) {
         free(code);
     }
 }
 
 void Directive::GenerateHeader(CArrayChar &output, bool /*interface*/) {
-    if(code) {
-        output.push_back('\n');
-        std::copy(code, code + strlen(code), std::back_inserter(output));
-        output.push_back('\n');
+    if(code!=NULL) {
+        output.InsertAt(-1,"\n",1);
+        output.InsertAt(-1,code,strlen(code));
+        output.InsertAt(-1,"\n",1);
     }
 }
 
@@ -734,10 +725,9 @@ void Method::GenerateReturn(CArrayChar &output, bool header, bool interface) {
         return;
     }
     if(header && isVirtual) {
-        std::string tmp{"virtual "};
-        std::copy(tmp.begin(), tmp.end(), std::back_inserter(output));
+        output.InsertAt(-1,"virtual ",8);
     } else if(!header) {
-        output.push_back('\n');
+        output.InsertAt(-1,"\n",1);
     }
 
     if(returnparam.GetType()->IsParClass() && !returnparam.IsRef()) {
@@ -754,51 +744,54 @@ void Method::GenerateReturn(CArrayChar &output, bool header, bool interface) {
 
     // add by david
     if(returnparam.IsConst()) {
-        std::string tmp_const{"const "};
-        std::copy(tmp_const.begin(), tmp_const.end(), std::back_inserter(output));
+        const char* tmp_const= "const ";
+        output.InsertAt(-1,tmp_const, strlen(tmp_const));
     }
 
     char tmp[1024];
 
     type->GetDeclaration(NULL,tmp);
-
-    std::copy(tmp,tmp+strlen(tmp),std::back_inserter(output));
+    //if (returnparam.IsConst())sprintf(tmp, "const %s", tmp);
+    output.InsertAt(-1,tmp, strlen(tmp));
 
     // add by david
     if(returnparam.IsRef() && !interface) {
-        output.push_back('&');
-        output.push_back(' ');
+//      if(!returnparam.GetType()->IsParClass())
+//      {
+        const char* tmp_const= "& ";
+        output.InsertAt(-1,tmp_const, strlen(tmp_const));
+//      }
     }
 
-    output.push_back(' ');
+    output.InsertAt(-1," ");
 }
 
 void Method::GeneratePostfix(CArrayChar &output, bool header) {
     // add const add the end of methode - david
     if(isGlobalConst) {
         const char* tmp = " const ";
-        std::copy(tmp,tmp+strlen(tmp),std::back_inserter(output));
+        output.InsertAt(-1,tmp, strlen(tmp));
     }
 
     if(header) {
-        output.push_back(';');
+        output.InsertAt(-1,";",1);
     }
 }
 
 void Method::GenerateName(CArrayChar &output, bool header) {
     if(header) {
-        std::copy(name, name + strlen(name), std::back_inserter(output));
+        output.InsertAt(-1,name,strlen(name));
     } else {
         char str[256];
         sprintf(str,"%s::%s",GetClass()->GetName(),name);
-        std::copy(str, str+strlen(str), std::back_inserter(output));
+        output.InsertAt(-1,str,strlen(str));
     }
 }
 
 void Method::GenerateArguments(CArrayChar &output, bool header) {
     char tmpcode[10240];
 
-    output.push_back('(');
+    output.InsertAt(-1,"(",1);
     int nb=params.size();
     for(int j=0; j<nb; j++) {
         Param &p=*(params[j]);
@@ -806,9 +799,9 @@ void Method::GenerateArguments(CArrayChar &output, bool header) {
         if(j<nb-1) {
             strcat(tmpcode,", ");
         }
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
     }
-    output.push_back(')');
+    output.InsertAt(-1,")",1);
 }
 
 
@@ -851,10 +844,10 @@ void Method::GenerateClient(CArrayChar &output) {
     GenerateArguments(output, false);
     GeneratePostfix(output, false);
 
-    output.push_back('\n');
-    output.push_back('{');
+    output.InsertAt(-1, "\n{", 2);
 
     GenerateClientPrefixBody(output);
+
 
     // Generate method body
     int invoke_code = 0;
@@ -883,16 +876,16 @@ void Method::GenerateClient(CArrayChar &output) {
      */
     if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && GetClass()->IsAsyncAllocationDisable()) {
         sprintf(tmpcode, "\n  // Waiting for APOA to be done before executing any method\n");
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         sprintf(tmpcode, "  void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n");
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         char* nameOfRetType = returnparam.GetType()->GetName();
         if(MethodType()==METHOD_NORMAL &&!returnparam.GetType()->Same((char*)"void")) {
             sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    %s *tempObject = 0;\n    return (*tempObject);\n  }\n", nameOfRetType);
         } else  if(MethodType()==METHOD_NORMAL && returnparam.GetType()->Same((char*)"void")) {
             sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    return;\n  }\n");
         }
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
     } // End of APOA Support
 
 
@@ -901,32 +894,32 @@ void Method::GenerateClient(CArrayChar &output) {
 
     if(!GetClass()->is_collective()) {
         sprintf(tmpcode, "\n  paroc_mutex_locker __paroc_lock(_paroc_imutex);");
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         sprintf(tmpcode, "\n  if(!__paroc_combox)paroc_exception::paroc_throw_errno(\"combox was not initialized\");");
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         sprintf(tmpcode, "\n  paroc_connection* _popc_connection = __paroc_combox->get_connection();\n  __paroc_buf->Reset();\n  paroc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __paroc_buf->SetHeader(__paroc_buf_header);\n", clname, id, invoke_code, name);
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
     } else {
         // Additional code if the method is not collective
         if(!is_collective() && MethodType() != METHOD_CONSTRUCTOR) {
             sprintf(tmpcode, "\n  // Generate additional information for a non collective call");
-            std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
             sprintf(tmpcode, "\n  paroc_connection* _popc_connection = _popc_combox->get_connection();\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n  _popc_buffer->SetHeader(_popc_message_header);\n",
                     clname, POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID, POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE, POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME);
-            std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+            output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
             sprintf(tmpcode, "\n   _popc_buffer->Push(\"rank\", \"int\", 1);\n  _popc_buffer->Pack(&_popc_default_rank_for_single_call, 1);\n  _popc_buffer->Pop();\n");
-            std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+            output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
             sprintf(tmpcode, "\n  popc_send_request(_popc_buffer, _popc_connection);\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header_call(CLASSUID_%s, %d, %d, \"%s\");", clname, id, invoke_code, name);
-            std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+            output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
             sprintf(tmpcode, "\n  _popc_buffer->SetHeader(_popc_message_header_call);");
-            std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+            output.InsertAt(-1, tmpcode, strlen(tmpcode));
         } else {
             sprintf(tmpcode, "\n  paroc_connection* _popc_connection = _popc_combox->get_connection();\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n  _popc_buffer->SetHeader(_popc_message_header);\n", clname, id, invoke_code, name);
-            std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
         }
     }
 
@@ -951,14 +944,14 @@ void Method::GenerateClient(CArrayChar &output) {
     } else {
         strcpy(tmpcode,"\n  popc_send_request(_popc_buffer, _popc_connection);");
     }
-    std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+    output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
     if(waitreturn) {
 #ifdef OD_DISCONNECT
         strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())paroc_exception::paroc_throw_errno();\n\t}");
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         strcpy(tmpcode,"\n\telse\n");
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #endif
 
         if(!GetClass()->is_collective()) {
@@ -966,7 +959,7 @@ void Method::GenerateClient(CArrayChar &output) {
         } else {
             strcpy(tmpcode,"\n  popc_recv_response(_popc_buffer, _popc_connection);");
         }
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         for(j=0; j<nb; j++) {
             Param &p=*(params[j]);
             if(p.OutParam()) {
@@ -981,7 +974,7 @@ void Method::GenerateClient(CArrayChar &output) {
         if(MethodType() == METHOD_NORMAL && !returnparam.GetType()->Same((char*)"void")) {
             bool reformat;
             returnparam.DeclareVariable(tmpcode,reformat,false);
-            std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
 
 
@@ -992,7 +985,7 @@ void Method::GenerateClient(CArrayChar &output) {
                 returnparam.UnMarshal((char*)"(*_popc_buffer)", reformat, true, true, output);
                 strcpy(tmpcode,"\n  _popc_buffer->Reset();");
             }
-            std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
 
             // Added for new communication support
@@ -1003,7 +996,7 @@ void Method::GenerateClient(CArrayChar &output) {
             }
             strcat(tmpcode,returnparam.name);
             strcat(tmpcode,";\n}\n");
-            std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         } else {
             if(!GetClass()->is_collective()) {
@@ -1011,10 +1004,10 @@ void Method::GenerateClient(CArrayChar &output) {
             } else {
                 strcpy(tmpcode,"\n  _popc_buffer->Reset();\n");
             }
-            std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
             // Added for new communication support
             strcpy(tmpcode,"\n  _popc_connection->reset();}\n");
-            std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+            output.InsertAt(-1,tmpcode,strlen(tmpcode));
         }
     } else {
         // Check that we are not waiting for a returning param
@@ -1032,20 +1025,20 @@ void Method::GenerateClient(CArrayChar &output) {
         }
 #ifdef OD_DISCONNECT
         strcpy(tmpcode,"\n\tint time_alive, time_control, oldTime;\nod.getCheckConnection(time_alive, time_control);\n\t");
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         strcpy(tmpcode,"\n\tif(time_alive > 0 && time_control > 0 ){\n\t\toldTime=__paroc_combox->GetTimeout();\n\t\t__paroc_combox->SetTimeout(time_alive);\n\t\t__paroc_combox->RecvAck();\n\t\t__paroc_combox->SetTimeout(oldTime);\n\t}");
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #else
         if(!GetClass()->is_collective()) {
             strcpy(tmpcode,"\n  __paroc_buf->Reset();");
         } else {
             strcpy(tmpcode,"\n  _popc_buffer->Reset();");
         }
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         // Added for new communication support
         strcpy(tmpcode,"_popc_connection->reset();\n}\n");
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #endif
     }
 }
@@ -1072,7 +1065,7 @@ void Method::generate_header_pog(CArrayChar &output, bool interface) {
     if(!interface && type != METHOD_NORMAL) {
         char str[256];
         sprintf(str, "%s%s", name, Class::POG_OBJECT_POSTFIX);
-        std::copy(str, str+strlen(str), std::back_inserter(output));
+        output.InsertAt(-1, str, strlen(str));
     } else {
         GenerateName(output, true);
     }
@@ -1080,8 +1073,7 @@ void Method::generate_header_pog(CArrayChar &output, bool interface) {
     GenerateArguments(output, true);
 
     if(isPureVirtual && !interface) {
-        output.push_back('=');
-        output.push_back('0');
+        output.InsertAt(-1,"=0",2);
     }
 
     GeneratePostfix(output, true);
@@ -1108,15 +1100,14 @@ void Method::GenerateHeader(CArrayChar &output, bool interface) {
     if(!interface && type != METHOD_NORMAL) {
         char str[256];
         sprintf(str, "%s%s", name, OBJ_POSTFIX);
-        std::copy(str, str+strlen(str), std::back_inserter(output));
+        output.InsertAt(-1, str, strlen(str));
     } else {
         GenerateName(output, true);
     }
     GenerateArguments(output, true);
 
     if(isPureVirtual && !interface) {
-        output.push_back('=');
-        output.push_back('0');
+        output.InsertAt(-1,"=0",2);
     }
 
     GeneratePostfix(output,true);
@@ -1133,7 +1124,7 @@ void Method::GenerateBrokerHeader(CArrayChar &output) {
 
     char str[1024];
     sprintf(str,"\nvoid Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output);",name , id);
-    std::copy(str, str+strlen(str), std::back_inserter(output));
+    output.InsertAt(-1,str,strlen(str));
 }
 
 void Method::generate_broker_header_pog(CArrayChar &output) {
@@ -1147,7 +1138,7 @@ void Method::generate_broker_header_pog(CArrayChar &output) {
 
     char str[1024];
     sprintf(str,"\n  void Invoke_%s_%d(paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);",name , id);
-    std::copy(str, str+strlen(str), std::back_inserter(output));
+    output.InsertAt(-1,str,strlen(str));
 }
 
 void Method::GenerateBroker(CArrayChar &output) {
@@ -1179,7 +1170,7 @@ void Method::GenerateBroker(CArrayChar &output) {
     } else {
         sprintf(str,"\nvoid %s::Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output)\n{",brokername,name, id);
     }
-    std::copy(str, str+strlen(str), std::back_inserter(output));
+    output.InsertAt(-1,str,strlen(str));
 
     char methodcall[1024];
     bool haveReturn=false;
@@ -1225,7 +1216,7 @@ void Method::GenerateBroker(CArrayChar &output) {
 
         // unmarhall and allocate memory for input arguments first
         strcpy(str,"\n  ");
-        std::copy(str, str+strlen(str), std::back_inserter(output));
+        output.InsertAt(-1,str,strlen(str));
 
         for(int j = 0; j < nb; j++) {
             Param &p = *(params[j]);
@@ -1234,7 +1225,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             }
             char decl[1024];
             if(p.DeclareVariable(decl,reformat[j],false)) {
-                std::copy(decl,decl+strlen(decl),std::back_inserter(output));
+                output.InsertAt(-1, decl, strlen(decl));
             }
 
             if(GetClass()->is_collective()) {
@@ -1244,7 +1235,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             }
             if(p.marshalProc!=NULL && !have_memspool) {
                 strcpy(str,"\nparoc_memspool _internal_mem;");
-                std::copy(str, str+strlen(str), std::back_inserter(output));
+                output.InsertAt(-1,str,strlen(str));
                 have_memspool=true;
             }
             if(GetClass()->is_collective()) {
@@ -1262,7 +1253,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             if(!p.InParam()  /*&& strcmp(p.GetType()->GetName(), "void") != 0 */) {
                 char decl[1024];
                 p.DeclareVariable(decl,reformat[j],true);
-                std::copy(decl,decl+strlen(decl),std::back_inserter(output));
+                output.InsertAt(-1, decl, strlen(decl));
             }
 
             if(reformat[j] && !p.IsVoid()) {
@@ -1284,8 +1275,14 @@ void Method::GenerateBroker(CArrayChar &output) {
         sprintf(tempcatch,"\n  } catch(std::exception& e) {\n    printf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what());\n    throw;\n  }\n", name, clname);
         strcat(methodcall,tempcatch);
 
+
+
         //now....generate the call...
-        std::copy(methodcall, methodcall + strlen(methodcall), std::back_inserter(output));
+        output.InsertAt(-1,methodcall,strlen(methodcall));
+
+        /*
+
+          } */
 
         if(GetClass()->is_collective()) {
             sprintf(str,"\n  if (_popc_connection != 0) {\n    _popc_buffer.Reset();\n    paroc_message_header _popc_message_header(\"%s\");\n    _popc_buffer.SetHeader(_popc_message_header);\n", name);
@@ -1293,7 +1290,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             sprintf(str,"\nif (__interface_output!=0) \n{\n__paroc_buf.Reset();\nparoc_message_header __paroc_buf_header(\"%s\");\n__paroc_buf.SetHeader(__paroc_buf_header);\n", name);
         }
 
-        std::copy(str, str+strlen(str), std::back_inserter(output));
+        output.InsertAt(-1,str,strlen(str));
 
         for(int j=0; j<nb; j++) {
             Param &p=*(params[j]);
@@ -1325,14 +1322,14 @@ void Method::GenerateBroker(CArrayChar &output) {
             } else {
                 sprintf(str, "\n    popc_send_response(_popc_buffer, _popc_connection, %s);", (is_collective()) ? "true" : "false");
             }
-            std::copy(str, str+strlen(str), std::back_inserter(output));
+            output.InsertAt(-1,str,strlen(str));
             strcpy(str, "\n    _popc_connection->reset();\n  }\n}\n");
-            std::copy(str, str+strlen(str), std::back_inserter(output));
+            output.InsertAt(-1,str,strlen(str));
         } else {
             strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n");
-            std::copy(str, str+strlen(str), std::back_inserter(output));
+            output.InsertAt(-1,str,strlen(str));
             strcpy(str,"\nif(__interface_output != 0)\n__interface_output->reset();\n}\n");
-            std::copy(str, str+strlen(str), std::back_inserter(output));
+            output.InsertAt(-1,str,strlen(str));
         }
         // End of mod
     } else {
@@ -1340,7 +1337,7 @@ void Method::GenerateBroker(CArrayChar &output) {
             printf("POP-C++ Warning: %s is an abstract parclass. Be aware that only the final class (parallel object) will keep this semantic.\n", clname);
         }
         strcpy(str,"}\n");  // Close the method braces
-        std::copy(str, str+strlen(str), std::back_inserter(output));
+        output.InsertAt(-1,str,strlen(str));
     }
 
 }
@@ -1447,7 +1444,7 @@ void Constructor::generate_header_pog(CArrayChar &output, bool interface) {
     if(interface) {
         char str[1024];
         strcpy(str,"\nvoid _popc_constructor");
-        std::copy(str, str+strlen(str), std::back_inserter(output));
+        output.InsertAt(-1,str,strlen(str));
         GenerateArguments(output, true);
         GeneratePostfix(output,true);
     }
@@ -1459,7 +1456,7 @@ void Constructor::GenerateHeader(CArrayChar &output, bool interface) {
     if(interface) {
         char str[1024];
         strcpy(str,"\nvoid _paroc_Construct");
-        std::copy(str, str+strlen(str), std::back_inserter(output));
+        output.InsertAt(-1,str,strlen(str));
         GenerateArguments(output, true);
         GeneratePostfix(output,true);
     }
@@ -1470,7 +1467,7 @@ void Constructor::GenerateReturn(CArrayChar& /*output*/, bool /*header*/) {
 
 void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
     if(header) {
-        output.push_back(';');
+        output.InsertAt(-1,";",1);
         return;
     }
 
@@ -1497,7 +1494,7 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
                 strcat(tmpcode,"(_paroc_nobind)");
             }
         }
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
     }
 }
 
@@ -1512,18 +1509,18 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
 
     if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()) {
         strcpy(tmpcode, "\n");
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
         od.Generate(tmpcode);   // Generates the object description
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 #ifdef __APPLE__
         strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, 1);");
 #else
         strcpy(tmpcode,"\n  pthread_attr_t attr;\n  pthread_attr_init(&attr);\n  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);");
 #endif
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         sprintf(tmpcode,"\n  pthread_args_t_%d *arguments = (pthread_args_t_%d *) malloc(sizeof(pthread_args_t_%d));\n  %s* ptr = static_cast<%s*>(this);\n  arguments->ptr_interface = ptr;\n", get_id(), get_id(), get_id(), GetClass()->GetName(), GetClass()->GetName());
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         for(auto& param : params){
             Param &p = *param;
@@ -1532,13 +1529,13 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
             strcat(tmpcode, " = ");
             strcat(tmpcode, p.GetName());
             strcat(tmpcode, ";\n");
-            std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+            output.InsertAt(-1, tmpcode, strlen(tmpcode));
         }
 
         sprintf(tmpcode, "  int ret;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread%d, arguments);\n", GetClass()->GetName(), get_id());
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
         strcpy(tmpcode, "  if(ret != 0) {\n    printf(\"Thread creation failed\\n\");\n    perror(\"pthread_create\");\n    pthread_attr_destroy(&attr);\n    return;\n  }\n  pthread_attr_destroy(&attr);\n");
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
     } else if(!GetClass()->is_collective()) { // End of APOA Support
         /**
          * Standard parallel object allocation
@@ -1546,7 +1543,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
         strcpy(tmpcode, "");
         od.Generate(tmpcode);   // Generates the object description
         strcat(tmpcode,"\nAllocate();");    // Generates call to the Allocate method of paroc_interface
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         // Generates invocation to the constructor of the remote object
         strcpy(tmpcode,"\n_paroc_Construct(");
@@ -1559,48 +1556,48 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
             }
         }
         strcat(tmpcode,");\n");
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
         // End of constructor invocation
     } else {
         // Generate the object description in the interface constructor
         sprintf(tmpcode, "\n  _popc_selected_constructor_id = %d;", id);
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         strcpy(tmpcode, "\n  ");
         od.Generate(tmpcode);
         strcat(tmpcode, "\n");
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         // Save constructor parameters for group initialization
         for(auto& param : params){
             Param &p = *param;
             sprintf(tmpcode, "  _popc_constructor_%d_%s = %s;\n", id, p.GetName(), p.GetName());
-            std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+            output.InsertAt(-1, tmpcode, strlen(tmpcode));
         }
     }
 
 
     strcpy(tmpcode,"}\n");
-    std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+    output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
 
     // APOA Code generation
     if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()) {
         sprintf(tmpcode,"\n// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", GetClass()->GetName());
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
         sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg)\n  {\n", GetClass()->GetName(), get_id());
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode,"    pthread_args_t_%d *arguments = (pthread_args_t_%d*)arg;\n", get_id(), get_id());
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         sprintf(tmpcode,"    %s* _this_interface = static_cast<%s*>(arguments->ptr_interface);\n",GetClass()->GetName(), GetClass()->GetName());
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
 
         for(auto& param : params){
             Param &p = *param;
             sprintf(tmpcode, "%s %s = arguments->%s;\n", p.GetType()->GetName(), p.GetName(), p.GetName());
-            std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+            output.InsertAt(-1, tmpcode, strlen(tmpcode));
         }
 
         sprintf(tmpcode, "    try{\n      _this_interface->Allocate();\n      _this_interface->_paroc_Construct(");
@@ -1615,20 +1612,20 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
         }
 
         strcat(tmpcode, ");\n");
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
         sprintf(tmpcode, "    } catch(paroc_exception* ex) {\n      printf(\"Async allocation: %%s\", ex->what()); \n    }\n   free(arg);\n  return 0;\n  }\n}\n");
-        std::copy(tmpcode,tmpcode+strlen(tmpcode),std::back_inserter(output));
+        output.InsertAt(-1,tmpcode,strlen(tmpcode));
     }
 
 
 
     if(!GetClass()->is_collective()) {
         sprintf(tmpcode, "\nvoid %s::_paroc_Construct", GetClass()->GetName());
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
     } else {
         //sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  _popc_constructor(", GetClass()->GetName());
-        //std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        //output.InsertAt(-1, tmpcode, strlen(tmpcode));
 
 
 
@@ -1637,19 +1634,19 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
                 for (int j = 0; j < nb; j++) {
                     Param &p = *(params[j]);
                     sprintf(tmpcode, "_popc_constructor_%d_%s", get_id(), p.GetName());
-                    std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+                    output.InsertAt(-1, tmpcode, strlen(tmpcode));
                     if (j < nb-1) {
                     strcpy(tmpcode, ", ");
-                    std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+                    output.InsertAt(-1, tmpcode, strlen(tmpcode));
                 }
                 }
 
 
               strcpy(tmpcode, ");\n}\n");
-              std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));     */
+              output.InsertAt(-1, tmpcode, strlen(tmpcode));     */
 
         sprintf(tmpcode,"\nvoid %s::_popc_constructor",GetClass()->GetName());
-        std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+        output.InsertAt(-1, tmpcode, strlen(tmpcode));
     }
 
     GenerateArguments(output,false);
@@ -1657,7 +1654,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
 
 
     strcpy(tmpcode,"\n{");
-    std::copy(tmpcode, tmpcode+strlen(tmpcode), std::back_inserter(output));
+    output.InsertAt(-1, tmpcode, strlen(tmpcode));
 }
 
 //Implement Destructor class
@@ -1671,10 +1668,9 @@ void Destructor::GenerateClient(CArrayChar& /*output*/) {
 
 void Destructor::GenerateReturn(CArrayChar &output, bool header) {
     if(header) {
-        output.push_back('~');
+        output.InsertAt(-1,"~",1);
     } else {
-        output.push_back('\n');
-        output.push_back('~');
+        output.InsertAt(-1,"\n~",2);
     }
 }
 

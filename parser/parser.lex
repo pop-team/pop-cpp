@@ -19,6 +19,7 @@
   extern CodeFile *thisCodeFile;
 
   CArrayChar othercodes;
+  //TODO(BW) othercodes.reserve(32536);
   bool insideClass;
   int startPos=-1;
 
@@ -58,12 +59,12 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 %%
 
 {whitespace} {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
 };
 
 "@"{whitespace2}"pack" {
   startPos=othercodes.size();
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PACK_KEYWORD;
 };
 
@@ -111,7 +112,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
   sscanf(yytext+1, "%d", &linenumber);
   linenumber++;
   //  printf("LINE DIRECTIVE:line:%d in %s\n", linenumber,filename);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   //  yylval=PutToken(yytext);
   //  return DIRECTIVE;
 };
@@ -132,7 +133,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       *t2='"';
     }
   }
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
 };
 
 ^"#"[ \t]*[0-9]+[ \t]+\"[^\"]*\"[^\n]* {
@@ -151,19 +152,19 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       *t2='"';
     }
   }
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
 };
 
 
 
 ^"#"[^\n]* {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   //  yylval=PutToken(yytext);
   //  return DIRECTIVE;
 };
 
 "\""("\\\\"|"\\\""|[^"\""])*"\"" {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   linenumber+=CountLine(yytext);
 
   yylval=PutToken(yytext);
@@ -172,7 +173,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 };
 
 "\'"("\\\\"|"\\\'"|[^"\'"])*"\'" {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   linenumber+=CountLine(yytext);
 
   yylval=PutToken(yytext);
@@ -203,12 +204,12 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       char postfix[32]="_popcobject";
       int len=strlen(clname);
       int len1=strlen(postfix);
-      std::copy(clname, clname+len, std::back_inserter(othercodes));
-      std::copy(postfix, postfix+len1, std::back_inserter(othercodes));
-      std::copy(yytext+len, yytext+strlen(yytext), std::back_inserter(othercodes));
-      std::copy(postfix, postfix+len1, std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,clname,len);
+      othercodes.InsertAt(-1,postfix,len1);
+      othercodes.InsertAt(-1,yytext+len,strlen(yytext)-len);
+      othercodes.InsertAt(-1,postfix,len1);
     } else {
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
     }
     linenumber+=CountLine(tmp);
 };
@@ -236,7 +237,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     }
     bool constructor = paroc_utils::isEqual(clname,tmp);
     sprintf(newyytext,"%s_popcobject%s", clname, yytext+len);
-    std::copy(newyytext, newyytext+strlen(newyytext), std::back_inserter(othercodes));
+    othercodes.InsertAt(-1,newyytext,strlen(newyytext));
     Class *cl = thisCodeFile->FindClass(clname);
     if(!cl->is_collective()){
       //Create the string to be inserted in every paroc_object constructor
@@ -248,16 +249,16 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 	  shouldreturn = false;
 	  char postfix[] = "_popcobject";
 	  int len1 = strlen(postfix);
-	  std::copy(postfix, postfix+len1, std::back_inserter(othercodes));
+	  othercodes.InsertAt(-1, postfix, len1);
 
 	  char buf[10240];
 	  int n = ReadUntil((char*)");{", buf, 10240);
-	  std::copy(buf, buf+n, std::back_inserter(othercodes));
+	  othercodes.InsertAt(-1,buf,n);
 
 	  linenumber+=CountLine(buf);
 	  if (n && buf[n-1]==')'){
       n=ReadUntil((char*)":;{", buf, 10240);
-	    std::copy(buf, buf+n, std::back_inserter(othercodes));
+	    othercodes.InsertAt(-1,buf,n);
 	    linenumber+=CountLine(buf);
     }
 	  if (n && buf[n-1]==':') {
@@ -275,32 +276,32 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
 	  	  if (thisCodeFile->FindClass(clname)!=NULL) {
 		      char *t=strstr(buf,clname)+ strlen(clname);
-		      std::copy(buf, buf + (t-buf), std::back_inserter(othercodes));
-		      std::copy(postfix, postfix+len1, std::back_inserter(othercodes));
-		      std::copy(t, t+strlen(t), std::back_inserter(othercodes));
+		      othercodes.InsertAt(-1,buf,t-buf);
+		      othercodes.InsertAt(-1,postfix,len1);
+		      othercodes.InsertAt(-1,t,strlen(t));
 		    } else {
-		      std::copy(buf, buf+n, std::back_inserter(othercodes));
+		      othercodes.InsertAt(-1,buf,n);
 		    }
   		  // Extract parametters...
 
 		    n = ReadUntil((char*)"){;",buf,10240);
-		    std::copy(buf, buf+n, std::back_inserter(othercodes));
+		    othercodes.InsertAt(-1,buf,n);
         if (!n || buf[n-1]!=')')
 		      break;
 
 		    // Extract separators
     		n=ReadUntil((char*)",{;",buf,10240);
-		      std::copy(buf, buf+n, std::back_inserter(othercodes));
+		      othercodes.InsertAt(-1,buf,n);
   		    if (!n || buf[n-1]!=',')
 	  	      break;
         }
       }
       // Print the THIS handling string line
-      std::copy(thisBuf, thisBuf+strlen(thisBuf), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1, thisBuf, strlen(thisBuf));
 	  }
   } else {
     strcpy(newyytext,yytext);
-    std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+    othercodes.InsertAt(-1,yytext,strlen(yytext));
   }
 
   linenumber += CountLine(tmp);
@@ -314,14 +315,14 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
 {newline} {
   linenumber++;
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
 };
 
 parclass {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
@@ -329,32 +330,32 @@ parclass {
   yylval=PutToken(char(100));
 
   startPos=othercodes.size();
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PARCLASS_KEYWORD;
 };
 
 class {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return CLASS_KEYWORD;
 
 };
 
 enum {
 	yylval=PutToken(yytext);
-	std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+	othercodes.InsertAt(-1,yytext,strlen(yytext));
 	return ENUM;
 };
 
 namespace {
 	yylval=PutToken(yytext);
-	std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+	othercodes.InsertAt(-1,yytext,strlen(yytext));
 	return NAMESPACE;
 };
 
 broadcast {
 	yylval=PutToken(yytext);
-	std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+	othercodes.InsertAt(-1,yytext,strlen(yytext));
 	return BROADCAST;
 };
 
@@ -362,59 +363,59 @@ classuid {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return CLASSID;
 };
 
 auto {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return AUTO_KEYWORD;
 };
 
 register {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return REGISTER_KEYWORD;
 };
 
 
 public {
-  if (!insideClass) std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  if (!insideClass) othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PUBLIC_KEYWORD;
 };
 private {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PRIVATE_KEYWORD;
 };
 protected {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PROTECTED_KEYWORD;
 };
 
 
 virtual {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return VIRTUAL_KEYWORD;
 };
 
 const {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return CONST_KEYWORD;
 };
 
 struct {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return STRUCT_KEYWORD;
 };
 
 static {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return STATIC_KEYWORD;
 };
 
@@ -422,12 +423,12 @@ sync {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
   else
     {
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return SYNC_INVOKE;
     }
 };
@@ -437,11 +438,11 @@ async {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return ASYNC_INVOKE;
 };
 
@@ -449,11 +450,11 @@ in {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return INPUT;
 };
 
@@ -461,11 +462,11 @@ out {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return OUTPUT;
 };
 
@@ -473,11 +474,11 @@ conc {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return CONCURRENT;
 };
 
@@ -486,11 +487,11 @@ seq {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return SEQUENTIAL;
 };
 
@@ -500,20 +501,20 @@ mutex[ \a\b\v\f\t\r\n]*"{" {
       char *yycopy=strdup(yytext+5);
       int len=strlen(yycopy);
       yylval=PutToken((char*)"mutex");
-      std::copy(yytext, yytext+5, std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,5);
       for (char *t=yycopy+len-1;t!=yycopy;t--) unput(*t);
       free(yycopy);
       return ID;
 
-      //      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      //      othercodes.InsertAt(-1,yytext,strlen(yytext));
     }
   else
     {
       char str[256];
       int len=strlen(yytext)-6;
       sprintf(str," { paroc_mutex_locker _paroc_mutex%d(_paroc_omutex); ",mutexCount++);
-      std::copy(str, str+strlen(str), std::back_inserter(othercodes));
-      std::copy(yytext+5, yytext+5+len, std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,str,strlen(str));
+      othercodes.InsertAt(-1,yytext+5,len);
     }
   linenumber+=CountLine(yytext+5);
 };
@@ -522,18 +523,18 @@ mutex {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return MUTEX;
 
 };
 
 "::" {
 
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return SCOPE;
 };
 
@@ -541,11 +542,11 @@ __hidden {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return HIDDEN;
 };
 
@@ -553,24 +554,24 @@ proc {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
   yylval=PutToken(char(USERPROC));
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return PROC;
 };
 size {
   if (IsSystemHeader(filename))
     {
       yylval=PutToken(yytext);
-      std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+      othercodes.InsertAt(-1,yytext,strlen(yytext));
       return ID;
     }
 
   yylval=PutToken(char(PARAMSIZE));
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return SIZE;
 };
 
@@ -583,15 +584,14 @@ this {
         {
             //If the class is a parclass, replace THIS keyword by the interface pointer __POPThis_ClassName
             if(cl->IsParClass()) {
-                std::string tmp{"__POPThis_"};
-                std::copy(tmp.begin(), tmp.end(), std::back_inserter(othercodes));
-                std::copy(cl->GetName(), cl->GetName() + strlen(cl->GetName()), std::back_inserter(othercodes));
+                othercodes.InsertAt(-1,"__POPThis_",strlen("__POPThis_"));
+                othercodes.InsertAt(-1,cl->GetName(),strlen(cl->GetName()));
                 insertNormalThis = false;
             }
         }
 
         if(insertNormalThis)
-            std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+            othercodes.InsertAt(-1,yytext,strlen(yytext));
 
 
 	/*
@@ -605,42 +605,42 @@ this {
 unsigned{whitespace1}int {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 signed{whitespace1}int {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 unsigned{whitespace1}long {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 signed{whitespace1}long {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 signed{whitespace1}char {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 unsigned{whitespace1}char {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
@@ -648,37 +648,37 @@ unsigned{whitespace1}char {
 signed{whitespace1}short {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 unsigned{whitespace1}short {
   yylval=PutToken(yytext);
   linenumber+=CountLine(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID1);
 };
 
 typedef {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(TYPEDEF_KEYWORD);
 };
 
 {id} {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return(ID);
 };
 
 [0-9]+   {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return (INTEGER);
 };
 
 [0-9]*"."[0-9]+([Ee][0-9]+)? {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return (REAL);
 };
 
@@ -691,49 +691,49 @@ typedef {
 
 "&&" {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return (AND_OP);
 };
 
 "||" {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return (OR_OP);
 };
 
 "==" {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return (EQUAL_OP);
 };
 
 "!=" {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return (NOTEQUAL_OP);
 };
 
 ">=" {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return (GREATEREQUAL_OP);
 };
 
 "<=" {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return (LESSEQUAL_OP);
 };
 
 "?"{whitespace2}":" {
   yylval=PutToken(yytext);
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return (NONSTRICT_OD_OP);
 };
 
 
 "\'"|"\""|"#"|"("|")"|"{"|"}"|"["|"]"|";"|":"|","|"*"|"&"|"~"|"="|"+"|"%"|"@"|"$"|"^"|"-"|"|"|"`"|"!"  {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return yytext[0];
 };
 
@@ -741,7 +741,7 @@ typedef {
 	return EOFCODE;
 };
 . {
-  std::copy(yytext, yytext+strlen(yytext), std::back_inserter(othercodes));
+  othercodes.InsertAt(-1,yytext,strlen(yytext));
   return yytext[0];
 };
 
