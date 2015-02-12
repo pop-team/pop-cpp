@@ -40,8 +40,8 @@ void paroc_service_base::Start() {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.UnManageObject(myself);
             paroc_system::appservice.SetAccessString(NULL);
-        } catch(...) {
-            LOG_WARNING("Failed to unregister the service from ObjectMonitor");
+        } catch(std::exception& e) {
+            LOG_WARNING("Failed to unregister the service from ObjectMonitor: %s", e.what());
         }
     }
 }

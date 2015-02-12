@@ -727,8 +727,8 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                                     fitness[j]=0;
                                     jobmgr.CancelReservation(reserveIDs.data()+j,1);
                                 }
-                        } catch(...) {
-                            LOG_WARNING("Exception while canceling reservations");
+                        } catch(std::exception& e) {
+                            LOG_WARNING("Exception while canceling reservations: %s", e.what());
                         }
                     }
                 ret=OBJECT_NO_RESOURCE;
@@ -760,8 +760,8 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                         } else {
                             count+=sz;
                         }
-                    } catch(...) {
-                        LOG_ERROR( "[JM] Exception caught in ExecObj");
+                    } catch(std::exception& e) {
+                        LOG_ERROR( "[JM] Exception caught in ExecObj: %s", e.what());
                     }
                 }
             }
@@ -773,8 +773,8 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
     } //End try
 
 
-    catch(...) {
-        LOG_WARNING("Exception in JogMgr::CreateObject");
+    catch(std::exception& e) {
+        LOG_WARNING("Exception in JogMgr::CreateObject: %s", e.what());
         Pause(localservice, SLEEP_TIME_ON_ERROR);
         ret=POPC_JOBSERVICE_FAIL;
     }
@@ -789,8 +789,8 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
         try {
             paroc_interface obj(objcontacts[i]);
             obj.Kill();
-        } catch(...) {
-            LOG_WARNING("Exception while killing objects");
+        } catch(std::exception& e) {
+            LOG_WARNING("Exception while killing objects: %s", e.what());
         }
     }
     if(ret==0) {
@@ -833,8 +833,8 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
                     }
                 }
             }
-        } catch(...) {
-            LOG_ERROR( "[JM] Exception on resource discovery");
+        } catch(std::exception& e) {
+            LOG_ERROR( "[JM] Exception on resource discovery: %s", e.what());
             return false;
         }
 
@@ -1152,8 +1152,8 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
         try{
             POPCSearchNode psn(_localPSN);
             psn.addJob(t.flops, t.mem, t.bandwidth);
-        } catch(...) {
-            LOG_ERROR( "[JM] Can't add job to PSN");
+        } catch(std::exception& e) {
+            LOG_ERROR( "[JM] Can't add job to PSN: %s", e.what());
             return 0;
         }
         available.flops-=flops;
@@ -1318,8 +1318,8 @@ bool JobMgr::MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoi
             try {
                 JobMgr res(jobcontacts[pos]);
                 res.CancelReservation(reserveIDs+pos,1);
-            } catch(...) {
-                LOG_ERROR( "[JM] Fail to cancel reservation #%d on %s",reserveIDs[pos],jobcontacts[pos].GetAccessString());
+            } catch(std::exception& e) {
+                LOG_ERROR( "[JM] Fail to cancel reservation #%d on %s %s",reserveIDs[pos],jobcontacts[pos].GetAccessString(), e.what());
             }
         }
         reserveIDs[pos]=id;
@@ -1464,8 +1464,8 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                 }
             }
 
-        } catch(...) {
-            LOG_CORE( "[JM] Exception on contact %s", (const char *)contact);
+        } catch(std::exception& e) {
+            LOG_CORE( "[JM] Exception on contact %s: %s", (const char *)contact, e.what());
             if(info.nodetype!=NODE_STATIC) {
                 neighbors.Remove(contact);
                 continue;
@@ -1537,8 +1537,8 @@ void JobMgr::SelfRegister() {
             POPCSearchNode psn(_localPSN);
             psn.addNeighbor(remoteNode);
             //End of add
-        } catch(...) {
-            LOG_ERROR( "[JM] can not register the local job service [%s] to %s",GetAccessPoint().GetAccessString(), tmp.GetAccessString());
+        } catch(std::exception& e) {
+            LOG_ERROR( "[JM] can not register the local job service [%s] to %s: %s",GetAccessPoint().GetAccessString(), tmp.GetAccessString(), e.what());
         }
     }
     lasttime=service_timer.Elapsed();
@@ -1751,9 +1751,9 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
                         tmpPlatform.GetString());
             return ENOENT;
         }
-    } catch(...) {
+    } catch(std::exception& e) {
         CancelReservation(reserveIDs, howmany);
-        LOG_ERROR( "[JM] Exec failed. CodeMgr cannot be contacted");
+        LOG_ERROR( "[JM] Exec failed. CodeMgr cannot be contacted: %s", e.what());
         return ENOENT;
     }
 
@@ -2033,8 +2033,8 @@ bool JobMgr::ObjectAlive(paroc_accesspoint &t) {
     try {
         paroc_interface test(t);
         return true;
-    } catch(...) {
-        LOG_WARNING("Exception in JobMgr::ObjectAlive");
+    } catch(std::exception& e) {
+        LOG_WARNING("Exception in JobMgr::ObjectAlive: %s", e.what());
         return false;
     }
 }
@@ -2144,8 +2144,8 @@ void JobMgr::ApplicationEnd(POPString popAppId, bool initiator) {
         try {
             POPCSearchNode psn(_localPSN);
             psn.removeJob(available.flops, available.mem, available.bandwidth, nbJob);
-        } catch(...) {
-            LOG_ERROR( "[JM] can't update PSN resource");
+        } catch(std::exception& e) {
+            LOG_ERROR( "[JM] can't update PSN resource: %s", e.what());
 
         }
     }

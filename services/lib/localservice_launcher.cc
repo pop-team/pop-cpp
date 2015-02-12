@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
         errno=e;
         LOG_ERROR("Exception in localservice_launcher");
         return 1;
-    } catch(paroc_exception &e) {
+    } catch(std::exception &e) {
         LOG_ERROR("Exception in localservice_launcher: %s", e.what());
         return 1;
     }

@@ -202,8 +202,8 @@ int paroc_broker::Run() {
                     break;
                 }
             }
-        } catch(...) {
-            LOG_WARNING("Unknown exception in paroc_broker::Run");
+        } catch(std::exception &e) {
+            LOG_WARNING("Unknown exception in paroc_broker::Run: %s", e.what());
             UnhandledException();
         }
     }

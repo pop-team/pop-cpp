@@ -445,10 +445,9 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         }
 #endif
         return false;
-    } catch(...) {
-        LOG_WARNING("Exception occurs in paroc_system::Initialize");
+    } catch(std::exception &e) {
+        LOG_WARNING("Exception occurs in paroc_system::Initialize: %s", e.what());
 #ifndef DEFINE_UDS_SUPPORT
-        LOG_WARNING("Exception occurs in paroc_system::Initialize");
         if(mgr!=NULL) {
             mgr->KillAll();
             mgr->Stop(challenge);

@@ -134,8 +134,8 @@ int main(int argc, char **argv) {
             MPI::Finalize();
         }
         return -1;
-    } catch(...) {
-        LOG_WARNING("End of main exception caught 3");
+    } catch(std::exception &e) {
+        LOG_WARNING("End of main exception caught 3: %s", e.what());
         paroc_system::Finalize(false);
         LOG_DEBUG("Will call MPI::Finalize and exit main");
         // Only for MPI

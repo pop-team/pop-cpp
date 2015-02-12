@@ -50,8 +50,8 @@ void ObjectMonitor::KillAll() {
             try {
                 paroc_interface tmp(t);
                 tmp.Kill();
-            } catch(...) {
-                LOG_WARNING("Exception while killing objects");
+            } catch(std::exception& e) {
+                LOG_WARNING("Exception while killing objects: %s", e.what());
             }
         }
         objects.RemoveAll();
