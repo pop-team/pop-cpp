@@ -371,21 +371,21 @@ LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::
 
         /*  try
             {
-                LOG_DEBUG("JOBMGR --> connect to %s\n", jobcontact.GetAccessString());
+                LOG_DEBUG("JOBMGR --> connect to %s", jobcontact.GetAccessString());
                 JobCoreService resources(jobcontact);
                 int ret;
                 if (batchindex==0 && batchsize>1)
                 {
                     if (batchaccesspoint!=NULL) delete [] batchaccesspoint;
                     batchaccesspoint=new paroc_accesspoint[batchsize];
-                    LOG_DEBUG("Create Object : %s\n", ClassName());
+                    LOG_DEBUG("Create Object : %s", ClassName());
                 //TODO put an other array than batchaccesspoint
                     ret=resources.CreateObject(paroc_system::appservice,objname,od, batchsize,  batchaccesspoint, batchsize, batchaccesspoint);
                     if (ret==0) objaccess=batchaccesspoint[batchindex++];
                 LOG_DEBUG("Return %d", ret);
                 } else{
 
-                    LOG_DEBUG("Create Object : %s\n", ClassName());
+                    LOG_DEBUG("Create Object : %s", ClassName());
                 ret=resources.CreateObject(paroc_system::appservice,objname,od, 1,  &objaccess, 1, &remotejobcontact);
                 LOG_DEBUG("Return %d", ret);
                 }
@@ -792,6 +792,7 @@ bool paroc_interface::RecvCtrl() {
     od.getCheckConnection(time_alive, time_control);
     if(!__paroc_combox || !__paroc_buf) {
         __paroc_combox->SetTimeout(oldTimeout);
+        LOG_ERROR("Error");
         return false;
     };
 

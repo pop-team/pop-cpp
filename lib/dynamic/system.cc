@@ -327,7 +327,7 @@ POPString paroc_system::GetDefaultInterface() {
             //       iface, net_addr, gate_addr, &iflags, &refcnt, &use, &metric, mask_addr, &mss, &window, &irtt);
             int num = sscanf(buff, "%16s %128s",iface, net_addr);
             if(num < 2) {
-                paroc_exception::paroc_throw_errno();
+                paroc_exception::paroc_throw("GetDefaultInterface failed: num < 2");
             }
             // LOG_DEBUG( "iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
 

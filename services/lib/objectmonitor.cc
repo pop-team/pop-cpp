@@ -74,6 +74,9 @@ int ObjectMonitor::CheckObjects() {
                 if(!active && !isActive) {
                     test.DecRef();
                 }
+            } catch(std::exception &e) {
+                LOG_WARNING("Exception in CheckObjects: %s",e.what());
+                objects.RemoveAt(old);
             } catch(...) {
                 LOG_WARNING("Exception in CheckObjects");
                 objects.RemoveAt(old);
@@ -96,6 +99,7 @@ void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
                 return;
             }
         }
+        LOG_DEBUG("Add object %s", newstr);
         objects.AddTail(p);
     }
 }

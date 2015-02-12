@@ -175,6 +175,7 @@ int popc_combox_mpi::Send(const char *s, int length, paroc_connection *conn, boo
 
 int popc_combox_mpi::Recv(char *s, int length, bool /*unlock*/) {
     if(peer == NULL) {
+        LOG_ERROR("peer==NULL");
         return -1;
     }
     MPI::Status status;

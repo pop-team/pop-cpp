@@ -680,6 +680,7 @@ LOG_DEBUG("XDR: recv header");
         header.SetMethodID(popc_ntohl(h[3]));
         break;
     default:
+        LOG_ERROR("Unknown type %d", type);
         return false;
     }
 
