@@ -50,7 +50,7 @@ paroc_combox * combox_socket_creator() {
 // TODO LW: Why doesn't the compiler complain about this with Werror ? Could we have different flags here ?
 paroc_combox* combox_uds_creator() {
  //   return new popc_combox_uds; // TODO LW: This should be uncommented !
-    return NULL;
+    return nullptr;
 }
 
 #ifdef MPI_SUPPORT
@@ -59,7 +59,7 @@ paroc_combox * combox_mpi_creator() {
 }
 #endif
 
-paroc_combox_factory *paroc_combox_factory::fact=NULL;
+paroc_combox_factory *paroc_combox_factory::fact=nullptr;
 
 
 paroc_combox_factory::paroc_combox_factory() {
@@ -76,10 +76,10 @@ paroc_combox_factory::paroc_combox_factory() {
     POPString name;
 
     char *module=getenv("POPC_COMBOX_MODULES");
-    if(module!=NULL) {
+    if(module!=nullptr) {
         char *libs=popc_strdup(module);
         char *mod=strtok(libs,": ");
-        while(mod!=NULL) {
+        while(mod!=nullptr) {
             void *h=LoadPlugin(mod, name, creator);
 
             if(h) {
@@ -88,26 +88,26 @@ paroc_combox_factory::paroc_combox_factory() {
                     Register(name,metrics,creator);
                 }
             }
-            mod=strtok(NULL,": ");
+            mod=strtok(nullptr,": ");
         }
         free(libs);
     } else {
         POPString plugindir;
         plugindir=getenv("POPC_PLUGIN_LOCATION");
 #ifdef _PLUGINDIR
-        if(plugindir==NULL) {
+        if(plugindir==nullptr) {
             plugindir=_PLUGINDIR;
         }
 #endif
 
-        if(plugindir!=NULL) {
+        if(plugindir!=nullptr) {
             POPString pluginmap(plugindir);
             pluginmap+="/paroc_combox.map";
             FILE *map=fopen(pluginmap,"r");
-            if(map!=NULL) {
+            if(map!=nullptr) {
                 char line[1024];
                 char fname[1024];
-                while(fgets(line,1023,map)!=NULL) {
+                while(fgets(line,1023,map)!=nullptr) {
                     int t=sscanf(line, "%s %d",fname,&metrics);
                     if(t<1) {
                         continue;
@@ -120,7 +120,7 @@ paroc_combox_factory::paroc_combox_factory() {
                     }
 
                     void *h=LoadPlugin(fname, name, creator);
-                    if(h!=NULL) {
+                    if(h!=nullptr) {
                         if(std::find(plugins.begin(), plugins.end(), h) == plugins.end()) {
                             plugins.push_back(h);
                             Register(name,metrics,creator);
@@ -131,16 +131,16 @@ paroc_combox_factory::paroc_combox_factory() {
             } else {
                 LOG_DEBUG("unable to open plugin mapfile: %s",(const char *)pluginmap); // note: level set to debug
                 DIR *dir=opendir(plugindir);
-                if(dir!=NULL) {
+                if(dir!=nullptr) {
                     dirent *t;
-                    while((t=readdir(dir))!=NULL) {
+                    while((t=readdir(dir))!=nullptr) {
                         if(!paroc_utils::MatchWildcard(t->d_name,"*.so")) {
                             continue;
                         }
                         char fname[1024];
                         sprintf(fname,"%s/%s", (const char *)plugindir, t->d_name);
                         void *h=LoadPlugin(fname, name, creator);
-                        if(h!=NULL) {
+                        if(h!=nullptr) {
                             if(std::find(plugins.begin(), plugins.end(), h) == plugins.end()) {
                                 plugins.push_back(h);
                                 Register(name, metrics, creator);
@@ -155,106 +155,82 @@ paroc_combox_factory::paroc_combox_factory() {
 }
 
 paroc_combox_factory::~paroc_combox_factory() {
-    POSITION pos=list.GetHeadPosition();
-    while(pos!=NULL) {
-        combox_factory_struct &t=list.GetNext(pos);
-        free(t.name);
+    for(auto& s : list){
+        free(s.name);
     }
 }
 
 paroc_combox_factory *paroc_combox_factory::GetInstance() {
-    if(fact==NULL) {
+    if(fact==nullptr) {
         fact=new paroc_combox_factory;
     }
     return fact;
 }
 
 void paroc_combox_factory::Destroy() {
-    if(fact!=NULL) {
+    if(fact!=nullptr) {
         delete fact;
     }
-    fact=NULL;
+    fact=nullptr;
 }
 
 paroc_combox* paroc_combox_factory::Create(const char * name) {
     LOG_DEBUG("Create a combox : %s", name);
-    if(name == NULL) {
-        return NULL;
+    if(name == nullptr) {
+        return nullptr;
     }
-    POSITION pos = list.GetHeadPosition();
-    while(pos != NULL) {
-        combox_factory_struct &t = list.GetNext(pos);
+    for(auto& t : list){
         if(strcmp(name, t.name) == 0) {
             return t.creator();
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 paroc_combox* paroc_combox_factory::Create(int index) {
-    if(index<0 || index>=GetCount()) {
-        return NULL;
+    if(index<0 || static_cast<std::size_t>(index) >= list.size()) {
+        return nullptr;
     }
-    POSITION pos=list.GetHeadPosition();
-    while(pos!=NULL) {
-        combox_factory_struct &t=list.GetNext(pos);
-        if(index==0) {
-            return t.creator();
-        }
-        index--;
-    }
-    return NULL;
+
+    return list[index].creator();
 }
 
 void paroc_combox_factory::GetNames(POPString &prots) {
-    prots = "";
-    POSITION pos = list.GetHeadPosition();
-    while(pos != NULL) {
-        combox_factory_struct &t = list.GetNext(pos);
-        LOG_DEBUG("%s", t.name);
-        prots += t.name;
-        if(pos!=NULL) {
-            prots += " ";
-        }
-    }
+    prots = std::accumulate(
+        list.begin(), list.end(), POPString(),
+        [](POPString& res, combox_factory_struct& t){ return res + " " + t.name; });
 }
 
 int paroc_combox_factory::GetCount() {
-    return list.GetCount();
+    return list.size();
 }
 
 bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATOR creator) {
     LOG_DEBUG("[Combox] Register %s", name);
-    if(name == NULL || creator == NULL) {
+
+    if(!name || !creator) {
         return false;
     }
 
-    POSITION pos = list.GetHeadPosition();
-    POSITION insertpos = NULL;
+    //If the name is already present, return false
 
-    while(pos != NULL) {
-        POSITION old = pos;
-        combox_factory_struct& t = list.GetNext(pos);
+    for(auto& t : list){
         if(strcmp(t.name, name) == 0) {
             return false;
         }
+    }
 
-        if(metrics<t.metrics && insertpos == NULL) {
-            insertpos = old;
-        }
-    }
-    if(insertpos == NULL) {
-        combox_factory_struct &el = list.AddTailNew();
-        el.name = popc_strdup(name);
-        el.metrics = metrics;
-        el.creator = creator;
+    //Otherwise find the correct position inside the list and insert it
+
+    auto it = std::find_if(list.begin(), list.end(),
+        [metrics](combox_factory_struct& t){ return metrics < t.metrics; });
+
+    if(it == list.end()){
+        list.emplace_back(popc_strdup(name), metrics, creator);
     } else {
-        combox_factory_struct el;
-        el.name = popc_strdup(name);
-        el.metrics = metrics;
-        el.creator = creator;
-        list.InsertBefore(insertpos, el);
+        list.emplace(it, popc_strdup(name), metrics, creator);
     }
+
     return true;
 }
 
@@ -262,22 +238,22 @@ void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CR
 #ifdef HAVE_LIBDL
     LOG_INFO("Load plugin %s", fname);
     void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);
-    if(handle == NULL) {
+    if(handle == nullptr) {
         LOG_ERROR("%s: %s",fname,dlerror());
-        return NULL;
+        return nullptr;
     }
 
     LOAD_PROTOCOL func;
     func = (LOAD_PROTOCOL)popc_dlsym(handle, "LoadProtocol");
-    if(func == NULL || func(name, f) != 0) {
+    if(func == nullptr || func(name, f) != 0) {
         popc_dlclose(handle);
-        return NULL;
+        return nullptr;
     }
     return handle;
 #else
 	(void) fname;
 	(void) name;
 	(void) f;
-    return NULL;
+    return nullptr;
 #endif
 }

@@ -12,10 +12,10 @@
 #ifndef POPC_COMBOX_FACTORY_H
 #define POPC_COMBOX_FACTORY_H
 
+#include <vector>
+
 #include "paroc_combox.h"
-#include "paroc_list.h"
 #include "paroc_string.h"
-#include "paroc_array.h"
 
 /*This abstract class declares an interface creating abstract combox*/
 
@@ -27,8 +27,10 @@ struct combox_factory_struct {
     int metrics;
 
     COMBOX_CREATOR creator;
-};
 
+    combox_factory_struct(){}
+    combox_factory_struct(char* name, int metrics, COMBOX_CREATOR creator) : name(name), metrics(metrics), creator(creator) {}
+};
 
 /**
  * @class paroc_combox_factory
@@ -59,7 +61,7 @@ private:
     static paroc_combox_factory *fact;
 
 private:
-    paroc_list<combox_factory_struct> list;
+    std::vector<combox_factory_struct> list;
     std::vector<void *> plugins;
 
 };
