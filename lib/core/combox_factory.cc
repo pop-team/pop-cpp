@@ -17,6 +17,8 @@
   Note by LWK: The factory should generate the parent class paroc_combox and not have 3 different methods for uds, mpi and socket
  */
 
+#include <algorithm>
+
 #include "popc_intface.h"
 
 #ifdef HAVE_CONFIG_H
@@ -80,17 +82,9 @@ paroc_combox_factory::paroc_combox_factory() {
         while(mod!=NULL) {
             void *h=LoadPlugin(mod, name, creator);
 
-            if(h!=NULL) {
-                int n=plugins.size();
-                bool loaded=false;
-                for(int i=0; i<n; i++)
-                    if(plugins[i]==h) {
-                        loaded=true;
-                        break;
-                    }
-
-                if(!loaded) {
-                    plugins.InsertAt(-1,h);
+            if(h) {
+                if(std::find(plugins.begin(), plugins.end(), h) == plugins.end()) {
+                    plugins.push_back(h);
                     Register(name,metrics,creator);
                 }
             }
@@ -127,15 +121,8 @@ paroc_combox_factory::paroc_combox_factory() {
 
                     void *h=LoadPlugin(fname, name, creator);
                     if(h!=NULL) {
-                        bool loaded=false;
-                        int n=plugins.size();
-                        for(int j=0; j<n; j++) if(h==plugins[j]) {
-                                loaded=true;
-                                break;
-                            }
-
-                        if(!loaded) {
-                            plugins.InsertAt(-1,h);
+                        if(std::find(plugins.begin(), plugins.end(), h) == plugins.end()) {
+                            plugins.push_back(h);
                             Register(name,metrics,creator);
                         }
                     }
@@ -154,16 +141,8 @@ paroc_combox_factory::paroc_combox_factory() {
                         sprintf(fname,"%s/%s", (const char *)plugindir, t->d_name);
                         void *h=LoadPlugin(fname, name, creator);
                         if(h!=NULL) {
-                            bool loaded = false;
-                            int n = plugins.size();
-                            for(int j = 0; j < n; j++) {
-                                if(h == plugins[j]) {
-                                    loaded = true;
-                                    break;
-                                }
-                            }
-                            if(!loaded) {
-                                plugins.InsertAt(-1, h);
+                            if(std::find(plugins.begin(), plugins.end(), h) == plugins.end()) {
+                                plugins.push_back(h);
                                 Register(name, metrics, creator);
                             }
                         }

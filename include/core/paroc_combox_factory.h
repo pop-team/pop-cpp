@@ -60,7 +60,7 @@ private:
 
 private:
     paroc_list<combox_factory_struct> list;
-    paroc_array<void *> plugins;
+    std::vector<void *> plugins;
 
 };
 
