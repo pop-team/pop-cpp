@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
     }
 
     // TODO LW: See what to do with signal handling
-    atexit(_paroc_atexit); // TODO LWK: Commented this: see if works
+    // atexit(_paroc_atexit); // TODO LWK: Commented this: see if works
 
     try {
         int ret=parocmain(argc,argv);

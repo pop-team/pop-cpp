@@ -653,6 +653,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
         header.SetMethodID(popc_ntohl(h[3]));
         break;
     default:
+        LOG_ERROR("Unknown type %d", type);
         return false;
     }
 

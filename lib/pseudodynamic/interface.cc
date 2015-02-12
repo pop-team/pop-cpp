@@ -444,6 +444,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                 LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
                 continue;
             }
+            LOG_DEBUG("Successful bind to %s", addr);
         }
     } else {
         //The user specify the protocol in OD, select the preference and match with the access point...
@@ -469,6 +470,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
         }
     }
 
+    LOG_WARNING("Cannot find suitable protocol");
     paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName());
 }
 
@@ -533,7 +535,7 @@ void paroc_interface::Bind(const char *dest) {
         }
 
         default:
-            LOG_WARNING("INTERFACE: Unknown binding status");
+            LOG_WARNING("Unknown binding status");
             Release();
             paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
         }
@@ -888,7 +890,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     if(codefile==NULL) {
         return ENOENT;
     }
-    signal(SIGCHLD, SIG_IGN);
+    popc_signal(SIGCHLD, SIG_IGN);
 
       while (isspace(*codefile)) codefile++;
 
@@ -1217,7 +1219,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf) {
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Send((*__paroc_combox), conn)) {
-        paroc_exception::paroc_throw(errno);
+        paroc_exception::paroc_throw("Buffer sent failed");
     }
     LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == NULL) ? "is null" : "is not null");
 }
@@ -1227,7 +1229,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
  */
 void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Recv((*__paroc_combox), conn)) {
-        paroc_exception::paroc_throw(errno);
+        paroc_exception::paroc_throw("Buffer receive failed");
     }
     LOG_DEBUG("INTERFACE: paroc_response will disconnect the connection");
     paroc_buffer::CheckAndThrow(*buf);
@@ -1358,7 +1360,8 @@ bool paroc_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, 
 
     fp = popen(cmd.str().c_str(), "r");
     if(fp == NULL) {
-        return -1;
+        LOG_WARNING("cannot launch %s", cmd.str().c_str());
+        return false;
     }
 
     fgets(res, BUF_SIZE, fp);
@@ -1367,6 +1370,7 @@ bool paroc_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, 
     if(pid != 0) {
         return true;
     }
+    LOG_WARNING("pid=0");
     return false;
 }
 

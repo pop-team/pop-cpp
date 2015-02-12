@@ -430,7 +430,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                     try {
                         Bind(addr);
                         return;
-                    } catch(paroc_exception &e) {
+                    } catch(std::exception &e) {
                         LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
                         continue;
                     }
@@ -468,7 +468,7 @@ void paroc_interface::Bind(const char *dest) {
     paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
     POPString p;
     if(!fact) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot get instance of factory");
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
     }
     fact->GetNames(p);
 
@@ -571,7 +571,7 @@ void paroc_interface::Bind(const char *dest) {
         default:
             LOG_WARNING("Unknown binding status");
             Release();
-            paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName(), "Unknown binding status");
+            paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
         }
     } else {
         int code=errno;
@@ -624,7 +624,7 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
           int status = LocalExec(hoststr, codefile, ClassName(), paroc_system::jobservice, paroc_system::appservice,&objaccess,1,od);
 
           if (status!=0) {
-              paroc_exception::paroc_throw(status, ClassName());
+            paroc_exception::paroc_throw(status, "Invalid status", ClassName());
           }
           return (status==0);
       }
@@ -915,7 +915,9 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od) {
     LOG_ERROR("This method has been commented"); // Note: No, I do not know who did this or why. TODO LWK
     /* TODO should have been restored at least for TCP/IP version
-      if (codefile==NULL) return ENOENT;
+    if(codefile==NULL) {
+        return ENOENT;
+    }
       popc_signal(SIGCHLD, SIG_IGN);
 
       while (isspace(*codefile)) codefile++;

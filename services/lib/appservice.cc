@@ -18,7 +18,7 @@
 #include <locale>
 #include "appservice.ph"
 
-#include "jobmgr.ph"
+// #include "jobmgr.ph"
 #include "popc_logger.h"
 
 using namespace std;
@@ -52,6 +52,7 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
 }
 
 AppCoreService::~AppCoreService() {
+	/* Commented LWK: This raises errors and seems pointless here
     try {
         // Try to end the application on job mgr
         JobMgr jm(paroc_system::jobservice);
@@ -59,6 +60,7 @@ AppCoreService::~AppCoreService() {
     } catch(std::exception &e) {
         LOG_WARNING("Exception while destroying JobMgr: %s", e.what());
     }
+    */
     
     auto pos=servicelist.GetHeadPosition();
     while(pos) {
