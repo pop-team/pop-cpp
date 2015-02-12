@@ -650,7 +650,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
     if(paroc_utils::isEqual(type,"pausejobs")) {
         //  Update();
         mutex {
-            sprintf(tmp,"%d", pause_apps.GetCount());
+            sprintf(tmp,"%lu", pause_apps.size());
             val=tmp;
         }
         return 1;
@@ -1919,7 +1919,8 @@ void JobMgr::dump() {
 void JobMgr::Pause(const paroc_accesspoint &app, int duration) {
     LOG_DEBUG( "[JM] Pause %d seconds", duration);
     mutex {
-        PauseInfo &t=pause_apps.AddTailNew();
+        pause_apps.emplace_back();
+        auto& t = pause_apps.back();
         t.until_time=service_timer.Elapsed()+duration;
         t.app=app;
     }
@@ -1928,22 +1929,24 @@ void JobMgr::Pause(const paroc_accesspoint &app, int duration) {
 bool JobMgr::CheckPauseList(const paroc_accesspoint &app) {
     double now=service_timer.Elapsed();
     mutex {
-        POSITION pos=pause_apps.GetHeadPosition();
-        while(pos!=NULL) {
-            POSITION old=pos;
-            PauseInfo &t=pause_apps.GetNext(pos);
-            if(now> t.until_time) {
-                pause_apps.RemoveAt(old);
+        auto it = pause_apps.begin();
+        auto end = pause_apps.end();
+
+        while(it != end){
+            auto& t = *it;
+
+            if(now > t.until_time) {
+                it = pause_apps.erase(it);
+                end = pause_apps.end();
             } else if(t.app.IsEmpty() || t.app==app) {
                 LOG_DEBUG("CheckPauseList return true (app=%s)",t.app.GetAccessString());
                 return true;
             }
         }
     }
+
     return false;
-
 }
-
 
 bool JobMgr::AddRequest(int reqId[3]) {
     double oldest=service_timer.Elapsed();
