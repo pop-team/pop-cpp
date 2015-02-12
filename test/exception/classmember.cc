@@ -223,7 +223,7 @@ bool Param::DeclareVariable(char *output) {
     return false;
 }
 
-bool Param::Marshal(char *bufname, bool reformat,bool inf_side, CArrayChar &output) {
+bool Param::Marshal(char *bufname, bool reformat,bool inf_side, std::string &output) {
     if(mytype==NULL) {
         return false;
     }
@@ -269,7 +269,7 @@ bool Param::Marshal(char *bufname, bool reformat,bool inf_side, CArrayChar &outp
     return true;
 }
 
-bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_side, CArrayChar &output) {
+bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_side, std::string &output) {
     if(mytype==NULL) {
         return false;
     }
@@ -401,10 +401,10 @@ void ClassMember::SetLineInfo(int linenum) {
     line=linenum;
 }
 
-void ClassMember::GenerateClient(CArrayChar &output) {
+void ClassMember::GenerateClient(std::string &output) {
 }
 
-void ClassMember::GenerateHeader(CArrayChar &output, bool interface) {
+void ClassMember::GenerateHeader(std::string &output, bool interface) {
     char *fname;
     if(line>0 && (fname=myclass->GetFileInfo())!=NULL) {
         char str[1024];
@@ -420,14 +420,14 @@ void ClassMember::GenerateHeader(CArrayChar &output, bool interface) {
 Attribute::Attribute(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), attributes(0,1) {
 }
 
-void Attribute::GenerateHeader(CArrayChar &output, bool interface) {
+void Attribute::GenerateHeader(std::string &output, bool interface) {
     if(interface) {
         return;
     }
     ClassMember::GenerateHeader(output, interface);
 
     char tmp[1024];
-    int n=attributes.GetSize();
+    int n=attributes.size();
     for(int i=0; i<n; i++) {
         Param &p=*(attributes[i]);
         p.DeclareVariable(tmp);
@@ -453,7 +453,7 @@ Directive::~Directive() {
     }
 }
 
-void Directive::GenerateHeader(CArrayChar &output, bool interface) {
+void Directive::GenerateHeader(std::string &output, bool interface) {
     if(code!=NULL) {
         output.InsertAt(-1,"\n",1);
         output.InsertAt(-1,code,strlen(code));
@@ -478,7 +478,7 @@ Method::Method(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), retur
 
 Method::~Method() {
     int n,i;
-    n=params.GetSize();
+    n=params.size();
     for(i=0; i<n; i++) if(params[i]!=NULL) {
             delete params[i];
         }
@@ -492,7 +492,7 @@ int Method::CheckMarshal() {
     if(MethodType()==METHOD_NORMAL && !returnparam.CanMarshal()) {
         return -1;
     }
-    int n=params.GetSize();
+    int n=params.size();
     Class *cl=GetClass();
 
     for(int i=0; i<n; i++) {
@@ -508,7 +508,7 @@ int Method::CheckMarshal() {
 
 }
 
-void Method::GenerateReturn(CArrayChar &output, bool header) {
+void Method::GenerateReturn(std::string &output, bool header) {
     DataType *type=returnparam.GetType();
     if(type==NULL) {
         return;
@@ -536,13 +536,13 @@ void Method::GenerateReturn(CArrayChar &output, bool header) {
     output.InsertAt(-1," ");
 }
 
-void Method::GeneratePostfix(CArrayChar &output, bool header) {
+void Method::GeneratePostfix(std::string &output, bool header) {
     if(header) {
         output.InsertAt(-1,";",1);
     }
 }
 
-void Method::GenerateName(CArrayChar &output, bool header) {
+void Method::GenerateName(std::string &output, bool header) {
     if(header) {
         output.InsertAt(-1,name,strlen(name));
     } else {
@@ -552,11 +552,11 @@ void Method::GenerateName(CArrayChar &output, bool header) {
     }
 }
 
-void Method::GenerateArguments(CArrayChar &output, bool header) {
+void Method::GenerateArguments(std::string &output, bool header) {
     char tmpcode[10240];
 
     output.InsertAt(-1,"(",1);
-    int nb=params.GetSize();
+    int nb=params.size();
     for(int j=0; j<nb; j++) {
         Param &p=*(params[j]);
         p.DeclareParam(tmpcode, header);
@@ -569,11 +569,11 @@ void Method::GenerateArguments(CArrayChar &output, bool header) {
 }
 
 
-void Method::GenerateClientPrefixBody(CArrayChar &output) {
+void Method::GenerateClientPrefixBody(std::string &output) {
 
 }
 
-void Method::GenerateClient(CArrayChar &output) {
+void Method::GenerateClient(std::string &output) {
 
     if((isVirtual && GetClass()->methodInBaseClass(*this)) || isHidden) {
         return;
@@ -596,7 +596,7 @@ void Method::GenerateClient(CArrayChar &output) {
     char str[1024];
 
     char *clname=GetClass()->GetName();
-    int j,nb=params.GetSize();
+    int j,nb=params.size();
     //      Param &ret=met.returnparam;
 
     GenerateReturn(output,false);
@@ -703,7 +703,7 @@ void Method::GenerateClient(CArrayChar &output) {
     }
 }
 
-void Method::GenerateHeader(CArrayChar &output, bool interface) {
+void Method::GenerateHeader(std::string &output, bool interface) {
     int type=MethodType();
     if(interface) {
         if(type==METHOD_DESTRUCTOR || GetMyAccess()!=PUBLIC || isHidden) {
@@ -732,7 +732,7 @@ void Method::GenerateHeader(CArrayChar &output, bool interface) {
     GeneratePostfix(output,true);
 }
 
-void Method::GenerateBrokerHeader(CArrayChar &output) {
+void Method::GenerateBrokerHeader(std::string &output) {
     int type=MethodType();
     if(type==METHOD_DESTRUCTOR || GetMyAccess()!=PUBLIC || isHidden) {
         return;
@@ -746,7 +746,7 @@ void Method::GenerateBrokerHeader(CArrayChar &output) {
     output.InsertAt(-1,str,strlen(str));
 }
 
-void Method::GenerateBroker(CArrayChar &output) {
+void Method::GenerateBroker(std::string &output) {
     int type=MethodType();
     if(type==METHOD_DESTRUCTOR || GetMyAccess()!=PUBLIC || isHidden) {
         return;
@@ -758,13 +758,13 @@ void Method::GenerateBroker(CArrayChar &output) {
     Class *cl=GetClass();
     char *clname=cl->GetName();
 
-    int nb=params.GetSize();
+    int nb=params.size();
 
     char brokername[256];
     sprintf(brokername,"%s%sBroker",cl->GetName(),OBJ_POSTFIX);
 
     paroc_array<bool>  reformat;
-    reformat.SetSize(nb);
+    reformat.resize(nb);
 
 
     //Now generate method wrappers...
@@ -879,7 +879,7 @@ Param *Method::AddNewParam() {
 }
 
 bool Method::hasInput() {
-    int np=params.GetSize();
+    int np=params.size();
     Param **pr=params;
     for(int i=0; i<np; i++,pr++) if((*pr)->InParam()) {
             return true;
@@ -894,7 +894,7 @@ bool Method::hasOutput() {
         }
     }
 
-    int np=params.GetSize();
+    int np=params.size();
     Param **pr=params;
     for(int i=0; i<np; i++,pr++) if((*pr)->OutParam()) {
             return true;
@@ -928,8 +928,8 @@ bool Method::operator ==(Method &other) {
         return false;
     }
 
-    int n=params.GetSize();
-    if(n!=other.params.GetSize()) {
+    int n=params.size();
+    if(n!=other.params.size()) {
         return false;
     }
     for(int i=0; i<n; i++) {
@@ -951,7 +951,7 @@ Constructor::Constructor(Class *cl, AccessType myaccess):Method(cl, myaccess) {
 }
 
 bool Constructor::isDefault() {
-    return (params.GetSize()==0);
+    return (params.size()==0);
 }
 
 
@@ -959,7 +959,7 @@ ObjDesc & Constructor::GetOD() {
     return od;
 }
 
-void Constructor::GenerateHeader(CArrayChar &output, bool interface) {
+void Constructor::GenerateHeader(std::string &output, bool interface) {
     Method::GenerateHeader(output,interface);
 
     //SEPARATE allocation from invocation
@@ -972,20 +972,20 @@ void Constructor::GenerateHeader(CArrayChar &output, bool interface) {
     }
 }
 
-void Constructor::GenerateReturn(CArrayChar &output, bool header) {
+void Constructor::GenerateReturn(std::string &output, bool header) {
 }
 
-void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
+void Constructor::GeneratePostfix(std::string &output, bool header) {
     if(header) {
         output.InsertAt(-1,";",1);
         return;
     }
 
     CArrayBaseClass &baseClass=GetClass()->baseClass;
-    int n=baseClass.GetSize();
+    int n=baseClass.size();
     if(n) {
         CArrayClass bases;
-        bases.SetSize(n);
+        bases.resize(n);
         for(int i=0; i<n; i++) {
             bases[i]=baseClass[i]->base;
         }
@@ -993,7 +993,7 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
         CodeFile *prog=cl->GetCodeFile();
         prog->FindAllBaseClass(*cl, bases,true);
 
-        n=bases.GetSize();
+        n=bases.size();
         char tmpcode[10240];
         strcpy(tmpcode," : ");
         for(int j=0; j<n; j++) {
@@ -1008,10 +1008,10 @@ void Constructor::GeneratePostfix(CArrayChar &output, bool header) {
     }
 }
 
-void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
+void Constructor::GenerateClientPrefixBody(std::string &output) {
     char tmpcode[10240];
     od.Generate(tmpcode);
-//   if (baseClass.GetSize()>=2)
+//   if (baseClass.size()>=2)
 //     {
 //       sprintf(str,"\n\t%s::Allocate();",baseClass[0]->basename);
 //       strcat(tmpcode,str);
@@ -1022,7 +1022,7 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
 
     //SEPARATE ALLOCATION FROM INVOCATION.....
     strcpy(tmpcode,"\n_paroc_Construct(");
-    int nb=params.GetSize();
+    int nb=params.size();
     for(int j=0; j<nb; j++) {
         Param &p=*(params[j]);
         strcat(tmpcode,p.GetName());
@@ -1046,11 +1046,11 @@ void Constructor::GenerateClientPrefixBody(CArrayChar &output) {
 
 Destructor::Destructor(Class *cl, AccessType myaccess): Method(cl, myaccess) {
 }
-void Destructor::GenerateClient(CArrayChar &output) {
+void Destructor::GenerateClient(std::string &output) {
     //Ignore the destructor of the interface....
 }
 
-void Destructor::GenerateReturn(CArrayChar &output, bool header) {
+void Destructor::GenerateReturn(std::string &output, bool header) {
     if(header) {
         output.InsertAt(-1,"~",1);
     } else {

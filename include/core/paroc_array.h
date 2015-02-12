@@ -23,54 +23,28 @@
 
 #include <typeinfo>
 
-template<class T> inline void paroc_construct_element(T *data, int n) {
+template<typename T>
+inline void paroc_construct_element(T *data, int n) {
     for(; n-->0; data++) {
         new(data) T;    // Calls the constructor
     }
 }
 
-template<class T> inline void paroc_destruct_element(T *data, int n) {
+template<typename T>
+inline void paroc_destruct_element(T *data, int n) {
     for(; n-->0; data++) {
         data->~T();    // Calls the destructor
     }
 }
 
+//Arrays have no destructors, therefore, it necessary to overload
+//these functions
 
-// Do not call const and destr for non-class types (to avoid a waste of time)
-typedef char string64[64];
-inline void paroc_construct_element(string64* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(string64*  /*data*/, int /*n*/) {}
+template<typename X, std::size_t N>
+inline void paroc_construct_element(X (*)[N] /*data*/, int /*n*/) {}
 
-inline void paroc_construct_element(unsigned int* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(unsigned int*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(long* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(long*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(unsigned long* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(unsigned long*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(short* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(short*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(unsigned short* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(unsigned short*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(bool* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(bool*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(char* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(char*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(unsigned char* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(unsigned char*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(float* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(float*  /*data*/, int /*n*/) {}
-
-inline void paroc_construct_element(double* /*data*/, int /*n*/) {}
-inline void paroc_destruct_element(double*  /*data*/, int /*n*/) {}
-
+template<typename X, std::size_t N>
+inline void paroc_destruct_element(X (*)[N]  /*data*/, int /*n*/) {}
 
 /**
  * @class paroc_array
@@ -79,13 +53,12 @@ inline void paroc_destruct_element(double*  /*data*/, int /*n*/) {}
  */
 template<class T> class paroc_array {
 public:
-    paroc_array(int asize=0,int grow=0);
+    paroc_array(int asize=0);
     paroc_array(paroc_array &val);
 
     ~paroc_array();
-    int GetSize();
-    void SetSize(int asize);
-    inline operator T*();
+    int size();
+    void resize(int asize);
     paroc_array & operator =(paroc_array & val);
     void RemoveAll();
     void InsertAt(int index,const T & e,int count=1);
@@ -94,38 +67,47 @@ public:
     void RemoveAt(int index,int count=1);
     int Find(T &e, int startIndex=0);
     void Shrink();
-    void SetGrowby(int g);
-    int  GetGrowby();
-    void DisableDestructors(bool disable=true);
+
+    T& operator[](std::size_t i){
+        return m_data[i];
+    }
+
+    const T& operator[](std::size_t i) const {
+        return m_data[i];
+    }
+
+    T* data(){
+        return m_data;
+    }
+
+    const T* data() const {
+        return m_data;
+    }
 
 protected:
-    T *data;
-    int size;
+    T *m_data;
+    int m_size;
     int actualsize;
-    int growby;
-    bool autodelete;
+    int __fake_1;
+    bool __fake; //For some obscure reasons, cannot be rmeoved
 };
 
 template<class T>
-paroc_array<T>::paroc_array(int asize,int grow) {
-    size=actualsize=0;
-    data=0;
-    growby=(grow<0) ? 0 : grow;
-    autodelete=true;
-    SetSize(asize);
+paroc_array<T>::paroc_array(int asize) {
+    m_size=actualsize=0;
+    m_data=0;
+    resize(asize);
 }
 
 template<class T>
 paroc_array<T>::paroc_array(paroc_array & val) {
-    size=actualsize=0;
-    data=0;
-    growby=0;
-    autodelete=true;
+    m_size=actualsize=0;
+    m_data=0;
 
-    int n=val.GetSize();
-    SetSize(n);
+    int n=val.size();
+    resize(n);
     if(n>0) {
-        memcpy(data,(T *)val, n*sizeof(T));
+        memcpy(m_data,(T *)val, n*sizeof(T));
     }
 }
 
@@ -135,61 +117,56 @@ paroc_array<T>::~paroc_array() {
 }
 
 template<class T>
-int paroc_array<T>::GetSize() {
-    return size;
+int paroc_array<T>::size() {
+    return m_size;
 }
 
 template<class T>
-void paroc_array<T>::SetSize(int asize) {
+void paroc_array<T>::resize(int asize) {
     if(asize<=actualsize) {
         if(asize<0) {
             asize=0;
         }
-        if(asize>size) {
-            paroc_construct_element(data+size,asize-size);
-        } else if(autodelete) {
-            paroc_destruct_element(data+asize,size-asize);
+        if(asize>m_size) {
+            paroc_construct_element(m_data+m_size,asize-m_size);
+        } else {
+            paroc_destruct_element(m_data+asize,m_size-asize);
         }
-        size=asize;
     } else {
-        int newsize=asize+ (growby<=0 ? asize/3: growby);
+        int newsize=asize+ asize/3;
+        if(newsize == asize){
+            ++newsize;
+        }
         T *data1;
-        if((data1=(T *)realloc(data,sizeof(T)*newsize))==0) {
+        if((data1=(T *)realloc(m_data,sizeof(T)*newsize))==0) {
             throw errno;
         }
 
-        data=data1;
+        m_data=data1;
         actualsize=newsize;
-        paroc_construct_element(data+size,asize-size);
-        size=asize;
+        paroc_construct_element(m_data+m_size,asize-m_size);
     }
-}
 
-template<class T>
-paroc_array<T>::operator T*() {
-    return data;
+    m_size=asize;
 }
 
 template<class T>
 paroc_array<T> & paroc_array<T>::operator =(paroc_array & val) {
-    int n=val.GetSize();
-    SetSize(n);
-    memcpy(data, (T *)val, n*sizeof(T));
+    int n=val.size();
+    resize(n);
+    memcpy(m_data, val.m_data, n * sizeof(T));
     return *this;
 }
 
 template<class T>
 void paroc_array<T>::RemoveAll() {
-    if(data) {
-        if(autodelete) {
-            paroc_destruct_element(data,size);
-        }
-
-        free(data);
+    if(m_data) {
+        paroc_destruct_element(m_data,m_size);
+        free(m_data);
     }
 
-    data=0;
-    size=actualsize=0;
+    m_data=0;
+    m_size=actualsize=0;
 }
 
 template<class T>
@@ -198,12 +175,12 @@ void paroc_array<T>::InsertAt(int index, const T & e,int count) {
         return;
     }
     if(index<0) {
-        index=size;
+        index=size();
     }
-    int t=size-1;
+    int t=size()-1;
 
-    SetSize(index>size ? index+count : size+count);
-    T *dat=data+t;
+    resize(index>size() ? index+count : size()+count);
+    T *dat=m_data+t;
     T *dat1=dat+count;
     while(t>=index) {
         *(dat+count)=*dat;
@@ -212,7 +189,7 @@ void paroc_array<T>::InsertAt(int index, const T & e,int count) {
         dat1--;
     }
 
-    dat=data+index;
+    dat=m_data+index;
     while(count-->0) {
         *dat=e;
         dat++;
@@ -225,12 +202,12 @@ void paroc_array<T>::InsertAt(int index,const T * e,int count) {
         return;
     }
     if(index<0) {
-        index=size;
+        index=size();
     }
-    int t=size-1;
+    int t=size()-1;
 
-    SetSize(index>size ? index+count : size+count);
-    T *dat=data+t;
+    resize(index>size() ? index+count : size()+count);
+    T *dat=m_data+t;
     T *dat1=dat+count;
     while(t>=index) {
         *dat1=*dat;
@@ -238,7 +215,7 @@ void paroc_array<T>::InsertAt(int index,const T * e,int count) {
         dat--;
         dat1--;
     }
-    dat=data+index;
+    dat=m_data+index;
     while(count-->0) {
         *dat=*e;
         dat++;
@@ -247,28 +224,26 @@ void paroc_array<T>::InsertAt(int index,const T * e,int count) {
 }
 
 template<class T> void paroc_array<T>::RemoveAt(int index,int count) {
-    if(index+count>size) {
-        count=size-index;
+    if(index+count>size()) {
+        count=size()-index;
     }
     if(count<=0) {
         return;
     }
-    if(autodelete) {
-        paroc_destruct_element(data+index,count);
-    }
-    for(int i=index+count; i<size; i++) {
-        memcpy(data+i-count,data+i,sizeof(T));
+    paroc_destruct_element(m_data+index,count);
+    for(int i=index+count; i<size(); i++) {
+        memcpy(m_data+i-count,m_data+i,sizeof(T));
     }
 
-    size-=count;
+    m_size-=count;
 }
 
 template<class T> int  paroc_array<T>::Find(T &e, int startIndex) {
     if(startIndex<0) {
         startIndex=0;
     }
-    T *t=data;
-    for(int i=startIndex; i<size; i++) {
+    T *t=m_data;
+    for(int i=startIndex; i<size(); i++) {
         if(memcmp(t,&e,sizeof(T))==0) {
             return i;
         }
@@ -279,34 +254,18 @@ template<class T> int  paroc_array<T>::Find(T &e, int startIndex) {
 
 template<class T> void paroc_array<T>::Shrink() {
 
-    if(size<actualsize) {
-        if(size<=0) {
+    if(m_size<actualsize) {
+        if(m_size<=0) {
             RemoveAll();
         } else {
-            T *newData=(T *)realloc(data,sizeof(T)*size);
+            T *newData=(T *)realloc(m_data,sizeof(T)*size());
             if(newData==0) {
                 throw errno;
             }
-            data=newData;
-            actualsize=size;
+            m_data=newData;
+            actualsize=m_size;
         }
     }
 }
 
-template<class T> void paroc_array<T>::SetGrowby(int g) {
-    if(g>=0) {
-        growby=g;
-    }
-}
-template<class T> int paroc_array<T>::GetGrowby() {
-    return growby;
-}
-
-template<class T>  void paroc_array<T>::DisableDestructors(bool disable) {
-    autodelete=!disable;
-}
-
 #endif
-
-
-///new

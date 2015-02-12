@@ -4,8 +4,8 @@
 #include "modelgene.h"
 
 int compareIndv(CRealArray **v1, CRealArray **v2) {
-    assert((*v1)!=NULL && (*v2)!=NULL && (*v1)->GetSize()==(*v2)->GetSize());
-    int n=(*v1)->GetSize()-1;
+    assert((*v1)!=NULL && (*v2)!=NULL && (*v1)->size()==(*v2)->size());
+    int n=(*v1)->size()-1;
     if((**v1)[n]<(**v2)[n]) {
         return -1;
     }
@@ -26,7 +26,7 @@ ModelGenetic::ModelGenetic(int pop, int cross_rate, int mutation_rate) {
         keepbests=1;
     }
 
-    population.SetSize(4*Np);
+    population.resize(4*Np);
     for(int i=0; i<4*Np; i++) {
         population[i]=new CRealArray();
         assert(population[i]!=NULL);
@@ -34,7 +34,7 @@ ModelGenetic::ModelGenetic(int pop, int cross_rate, int mutation_rate) {
 }
 
 ModelGenetic::~ModelGenetic() {
-    for(int i=0; i<population.GetSize(); i++) if(population[i]!=NULL) {
+    for(int i=0; i<population.size(); i++) if(population[i]!=NULL) {
             delete population[i];
         }
 }
@@ -43,9 +43,9 @@ bool ModelGenetic::Init(int NStep, int NTask, real *Complexities, int *fromstep,
     Nt=NTask;
     Ns=NStep;
 
-    complexities.SetSize(Nt);
-    startStep.SetSize(Nt);
-    endStep.SetSize(Nt);
+    complexities.resize(Nt);
+    startStep.resize(Nt);
+    endStep.resize(Nt);
     for(int i=0; i<Nt; i++) {
         complexities[i]=Complexities[i];
         startStep[i]=fromstep[i];
@@ -53,13 +53,13 @@ bool ModelGenetic::Init(int NStep, int NTask, real *Complexities, int *fromstep,
     }
 
     //Initialize the population....
-    int n=population.GetSize();
+    int n=population.size();
 
     paroc_array<int> tmp;
-    tmp.SetSize(Ns);
+    tmp.resize(Ns);
     for(int i=0; i<n; i++) {
         CRealArray &indv=(*population[i]);
-        indv.SetSize(Ns+1);
+        indv.resize(Ns+1);
         if(i>=Np) {
             continue;
         }
@@ -127,7 +127,7 @@ int ModelGenetic::Solve(int maxepoch) {
 }
 
 real ModelGenetic::GetResults(CRealArray &ret) {
-    ret.SetSize(Ns);
+    ret.resize(Ns);
     for(int i=0; i<Ns; i++) {
         ret[i]=(*population[0])[i];
     }
@@ -160,8 +160,8 @@ bool ModelGenetic::CrossOver(int indv) {
     int pos1=pos+1+rand()%(Ns-1);
 
     static CRealArray new1, new2;
-    new1.SetSize(Ns+1);
-    new2.SetSize(Ns+1);
+    new1.resize(Ns+1);
+    new2.resize(Ns+1);
     real total1=0,total2=0;
     int endpos=pos+Ns-1;
     real v1,v2;
@@ -237,7 +237,7 @@ bool ModelGenetic::Mutation(int indv) {
 
 
     static CRealArray new1;
-    new1.SetSize(Ns+1);
+    new1.resize(Ns+1);
 
     real * indvptr=(*population[indv]);
     real *new1ptr=new1;
@@ -304,7 +304,7 @@ bool ModelGenetic::Mutation(int indv) {
 
 
 real ModelGenetic::EvalFitness(CRealArray &indv) {
-    assert(indv.GetSize()==Ns+1);
+    assert(indv.size()==Ns+1);
     real v=0;
     int *startptr=startStep;
     int *endptr=endStep;

@@ -68,7 +68,7 @@ int TypeArray::CanMarshal() {
     return ret;
 }
 
-void TypeArray::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypeArray::Marshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpvar[1024];
     char size[1024];
     char *tmpsize;
@@ -88,33 +88,33 @@ void TypeArray::Marshal(char *varname, char *bufname, char *sizehelper, CArrayCh
         char tmpcode[1024];
 
         sprintf(tmpcode,"{ int _paroc_count%d=%s;\n",counter, tmpsize);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         char paramname[256];
         if(!FindVarName(varname,paramname)) {
             strcpy(paramname,"unknown");
         }
         sprintf(tmpcode,"%s.Push(\"%s\",\"%s\",_paroc_count%d);\n",bufname, paramname,typebase->GetName(), counter);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
 
         sprintf(tmpcode,"for (%s *_paroc_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _paroc_elem%d++)\n{\n", typebase->GetName(), counter, typebase->GetName(), varname, counter,counter, counter);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpvar,"(*_paroc_elem%d)",counter);
         typebase->Marshal(tmpvar,bufname, NULL, output);
         strcpy(tmpcode,"}\n}\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"%s.Pop();\n",bufname);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         counter++;
     }
 
 }
 
-void TypeArray::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypeArray::DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpvar[1024];
     char size[1024];
     char *tmpsize;
@@ -134,25 +134,25 @@ void TypeArray::DeMarshal(char *varname, char *bufname, char *sizehelper, CArray
         char tmpcode[1024];
 
         sprintf(tmpcode,"{ int _paroc_count%d=%s;\n",counter, tmpsize);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         char paramname[256];
         if(!FindVarName(varname,paramname)) {
             strcpy(paramname,"unknown");
         }
         sprintf(tmpcode,"%s.Push(\"%s\",\"%s\",_paroc_count%d);\n",bufname, paramname, typebase->GetName(), counter);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"for (%s *_paroc_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _paroc_elem%d++)\n{\n", typebase->GetName(), counter, typebase->GetName(), varname, counter,counter, counter);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpvar,"(*_paroc_elem%d)",counter);
         typebase->DeMarshal(tmpvar,bufname, NULL, output);
         strcpy(tmpcode,"}\n}\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"%s.Pop();\n",bufname);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         counter++;
     }

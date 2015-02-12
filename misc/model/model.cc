@@ -327,9 +327,9 @@ bool DTreeNode::ComputeTimeConstraints() {
     CIntArray start, end;
     int nstep=0;
 
-    complexity.SetSize(ntask);
-    start.SetSize(ntask);
-    end.SetSize(ntask);
+    complexity.resize(ntask);
+    start.resize(ntask);
+    end.resize(ntask);
 
     real *tmp=complexity;
     int *startptr=start;
@@ -361,7 +361,7 @@ bool DTreeNode::ComputeTimeConstraints() {
 
     CRealArray results;
     model.GetResults(results);
-    assert(results.GetSize()==nstep);
+    assert(results.size()==nstep);
 
     pos=decomposition.GetHeadPosition();
 

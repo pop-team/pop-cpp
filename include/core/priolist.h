@@ -67,9 +67,9 @@ CPrioList<T, Tprio>::~CPrioList() {
 template <class T, class Tprio>
 void CPrioList<T, Tprio>::GetData(paroc_array<int> &keys, paroc_array<T> &elems, paroc_array<Tprio> &prio) {
     paroc_mutex_locker look(mylock);
-    keys.SetSize(0);
-    elems.SetSize(0);
-    prio.SetSize(0);
+    keys.resize(0);
+    elems.resize(0);
+    prio.resize(0);
     PrioItem *t=head.next;
     while(t!=&head) {
         keys.InsertAt(-1,t->key);

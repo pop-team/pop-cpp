@@ -21,40 +21,23 @@
 
 #include "popc_intface.h"
 
+#include <numeric>
 #include <list>
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <strings.h>
-//#include <unistd.h>
-//#include <signal.h>
-//#include <netdb.h>
-//#include <sys/types.h>
-//#include <sys/wait.h>
-//#include <sys/stat.h>
-//#include <fcntl.h>
-//#include <netinet/in.h>
-//#include <arpa/inet.h>
+#include <cstring>
+#include <algorithm>
 
-//#include <assert.h>
 #include "codemgr.ph"
-//#include <sys/times.h>
 #include "timer.h"
-//#include <ctype.h>
-//#include <pwd.h>
 #include "paroc_array.h"
 #include "jobmgr.ph"
 #include "priolist.h"
 #include "paroc_thread.h"
+
 /**
  * ViSaG : clementval
  * Added vor ViSaG
  */
 #include "appservice.ph"
-
-/* ### Added by Wyssen ### */
-#include <cstring>
-/* ### End ### */
-
 
 #define min(a,b) ((a)<(b) ? (a) : (b))
 
@@ -667,7 +650,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
     if(paroc_utils::isEqual(type,"pausejobs")) {
         //  Update();
         mutex {
-            sprintf(tmp,"%d", pause_apps.GetCount());
+            sprintf(tmp,"%lu", pause_apps.size());
             val=tmp;
         }
         return 1;
@@ -718,7 +701,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                 jobcontacts[i].SetAccessString(NULL);
             }
 
-            if(!AllocResource(localservice,objname,od, howmany-count, fitness+count, jobcontacts+count, reserveIDs+count, requestInfo,traceip, 0)) {
+            if(!AllocResource(localservice,objname,od, howmany-count, fitness.data()+count, jobcontacts.data()+count, reserveIDs.data()+count, requestInfo,traceip, 0)) {
                 LOG_ERROR( "[JM] AllocResource failed");
                 ret=OBJECT_NO_RESOURCE;
                 break;
@@ -738,11 +721,11 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                             POPString acstr(ac.GetAccessString());
                             JobMgr jobmgr(ac);
 
-                            jobmgr.CancelReservation(reserveIDs+i,1);
+                            jobmgr.CancelReservation(reserveIDs.data()+i,1);
                             for(int j=i+1; j<howmany; j++) if(fitness[j]>0 && paroc_utils::isEqual(acstr,jobcontacts[j].GetAccessString())) {
                                     jobcontacts[j].SetAccessString(NULL);
                                     fitness[j]=0;
-                                    jobmgr.CancelReservation(reserveIDs+j,1);
+                                    jobmgr.CancelReservation(reserveIDs.data()+j,1);
                                 }
                         } catch(...) {
                             LOG_WARNING("Exception while canceling reservations");
@@ -768,12 +751,12 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                                 tmpids[sz++]=reserveIDs[j];
                             }
                         *(remotejobcontacts+count) = jobcontacts[i];
-                        int execRet = jobmgr.ExecObj(objname, od, sz, tmpids, localservice, objcontacts+count);
+                        int execRet = jobmgr.ExecObj(objname, od, sz, tmpids.data(), localservice, objcontacts+count);
                         if(execRet!=0) {
                             //Added by clementval
                             LOG_ERROR( "[JM] EXEC_FAILED");
                             //End of add
-                            jobmgr.CancelReservation(tmpids,sz);
+                            jobmgr.CancelReservation(tmpids.data(),sz);
                         } else {
                             count+=sz;
                         }
@@ -1304,18 +1287,19 @@ bool JobMgr::MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoi
     bool ret=false;
 
     //Sort by the fitness
-    paroc_array<int> index;
-    index.SetSize(howmany);
-    for(int i=0; i<howmany; i++) {
-        index[i]=i;
-    }
+    std::vector<int> index(howmany);
+    std::iota(index.begin(), index.end(), 0);
 
-    for(int i=0; i<howmany; i++)
-        for(int j=howmany-1; j>i; j--) if(fitness[index[j]]>fitness[index[j-1]]) {
+    for(int i=0; i<howmany; i++){
+        for(int j=howmany-1; j>i; j--){
+            if(fitness[index[j]]>fitness[index[j-1]]) {
                 int t=index[j];
                 index[j]=index[j-1];
                 index[j-1]=t;
             }
+        }
+    }
+
     for(int i=howmany-1; i>=0; i--) {
         int pos=index[i];
         float t=fitness[pos];
@@ -1451,8 +1435,10 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                 break;
             }
             JobMgr child(childaddr);
+
             paroc_array<float> oldfitness;
             oldfitness.InsertAt(-1,fitness+good,count);
+
             if(child.AllocResource(localservice,objname,od, count , fitness+good,jobcontacts+good, reserveIDs+good, requestInfo, iptrace, tracesize)) {
                 ret=true;
                 double seconds=watch.Elapsed();
@@ -1492,14 +1478,15 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
     }
 
     if(modelearn) {
-        paroc_array<int> index;
-        index.SetSize(howmany);
+        std::vector<int> index(howmany);
         for(int i=0; i<howmany; i++) {
             index[i]=(fitness[i]<=0)? 1: -1;
         }
+
         int total=0;
         POPString local=GetAccessPoint().GetAccessString();
-        for(int i=0; i<howmany; i++) if(index[i]==-1) {
+        for(int i=0; i<howmany; i++){
+            if(index[i]==-1) {
                 index[i]=1;
                 POPString t(jobcontacts[i].GetAccessString());
                 if(t==NULL || paroc_utils::isEqual(t,local)) {
@@ -1513,11 +1500,13 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                     total++;
                 }
 
-                for(int j=i+1; j<howmany; j++)
+                for(int j=i+1; j<howmany; j++){
                     if(index[j]==-1 && paroc_utils::isEqual(jobcontacts[i].GetAccessString(), jobcontacts[j].GetAccessString())) {
                         index[j]=1;
                     }
+                }
             }
+        }
     }
 
     //Now remove dynamic nodes to keep balance....
@@ -1930,7 +1919,8 @@ void JobMgr::dump() {
 void JobMgr::Pause(const paroc_accesspoint &app, int duration) {
     LOG_DEBUG( "[JM] Pause %d seconds", duration);
     mutex {
-        PauseInfo &t=pause_apps.AddTailNew();
+        pause_apps.emplace_back();
+        auto& t = pause_apps.back();
         t.until_time=service_timer.Elapsed()+duration;
         t.app=app;
     }
@@ -1939,22 +1929,24 @@ void JobMgr::Pause(const paroc_accesspoint &app, int duration) {
 bool JobMgr::CheckPauseList(const paroc_accesspoint &app) {
     double now=service_timer.Elapsed();
     mutex {
-        POSITION pos=pause_apps.GetHeadPosition();
-        while(pos!=NULL) {
-            POSITION old=pos;
-            PauseInfo &t=pause_apps.GetNext(pos);
-            if(now> t.until_time) {
-                pause_apps.RemoveAt(old);
+        auto it = pause_apps.begin();
+        auto end = pause_apps.end();
+
+        while(it != end){
+            auto& t = *it;
+
+            if(now > t.until_time) {
+                it = pause_apps.erase(it);
+                end = pause_apps.end();
             } else if(t.app.IsEmpty() || t.app==app) {
                 LOG_DEBUG("CheckPauseList return true (app=%s)",t.app.GetAccessString());
                 return true;
             }
         }
     }
+
     return false;
-
 }
-
 
 bool JobMgr::AddRequest(int reqId[3]) {
     double oldest=service_timer.Elapsed();
@@ -1965,23 +1957,26 @@ bool JobMgr::AddRequest(int reqId[3]) {
     }
 
     mutex {
-        POSITION pos=tracelist.GetHeadPosition();
-        while(pos!=NULL) {
-            POSITION oldpos=pos;
-            RequestTrace &t=tracelist.GetNext(pos);
+        for(auto& t : tracelist){
             if(memcmp(t.requestID,reqId, 3*sizeof(int))==0) {
                 return false;
             }
-            if(t.timestamp<oldest) {
-                tracelist.RemoveAt(oldpos);
-            }
         }
-        RequestTrace &t=tracelist.AddTailNew();
+
+        tracelist.erase(std::remove_if(tracelist.begin(), tracelist.end(), [oldest](RequestTrace& t){
+            return t.timestamp < oldest;
+        }), tracelist.end());
+
+        tracelist.emplace_back();
+
+        auto& t = tracelist.back();
         memcpy(t.requestID,reqId,3*sizeof(int));
         t.timestamp=service_timer.Elapsed();
-        if(tracelist.GetCount()>100) {
-            LOG_INFO( "[JM] Warning: job trace list is too big (%d items)",tracelist.GetCount());
+
+        if(tracelist.size()>100) {
+            LOG_INFO( "[JM] Warning: job trace list is too big (%d items)", tracelist.size());
         }
+
         return true;
     }
 }

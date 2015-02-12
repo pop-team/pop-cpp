@@ -121,18 +121,12 @@ struct RequestTrace {
     double timestamp;
 };
 
-
 typedef paroc_list<HostInfo> HostInfoDB;
 typedef paroc_list<NodeInfo> NodeInfoList;
 typedef paroc_list<paroc_string> paroc_list_string;
-
-
-
 typedef paroc_list<Resources> ResourceList;
-typedef paroc_list<PauseInfo> PauseList;
-
-typedef paroc_list<RequestTrace> TraceList;
-
+typedef std::vector<PauseInfo> PauseList;
+typedef std::vector<RequestTrace> TraceList;
 
 /**
  * @class NodeInfoMap

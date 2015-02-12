@@ -40,35 +40,29 @@ int yylex();
 extern int linenumber;
 extern char filename[1024];
 
-CArrayCharPtr incl[1000];
-CArrayCharPtr sources;
-CArrayCharPtr searchpath;
-
 int indexsource=0;  //the index of source file and the include directive
 
+extern std::string othercodes;
+extern bool insideClass;
+extern int startPos;
 
- extern CArrayChar othercodes;
- extern bool insideClass;
- extern int startPos;
+CodeFile *thisCodeFile;
+Class *currentClass;
+DataType *currenttype;
+DataType *returntype;
 
+std::vector<bool> constPointerPositions; // counter variables who contains order of conts possition in pointers
 
-    CodeFile *thisCodeFile;
-    Class *currentClass;
-    DataType *currenttype;
-    DataType *returntype;
+TypeClassStruct *seqclass;
 
-    std::vector<bool> constPointerPositions; // counter variables who contains order of conts possition in pointers
+Param *currentparam;
 
-    TypeClassStruct *seqclass;
+PackObject *currentPack;
+Structure *structContainer;
 
-    Param *currentparam;
-
-    PackObject *currentPack;
-    Structure *structContainer;
-
-    TypeDefinition *typeDefContainer;
-    Method *method;
-    // Param *param;
+TypeDefinition *typeDefContainer;
+Method *method;
+// Param *param;
 
  int n,t;
  bool isNamespace = false;
@@ -94,12 +88,11 @@ int indexsource=0;  //the index of source file and the include directive
 
  int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation, bool isAsyncAllocationDisable);
  char *CheckAndCreateDir(char *fname,char *name);
- bool CheckAndInsert(CArrayCharPtr &source, CArrayCharPtr &searchpath, char *fname);
 
  int AfterParsing(int status, char *classname, char *stubproc, bool gen_stub);
 
 
- paroc_list<TypeClassStruct *>  typestack;
+ std::vector<TypeClassStruct*>  typestack;
  TypeClassStruct *currentstruct;
  void CleanStack();
  void Push(TypeClassStruct *x);
@@ -145,12 +138,12 @@ struct TemplateArgument
 startlist: handle_this startlist
 |/*empty*/
 {
-    if (othercodes.GetSize()) {
+    if (othercodes.size()) {
         assert(thisCodeFile != NULL);
         OtherCode *dat = new OtherCode(thisCodeFile);
         dat->AddCode(othercodes);
         thisCodeFile->AddCodeData(dat);
-        othercodes.SetSize(0);
+        othercodes.resize(0);
     }
 }
 
@@ -158,7 +151,7 @@ startlist: handle_this startlist
 | class_declaration
 {
     insideClass=false;
-    othercodes.SetSize(0);
+    othercodes.resize(0);
     startPos=-1;
 } startlist
 | class_prototype startlist
@@ -330,12 +323,12 @@ handle_eof: EOFCODE
 
                 if(!matched_parclasses.empty()){
                     // Implict add the pack directive
-                    if (othercodes.GetSize() && startPos>0) {
+                    if (othercodes.size() && startPos>0) {
                         assert(thisCodeFile != NULL);
                         OtherCode *dat=new OtherCode(thisCodeFile);
-                        dat->AddCode((char *)othercodes,startPos);
+                        dat->AddCode(othercodes.data(),startPos);
                         thisCodeFile->AddCodeData(dat);
-                        othercodes.SetSize(0);
+                        othercodes.resize(0);
                     }
                     startPos=-1;
                     currentPack=new PackObject(thisCodeFile);
@@ -360,7 +353,7 @@ handle_eof: EOFCODE
                     isParclassDeclared = true;
                     currentPack->SetEndLine(linenumber-1);
                     currentPack=NULL;
-                    othercodes.SetSize(0);
+                    othercodes.resize(0);
                     startPos=-1;
                 }
             }
@@ -370,7 +363,7 @@ handle_eof: EOFCODE
 
 handle_this: THIS_KEYWORD
 {
-    othercodes.InsertAt(-1,"\n",strlen("\n"));
+    othercodes += "\n";
 }
 ;
 
@@ -379,39 +372,39 @@ not_care_code: error ';'
 {
   startPos=-1;
   insideClass=false;
-  if (othercodes.GetSize())
+  if (othercodes.size())
     {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode((char *)othercodes,othercodes.GetSize());
+      dat->AddCode(othercodes);
       thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
+      othercodes.resize(0);
     }
 }
 | error '}'
 {
   startPos=-1;
   insideClass=false;
-  if (othercodes.GetSize())
+  if (othercodes.size())
     {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode((char *)othercodes,othercodes.GetSize());
+      dat->AddCode(othercodes);
       thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
+      othercodes.resize(0);
     }
 }
 | error EOFCODE
 {
   startPos=-1;
   insideClass=false;
-  if (othercodes.GetSize())
+  if (othercodes.size())
     {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode((char *)othercodes,othercodes.GetSize());
+      dat->AddCode(othercodes);
       thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
+      othercodes.resize(0);
     }
   YYACCEPT;
 }
@@ -423,18 +416,18 @@ pack_directive: pack_header '(' object_list ')'
     isParclassDeclared = true;
     currentPack->SetEndLine(linenumber-1);
     currentPack=NULL;
-    othercodes.SetSize(0);
+    othercodes.resize(0);
     startPos=-1;
 };
 
 pack_header: PACK_KEYWORD
 {
-    if (othercodes.GetSize() && startPos>0) {
+    if (othercodes.size() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode((char *)othercodes,startPos);
+      dat->AddCode(othercodes.data(),startPos);
       thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
+      othercodes.resize(0);
     }
     startPos=-1;
     currentPack=new PackObject(thisCodeFile);
@@ -567,13 +560,8 @@ struct_head: STRUCT_KEYWORD ID
     if (type!=NULL){
         t=dynamic_cast<TypeClassStruct *>(type);
         if (t==NULL) {
-      //          thisCodeFile->RemoveDataType(type);
-      //          delete type;
-      t=new TypeClassStruct(tname, false);
-      thisCodeFile->AddDataType(t);
-      //      sprintf(tmp,"data type \"%s\" has been redefined!\n",tname);
-      //      errormsg(tmp);
-      //      exit(1);
+          t=new TypeClassStruct(tname, false);
+          thisCodeFile->AddDataType(t);
         }
     } else {
       t=new TypeClassStruct(tname,false);
@@ -871,7 +859,7 @@ class_prototype: class_key ';'
   dat->AddCode(tmp);
   thisCodeFile->AddCodeData(dat);
 
-  othercodes.SetSize(0);
+  othercodes.resize(0);
 
   currentClass=NULL;
   insideClass=false;
@@ -903,12 +891,12 @@ class_key: PARCLASS_KEYWORD ID
 {
 
   hadParclass = true;
-    if (othercodes.GetSize() && startPos>0) {
+    if (othercodes.size() && startPos>0) {
       assert(thisCodeFile!=NULL);
       OtherCode *dat=new OtherCode(thisCodeFile);
-      dat->AddCode((char *)othercodes,startPos);
+      dat->AddCode(othercodes.data(),startPos);
       thisCodeFile->AddCodeData(dat);
-      othercodes.SetSize(0);
+      othercodes.resize(0);
     }
     insideClass=true;
     char *clname=GetToken($2);
@@ -962,7 +950,7 @@ base_specifier: ID
         exit(1);
       }
     BaseClass *t=new BaseClass(cl, PUBLIC, false);
-    currentClass->baseClass.InsertAt(-1,t);
+    currentClass->baseClass.push_back(t);
 }
 | access_specifier ID
 {
@@ -977,7 +965,7 @@ base_specifier: ID
         exit(1);
       }
     BaseClass *t=new BaseClass(cl,accessmode,false);
-    currentClass->baseClass.InsertAt(-1,t);
+    currentClass->baseClass.push_back(t);
 }
 | VIRTUAL_KEYWORD access_specifier ID
 {
@@ -994,7 +982,7 @@ base_specifier: ID
       }
 
     BaseClass *t=new BaseClass(cl,accessmode,true);
-    currentClass->baseClass.InsertAt(-1,t);
+    currentClass->baseClass.push_back(t);
 }
 | access_specifier VIRTUAL_KEYWORD ID
 {
@@ -1011,7 +999,7 @@ base_specifier: ID
       }
 
     BaseClass *t=new BaseClass(cl,accessmode,true);
-    currentClass->baseClass.InsertAt(-1,t);
+    currentClass->baseClass.push_back(t);
 }
 ;
 
@@ -1234,14 +1222,11 @@ type_specifier: ID
 {
 
   TypeTemplate *type=new TypeTemplate(GetToken($1));
-  paroc_list<TemplateArgument *> *list=(paroc_list<TemplateArgument *> *)$3;
-  POSITION pos=list->GetHeadPosition();
-  while (pos!=NULL)
-    {
-      TemplateArgument *el=list->GetNext(pos);
+  auto list = reinterpret_cast<std::deque<TemplateArgument*>*>($3);
+  for(auto el : *list){
       type->AddTemplate(el->type, el->isRef);
       delete el;
-    }
+  }
   delete list;
 
   thisCodeFile->AddDataType(type);
@@ -1270,16 +1255,14 @@ type_specifier: ID
 
 template_arguments: template_arg
 {
-  paroc_list<TemplateArgument *> *list=new paroc_list<TemplateArgument *>();
-  TemplateArgument *v=(TemplateArgument *)$1;
-  list->AddHead(v);
+  auto list = new std::deque<TemplateArgument *>();
+  list->push_front(reinterpret_cast<TemplateArgument*>($1));
   $$=(YYSTYPE)list;
 }
 | template_arg ',' template_arguments
 {
-  paroc_list<TemplateArgument *> *list=(paroc_list<TemplateArgument *> *)$3;
-  TemplateArgument *v=(TemplateArgument *)$1;
-  list->AddHead(v);
+  auto list = reinterpret_cast<std::deque<TemplateArgument*>*>($3);
+  list->push_front(reinterpret_cast<TemplateArgument*>($1));
   $$=(YYSTYPE)list;
 }
 ;
@@ -1958,27 +1941,27 @@ arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_s
     if($8 == 0){
         t->isArray=true;
         //Find last int as size of array
-        int nb=method->params.GetSize()-1;
 
         std::string size_variable_name;
 
-        for (int j=0;j<nb;j++) {
-            Param &p=*(method->params[j]);
+        for(std::size_t i = 0; i < method->params.size() - 1; ++i){
+            auto& p = *(method->params[i]);
             if(strcmp("int", p.GetType()->GetName())==0){
                 size_variable_name.clear();
                 size_variable_name.append(p.GetName());
             }
         }
+
         if(size_variable_name.length() == 0){
-            //
             sprintf(tmp,"Could not find size to marshall array: %s\n", GetToken($7));
             errormsg(tmp);
             exit(1);
         }
+
         strcpy(tmpSize, size_variable_name.c_str());
         UpdateMarshalParam(67,t);
-      type=new TypePtr(NULL, 1, type, constPointerPositions);
-      thisCodeFile->AddDataType(type);
+        type=new TypePtr(NULL, 1, type, constPointerPositions);
+        thisCodeFile->AddDataType(type);
     } else if ($8 != -1) {
         type=new TypeArray(NULL, GetToken($8) , type);
         thisCodeFile->AddDataType(type);
@@ -2278,34 +2261,33 @@ void Usage()
   exit(1);
 }
 
-void CleanStack()
-{
-  if (typestack.GetCount()) fprintf(stderr,"STRUCT list: %d elements\n",typestack.GetCount());
-  currentstruct=NULL;
-  structContainer=NULL;
-  typestack.RemoveAll();
+void CleanStack(){
+  if (typestack.size()) {
+    fprintf(stderr,"STRUCT list: %lu elements\n",typestack.size());
+  }
+  currentstruct=nullptr;
+  structContainer=nullptr;
+  typestack.clear();
 }
 
-void Push(TypeClassStruct *x)
-{
-  typestack.AddHead(x);
+void Push(TypeClassStruct *x){
+  typestack.push_back(x);
 }
 
-TypeClassStruct *Pop()
-{
-  POSITION pos=typestack.GetHeadPosition();
-  if (pos==NULL) return NULL;
-  TypeClassStruct *t=typestack.GetAt(pos);
-  typestack.RemoveHead();
+TypeClassStruct *Pop(){
+  if (typestack.empty()){
+    return nullptr;
+  }
+  auto t = typestack.back();
+  typestack.pop_back();
   return t;
 }
 
-TypeClassStruct *Peek()
-{
-  POSITION pos=typestack.GetHeadPosition();
-  if (pos==NULL) return NULL;
-  TypeClassStruct *t=typestack.GetAt(pos);
-  return t;
+TypeClassStruct *Peek(){
+  if (typestack.empty()){
+    return nullptr;
+  }
+  return typestack.back();
 }
 
 // Update marshall options for a specific parameter
@@ -2434,7 +2416,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
         thisCodeFile->DisableAsyncAllocation();
 
     insideClass = false;
-    othercodes.SetSize(0);
+    othercodes.resize(0);
     startPos = -1;
 
     int ret = yyparse();
@@ -2452,9 +2434,10 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
         }
 
         if (outf!=NULL) {
-            CArrayChar output(0, 32000);
+            std::string output;
+            //TODO(BW) output.reserve(32000);
             thisCodeFile->GenerateCode(output, client, broker);
-            fwrite((char *)output,1, output.GetSize(),outf);
+            fwrite(output.data(), 1, output.size(),outf);
         }
 
         if (outf != stdout) {
@@ -2462,7 +2445,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
         }
     }
 
-    othercodes.SetSize(0);
+    othercodes.resize(0);
 
     if (yyin!=stdin) {
         fclose(yyin);

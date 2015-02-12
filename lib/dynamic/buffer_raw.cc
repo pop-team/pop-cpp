@@ -22,27 +22,25 @@
 #include "paroc_exception.h"
 #include "popc_logger.h"
 
-paroc_buffer_raw::paroc_buffer_raw(): packeddata(0,1024) {
+paroc_buffer_raw::paroc_buffer_raw() {
     Reset();
 }
 
-paroc_buffer_raw::~paroc_buffer_raw() {
-}
+paroc_buffer_raw::~paroc_buffer_raw() {}
 
 void paroc_buffer_raw::Reset() {
     unpackpos=20;
     //packeddata.RemoveAll();
-    packeddata.SetSize(20);
+    packeddata.resize(20);
 }
-
 
 void paroc_buffer_raw::Pack(const char *data, int n) {
     if(n<=0) {
         return;
     }
-    int t=packeddata.GetSize();
-    packeddata.SetSize(t+((n-1)/4+1)*4);
-    memcpy(((char *)packeddata)+t,data,n);
+    int t=packeddata.size();
+    packeddata.resize(t+((n-1)/4+1)*4);
+    memcpy(packeddata.data()+t,data,n);
 }
 
 void paroc_buffer_raw::UnPack(char *data, int n) {
@@ -50,8 +48,8 @@ void paroc_buffer_raw::UnPack(char *data, int n) {
         return;
     }
     //CheckUnPack(n); // Error with this check in 64 bits
-    packeddata.GetSize();
-    memcpy(data, ((char *)packeddata)+unpackpos,n);
+    packeddata.size();
+    memcpy(data, packeddata.data()+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
 
@@ -189,7 +187,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //       UnPack(&len,1);
 //       if (len)
 //  {
-//    tmpstr.SetSize(len);
+//    tmpstr.resize(len);
 //    UnPack(tmpstr,len);
 //    list->SetAccessString(tmpstr);
 //  }
@@ -219,7 +217,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //       UnPack(&len,1);
 //       if (len>0)
 //  {
-//    tmpstr.SetSize(len);
+//    tmpstr.resize(len);
 //    UnPack(tmpstr,len);
 //    (*list)=(char *)tmpstr;
 //  }
@@ -356,19 +354,19 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 
 
 void paroc_buffer_raw::CheckUnPack(int sz) {
-    if(sz+unpackpos > packeddata.GetSize()) {
+    if(sz+unpackpos > packeddata.size()) {
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format");
     }
 }
 
 bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
-    char *dat = (char *)packeddata;
+    char *dat = packeddata.data();
 
     if(dat == NULL) {
         return false;
     }
-    int n = packeddata.GetSize();
+    int n = packeddata.size();
     int h[5];
     memset(h,0, 5 * sizeof(int));
 
@@ -445,8 +443,8 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
         return false;
     }
 
-    packeddata.SetSize(n);
-    dat = (char *)packeddata + 20;
+    packeddata.resize(n);
+    dat = packeddata.data() + 20;
     n -= 20;
 
     // Recv data if there is some
@@ -463,17 +461,17 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
 }
 
 int paroc_buffer_raw::get_size() {
-    return packeddata.GetSize();
+    return packeddata.size();
 }
 
 char* paroc_buffer_raw::get_load() {
     // Pack the header (20 bytes)
-    char *dat = (char *)packeddata;
+    char *dat = packeddata.data();
 
     if(dat == NULL) {
         return NULL;
     }
-    int n = packeddata.GetSize();
+    int n = packeddata.size();
     int h[5];
     memset(h,0, 5 * sizeof(int));
 
@@ -499,11 +497,11 @@ char* paroc_buffer_raw::get_load() {
         return NULL;
     }
     memcpy(dat, h, 20);
-    return (char *)packeddata;
+    return packeddata.data();
 }
 
 void paroc_buffer_raw::load(char* data, int length) {
-    memcpy(packeddata, data, length);
+    memcpy(packeddata.data(), data, length);
 }
 
 #ifdef OD_DISCONNECT

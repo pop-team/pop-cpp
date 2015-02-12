@@ -62,7 +62,7 @@ int TypePtr::CanMarshal() {
     return ret;
 }
 
-void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpvar[1024];
     char *tmpsize=(sizehelper!=NULL)? sizehelper: size;
 
@@ -77,23 +77,23 @@ void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar
             strcpy(paramname,"unknown");
         }
         sprintf(tmpcode,"\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname,typebase->GetName(),tmpsize);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"\n{for (int _paroc_item=0; _paroc_item < %s; _paroc_item++) { \n", tmpsize);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
         sprintf(tmpvar,"(%s[_paroc_item])",varname);
         typebase->Marshal(tmpvar,bufname, NULL, output);
 
         strcpy(tmpcode,"}\n}\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"%s.Pop();\n",bufname);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
     }
 }
 
-void TypePtr::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypePtr::DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpvar[1024];
     char *tmpsize=(sizehelper!=NULL)? sizehelper: size;
 
@@ -108,18 +108,18 @@ void TypePtr::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayCh
             strcpy(paramname,"unknown");
         }
         sprintf(tmpcode,"\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname,typebase->GetName(),tmpsize);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode," {\nfor (int _paroc_item=0; _paroc_item < %s; _paroc_item++) { \n", tmpsize);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
         sprintf(tmpvar,"(%s[_paroc_item])",varname);
         typebase->DeMarshal(tmpvar,bufname, NULL, output);
 
         strcpy(tmpcode,"}\n}\n");
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"%s.Pop();\n",bufname);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
     }
 }
 
@@ -157,7 +157,7 @@ void TypePtr::GetExpandType(char *output) {
 }
 
 
-void TypePtr::SetSize(char *sizestr) {
+void TypePtr::resize(char *sizestr) {
     if(size!=NULL) {
         free(size);
     }
