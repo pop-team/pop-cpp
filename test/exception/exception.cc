@@ -15,20 +15,20 @@ ClassExcep::~ClassExcep() {
 void ClassExcep::SeqSync(int i) {
     IOException a("Object: My Exception SeqSync", "ICI");
     if(i==0) {
-        paroc_exception::paroc_throw(a);
+        throw a;
     } else {
         e = 1;
-        paroc_exception::paroc_throw(e);
+        throw e;
     }
 }
 
 void ClassExcep::ConcSync(int i) {
     IOException b("Object: My Exception ConcSync", "ICI");
     if(i==0) {
-        paroc_exception::paroc_throw(b);
+        throw b;
     } else {
         e = 2;
-        paroc_exception::paroc_throw(e);
+        throw e;
     }
 }
 
@@ -36,10 +36,10 @@ void ClassExcep::ConcSync(int i) {
 void ClassExcep::MutexSync(int i) {
     IOException b("Object: My Exception MutexSync", "ICI");
     if(i==0) {
-        paroc_exception::paroc_throw(b);
+        throw b;
     } else {
         e = 3;
-        paroc_exception::paroc_throw(e);
+        throw e;
     }
 }
 

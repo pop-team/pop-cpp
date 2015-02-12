@@ -20,10 +20,9 @@
 #include <errno.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <stdexcept>
 
 #include <typeinfo>
-
-#define FATAL {fprintf(stderr, "Fatal error on %s %s %d", __FILE__, __FUNCTION__, __LINE__); exit(-1);}
 
 template<typename T>
 inline void paroc_construct_element(T *data, int n) {
@@ -141,7 +140,7 @@ void paroc_array<T>::resize(int asize) {
         }
         T *data1;
         if((data1=(T *)realloc(m_data,sizeof(T)*newsize))==0) {
-            FATAL;
+            throw std::runtime_error("array realloc");
         }
 
         m_data=data1;
@@ -262,7 +261,7 @@ template<class T> void paroc_array<T>::Shrink() {
         } else {
             T *newData=(T *)realloc(m_data,sizeof(T)*size());
             if(newData==0) {
-                FATAL;
+                throw std::runtime_error("array realloc");
             }
             m_data=newData;
             actualsize=m_size;

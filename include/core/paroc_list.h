@@ -15,7 +15,8 @@
 
 #include <errno.h>
 #include <assert.h>
-#define FATAL {fprintf(stderr, "Fatal error on %s %s %d", __FILE__, __FUNCTION__, __LINE__); exit(-1);}
+#include <stdexcept>
+
 typedef void * POSITION;
 
 /**
@@ -120,7 +121,7 @@ template <class T>
 void paroc_list<T>::InsertBefore(POSITION pos,T &dat) {
     ListElement *e=new ListElement;
     if(e==0) {
-        FATAL;
+	throw std::runtime_error("new list");
     }
 
     ListElement *t=(ListElement *)pos;
@@ -137,7 +138,7 @@ template <class T>
 void paroc_list<T>::InsertAfter(POSITION pos,T &dat) {
     ListElement *e=new ListElement;
     if(e==0) {
-        FATAL;
+	throw std::runtime_error("new list");
     }
 
     ListElement *t=(ListElement *)pos;
@@ -154,7 +155,7 @@ template <class T>
 void paroc_list<T>::AddHead(T &dat) {
     ListElement *e=new ListElement;
     if(e==0) {
-        FATAL;
+	throw std::runtime_error("new list");
     }
     e->data=dat;
     e->next=Head.next;
@@ -168,7 +169,7 @@ template <class T>
 void paroc_list<T>::AddTail(T &dat) {
     ListElement *e=new ListElement;
     if(e==0) {
-        FATAL;
+	throw std::runtime_error("new list");
     }
     e->data=dat;
     e->prev=Head.prev;
@@ -182,7 +183,7 @@ template <class T>
 T & paroc_list<T>::AddHeadNew() {
     ListElement *e=new ListElement;
     if(e==0) {
-        FATAL;
+	throw std::runtime_error("new list");
     }
     e->next=Head.next;
     e->prev=&Head;
@@ -196,7 +197,7 @@ template <class T>
 T & paroc_list<T>::AddTailNew() {
     ListElement *e=new ListElement;
     if(e==0) {
-        FATAL;
+	throw std::runtime_error("new list");
     }
     e->prev=Head.prev;
     e->next=&Head;
