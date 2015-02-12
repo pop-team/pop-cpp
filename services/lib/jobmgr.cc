@@ -24,6 +24,7 @@
 #include <numeric>
 #include <list>
 #include <cstring>
+#include <algorithm>
 
 #include "codemgr.ph"
 #include "timer.h"
@@ -1953,23 +1954,26 @@ bool JobMgr::AddRequest(int reqId[3]) {
     }
 
     mutex {
-        POSITION pos=tracelist.GetHeadPosition();
-        while(pos!=NULL) {
-            POSITION oldpos=pos;
-            RequestTrace &t=tracelist.GetNext(pos);
+        for(auto& t : tracelist){
             if(memcmp(t.requestID,reqId, 3*sizeof(int))==0) {
                 return false;
             }
-            if(t.timestamp<oldest) {
-                tracelist.RemoveAt(oldpos);
-            }
         }
-        RequestTrace &t=tracelist.AddTailNew();
+
+        tracelist.erase(std::remove_if(tracelist.begin(), tracelist.end(), [oldest](RequestTrace& t){
+            return t.timestamp < oldest;
+        }), tracelist.end());
+
+        tracelist.emplace_back();
+
+        auto& t = tracelist.back();
         memcpy(t.requestID,reqId,3*sizeof(int));
         t.timestamp=service_timer.Elapsed();
-        if(tracelist.GetCount()>100) {
-            LOG_INFO( "[JM] Warning: job trace list is too big (%d items)",tracelist.GetCount());
+
+        if(tracelist.size()>100) {
+            LOG_INFO( "[JM] Warning: job trace list is too big (%d items)", tracelist.size());
         }
+
         return true;
     }
 }

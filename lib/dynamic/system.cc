@@ -520,8 +520,6 @@ void paroc_system::Finalize(bool normalExit) {
 #endif
 }
 
-
-
 AppCoreService *paroc_system::CreateAppCoreService(char *codelocation) {
     srand(time(NULL));
     char tmp[256];
