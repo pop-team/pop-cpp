@@ -3,7 +3,8 @@
 #ifdef _POPC_
 #include "popc_logger.h"
 #else
-// TODO LW: This should not be here
+// Note: we redefine two methods of the logger here. This allows to use this file outside of popc
+// This can of course be made in a cleaner way
 #define LOG_INFO(_log_msg, ...)    fprintf(stderr, _log_msg, ##__VA_ARGS__)
 #define LOG_ERROR(_log_msg, ...)   fprintf(stderr, _log_msg, ##__VA_ARGS__)
 #endif
