@@ -19,6 +19,7 @@
 #include "appservice.ph"
 
 #include "jobmgr.ph"
+#include "popc_logger.h"
 
 using namespace std;
 
@@ -54,6 +55,8 @@ AppCoreService::~AppCoreService() {
     try {
         JobMgr jm(paroc_system::jobservice);
         jm.ApplicationEnd(_popcAppId, true);
+    } catch(std::exception &e) {
+        LOG_WARNING("Exception while destroying JobMgr: %s", e.what());
     } catch(...) {
         LOG_WARNING("Exception while destroying JobMgr");
     }

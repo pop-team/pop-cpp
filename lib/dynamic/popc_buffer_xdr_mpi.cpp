@@ -556,7 +556,7 @@ bool popc_buffer_xdr_mpi::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
         paroc_connection * t = (paroc_connection *) s.Wait();
         if(t == NULL) {
             paroc_exception::paroc_throw(9998,
-                                         "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
+                                         "[paroc_buffer_xdr.cc] : Remote Object not alive");
         }
         if(!Recv(s, t)) {
             paroc_exception::paroc_throw(errno);
@@ -571,7 +571,7 @@ bool popc_buffer_xdr_mpi::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 paroc_connection * t = (paroc_connection *) s.Wait();
                 if(t == NULL) {
                     paroc_exception::paroc_throw(9998,
-                                                 "[paroc_buffer_xdr.cc] : Remote Object not alive\n");
+                                                 "[paroc_buffer_xdr.cc] : Remote Object not alive");
                 }
                 if(!Recv(s, t)) {
                     paroc_exception::paroc_throw(errno);

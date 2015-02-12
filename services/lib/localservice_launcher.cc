@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
         return 1;
     } catch(paroc_exception *e) {
         errno=e->Code();
-        LOG_ERROR("POP-C++ exception in localservice_launcher");
+        LOG_ERROR("POP-C++ exception in localservice_launcher: %s", e->what());
         delete e;
         return 1;
     }
