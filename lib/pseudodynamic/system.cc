@@ -442,10 +442,8 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         }
         //paroc_system::appservice=mgr->GetAccessPoint();
         paroc_system::appservice.SetAsService();
-    } catch(POPException *e) {
-        LOG_WARNING("POP-C++ Exception occurs in paroc_system::Initialize");
-        POPSystem::perror(e);
-        delete e;
+    } catch(POPException &e) {
+        LOG_WARNING("POP-C++ Exception occurs in paroc_system::Initialize: %s", e.what());
 #ifndef DEFINE_UDS_SUPPORT
         /*if (mgr!=NULL) {
             mgr->KillAll();

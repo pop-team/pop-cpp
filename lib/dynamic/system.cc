@@ -434,10 +434,8 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         }
         paroc_system::appservice=mgr->GetAccessPoint();
         paroc_system::appservice.SetAsService();
-    } catch(POPException *e) {
-        LOG_WARNING("POP-C++ Exception occurs in paroc_system::Initialize");
-        POPSystem::perror(e);
-        delete e;
+    } catch(POPException &e) {
+        LOG_WARNING("POP-C++ Exception occurs in paroc_system::Initialize: %s", e.what());
 #ifndef DEFINE_UDS_SUPPORT
         if(mgr!=NULL) {
             mgr->KillAll();
@@ -508,12 +506,8 @@ void paroc_system::Finalize(bool normalExit) {
           LOG_DEBUG("Finalize stop");
             mgr->Stop(challenge);
             delete mgr;
-        } catch(paroc_exception *e) {
-            LOG_WARNING("POP-C++ error while finalizing the application");
-            paroc_system::perror(e);
-            delete e;
-        } catch(...) {
-            LOG_WARNING("Error while finalizing the application");
+        } catch(paroc_exception &e) {
+            LOG_ERROR("while finalizing the application: %s", e.what());
         }
         mgr=NULL;
     }

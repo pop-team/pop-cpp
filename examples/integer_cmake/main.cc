@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 
     } // Try
 
-    catch(POPException *e) {
+    catch(POPException &e) {
         cout << "Exception occurs in application :" << popcendl;
         e->Print();
         delete e;

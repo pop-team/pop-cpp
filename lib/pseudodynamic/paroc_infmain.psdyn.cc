@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
         }
         LOG_DEBUG("Exit main");
         return ret;
-    } catch(paroc_exception *e) {
+    } catch(std::exception &e) {
         LOG_WARNING("End of main exception caught 1");
         errno = e->Code();
         paroc_system::perror(e);

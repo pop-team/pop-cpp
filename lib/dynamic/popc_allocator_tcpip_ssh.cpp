@@ -95,8 +95,8 @@ POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od
             paroc_exception::paroc_throw(ret,objectname,"CreateObject returned error code");
         }
 
-    } catch(paroc_exception & e) {
-        paroc_system::perror(&e);
+    } catch(std::exception & e) {
+        LOG_ERROR("Cannot create object via POP-C++ Job Manager: %s", e.what());
         paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"POP-C++ error: Cannot create object via POP-C++ Job Manager",e.what());
     }
 

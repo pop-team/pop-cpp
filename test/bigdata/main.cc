@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
         assert(array[60495998] == 'w');
 
         cout << "big data succeed !" << popcendl;
-    } catch(POPException e) {
+    } catch(POPException& e) {
         printf("big data test failed: error no.%d, destroying objects:\n", e.Code());
         return 1;
     }

@@ -204,7 +204,7 @@ int main(int argc, char** argv) {
             }
     } // end try
 
-    catch(POPException *e) {
+    catch(POPException &e) {
         printf("Matrix: Test failed, Object creation failure\n");
         return 1;
     }

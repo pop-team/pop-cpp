@@ -440,9 +440,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
             try {
                 Bind(addr);
                 return;
-            } catch(paroc_exception *e) {
-                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e->what());
-                delete e;
+            } catch(std::exception &e) {
+                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
                 continue;
             }
         }
@@ -461,9 +460,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                     try {
                         Bind(addr);
                         return;
-                    } catch(paroc_exception *e) {
-                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e->what());
-                        delete e;
+                    } catch(std::exception &e) {
+                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
                         continue;
                     }
                 }

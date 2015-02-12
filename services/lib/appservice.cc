@@ -58,8 +58,6 @@ AppCoreService::~AppCoreService() {
         jm.ApplicationEnd(_popcAppId, true);
     } catch(std::exception &e) {
         LOG_WARNING("Exception while destroying JobMgr: %s", e.what());
-    } catch(...) {
-        LOG_WARNING("Exception while ending the application on JobMgr");
     }
     
     auto pos=servicelist.GetHeadPosition();

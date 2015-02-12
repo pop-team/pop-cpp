@@ -444,11 +444,8 @@ int main(int argc, char **argv) {
         if(daemon) {
             return 0;
         }
-    } catch(paroc_exception *e) {
-        errno=e->Code();
-        paroc_system::perror("Exception occurs");
-        delete e;
-        return 1;
+    } catch(std::exception &e) {
+    	    LOG_ERROR("Exception while launching job manager: %s", e.what());
     }
     return 0;
 }

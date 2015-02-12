@@ -77,10 +77,7 @@ int ObjectMonitor::CheckObjects() {
             } catch(std::exception &e) {
                 LOG_WARNING("Exception in CheckObjects: %s",e.what());
                 objects.RemoveAt(old);
-            } catch(...) {
-                LOG_WARNING("Exception in CheckObjects");
-                objects.RemoveAt(old);
-            }
+	    }
         }
         isActive=active;
 

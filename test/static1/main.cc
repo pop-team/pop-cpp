@@ -202,9 +202,9 @@ int main(int argc, char** argv)
 		for (int i=0; i<nbWorker; i++) if (mw[i]!=NULL) delete mw[i];
 	} // end try
 
-	catch (POPException *e)
+	catch (POPException &e)
 	{
-	  printf("Matrix: Test failed, Object creation failure\n");
+	  printf("Matrix: Test failed, Object creation failure: %s\n", e.what());
 	  return 1;
 	}
 	return 0;

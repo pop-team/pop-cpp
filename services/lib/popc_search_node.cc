@@ -372,8 +372,8 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                         POPCSearchNode asker(node_ap);
                         LOG_DEBUG(  "[PSN] SEND_REP;DEST;%s", node_ap.GetAccessString());
                         asker.callbackResult(*resp);
-                    } catch(POPException* ex) {
-                        LOG_WARNING(  "[PSN] Can't connect to %s", node_ap.GetAccessString());
+                    } catch(POPException& e) {
+                        LOG_WARNING(  "[PSN] Can't connect to %s: %s", node_ap.GetAccessString(), e.what());
                     }
 
                 }

@@ -120,19 +120,16 @@ int main(int argc, char **argv) {
             LOG_WARNING("main returned error code %d. Finalize method will kill all remaining objects", ret);
         app.Finalize(ret==0);
         return ret;
-    } catch(paroc_exception *e) {
-        errno=e->Code();
-        paroc_system::perror(e);
-        delete e;
+    } catch(std::exception &e) {
+        LOG_ERROR("Exception in main: %s", e.what());
         paroc_system::Finalize(false);
         return -1;
     } catch(int e) {
-        errno=e;
-        paroc_system::perror("Exception occured");
+        LOG_ERROR("Exception in main with code %d", e);
         paroc_system::Finalize(false);
         return -1;
     } catch(...) {
-        LOG_WARNING("Unknown exception");
+        LOG_ERROR("Unknown exception");
         paroc_system::Finalize(false);
     }
     return 1;
