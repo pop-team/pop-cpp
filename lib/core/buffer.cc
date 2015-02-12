@@ -295,6 +295,7 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paro
     return except.Send(s);
 }
 
+/// Check if an exception was thrown by the remote method and propagate (if thrown)
 void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
     const paroc_message_header &h=except.GetHeader();
 
@@ -386,7 +387,7 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
         throw t;
     }
     default:
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+        paroc_exception::paroc_throw("Unknown exception in paroc_buffer::CheckAndThrow");
     }
 }
 

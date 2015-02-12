@@ -114,7 +114,7 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
     }
 
     if(!allocating_buffer->Recv((*allocating_combox), connection)) {
-        paroc_exception::paroc_throw_errno("allocating_buffer->Recv failed");
+        paroc_exception::paroc_throw("allocating_buffer->Recv failed");
     }
     paroc_buffer::CheckAndThrow(*allocating_buffer);
 

@@ -646,12 +646,12 @@ void Method::GenerateClient(std::string &output) {
 
     if(waitreturn) {
 #ifdef OD_DISCONNECT
-        strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())paroc_exception::paroc_throw_errno();\n\t}");
+        strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())paroc_exception::paroc_throw(errno);\n\t}");
         output.InsertAt(-1,tmpcode,strlen(tmpcode));
         strcpy(tmpcode,"\n\telse\n");
         output.InsertAt(-1,tmpcode,strlen(tmpcode));
 #endif
-        strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv(*__paroc_combox)) paroc_exception::paroc_throw_errno();\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
+        strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv(*__paroc_combox)) paroc_exception::paroc_throw(errno);\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
         output.InsertAt(-1,tmpcode,strlen(tmpcode));
         for(j=0; j<nb; j++) {
             Param &p=*(params[j]);
@@ -868,7 +868,7 @@ void Method::GenerateBroker(std::string &output) {
     if(haveReturn) {
         returnparam.Marshal("__paroc_buf",false,false, output);
     }
-    strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n}\n");
+    strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw(errno);\n}\n}\n");
     output.InsertAt(-1,str,strlen(str));
 }
 
