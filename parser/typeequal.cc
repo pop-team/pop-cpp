@@ -18,11 +18,11 @@ int TypeEqual::CanMarshal() {
     return ret;
 }
 
-void TypeEqual::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypeEqual::Marshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     type->Marshal(varname,bufname,sizehelper, output);
 }
 
-void TypeEqual::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypeEqual::DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     type->DeMarshal(varname,bufname,sizehelper, output);
 }
 

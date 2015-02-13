@@ -327,7 +327,7 @@ POPString paroc_system::GetDefaultInterface() {
             //       iface, net_addr, gate_addr, &iflags, &refcnt, &use, &metric, mask_addr, &mss, &window, &irtt);
             int num = sscanf(buff, "%16s %128s",iface, net_addr);
             if(num < 2) {
-                paroc_exception::paroc_throw_errno();
+                paroc_exception::paroc_throw("GetDefaultInterface failed: num < 2");
             }
             // LOG_DEBUG( "iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
 
@@ -434,10 +434,8 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         }
         paroc_system::appservice=mgr->GetAccessPoint();
         paroc_system::appservice.SetAsService();
-    } catch(POPException *e) {
-        LOG_WARNING("POP-C++ Exception occurs in paroc_system::Initialize");
-        POPSystem::perror(e);
-        delete e;
+    } catch(POPException &e) {
+        LOG_WARNING("POP-C++ Exception occurs in paroc_system::Initialize: %s", e.what());
 #ifndef DEFINE_UDS_SUPPORT
         if(mgr!=NULL) {
             mgr->KillAll();
@@ -447,10 +445,9 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         }
 #endif
         return false;
-    } catch(...) {
-        LOG_WARNING("Exception occurs in paroc_system::Initialize");
+    } catch(std::exception &e) {
+        LOG_WARNING("Exception occurs in paroc_system::Initialize: %s", e.what());
 #ifndef DEFINE_UDS_SUPPORT
-        LOG_WARNING("Exception occurs in paroc_system::Initialize");
         if(mgr!=NULL) {
             mgr->KillAll();
             mgr->Stop(challenge);
@@ -508,19 +505,13 @@ void paroc_system::Finalize(bool normalExit) {
           LOG_DEBUG("Finalize stop");
             mgr->Stop(challenge);
             delete mgr;
-        } catch(paroc_exception *e) {
-            LOG_WARNING("POP-C++ error while finalizing the application");
-            paroc_system::perror(e);
-            delete e;
-        } catch(...) {
-            LOG_WARNING("Error while finalizing the application");
+        } catch(paroc_exception &e) {
+            LOG_ERROR("while finalizing the application: %s", e.what());
         }
         mgr=NULL;
     }
 #endif
 }
-
-
 
 AppCoreService *paroc_system::CreateAppCoreService(char *codelocation) {
     srand(time(NULL));

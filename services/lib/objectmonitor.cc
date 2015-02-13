@@ -50,8 +50,8 @@ void ObjectMonitor::KillAll() {
             try {
                 paroc_interface tmp(t);
                 tmp.Kill();
-            } catch(...) {
-                LOG_WARNING("Exception while killing objects");
+            } catch(std::exception& e) {
+                LOG_WARNING("Exception while killing objects: %s", e.what());
             }
         }
         objects.RemoveAll();
@@ -74,10 +74,10 @@ int ObjectMonitor::CheckObjects() {
                 if(!active && !isActive) {
                     test.DecRef();
                 }
-            } catch(...) {
-                LOG_WARNING("Exception in CheckObjects");
+            } catch(std::exception &e) {
+                LOG_WARNING("Exception in CheckObjects: %s",e.what());
                 objects.RemoveAt(old);
-            }
+	    }
         }
         isActive=active;
 
@@ -96,6 +96,7 @@ void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
                 return;
             }
         }
+        LOG_DEBUG("Add object %s", newstr);
         objects.AddTail(p);
     }
 }

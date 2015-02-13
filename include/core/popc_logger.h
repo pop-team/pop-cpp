@@ -20,7 +20,6 @@
 
 enum LOGLEVEL {
     __DEBUG__,
-    //__DEV__, 
     __INFO__,
     __CORE__, 
     __WARNING__,

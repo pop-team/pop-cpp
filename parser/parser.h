@@ -69,16 +69,14 @@ class CodeData;
 class CodeFile;
 class PackObject;
 
-typedef paroc_array<Param *> CArrayParam;
-typedef paroc_array<Method *> CArrayMethod;
-typedef paroc_array<Class *> CArrayClass;
-typedef paroc_array<BaseClass *> CArrayBaseClass;
-typedef paroc_array<ClassMember *> CArrayClassMember;
-typedef paroc_array<CodeData *> CArrayCodeData;
-typedef paroc_array<CodeFile *> CArrayCodeFile;
-
-typedef paroc_array<DataType *> CArrayDataType;
-
+typedef std::vector<Param*> CArrayParam;
+typedef std::vector<Method*> CArrayMethod;
+typedef std::vector<Class*> CArrayClass;
+typedef std::vector<BaseClass*> CArrayBaseClass;
+typedef std::vector<ClassMember*> CArrayClassMember;
+typedef std::vector<CodeData *> CArrayCodeData;
+typedef std::vector<CodeFile*> CArrayCodeFile;
+typedef std::vector<DataType*> CArrayDataType;
 
 /**
  * @class CodeData
@@ -95,7 +93,7 @@ public:
         return -1;
     };
 
-    virtual void GenerateCode(CArrayChar &output);
+    virtual void GenerateCode(std::string &output);
     CodeFile *GetCodeFile() {
         return codeFile;
     }
@@ -112,18 +110,19 @@ protected:
 class OtherCode: public CodeData {
 public:
     OtherCode(CodeFile *file);
+
     virtual int Type() {
         return TYPE_OTHERCODE;
     };
 
-    virtual void GenerateCode(CArrayChar &output);
+    virtual void GenerateCode(std::string& output);
 
+    void AddCode(const char *newcode);
+    void AddCode(const char *, int n);
+    void AddCode(const std::string& newcode);
 
-    void AddCode(char *newcode);
-    void AddCode(char *, int n);
-    void AddCode(CArrayChar &newcode);
 protected:
-    CArrayChar code;
+    std::string code;
 };
 
 /**
@@ -138,15 +137,15 @@ public:
     virtual int Type() {
         return TYPE_PACKOBJECT;
     };
-    virtual void GenerateCode(CArrayChar &output);
-    void AddObject(string64 objname);
+    virtual void GenerateCode(std::string &output);
+    void AddObject(const std::string& objname);
     int GetNumObject();
 
     void SetStartLine(int l);
     void SetEndLine(int l);
 
 protected:
-    CArrayString objects;
+    std::vector<std::string> objects;
     int startline, endline;
 };
 
@@ -163,7 +162,7 @@ public:
     ~CodeFile();
     void AddCodeData(CodeData *code);
     void EmptyCodeData();
-    void GenerateCode(CArrayChar &output, bool client=true, bool broker=true/*, bool isPOPCPPCompilation=false*/);
+    void GenerateCode(std::string &output, bool client=true, bool broker=true/*, bool isPOPCPPCompilation=false*/);
     CArrayCodeData *GetCodes();
     bool HasClass();
     char *GetFileName();
@@ -188,7 +187,6 @@ public:
 
     DataType *FindDataType(const char *name);
     void AddDataType(DataType *type);
-    void RemoveDataType(DataType *type);
 
     void SetAsCoreCompilation();
     bool IsCoreCompilation();
@@ -253,8 +251,8 @@ public:
     bool DeclareVariable(char *output, bool &reformat, bool allocmem);
     bool DeclareVariable(char *output);
 
-    virtual bool Marshal(char *bufname, bool reformat,bool inf_side, CArrayChar &output);
-    virtual bool UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_side, CArrayChar &output);
+    virtual bool Marshal(char *bufname, bool reformat,bool inf_side, std::string &output);
+    virtual bool UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_side, std::string &output);
     virtual bool UserProc(char *code);
 
     bool isConst;
@@ -307,9 +305,9 @@ public:
         return -1;
     };
 
-    virtual void GenerateClient(CArrayChar &output);
-    virtual void GenerateHeader(CArrayChar &output, bool interface);
-    virtual void generate_header_pog(CArrayChar &output, bool interface);
+    virtual void GenerateClient(std::string &output);
+    virtual void GenerateHeader(std::string &output, bool interface);
+    virtual void generate_header_pog(std::string &output, bool interface);
 
     void SetLineInfo(int linenum);
 
@@ -334,7 +332,7 @@ public:
         return TYPE_ATTRIBUTE;
     };
 
-    virtual void GenerateHeader(CArrayChar &output, bool interface);
+    virtual void GenerateHeader(std::string &output, bool interface);
 
     Param *NewAttribute();
 
@@ -351,7 +349,7 @@ class Enumeration: public ClassMember {
 public:
     Enumeration(Class *cl, AccessType myaccess);
     ~Enumeration();
-    virtual void GenerateHeader(CArrayChar &output, bool interface);
+    virtual void GenerateHeader(std::string &output, bool interface);
 
     void setName(std::string value);
     void setArgs(std::string value);
@@ -369,7 +367,7 @@ class Structure: public ClassMember {
 public:
     Structure(Class *cl, AccessType myaccess);
     ~Structure();
-    virtual void GenerateHeader(CArrayChar &output, bool interface);
+    virtual void GenerateHeader(std::string &output, bool interface);
 
     void setName(std::string value);
     void setObjects(std::string value);
@@ -389,7 +387,7 @@ class TypeDefinition: public ClassMember {
 public:
     TypeDefinition(Class *cl, AccessType myaccess);
     ~TypeDefinition();
-    virtual void GenerateHeader(CArrayChar &output, bool interface);
+    virtual void GenerateHeader(std::string &output, bool interface);
 
     void setName(std::string name);
     void setBaseType(std::string basetype);
@@ -420,7 +418,7 @@ public:
     virtual int Type() {
         return TYPE_DIRECTIVE;
     };
-    virtual void GenerateHeader(CArrayChar &output, bool interface);
+    virtual void GenerateHeader(std::string &output, bool interface);
 private:
     char *code;
 };
@@ -445,12 +443,12 @@ public:
 
     int CheckMarshal();
 
-    virtual void GenerateClient(CArrayChar &output);
-    virtual void GenerateHeader(CArrayChar &output, bool interface);
-    virtual void generate_header_pog(CArrayChar &output, bool interface);
-    virtual void GenerateBrokerHeader(CArrayChar &output);
-    virtual void generate_broker_header_pog(CArrayChar &output);
-    virtual void GenerateBroker(CArrayChar &output);
+    virtual void GenerateClient(std::string &output);
+    virtual void GenerateHeader(std::string &output, bool interface);
+    virtual void generate_header_pog(std::string &output, bool interface);
+    virtual void GenerateBrokerHeader(std::string &output);
+    virtual void generate_broker_header_pog(std::string &output);
+    virtual void GenerateBroker(std::string &output);
 
     virtual int MethodType() {
         return METHOD_NORMAL;
@@ -479,8 +477,6 @@ public:
     bool isMutex;
     bool isHidden;
 
-    CArrayString mutex;
-
     InvokeType invoketype;
 
     char name[64];
@@ -489,13 +485,13 @@ public:
     Param returnparam;
 
 protected:
-    virtual void GenerateReturn(CArrayChar &output, bool header, bool interface);
-    virtual void GenerateReturn(CArrayChar &output, bool header);
-    virtual void GeneratePostfix(CArrayChar &output, bool header);
-    virtual void GenerateName(CArrayChar &output, bool header);
-    virtual void GenerateArguments(CArrayChar &output, bool header);
+    virtual void GenerateReturn(std::string &output, bool header, bool interface);
+    virtual void GenerateReturn(std::string &output, bool header);
+    virtual void GeneratePostfix(std::string &output, bool header);
+    virtual void GenerateName(std::string &output, bool header);
+    virtual void GenerateArguments(std::string &output, bool header);
 
-    virtual void GenerateClientPrefixBody(CArrayChar &output);
+    virtual void GenerateClientPrefixBody(std::string &output);
 
 private:
     bool _is_collective;
@@ -518,8 +514,8 @@ public:
         return METHOD_CONSTRUCTOR;
     };
 
-    virtual void GenerateHeader(CArrayChar &output, bool interface);
-    virtual void generate_header_pog(CArrayChar &output, bool interface);
+    virtual void GenerateHeader(std::string &output, bool interface);
+    virtual void generate_header_pog(std::string &output, bool interface);
 
     bool isDefault();
 
@@ -528,12 +524,12 @@ public:
     void set_id(int value);
     int get_id();
 protected:
-    virtual void GenerateReturn(CArrayChar &output, bool header, bool interface) {
+    virtual void GenerateReturn(std::string &output, bool header, bool interface) {
         Method::GenerateReturn(output, header, interface);
     };
-    virtual void GenerateReturn(CArrayChar &output, bool header);
-    virtual void GeneratePostfix(CArrayChar &output, bool header);
-    virtual void GenerateClientPrefixBody(CArrayChar &output);
+    virtual void GenerateReturn(std::string &output, bool header);
+    virtual void GeneratePostfix(std::string &output, bool header);
+    virtual void GenerateClientPrefixBody(std::string &output);
 
     ObjDesc od; //Only used for constructor method
 
@@ -553,12 +549,12 @@ public:
         return METHOD_DESTRUCTOR;
     };
 
-    virtual void GenerateClient(CArrayChar &output);
+    virtual void GenerateClient(std::string &output);
 protected:
-    virtual void GenerateReturn(CArrayChar &output, bool header, bool interface) {
+    virtual void GenerateReturn(std::string &output, bool header, bool interface) {
         Method::GenerateReturn(output, header, interface);
     };
-    virtual void GenerateReturn(CArrayChar &output, bool header);
+    virtual void GenerateReturn(std::string &output, bool header);
 };
 
 /**
@@ -589,13 +585,13 @@ public:
 
     virtual bool IsParClass();
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
     virtual int Type() {
         return TYPE_CLASS;
     };
-    virtual void GenerateCode(CArrayChar &output/*, bool isPOPCPPCompilation*/);
+    virtual void GenerateCode(std::string &output/*, bool isPOPCPPCompilation*/);
 
     void SetFileInfo(char *file);
     char *GetFileInfo();
@@ -620,13 +616,13 @@ public:
     //void findPureVirtual(CArrayMethod &lst);
 
 
-    bool GenerateClient(CArrayChar &code);
-    bool GenerateHeader(CArrayChar &code, bool interface);
-    bool GenerateBrokerHeader(CArrayChar & code);
-    bool GenerateBroker(CArrayChar & code);
+    bool GenerateClient(std::string &code);
+    bool GenerateHeader(std::string &code, bool interface);
+    bool GenerateBrokerHeader(std::string & code);
+    bool GenerateBroker(std::string & code);
 
-    bool generate_header_pog(CArrayChar &code, bool interface);
-    bool generate_broker_header_pog(CArrayChar &code);
+    bool generate_header_pog(std::string &code, bool interface);
+    bool generate_broker_header_pog(std::string &code);
 
     char classid[64];
 

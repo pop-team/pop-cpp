@@ -87,7 +87,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
             rarch=paroc_system::platform;
         }
         if(!mgr.QueryCode(objectname,rarch, codefile)) {
-            paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname);
+            paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname, "QueryCode failed");
         }
     }
 
@@ -143,17 +143,17 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
     if(combox_factory == NULL) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "Combox factory is null");
     }
 
     paroc_combox* tmpsock = combox_factory->Create("socket");
     if(tmpsock == NULL) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "Creation of combox failed");
     }
 
     bool isServer=true;
     if(!tmpsock->Create(0, isServer)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Creation of socket failed");
     }
 
     paroc_connection *connection = tmpsock->get_connection();
@@ -232,8 +232,8 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         }
 
     if(ret==-1) {
-        LOG_WARNING("Can not start the object code...");
-        paroc_exception::paroc_throw(err, objectname);
+        LOG_WARNING("Can not start the object: code %d", ret);
+        paroc_exception::paroc_throw(err, objectname, "Can not start the object");
     }
 
     //Now get the return paroc_accesspoint....
@@ -243,7 +243,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     if(!tmpbuffer->Recv((*tmpsock), connection)) {
         LOG_WARNING("cannot receive anything");
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("cannot receive anything");
     }
 
     paroc_buffer::CheckAndThrow(*tmpbuffer);
@@ -253,7 +253,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     tmpbuffer->Pop();
 
     if(n!=0) {
-        paroc_exception::paroc_throw(n, objectname);
+        paroc_exception::paroc_throw(n, objectname, "n is null");
     }
 
     POPString objectaddress;

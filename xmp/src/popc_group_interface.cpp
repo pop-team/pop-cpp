@@ -81,11 +81,11 @@ bool POPC_GroupInterface::initialize(int nb) {
  */
 POPC_GroupInterface& POPC_GroupInterface::merge(POPC_GroupInterface& other) {
     if(!is_initialized() || !other.is_initialized()) {
-        throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
+        throw POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
     }
 
     // To be removed when implemented
-    throw new POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);
+    throw POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);
 }
 
 /**
@@ -96,15 +96,15 @@ POPC_GroupInterface& POPC_GroupInterface::merge(POPC_GroupInterface& other) {
  */
 POPC_GroupInterface& POPC_GroupInterface::split(const int rank) {
     if(!is_initialized()) {
-        throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
+        throw POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
     }
 
     if(rank >= get_group_size()) {
-        throw new POPC_GroupException(POPC_GroupException::OUTOFGROUP);
+        throw POPC_GroupException(POPC_GroupException::OUTOFGROUP);
     }
 
     // To be removed when implemented
-    throw new POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);
+    throw POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);
 }
 
 /**
@@ -115,17 +115,17 @@ POPC_GroupInterface& POPC_GroupInterface::split(const int rank) {
  */
 POPC_GroupInterface& POPC_GroupInterface::split(const int group1[], const int group1_size) {
     if(!is_initialized()) {
-        throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
+        throw POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
     }
 
     // Check if group1 are members of this group
     for(int i = 0; i < group1_size; i++) {
         if(group1[i] >= get_group_size()) {
-            throw new POPC_GroupException(POPC_GroupException::OUTOFGROUP);
+            throw POPC_GroupException(POPC_GroupException::OUTOFGROUP);
         }
     }
 
-    throw new POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);
+    throw POPC_GroupException(POPC_GroupException::NOTIMPLEMENTED);
 }
 
 /**
@@ -135,7 +135,7 @@ POPC_GroupInterface& POPC_GroupInterface::split(const int group1[], const int gr
  */
 POPC_GroupInterface& POPC_GroupInterface::split(const std::vector<int> group1) {
     if(!is_initialized()) {
-        throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
+        throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED); TODO
     }
 
     // Check if group1
@@ -207,7 +207,7 @@ bool POPC_GroupInterface::finalize() {
 void POPC_GroupInterface::popc_send_request(paroc_buffer* buffer, paroc_connection* connection) {
     if(!buffer->Send((*_popc_combox), connection)) {
         printf("ERROR: Problem while sending request\n");
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Problem while sending request");
     }
 }
 
@@ -218,7 +218,7 @@ void POPC_GroupInterface::popc_send_request(paroc_buffer* buffer, paroc_connecti
  */
 void POPC_GroupInterface::popc_recv_response(paroc_buffer* buffer, paroc_connection* connection) {
     if(!buffer->Recv((*_popc_combox), connection)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("buffer Receive");
     }
     paroc_buffer::CheckAndThrow(*buffer);
 }

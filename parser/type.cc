@@ -77,7 +77,7 @@ int DataType::CanMarshal() {
     return isStandard;
 }
 
-void DataType::Marshal(char *varname, char *bufname, char *sizehelper,  CArrayChar &output) {
+void DataType::Marshal(char *varname, char *bufname, char *sizehelper,  std::string &output) {
     char tmpcode[1024];
     char paramname[256];
     const char *sz=(sizehelper==NULL)? "1" : sizehelper;
@@ -87,17 +87,17 @@ void DataType::Marshal(char *varname, char *bufname, char *sizehelper,  CArrayCh
             strcpy(paramname,"unkown");
         }
         sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", %s);\n",bufname,paramname, GetName(), sz);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"%s.Pack(&%s, %s);\n",bufname,varname, sz);
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"%s.Pop();\n",bufname);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
     }
 }
 
-void DataType::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void DataType::DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpcode[1024];
     char paramname[256];
     const char *sz=(sizehelper==NULL)? "1" : sizehelper;
@@ -107,13 +107,13 @@ void DataType::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayC
             strcpy(paramname,"unkown");
         }
         sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", %s);\n",bufname,paramname, GetName(), sz);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"%s.UnPack(&%s,%s);\n",bufname,varname, sz);
-        output.InsertAt(-1, tmpcode, strlen(tmpcode));
+        output += tmpcode;
 
         sprintf(tmpcode,"%s.Pop();\n",bufname);
-        output.InsertAt(-1,tmpcode,strlen(tmpcode));
+        output += tmpcode;
     }
 }
 

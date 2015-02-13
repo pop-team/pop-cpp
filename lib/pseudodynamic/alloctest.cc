@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
         printf("Usage: alloctest jobmgrcontact object howmany\n");
         return 1;
     }
+
     POPString objname=argv[2];
     paroc_accesspoint job;
     job.SetAccessString(argv[1]);
@@ -36,6 +37,7 @@ int main(int argc, char **argv) {
                 paroc_array<paroc_accesspoint> jobcontacts(howmany);
                 paroc_array <int> reserveIDs(howmany);
                 paroc_array <float> fitness(howmany);
+
                 LOG_INFO("Do resource allocation now...");
                 int requestInfo[3];
                 int iptrace[MAX_HOPS];
@@ -84,10 +86,10 @@ int main(int argc, char **argv) {
             tmp.CancelReservation(&r,1);
         }
         resources.RemoveAll();
-    } catch(...) {
-        LOG_WARNING("Exception in alloctest");
+    } catch(std::exception &e) {
+        LOG_WARNING("Exception in alloctest: %s", e.what());
         return 1;
-
     }
+
     return 0;
 }

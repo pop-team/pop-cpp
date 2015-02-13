@@ -53,22 +53,21 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
 
 AppCoreService::~AppCoreService() {
     try {
+        // Try to end the application on job mgr
         JobMgr jm(paroc_system::jobservice);
         jm.ApplicationEnd(_popcAppId, true);
     } catch(std::exception &e) {
         LOG_WARNING("Exception while destroying JobMgr: %s", e.what());
-    } catch(...) {
-        LOG_WARNING("Exception while destroying JobMgr");
     }
-
+    
     auto pos=servicelist.GetHeadPosition();
     while(pos) {
         auto& t = servicelist.GetNext(pos);
         free(t.name);
         try {
             t.service->Stop(mychallenge);
-        } catch(...) {
-            LOG_WARNING("Exception while stopping service");
+        } catch(std::exception& e) {
+            LOG_WARNING("Exception while stopping service: %s", e.what());
         }
         delete t.service;
     }
@@ -116,8 +115,8 @@ bool AppCoreService::RegisterService(const POPString &name, const paroc_service_
     try {
         t.service=new paroc_service_base(newservice);
         t.name=popc_strdup(name);
-    } catch(...) {
-        LOG_WARNING("Exception while creating service");
+    } catch(std::exception& e) {
+        LOG_WARNING("Exception while creating service: %s", e.what());
         return false;
     }
     servicelist.AddTail(t);
@@ -190,8 +189,8 @@ void AppCoreService::LoadAddOn() {
         try {
             paroc_service_base s(ap);
             s.Start(mychallenge);
-        } catch(...) {
-            LOG_WARNING("Can not connect to %s",service);
+        } catch(std::exception& e) {
+            LOG_WARNING("Can not connect to %s: %s",service, e.what());
             continue;
         }
         if(tmp!=NULL && sscanf(tmp+8,"%s",service)==1) {

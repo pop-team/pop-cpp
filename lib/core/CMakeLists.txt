@@ -1,9 +1,10 @@
 #
 # POP-C++
-# Common (dynamic) library build process
+# Common (core) library build process
+#   The core part of the library contains code that is common to both the dynamic and pseudodynamic parts of POP-C++
 #
-# AUTHOR: Valentin Clement
-# DATE: 2012/11/14
+# AUTHOR: Laurent Winkler
+# DATE: Jan 2015
 #
 
 set(POPCPP_DYNAMIC_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/core")

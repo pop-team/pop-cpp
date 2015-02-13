@@ -307,7 +307,8 @@ int rprintf(const char *format,...) {
         RemoteLog log(paroc_system::appservice);
         POPString msg(str);
         log.Log(msg);
-    } catch(...) {
+    } catch(std::exception e) {
+        LOG_ERROR("Exception in rprintf: %s", e.what());
         LOG_INFO("%s",str);
         fflush(stdout);
         return 0;
@@ -360,9 +361,9 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
                 s->RegisterCode(objname,arch,codefile);
             }
         }
-    } catch(...) {
+    } catch(std::exception &e) {
         fclose(f);
-        LOG_WARNING("Exception while registring code");
+        LOG_WARNING("Exception while registring code: %s", e.what());
         return 0;
     }
     fclose(f);

@@ -18,14 +18,12 @@ CodeFile::CodeFile(char *fname) {
     isCoreCompilation = false;              // Core compilation is disable by default.
     isAsyncAllocationDisable = false;   // Asynchronous allocation is enable by default.
     filename = (fname == NULL) ? NULL : popc_strdup(fname);
-    codes.SetGrowby(1024);
     outfile=NULL;
     DataType *std;
     for(int i=0; i<MAXSTDTYPES; i++) {
         std=new DataType(DataType::stdType[i]);
         AddDataType(std);
     }
-
 }
 
 CodeFile::~CodeFile() {
@@ -41,22 +39,23 @@ CodeFile::~CodeFile() {
 }
 
 void CodeFile::AddCodeData(CodeData *code) {
-    codes.InsertAt(-1,code);
+    codes.push_back(code);
     if(code->Type()==TYPE_CLASS) {
-        classlist.InsertAt(-1,(Class *)code);
+        classlist.push_back((Class *)code);
     }
 }
 
 void CodeFile::EmptyCodeData() {
-    int n=codes.GetSize();
-    for(int i=0; i<n; i++) if(codes[i]!=NULL) {
-            delete codes[i];
+    for(auto& code : codes){
+        if(code){
+            delete code;
         }
-    codes.SetSize(0);
+    }
+    codes.clear();
 }
 
-void CodeFile::GenerateCode(CArrayChar &output, bool client, bool broker) {
-    int m = codes.GetSize();
+void CodeFile::GenerateCode(std::string &output, bool client, bool broker) {
+    int m = codes.size();
     for(int j = 0; j < m; j++) {
         if(broker || codes[j]->Type() != TYPE_PACKOBJECT) {
             codes[j]->GenerateCode(output);
@@ -83,7 +82,7 @@ CArrayCodeData *CodeFile::GetCodes() {
     return &codes;
 }
 bool CodeFile::HasClass() {
-    return (classlist.GetSize()>0);
+    return (classlist.size()>0);
 }
 
 char *CodeFile::GetFileName() {
@@ -120,7 +119,7 @@ Class *CodeFile::FindClass(char *clname) {
         tmp1--;
     }
 
-    int n=classlist.GetSize();
+    int n=classlist.size();
     for(int i=0; i<n; i++) if(paroc_utils::isEqual(classlist[i]->GetName(),tmp)) {
             return classlist[i];
         }
@@ -132,7 +131,7 @@ void CodeFile::FindAllClass(CArrayClass &list) {
 }
 
 void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseOnly) {
-    int index=bases.GetSize();
+    int index=bases.size();
     CArrayClass tmp;
     if(virtualBaseOnly) {
         tmp=bases;
@@ -145,15 +144,15 @@ void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseO
 
     index=0;
     while(1) {
-        int sz=allbases.GetSize();
-        int n=cl->baseClass.GetSize();
-        allbases.SetSize(sz+n);
+        int sz=allbases.size();
+        int n=cl->baseClass.size();
+        allbases.resize(sz+n);
         int actual_n=sz;
 
         if(virtualBaseOnly) {
-            sz1=bases.GetSize();
+            sz1=bases.size();
             actual_n1=sz1;
-            bases.SetSize(sz1+n);
+            bases.resize(sz1+n);
         }
 
         for(int i=0; i<n; i++) {
@@ -173,9 +172,9 @@ void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseO
                 }
             }
         }
-        allbases.SetSize(actual_n);
+        allbases.resize(actual_n);
         if(virtualBaseOnly) {
-            bases.SetSize(actual_n1);
+            bases.resize(actual_n1);
         }
         if(index<actual_n) {
             cl=allbases[index];
@@ -186,39 +185,25 @@ void CodeFile::FindAllBaseClass(Class &t, CArrayClass & bases, bool virtualBaseO
     }
 }
 
-
-
-
-
 DataType *CodeFile::FindDataType(const char *name) {
-    int n=datatypes.GetSize();
-    DataType **tmp=datatypes;
-    for(; n>0; n--, tmp++) {
-        if(strcmp(name,(*tmp)->GetName())==0) {
-            return *tmp;
+    for(auto& datatype : datatypes){
+        if(strcmp(name, datatype->GetName())==0) {
+            return datatype;
         }
     }
-    return NULL;
+
+    return nullptr;
 }
 
 void CodeFile::AddDataType(DataType *type) {
     type->SetOwnerFile(this);
     if(type->GetName()==NULL) {
-        temptypes.InsertAt(-1,type);
+        temptypes.push_back(type);
     } else {
-        datatypes.InsertAt(-1,type);
+        datatypes.push_back(type);
     }
 
 }
-
-void CodeFile::RemoveDataType(DataType *type) {
-    int n=temptypes.GetSize();
-    DataType **ptr=temptypes;
-    for(int i=0; i<n; i++, ptr++) if(*ptr==type) {
-            temptypes.RemoveAt(i);
-        }
-}
-
 
 bool CodeFile::SameFile(char *file1, char *file2) {
     if(paroc_utils::isEqual(file1,file2)) {

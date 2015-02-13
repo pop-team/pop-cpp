@@ -216,8 +216,8 @@ int main(int argc, char **argv) {
                 } else {
                     LOG_INFO("[POP-C++ Runtime] PFM stopped successfully!");
                 }
-            } catch(...){
-                LOG_WARNING("Exception while creating POPFileManager");
+            } catch(std::exception& e){
+                LOG_WARNING("Exception while creating POPFileManager: %s", e.what());
 	    }
 
 
@@ -347,8 +347,8 @@ int main(int argc, char **argv) {
             VirtSecureJobMgr info(daemon, virtconf, conf, challenge, host, psn.GetAccessPoint(), cloner.GetAccessPoint(), psm.GetAccessPoint());
             LOG_INFO("VSJM created [%s]", info.GetAccessPoint().GetAccessString());
             psm.setJobMgrRef(info.GetAccessPoint());
-        } catch(...) {
-            LOG_WARNING("Error: Need to stop VSPSN, VPSM and POPCloner");
+        } catch(std::exception& e) {
+            LOG_WARNING("Error: Need to stop VSPSN, VPSM and POPCloner: %s", e.what());
             //Stop the created PSN
             if(!psn.Stop(challenge)) {
                 LOG_WARNING("Bad challenge string. Cannot stop VSPSN ...");
@@ -380,8 +380,8 @@ int main(int argc, char **argv) {
             paroc_accesspoint empty;
             VirtualJobMgr info(daemon, virtconf, conf, challenge, host, psn.GetAccessPoint(), cloner.GetAccessPoint(), empty);
             LOG_INFO("VJM created [%s]", info.GetAccessPoint().GetAccessString());
-        } catch(...) {
-            LOG_ERROR("Need to stop VPSN and POPCloner");
+        } catch(std::exception& e) {
+            LOG_ERROR("Need to stop VPSN and POPCloner: %s", e.what());
             //Stop the created PSN
             if(!psn.Stop(challenge)) {
                 LOG_WARNING("Bad challenge string. Cannot stop VPSN ...");
@@ -401,8 +401,8 @@ int main(int argc, char **argv) {
             SecureJobMgr info(daemon, conf, challenge, host, psn.GetAccessPoint(), psm.GetAccessPoint());
             LOG_INFO("SJM created [%s]", info.GetAccessPoint().GetAccessString());
             psm.setJobMgrRef(info.GetAccessPoint());
-        } catch(...) {
-            LOG_ERROR("Need to stop SPSN and PSM");
+        } catch(std::exception& e) {
+            LOG_ERROR("Need to stop SPSN and PSM: %s", e.what());
             //Stop the created PSN
             if(!psn.Stop(challenge)) {
                 LOG_ERROR("Bad challenge string. Cannot stop SPSN ...");
@@ -432,8 +432,8 @@ int main(int argc, char **argv) {
                  pfm.setPSNAccessPoint(psn.GetAccessPoint());
                 pfm.getNeighborsFromPSN();
             } */
-        } catch(...) {
-            LOG_WARNING("Error: Need to stop PSN");
+        } catch(std::exception& e) {
+            LOG_WARNING("Error: Need to stop PSN: %s", e.what());
             if(!psn.Stop(challenge)) {
                 LOG_WARNING("Bad challenge string. Cannot stop PSN ...");
             } else {
@@ -444,11 +444,8 @@ int main(int argc, char **argv) {
         if(daemon) {
             return 0;
         }
-    } catch(paroc_exception *e) {
-        errno=e->Code();
-        paroc_system::perror("Exception occurs");
-        delete e;
-        return 1;
+    } catch(std::exception &e) {
+    	    LOG_ERROR("Exception while launching job manager: %s", e.what());
     }
     return 0;
 }

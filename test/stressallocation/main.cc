@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
         printf("For this test ulimit will be set to 1024\n");
         POPObject o[500];
 
-    } catch(POPException e) {
+    } catch(POPException& e) {
         printf("Stress allocation test failed: error no.%d, destroying objects:\n", e.Code());
         return 1;
     }

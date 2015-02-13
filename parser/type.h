@@ -4,8 +4,11 @@
 #define MAXSTDTYPES 24
 #define MAXSTLTYPES 8
 
-#include "parser_common.h"
 #include <vector>
+#include <deque>
+#include <utility>
+
+#include "parser_common.h"
 
 #define TYPE_BASE 0
 #define TYPE_STRUCT 1
@@ -18,7 +21,7 @@ class CodeFile;
 
 /**
  * @class DataType
- * @brief A C++ class representing a data type, used by the parser.
+  * @brief A C++ class representing a data type, used by the parser.
  *
  *
  */
@@ -54,8 +57,8 @@ public:
      * @param sizehelper (not used)
      * @param output output
      */
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
     /**
      * @brief  Prints the declaration line to output
@@ -152,8 +155,8 @@ public:
     //  virtual bool Same(DataType *other);
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
     virtual bool GetDeclaration(const char *varname, char *output);
     virtual bool GetCastType(char *output);
@@ -177,13 +180,13 @@ public:
     ~TypePtr();
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
     virtual bool GetDeclaration(const char *varname, char *output);
     virtual void GetExpandType(char *output);
 
-    virtual void SetSize(char *sizestr);
+    virtual void resize(char *sizestr);
 
     virtual int IsPointer();
     virtual DataType *GetBaseType();
@@ -204,8 +207,8 @@ public:
     TypeEqual(char *name, DataType *atype);
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
     //  virtual bool Same(DataType *other);
     //  virtual bool Same(char *tname);
@@ -236,11 +239,10 @@ public:
     virtual bool IsPrototype();
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 protected:
-    paroc_list<DataType *> attr_types;
-    paroc_list<char *> attr_names;
+    std::vector<std::pair<DataType*, char*>> attributes;
 };
 
 /**
@@ -253,9 +255,9 @@ public:
     void AddBase(DataType *t);
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    paroc_list<DataType *> bases;
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    std::vector<DataType*> bases;
 };
 
 /**
@@ -271,8 +273,8 @@ public:
     virtual bool IsPrototype();
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
 protected:
     bool isClass;
@@ -288,15 +290,13 @@ public:
     virtual bool GetDeclaration(const char *varname, char *output);
 
     virtual int CanMarshal();
-    virtual void Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
-    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output);
+    virtual void Marshal(char *varname, char *bufname, char *sizehelper, std::string &output);
+    virtual void DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output);
 
 private:
-    paroc_array<DataType *> elements;
-    paroc_array<bool> refStatus;
+    std::vector<DataType*> elements;
+    std::deque<bool> refStatus;
     static char stlType[MAXSTLTYPES][32];
-
-
 };
 
 #endif

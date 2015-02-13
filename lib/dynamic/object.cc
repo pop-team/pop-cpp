@@ -32,8 +32,8 @@ paroc_object::paroc_object() {
         try {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.ManageObject(myself);
-        } catch(...) {
-            LOG_WARNING("Can not register %s@%s to ObjectMonitor service!",(const char *)paroc_broker::classname, myself.GetAccessString());
+        } catch(std::exception &e) {
+            LOG_WARNING("Can not register %s@%s to ObjectMonitor service: %s",(const char *)paroc_broker::classname, myself.GetAccessString(), e.what());
         }
     }
 
@@ -45,9 +45,9 @@ paroc_object::~paroc_object() {
         try {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.UnManageObject(myself);
-        } catch(...) {
+        } catch(std::exception &e) {
             // Did not find the object to unregister V1.3.1m: suppress error mess. V3.0 log as debug
-            LOG_DEBUG("Can not unregister %s@%s from ObjectMonitor service!",(const char *)paroc_broker::classname, myself.GetAccessString());
+            LOG_DEBUG("Can not unregister %s@%s from ObjectMonitor service: %s",(const char *)paroc_broker::classname, myself.GetAccessString(), e.what());
         }
     }
 

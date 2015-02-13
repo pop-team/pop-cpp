@@ -180,8 +180,8 @@ void POPCSearchNode::unlockDiscovery(POPString reqid) {
         sem_post(reqsem[_reqid]);
         // Log
         LOG_DEBUG( "[PSN] Unlocked by timer: %s", _reqid.c_str());
-    } catch(...) {
-        LOG_ERROR( "[PSN] Exception caught in unlockDisc");
+    } catch(std::exception& e) {
+        LOG_ERROR( "[PSN] Exception caught in unlockDisc: %s", e.what());
     }
 }
 
@@ -287,8 +287,8 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
         actualReqSyn.unlock();
 
         return results;
-    } catch(...) {
-        LOG_ERROR( "[PSN] Exception caught in launchDiscovery");
+    } catch(std::exception& e) {
+        LOG_ERROR( "[PSN] Exception caught in launchDiscovery: %s", e.what());
     }
 #endif
 
@@ -372,8 +372,8 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                         POPCSearchNode asker(node_ap);
                         LOG_DEBUG(  "[PSN] SEND_REP;DEST;%s", node_ap.GetAccessString());
                         asker.callbackResult(*resp);
-                    } catch(POPException* ex) {
-                        LOG_WARNING(  "[PSN] Can't connect to %s", node_ap.GetAccessString());
+                    } catch(POPException& e) {
+                        LOG_WARNING(  "[PSN] Can't connect to %s: %s", node_ap.GetAccessString(), e.what());
                     }
 
                 }
@@ -397,8 +397,8 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                 }
             }
         }
-    } catch(...) {
-        LOG_ERROR( "[PSN] Exception caught in askResource");
+    } catch(std::exception& e) {
+        LOG_ERROR( "[PSN] Exception caught in askResource: %s", e.what());
     }
 }
 
@@ -435,8 +435,8 @@ void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb) {
             //Print a log
             LOG_DEBUG(  "[PSN] REROUTE;TO;%s;WAYBACK;%s", nextNodeStr.GetString(), wb.getAsString().GetString());
         }
-    } catch(...) {
-        LOG_ERROR( "[PSN] Exception caught in reroute");
+    } catch(std::exception& e) {
+        LOG_ERROR( "[PSN] Exception caught in reroute: %s", e.what());
     }
 }
 
@@ -469,8 +469,8 @@ void POPCSearchNode::callbackResult(Response resp) {
         } else {
             LOG_DEBUG( "[PSN] SEMAPHORE IS NULL UNABLE TO UNLOCK %s", _reqid.c_str());
         }
-    } catch(...) {
-        LOG_ERROR( "[PSN] Exception caught in callback");
+    } catch(std::exception& e) {
+        LOG_ERROR( "[PSN] Exception caught in callback: %s", e.what());
     }
 }
 

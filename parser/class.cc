@@ -10,6 +10,8 @@
  * clementval   August 2012 Add asynchronous parallel object allocation (APOA) support
  */
 
+#include <algorithm>
+
 #include "popc_intface.h"
 
 #include "parser.h"
@@ -46,6 +48,9 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
     hasWarningEnable=false;
     _is_collective = false;
 
+    isCoreCompilation = false;
+    isAsyncAllocationDisable = false;
+
     my_interface_base=popc_strdup(interface_base);
     my_object_base=popc_strdup(object_base);
     my_broker_base=popc_strdup(broker_base);
@@ -54,12 +59,12 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
 
 Class::~Class() {
     int i,n;
-    n=baseClass.GetSize();
+    n=baseClass.size();
     for(i=0; i<n; i++) if(baseClass[i]!=NULL) {
             delete baseClass[i];
         }
 
-    n=memberList.GetSize();
+    n=memberList.size();
     for(i=0; i<n; i++) if(memberList[i]!=NULL) {
             delete memberList[i];
         }
@@ -92,7 +97,7 @@ int Class::CanMarshal() {
     return 1;
 }
 
-void Class::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
+void Class::Marshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
     char tmpstr[1024];
     char paramname[256];
 
@@ -100,22 +105,22 @@ void Class::Marshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayCh
         strcpy(paramname,"unkown");
     }
     sprintf(tmpstr,"%s.Push(\"%s\",\"paroc_interface\",1);\n",bufname,paramname);
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    output += tmpstr;
 
     // If uncommented, the 4 following lines will check at runtime if polymorphism is used (and exit)
     //sprintf(tmpstr, "if(!paroc_utils::MatchWildcard(typeid(%s).name(),\"*%s\"))\n",varname,GetName());
-    //output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    //output += tmpstr;
     //sprintf(tmpstr, "{printf(\"POPC Error at method call: dynamic type of %s must correspond with static type %s\\n\");exit(-1);}\n",varname,GetName());
-    //output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    //output += tmpstr;
 
     sprintf(tmpstr, "((%s &)(%s)).Serialize(%s, true);",GetName(),varname,bufname);
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    output += tmpstr;
 
     sprintf(tmpstr,"%s.Pop();\n",bufname);
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    output += tmpstr;
 }
 
-void Class::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArrayChar &output) {
+void Class::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
     char tmpstr[1024];
     char paramname[256];
 
@@ -123,13 +128,13 @@ void Class::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, CArray
         strcpy(paramname,"unkown");
     }
     sprintf(tmpstr,"%s.Push(\"%s\",\"paroc_interface\",1);\n",bufname,paramname);
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    output += tmpstr;
 
     sprintf(tmpstr, "((%s &)(%s)).Serialize(%s, false);",GetName(),varname,bufname);
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    output += tmpstr;
 
     sprintf(tmpstr,"%s.Pop();\n",bufname);
-    output.InsertAt(-1,tmpstr,strlen(tmpstr));
+    output += tmpstr;
 }
 
 
@@ -158,7 +163,7 @@ void Class::SetEndLine(int num) {
 }
 
 
-void Class::GenerateCode(CArrayChar &output/*, bool isPOPCPPCompilation*/) {
+void Class::GenerateCode(std::string &output/*, bool isPOPCPPCompilation*/) {
     char str[1024];
 
     // Generate the class uid in fonction of the defined one or generate one from the name of the parclass
@@ -172,13 +177,13 @@ void Class::GenerateCode(CArrayChar &output/*, bool isPOPCPPCompilation*/) {
     if(!pureVirtual) {
         CArrayMethod puremethods;
         bool flag = findPureVirtual(puremethods);
-        if(puremethods.GetSize()>0) {
+        if(puremethods.size()>0) {
             SetPureVirtual(true);
             SetBasePureVirtual(flag);
         }
     }
 
-    output.InsertAt(-1,str,strlen(str));
+    output += str;
 
     // If the parclass is a POG, generate differently
     if(is_collective()) {
@@ -208,7 +213,7 @@ void Class::AddMember(ClassMember *t) {
             met->id=endid++;
         }
     }
-    memberList.InsertAt(-1,t);
+    memberList.push_back(t);
 }
 
 
@@ -252,7 +257,7 @@ void Class::SetBasePureVirtual(bool val) {
 }
 
 bool Class::hasMethod(Method &x) {
-    int n=memberList.GetSize();
+    int n=memberList.size();
     for(int i=0; i<n; i++) if(memberList[i]->Type()==TYPE_METHOD) {
             Method &t=*((Method *)memberList[i]);
             if(t==x) {
@@ -263,7 +268,7 @@ bool Class::hasMethod(Method &x) {
 }
 
 bool Class::methodInBaseClass(Method &x) {
-    int n=baseClass.GetSize();
+    int n=baseClass.size();
     for(int i=0; i<n; i++) {
         BaseClass &t=*(baseClass[i]);
         if(t.type!=PUBLIC) {
@@ -283,58 +288,57 @@ bool Class::methodInBaseClass(Method &x) {
 bool Class::findPureVirtual(CArrayMethod &lst) {
     bool returnFlag = true;
 
-    int n=baseClass.GetSize();
-    for(int i=0; i<n; i++) {
-        BaseClass &t=*(baseClass[i]);
-        if(t.type!=PUBLIC) {
+    for(auto& bc : baseClass){
+        if(bc->type!=PUBLIC) {
             continue;
         }
-        t.base->findPureVirtual(lst);
+
+        bc->base->findPureVirtual(lst);
         returnFlag = false;
     }
 
-    n=memberList.GetSize();
-    int m=lst.GetSize();
-    for(int i=0; i<n; i++) if(memberList[i]->Type()==TYPE_METHOD) {
-            Method *t=(Method *)(memberList[i]);
+    for(auto& member : memberList){
+        if(member->Type()==TYPE_METHOD) {
+            auto t = (Method *)member;
+
             if(t->isPureVirtual) {
-                lst.InsertAt(-1,t);
-            } else if(m) {
-                for(int j=m-1; j>=0; j--) {
-                    if(*(lst[j]) == (*t)) {
-                        lst.RemoveAt(j);
-                    }
-                }
+                lst.push_back(t);
+            } else {
+                lst.erase(
+                    std::remove_if(lst.begin(), lst.end(), [t](Method* v){ return *v == *t; }),
+                    lst.end());
             }
         }
+    }
+
     return returnFlag;
 }
 
-bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
+bool Class::GenerateClient(std::string &code/*, bool isPOPCPPCompilation*/) {
     char tmpcode[10240];
 
     if(is_collective()) {
         sprintf(tmpcode,"\n// Generate code for client side of POG\n");
-        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        code += tmpcode;
     }
 
     char *outfile=GetCodeFile()->GetOutputName();
     if(outfile != NULL) {
         int lines=CountCodeLines(code);
         sprintf(tmpcode,"\n# %d \"%s\"\n",lines+3, outfile);
-        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        code += tmpcode;
 
         if(strcmp(strnamespace.c_str(), "") != 0) {
             sprintf(tmpcode,"using namespace %s;\n", strnamespace.c_str());
-            code.InsertAt(-1,tmpcode,strlen(tmpcode));
+            code += tmpcode;
         }
     }
 
     if(!IsCoreCompilation() && IsAsyncAllocationDisable()) {
         sprintf(tmpcode,"// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", name);
-        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        code += tmpcode;
 
-        int nb_of_methods = memberList.GetSize();
+        int nb_of_methods = memberList.size();
         for(int i = 0; i < nb_of_methods; i++) {
 
 
@@ -350,27 +354,27 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
 
 
                 sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg);\n}\n\n", name, cons->get_id());
-                code.InsertAt(-1,tmpcode,strlen(tmpcode));
+                code += tmpcode;
 
                 sprintf(tmpcode, "typedef struct pthread_args%d\n{\n  %s* ptr_interface;\n", cons->get_id(), name);
-                code.InsertAt(-1, tmpcode, strlen(tmpcode));
+                code += tmpcode;
 
-                int nb = (*met).params.GetSize();
-                for(int j=0; j<nb; j++)  {
+                auto nb = (*met).params.size();
+                for(std::size_t j=0; j<nb; j++)  {
                     sprintf(tmpcode, "  ");
                     Param &p=*((*met).params[j]);
                     p.DeclareParam(tmpcode, false);
                     strcat(tmpcode, ";\n");
-                    code.InsertAt(-1,tmpcode,strlen(tmpcode));
+                    code += tmpcode;
                 }
 
                 sprintf(tmpcode, "} pthread_args_t_%d;\n\n", cons->get_id());
-                code.InsertAt(-1, tmpcode, strlen(tmpcode));
+                code += tmpcode;
             }
         }
     }
 
-    int n = memberList.GetSize();
+    int n = memberList.size();
     for(int i=0; i<n; i++) {
         if(memberList[i]->Type() != TYPE_METHOD || memberList[i]->GetMyAccess() != PUBLIC) {
             continue;
@@ -391,42 +395,42 @@ bool Class::GenerateClient(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
 
     if(is_collective()) {
         sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  switch(_popc_selected_constructor_id) {", GetName());
-        code.InsertAt(-1, tmpcode, strlen(tmpcode));
-        int n = memberList.GetSize();
+        code += tmpcode;
+        int n = memberList.size();
         for(int i=0; i<n; i++) {
             if(memberList[i]->Type() == TYPE_METHOD) {
                 Method* m = dynamic_cast<Method*>(memberList[i]);
                 if(m->MethodType() == METHOD_CONSTRUCTOR) {
                     Constructor* c = dynamic_cast<Constructor*>(memberList[i]);
                     sprintf(tmpcode, "\n  case %d:", (*c).id);
-                    code.InsertAt(-1, tmpcode, strlen(tmpcode));
+                    code += tmpcode;
                     strcpy(tmpcode, "\n    _popc_constructor(");
-                    code.InsertAt(-1, tmpcode, strlen(tmpcode));
-                    int nb = (*c).params.GetSize();
-                    for(int j=0; j<nb; j++)  {
+                    code += tmpcode;
+                    auto nb = (*c).params.size();
+                    for(std::size_t j=0; j<nb; j++)  {
                         Param &p = *((*c).params[j]);
                         sprintf(tmpcode, "_popc_constructor_%d_%s", (*c).id, p.GetName());
                         if(j < nb-1) {
                             strcat(tmpcode, ", ");
                         }
-                        code.InsertAt(-1, tmpcode, strlen(tmpcode));
+                        code += tmpcode;
                     }
                     strcpy(tmpcode, ");\n    break;");
-                    code.InsertAt(-1, tmpcode, strlen(tmpcode));
+                    code += tmpcode;
                 }
             }
         }
         strcpy(tmpcode, "\n  }\n}");
-        code.InsertAt(-1, tmpcode, strlen(tmpcode));
+        code += tmpcode;
 
         sprintf(tmpcode, "\%s& %s::operator[] (const int index) {\n  set_default_rank(index);\n  return (*this);\n}\n", GetName(), GetName());
-        code.InsertAt(-1, tmpcode, strlen(tmpcode));
+        code += tmpcode;
     }
 
     char *fname = GetCodeFile()->GetFileName();
     if(endline > 0 && fname != NULL) {
         sprintf(tmpcode,"\n# %d \"%s\"\n", endline, fname);
-        code.InsertAt(-1, tmpcode, strlen(tmpcode));
+        code += tmpcode;
     }
     return true;
 }
@@ -458,7 +462,7 @@ unsigned Class::IDFromString(char *str) {
 
 }
 
-bool Class::generate_broker_header_pog(CArrayChar &code) {
+bool Class::generate_broker_header_pog(std::string &code) {
     int i;
     char str[1024];
     char tmpcode[10240];
@@ -467,18 +471,18 @@ bool Class::generate_broker_header_pog(CArrayChar &code) {
 
     // Print a comment in the generated code
     sprintf(tmpcode, "\n// Generate broker-side code for a POG\n");
-    code.InsertAt(-1, tmpcode, strlen(tmpcode));
+    code += tmpcode;
 
     if(outfile != NULL) {
         int lines = CountCodeLines(code);
         sprintf(tmpcode, "\n# %d \"%s\"\n", lines+3, outfile);
-        code.InsertAt(-1, tmpcode, strlen(tmpcode));
+        code += tmpcode;
     }
 
     // Prepare broker name
     sprintf(brokername, "%s%s", name, Class::POG_BROKER_POSTFIX);
 
-    int n = baseClass.GetSize();
+    int n = baseClass.size();
     if(n == 0) {
         sprintf(tmpcode,"\n\nclass %s: virtual public %s", brokername, Class::POG_BASE_BROKER_NAME);
     } else {
@@ -499,9 +503,9 @@ bool Class::generate_broker_header_pog(CArrayChar &code) {
     strcat(tmpcode,str);
 
     strcat(tmpcode,"\nprotected:");
-    code.InsertAt(-1,tmpcode,strlen(tmpcode));
+    code += tmpcode;
 
-    n=memberList.GetSize();
+    n=memberList.size();
     for(i = 0; i < n; i++) {
         if(memberList[i]->GetMyAccess() != PUBLIC || memberList[i]->Type() != TYPE_METHOD) {
             continue;
@@ -519,33 +523,33 @@ bool Class::generate_broker_header_pog(CArrayChar &code) {
     }*/
 
     sprintf(tmpcode,"\npublic:\n  static POPC_GroupBroker *_init();\n  static POPC_GroupBrokerFactory _popc_factory;\n");
-    code.InsertAt(-1, tmpcode, strlen(tmpcode));
+    code += tmpcode;
     strcpy(str,"\n}\n;");
-    code.InsertAt(-1,str,strlen(str));
+    code += str;
 
     char *fname = GetCodeFile()->GetFileName();
     if(endline > 0 && fname != NULL) {
         sprintf(str, "\n# %d \"%s\"\n", endline, fname);
-        code.InsertAt(-1, str, strlen(str));
+        code += str;
     }
     return true;
 }
 
-bool Class::generate_header_pog(CArrayChar &code, bool interface) {
+bool Class::generate_header_pog(std::string &code, bool interface) {
     char tmpcode[10240];
     char str[1024];
     char *fname = GetCodeFile()->GetFileName();
     if(startline > 0 && fname != NULL) {
         sprintf(str, "\n# %d \"%s\"\n", startline, fname);
-        code.InsertAt(-1, str, strlen(str));
+        code += str;
     }
 
     if(interface) {
         sprintf(tmpcode, "\n// Generated code for the interface-side of a POG\n");
-        code.InsertAt(-1, tmpcode, strlen(tmpcode));
+        code += tmpcode;
     } else {
         sprintf(tmpcode, "\n// Generated code for the object-side of a POG\n");
-        code.InsertAt(-1, tmpcode, strlen(tmpcode));
+        code += tmpcode;
     }
 
     strcpy(str, name);
@@ -555,7 +559,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
     }
 
     sprintf(tmpcode, "class %s ", str);
-    int n = baseClass.GetSize();
+    int n = baseClass.size();
     strcat(tmpcode, " :");
 
     int i;
@@ -590,13 +594,13 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
         strcat(tmpcode, str);
     }
 
-    code.InsertAt(-1,tmpcode,strlen(tmpcode));
+    code += tmpcode;
     *tmpcode=0;
 
     //Generate members
     const char *accessstr[3] = {"\npublic:", "\nprotected:", "\nprivate:"};
     AccessType currentaccess = PUBLIC;
-    n = memberList.GetSize();
+    n = memberList.size();
 
     for(i = 0; i < n; i++) {
         if(interface && memberList[i]->GetMyAccess() != PUBLIC) {
@@ -605,7 +609,7 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
 
         if(memberList[i]->GetMyAccess() != currentaccess) {
             currentaccess = memberList[i]->GetMyAccess();
-            code.InsertAt(-1, accessstr[currentaccess], strlen(accessstr[currentaccess]));
+            code += accessstr[currentaccess];
         }
 
         memberList[i]->generate_header_pog(code, interface);
@@ -613,28 +617,28 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
 
     if(interface) {
         sprintf(str,"\npublic:\n  virtual void construct_remote_object();");
-        code.InsertAt(-1, str, strlen(str));
+        code += str;
 
         //sprintf(str,"\n  void _popc_constructor();", name);
-        //code.InsertAt(-1, str, strlen(str));
-    
+        //code += str;
+
 
         sprintf(str, "\n  virtual char* get_class_name() { return (char*)\"%s\"; };\n", name);
-        code.InsertAt(-1, str, strlen(str));
+        code += str;
 
         sprintf(str, "\n  %s& operator[] (const int index);\n", name);
-        code.InsertAt(-1, str, strlen(str));
+        code += str;
 
-        /*int n=baseClass.GetSize();
+        /*int n=baseClass.size();
         if (n)
         {
             CArrayClass bases;
-            bases.SetSize(n);
+            bases.resize(n);
             for (int i=0;i<n;i++)  bases[i]=baseClass[i]->base;
             CodeFile *prog=GetCodeFile();
             prog->FindAllBaseClass(*this, bases,true);
 
-            n=bases.GetSize();
+            n=bases.size();
             strcpy(tmpcode," : ");
             for (int j=0;j<n;j++)
             {
@@ -642,11 +646,11 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
                 if (j<n-1) strcat(tmpcode,"(_paroc_nobind) ,");
                 else  strcat(tmpcode,"(_paroc_nobind)");
             }
-            code.InsertAt(-1,tmpcode,strlen(tmpcode));
+            code += tmpcode;
         }
 
         strcpy(str," { Bind(p); };\n");
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
 
 
         if (noConstructor && !pureVirtual)
@@ -654,32 +658,31 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
 
         //Generate constructor from the interface binding
         sprintf(str,"\n%s(const %s &inf)",name, my_interface_base);
-        code.InsertAt(-1,str,strlen(str));
-        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        code += str;
+        code += tmpcode;
         strcpy(str," { SetOD(inf.GetOD()); Bind(inf.GetAccessPoint()); };\n");
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
 
         //Generate constructor from the object side binding
         sprintf(str,"\n%s(const paroc_object *obj)",name);
-        code.InsertAt(-1,str,strlen(str));
-        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        code += str;
+        code += tmpcode;
         strcpy(str," { Bind(obj->GetAccessPoint());};\n");
-        code.InsertAt(-1,str,strlen(str));*/
+        code += str;*/
 
         sprintf(str,"\n  ~%s() {};",name);
-        code.InsertAt(-1, str, strlen(str));
+        code += str;
 
-        n = memberList.GetSize();
+        n = memberList.size();
         for(i = 0; i < n; i++) {
             if(memberList[i]->Type() == TYPE_METHOD) {
                 Method* m = dynamic_cast<Method*>(memberList[i]);
                 if(m->MethodType() == METHOD_CONSTRUCTOR) {
                     Constructor* t = dynamic_cast<Constructor*>(memberList[i]);
-                    int nb = (*t).params.GetSize();
-                    for(int j = 0; j < nb; j++) {
-                        Param &p = *((*t).params[j]);
+                    for(auto& param : t->params){
+                        Param &p = *param;
                         sprintf(str, "\n  %s _popc_constructor_%d_%s;\n", p.GetType()->GetName(), (*t).id, p.GetName());
-                        code.InsertAt(-1, str, strlen(str));
+                        code += str;
                     }
                 }
             }
@@ -688,26 +691,26 @@ bool Class::generate_header_pog(CArrayChar &code, bool interface) {
 
     //Add the declaration of the __POPThis variable for support of the "this" keyword
     sprintf(str,"\npublic:\n  %s* __POPThis_%s; \n", name, name);
-    code.InsertAt(-1,str,strlen(str));
+    code += str;
     strcpy(str,"\n};\n");
-    code.InsertAt(-1,str, strlen(str));
+    code += str;
 
     if(endline>0 && fname!=NULL) {
         sprintf(str,"\n# %d \"%s\"\n",endline,fname);
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
     }
 
     return true;
 }
 
-bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPCompilation*/) {
+bool Class::GenerateHeader(std::string &code, bool interface/*, bool isPOPCPPCompilation*/) {
     char tmpcode[10240];
     char str[1024];
 
     char *fname=GetCodeFile()->GetFileName();
     if(startline>0 && fname!=NULL) {
         sprintf(str,"\n# %d \"%s\"\n",startline,fname);
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
     }
 
     strcpy(str,name);
@@ -717,7 +720,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
     }
 
     sprintf(tmpcode,"class %s ",str);
-    int n=baseClass.GetSize();
+    int n=baseClass.size();
     strcat(tmpcode," :");
 
     int i;
@@ -753,13 +756,13 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
         strcat(tmpcode, str);
     }
 
-    code.InsertAt(-1,tmpcode,strlen(tmpcode));
+    code += tmpcode;
     *tmpcode=0;
 
     //Generate members
     const char *accessstr[3]= {"\npublic:","\nprotected:","\nprivate:"};
     AccessType currentaccess=PUBLIC;
-    n=memberList.GetSize();
+    n=memberList.size();
 
     for(i=0; i<n; i++) {
         if(interface && memberList[i]->GetMyAccess()!=PUBLIC) {
@@ -768,7 +771,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 
         if(memberList[i]->GetMyAccess()!=currentaccess) {
             currentaccess=memberList[i]->GetMyAccess();
-            code.InsertAt(-1,accessstr[currentaccess],strlen(accessstr[currentaccess]));
+            code += accessstr[currentaccess];
         }
 
         if(memberList[i]->Type()==TYPE_METHOD) {
@@ -784,34 +787,34 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 
     //Add the declaration of the __POPThis variable for support of the "this" keyword
     sprintf(str,"\n%s* __POPThis_%s; \n", name, name);
-    code.InsertAt(-1,str,strlen(str));
+    code += str;
 
     sprintf(str,"void AllocateObject();\n");
-    code.InsertAt(-1,str,strlen(str));
+    code += str;
 
     if(interface) {
 
         sprintf(str,"\npublic:\nvirtual const char *ClassName() { return \"%s\"; };",name);
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
 
 
 
 
         //Generate constructor from paroc_accesspoint...
         sprintf(str,"\npublic:\n%s(const paroc_accesspoint &p)",name);
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
 
-        int n=baseClass.GetSize();
+        int n=baseClass.size();
         if(n) {
             CArrayClass bases;
-            bases.SetSize(n);
+            bases.resize(n);
             for(int i=0; i<n; i++) {
                 bases[i]=baseClass[i]->base;
             }
             CodeFile *prog=GetCodeFile();
             prog->FindAllBaseClass(*this, bases,true);
 
-            n=bases.GetSize();
+            n=bases.size();
             strcpy(tmpcode," : ");
             for(int j=0; j<n; j++) {
                 strcat(tmpcode,bases[j]->GetName());
@@ -821,11 +824,11 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
                     strcat(tmpcode,"(_paroc_nobind)");
                 }
             }
-            code.InsertAt(-1,tmpcode,strlen(tmpcode));
+            code += tmpcode;
         }
 
         strcpy(str," { Bind(p); };\n");
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
 
         //If no constructor, generate default for interface...
         if(noConstructor /*PEKA Removed */ && !pureVirtual) {
@@ -834,47 +837,47 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
 
         //Generate constructor from the interface binding
         sprintf(str,"\n%s(const %s &inf)",name, my_interface_base);
-        code.InsertAt(-1,str,strlen(str));
-        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        code += str;
+        code += tmpcode;
         strcpy(str," { SetOD(inf.GetOD()); Bind(inf.GetAccessPoint()); };\n");
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
 
         //Generate constructor from the object side binding
         sprintf(str,"\n%s(const paroc_object *obj)",name);
-        code.InsertAt(-1,str,strlen(str));
-        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        code += str;
+        code += tmpcode;
         strcpy(str," { Bind(obj->GetAccessPoint());};\n");
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
 
         sprintf(str,"\n~%s() {};",name);
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
 
         /*  if(!IsCoreCompilation()){
                 // Generate method declaration for asynchronous object creation
                 sprintf(str,"void %s_AsynchronousAllocation();\n", name);
-                code.InsertAt(-1,str,strlen(str));
+                code += str;
             }*/
 
 
 //       if (!defaultconstructor && interface)
 //  {
 //    sprintf(str,"\n\t%s ()",name);
-//    code.InsertAt(-1,str,strlen(str));
+//    code += str;
 //    if (n)
 //      {
-//        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+//        code += tmpcode;
 //      }
 //    code.InsertAt(-1," {};\n",5);
 //  }
     }
     strcpy(str,"\n};\n");
-    code.InsertAt(-1,str, strlen(str));
+    code += str;
 
 
 
     if(endline>0 && fname!=NULL) {
         sprintf(str,"\n# %d \"%s\"\n",endline,fname);
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
     }
 
 
@@ -882,7 +885,7 @@ bool Class::GenerateHeader(CArrayChar &code, bool interface/*, bool isPOPCPPComp
     return true;
 }
 
-bool Class::GenerateBrokerHeader(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
+bool Class::GenerateBrokerHeader(std::string &code/*, bool isPOPCPPCompilation*/) {
     int i;
     char str[1024];
     char tmpcode[10240];
@@ -890,18 +893,18 @@ bool Class::GenerateBrokerHeader(CArrayChar &code/*, bool isPOPCPPCompilation*/)
 
     if(is_collective()) {
         sprintf(tmpcode, "\n//Generating broker-side of a POG\n");
-        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        code += tmpcode;
     }
 
     char *outfile = GetCodeFile()->GetOutputName();
     if(outfile != NULL) {
         int lines = CountCodeLines(code);
         sprintf(tmpcode, "\n# %d \"%s\"\n", lines+3, outfile);
-        code.InsertAt(-1, tmpcode, strlen(tmpcode));
+        code += tmpcode;
     }
     sprintf(brokername,"%s%s",name, Class::POG_BROKER_POSTFIX);
 
-    int n=baseClass.GetSize();
+    int n=baseClass.size();
     if(n==0) {
         sprintf(tmpcode,"\n\nclass %s: virtual public %s",brokername, my_broker_base);
     } else {
@@ -923,9 +926,9 @@ bool Class::GenerateBrokerHeader(CArrayChar &code/*, bool isPOPCPPCompilation*/)
     strcat(tmpcode,str);
 
     strcat(tmpcode,"\nprotected:");
-    code.InsertAt(-1,tmpcode,strlen(tmpcode));
+    code += tmpcode;
 
-    n=memberList.GetSize();
+    n=memberList.size();
     for(i=0; i<n; i++) {
         if(memberList[i]->GetMyAccess()!=PUBLIC || memberList[i]->Type()!=TYPE_METHOD) {
             continue;
@@ -942,22 +945,22 @@ bool Class::GenerateBrokerHeader(CArrayChar &code/*, bool isPOPCPPCompilation*/)
     }
 
     sprintf(tmpcode,"\npublic:\nstatic paroc_broker *_init();\nstatic paroc_broker_factory _popc_factory;\n");
-    code.InsertAt(-1,tmpcode,strlen(tmpcode));
+    code += tmpcode;
 
 
     strcpy(str,"\n}\n;");
 
-    code.InsertAt(-1,str,strlen(str));
+    code += str;
 
     char *fname=GetCodeFile()->GetFileName();
     if(endline>0 && fname!=NULL) {
         sprintf(str,"\n# %d \"%s\"\n",endline,fname);
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
     }
     return true;
 }
 
-bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
+bool Class::GenerateBroker(std::string &code/*, bool isPOPCPPCompilation*/) {
     // Generate Broker-derived class for creation objects and the re-implementation of
 
     int i;
@@ -968,7 +971,7 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
 
     if(is_collective()) {
         sprintf(tmpcode, "\n// Generating code implementing the broker of a POG\n");
-        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        code += tmpcode;
     }
 
 
@@ -978,7 +981,7 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
     if(outfile != NULL) {
         int lines = CountCodeLines(code);
         sprintf(tmpcode, "\n# %d \"%s\"\n", lines+3, outfile);
-        code.InsertAt(-1,tmpcode,strlen(tmpcode));
+        code += tmpcode;
     }
 
 
@@ -992,14 +995,14 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
     } else {
         sprintf(str,"\nbool %s::Invoke(unsigned method[3], paroc_buffer &__brokerbuf, paroc_connection *peer)\n{\n if (*method==CLASSUID_%s) {\n    switch(method[1])\n{",brokername,name);
     }
-    code.InsertAt(-1,str,strlen(str));
+    code += str;
 
     char methodinfo[10240];
     char methodcount = 0;
     char *methodinfoptr = methodinfo;
     *methodinfoptr = 0;
 
-    int n = memberList.GetSize();
+    int n = memberList.size();
     for(i = 0; i < n; i++) {
         if(memberList[i]->GetMyAccess()!=PUBLIC || memberList[i]->Type()!=TYPE_METHOD) {
             continue;
@@ -1015,7 +1018,7 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
         } else {
             sprintf(str,"\n    case %d: Invoke_%s_%d(__brokerbuf, peer); return true;", met.id, met.name, met.id);
         }
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
 
 //Collect method id, name
         if(methodcount) {
@@ -1028,7 +1031,7 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
     }
     if(noConstructor && !pureVirtual) {
         sprintf(str,"\ncase %d: Invoke_%s_%d(__brokerbuf, peer); return true;",constructor.id, constructor.name,constructor.id);
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
 
         if(methodcount) {
             sprintf(methodinfoptr,",{%d,(char*)\"%s\"}",constructor.id,constructor.name);
@@ -1039,12 +1042,12 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
     }
 
     strcpy(str,"\n    default:\n      return false;\n    }\n  }");
-    code.InsertAt(-1,str,strlen(str));
+    code += str;
 
-    n=baseClass.GetSize();
+    n=baseClass.size();
     for(i=0; i<n; i++) {
         sprintf(str,"\nelse if (%s%s::Invoke(method,__brokerbuf,peer)) return true;", baseClass[i]->base->GetName(), Class::POG_BROKER_POSTFIX);
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
     }
     if(n) {
         strcpy(str,"\nreturn false;\n}");
@@ -1056,7 +1059,7 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
         }
     }
 
-    code.InsertAt(-1,str,strlen(str));
+    code += str;
 
 
 
@@ -1067,10 +1070,10 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
     } else {
         sprintf(str,"\n%s::%s()\n{\nstatic paroc_method_info _paroc_minfo[%d]={%s};\nAddMethodInfo(CLASSUID_%s, _paroc_minfo, %d);\n}", brokername, brokername, methodcount, methodinfo, name, methodcount);
     }
-    code.InsertAt(-1,str,strlen(str));
+    code += str;
 
     // Generate code for Invoke_xxx(...) to invoke object's method
-    n = memberList.GetSize();
+    n = memberList.size();
     for(i = 0; i < n; i++) {
         if(memberList[i]->GetMyAccess() != PUBLIC || memberList[i]->Type() != TYPE_METHOD) {
             continue;
@@ -1094,12 +1097,12 @@ bool Class::GenerateBroker(CArrayChar &code/*, bool isPOPCPPCompilation*/) {
     } else {
         sprintf(tmpcode,"\nparoc_broker *%s::_init() { return new %s; }\nparoc_broker_factory %s::_popc_factory(_init, \"%s\");\n",brokername, brokername, brokername, name);
     }
-    code.InsertAt(-1,tmpcode,strlen(tmpcode));
+    code += tmpcode;
 
     char *fname = GetCodeFile()->GetFileName();
     if(endline > 0 && fname != NULL) {
         sprintf(str, "\n# %d \"%s\"\n", endline, fname);
-        code.InsertAt(-1,str,strlen(str));
+        code += str;
     }
 
     return true;

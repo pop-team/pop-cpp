@@ -22,26 +22,25 @@
 #include "paroc_buffer_xdr.h"
 #include "paroc_exception.h"
 
-paroc_buffer_xdr::paroc_buffer_xdr(): packeddata(0,1024) {
+paroc_buffer_xdr::paroc_buffer_xdr() {
     Reset();
 }
 
-paroc_buffer_xdr::~paroc_buffer_xdr() {
-}
+paroc_buffer_xdr::~paroc_buffer_xdr() {}
 
 void paroc_buffer_xdr::Reset() {
     unpackpos=20;
     packeddata.RemoveAll();
-    packeddata.SetSize(unpackpos);
+    packeddata.resize(unpackpos);
 }
 
 void paroc_buffer_xdr::Pack(const int *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
-    packeddata.SetSize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    int oldsize=packeddata.size();
+    packeddata.resize(n*4+oldsize);
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -53,7 +52,7 @@ void paroc_buffer_xdr::UnPack(int *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=4*n;
 
@@ -71,9 +70,9 @@ void paroc_buffer_xdr::Pack(const unsigned *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
-    packeddata.SetSize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    int oldsize=packeddata.size();
+    packeddata.resize(n*4+oldsize);
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -89,7 +88,7 @@ void paroc_buffer_xdr::UnPack(unsigned *data, int n) {
     int sz=4*n;
     CheckUnPack(sz);
 
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
     xdr_vector(&xdr,(char *)data,n,sizeof(unsigned),(xdrproc_t)xdr_u_int);
@@ -102,9 +101,9 @@ void paroc_buffer_xdr::Pack(const long *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
-    packeddata.SetSize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    int oldsize=packeddata.size();
+    packeddata.resize(n*4+oldsize);
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -116,14 +115,14 @@ void paroc_buffer_xdr::UnPack(long *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=4*n;
     CheckUnPack(sz);
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_long);
+    xdr_vector(&xdr, (char*)data,n,sizeof(long),(xdrproc_t)xdr_long);
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -133,9 +132,9 @@ void paroc_buffer_xdr::Pack(const unsigned long *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
-    packeddata.SetSize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    int oldsize=packeddata.size();
+    packeddata.resize(n*4+oldsize);
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -147,7 +146,7 @@ void paroc_buffer_xdr::UnPack(unsigned long *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=n*4;
     CheckUnPack(sz);
@@ -164,9 +163,9 @@ void paroc_buffer_xdr::Pack(const short *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
-    packeddata.SetSize(((n-1)/2+1)*4+oldsize);
-    char *dest=packeddata+oldsize;
+    int oldsize=packeddata.size();
+    packeddata.resize(((n-1)/2+1)*4+oldsize);
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*2,XDR_ENCODE);
@@ -179,7 +178,7 @@ void paroc_buffer_xdr::UnPack(short *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=2*n;
     CheckUnPack(sz);
@@ -196,9 +195,9 @@ void paroc_buffer_xdr::Pack(const unsigned short *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
-    packeddata.SetSize(((n-1)/2+1)*4+oldsize);
-    char *dest=packeddata+oldsize;
+    int oldsize=packeddata.size();
+    packeddata.resize(((n-1)/2+1)*4+oldsize);
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*2,XDR_ENCODE);
@@ -210,7 +209,7 @@ void paroc_buffer_xdr::UnPack(unsigned short *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=2*n;
     CheckUnPack(sz);
@@ -227,9 +226,9 @@ void paroc_buffer_xdr::Pack(const bool *data, int n) {
     if(n<=0) {
         return;
     }
-    int t=packeddata.GetSize();
-    packeddata.SetSize(t+((n-1)/4+1)*4);
-    char *dat=((char *)packeddata)+t;
+    int t=packeddata.size();
+    packeddata.resize(t+((n-1)/4+1)*4);
+    char *dat=packeddata.data()+t;
     while(n-->0) {
         *dat=(*data==true);
         dat++;
@@ -241,9 +240,9 @@ void paroc_buffer_xdr::UnPack(bool *data, int n) {
         return;
     }
     CheckUnPack(n);
-    packeddata.GetSize();
+    packeddata.size();
 
-    char *dat = ((char *)packeddata) + unpackpos;
+    char *dat = packeddata.data() + unpackpos;
     while(n-->0) {
         *data = (*dat != 0);
         dat++;
@@ -256,9 +255,9 @@ void paroc_buffer_xdr::Pack(const char *data, int n) {
     if(n<=0) {
         return;
     }
-    int t=packeddata.GetSize();
-    packeddata.SetSize(t+((n-1)/4+1)*4);
-    memcpy(((char *)packeddata)+t,data,n);
+    int t=packeddata.size();
+    packeddata.resize(t+((n-1)/4+1)*4);
+    memcpy(packeddata.data()+t,data,n);
 }
 
 void paroc_buffer_xdr::UnPack(char *data, int n) {
@@ -266,8 +265,8 @@ void paroc_buffer_xdr::UnPack(char *data, int n) {
         return;
     }
     CheckUnPack(n);
-    packeddata.GetSize();
-    memcpy(data, ((char *)packeddata)+unpackpos,n);
+    packeddata.size();
+    memcpy(data, (packeddata.data())+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
 
@@ -283,9 +282,9 @@ void paroc_buffer_xdr::Pack(const float *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
-    packeddata.SetSize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    int oldsize=packeddata.size();
+    packeddata.resize(n*4+oldsize);
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -297,7 +296,7 @@ void paroc_buffer_xdr::UnPack(float *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=n*4;
     CheckUnPack(sz);
@@ -315,9 +314,9 @@ void paroc_buffer_xdr::Pack(const double *data, int n) {
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.GetSize();
-    packeddata.SetSize(n*8+oldsize);
-    char *dest=packeddata+oldsize;
+    int oldsize=packeddata.size();
+    packeddata.resize(n*8+oldsize);
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
@@ -329,7 +328,7 @@ void paroc_buffer_xdr::UnPack(double *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=8*n;
     CheckUnPack(sz);
@@ -395,7 +394,7 @@ void paroc_buffer_xdr::UnPack(long double *data, int n)
 //       UnPack(&len,1);
 //       if (len)
 //  {
-//    tmpstr.SetSize(len);
+//    tmpstr.resize(len);
 //    UnPack(tmpstr,len);
 //    list->SetAccessString(tmpstr);
 //  }
@@ -425,7 +424,7 @@ void paroc_buffer_xdr::UnPack(long double *data, int n)
 //       UnPack(&len,1);
 //       if (len>0)
 //  {
-//    tmpstr.SetSize(len);
+//    tmpstr.resize(len);
 //    UnPack(tmpstr,len);
 //    (*list)=(char *)tmpstr;
 //  }
@@ -562,7 +561,7 @@ void paroc_buffer_xdr::UnPack(long double *data, int n)
 
 
 void paroc_buffer_xdr::CheckUnPack(int sz) {
-    if(sz+unpackpos > packeddata.GetSize()) {
+    if(sz+unpackpos > packeddata.size()) {
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
     }
 }
@@ -575,14 +574,14 @@ void paroc_buffer_xdr::CheckUnPack(int sz) {
  */
 bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
-    char *dat=(char *)packeddata;
+    char *dat=packeddata.data();
 
     if(dat == NULL) {
         LOG_ERROR("fail 1");
         return false;
     }
 
-    int n = packeddata.GetSize();
+    int n = packeddata.size();
     int h[5];
     memset(h, 0, 5 * sizeof(int));
 
@@ -657,8 +656,8 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
         return false;
     }
 
-    packeddata.SetSize(n);
-    dat = (char *)packeddata+20;
+    packeddata.resize(n);
+    dat = packeddata.data()+20;
     n -= 20;
 
     i = 0;
@@ -675,17 +674,17 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
 }
 
 int paroc_buffer_xdr::get_size() {
-    return packeddata.GetSize();
+    return packeddata.size();
 }
 
 char* paroc_buffer_xdr::get_load() {
-    char *dat = (char*)packeddata;
+    char *dat = packeddata.data();
 
     if(!dat) {
         return NULL;
     }
 
-    int n = packeddata.GetSize();
+    int n = packeddata.size();
     int h[5];
     memset(h,0, 5*sizeof(int));
 
@@ -714,15 +713,15 @@ char* paroc_buffer_xdr::get_load() {
 
     memcpy(dat, h, 20);
 
-    return (char *) packeddata;
+    return packeddata.data();
 }
 
 void paroc_buffer_xdr::load(char* data, int length) {
     int h[5];
 
     Reset();
-    memcpy(packeddata, data, length);
-    memcpy(h, packeddata, 20);
+    memcpy(packeddata.data(), data, length);
+    memcpy(h, packeddata.data(), 20);
 
     int n = popc_ntohl(h[0]);
     if(n < 20) {
@@ -749,7 +748,7 @@ void paroc_buffer_xdr::load(char* data, int length) {
         return;
     }
 
-    packeddata.SetSize(length);
+    packeddata.resize(length);
 }
 
 
@@ -791,4 +790,5 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
         }
     }
 }
+
 #endif

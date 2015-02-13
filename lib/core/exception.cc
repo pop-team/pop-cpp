@@ -51,41 +51,23 @@ int paroc_exception::Code()const {
 }
 
 void paroc_exception::paroc_throw(int code, const char *reason1, const char *reason2) {
-    paroc_exception *e=new paroc_exception(code);
+    paroc_exception e(code);
     if(reason1!=NULL) {
-        e->SetExtra(reason1);
+        e.SetExtra(reason1);
     }
     if(reason2!=NULL) {
-        e->SetExtra(reason2);
+        e.AddExtra(reason2);
     }
     throw e;
 }
 
 void paroc_exception::paroc_throw(const char *reason) {
-    paroc_exception *e=new paroc_exception(UNKNOWN_EXCEPTION);
+    paroc_exception e(UNKNOWN_EXCEPTION);
     if(reason!=NULL) {
-        e->SetExtra(reason);
+        e.SetExtra(reason);
     }
     throw e;
 }
-
-void paroc_exception::paroc_throw_errno(const char *reason) {
-    paroc_exception *e=new paroc_exception(errno);
-    if(reason!=NULL) {
-        e->SetExtra(reason);
-    }
-    throw e;
-}
-
-/*
-paroc_exception *paroc_exception::create(int code, const char *reason) {
-    paroc_exception *e=new paroc_exception(code);
-    if(reason1!=NULL) {
-        e->SetExtra(reason);
-    }
-    return e;
-}
-*/
 
 const char* paroc_exception::what() const throw() {
     errno=Code();

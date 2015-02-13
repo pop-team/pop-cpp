@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
         } else {
             printf("Stress failed: test succeeded, destroying objects ...\n");
         }
-    } catch(POPException e) {
+    } catch(POPException& e) {
         printf("Stress test failed: error no.%d, destroying objects:\n", e.Code());
     }
     return 0;

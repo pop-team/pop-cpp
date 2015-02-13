@@ -28,7 +28,7 @@ int TypeClassStruct::CanMarshal() {
     }
 }
 
-void TypeClassStruct::Marshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypeClassStruct::Marshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     if(isClass) {
         TypeSeqClass::Marshal(varname,bufname,sizehelper, output);
     } else {
@@ -36,7 +36,7 @@ void TypeClassStruct::Marshal(char *varname, char *bufname, char *sizehelper, CA
     }
 }
 
-void TypeClassStruct::DeMarshal(char *varname, char *bufname, char *sizehelper, CArrayChar &output) {
+void TypeClassStruct::DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     if(isClass) {
         TypeSeqClass::DeMarshal(varname,bufname,sizehelper, output);
     } else {

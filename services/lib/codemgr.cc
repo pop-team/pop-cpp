@@ -34,7 +34,7 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
         return;
     }
 
-    auto n=info.GetSize();
+    auto n=info.size();
     int i;
     for(i=0; i<n; i++){
         if(paroc_utils::isEqual(objname,info[i].objname)) {
@@ -46,12 +46,12 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
     if(i<n) {
         element=&(info[i]);
     } else {
-        info.SetSize(n+1);
+        info.resize(n+1);
         element=&(info[n]);
         strcpy(element->objname,objname);
     }
 
-    n=element->platform.GetSize();
+    n=element->platform.size();
     for(i=0; i<n; i++){
         if(paroc_utils::isEqual(platform,element->platform[i].platform)) {
             break;
@@ -62,7 +62,7 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
         LOG_DEBUG("Changing (%s, %s) -> %s",element->objname,element->platform[i].platform,(const char *)codefile);
         strcpy(element->platform[i].codefile,codefile);
     } else {
-        element->platform.SetSize(n+1);
+        element->platform.resize(n+1);
         strcpy(element->platform[n].codefile,codefile);
         strcpy(element->platform[n].platform,platform);
     }
@@ -70,7 +70,7 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
 
 int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPString &codefile) {
     codefile=nullptr;
-    auto n=info.GetSize();
+    auto n=info.size();
     codedb *element;
 
     int i;
@@ -85,7 +85,7 @@ int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPS
     }
 
     element=&(info[i]);
-    n=element->platform.GetSize();
+    n=element->platform.size();
     for(i=0; i<n; i++){
         if(paroc_utils::MatchWildcard(platform,element->platform[i].platform)) {
             break;
@@ -103,7 +103,7 @@ int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPS
 
 int CodeMgr::GetPlatform(const POPString &objname, POPString &platform) {
     platform=nullptr;
-    auto n=info.GetSize();
+    auto n=info.size();
 
     int i;
     for(i=0; i<n; i++){
@@ -117,7 +117,7 @@ int CodeMgr::GetPlatform(const POPString &objname, POPString &platform) {
     }
 
     auto& element=info[i];
-    n=element.platform.GetSize();
+    n=element.platform.size();
     for(i=0; i<n; i++) {
         platform+=element.platform[i].platform;
         if(i<n-1) {

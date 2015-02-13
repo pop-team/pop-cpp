@@ -32,7 +32,7 @@ paroc_buffer_raw::~paroc_buffer_raw() {
 void paroc_buffer_raw::Reset() {
     unpackpos=20;
     //packeddata.RemoveAll();
-    packeddata.SetSize(20);
+    packeddata.resize(20);
 }
 
 
@@ -40,8 +40,8 @@ void paroc_buffer_raw::Pack(const char *data, int n) {
     if(n<=0) {
         return;
     }
-    int t=packeddata.GetSize();
-    packeddata.SetSize(t+((n-1)/4+1)*4);
+    int t=packeddata.size();
+    packeddata.resize(t+((n-1)/4+1)*4);
     memcpy(((char *)packeddata)+t,data,n);
 }
 
@@ -50,7 +50,7 @@ void paroc_buffer_raw::UnPack(char *data, int n) {
         return;
     }
     //CheckUnPack(n); // Error with this check in 64 bits
-    packeddata.GetSize();
+    packeddata.size();
     memcpy(data, ((char *)packeddata)+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
@@ -189,7 +189,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //       UnPack(&len,1);
 //       if (len)
 //  {
-//    tmpstr.SetSize(len);
+//    tmpstr.resize(len);
 //    UnPack(tmpstr,len);
 //    list->SetAccessString(tmpstr);
 //  }
@@ -219,7 +219,7 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 //       UnPack(&len,1);
 //       if (len>0)
 //  {
-//    tmpstr.SetSize(len);
+//    tmpstr.resize(len);
 //    UnPack(tmpstr,len);
 //    (*list)=(char *)tmpstr;
 //  }
@@ -356,8 +356,8 @@ void paroc_buffer_raw::UnPack(long double *data, int n)
 
 
 void paroc_buffer_raw::CheckUnPack(int sz) {
-    if(sz+unpackpos > packeddata.GetSize()) {
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+    if(sz+unpackpos > packeddata.size()) {
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format");
     }
 }
 
@@ -368,7 +368,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     if(dat == NULL) {
         return false;
     }
-    int n = packeddata.GetSize();
+    int n = packeddata.size();
     int h[5];
     memset(h, 0, 5 * sizeof(int));
 
@@ -430,6 +430,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     /*  n = 20;
         do {
             if ((i = s.Recv(dat,n, conn)) <= 0) {
+            LOG_ERROR("[CORE] combox recv returned %d", i);
                 return false;
             }
             n -= i;
@@ -459,10 +460,11 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
         header.SetMethodID(h[3]);
         break;
     default:
+        LOG_ERROR("[CORE] unknown type: %d", type);
         return false;
     }
 
-    packeddata.SetSize(n);
+    packeddata.resize(n);
     n -= 20;
 
     if(n > 0) {
@@ -475,6 +477,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
         i = 0;
         while (n > 0) {
             if ((i = s.Recv(dat,n, conn)) <= 0) {
+                LOG_ERROR("[CORE] combox recv returned %d", i);
                 return false;
             }
             dat += i;
@@ -484,7 +487,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
 }
 
 int paroc_buffer_raw::get_size() {
-    return packeddata.GetSize();
+    return packeddata.size();
 }
 
 char* paroc_buffer_raw::get_load() {
@@ -494,7 +497,7 @@ char* paroc_buffer_raw::get_load() {
     if(dat == NULL) {
         return NULL;
     }
-    int n = packeddata.GetSize();
+    int n = packeddata.size();
     int h[5];
     memset(h,0, 5 * sizeof(int));
 
