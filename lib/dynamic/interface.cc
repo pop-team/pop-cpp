@@ -1136,6 +1136,26 @@ void paroc_interface::Tokenize(POPString &s, paroc_list<char *> &tokens) {
     }
 }
 
+std::vector<char*> paroc_interface::Tokenize(POPString &s) {
+    char *t=s.GetString();
+    if(!t) {
+        return {};
+    }
+
+    std::vector<char*> result;
+
+    char sep[]=" \n\t";
+    char *ptrptr;
+    char *tok=popc_strtok_r(t,sep,&ptrptr);
+
+    while(tok!=NULL) {
+        result.push_back(tok);
+        tok=popc_strtok_r(NULL,sep,&ptrptr);
+    }
+
+    return result;
+}
+
 void paroc_interface::ApplyCommPattern(const char *pattern, paroc_list<char *> &accesslist) {
     if(pattern==NULL) {
         return;

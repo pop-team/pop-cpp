@@ -177,7 +177,8 @@ private:
     POPString popAppId;
 
     void NegotiateEncoding(paroc_string &enclist, paroc_string &peerplatform);
-    void Tokenize(paroc_string &s, paroc_list<char *> &tokens);
+    void Tokenize(paroc_string &s, paroc_list<char *> &tokens); //TODO(BW) This should be removed
+    std::vector<char*> Tokenize(paroc_string &s);
     void ApplyCommPattern(const char *pattern, paroc_list<char *> &accesslist);
     int CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port);
     int KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port);
