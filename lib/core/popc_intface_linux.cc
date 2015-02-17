@@ -403,14 +403,14 @@ int RunPipe(int argc1, const char *argv1[], int argc2, const char *argv2[]) {
 
     int p[2];
     if(pipe(p) != 0) {
-        perror("Error");
+        perror("Error in pipe");
         _exit(1);
     }
 
     int status;
     int pid1=fork();
     if(pid1<0) {
-        perror("ERROR");
+        perror("Error in pid (1)");
         _exit(1);
     } else if(pid1==0) {
         close(p[0]);
@@ -422,7 +422,7 @@ int RunPipe(int argc1, const char *argv1[], int argc2, const char *argv2[]) {
 
     int pid2 = fork();
     if(pid2<0) {
-        perror("ERROR");
+        perror("Error in pid (2)");
         _exit(1);
     }
 

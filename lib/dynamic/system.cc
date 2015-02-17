@@ -135,10 +135,6 @@ void paroc_system::perror(const char *msg) {
     }
 }
 
-void paroc_system::perror(const paroc_exception *e) {
-    errno=e->Code();
-    paroc_system::perror((const char*)e->Extra());
-}
 
 // V1.3m
 // Try to determine the Host Name of the machine and put it in POPC_Host_Name

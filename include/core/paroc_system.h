@@ -89,8 +89,7 @@ public:
     static paroc_string GetDefaultInterface();
 
     static void perror(const char *msg);
-    static void perror(const paroc_exception *e);
-
+    
     /**
      * @brief Sets object execution on a given CPU
      */

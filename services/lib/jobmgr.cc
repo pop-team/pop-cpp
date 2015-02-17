@@ -1662,7 +1662,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
         if(localuid>=0) {
             int ret=popc_setuid(localuid);
             if(ret!=0) {
-                perror("ERROR: can not setuid\n");
+                perror("ERROR: can not setuid");
             }
         }
 

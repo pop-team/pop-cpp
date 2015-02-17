@@ -73,7 +73,6 @@ public:
     void SetExtra(const char* str);
     void AddExtra(const char* str);
     int Code()const;
-    void Print()const;
 
     // Redefine the virtual what method of exception
     const char* what() const throw();

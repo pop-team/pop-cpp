@@ -82,9 +82,6 @@ const char* paroc_exception::what() const throw() {
     return (const char*)info;
 }
 
-void paroc_exception::Print()const {
-    paroc_system::perror(this);
-}
 
 void paroc_exception::Serialize(paroc_buffer &buf, bool pack) {
     if(pack) {
