@@ -22,7 +22,8 @@ RemoteLog::~RemoteLog() {
 
 void RemoteLog::Log(const POPString &info) {
     POPString prt=info;
-    printf("%s",prt.GetString());
+    //By doing a fprintf we avoid to go through rprintf (it'll be a bit faster and easier to understand)
+    fprintf(stdout, "%s",prt.GetString());
     fflush(stdout);
 }
 

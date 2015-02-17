@@ -297,7 +297,9 @@ int rprintf(const char *format,...) {
     vsnprintf(str,1023, format, ap);
     va_end(ap);
     if(paroc_system::appservice.IsEmpty()) {
-        LOG_INFO("%s",str);
+        //At this point, we arrive from an object that has no appservice, namely a local object (RemoteLog for instance)
+        //In which case, a printf can be done directly on the console (logging it would add unecessary content to the log)
+        fprintf(stdout, "%s", str);
         fflush(stdout);
         return 0;
     }
