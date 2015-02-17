@@ -28,7 +28,7 @@ void marshalstring(paroc_buffer &buf, char *str, int maxsize, int flag, paroc_me
         int n;
         buf.UnPack(&n,1);
         if(n>maxsize || (n>0 && str==NULL)) {
-            paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+            paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format");
         }
         if(n>0) {
             buf.UnPack(str,n);

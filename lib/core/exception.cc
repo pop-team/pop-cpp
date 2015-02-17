@@ -20,6 +20,7 @@
 
 #include "paroc_exception.h"
 #include "paroc_system.h"
+#include "popc_logger.h"
 
 paroc_exception::paroc_exception() {
     errcode=0;
@@ -61,16 +62,23 @@ void paroc_exception::paroc_throw(int code, const char *reason1, const char *rea
     throw e;
 }
 
-void paroc_exception::paroc_throw(const char *reason) {
+void paroc_exception::paroc_throw(const char *reason1, const char *reason2) {
     paroc_exception e(UNKNOWN_EXCEPTION);
-    if(reason!=NULL) {
-        e.SetExtra(reason);
+    if(reason1!=NULL) {
+        e.SetExtra(reason1);
+    }
+    if(reason2!=NULL) {
+        e.AddExtra(reason2);
     }
     throw e;
 }
 
 const char* paroc_exception::what() const throw() {
     errno=Code();
+    if(Code() != UNKNOWN_EXCEPTION)
+        // note: we print the exception number since it might not be shown if perror is not called
+        // in the future, the code and an explanation should be printed by what // TODO LW
+        LOG_WARNING("Exception number %d", Code());
     return (const char*)info;
 }
 

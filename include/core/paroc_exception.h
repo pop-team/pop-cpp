@@ -65,7 +65,7 @@ public:
 
     paroc_exception & operator = (paroc_exception &e);
     static void paroc_throw(int code, const char *reason1=NULL, const char *reason2=NULL);
-    static void paroc_throw(const char *reason=NULL);
+    static void paroc_throw(const char *reason1, const char *reason2=NULL);
 
     virtual void Serialize(paroc_buffer &buf, bool pack);
 

@@ -123,7 +123,7 @@ paroc_system::~paroc_system() {
 
 void paroc_system::perror(const char *msg) {
     LOG_ERROR("paroc_system::perror : %d",errno);
-    if(errno>USER_DEFINE_ERROR && errno<=USER_DEFINE_LASTERROR) {
+    if(errno>USER_DEFINE_ERROR && errno<USER_DEFINE_LASTERROR) {
         if(msg==NULL) {
             msg="POP-C++ Error";
         }
@@ -486,6 +486,7 @@ void paroc_system::Finalize(bool normalExit) {
                 int loop=0;
                 while((count=mgr->CheckObjects())>0) {
                     if(timeout<1800 && oldcount==count) {
+                        // sleep an increasing amount of time
                         timeout=timeout*4/3;
                         loop++;
                         if(loop%10 == 0) {
@@ -495,6 +496,7 @@ void paroc_system::Finalize(bool normalExit) {
                         loop=0;
                         timeout=1;
                     }
+                    LOG_INFO("%d parallel objects remain. Awaiting %d s. Type Ctrl+C to kill all remaining objects", count, timeout);
                     popc_sleep(timeout);
                     oldcount=count;
                 }
