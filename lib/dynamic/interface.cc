@@ -200,6 +200,7 @@ paroc_interface::paroc_interface(const paroc_interface &inf) {
     Bind(inf.GetAccessPoint());
 }
 
+/* TODO LW: Used by pseudodyn version ?
 paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
     _ssh_tunneling=false;
     __paroc_combox = combox;
@@ -215,6 +216,7 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
         }
     }
 }
+*/
 
 
 /**
@@ -283,6 +285,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
     paroc_buffer *old = NULL;
 
     if(&buf == __paroc_buf) {
+        LOG_WARNING("Buffers share the same address");// TODO LW: Where does this come from ?
         old = &buf;
         __paroc_buf = __paroc_combox->GetBufferFactory()->CreateBuffer();
     }
@@ -298,6 +301,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         buf.UnPack(&ref,1);
         buf.Pop();
         if(ref>0) {
+            LOG_DEBUG("Bind accesspoint since ref>0");
             Bind(accesspoint);
             //AddRef();
             DecRef();
@@ -829,6 +833,7 @@ bool paroc_interface::RecvCtrl() {
     od.getCheckConnection(time_alive, time_control);
     if(!__paroc_combox || !__paroc_buf) {
         __paroc_combox->SetTimeout(oldTimeout);
+        LOG_ERROR("Error");
         return false;
     };
 
@@ -1275,6 +1280,9 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
     if(error_code==0) {
         _ssh_local_port = local_port;
         return local_port;
+    } else {
+        //paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
+        LOG_WARNING("Executable not found");
     }
     LOG_WARNING("CreateSSHTunnel returned with error code %d", error_code);
     return error_code;

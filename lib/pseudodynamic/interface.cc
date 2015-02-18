@@ -667,6 +667,7 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
 
 int paroc_interface::AddRef() {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_WARNING("AddRef cannot be called");
         return -1;
     }
 
@@ -688,6 +689,7 @@ int paroc_interface::AddRef() {
 
 int paroc_interface::DecRef() {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_WARNING("DecRef cannot be called");
         return -1;
     }
 
@@ -710,6 +712,7 @@ int paroc_interface::DecRef() {
 
 bool paroc_interface::Encoding(POPString encoding) {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_WARNING("Encoding cannot be called");
         return false;
     }
 
@@ -750,6 +753,7 @@ bool paroc_interface::Encoding(POPString encoding) {
 
 void paroc_interface::Kill() {
     if(!__paroc_combox) {
+        LOG_WARNING("Kill cannot be called");
         return;
     }
 
@@ -767,6 +771,7 @@ void paroc_interface::Kill() {
 
 bool paroc_interface::ObjectActive() {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_DEBUG("ObjectActive cannot be called");
         return false;
     }
 
