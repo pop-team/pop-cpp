@@ -290,7 +290,6 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paro
     return except.Send(s);
 }
 
-/*
 bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paroc_interface &code) {
     paroc_message_header tmp(EXCEPTION_OBJECT, except.GetHeader().GetMethodName());
     except.Reset();
@@ -298,7 +297,6 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paro
     code.Serialize(except,true);
     return except.Send(s);
 }
-*/
 
 /// Check if an exception was thrown by the remote method and propagate (if thrown)
 void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
