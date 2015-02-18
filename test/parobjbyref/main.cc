@@ -12,6 +12,7 @@ int main(int argc, char** argv) {
         o.voidMethod(o);
         printf("Method with void parameter: test succeeded, destroying objects ...\n");
     } catch(POPException& e) {
+        printf("Exception: %s\n", e.what());
         printf("Method with void parameter: test failed, error no.%d, destroying objects:\n", e.Code());
         return 1;
     }

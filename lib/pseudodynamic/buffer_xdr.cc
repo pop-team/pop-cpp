@@ -564,7 +564,7 @@ void paroc_buffer_xdr::UnPack(long double *data, int n)
 
 void paroc_buffer_xdr::CheckUnPack(int sz) {
     if(sz+unpackpos > packeddata.size()) {
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in paroc_buffer_xdr::CheckUnPack");
     }
 }
 

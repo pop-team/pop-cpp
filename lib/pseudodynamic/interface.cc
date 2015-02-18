@@ -71,10 +71,12 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
         LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
         return err;
     } else if(pid==0) {
+        /*
         int nf=popc_getdtablesize();
         for(int fd=3; fd<nf; fd++) {
             popc_close(fd);
         }
+        */
         if(env!=NULL) {
             while(*env!=NULL) {
                 putenv(popc_strdup(*env));
@@ -471,7 +473,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     }
 
     LOG_WARNING("Cannot find suitable protocol");
-    paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName());
+    paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName(), "Cannot find suitable protocol");
 }
 
 void paroc_interface::Bind(const char *dest) {
@@ -484,10 +486,10 @@ void paroc_interface::Bind(const char *dest) {
 
     paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
     POPString p;
-    fact->GetNames(p);
     if(!fact) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
     }
+    fact->GetNames(p);
 
     // Create combox
     __paroc_combox = fact->Create("mpi");
@@ -542,10 +544,9 @@ void paroc_interface::Bind(const char *dest) {
     } else {
         int code = errno;
 
-        LOG_WARNING("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
-        LOG_WARNING("Create socket fails. Reason: %s.",strerror(code));
+        LOG_WARNING("Fail to connect from [%s] to [%s]. Error code: %s",(const char *)paroc_system::GetHost(),dest,strerror(code));
         Release();
-        paroc_exception::paroc_throw(code, "Exception (by code)" ClassName());
+        paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
 
     __paroc_combox->SetTimeout(-1);
@@ -805,7 +806,7 @@ bool paroc_interface::RecvCtrl() {
         if(t != NULL) {
             if(!__paroc_buf->Recv(*__paroc_combox,t)) {
                 __paroc_combox->SetTimeout(oldTimeout);
-                paroc_exception::paroc_throw(errno);
+                paroc_exception::paroc_throw("Error in od disconnect 1");
             } else {
                 __paroc_combox->SetTimeout(oldTimeout);
                 return true;
@@ -817,7 +818,7 @@ bool paroc_interface::RecvCtrl() {
 
         if(!__paroc_buf->Send(*__paroc_combox)) {
             __paroc_combox->SetTimeout(oldTimeout);
-            paroc_exception::paroc_throw(errno);
+            paroc_exception::paroc_throw("Error in od disconnect 2");
         }
         __paroc_combox->SetTimeout(time_alive);
         if(!__paroc_buf->RecvCtrl(*__paroc_combox)) {
@@ -876,7 +877,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
         }
     }
 
-    paroc_exception::paroc_throw(POPC_NO_ENCODING, "No encoding for class", ClassName());
+    paroc_exception::paroc_throw(POPC_NO_ENCODING, ClassName(), "NegociateEncoding failed");
 }
 
         /**
@@ -1201,15 +1202,15 @@ void paroc_interface::ApplyCommPattern(const char *pattern, paroc_list<char *> &
 // DEPRECATED
 void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
     if(!buf->Send(*__paroc_combox)) {
-        paroc_exception::paroc_throw(errno);
+        paroc_exception::paroc_throw("Buffer sent failed (old)");
     }
 }
 
 // DEPRECATED
 void paroc_interface::paroc_Response(paroc_buffer *buf) {
     if(!buf->Recv(*__paroc_combox)) {
-        LOG_INFO("Throw from response");
-        paroc_exception::paroc_throw(errno);
+        printf("Throw from response");
+        paroc_exception::paroc_throw("Buffer receive failed (old)");
     }
     paroc_buffer::CheckAndThrow(*buf);
 }
@@ -1300,7 +1301,7 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
         //paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
         LOG_WARNING("Executable not found");
     }
-
+    LOG_WARNING("CreateSSHTunnel returned with error code %d", error_code);
     return error_code;
 }
 
@@ -1337,8 +1338,8 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
     }
     int pid = atoi(buf);
     LOG_WARNING("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
-    if(pid!=0)
-       popc_kill(pid, popc_SIGKILL);
+    /*if(pid!=0)
+       popc_kill(pid, popc_SIGKILL);*/
     return pid;
  }
 
