@@ -21,7 +21,7 @@
 static ObjectMonitor *myObjMonitor=NULL;
 
 static void LocalServiceTerminate(int sig) {
-    LOG_ERROR( "LOCAL SERVICE SIGNAL %d!!!!",sig);
+    LOG_ERROR( "Local service received signal %d!!!! Kill all objects",sig);
     if(myObjMonitor!=NULL) {
         myObjMonitor->KillAll();
     }

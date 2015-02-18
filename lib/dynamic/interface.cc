@@ -47,6 +47,7 @@
 #define POPC_CONNECT_TIMEOUT 10000
 #endif
 
+// TODO: RunCmd is defined in ...intface also !!! Fix this
 int RunCmd(int argc, char **argv, char *env[], int *status) {
     (void)argc;
     char *file=NULL;
@@ -73,10 +74,12 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
         LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
         return err;
     } else if(pid==0) {
+        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ? 
         int nf=popc_getdtablesize();
         for(int fd=3; fd<nf; fd++) {
             popc_close(fd);
         }
+        */
         if(env!=NULL) {
             while(*env!=NULL) {
                 putenv(popc_strdup(*env));
@@ -147,7 +150,7 @@ int paroc_interface::paroc_bind_timeout=10000;
 //paroc_interface base class
 
 paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
-    LOG_DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("Create interface for class %s (OD secure:%s)", ClassName(), (od.isSecureSet())?"true":"false");
 
     if(od.isSecureSet()) {
         accesspoint.SetSecure();

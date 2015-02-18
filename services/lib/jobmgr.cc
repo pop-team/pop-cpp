@@ -1655,10 +1655,12 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
         Pause(empty,SLEEP_TIME_ON_ERROR);
         return errno;
     } else if(pid==0) {
+        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ?
         int nf=popc_getdtablesize();
         for(int fd=3; fd<nf; fd++) {
             popc_close(fd);
         }
+        */
         if(localuid>=0) {
             int ret=popc_setuid(localuid);
             if(ret!=0) {

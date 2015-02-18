@@ -301,6 +301,7 @@ int rprintf(const char *format,...) {
         //In which case, a printf can be done directly on the console (logging it would add unecessary content to the log)
         fprintf(stdout, "%s", str);
         fflush(stdout);
+        // LOG_INFO("CANNOT LOG THIS: %s",str); // TODO: Discuss with bw: why no logging in /tmp ?
         return 0;
     }
     try {
