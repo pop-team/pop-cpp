@@ -46,5 +46,7 @@ int main(int argc, char** argv) {
     obj1.asyncConcMethod("call4", 0.8 * TIME_SCALE);
     obj1.asyncMutexMethod("call5", 0.0 * TIME_SCALE);
 
+    sleep(3);
+
     return 0;
 }
