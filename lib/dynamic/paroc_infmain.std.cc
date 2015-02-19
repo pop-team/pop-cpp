@@ -131,6 +131,7 @@ int main(int argc, char **argv) {
     } catch(...) {
         LOG_ERROR("Unknown exception");
         paroc_system::Finalize(false);
+        return -1;
     }
     return 1;
 }

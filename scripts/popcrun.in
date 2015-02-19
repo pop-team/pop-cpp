@@ -194,7 +194,7 @@ cmd="$PROG $args -initparoc -appservicecode=$MYAPPSERVICE $MY_PROXY -codeconf=$P
 
 retval=0
 if [ $drun -eq 1 ]; then
-    echo Exec: $cmd $logging_cmd
+    echo "$cmd $logging_cmd"
 else
     # execute command
     echo "$cmd $logging_cmd" | bash
