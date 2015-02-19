@@ -334,7 +334,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
             }
             paroc_accesspoint t;
             t.SetAccessString(val);
-            parents.AddTail(t);
+            parents.push_back(t);
         } else if(paroc_utils::isEqual(name,"maxjobs")) {
             if(sscanf(val,"%d",&maxjobs)!=1 || maxjobs<0) {
                 maxjobs=100;
@@ -1450,9 +1450,7 @@ void JobMgr::SelfRegister() {
     lasttime=service_timer.Elapsed()+36000;
 
     LOG_DEBUG("Updating my contact to parent nodes...");
-    POSITION pos=parents.GetHeadPosition();
-    while(pos!=NULL) {
-        paroc_accesspoint &tmp=parents.GetNext(pos);
+    for(auto& tmp : parents){
         try {
             tmp.SetAsService();
             JobMgr remote(tmp);
@@ -1469,8 +1467,6 @@ void JobMgr::SelfRegister() {
     }
     lasttime=service_timer.Elapsed();
 }
-
-
 
 void JobMgr::Start() {
     JobCoreService::Start();

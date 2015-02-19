@@ -20,7 +20,6 @@
 #define _POPC_OD_H
 #include <paroc_string.h>
 #include <paroc_base.h>
-#include <paroc_list.h>
 
 /**
  * @class paroc_od

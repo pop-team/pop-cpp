@@ -24,7 +24,6 @@
 #include <paroc_accesspoint.h>
 #include <paroc_od.h>
 #include <paroc_buffer.h>
-#include <paroc_list.h>
 #include <paroc_allocobj.h>
 #include "popwayback.h"
 

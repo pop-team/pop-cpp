@@ -14,7 +14,7 @@
 
 #define ANY_EVENT -1
 
-#include "paroc_list.h"
+#include <vector>
 #include "paroc_mutex.h"
 
 /**
@@ -35,8 +35,7 @@ public:
 
 protected:
     paroc_condition cond;
-    paroc_list<int> queue;
-
+    std::vector<int> queue;
 };
 
 #endif

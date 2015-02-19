@@ -12,8 +12,8 @@
 #define _POPC_SERVICE_BASE_PH
 
 #include "paroc_accesspoint.h"
-#include "paroc_list.h"
-typedef paroc_list<paroc_accesspoint> paroc_accesspoint_list;
+
+typedef std::vector<paroc_accesspoint> paroc_accesspoint_list;
 
 /**
  * @class paroc_service_base

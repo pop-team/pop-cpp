@@ -28,7 +28,6 @@
 #include "paroc_service_base.ph"
 #include <timer.h>
 #include <paroc_accesspoint.h>
-#include <paroc_list.h>
 
 /**
  * ViSaG : clementval

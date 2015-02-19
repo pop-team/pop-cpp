@@ -44,9 +44,7 @@ ObjectMonitor::~ObjectMonitor() {
 void ObjectMonitor::KillAll() {
     mutex {
         LOG_INFO("POP-C++: End of all parallel objects is being processed");
-        POSITION pos=objects.GetHeadPosition();
-        while(pos!=NULL) {
-            paroc_accesspoint &t=objects.GetNext(pos);
+        for(auto& t : objects){
             try {
                 paroc_interface tmp(t);
                 tmp.Kill();
@@ -54,18 +52,18 @@ void ObjectMonitor::KillAll() {
                 LOG_WARNING("Exception while killing objects");
             }
         }
-        objects.RemoveAll();
+        objects.clear();
     }
 }
 
 int ObjectMonitor::CheckObjects() {
     mutex {
-        POSITION pos=objects.GetHeadPosition();
         bool active=false;
 
-        while(pos!=NULL) {
-            POSITION old=pos;
-            paroc_accesspoint &t=objects.GetNext(pos);
+        auto pos = objects.begin();
+        while(pos!=objects.end()) {
+            auto old=pos;
+            auto &t=*pos++;
             try {
                 paroc_interface test(t);
                 if(!active && test.ObjectActive()) {
@@ -76,41 +74,38 @@ int ObjectMonitor::CheckObjects() {
                 }
             } catch(...) {
                 LOG_WARNING("Exception in CheckObjects");
-                objects.RemoveAt(old);
+                pos = objects.erase(old);
             }
         }
         isActive=active;
 
-        LOG_DEBUG("Check parallel objects....%d object alive", objects.GetCount());
-        return objects.GetCount();
+        LOG_DEBUG("Check parallel objects....%ld object alive", objects.size());
+        return objects.size();
     }
 }
 
 void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
     mutex {
         const char *newstr=p.GetAccessString();
-        POSITION pos=objects.GetHeadPosition();
-        while(pos!=NULL) {
-            paroc_accesspoint &t=objects.GetNext(pos);
+        for(auto& t : objects){
             if(paroc_utils::isEqual(t.GetAccessString(), newstr)) {
                 return;
             }
         }
-        objects.AddTail(p);
+        objects.push_back(p);
     }
 }
 
 void ObjectMonitor::UnManageObject(paroc_accesspoint &p) {
     mutex {
         const char *newstr=p.GetAccessString();
-        POSITION pos=objects.GetHeadPosition();
-        while(pos!=NULL) {
-            POSITION old=pos;
-            paroc_accesspoint &t=objects.GetNext(pos);
-            if(paroc_utils::isEqual(t.GetAccessString(), newstr)) {
-                objects.RemoveAt(old);
+        auto pos=objects.begin();
+        while(pos!=objects.end()) {
+            if(paroc_utils::isEqual(pos->GetAccessString(), newstr)) {
+                pos = objects.erase(pos);
                 return;
             }
+            ++pos;
         }
         LOG_WARNING("ObjectMonitor: unable to unmanage ap: %s",newstr);
     }

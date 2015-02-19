@@ -123,22 +123,23 @@ void paroc_broker::AddMethodInfo(unsigned cid, paroc_method_info *methods, int s
     if(sz<=0 || methods==NULL) {
         return;
     }
-    paroc_class_info &t=methodnames.AddHeadNew();
+    paroc_class_info t;
     t.cid=cid;
     t.methods=methods;
     t.sz=sz;
+    methodnames.push_back(t);
 }
 
 const char *paroc_broker::FindMethodName(unsigned classID, unsigned methodID) {
-    POSITION pos=methodnames.GetHeadPosition();
-    while(pos!=NULL) {
-        paroc_class_info &t=methodnames.GetNext(pos);
+    for(auto& t : methodnames){
         if(t.cid==classID) {
             paroc_method_info *m=t.methods;
             int n=t.sz;
-            for(int i=0; i<n; i++, m++) if(m->mid==methodID) {
+            for(int i=0; i<n; i++, m++){
+                if(m->mid==methodID) {
                     return m->name;
                 }
+            }
         }
     }
     return NULL;
@@ -149,20 +150,20 @@ bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned 
         return false;
     }
 
-    POSITION pos=methodnames.GetHeadPosition();
-    while(pos!=NULL) {
-        paroc_class_info &t=methodnames.GetNext(pos);
+    for(auto& t : methodnames){
         paroc_method_info *m=t.methods;
         int n=t.sz;
-        for(int i=0; i<n; i++, m++) if(paroc_utils::isEqual(name,m->name)) {
+        for(int i=0; i<n; i++, m++){
+            if(paroc_utils::isEqual(name,m->name)) {
                 methodID=m->mid;
                 classID=t.cid;
                 return true;
             }
+        }
     }
+
     return false;
 }
-
 
 int paroc_broker::Run() {
     //Create threads for each protocols for receiving requests....
@@ -213,7 +214,7 @@ int paroc_broker::Run() {
         paroc_mutex_locker test(execCond);
 
         //Wait for all invocations terminated....
-        while(instanceCount > 0 || !request_fifo.IsEmpty()) {
+        while(instanceCount > 0 || !request_fifo.empty()) {
             execCond.wait();
         }
     }

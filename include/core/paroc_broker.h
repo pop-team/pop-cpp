@@ -15,6 +15,7 @@
 
 #include <assert.h>
 #include <strings.h>
+#include <deque>
 
 #define INVOKE_SYNC 1
 //#define INVOKE_ASYNC 2
@@ -48,7 +49,7 @@ struct paroc_request {
     paroc_request(const paroc_request &r);
 };
 
-typedef paroc_list<paroc_request> paroc_request_fifo_list;
+typedef std::deque<paroc_request> paroc_request_fifo_list;
 
 //Method names....
 struct paroc_method_info {
@@ -62,7 +63,7 @@ struct paroc_class_info {
     int sz;
 };
 
-typedef paroc_list<paroc_class_info> paroc_method_map_list;
+typedef std::vector<paroc_class_info> paroc_method_map_list;
 
 /**
  * @class paroc_broker
