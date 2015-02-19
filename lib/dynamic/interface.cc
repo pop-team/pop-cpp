@@ -878,7 +878,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
 }
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od) {
-    LOG_ERROR("This method has been commented"); // Note: No, I do not know who did this or why. TODO LWK
+    LOG_ERROR("This method has been commented"); // Note: This method is only used by add ons at the moment
     /* TODO should have been restored at least for TCP/IP version
     if(codefile==NULL) {
         return ENOENT;
