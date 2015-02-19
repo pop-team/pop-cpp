@@ -339,13 +339,13 @@ LOG_DEBUG("INTERFACE: Allocate start");
     } else if(!TryLocal(objaccess)) {
 
         POPString objname(ClassName());
-LOG_DEBUG("INTERFACE: Will try to create a parallel object: %s", objname.GetString());
+	LOG_DEBUG("INTERFACE: Will try to create a parallel object: %s", objname.GetString());
         //Exec using JobMgr interface...
         POPString platforms;
         od.getPlatforms(platforms);
 
         if(platforms.Length()<=0) {
-LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::appservice.GetAccessString());
+		LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::appservice.GetAccessString());
             /*CodeMgr mgr(paroc_system::appservice);
             if (mgr.GetPlatform(objname, platforms)<=0) {
                 paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());

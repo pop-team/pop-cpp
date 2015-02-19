@@ -591,54 +591,6 @@ void paroc_interface::Bind(const char *dest) {
     __paroc_combox->SetTimeout(-1);
 }
 
-bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
-    LOG_ERROR("Method has been commented"); // Note LWK: I still do not know by whom or for what reason // TODO
-    /* TODO should have been restored for version TCP/IP
-      POPString hostname;
-      POPString rarch;
-      POPString codefile;
-      POPString batch;
-
-      POPString objname(ClassName());
-      bool localFlag = od.IsLocal();
-      od.getURL(hostname);
-      od.getArch(rarch);
-      od.getBatch(batch);
-
-
-      if (localFlag || hostname != NULL || batch != NULL) {
-
-          if (hostname == NULL) hostname=paroc_system::GetHost();
-
-          od.getExecutable(codefile);
-
-          //Hostname existed
-          if (codefile == NULL) {
-              //Lookup local code manager for the binary source....
-              assert(!paroc_system::appservice.IsEmpty());
-              CodeMgr mgr(paroc_system::appservice);
-              if (rarch==NULL)rarch=paroc_system::platform;
-              if (!mgr.QueryCode(objname,rarch,codefile))
-              {
-                  paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, ClassName());
-                  //else return false;
-              }
-          }
-
-          //Local exec using sh or rsh
-          char *hoststr = hostname.GetString();
-
-          int status = LocalExec(hoststr, codefile, ClassName(), paroc_system::jobservice, paroc_system::appservice,&objaccess,1,od);
-
-          if (status!=0) {
-            paroc_exception::paroc_throw(status, "Invalid status", ClassName());
-          }
-          return (status==0);
-      }
-      */
-    return false;
-}
-
 
 void paroc_interface::Release() {
 
