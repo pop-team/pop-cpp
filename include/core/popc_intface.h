@@ -292,6 +292,13 @@ int popc_strncasecmp(const char *, const char *, popc_size_t);
 
 void Verbose(int argc, char *argv[]);
 
+
+/*! \brief Run a command using fork
+ * This method simply calls a command by creating a fork.
+ * @param argv Command and arguments
+ * @param env
+ * @return Zero */
+int RunCmd(int argc, char **argv, char *env[], int *status=NULL);
 int RunCmd(int argc, const char *argv[]);
 int RunPipe(int argc1, const char *argv1[], int argc2, const char *argv2[]);
 

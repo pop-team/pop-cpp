@@ -35,13 +35,6 @@
 
 #define POPC_ALLOC_RETRY 3
 
-/*! \brief Run a command using fork
- * This method simply calls a command by creating a fork.
- * @param argv Command and arguments
- * @param env
- * @return Zero */
-int RunCmd(int argc, char **argv, char *env[], int *status=NULL);
-
 
 /**
  * @class paroc_interface

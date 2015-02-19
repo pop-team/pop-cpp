@@ -363,6 +363,64 @@ int popc_strncasecmp(const char * a, const char * b, popc_size_t c) {
 }
 
 // RunCmd function
+int RunCmd(int argc, char **argv, char *env[], int *status) {
+    (void)argc;
+    char *file=NULL;
+
+    if(argv==NULL || argv[0]==NULL) {
+        return ENOENT;
+    }
+    file=argv[0];
+    //  if (access(file,X_OK)!=0)
+    //    {
+    //      return -1;
+    //    }
+    popc_signal(popc_SIGCHLD, ((status==NULL) ? popc_SIG_IGN : popc_SIG_DFL));
+
+#ifndef UC_LINUX
+    int pid=popc_fork();
+    if(pid==-1) {
+        int err=errno;
+        LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
+        return err;
+    } else if(pid==0) {
+        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ? 
+        int nf=popc_getdtablesize();
+        for(int fd=3; fd<nf; fd++) {
+            popc_close(fd);
+        }
+        */
+        if(env!=NULL) {
+            while(*env!=NULL) {
+                putenv(popc_strdup(*env));
+                env++;
+            }
+        }
+        if(status==NULL) {
+            popc_setpgid(0,0);
+        }
+        //Child process
+        popc_execvp(file,argv);
+        LOG_ERROR("[CORE] Execution of [%s] fails",file);
+        popc__exit(-1);
+    }
+#else
+    int pid=popc_vfork();
+    if(pid==-1) {
+        int err=errno;
+        LOG_ERROR("[CORE] Fork fails to execute! errno=%d", errno);
+        return err;
+    } else if(pid==0) {
+        execve(file,argv,env);
+        LOG_ERROR("[CORE] Execution of [%s] fail (popc_vfork)",file);
+        popc__exit(-1);
+    }
+#endif
+    if(status!=NULL) {
+        popc_waitpid(pid, status, 0);
+    }
+    return 0;
+}
 
 int RunCmd(int argc, const char *argv[]) {
 /* TODO: See what to use
