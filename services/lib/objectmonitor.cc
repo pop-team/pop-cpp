@@ -36,9 +36,11 @@ ObjectMonitor::ObjectMonitor(const POPString &challenge): paroc_service_base(cha
 #endif
     popc_signal(popc_SIGTERM,LocalServiceTerminate);
     isActive=true;
+    LOG_DEBUG("Create object monitor");
 }
 
 ObjectMonitor::~ObjectMonitor() {
+    LOG_DEBUG("Destroy object monitor");
 }
 
 void ObjectMonitor::KillAll() {

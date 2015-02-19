@@ -49,6 +49,7 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
     }
     LoadAddOn();
 
+    LOG_DEBUG("Create AppCoreService");
 }
 
 AppCoreService::~AppCoreService() {
@@ -73,6 +74,7 @@ AppCoreService::~AppCoreService() {
         }
         delete t.service;
     }
+    LOG_DEBUG("Destroyed AppCoreService");
 }
 
 bool AppCoreService::QueryService(const POPString &name, paroc_service_base &service) {
