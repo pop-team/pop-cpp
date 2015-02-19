@@ -306,6 +306,7 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
         return;
     }
     int code=h.GetExceptionCode();
+    LOG_INFO("Exception thrown type=%d", code);
     switch(code) {
     case EXCEPTION_INT: {
         int t;
