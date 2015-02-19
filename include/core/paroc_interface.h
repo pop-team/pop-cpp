@@ -56,7 +56,6 @@ public:
     paroc_interface();
     paroc_interface(const paroc_accesspoint &p);
     paroc_interface(const paroc_interface &inf);
-    paroc_interface(paroc_combox *combox, paroc_buffer *buffer); // TODO LW: check if used in pseudodyn and comment if not
 
     virtual ~paroc_interface();
 

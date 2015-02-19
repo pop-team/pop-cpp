@@ -200,24 +200,6 @@ paroc_interface::paroc_interface(const paroc_interface &inf) {
     Bind(inf.GetAccessPoint());
 }
 
-/* TODO LW: Used by pseudodyn version ?
-paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
-    _ssh_tunneling=false;
-    __paroc_combox = combox;
-    __paroc_buf = buffer;
-
-    //_popc_async_construction_thread=NULL;
-    if(combox!=NULL) {
-        POPString url;
-        combox->GetUrl(url);
-        accesspoint.SetAccessString(url);
-        if(__paroc_buf==NULL) {
-            __paroc_buf=combox->GetBufferFactory()->CreateBuffer();
-        }
-    }
-}
-*/
-
 
 /**
  * Interface destructor
