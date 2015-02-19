@@ -18,17 +18,16 @@
 
 #include <rpc/types.h>
 #include <rpc/xdr.h>
-#include "paroc_interface.h"
+// #include "paroc_interface.h"
 #include "paroc_buffer_xdr.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"
 
-paroc_buffer_xdr::paroc_buffer_xdr(): packeddata(0,1024) {
+paroc_buffer_xdr::paroc_buffer_xdr() {
     Reset();
 }
 
-paroc_buffer_xdr::~paroc_buffer_xdr() {
-}
+paroc_buffer_xdr::~paroc_buffer_xdr() {}
 
 void paroc_buffer_xdr::Reset() {
     unpackpos=20;
@@ -42,7 +41,7 @@ void paroc_buffer_xdr::Pack(const int *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.resize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -54,7 +53,7 @@ void paroc_buffer_xdr::UnPack(int *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=4*n;
 
@@ -74,7 +73,7 @@ void paroc_buffer_xdr::Pack(const unsigned *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.resize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -90,7 +89,7 @@ void paroc_buffer_xdr::UnPack(unsigned *data, int n) {
     int sz=4*n;
     CheckUnPack(sz);
 
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
     xdr_vector(&xdr,(char *)data,n,sizeof(unsigned),(xdrproc_t)xdr_u_int);
@@ -105,7 +104,7 @@ void paroc_buffer_xdr::Pack(const long *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.resize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -117,7 +116,7 @@ void paroc_buffer_xdr::UnPack(long *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=4*n;
     CheckUnPack(sz);
@@ -136,7 +135,7 @@ void paroc_buffer_xdr::Pack(const unsigned long *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.resize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -148,7 +147,7 @@ void paroc_buffer_xdr::UnPack(unsigned long *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=n*4;
     CheckUnPack(sz);
@@ -167,7 +166,7 @@ void paroc_buffer_xdr::Pack(const short *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.resize(((n-1)/2+1)*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*2,XDR_ENCODE);
@@ -180,7 +179,7 @@ void paroc_buffer_xdr::UnPack(short *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=2*n;
     CheckUnPack(sz);
@@ -199,7 +198,7 @@ void paroc_buffer_xdr::Pack(const unsigned short *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.resize(((n-1)/2+1)*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*2,XDR_ENCODE);
@@ -211,7 +210,7 @@ void paroc_buffer_xdr::UnPack(unsigned short *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=2*n;
     CheckUnPack(sz);
@@ -230,7 +229,7 @@ void paroc_buffer_xdr::Pack(const bool *data, int n) {
     }
     int t=packeddata.size();
     packeddata.resize(t+((n-1)/4+1)*4);
-    char *dat=((char *)packeddata)+t;
+    char *dat=packeddata.data()+t;
     while(n-->0) {
         *dat=(*data==true);
         dat++;
@@ -244,7 +243,7 @@ void paroc_buffer_xdr::UnPack(bool *data, int n) {
     CheckUnPack(n);
     packeddata.size();
 
-    char *dat=((char *)packeddata)+unpackpos;
+    char *dat = packeddata.data() + unpackpos;
     while(n-->0) {
         *data=(*dat!=0);
         dat++;
@@ -259,7 +258,7 @@ void paroc_buffer_xdr::Pack(const char *data, int n) {
     }
     int t=packeddata.size();
     packeddata.resize(t+((n-1)/4+1)*4);
-    memcpy(((char *)packeddata)+t,data,n);
+    memcpy(packeddata.data()+t,data,n);
 }
 
 void paroc_buffer_xdr::UnPack(char *data, int n) {
@@ -268,7 +267,7 @@ void paroc_buffer_xdr::UnPack(char *data, int n) {
     }
     CheckUnPack(n);
     packeddata.size();
-    memcpy(data, ((char *)packeddata)+unpackpos,n);
+    memcpy(data, (packeddata.data())+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
 
@@ -286,7 +285,7 @@ void paroc_buffer_xdr::Pack(const float *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.resize(n*4+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
@@ -298,7 +297,7 @@ void paroc_buffer_xdr::UnPack(float *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=n*4;
     CheckUnPack(sz);
@@ -318,7 +317,7 @@ void paroc_buffer_xdr::Pack(const double *data, int n) {
     }
     int oldsize=packeddata.size();
     packeddata.resize(n*8+oldsize);
-    char *dest=packeddata+oldsize;
+    char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
@@ -330,7 +329,7 @@ void paroc_buffer_xdr::UnPack(double *data, int n) {
     if(n<=0) {
         return;
     }
-    char *dest=packeddata+unpackpos;
+    char *dest=packeddata.data()+unpackpos;
 
     int sz=8*n;
     CheckUnPack(sz);
@@ -576,7 +575,7 @@ void paroc_buffer_xdr::CheckUnPack(int sz) {
  */
 bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
-    char *dat = (char*) packeddata;
+    char *dat=packeddata.data();
 
     if(dat == NULL) {
         LOG_ERROR("fail 1");
@@ -688,7 +687,7 @@ LOG_DEBUG("XDR: recv header");
     n-=20;
 
     if(n > 0) {
-        dat = (char *)packeddata+20;
+        dat = packeddata.data()+20;
         // LOG_DEBUG("XDR: %s ready to receive %d",(isServer) ? "server":"client",  n);
         s.Recv(dat, n, conn);
         // LOG_DEBUG("XDR: %s received %d",(isServer) ? "server":"client",  n);
@@ -706,7 +705,7 @@ int paroc_buffer_xdr::get_size() {
 // Note LWK: This method was copied from the dynamic to the pseudodynamic version of the code
 // TODO LWK: Check with Valentin if ok
 char* paroc_buffer_xdr::get_load() {
-    char *dat = (char*)packeddata;
+    char *dat = packeddata.data();
 
     if(!dat) {
         return NULL;
@@ -741,7 +740,7 @@ char* paroc_buffer_xdr::get_load() {
 
     memcpy(dat, h, 20);
 
-    return (char *) packeddata;
+    return packeddata.data();
 }
 // Note LWK: This method was copied from the dynamic to the pseudodynamic version of the code
 // TODO LWK: Check with Valentin if ok
@@ -749,8 +748,8 @@ void paroc_buffer_xdr::load(char* data, int length) {
     int h[5];
 
     Reset();
-    memcpy(packeddata, data, length);
-    memcpy(h, packeddata, 20);
+    memcpy(packeddata.data(), data, length);
+    memcpy(h, packeddata.data(), 20);
 
     int n = popc_ntohl(h[0]);
     if(n < 20) {
@@ -819,4 +818,5 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
         }
     }
 }
+
 #endif

@@ -76,6 +76,7 @@ public:
     virtual void Serialize(paroc_buffer &buf, bool pack);
 
     //Find the resource that satisfies the OD, output the resource name or the jobcontact..
+    // This method only exist in the pseudodynamic version of the code (this may cause a linking error is used)
     bool TryLocal(paroc_accesspoint &objaccess);
 
     //Connect the interface to the existed object located at resource dest...

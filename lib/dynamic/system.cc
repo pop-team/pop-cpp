@@ -67,8 +67,8 @@ paroc_system::paroc_system() {
 #ifndef POPC_ARCH
         char arch[64], sysname[64];
 #ifndef __WIN32__
-        sysinfo(SI_SYSNAME,sysname,64);
-        sysinfo(SI_ARCHITECTURE,arch,64);
+        popc_sysinfo(SI_SYSNAME,sysname,64);
+        popc_sysinfo(SI_ARCHITECTURE,arch,64);
 #endif
         sprintf(str,"%s-%s",sysname,arch);
 #else

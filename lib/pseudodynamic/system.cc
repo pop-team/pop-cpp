@@ -42,7 +42,6 @@ paroc_accesspoint paroc_system::appservice;
 paroc_accesspoint paroc_system::jobservice;
 int paroc_system::pop_current_local_address;
 
-// paroc_accesspoint paroc_system::popcloner;
 int paroc_system::popc_local_mpi_communicator_rank;
 
 int paroc_system_mpi::current_free_process;
@@ -74,8 +73,8 @@ paroc_system::paroc_system() {
 #ifndef POPC_ARCH
         char arch[64], sysname[64];
 #ifndef __WIN32__
-        //sysinfo(SI_SYSNAME,sysname,64);
-        //sysinfo(SI_ARCHITECTURE,arch,64);
+        // popc_sysinfo(SI_SYSNAME,sysname,64);
+        // popc_sysinfo(SI_ARCHITECTURE,arch,64);
 #endif
         sprintf(str,"%s-%s",sysname,arch);
 #else
@@ -296,7 +295,7 @@ POPString paroc_system::GetDefaultInterface() {
             //       iface, net_addr, gate_addr, &iflags, &refcnt, &use, &metric, mask_addr, &mss, &window, &irtt);
             int num = sscanf(buff, "%16s %128s",iface, net_addr);
             if(num < 2) {
-                paroc_exception::paroc_throw(errno);
+                paroc_exception::paroc_throw("GetDefaultInterface failed: num < 2");
             }
             // LOG_DEBUG("iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
 

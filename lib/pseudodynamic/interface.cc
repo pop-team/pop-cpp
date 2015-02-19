@@ -71,7 +71,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
         LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
         return err;
     } else if(pid==0) {
-        /*
+        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ? 
         int nf=popc_getdtablesize();
         for(int fd=3; fd<nf; fd++) {
             popc_close(fd);
@@ -150,7 +150,7 @@ paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
 //paroc_interface base class
 
 paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
-    LOG_DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("Create interface for class %s (OD secure:%s)", ClassName(), (od.isSecureSet())?"true":"false");
 
     if(od.isSecureSet()) {
         accesspoint.SetSecure();
@@ -200,6 +200,7 @@ paroc_interface::paroc_interface(const paroc_interface &inf) {
     Bind(inf.GetAccessPoint());
 }
 
+/* TODO LW: Used by pseudodyn version ?
 paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
     _ssh_tunneling=false;
     __paroc_combox = combox;
@@ -215,6 +216,7 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
         }
     }
 }
+*/
 
 
 /**
@@ -299,7 +301,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
         if(ref > 0) {
             Bind(accesspoint);
-            LOG_DEBUG("binded %s", accesspoint.GetAccessString());
+            LOG_DEBUG("Bound %s", accesspoint.GetAccessString());
             AddRef();
             //DecRef();
         }
@@ -320,8 +322,9 @@ void paroc_interface::allocate_only() {
     Allocate();
 }
 
+// note LWK: In the future the Allocate method should use allocators and allocators factories. Just as in the dynamic version
 void paroc_interface::Allocate() {
-LOG_DEBUG("INTERFACE: Allocate start");
+    LOG_DEBUG("INTERFACE: Allocate start");
     Release();
     POPString protocol;
     od.getProtocol(protocol);
@@ -370,41 +373,6 @@ LOG_DEBUG("INTERFACE: Allocate start");
             sprintf(str,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
             jobcontact.SetAccessString(str);
         }
-
-        /*  try
-            {
-                LOG_DEBUG("JOBMGR --> connect to %s", jobcontact.GetAccessString());
-                JobCoreService resources(jobcontact);
-                int ret;
-                if (batchindex==0 && batchsize>1)
-                {
-                    if (batchaccesspoint!=NULL) delete [] batchaccesspoint;
-                    batchaccesspoint=new paroc_accesspoint[batchsize];
-                    LOG_DEBUG("Create Object : %s", ClassName());
-                //TODO put an other array than batchaccesspoint
-                    ret=resources.CreateObject(paroc_system::appservice,objname,od, batchsize,  batchaccesspoint, batchsize, batchaccesspoint);
-                    if (ret==0) objaccess=batchaccesspoint[batchindex++];
-                LOG_DEBUG("Return %d", ret);
-                } else{
-
-                    LOG_DEBUG("Create Object : %s", ClassName());
-                ret=resources.CreateObject(paroc_system::appservice,objname,od, 1,  &objaccess, 1, &remotejobcontact);
-                LOG_DEBUG("Return %d", ret);
-                }
-
-                if (ret != 0)
-                  paroc_exception::paroc_throw(ret,ClassName());
-
-
-
-          // Get the POPAppID
-          AppCoreService acs(paroc_system::appservice);
-          popAppId = acs.GetPOPCAppID();
-
-            } catch (paroc_exception * e) {
-                paroc_system::perror(e);
-                paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"POP-C++ error: Cannot create object via POP-C++ Job Manager");
-            } */
     }
     Bind(objaccess);
 }
