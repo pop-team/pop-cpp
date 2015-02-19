@@ -34,7 +34,6 @@
 #include "paroc_buffer.h"
 #include "paroc_buffer_xdr.h"
 #include "paroc_accesspoint.h"
-#include "paroc_memspool.h"
 #include "paroc_combox_factory.h"
 #include "paroc_combox_socket.h"
 #include "paroc_object.h"
