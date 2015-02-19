@@ -30,7 +30,7 @@ paroc_buffer_xdr::~paroc_buffer_xdr() {}
 
 void paroc_buffer_xdr::Reset() {
     unpackpos=20;
-    packeddata.RemoveAll();
+    packeddata.clear();
     packeddata.resize(unpackpos);
 }
 
@@ -558,7 +558,7 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
             } else {
                 paroc_message_header h = header;
                 int unpackposold = unpackpos;
-                paroc_array<char> packeddataold = packeddata;
+                std::vector<char> packeddataold = packeddata;
                 paroc_connection * t = (paroc_connection *) s.Wait();
                 if(!t) {
                     paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive\n");

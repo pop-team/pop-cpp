@@ -88,8 +88,6 @@ public:
 
     virtual int Run();
 
-    //  static bool Init(int *argc, char ***argv, paroc_array<paroc_combox *> & comboxList);
-
     bool Initialize(int *argc, char ***argv);
     bool WakeupReceiveThread(paroc_combox *mycombox);
 
@@ -127,7 +125,7 @@ protected:
     int mutexCount;             // Number of mutex call pending
     int concPendings;           // Number of concurrent call pending
 
-    paroc_array<paroc_combox*> comboxArray;
+    std::vector<paroc_combox*> comboxArray;
 
     paroc_object *obj;                    // Real object associated with this broker
     paroc_request_fifo_list request_fifo; // Queue storing the request received by the broker

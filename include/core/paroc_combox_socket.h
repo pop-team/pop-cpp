@@ -11,14 +11,10 @@
 
 #ifndef POPC_COMBOX_SOCKET_H
 #define POPC_COMBOX_SOCKET_H
+
+#include <vector>
+
 #include "popc_intface.h"
-//#include <sys/types.h>
-//#include <sys/socket.h>
-//#include <poll.h>
-//#include <ctype.h>
-
-#include <paroc_array.h>
-
 #include "paroc_combox.h"
 /**
  * @class paroc_connection_sock
@@ -101,23 +97,14 @@ protected:
     int highsockfd;
     fd_set readfds, activefdset;
 #else
-    paroc_array<pollfd> pollarray;
+    std::vector<pollfd> pollarray;
 #endif
     paroc_connection_sock *peer;
 
     //Only used by combox server...
-    paroc_array<paroc_connection_sock *> connarray;
+    std::vector<paroc_connection_sock *> connarray;
     int index;
     int nready;
 };
 
-
-
 #endif
-
-
-
-
-
-
-

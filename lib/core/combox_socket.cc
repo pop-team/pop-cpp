@@ -219,7 +219,7 @@ void paroc_combox_socket::Close() {
     index=-1;
 
     if(isServer) {
-        for(int i=0; i<pollarray.size(); i++){
+        for(std::size_t i=0; i<pollarray.size(); i++){
             if(fd!=pollarray[i].fd) {
                 OnCloseConnection(connarray[i]);
             }
@@ -229,8 +229,8 @@ void paroc_combox_socket::Close() {
             delete connarray[i];
         }
 
-        pollarray.RemoveAll();
-        connarray.RemoveAll();
+        pollarray.clear();
+        connarray.clear();
     } else {
         if(peer) {
             OnCloseConnection(peer);
@@ -246,12 +246,12 @@ void paroc_combox_socket::Close() {
 
 bool paroc_combox_socket::CloseSock(int fd) {
     if(isServer) {
-        for(int i=0; i<pollarray.size(); i++){
+        for(std::size_t i=0; i<pollarray.size(); i++){
             if(pollarray[i].fd==fd){
                 isCanceled=!OnCloseConnection(connarray[i]);
                 delete connarray[i];
-                connarray.RemoveAt(i);
-                pollarray.RemoveAt(i);
+                connarray.erase(connarray.begin() + i);
+                pollarray.erase(pollarray.begin() + i);
                 if(isCanceled) {
                     errno=ECANCELED;
                 }

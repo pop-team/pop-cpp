@@ -13,7 +13,8 @@
 #ifndef _POPC_BUFFER_RAW_H
 #define _POPC_BUFFER_RAW_H
 
-#include "paroc_array.h"
+#include <vector>
+
 #include "paroc_buffer.h"
 
 /**
@@ -21,7 +22,7 @@
  * @brief Raw buffer declaration, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  */
-class paroc_buffer_raw:public paroc_buffer {
+class paroc_buffer_raw : public paroc_buffer {
 public:
     paroc_buffer_raw();
     ~paroc_buffer_raw();
@@ -32,6 +33,7 @@ public:
 
     using paroc_buffer::Pack; // TODO lwk can we remove ? not a good practice
     using paroc_buffer::UnPack;
+
     virtual void Pack(const int *data, int n);
     virtual void UnPack(int *data, int n);
 
@@ -92,7 +94,7 @@ protected:
     void CheckUnPack(int sz);
 
     int unpackpos;
-    paroc_array<char> packeddata;
+    std::vector<char> packeddata;
 };
 
 #endif

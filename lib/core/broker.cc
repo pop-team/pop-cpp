@@ -168,7 +168,7 @@ bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned 
 int paroc_broker::Run() {
     //Create threads for each protocols for receiving requests....
 
-    paroc_array<paroc_receivethread *> ptArray;
+    std::vector<paroc_receivethread *> ptArray;
     int comboxCount = comboxArray.size();
     if(comboxCount <= 0) {
         return -1;
