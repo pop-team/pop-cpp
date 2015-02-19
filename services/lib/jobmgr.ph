@@ -22,6 +22,7 @@
 #ifndef JOBMGR_PH
 #define JOBMGR_PH
 
+#include <unordered_map>
 #include <time.h>
 #include <sys/time.h>
 #include "paroc_service_base.ph"
@@ -142,14 +143,7 @@ public:
     bool Remove(const paroc_string &key);
     bool Add(const paroc_string &contact, NodeInfo &info);
 private:
-    int Hash(const paroc_string &key);
-
-    struct NodeInfoExt {
-        paroc_string key;
-        NodeInfo data;
-    };
-    paroc_list<NodeInfoExt> map[HASH_SIZE];
-    int keycount;
+    std::unordered_map<std::string, NodeInfo> hashmap;
     paroc_mutex maplock;
 };
 

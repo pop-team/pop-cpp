@@ -88,7 +88,7 @@ void paroc_timerthread::start() {
 
 //CLASS NEIGHBOR NODE: IMPLEMENT THREAD-SAFE NEIGHBOR NODE ACCESS BASED ON KEYS
 NodeInfoMap::NodeInfoMap() {
-    keycount=0;
+    //keycount=0;
 }
 
 std::vector<paroc_string> NodeInfoMap::GetContacts() {
@@ -98,32 +98,27 @@ std::vector<paroc_string> NodeInfoMap::GetContacts() {
 
     std::unique_lock<paroc_mutex> lock(maplock);
 
-    for(int i=0; i<HASH_SIZE; i++) {
-        auto& node = map[i];
-        POSITION pos=node.GetHeadPosition();
-        while(pos!=NULL) {
-            auto& t=node.GetNext(pos);
-            double heuristic=t.data.heuristic;
+    for(auto& t : hashmap){
+        double heuristic=t.second.heuristic;
 
-            auto hpos = h.begin();
-            auto cpos = contacts.begin();
-            while(hpos != h.end()) {
-                auto old = hpos;
-                auto& tmp = *hpos++;
+        auto hpos = h.begin();
+        auto cpos = contacts.begin();
+        while(hpos != h.end()) {
+            auto old = hpos;
+            auto& tmp = *hpos++;
 
-                if(tmp>=heuristic) {
-                    contacts.insert(cpos, t.key);
-                    h.insert(old, heuristic);
-                    break;
-                }
-
-                ++cpos;
+            if(tmp>=heuristic) {
+                contacts.insert(cpos, paroc_string(t.first));
+                h.insert(old, heuristic);
+                break;
             }
 
-            if(cpos == contacts.end()) {
-                contacts.push_back(t.key);
-                h.push_back(heuristic);
-            }
+            ++cpos;
+        }
+
+        if(cpos == contacts.end()) {
+            contacts.push_back(paroc_string(t.first));
+            h.push_back(heuristic);
         }
     }
 
@@ -131,129 +126,59 @@ std::vector<paroc_string> NodeInfoMap::GetContacts() {
 }
 
 bool NodeInfoMap::HasContact(const POPString &contact) {
-    int i=Hash(contact);
-    auto& node=map[i];
-    bool ret=false;
+    std::unique_lock<paroc_mutex> lock(maplock);
 
-    maplock.lock();
-
-    POSITION pos=node.GetHeadPosition();
-    while(pos!=NULL) {
-        NodeInfoExt &t=node.GetNext(pos);
-        if(paroc_utils::SameContact(t.key, contact)) {
-            ret=true;
-            break;
+    for(auto& v : hashmap){
+        if(paroc_utils::SameContact(paroc_string(v.first), contact)){
+            return true;
         }
     }
-    maplock.unlock();
-    return ret;
+
+    return false;
 }
 
 bool NodeInfoMap::GetInfo(const POPString &contact, NodeInfo &info) {
-    int i=Hash(contact);
-    maplock.lock();
-    auto& node=map[i];
-    POSITION pos=node.GetHeadPosition();
-    bool ret=false;
-    while(pos!=NULL) {
-        NodeInfoExt &t=node.GetNext(pos);
-        if(paroc_utils::isEqual(t.key,contact)) {
-            info=t.data;
-            ret=true;
-            break;
-        }
+    std::unique_lock<paroc_mutex> lock(maplock);
+
+    if(hashmap.count(contact)){
+        info = hashmap[contact];
+        return true;
+    } else {
+        return false;
     }
-    maplock.unlock();
-    return ret;
 }
 
 int NodeInfoMap::GetCount() {
-    maplock.lock();
-    int count=0;
-    for(int i=0; i<HASH_SIZE; i++) {
-        count+=map[i].GetCount();
-    }
-    maplock.unlock();
-    return count;
+    std::unique_lock<paroc_mutex> lock(maplock);
+    return hashmap.size();
 }
 
 bool NodeInfoMap::Update(const POPString &contact, NodeInfo &info) {
-    int i=Hash(contact);
-    maplock.lock();
-    auto& node=map[i];
-    POSITION pos=node.GetHeadPosition();
-    bool ret=false;
-    while(pos!=NULL) {
-        NodeInfoExt &t=node.GetNext(pos);
-        if(paroc_utils::isEqual(t.key,contact)) {
-            info=t.data;
-            ret=true;
-            break;
-        }
+    std::unique_lock<paroc_mutex> lock(maplock);
+
+    if(hashmap.count(contact)){
+        hashmap[contact] = info;
+        return true;
     }
-    maplock.unlock();
-    return ret;
+
+    return false;
 }
 
 bool NodeInfoMap::Remove(const POPString &contact) {
-    int i=Hash(contact);
-    if(i<0) {
-        i=-i;
-    }
-    maplock.lock();
-    auto& node=map[i];
-    POSITION pos=node.GetHeadPosition();
-    bool ret=false;
-    while(pos!=NULL) {
-        POSITION oldpos=pos;
-        NodeInfoExt &t=node.GetNext(pos);
-        if(paroc_utils::isEqual(t.key, contact)) {
-            node.RemoveAt(oldpos);
-            ret=true;
-            break;
-        }
-    }
-    maplock.unlock();
-    return ret;
+    std::unique_lock<paroc_mutex> lock(maplock);
+    auto erased = hashmap.erase(contact);
+    return erased > 0;
 }
 
 bool NodeInfoMap::Add(const POPString &contact, NodeInfo &info) {
-    maplock.lock();
+    std::unique_lock<paroc_mutex> lock(maplock);
 
-    int i=Hash(contact);
-    auto& node=map[i];
-
-    POSITION pos=node.GetHeadPosition();
-    bool ret=true;
-    while(pos!=NULL) {
-
-        NodeInfoExt &t=node.GetNext(pos);
-        if(paroc_utils::isEqual(t.key, contact)) {
-            ret=false;
-            break;
-        }
+    if(!hashmap.count(contact)){
+        hashmap[contact] = info;
+        return true;
     }
-    if(ret) {
-        NodeInfoExt &t=node.AddTailNew();
-        t.key=contact;
-        t.data=info;
-    }
-    maplock.unlock();
-    return ret;
 
-}
-
-int NodeInfoMap::Hash(const POPString &key) {
-    const char *s=key;
-    if(s==NULL) {
-        return 0;
-    }
-    int sum=0;
-    while(*s!=0) {
-        sum+=*s;
-        s++;
-    }
-    return sum%HASH_SIZE;
+    return false;
 }
 
 //*********************    JobMgr implementation    *********************
@@ -1490,7 +1415,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
             if(index[i]==-1) {
                 index[i]=1;
                 POPString t(jobcontacts[i].GetAccessString());
-                if(t==NULL || paroc_utils::isEqual(t,local)) {
+                if(t == NULL || paroc_utils::isEqual(t,local)) {
                     continue;
                 }
                 NodeInfo info;
@@ -1744,7 +1669,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     POPString mycodefile;
     try {
         CodeMgr code(localservice);
-        if(!code.QueryCode(objname,paroc_system::platform,mycodefile) || mycodefile==NULL) {
+        if(!code.QueryCode(objname,paroc_system::platform,mycodefile) || mycodefile == NULL) {
             CancelReservation(reserveIDs,howmany);
             POPString tmpObjname = objname;
             POPString tmpPlatform = paroc_system::platform;
