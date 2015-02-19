@@ -55,7 +55,7 @@
  *
  *
  * Modifications
- * - Added AddExtra method and suppress create(...) method that was barely used (LW Jan 2015)
+ * - Added AddInfo method and suppress create(...) method that was barely used + suppress SetExtra method (LW Jan 2015)
  */
 class paroc_exception: public paroc_base, public std::exception {
 public:
@@ -69,16 +69,19 @@ public:
 
     virtual void Serialize(paroc_buffer &buf, bool pack);
 
-    const paroc_string Extra()const;
-    void SetExtra(const char* str);
-    void AddExtra(const char* str);
+    const paroc_string Info()const;
+    void AddInfo(const char* str);
     int Code()const;
 
     // Redefine the virtual what method of exception
     const char* what() const throw();
 
+    // Old way: only prints an error message to stderr
+    static void perror(const char *msg);
+
 protected:
 
+    static const char *paroc_errstr[17];
     paroc_string info;
     int errcode;
 };

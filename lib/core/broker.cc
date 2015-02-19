@@ -277,7 +277,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
                 return false;
             }
             if(!pc->Create(port, true)) {
-                paroc_system::perror("Broker");
+                paroc_exception::perror("Broker");
                 return false;
             }
         } else {
@@ -286,7 +286,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 #else
             if(!pc->Create(0, true)) {
 #endif
-                paroc_system::perror("Broker");
+                paroc_exception::perror("Broker");
                 return false;
             }
         }

@@ -60,27 +60,6 @@ POPString paroc_system::POPC_HostName;
 #define LOCALHOST "localhost"
 //End modif
 
-const char *paroc_system::paroc_errstr[17]= {
-    "Out of resource",                           // 0
-    "Fail to bind to the remote object broker",  // 1
-    "Mismatch remote method id",                 // 2
-    "Can not access code service",               // 3
-    "Object allocation failed",                  // 4
-    "No parallel object executable",             // 5
-    "Bad paroc package format",                  // 6
-    "Local application service failed",          // 7
-    "Job Manager service failed",                // 8
-    "Execution of object code failed",           // 9
-    "Bad binding reply",                         // 10
-    "No support protocol",                       // 11
-    "No support data encoding",                  // 12
-    "Standard exception",                        // 13
-    "Acknowledgement not received",              // 14
-    "Network configuration error",               // 15
-    "Unknown exception"                          // 16
-};
-
-
 AppCoreService *paroc_system::mgr=NULL;
 POPString paroc_system::challenge;
 
@@ -129,24 +108,6 @@ paroc_system::~paroc_system() {
 }
 
 
-void paroc_system::perror(const char *msg) {
-    LOG_ERROR("paroc_system::perror : %d",errno);
-    if(errno>USER_DEFINE_ERROR && errno<=USER_DEFINE_LASTERROR) {
-        if(msg==NULL) {
-            msg="POP-C++ Error";
-        }
-        LOG_ERROR("%s: %s (errno %d)",msg,paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
-    } else if(errno>USER_DEFINE_LASTERROR) {
-        LOG_ERROR("%s: Unknown error (errno %d)",msg, errno);
-    } else {
-        ::perror(msg);
-    }
-}
-
-void paroc_system::perror(const paroc_exception *e) {
-    errno=e->Code();
-    paroc_system::perror((const char*)e->Extra());
-}
 
 // V1.3m
 // Try to determine the Host Name of the machine and put it in POPC_Host_Name
@@ -496,6 +457,7 @@ void paroc_system::Finalize(bool /*normalExit*/) {
             int loop = 0;
             while ((count = mgr->CheckObjects()) > 0){
               if (timeout < 1800 && oldcount == count){
+                        // sleep an increasing amount of time
                 timeout = timeout * 4/3;
                 loop++;
                 if (loop % 10 == 0) {
@@ -505,6 +467,7 @@ void paroc_system::Finalize(bool /*normalExit*/) {
                 loop = 0;
                 timeout = 1;
               }
+                    LOG_INFO("%d parallel objects remain. Awaiting %d s. Type Ctrl+C to kill all remaining objects", count, timeout);
                     popc_sleep(timeout);
               oldcount = count;
             }
@@ -515,16 +478,11 @@ void paroc_system::Finalize(bool /*normalExit*/) {
           LOG_DEBUG("Finalize stop");
           mgr->Stop(challenge);
           delete mgr;
-        } catch (paroc_exception *e) {
-            LOG_WARNING("POP-C++ error while finalizing the application");
-            paroc_system::perror(e);
-          delete e;
-        } catch (...) {
-            LOG_WARNING("Error while finalizing the application");
+        } catch(paroc_exception &e) {
+            LOG_ERROR("while finalizing the application: %s", e.what());
         }
         mgr = NULL;
       }*/
-    LOG_DEBUG("Finalize the application end");
 #endif
 }
 
@@ -550,11 +508,11 @@ void paroc_system::processor_set(int /*cpu*/) {
 #ifndef __APPLE__
     // Use glibc to set cpu affinity
     /*if (cpu < 0) {
-        LOG_WARNING("POPstringC++ Warning: Cannot set processor to %d<0", cpu);
+        LOG_WARNING("Cannot set processor to %d<0", cpu);
         exit(EXIT_FAILURE);
     }
     if(cpu >= CPU_SETSIZE) {
-        LOG_WARNING("POP-C++ Warning: Cannot set processor to %d while CPU_SETSIZE=%d", cpu, CPU_SETSIZE);
+        LOG_WARNING("Cannot set processor to %d while CPU_SETSIZE=%d", cpu, CPU_SETSIZE);
         exit(EXIT_FAILURE);
     }
 
@@ -562,19 +520,19 @@ void paroc_system::processor_set(int /*cpu*/) {
     CPU_ZERO(&cpu_set);
     CPU_SET(cpu, &cpu_set);
     if(sched_setaffinity(0, sizeof(cpu_set), &cpu_set) == -1) {
-        LOG_WARNING("POP-C++ Warning: Cannot set processor to %d (cpu_set %p)", cpu,(void *)&cpu_set);
+        LOG_WARNING("Cannot set processor to %d (cpu_set %p)", cpu,(void *)&cpu_set);
         exit(EXIT_FAILURE);
     }
 
     cpu_set_t cpu_get;
     CPU_ZERO(&cpu_get);
     if(sched_getaffinity(0, sizeof(cpu_get), &cpu_get) == -1) {
-        LOG_WARNING("POP-C++ Warning: Unable to sched_getaffinity to (cpu_get) %p", (void *)&cpu_get);
+        LOG_WARNING("Unable to sched_getaffinity to (cpu_get) %p", (void *)&cpu_get);
         exit(EXIT_FAILURE);
     }
 
     if(memcmp(&cpu_get, &cpu_set, sizeof(cpu_set_t))) {
-        LOG_WARNING("POP-C++ Warning: Unable to run on cpu %d", cpu);
+        LOG_WARNING("Unable to run on cpu %d", cpu);
         exit(EXIT_FAILURE);
     }
     #else
