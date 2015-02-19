@@ -74,7 +74,7 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
         case POPC_Allocator::LOCAL :
             return new POPC_Allocator_tcpip_local();
         case POPC_Allocator::SSH :
-            return new POPC_Allocator_tcpip_ssh();
+            return new POPC_Allocator_tcpip_service();
         default:
             LOG_WARNING("No allocator found");
             return NULL;

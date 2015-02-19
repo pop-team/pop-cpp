@@ -113,7 +113,7 @@ popcc_compile_cxx(interface.cc)
 popcc_compile_cxx(utils.cc)
 popcc_compile_cxx(benchmark.cc)
 popcc_compile_cxx(popc_allocator_tcpip_local.cpp)
-popcc_compile_cxx(popc_allocator_tcpip_ssh.cpp)
+popcc_compile_cxx(popc_allocator_tcpip_service.cpp)
 
 set(POPCC_GENERATED_FILES
     ${POPCC_OUTPUT_DIR}/broker_receive.cc.o
@@ -128,7 +128,7 @@ set(POPCC_GENERATED_FILES
     ${POPCC_OUTPUT_DIR}/utils.cc.o
     ${POPCC_OUTPUT_DIR}/benchmark.cc.o
     ${POPCC_OUTPUT_DIR}/popc_allocator_tcpip_local.cpp.o
-    ${POPCC_OUTPUT_DIR}/popc_allocator_tcpip_ssh.cpp.o
+    ${POPCC_OUTPUT_DIR}/popc_allocator_tcpip_service.cpp.o
     ${POPCC_GENERATED_STUBS}
 )
 
