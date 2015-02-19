@@ -13,8 +13,9 @@
 #ifndef POPC_MEMSPOOL_H
 #define POPC_MEMSPOOL_H
 
+#include <vector>
 #include <stdlib.h>
-#include "paroc_list.h"
+
 #include "paroc_interface.h"
 
 typedef void * VOIDPTR;
@@ -29,12 +30,12 @@ class paroc_memspool {
 public:
     paroc_memspool();
     ~paroc_memspool();
-    VOIDPTR Alloc(int sz);
-    void Managed(VOIDPTR data);
 
+    void* Alloc(int sz);
+    void Managed(void* data);
     void Free();
 protected:
-    paroc_list<VOIDPTR> memtemp;
+    std::vector<void*> memtemp;
 };
 
 template <class T> class paroc_container {

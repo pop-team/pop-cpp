@@ -13,8 +13,8 @@
 #ifndef _POPC_BROKER_FACTORY_H_
 #define  _POPC_BROKER_FACTORY_H_
 
+#include <vector>
 #include <paroc_broker.h>
-#include <paroc_list.h>
 
 typedef paroc_broker *(*initbrokerfunc)();
 typedef bool (*ispackedfunc)(const char *objname);
@@ -23,9 +23,6 @@ struct paroc_broker_init {
     initbrokerfunc func;
     paroc_string objname;
 };
-
-typedef paroc_list<paroc_broker_init> paroc_list_broker;
-typedef paroc_list<paroc_string> paroc_list_string;
 
 /**
  * @class paroc_broker_factory
@@ -51,7 +48,7 @@ public:
      * @brief Returns the list of brokers
      * @param objlist Output
      */
-    static void List(paroc_list_string &objlist);
+    static void List(std::vector<paroc_string>& objlist);
 
     /**
      * @brief Create a broker
@@ -81,7 +78,7 @@ public:
     static ispackedfunc CheckIfPacked; // Since this method is created by the parser, we have to declare a fct pointer for it
 
 private:
-    static paroc_list_broker *brokerlist;
+    static std::vector<paroc_broker_init> *brokerlist;
 };
 
 #endif

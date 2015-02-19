@@ -438,9 +438,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
         } else if(paroc_utils::isEqual(name,"platform")) {
             paroc_system::platform=val;
         } else {
-            HostInfo &t=info.AddTailNew();
-            t.name=name;
-            t.val=val;
+            info.push_back({name, val});
         }
     }
     fclose(f);
@@ -454,9 +452,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
         //We do benchmark now to find the computing power of the machine...
         total.flops=paroc_utils::benchmark_power();
         sprintf(val,"%g",total.flops);
-        HostInfo &t=info.AddHeadNew();
-        t.name="power";
-        t.val=val;
+        info.push_back({"power", val});
     }
 
     if(Query("ram",tmpstr)) {
@@ -629,7 +625,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
     if(paroc_utils::isEqual(type,"jobs")) {
         //  Update();
         mutex {
-            sprintf(tmp,"%d/%d", jobs.GetCount() ,maxjobs);
+            sprintf(tmp,"%ld/%d", jobs.size() ,maxjobs);
             val=tmp;
         }
         return 1;
@@ -639,9 +635,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
         val="";
 
         mutex {
-            POSITION pos=jobs.GetHeadPosition();
-            while(pos!=NULL) {
-                Resources &r=jobs.GetNext(pos);
+            for(auto& r : jobs){
                 if(r.contact.IsEmpty() || r.appservice.IsEmpty()) {
                     continue;
                 }
@@ -669,9 +663,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
         return 1;
     }
 
-    POSITION pos=info.GetHeadPosition();
-    while(pos!=NULL) {
-        HostInfo &t=info.GetNext(pos);
+    for(auto& t : info){
         if(paroc_utils::isEqual(type,t.name)) {
             val=t.val;
             return 1;
@@ -1024,19 +1016,20 @@ void JobMgr::CancelReservation(int *req, int howmany) {
         return;
     }
     mutex {
-        POSITION pos=jobs.GetHeadPosition();
-        while(pos!=NULL) {
-            POSITION oldpos=pos;
-            Resources &t=jobs.GetNext(pos);
-            for(int i=0; i<howmany; i++)
+        auto pos = jobs.begin();
+        while(pos!=jobs.end()) {
+            auto oldpos = pos;
+            auto& t = *pos++;
+            for(int i=0; i<howmany; i++){
                 if(t.Id==req[i] && t.contact.IsEmpty()) {
                     available.flops+=t.flops;
                     available.mem+=t.mem;
                     available.bandwidth+=t.bandwidth;
-                    jobs.RemoveAt(oldpos);
+                    jobs.erase(oldpos);
                     POPCSearchNode psn(_localPSN);
                     psn.removeJob(t.flops, t.mem, t.bandwidth, 1);
                 }
+            }
         }
     }
 }
@@ -1061,7 +1054,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
     float require, min;
 
     mutex {
-        if(jobs.GetCount()>=maxjobs) {
+        if(jobs.size()>=maxjobs) {
             return 0;
         }
 
@@ -1141,13 +1134,14 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
             }
         }
         inoutfitness=fitness;
-        Resources &t=jobs.AddTailNew();
+        Resources t;
         t.Id=counter;
         t.flops=flops;
         t.mem=mem;
         t.bandwidth=bandwidth;
         t.start=time(NULL);
         t.walltime=walltime;
+        jobs.push_back(t);
 
         /**
          * ViSaG : clementval
@@ -1185,7 +1179,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness) {
     float require, min;
 
     mutex {
-        if(jobs.GetCount()>=maxjobs) {
+        if(jobs.size()>=maxjobs) {
             return 0;
         }
 
@@ -1267,13 +1261,14 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness) {
             }
         }
         inoutfitness=fitness;
-        Resources &t=jobs.AddTailNew();
+        Resources t;
         t.Id=counter;
         t.flops=flops;
         t.mem=mem;
         t.bandwidth=bandwidth;
         t.start=time(NULL);
         t.walltime=walltime;
+        jobs.push_back(t);
 
         available.flops-=flops;
         available.mem-=mem;
@@ -1337,11 +1332,12 @@ bool JobMgr::MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoi
 void JobMgr::Update() {
     mutex {
         //Check if a reservation timeout/job termination....then reget the resource...
-        POSITION pos=jobs.GetHeadPosition();
+        auto pos=jobs.begin();
         POPCSearchNode psn(_localPSN);
-        while(pos!=NULL) {
-            POSITION old=pos;
-            Resources &t=jobs.GetNext(pos);
+        while(pos!=jobs.end()) {
+            auto old=pos;
+            Resources &t=*pos++;
+
             time_t now=time(NULL);
 
             if(t.contact.IsEmpty()) {
@@ -1349,7 +1345,7 @@ void JobMgr::Update() {
                     available.flops+=t.flops;
                     available.mem+=t.mem;
                     available.bandwidth+=t.bandwidth;
-                    jobs.RemoveAt(old);
+                    pos = jobs.erase(old);
                     psn.removeJob(t.flops, t.mem, t.bandwidth, 1);
                 }
             } else if(now-t.start>5) { // Do not check twice within 5 seconds
@@ -1359,7 +1355,7 @@ void JobMgr::Update() {
                     available.flops+=t.flops;
                     available.mem+=t.mem;
                     available.bandwidth+=t.bandwidth;
-                    jobs.RemoveAt(old);
+                    pos = jobs.erase(old);
                     psn.removeJob(t.flops, t.mem, t.bandwidth, 1);
                 }
             }
@@ -2041,9 +2037,7 @@ bool JobMgr::ObjectAlive(paroc_accesspoint &t) {
 
 Resources* JobMgr::VerifyReservation(int reserveId, bool updatetime) {
     mutex {
-        POSITION pos=jobs.GetHeadPosition();
-        while(pos!=NULL) {
-            Resources &tmp=jobs.GetNext(pos);
+        for(auto& tmp : jobs){
             if(tmp.Id==reserveId) {
                 if(updatetime) {
                     tmp.start=time(NULL);
@@ -2057,9 +2051,7 @@ Resources* JobMgr::VerifyReservation(int reserveId, bool updatetime) {
 
 bool JobMgr::ValidateReservation(int id, const paroc_accesspoint &objcontact, const paroc_accesspoint &appserv) {
     mutex {
-        POSITION pos=jobs.GetHeadPosition();
-        while(pos!=NULL) {
-            Resources &tmp=jobs.GetNext(pos);
+        for(auto& tmp : jobs){
             if(tmp.Id==id) {
                 tmp.contact=objcontact;
                 tmp.appservice=appserv;
@@ -2077,15 +2069,15 @@ bool JobMgr::ReleaseJob(int id) {
         return false;
     }
     mutex {
-        POSITION pos=jobs.GetHeadPosition();
-        while(pos!=NULL) {
-            POSITION oldpos=pos;
-            Resources &t=jobs.GetNext(pos);
+        auto  pos=jobs.begin();
+        while(pos!=jobs.end()) {
+            auto oldpos=pos;
+            auto &t=*pos++;
             if(t.Id==id && !t.contact.IsEmpty()) {
                 available.flops+=t.flops;
                 available.mem+=t.mem;
                 available.bandwidth+=t.bandwidth;
-                jobs.RemoveAt(oldpos);
+                jobs.erase(oldpos);
                 POPCSearchNode psn(_localPSN);
                 psn.removeJob(t.flops, t.mem, t.bandwidth, 1);
                 return true;
@@ -2123,17 +2115,17 @@ void JobMgr::ApplicationEnd(POPString popAppId, bool initiator) {
     bool hasRemoved=false;
     int nbJob=0;
     mutex {
-        POSITION pos=jobs.GetHeadPosition();
+        auto pos=jobs.begin();
+        while(pos!=jobs.end()) {
+            auto oldpos=pos;
+            auto &t=*pos++;
 
-        while(pos!=NULL) {
-            POSITION oldpos=pos;
-            Resources &t=jobs.GetNext(pos);
             if(strcmp(t.popAppId.GetString(), popAppId.GetString())==0) {
                 available.flops+=t.flops;
                 available.mem+=t.mem;
                 available.bandwidth+=t.bandwidth;
                 nbJob++;
-                jobs.RemoveAt(oldpos);
+                pos = jobs.erase(oldpos);
                 hasRemoved=true;
             }
         }

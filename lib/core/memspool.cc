@@ -21,32 +21,28 @@ paroc_memspool::~paroc_memspool() {
     Free();
 }
 
-VOIDPTR paroc_memspool::Alloc(int sz) {
+void* paroc_memspool::Alloc(int sz) {
     if(sz<=0) {
         return NULL;
     }
 
-    VOIDPTR data;
+    void* data;
     if((data=malloc(sz))==NULL) {
         paroc_exception::paroc_throw(errno);
     }
-    memtemp.AddTail(data);
+    memtemp.push_back(data);
     return data;
 }
 
-void paroc_memspool::Managed(VOIDPTR data) {
-    if(data!=NULL) {
-        memtemp.AddTail(data);
+void paroc_memspool::Managed(void* data) {
+    if(data) {
+        memtemp.push_back(data);
     }
 }
 
 void paroc_memspool::Free() {
-    POSITION pos=memtemp.GetHeadPosition();
-    while(pos!=NULL) {
-        VOIDPTR tmp=memtemp.GetNext(pos);
+    for(auto& tmp : memtemp){
         free(tmp);
     }
-    memtemp.RemoveAll();
+    memtemp.clear();
 }
-
-

@@ -109,11 +109,6 @@ struct PauseInfo {
 struct HostInfo {
     paroc_string  name;
     paroc_string val;
-    HostInfo & operator = (const HostInfo &t) {
-        name=t.name;
-        val=t.val;
-        return *this;
-    };
 };
 
 struct RequestTrace {
@@ -121,10 +116,9 @@ struct RequestTrace {
     double timestamp;
 };
 
-typedef paroc_list<HostInfo> HostInfoDB;
-typedef paroc_list<NodeInfo> NodeInfoList;
-typedef paroc_list<paroc_string> paroc_list_string;
-typedef paroc_list<Resources> ResourceList;
+typedef std::vector<HostInfo> HostInfoDB;
+typedef std::vector<NodeInfo> NodeInfoList;
+typedef std::vector<Resources> ResourceList;
 typedef std::vector<PauseInfo> PauseList;
 typedef std::vector<RequestTrace> TraceList;
 
@@ -261,7 +255,6 @@ protected:
     bool ReleaseJob(int id);
 
     HostInfoDB info;
-
 
     NodeInfoMap neighbors;
 

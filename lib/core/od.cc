@@ -18,13 +18,8 @@
 #include "popc_intface.h"
 #include "paroc_od.h"
 #include "paroc_utils.h"
-//#include <unistd.h>
-//#include <string.h>
-//#include <stdlib.h>
-//#include <stdio.h>
 
 bool paroc_od::defaultLocalJob=false;
-
 
 paroc_od::paroc_od() {
     mflops=min_mflops=ram=min_ram=net=min_net=time=-1;
@@ -405,25 +400,21 @@ void paroc_od::getPlatforms(POPString &objplatforms) const {
 }
 
 void paroc_od::setValue(const POPString &key, const POPString &val) {
-    POPString &t1=keys.AddTailNew();
-    POPString &t2=values.AddTailNew();
-    t1=key;
-    t2=val;
+    keys.emplace_back(key);
+    values.emplace_back(val);
 }
 
 void paroc_od::getValue(const POPString &key, POPString &val) {
-    POSITION posk=keys.GetHeadPosition();
-    POSITION posv=values.GetHeadPosition();
-
-    while(posk!=NULL) {
-        POPString &t1=keys.GetNext(posk);
-        POPString &t2=values.GetNext(posv);
+    for(std::size_t i = 0; i < keys.size(); ++i){
+        auto& t1 = keys[i];
+        auto& t2 = values[i];
         if(paroc_utils::isEqual(t1,key)) {
             val=t2;
             return;
         }
     }
-    val=NULL;
+
+    val=nullptr;
 }
 
 void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
@@ -525,18 +516,18 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
 
         //Pack additional attributes
-        int count = keys.GetCount();
-        buf.Push("attributes","paroc_list",count);
+        int count = keys.size();
+        buf.Push("attributes","vector",count);
 
         buf.Push("count","int",1);
         buf.Pack(&count,1);
         buf.Pop();
+
         if(count) {
-            POSITION posk=keys.GetHeadPosition();
-            POSITION posv=values.GetHeadPosition();
-            while(posk!=NULL) {
-                POPString &t1=keys.GetNext(posk);
-                POPString &t2=values.GetNext(posv);
+            for(std::size_t i = 0; i < keys.size(); ++i){
+                auto& t1 = keys[i];
+                auto& t2 = values[i];
+
                 buf.Push("element","POPString", 2);
 
                 buf.Push("key", "POPString", 1);
@@ -551,7 +542,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
             }
         }
 
-        buf.Pop(); // paroc_list
+        buf.Pop(); // vector
 #ifdef OD_DISCONNECT
         getCheckConnection(valInt[0],valInt[1]);
         buf.Push("checkConnection","int",2);
@@ -563,7 +554,6 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         buf.UnPack(val,2);
         buf.Pop();
         power(val[0],val[1]);
-
 
         buf.Push("memory","float",2);
         buf.UnPack(val,2);
@@ -644,15 +634,16 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
 
         //Unpack additional attributes
         int count = 0;
-        buf.Push("attributes", "paroc_list", count);
+        buf.Push("attributes", "vector", count);
 
         buf.Push("count", "int", 1);
         buf.UnPack(&count,1);
         buf.Pop();
-        keys.RemoveAll();
-        values.RemoveAll();
 
-        for(int i=0; i<count; i++) {
+        keys.clear();
+        values.clear();
+
+        for(std::size_t i=0; i<static_cast<std::size_t>(count); i++) {
             POPString t1, t2;
             buf.Push("element","POPString", 2);
 
@@ -669,7 +660,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
             setValue(t1,t2);
         }
 
-        buf.Pop();
+        buf.Pop(); //vector
 
 #ifdef OD_DISCONNECT
         buf.Push("checkConnection","int",2);
