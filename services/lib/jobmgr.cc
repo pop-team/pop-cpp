@@ -25,6 +25,7 @@
 #include <list>
 #include <cstring>
 #include <algorithm>
+#include <mutex>
 
 #include "codemgr.ph"
 #include "timer.h"
@@ -90,43 +91,48 @@ NodeInfoMap::NodeInfoMap() {
     keycount=0;
 }
 
-void NodeInfoMap::GetContacts(paroc_list_string &contacts) {
-    contacts.RemoveAll();
-    paroc_list<double> h;
+std::vector<paroc_string> NodeInfoMap::GetContacts() {
+    std::vector<paroc_string> contacts;
 
-    maplock.lock();;
+    std::vector<double> h;
+
+    std::unique_lock<paroc_mutex> lock(maplock);
+
     for(int i=0; i<HASH_SIZE; i++) {
-        paroc_list<NodeInfoExt> &node=map[i];
+        auto& node = map[i];
         POSITION pos=node.GetHeadPosition();
         while(pos!=NULL) {
-            NodeInfoExt &t=node.GetNext(pos);
+            auto& t=node.GetNext(pos);
             double heuristic=t.data.heuristic;
 
-            POSITION hpos=h.GetHeadPosition();
-            POSITION cpos=contacts.GetHeadPosition();
-            while(hpos!=NULL) {
-                POSITION old=hpos;
-                double &tmp=h.GetNext(hpos);
+            auto hpos = h.begin();
+            auto cpos = contacts.begin();
+            while(hpos != h.end()) {
+                auto old = hpos;
+                auto& tmp = *hpos++;
+
                 if(tmp>=heuristic) {
-                    contacts.InsertBefore(cpos, t.key);
-                    h.InsertBefore(old, heuristic);
+                    contacts.insert(cpos, t.key);
+                    h.insert(old, heuristic);
                     break;
                 }
-                contacts.GetNext(cpos);
+
+                ++cpos;
             }
-            if(cpos==NULL) {
-                contacts.AddTail(t.key);
-                h.AddTail(heuristic);
+
+            if(cpos == contacts.end()) {
+                contacts.push_back(t.key);
+                h.push_back(heuristic);
             }
         }
     }
 
-    maplock.unlock();
+    return contacts;
 }
 
 bool NodeInfoMap::HasContact(const POPString &contact) {
     int i=Hash(contact);
-    paroc_list<NodeInfoExt> &node=map[i];
+    auto& node=map[i];
     bool ret=false;
 
     maplock.lock();
@@ -146,7 +152,7 @@ bool NodeInfoMap::HasContact(const POPString &contact) {
 bool NodeInfoMap::GetInfo(const POPString &contact, NodeInfo &info) {
     int i=Hash(contact);
     maplock.lock();
-    paroc_list<NodeInfoExt> &node=map[i];
+    auto& node=map[i];
     POSITION pos=node.GetHeadPosition();
     bool ret=false;
     while(pos!=NULL) {
@@ -174,7 +180,7 @@ int NodeInfoMap::GetCount() {
 bool NodeInfoMap::Update(const POPString &contact, NodeInfo &info) {
     int i=Hash(contact);
     maplock.lock();
-    paroc_list<NodeInfoExt> &node=map[i];
+    auto& node=map[i];
     POSITION pos=node.GetHeadPosition();
     bool ret=false;
     while(pos!=NULL) {
@@ -195,7 +201,7 @@ bool NodeInfoMap::Remove(const POPString &contact) {
         i=-i;
     }
     maplock.lock();
-    paroc_list<NodeInfoExt> &node=map[i];
+    auto& node=map[i];
     POSITION pos=node.GetHeadPosition();
     bool ret=false;
     while(pos!=NULL) {
@@ -215,7 +221,7 @@ bool NodeInfoMap::Add(const POPString &contact, NodeInfo &info) {
     maplock.lock();
 
     int i=Hash(contact);
-    paroc_list<NodeInfoExt> &node=map[i];
+    auto& node=map[i];
 
     POSITION pos=node.GetHeadPosition();
     bool ret=true;
@@ -1368,15 +1374,11 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
     //Since this method can be invoked concurently,
     //we need to copy the data to local memony stack and process on these data
 
-    paroc_list_string nodes;
-    neighbors.GetContacts(nodes);
-    POSITION pos=nodes.GetHeadPosition();
     Timer watch;
     watch.Start();
     bool ret=false;
 
-    while(pos!=NULL) {
-        POPString &contact=nodes.GetNext(pos);
+    for(auto& contact : neighbors.GetContacts()){
         NodeInfo info;
         if(!neighbors.GetInfo(contact,info)) {
             continue;
@@ -1404,9 +1406,10 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
             //Separate the Fitness into 2 parts. Only forward the parts whose fitness<1...
             int good=0;
             int nswap=0;
-            for(int j=0; j<howmany; j++)
+            for(int j=0; j<howmany; j++){
                 if(fitness[j]<1) {
-                    for(int k=howmany-1-nswap; k>j; k--) if(fitness[k]>=1) {
+                    for(int k=howmany-1-nswap; k>j; k--){
+                        if(fitness[k]>=1) {
                             float f=fitness[k];
                             fitness[k]=fitness[j];
                             fitness[j]=f;
@@ -1421,14 +1424,17 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                             nswap++;
                             break;
                         }
+                    }
+
                     if(fitness[j]<1) {
                         break;
                     }
-                    good++;
 
+                    good++;
                 } else {
                     good++;
                 }
+            }
 
             int count=howmany-good;
             if(count<=0) {
@@ -1463,7 +1469,6 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                     info.heuristic=MAX_HEURISTICS;
                 }
             }
-
         } catch(...) {
             LOG_CORE( "[JM] Exception on contact %s", (const char *)contact);
             if(info.nodetype!=NODE_STATIC) {
@@ -1893,27 +1898,22 @@ void JobMgr::dump() {
             *tmp='_';
         }
     f=fopen(tmp,"w+t");
-    if(f==NULL) {
+    if(!f) {
         return;
     }
 
-    paroc_list_string keys;
-    neighbors.GetContacts(keys);
-    fprintf(f,"Neighbour nodes (%d)\n", keys.GetCount());
-    POSITION pos=keys.GetHeadPosition();
-    int i=0;
-    while(pos!=NULL) {
-        i++;
-        POPString &t=keys.GetNext(pos);
+    auto keys = neighbors.GetContacts();
+    fprintf(f,"Neighbour nodes (%ld)\n", keys.size());
+
+    for(std::size_t i = 0; i < keys.size(); ++i){
+        auto& t=keys[i];
         NodeInfo info;
-        if(!neighbors.GetInfo(t,info)) {
-            continue;
+        if(neighbors.GetInfo(t,info)) {
+            fprintf(f,"%ld: %s\t%g\t%d\n",i,(const char *)t, info.heuristic,int(info.nodetype));
         }
-        fprintf(f,"%d: %s\t%g\t%d\n",i,(const char *)t, info.heuristic,int(info.nodetype));
     }
     fclose(f);
 #endif
-
 }
 
 void JobMgr::Pause(const paroc_accesspoint &app, int duration) {

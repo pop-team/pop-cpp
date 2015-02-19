@@ -138,7 +138,7 @@ class NodeInfoMap {
 public:
     NodeInfoMap();
 //Manipulate neighbor nodes (thread safe)
-    void GetContacts(paroc_list_string &contacts);
+    std::vector<paroc_string> GetContacts();
     bool HasContact(const paroc_string &contact);
 
     bool GetInfo(const paroc_string &contact, NodeInfo &info);
