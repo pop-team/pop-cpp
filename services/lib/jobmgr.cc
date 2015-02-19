@@ -26,10 +26,10 @@
 #include <cstring>
 #include <algorithm>
 #include <mutex>
+#include <vector>
 
 #include "codemgr.ph"
 #include "timer.h"
-#include "paroc_array.h"
 #include "jobmgr.ph"
 #include "priolist.h"
 #include "paroc_thread.h"
@@ -606,9 +606,9 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
     int retry=3;
     try {
         int traceip[MAX_HOPS];
-        paroc_array<paroc_accesspoint> jobcontacts(howmany);
-        paroc_array<int> reserveIDs(howmany);
-        paroc_array<float> fitness(howmany);
+        std::vector<paroc_accesspoint> jobcontacts(howmany);
+        std::vector<int> reserveIDs(howmany);
+        std::vector<float> fitness(howmany);
 
         int requestInfo[3];
 
@@ -658,7 +658,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                 break;
             }
             //Now we will call ExecObj...
-            paroc_array<int> tmpids(howmany);
+            std::vector<int> tmpids(howmany);
             int sz;
 
             for(int i=count; i<howmany; i++) {
@@ -1363,8 +1363,8 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
             }
             JobMgr child(childaddr);
 
-            paroc_array<float> oldfitness;
-            oldfitness.InsertAt(-1,fitness+good,count);
+            std::vector<float> oldfitness;
+            std::copy(fitness+good, fitness+good+count, std::back_inserter(oldfitness));
 
             if(child.AllocResource(localservice,objname,od, count , fitness+good,jobcontacts+good, reserveIDs+good, requestInfo, iptrace, tracesize)) {
                 ret=true;
