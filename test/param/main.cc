@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 
     if(b==10) {
         printf("Param: test succeeded, destroying objects...\n");
-        return 1;
+        return 0;
     } else {
         printf("Param: Test failed, bad value transmission\n");
         return 1;
