@@ -216,6 +216,7 @@ paroc_object * paroc_broker::GetObject() {
     return obj;
 }
 
+/// This method manages different remote calls made by parallel objects
 bool paroc_broker::ParocCall(paroc_request &req) {
     if(req.methodId[1] >= 10) {
         return false;

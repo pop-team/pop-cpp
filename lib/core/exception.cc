@@ -50,10 +50,12 @@ paroc_exception::paroc_exception() {
 
 paroc_exception::paroc_exception(int code) {
     errcode=code;
-    if(code>USER_DEFINE_ERROR && code<USER_DEFINE_LASTERROR && code != UNKNOWN_EXCEPTION) {
-        info = paroc_errstr[code-USER_DEFINE_ERROR-1];
+    if(code == UNKNOWN_EXCEPTION) {
+    	    ; // Do nothing
     } else if(code>=USER_DEFINE_LASTERROR) {
         LOG_ERROR("Error code is too large: %d", code);
+    } else if(code>USER_DEFINE_ERROR) {
+        info = paroc_errstr[code-USER_DEFINE_ERROR-1];
     } else {
         info = "System error(";
         info += strerror(code);

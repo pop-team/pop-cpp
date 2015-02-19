@@ -415,7 +415,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     n = 20;
     do {
         if((i = s.Recv(dat, n, conn)) <= 0) {
-            LOG_ERROR("[CORE] combox recv returned %d", i);
+            LOG_DEBUG("combox recv returned %d", i);
             return false;
         }
         n -= i;
@@ -457,7 +457,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
 
     while(n) {
         if((i = s.Recv(dat,n, conn)) <= 0) {
-            LOG_ERROR("[CORE] combox recv returned %d", i);
+            LOG_DEBUG("combox recv returned %d", i);
             return false;
         }
         dat += i;

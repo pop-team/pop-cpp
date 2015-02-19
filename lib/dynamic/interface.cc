@@ -489,7 +489,7 @@ void paroc_interface::Bind(const char *dest) {
     } else {
         int code=errno;
 
-        LOG_WARNING("Fail to connect from [%s] to [%s]. Error code: %s",(const char *)paroc_system::GetHost(),dest,strerror(code));
+        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s",(const char *)paroc_system::GetHost(),dest,strerror(code));
         Release();
         paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
@@ -1055,7 +1055,6 @@ void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
 // DEPRECATED // TODO LW: See what to do
 void paroc_interface::paroc_Response(paroc_buffer *buf) {
     if(!buf->Recv(*__paroc_combox)) {
-        printf("Throw from response\n");
         paroc_exception::paroc_throw("Buffer receive failed (old)");
     }
     paroc_buffer::CheckAndThrow(*buf);
