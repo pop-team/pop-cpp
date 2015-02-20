@@ -31,7 +31,6 @@
 #include "codemgr.ph"
 #include "timer.h"
 #include "jobmgr.ph"
-#include "priolist.h"
 #include "paroc_thread.h"
 
 /**
