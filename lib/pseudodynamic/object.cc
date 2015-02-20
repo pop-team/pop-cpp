@@ -21,7 +21,10 @@
 #include "paroc_event.h"
 #include "paroc_broker.h"
 #include "paroc_system.h"
+
+#ifndef POP_PSEUDO
 #include "objectmonitor.ph"
+#endif
 
 int paroc_object::argc=0;
 char **paroc_object::argv=NULL;
