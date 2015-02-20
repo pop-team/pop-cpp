@@ -29,10 +29,7 @@ public:
     paroc_string(const paroc_string &x);
 
     ~paroc_string();
-    /**
-     * @brief Cast to a (char*)
-     */
-    //operator const char *() const;
+
     /**
      * @brief Cast to a (std::string)
      * @author Laurent Winkler

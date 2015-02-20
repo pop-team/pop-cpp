@@ -16,12 +16,9 @@
     POPC_String instead of paroc_string
  */
 #include "popc_intface.h"
-
-//#include <string.h>
-//#include <stdlib.h>
-//#include <errno.h>
 #include "paroc_string.h"
 #include "paroc_exception.h"
+
 paroc_string::paroc_string() {
     data=NULL;
 }
@@ -55,10 +52,6 @@ paroc_string::~paroc_string() {
     }
 
 }
-
-//paroc_string::operator const char *() const {
-    //return data;
-//}
 
 paroc_string::operator std::string() const {
     return data;
