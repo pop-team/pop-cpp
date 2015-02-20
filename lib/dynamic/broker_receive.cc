@@ -26,9 +26,10 @@
 #include "paroc_buffer_factory.h"
 #include "paroc_buffer_factory_finder.h"
 #include "paroc_system.h"
+#include "popc_logger.h"
 
 bool NewConnection(void *dat, paroc_connection *conn) {
-    paroc_broker *br=(paroc_broker *)dat;
+    paroc_broker *br = (paroc_broker *)dat;
     return br->OnNewConnection(conn);
 }
 
@@ -46,7 +47,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
     server->SetCallback(COMBOX_NEW, NewConnection, this);
     server->SetCallback(COMBOX_CLOSE, CloseConnection, this);
 
-    while(state==POPC_STATE_RUNNING) {
+    while(state == POPC_STATE_RUNNING) {
         paroc_request req;
         req.data=NULL;
         try {
@@ -54,6 +55,19 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
                 break;
             }
 
+#ifdef POP_PSEUDO            
+	    // Is it a connection initialization, then just serve a new request
+            if(req.from->is_initial_connection()) {
+                /* Note LWK: Apparently wait_unlock is never set
+                if(!req.from->is_wait_unlock()) {
+                    if(obj != NULL) {
+                        obj->AddRef();
+                    }
+                }
+                */
+                continue;
+            }
+#endif
 
             // Is it a POP-C++ core call ? If so serve it right away
             if(ParocCall(req)) {
@@ -83,7 +97,7 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
     server->SetTimeout(-1);
     while(1) {
         // Waiting for a new connection or a new request
-        paroc_connection *conn = server->Wait();
+        paroc_connection* conn = server->Wait();
 
         // Trouble with the connection
         if(conn == NULL) {
@@ -91,9 +105,11 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
             return false;
         }
 
+#ifndef POP_PSEUDO
         if(conn->is_initial_connection()) {
             continue;
         }
+#endif
 
         // Receiving the real data
         paroc_buffer_factory *fact = conn->GetBufferFactory();
@@ -105,7 +121,7 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
             req.methodId[0] = h.GetClassID();
             req.methodId[1] = h.GetMethodID();
 
-            if(!((req.methodId[2]=h.GetSemantics()) & INVOKE_SYNC)) {
+            if(!((req.methodId[2] = h.GetSemantics()) & INVOKE_SYNC)) {
 #ifdef OD_DISCONNECT
                 if(checkConnection) {
                     server->SendAck(conn);
@@ -123,20 +139,21 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
 
 void paroc_broker::RegisterRequest(paroc_request &req) {
     //Check if mutex is waiting/executing...
-    int type=req.methodId[2];
+    int type = req.methodId[2];
 
     if(type & INVOKE_SYNC) {
         // Method call is synchronous, a response will be send back so the connection is saved
         req.from  = req.from->Clone();
     } else {
         // Method call is asynchronous so the connection is not needed anymore
+        req.from->reset();
         req.from = NULL;
     }
 
 
     if(type & INVOKE_CONC) {    // Method semantic is concurrent so trying to execute if there is no mutex pending
         mutexCond.lock();
-        if(mutexCount<=0) {
+        if(mutexCount <= 0) {
             ServeRequest(req);
             mutexCond.unlock();
             return;
@@ -150,7 +167,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
     // Adding the request to the request queue
     execCond.lock();
     request_fifo.push_back(req);
-    int count=request_fifo.size();
+    int count = request_fifo.size();
 
     execCond.broadcast();
     execCond.unlock();
@@ -160,10 +177,10 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
         mutexCond.unlock();
     }
 
-    if(count>=POPC_QUEUE_NORMAL) {
+    if(count >= POPC_QUEUE_NORMAL) {
         //To many requests: Slowdown the receive thread...
-        int step=(count/POPC_QUEUE_NORMAL);
-        long t=step*step*step;
+        int step = (count/POPC_QUEUE_NORMAL);
+        long t = step*step*step;
         //if (count>POPC_QUEUE_NORMAL+5)
         LOG_WARNING(" Warning: too many requests (unserved requests: %d)",count);
         if(count<=POPC_QUEUE_MAX) {
@@ -177,7 +194,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
 }
 
 bool paroc_broker::OnNewConnection(paroc_connection * /*conn*/) {
-    if(obj!=NULL) {
+    if(obj != NULL) {
         obj->AddRef();
     }
     return true;
@@ -187,9 +204,9 @@ bool paroc_broker::OnNewConnection(paroc_connection * /*conn*/) {
  * This method is called when a connection with an interface is closed.
  */
 bool paroc_broker::OnCloseConnection(paroc_connection * /*conn*/) {
-    if(obj!=NULL) {
-        int ret=obj->DecRef();
-        if(ret<=0) {
+    if(obj != NULL) {
+        int ret = obj->DecRef();
+        if(ret <= 0) {
             execCond.broadcast();
         }
     }
@@ -201,13 +218,13 @@ paroc_object * paroc_broker::GetObject() {
     return obj;
 }
 
-bool  paroc_broker::ParocCall(paroc_request &req) {
-    if(req.methodId[1]>=10) {
+bool paroc_broker::ParocCall(paroc_request &req) {
+    if(req.methodId[1] >= 10) {
         return false;
     }
 
-    unsigned *methodid=req.methodId;
-    paroc_buffer *buf=req.data;
+    unsigned* methodid = req.methodId;
+    paroc_buffer *buf = req.data;
     switch(methodid[1]) {
     case 0:
         // BindStatus call
@@ -229,16 +246,16 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
                 }
             }
 
-            buf->Push("code","int",1);
-            buf->Pack(&status,1);
+            buf->Push("code", "int", 1);
+            buf->Pack(&status, 1);
             buf->Pop();
 
-            buf->Push("platform","POPString",1);
-            buf->Pack(&paroc_system::platform,1);
+            buf->Push("platform", "POPString", 1);
+            buf->Pack(&paroc_system::platform, 1);
             buf->Pop();
 
-            buf->Push("info","POPString",1);
-            buf->Pack(&enclist,1);
+            buf->Push("info", "POPString", 1);
+            buf->Pack(&enclist, 1);
             buf->Pop();
 
             buf->Send(req.from);
@@ -246,10 +263,10 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
         break;
     case 1: {
         //AddRef call...
-        if(obj==NULL) {
+        if(obj == NULL) {
             return false;
         }
-        int ret=obj->AddRef();
+        int ret = obj->AddRef();
         if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
             paroc_message_header h("AddRef");
@@ -286,10 +303,10 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
     case 3: {
         // Negotiate encoding call
         POPString enc;
-        buf->Push("encoding","POPString",1);
+        buf->Push("encoding", "POPString", 1);
         buf->UnPack(&enc,1);
         buf->Pop();
-        paroc_buffer_factory *fact=paroc_buffer_factory_finder::GetInstance()->FindFactory(enc);
+        paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(enc);
         bool ret;
         if(fact) {
             req.from->SetBufferFactory(fact);
@@ -301,8 +318,8 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
             paroc_message_header h("Encoding");
             buf->SetHeader(h);
             buf->Reset();
-            buf->Push("result","bool",1);
-            buf->Pack(&ret,1);
+            buf->Push("result", "bool", 1);
+            buf->Pack(&ret, 1);
             buf->Pop();
             buf->Send(req.from);
         }
@@ -317,7 +334,7 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
         break;
     }
     case 5: {
-        // ObjectAlive call
+        //ObjectAlive call
         if(!obj) {
             return false;
         }
@@ -348,6 +365,12 @@ bool  paroc_broker::ParocCall(paroc_request &req) {
             buf->SetHeader(h);
             buf->Send(req.from);
         }
+        break;
+    }
+#endif
+#ifdef POP_PSEUDO
+    case 7: {
+        // Dummy message
         break;
     }
 #endif
