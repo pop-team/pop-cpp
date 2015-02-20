@@ -14,6 +14,7 @@ services/popcobjrun
 
 # Ignore common generated files in lib/dynamic
 # TODO: These files should not be generated here
+lib/core/*.a
 lib/dynamic/*.a
 
 # Ignore configured scripts
