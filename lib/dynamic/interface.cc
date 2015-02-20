@@ -225,7 +225,7 @@ paroc_interface::~paroc_interface() {
 paroc_interface & paroc_interface::operator = (const paroc_interface & obj) {
     //  __paroc_combox = NULL;
     //  __paroc_buf = NULL;
-    //printf("Bind\n");
+    LOG_DEBUG("Bind");
     //Bind(accesspoint);
     //DecRef();
     //Bind(accesspoint);
@@ -242,7 +242,7 @@ paroc_interface & paroc_interface::operator = (const paroc_interface & obj) {
 }
 
 void paroc_interface::SetOD(const paroc_od &myod) {
-    od=myod;
+    od = myod;
 }
 
 const paroc_od & paroc_interface::GetOD() const {
@@ -388,7 +388,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     accesspoint = dest;
 
     //Choose the protocol and then bind
-    POPString prots=dest.GetAccessString();
+    POPString prots = dest.GetAccessString();
     POPString od_prots;
     od.getProtocol(od_prots);
 
@@ -552,8 +552,8 @@ void paroc_interface::Bind(const char *dest) {
             LOG_INFO("Forward current session to %s", (const char *)info);
             Bind(newap);
 
-            if(status==BIND_FORWARD_SESSION) {
-                accesspoint=old;
+            if(status == BIND_FORWARD_SESSION) {
+                accesspoint = old;
             }
 
             break;
@@ -565,7 +565,7 @@ void paroc_interface::Bind(const char *dest) {
             paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName());
         }
     } else {
-        int code=errno;
+        int code = errno;
 
         LOG_WARNING("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
         LOG_WARNING("Create socket fails. Reason: %s.",strerror(code));
@@ -642,11 +642,6 @@ void paroc_interface::Release() {
         __paroc_buf->Destroy();
         __paroc_buf = NULL;
     }
-
-    /*if(_ssh_tunneling){
-      int ret=0;
-      ret = KillSSHTunnel(_ssh_user.c_str(), _ssh_dest_ip.c_str(), _ssh_dest_port, _ssh_local_port);
-      } */
 }
 
 
@@ -657,16 +652,13 @@ bool paroc_interface::isBinded() {
     return true;
 }
 
-
-
-
 // ParocCall
 void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info) {
     if(!__paroc_combox || !__paroc_buf) {
         return;
     }
 
-    paroc_message_header h(0, 0, INVOKE_SYNC ,"BindStatus");
+    paroc_message_header h(0, 0, INVOKE_SYNC, "BindStatus");
     paroc_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
@@ -716,7 +708,7 @@ int paroc_interface::DecRef() {
         return -1;
     }
 
-    paroc_message_header h(0,2, INVOKE_SYNC,"DecRef");
+    paroc_message_header h(0, 2, INVOKE_SYNC,"DecRef");
     paroc_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
@@ -1172,7 +1164,7 @@ void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
 // DEPRECATED // TODO LW: See what to do
 void paroc_interface::paroc_Response(paroc_buffer *buf) {
     if(!buf->Recv(*__paroc_combox)) {
-        printf("Throw from response\n");
+        LOG_INFO("Throw from response");
         paroc_exception::paroc_throw_errno();
     }
     paroc_buffer::CheckAndThrow(*buf);

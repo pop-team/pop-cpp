@@ -16,6 +16,9 @@ set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
 # Activate some warnings
 add_definitions(-Wall -Wextra -Werror)
 
+# Compile in C++11 mode
+add_definitions(-std=c++11)
+
 add_library(popc_common_psdyn
     broker_receive.cc
     buffer_raw.cc
@@ -34,14 +37,14 @@ add_library(popc_common_psdyn
 
 add_custom_command(
     OUTPUT paroc_infmain.psdyn.o
-    COMMAND ${MPI_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_infmain.psdyn.cc 
+    COMMAND ${MPI_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_infmain.psdyn.cc
     ${POPCPP_PSEUDODYNAMIC_INCLUDE_PATH}
     DEPENDS paroc_infmain.psdyn.cc
     COMMENT "Compile POP-C++ Master main")
 
 add_custom_command(
     OUTPUT popc_objmain.psdyn.o
-    COMMAND ${MPI_CXX_COMPILER} ${POPC_MAIN_FLAGS} popc_objmain.psdyn.cc 
+    COMMAND ${MPI_CXX_COMPILER} ${POPC_MAIN_FLAGS} popc_objmain.psdyn.cc
     ${POPCPP_PSEUDODYNAMIC_INCLUDE_PATH}
     DEPENDS popc_objmain.psdyn.cc
     COMMENT "Compile POP-C++ Object main")

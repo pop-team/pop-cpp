@@ -22,12 +22,11 @@
 #include "paroc_exception.h"
 #include "popc_logger.h"
 
-paroc_buffer_raw::paroc_buffer_raw(): packeddata(0,1024) {
+paroc_buffer_raw::paroc_buffer_raw() {
     Reset();
 }
 
-paroc_buffer_raw::~paroc_buffer_raw() {
-}
+paroc_buffer_raw::~paroc_buffer_raw() {}
 
 void paroc_buffer_raw::Reset() {
     unpackpos=20;
@@ -35,14 +34,13 @@ void paroc_buffer_raw::Reset() {
     packeddata.resize(20);
 }
 
-
 void paroc_buffer_raw::Pack(const char *data, int n) {
     if(n<=0) {
         return;
     }
     int t=packeddata.size();
     packeddata.resize(t+((n-1)/4+1)*4);
-    memcpy(((char *)packeddata)+t,data,n);
+    memcpy(packeddata.data()+t,data,n);
 }
 
 void paroc_buffer_raw::UnPack(char *data, int n) {
@@ -51,7 +49,7 @@ void paroc_buffer_raw::UnPack(char *data, int n) {
     }
     //CheckUnPack(n); // Error with this check in 64 bits
     packeddata.size();
-    memcpy(data, ((char *)packeddata)+unpackpos,n);
+    memcpy(data, packeddata.data()+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
 
@@ -146,14 +144,14 @@ void paroc_buffer_raw::UnPack(signed char *data, int n) {
 }
 
 void paroc_buffer_raw::CheckUnPack(int sz) {
-    if(sz+unpackpos > packeddata.size()) {
+    if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
     }
 }
 
 bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
-    char *dat = (char *)packeddata;
+    char *dat = packeddata.data();
 
     if(dat == NULL) {
         return false;
@@ -169,16 +167,16 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
 
     switch(type) {
     case TYPE_REQUEST:
-        h[2]=header.GetClassID();
-        h[3]=header.GetMethodID();
-        h[4]=header.GetSemantics();
+        h[2] = header.GetClassID();
+        h[3] = header.GetMethodID();
+        h[4] = header.GetSemantics();
         break;
     case TYPE_EXCEPTION:
-        h[2]=header.GetExceptionCode();
+        h[2] = header.GetExceptionCode();
         break;
     case TYPE_RESPONSE:
-        h[2]=header.GetClassID();
-        h[3]=header.GetMethodID();
+        h[2] = header.GetClassID();
+        h[3] = header.GetMethodID();
         break;
     default:
         return false;
@@ -198,7 +196,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     dat += 20;
     n -= 20;
     if(n > 0) {
-        LOG_INFO("RAW: Send message size is %d: %s", n, (char*)packeddata);
+        LOG_INFO("RAW: Send message size is %d: %s", n, packeddata.data());
         if(s.Send(dat, n, conn) < 0) {
         LOG_WARNING("Fail to send a message!");
             return false;
@@ -228,7 +226,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
 
     Reset();
     n = h[0];
-    if(n<20) {
+    if(n < 20) {
         LOG_ERROR("[CORE] - Buffer RAW - bad message header (size error:%d)", n);
         return false;
     }
@@ -256,7 +254,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     n -= 20;
 
     if(n > 0) {
-        dat = (char *)packeddata+20;
+        dat = packeddata.data()+20;
         LOG_INFO("RAW: ready to receive %d", n);
         s.Recv(dat, n, conn);
         LOG_INFO("RAW: received %d", n);
@@ -279,7 +277,7 @@ int paroc_buffer_raw::get_size() {
 
 char* paroc_buffer_raw::get_load() {
     // Pack the header (20 bytes)
-    char *dat = (char *)packeddata;
+    char *dat = packeddata.data();
 
     if(dat == NULL) {
         return NULL;
@@ -310,11 +308,11 @@ char* paroc_buffer_raw::get_load() {
         return NULL;
     }
     memcpy(dat, h, 20);
-    return (char *)packeddata;
+    return packeddata.data();
 }
 
 void paroc_buffer_raw::load(char* data, int length) {
-    memcpy(packeddata, data, length);
+    memcpy(packeddata.data(), data, length);
 }
 
 #ifdef OD_DISCONNECT

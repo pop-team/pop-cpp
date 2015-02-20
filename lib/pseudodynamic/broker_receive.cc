@@ -164,8 +164,8 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
 
     // Adding the request to the request queue
     execCond.lock();
-    request_fifo.AddTail(req);
-    int count = request_fifo.GetCount();
+    request_fifo.push_back(req);
+    int count = request_fifo.size();
 
     execCond.broadcast();
     execCond.unlock();
@@ -184,7 +184,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
         if(count<=POPC_QUEUE_MAX) {
             popc_usleep(10*t);
         } else {
-            while(request_fifo.GetCount()>POPC_QUEUE_MAX) {
+            while(request_fifo.size()>POPC_QUEUE_MAX) {
                 popc_usleep(t*10);
             }
         }
@@ -224,7 +224,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     unsigned* methodid = req.methodId;
     paroc_buffer *buf = req.data;
     switch(methodid[1]) {
-    case 0: 
+    case 0:
         // BindStatus call
         if(methodid[2] & INVOKE_SYNC) {
             paroc_message_header h("BindStatus");
@@ -340,7 +340,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
             buf->Reset();
             paroc_message_header h("ObjectActive");
             buf->SetHeader(h);
-            bool ret=(instanceCount || request_fifo.GetCount());
+            bool ret=(instanceCount || request_fifo.size());
             buf->Push("result","bool",1);
             buf->Pack(&ret,1);
             buf->Pop();

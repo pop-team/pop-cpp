@@ -158,7 +158,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     }
     int n = packeddata.size();
     int h[5];
-    memset(h,0, 5 * sizeof(int));
+    memset(h, 0, 5 * sizeof(int));
 
     int type = header.GetType();
 
@@ -294,7 +294,7 @@ void paroc_buffer_raw::load(char* data, int length) {
 #ifdef OD_DISCONNECT
 bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
-        paroc_connection * t = (paroc_connection *) s.Wait();
+        paroc_connection* t = (paroc_connection*) s.Wait();
         if(t == NULL) {
             paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive");
         }
@@ -307,14 +307,18 @@ bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
             } else {
                 paroc_message_header h = header;
                 int unpackposold = unpackpos;
-                std::vector<char> packeddataold = packeddata;
-                paroc_connection * t = (paroc_connection *) s.Wait();
-                if(t == NULL) {
+
+                auto packeddataold = packeddata;
+                auto t = (paroc_connection *) s.Wait();
+
+                if(!t) {
                     paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive");
                 }
+
                 if(!Recv(s, t)) {
                     paroc_exception::paroc_throw(errno);
                 }
+
                 Reset();
                 header = h;
                 unpackpos = unpackposold;

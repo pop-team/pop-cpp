@@ -390,7 +390,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
     if(info==NULL) {
         LOG_ERROR("missing -jobservice argument");
-         return false;
+        return false;
     }
     paroc_system::jobservice.SetAccessString(info);
     paroc_system::jobservice.SetAsService();
@@ -405,14 +405,14 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     }
 
     // Get application service contact address
-    char *appcontact=paroc_utils::checkremove(argc,argv,"-appservicecontact=");
+    char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
     if(codeser==NULL && appcontact==NULL) {
         LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");
         return false;
     }
     try {
-        if(appcontact==NULL) {
+        if(appcontact == NULL) {
             char url[1024];
             if(proxy==NULL) {
                 strcpy(url,codeser);
