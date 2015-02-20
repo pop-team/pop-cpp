@@ -171,7 +171,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) {
     }
 
     if(!p.IsEmpty()) {
-      Bind(p);
+        Bind(p);
     }
 
     if(p.GetNoAddRef()) {
@@ -702,7 +702,7 @@ bool paroc_interface::Encoding(POPString encoding) {
         return false;
     }
 
-    paroc_message_header h(0, 3, INVOKE_SYNC , "Encoding");
+    paroc_message_header h(0, 3, INVOKE_SYNC, "Encoding");
     paroc_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
@@ -1303,7 +1303,7 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
     int BUF_SIZE=100;
     char buf[BUF_SIZE];
 
-//warning_remove   int error_code=0;
+    //warning_remove   int error_code=0;
 
     std::ostringstream cmd;
     cmd << "ps aux | grep \"/usr/bin/ssh -f -N -q -o ExitOnForwardFailure=yes -L" << local_port << ":127.0.0.1:" << dest_port << " " << dest_ip << "\" | grep -v grep | head -n 1 | awk -F\" \" '{print $2}'";
@@ -1320,7 +1320,7 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
     if(pid!=0)
        popc_kill(pid, popc_SIGKILL);
     return pid;
- }
+}
 
 /**
  * ViSaG : clementval

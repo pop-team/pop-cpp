@@ -232,8 +232,9 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     }
 
     packeddata.resize(n);
-    dat = packeddata.data() + 20;
     n -= 20;
+
+    dat = packeddata.data() + 20;
 
     // Recv data if there is some
     i = 0;

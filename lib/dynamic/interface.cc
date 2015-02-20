@@ -291,17 +291,17 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
     } else {
         int ref;
-        buf.Push("refcount","int",1);
-        buf.UnPack(&ref,1);
+        buf.Push("refcount", "int", 1);
+        buf.UnPack(&ref, 1);
         buf.Pop();
-        if(ref>0) {
+        if(ref > 0) {
             Bind(accesspoint);
             //AddRef();
             DecRef();
         }
     }
 
-    if(old!=NULL) {
+    if(old != NULL) {
         __paroc_buf->Destroy();
         __paroc_buf = old;
     }

@@ -106,7 +106,7 @@ paroc_system::paroc_system() {
         strcpy(str, "win32");
 #endif
 #endif
-        platform=str;
+        platform = str;
     }
     POPC_HostName = POPString("");
 }

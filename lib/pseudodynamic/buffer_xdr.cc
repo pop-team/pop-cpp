@@ -463,7 +463,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     }
 
     packeddata.resize(n);
-    n-=20;
+    n -= 20;
 
     if(n > 0) {
         dat = packeddata.data()+20;
