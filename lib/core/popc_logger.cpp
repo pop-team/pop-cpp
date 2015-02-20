@@ -24,7 +24,7 @@
 
 #include "popc_logger.h"
 #include <stdio.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -73,6 +73,11 @@ int popc_logger(LOGLEVEL level, const char* file, int line, const char* function
     va_start(ap, format);
     vsprintf(msg, format, ap);
     va_end(ap);
+
+    auto msg_length = strlen(msg);
+    if(msg[msg_length - 1] == '\n'){
+        msg[msg_length - 1] = ' ';
+    }
 
     // Print the message to stderr or stdout
     if(level >= __CORE__)

@@ -296,7 +296,7 @@ bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
         paroc_connection * t = (paroc_connection *) s.Wait();
         if(t == NULL) {
-            paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive\n");
+            paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive");
         }
         if(!Recv(s, t)) {
             paroc_exception::paroc_throw(errno);
@@ -310,7 +310,7 @@ bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 std::vector<char> packeddataold = packeddata;
                 paroc_connection * t = (paroc_connection *) s.Wait();
                 if(t == NULL) {
-                    paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive\n");
+                    paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive");
                 }
                 if(!Recv(s, t)) {
                     paroc_exception::paroc_throw(errno);
