@@ -12,7 +12,7 @@ POPObject::POPObject() {
 }
 
 POPObject::~POPObject() {
-    cout << "POPCobject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPCobject: on machine:" << POPSystem::GetHost().c_str() <<" is being destroyed" << popcendl;
 }
 
 void POPObject::displayArray(int length, char array[]) {

@@ -45,7 +45,7 @@ paroc_string::paroc_string(std::string x) {
 }
 
 paroc_string::paroc_string(const paroc_string &x) {
-    data= (x==NULL)? NULL : popc_strdup(x);
+    data= (x.data==NULL)? NULL : popc_strdup(x.data);
 }
 
 paroc_string::~paroc_string() {
@@ -56,9 +56,9 @@ paroc_string::~paroc_string() {
 
 }
 
-paroc_string::operator const char *() const {
-    return data;
-}
+//paroc_string::operator const char *() const {
+    //return data;
+//}
 
 paroc_string::operator std::string() const {
     return data;
@@ -79,25 +79,27 @@ const paroc_string &paroc_string::operator =(const paroc_string &x) {
         if(data!=NULL) {
             free(data);
         }
-        data=(x==NULL)? NULL: popc_strdup(x);
+        data=(x.data==NULL)? NULL: popc_strdup(x.data);
     }
     return (*this);
 }
 
-void paroc_string::operator +=(const char *x) {
+paroc_string& paroc_string::operator +=(const paroc_string& x) {
     if(data==NULL) {
         *this=x;
-    } else if(x!=NULL) {
-        int newsz=Length()+strlen(x)+1;
+    } else if(x.data!=NULL) {
+        int newsz=Length()+strlen(x.data)+1;
         if(newsz) {
             char *tmp=(char *)realloc(data,newsz+1);
             if(tmp==NULL) {
                 paroc_exception::paroc_throw(ENOMEM,"paroc_string");
             }
             data=tmp;
-            strcat(data,x);
+            strcat(data,x.data);
         }
     }
+
+    return *this;
 }
 
 paroc_string paroc_string::operator + (const paroc_string &x) {

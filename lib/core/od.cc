@@ -28,7 +28,7 @@ paroc_od::paroc_od() {
 #endif
     isManual=false;
     batchSystem=getenv("POPC_BATCH");
-    if(batchSystem!=NULL) {
+    if(batchSystem.c_str()!=NULL) {
         hostname=batchSystem;    // To avoid letting the hostname empty
     }
     isLocalJob = defaultLocalJob;
@@ -132,6 +132,10 @@ void paroc_od::walltime(float t) {
     time=t;
 }
 
+void paroc_od::url(const paroc_string& str) {
+    url(str.c_str());
+}
+
 void paroc_od::url(const char *str) {
     char h[256];
     char *tmpstr;
@@ -158,7 +162,7 @@ void paroc_od::url(const char *str) {
     }
 
     hostname = h;
-    if(!strcmp(hostname, "localhost")) {
+    if(!strcmp(hostname.c_str(), "localhost")) {
         runLocal(true);
     }
 }
@@ -170,6 +174,10 @@ void paroc_od::url(const char *h, const char *arch) {
 
 void paroc_od::joburl(const char *jobservice) {
     jobcontact=jobservice;
+}
+
+void paroc_od::executable(const paroc_string& code) {
+    codefile=code;
 }
 
 void paroc_od::executable(const char *code) {
@@ -383,7 +391,7 @@ paroc_od &paroc_od::operator =(const paroc_od &od) {
 }
 
 bool paroc_od::IsEmpty() const {
-    return (mflops<0 && min_mflops<0 && ram<0 && min_ram<0 && net<0 && min_net<0 && time<0 && hostname==NULL /*&& time_alive < 0 && time_control < 0*/);
+    return (mflops<0 && min_mflops<0 && ram<0 && min_ram<0 && net<0 && min_net<0 && time<0 && hostname.c_str()==NULL /*&& time_alive < 0 && time_control < 0*/);
 }
 
 bool paroc_od::IsLocal() const {
@@ -408,7 +416,7 @@ void paroc_od::getValue(const POPString &key, POPString &val) {
     for(std::size_t i = 0; i < keys.size(); ++i){
         auto& t1 = keys[i];
         auto& t2 = values[i];
-        if(paroc_utils::isEqual(t1,key)) {
+        if(paroc_utils::isEqual(t1.c_str(),key.c_str())) {
             val=t2;
             return;
         }
@@ -610,27 +618,27 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         buf.Push("joburl","POPString",1);
         buf.UnPack(&t,1);
         buf.Pop();
-        joburl(t);
+        joburl(t.c_str());
 
         buf.Push("executable","POPString",1);
         buf.UnPack(&t,1);
         buf.Pop();
-        executable(t);
+        executable(t.c_str());
 
         buf.Push("platforms","POPString",1);
         buf.UnPack(&t,1);
         buf.Pop();
-        setPlatforms(t);
+        setPlatforms(t.c_str());
 
         buf.Push("protocol","POPString",1);
         buf.UnPack(&t,1);
         buf.Pop();
-        protocol(t);
+        protocol(t.c_str());
 
         buf.Push("encoding","POPString",1);
         buf.UnPack(&t,1);
         buf.Pop();
-        encoding(t);
+        encoding(t.c_str());
 
         //Unpack additional attributes
         int count = 0;

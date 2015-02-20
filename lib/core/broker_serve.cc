@@ -128,7 +128,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
             if(req.from!=NULL) {
 
                 paroc_exception e(ret);
-                e.SetExtra(classname+"@"+accesspoint.GetAccessString());
+                e.SetExtra((classname+"@"+accesspoint.GetAccessString()).c_str());
                 paroc_buffer::SendException(*req.data, req.from, e);
             } else {
                 LOG_ERROR("fail to create a new thread for %s@%s (method:%d:%d)\n",
@@ -202,7 +202,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
             } else {
                 extra=classname + "@" + accesspoint.GetAccessString() + ": " + extra;
             }
-            e->SetExtra(extra);
+            e->SetExtra(extra.c_str());
             paroc_buffer::SendException(*request.data,request.from,*e);
         } else {
             UnhandledException();
@@ -218,7 +218,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
             } else {
                 extra=classname+"@"+accesspoint.GetAccessString()+": "+extra;
             }
-            e.SetExtra(extra);
+            e.SetExtra(extra.c_str());
             paroc_buffer::SendException(*request.data, request.from, e);
         } else {
             UnhandledException();
@@ -227,7 +227,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         LOG_WARNING("Std exception in paroc_broker::DoInvoke");
         if(request.from != NULL) {
             paroc_exception  e2=paroc_exception(STD_EXCEPTION);
-            e2.SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
+            e2.SetExtra((classname+"@"+accesspoint.GetAccessString() + ": " + e->what()).c_str());
             paroc_buffer::SendException(*request.data, request.from, e2);
             delete e;
         } else {
@@ -237,7 +237,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         LOG_WARNING("Std exception in paroc_broker::DoInvoke");
         if(request.from != NULL) {
             paroc_exception  e2=paroc_exception(STD_EXCEPTION);
-            e2.SetExtra(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
+            e2.SetExtra((classname+"@"+accesspoint.GetAccessString() + ": " + e.what()).c_str());
             paroc_buffer::SendException(*request.data, request.from, e2);
         } else {
             UnhandledException();
@@ -246,7 +246,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         LOG_WARNING("Unknown exception in paroc_broker::DoInvoke");
         if(request.from!=NULL) {
             paroc_exception e2(UNKNOWN_EXCEPTION);
-            e2.SetExtra(classname+"@"+accesspoint.GetAccessString());
+            e2.SetExtra((classname+"@"+accesspoint.GetAccessString()).c_str());
             paroc_buffer::SendException(*request.data, request.from, e2);
         } else {
             UnhandledException();

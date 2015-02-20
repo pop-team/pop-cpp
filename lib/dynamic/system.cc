@@ -137,7 +137,7 @@ void paroc_system::perror(const char *msg) {
 
 void paroc_system::perror(const paroc_exception *e) {
     errno=e->Code();
-    paroc_system::perror((const char*)e->Extra());
+    paroc_system::perror(e->Extra().c_str());
 }
 
 // V1.3m
@@ -169,7 +169,7 @@ POPString paroc_system::GetHost() {
             POPC_HostName=t;
         }
     }
-    LOG_DEBUG("GetHost returns %s", (const char*)POPC_HostName);
+    LOG_DEBUG("GetHost returns %s", POPC_HostName.c_str());
     return POPC_HostName;
 }
 
@@ -194,7 +194,7 @@ POPString paroc_system::GetIP() {
             if(!(GetIPFromInterface(iface,ip))) {
                 // Not found
                 setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
-                LOG_WARNING("Cannot find an IP for interface %s, using '%s' as IP address.",(const char*)iface, LOCALHOST);
+                LOG_WARNING("Cannot find an IP for interface %s, using '%s' as IP address.",iface.c_str(), LOCALHOST);
             }
         } else { // Env. Variable POP_IFACE is not defined
             iface=GetDefaultInterface();
@@ -297,7 +297,7 @@ int paroc_system::GetIP(const char *hostname, int *iplist, int listsize) {
 
 int paroc_system::GetIP(int *iplist, int listsize) {
     assert(listsize==1); /* This method cannot return more than one ip*/
-    char* parocip=popc_strdup((const char*)GetIP());
+    char* parocip=popc_strdup(GetIP().c_str());
     int n;
     int addr;
     char *tmp;
@@ -352,13 +352,13 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
 
     getifaddrs(&addrs);
 
-    LOG_DEBUG("Looking for interface: %s --->",(const char*)iface);
+    LOG_DEBUG("Looking for interface: %s --->",iface.c_str());
     for(iap = addrs; iap != NULL; iap = iap->ifa_next) {
         LOG_DEBUG("name=%s, addr=%p, flag=%d (%d), familly=%d (%d)",iap->ifa_name, iap->ifa_addr, iap->ifa_flags, IFF_UP, iap->ifa_addr->sa_family, AF_INET);
         if(iap->ifa_addr &&
                 (iap->ifa_flags & IFF_UP) &&
                 (iap->ifa_addr->sa_family == AF_INET) &&
-                !strcmp(iap->ifa_name, (const char*)iface)) {
+                !strcmp(iap->ifa_name, iface.c_str())) {
             sa = (struct sockaddr_in *)(iap->ifa_addr);
             inet_ntop(iap->ifa_addr->sa_family,
                       (void *)&(sa->sin_addr),

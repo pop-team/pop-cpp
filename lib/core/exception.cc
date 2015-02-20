@@ -89,7 +89,7 @@ paroc_exception *paroc_exception::create(int code, const char *reason) {
 
 const char* paroc_exception::what() const throw() {
     errno=Code();
-    return (const char*)info;
+    return info.c_str();
 }
 
 void paroc_exception::Print()const {

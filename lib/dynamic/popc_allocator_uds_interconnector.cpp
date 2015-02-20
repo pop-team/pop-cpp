@@ -62,7 +62,7 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
     if(codefile.Length() <= 0) {
         LOG_ERROR("POP-C++ Error: Code file executable path is NULL ! Abort !");
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str());
     }
 
     /**
@@ -71,13 +71,13 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
      */
     paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
     if(combox_factory == NULL) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str());
     }
 
     paroc_combox* allocating_combox = combox_factory->Create("uds");
 
     if(allocating_combox == NULL) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str());
     }
 
     paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
@@ -85,7 +85,7 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
     char* local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
     if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str());
     }
 
     paroc_message_header header(20, 200000, INVOKE_SYNC,"_allocate");

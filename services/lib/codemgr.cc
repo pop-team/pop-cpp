@@ -37,7 +37,7 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
     auto n=info.size();
     int i;
     for(i=0; i<n; i++){
-        if(paroc_utils::isEqual(objname,info[i].objname)) {
+        if(paroc_utils::isEqual(objname.c_str(),info[i].objname)) {
             break;
         }
     }
@@ -48,23 +48,23 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
     } else {
         info.resize(n+1);
         element=&(info[n]);
-        strcpy(element->objname,objname);
+        strcpy(element->objname,objname.c_str());
     }
 
     n=element->platform.size();
     for(i=0; i<n; i++){
-        if(paroc_utils::isEqual(platform,element->platform[i].platform)) {
+        if(paroc_utils::isEqual(platform.c_str(),element->platform[i].platform)) {
             break;
         }
     }
 
     if(i<n) {
-        LOG_DEBUG("Changing (%s, %s) -> %s",element->objname,element->platform[i].platform,(const char *)codefile);
-        strcpy(element->platform[i].codefile,codefile);
+        LOG_DEBUG("Changing (%s, %s) -> %s",element->objname,element->platform[i].platform,codefile.c_str());
+        strcpy(element->platform[i].codefile,codefile.c_str());
     } else {
         element->platform.resize(n+1);
-        strcpy(element->platform[n].codefile,codefile);
-        strcpy(element->platform[n].platform,platform);
+        strcpy(element->platform[n].codefile,codefile.c_str());
+        strcpy(element->platform[n].platform,platform.c_str());
     }
 }
 
@@ -75,7 +75,7 @@ int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPS
 
     int i;
     for(i=0; i<n; i++){
-        if(paroc_utils::isEqual(objname,info[i].objname)) {
+        if(paroc_utils::isEqual(objname.c_str(),info[i].objname)) {
             break;
         }
     }
@@ -87,7 +87,7 @@ int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPS
     element=&(info[i]);
     n=element->platform.size();
     for(i=0; i<n; i++){
-        if(paroc_utils::MatchWildcard(platform,element->platform[i].platform)) {
+        if(paroc_utils::MatchWildcard(platform.c_str(),element->platform[i].platform)) {
             break;
         }
     }
@@ -107,7 +107,7 @@ int CodeMgr::GetPlatform(const POPString &objname, POPString &platform) {
 
     int i;
     for(i=0; i<n; i++){
-        if(paroc_utils::isEqual(objname,info[i].objname)) {
+        if(paroc_utils::isEqual(objname.c_str(),info[i].objname)) {
             break;
         }
     }

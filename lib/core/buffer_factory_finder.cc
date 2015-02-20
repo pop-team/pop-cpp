@@ -83,10 +83,10 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
 #endif
 
 
-    if(plugindir != NULL) {
+    if(plugindir.c_str() != NULL) {
         POPString pluginmap(plugindir);
         pluginmap += "/paroc_buffer.map";
-        FILE *map = fopen(pluginmap, "r");
+        FILE *map = fopen(pluginmap.c_str(), "r");
         if(map != NULL) {
             char line[1024];
             char fname[1024];
@@ -122,7 +122,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
             }
             fclose(map);
         } else {
-            DIR *dir = opendir(plugindir);
+            DIR *dir = opendir(plugindir.c_str());
             if(dir != NULL) {
                 dirent *t;
                 while((t = readdir(dir))!=NULL && size<MAX_FACTORY) {
@@ -130,7 +130,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
                         continue;
                     }
                     char fname[1024];
-                    sprintf(fname,"%s/%s", (const char *)plugindir, t->d_name);
+                    sprintf(fname,"%s/%s", plugindir.c_str(), t->d_name);
                     metrics[size]=1;
 #ifdef HAVE_LIBDL
                     plugins[size]=LoadPlugin(fname, bfArray[size]);
@@ -249,7 +249,7 @@ paroc_buffer_factory* paroc_buffer_factory_finder::FindFactory(const POPString b
 
     for(i=0; i < size; i++) {
         bfArray[i]->GetBufferName(s);
-        if(paroc_utils::isEqual(s, bufferName)) {
+        if(paroc_utils::isEqual(s.c_str(), bufferName.c_str())) {
             return bfArray[i];
         }
     }

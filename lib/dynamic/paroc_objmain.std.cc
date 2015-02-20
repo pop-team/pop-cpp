@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
     if(!broker) {
         status = 1;
     } else if(!broker->Initialize(&argc, &argv)) {
-        LOG_INFO("Fail to initialize the broker for class %s",(const char *)paroc_broker::classname);
+        LOG_INFO("Fail to initialize the broker for class %s",paroc_broker::classname.c_str());
         status = 1;
     }
 

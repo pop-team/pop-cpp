@@ -32,7 +32,7 @@ public:
     /**
      * @brief Cast to a (char*)
      */
-    operator const char *() const;
+    //operator const char *() const;
     /**
      * @brief Cast to a (std::string)
      * @author Laurent Winkler
@@ -48,8 +48,9 @@ public:
         return data;
     }
     const paroc_string & operator =(const paroc_string &x);
-    void operator +=(const char *x);
-    paroc_string operator + (const paroc_string &x);
+
+    paroc_string operator+ (const paroc_string& rhs);
+    paroc_string& operator+= (const paroc_string& rhs);
 
     /**
      * @brief Extracts a substring
@@ -68,6 +69,11 @@ public:
 protected:
     char *data;
 };
+
+inline bool operator< (const paroc_string& lhs, const paroc_string& rhs){
+    //TODO This is insane beyond reason...
+    return lhs.c_str() < rhs.c_str();
+}
 
 typedef paroc_string POPString;
 

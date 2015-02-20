@@ -73,6 +73,7 @@ public:
      * @param h machine ip or name
      */
     void url(const char *h);
+    void url(const paroc_string& h);
 
     void node(int value);
     void core(int value);
@@ -92,6 +93,7 @@ public:
     //void url(const std::string h, std::string arch);
     void joburl(const char *jobcontact);
     void executable(const char *codefile);
+    void executable(const paroc_string& codefile);
 
     void protocol(const char *myproto);
     void encoding(const char *myencode);

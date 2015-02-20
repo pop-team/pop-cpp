@@ -54,17 +54,16 @@ POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od
     if(platforms.Length()<=0) {
         CodeMgr mgr(paroc_system::appservice);
         if(mgr.GetPlatform(objectname, platforms)<=0) {
-            paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, objectname);
+            paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, objectname.c_str());
         }
-        od.setPlatforms(platforms);
+        od.setPlatforms(platforms.c_str());
     }
     //Global Resource management system --> Find a resource.
 
     POPString joburl;
     od.getJobURL(joburl);
 
-
-    if(joburl!=NULL) {
+    if(joburl.c_str()!=NULL) {
         jobcontact.SetAccessString(joburl);
     } else {
         jobcontact=paroc_system::jobservice;
@@ -72,7 +71,7 @@ POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od
 
     if(jobcontact.IsEmpty()) {
         char str[1024];
-        sprintf(str,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
+        sprintf(str,"%s:%d",paroc_system::GetHost().c_str(),DEFAULTPORT);
         jobcontact.SetAccessString(str);
     }
 
@@ -92,7 +91,7 @@ POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od
         //}
 
         if(ret!=0) {
-            paroc_exception::paroc_throw(ret,objectname);
+            paroc_exception::paroc_throw(ret,objectname.c_str());
         }
 
     } catch(paroc_exception & e) {

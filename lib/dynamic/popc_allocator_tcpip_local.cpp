@@ -68,11 +68,11 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     int n = 0;
 
-    if(hostname==NULL) {
+    if(hostname.c_str()==NULL) {
         hostname=paroc_system::GetHost();
     }
 
-    if(hostname !=NULL &&(tmp=(char*)strchr(hostname, ':')) !=NULL) {
+    if(hostname.c_str() !=NULL &&(tmp=(char*)strchr(hostname.c_str(), ':')) !=NULL) {
         *tmp=0;
         rport=tmp+1;
     }
@@ -83,35 +83,35 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     if(codefile.Length() <= 0) {
         assert(!paroc_system::appservice.IsEmpty());
         CodeMgr mgr(paroc_system::appservice);
-        if(rarch==NULL) {
+        if(rarch.c_str()==NULL) {
             rarch=paroc_system::platform;
         }
         if(!mgr.QueryCode(objectname,rarch, codefile)) {
-            paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname);
+            paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname.c_str());
         }
     }
 
     POPString myhost = paroc_system::GetHost();
-    bool isLocal = (isManual || hostname==NULL || *hostname==0 || paroc_utils::SameContact(myhost, hostname) || paroc_utils::isEqual(hostname, "localhost") || paroc_utils::isEqual(hostname, "127.0.0.1"));
-    if(batch==NULL) {
+    bool isLocal = (isManual || hostname.c_str()==NULL || hostname.Length() > 0 || paroc_utils::SameContact(myhost.c_str(), hostname.c_str()) || paroc_utils::isEqual(hostname.c_str(), "localhost") || paroc_utils::isEqual(hostname.c_str(), "127.0.0.1"));
+    if(batch.c_str()==NULL) {
         if(!isLocal) {
             char *tmp=getenv("POPC_RSH");
             argv[n++]=popc_strdup((tmp==NULL)? "/usr/bin/ssh" :tmp);
-            if(ruser!=NULL && *ruser!=0) {
+            if(ruser.c_str()!=NULL && ruser.Length()>0) {
                 char tmpstr[100];
-                sprintf(tmpstr, "%s@%s", (const char*)ruser, (const char*)hostname);
+                sprintf(tmpstr, "%s@%s", ruser.c_str(), hostname.c_str());
                 argv[n++] = popc_strdup(tmpstr);
             } else {
-                argv[n++] = popc_strdup(hostname);
+                argv[n++] = popc_strdup(hostname.c_str());
             }
         }
     } else {
         char tmpstr[100];
         tmp=getenv("POPC_LOCATION");
         if(tmp!=NULL) {
-            sprintf(tmpstr, "%s/services/popcobjrun.%s", tmp, (const char*)batch);
+            sprintf(tmpstr, "%s/services/popcobjrun.%s", tmp, batch.c_str());
         } else {
-            sprintf(tmpstr, "popcobjrun.%s", (const char*)batch);
+            sprintf(tmpstr, "popcobjrun.%s", batch.c_str());
         }
         argv[n++]=popc_strdup(tmpstr);
         /*if (!isLocal)
@@ -130,7 +130,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
     argv[n++]=popc_strdup(tmpstr);
 
-    strcpy(tmpstr,codefile);
+    strcpy(tmpstr,codefile.c_str());
     char *tok=popc_strtok_r(tmpstr," \t\n",&tmp);
     while(tok!=NULL) {
         argv[n++]=popc_strdup(tok);
@@ -143,12 +143,12 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
     if(combox_factory == NULL) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str());
     }
 
     paroc_combox* tmpsock = combox_factory->Create("socket");
     if(tmpsock == NULL) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname);
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str());
     }
 
     bool isServer=true;
@@ -159,7 +159,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     paroc_connection *connection = tmpsock->get_connection();
     POPString cburl;
     tmpsock->GetUrl(cburl);
-    sprintf(tmpstr,"-callback=%s", (const char*)cburl);
+    sprintf(tmpstr,"-callback=%s", cburl.c_str());
     argv[n++]=popc_strdup(tmpstr);
 
     sprintf(tmpstr,"-object=%s", objectname.GetString());
@@ -176,8 +176,8 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 
     // Select core
-    if(rcore!=NULL&&rcore!=0) {
-        sprintf(tmpstr,"-core=%s",(const char*)rcore);
+    if(rcore.Length() > 0) {
+        sprintf(tmpstr,"-core=%s", rcore.c_str());
         argv[n++]=popc_strdup(tmpstr);
     }
 
@@ -199,8 +199,8 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 
     // Add the working directory as argument
-    if(cwd!=NULL && *cwd!=0) {
-        sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
+    if(cwd.Length() > 0) {
+        sprintf(tmpstr,"-cwd=%s",cwd.c_str());
         argv[n++]=popc_strdup(tmpstr);
     }
 
@@ -233,7 +233,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     if(ret==-1) {
         LOG_WARNING("Can not start the object code...");
-        paroc_exception::paroc_throw(err, objectname);
+        paroc_exception::paroc_throw(err, objectname.c_str());
     }
 
     //Now get the return paroc_accesspoint....
@@ -253,7 +253,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     tmpbuffer->Pop();
 
     if(n!=0) {
-        paroc_exception::paroc_throw(n, objectname);
+        paroc_exception::paroc_throw(n, objectname.c_str());
     }
 
     POPString objectaddress;

@@ -6,7 +6,7 @@ ParObject::ParObject() {
 }
 
 ParObject::ParObject(POPString machine) {
-    printf("VectorInt1: Creating object ParObject on %s\n",(const char *)POPSystem::GetHost());
+    printf("VectorInt1: Creating object ParObject on %s\n", POPSystem::GetHost().c_str());
 }
 
 ParObject::ParObject(float f) {

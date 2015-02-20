@@ -6,7 +6,7 @@ ParObject::ParObject() {
 }
 
 ParObject::ParObject(POPString machine) {
-    printf("Heritparam2: Creating object ParObject on %s\n",(const char *)POPSystem::GetHost());
+    printf("Heritparam2: Creating object ParObject on %s\n",POPSystem::GetHost().c_str());
 }
 
 ParObject::ParObject(float f) {

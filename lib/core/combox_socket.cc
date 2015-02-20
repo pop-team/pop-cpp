@@ -797,7 +797,7 @@ bool paroc_combox_socket::GetUrl(POPString & accesspoint) {
     int port=GetPort();
     char elem[1024];
 
-    sprintf(elem,"%s://%s:%d",(const char *)prot,(const char*)paroc_system::GetHost(),port);
+    sprintf(elem,"%s://%s:%d",prot.c_str(),paroc_system::GetHost().c_str(),port);
     accesspoint=elem;
     return true;
 }

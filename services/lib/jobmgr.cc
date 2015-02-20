@@ -128,7 +128,7 @@ bool NodeInfoMap::HasContact(const POPString &contact) {
     std::unique_lock<paroc_mutex> lock(maplock);
 
     for(auto& v : hashmap){
-        if(paroc_utils::SameContact(paroc_string(v.first), contact)){
+        if(paroc_utils::SameContact(paroc_string(v.first).c_str(), contact.c_str())){
             return true;
         }
     }
@@ -255,11 +255,11 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 //  assert(fd0==0 && fd1==1 && fd2==2);
 
 
-    FILE *f=fopen(conf,"rt");
+    FILE *f=fopen(conf.c_str(),"rt");
     char val[256];
     if(f==NULL) {
-        LOG_WARNING("Open config file [%s] fail",(const char*)conf);
-        paroc_exception::paroc_throw(errno,(const char*)conf);
+        LOG_WARNING("Open config file [%s] fail",conf.c_str());
+        paroc_exception::paroc_throw(errno,conf.c_str());
     }
 
     maxjobs=100;
@@ -267,7 +267,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
     maxdynamicnodes=0;
     dynamicnodes=0;
 
-    LOG_INFO( "[JM] Loading information from %s",(const char *)conf);
+    LOG_INFO( "[JM] Loading information from %s",conf.c_str());
 
     str[1023]=0;
     char mycontact[1024];
@@ -371,7 +371,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
     POPString tmpstr;
 
     if(Query("power",tmpstr)) {
-        total.flops=atof(tmpstr);
+        total.flops=atof(tmpstr.c_str());
     } else {
         //We do benchmark now to find the computing power of the machine...
         total.flops=paroc_utils::benchmark_power();
@@ -380,10 +380,10 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
     }
 
     if(Query("ram",tmpstr)) {
-        total.mem=atoi(tmpstr);
+        total.mem=atoi(tmpstr.c_str());
     }
     if(Query("bandwidth",tmpstr)) {
-        total.bandwidth=atoi(tmpstr);
+        total.bandwidth=atoi(tmpstr.c_str());
     }
 
     //Note(BW): This seems like a bad idea since Resources contains
@@ -391,7 +391,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
     memcpy(static_cast<void*>(&limit), static_cast<void*>(&total),sizeof(Resources));
 
     if(Query("np",tmpstr)) {
-        int n=atoi(tmpstr);
+        int n=atoi(tmpstr.c_str());
         if(n>0) {
             total.flops*=n;
         }
@@ -399,20 +399,20 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 
 
     if(Query("degree",tmpstr)) {
-        if(sscanf(tmpstr,"%d",&maxdynamicnodes)!=1 || maxdynamicnodes<0) {
+        if(sscanf(tmpstr.c_str(),"%d",&maxdynamicnodes)!=1 || maxdynamicnodes<0) {
             maxdynamicnodes=0;
         }
     }
 
     if(Query("learn",tmpstr)) {
-        if(popc_strcasecmp(tmpstr,"false")==0) {
+        if(popc_strcasecmp(tmpstr.c_str(),"false")==0) {
             modelearn=false;
         }
     }
 
     if(Query("localuser",tmpstr)) {
 #ifndef __WIN32__
-        passwd *t=popc_getpwnam(tmpstr);
+        passwd *t=popc_getpwnam(tmpstr.c_str());
         if(t!=NULL) {
             localuid=t->pw_uid;
         }
@@ -538,15 +538,15 @@ void JobMgr::UnregisterNode(const paroc_accesspoint &url) {
 
 int JobMgr::Query(const POPString &type, POPString  &val) {
     char tmp[1024];
-    if(paroc_utils::isEqual(type,"platform")) {
+    if(paroc_utils::isEqual(type.c_str(),"platform")) {
         val=paroc_system::platform;
         return 1;
     }
-    if(paroc_utils::isEqual(type,"host")) {
+    if(paroc_utils::isEqual(type.c_str(),"host")) {
         val=paroc_system::GetHost();
         return 1;
     }
-    if(paroc_utils::isEqual(type,"jobs")) {
+    if(paroc_utils::isEqual(type.c_str(),"jobs")) {
         //  Update();
         mutex {
             sprintf(tmp,"%ld/%d", jobs.size() ,maxjobs);
@@ -554,7 +554,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
         }
         return 1;
     }
-    if(paroc_utils::isEqual(type,"joblist")) {
+    if(paroc_utils::isEqual(type.c_str(),"joblist")) {
         //  Update();
         val="";
 
@@ -571,7 +571,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
         return 1;
     }
 
-    if(paroc_utils::isEqual(type,"pausejobs")) {
+    if(paroc_utils::isEqual(type.c_str(),"pausejobs")) {
         //  Update();
         mutex {
             sprintf(tmp,"%lu", pause_apps.size());
@@ -580,7 +580,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
         return 1;
     }
 
-    if(paroc_utils::isEqual(type,"power_available")) {
+    if(paroc_utils::isEqual(type.c_str(),"power_available")) {
         //  Update();
         sprintf(tmp,"%g/%g", available.flops ,total.flops);
         val=tmp;
@@ -588,7 +588,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
     }
 
     for(auto& t : info){
-        if(paroc_utils::isEqual(type,t.name)) {
+        if(paroc_utils::isEqual(type.c_str(),t.name.c_str())) {
             val=t.val;
             return 1;
         }
@@ -836,7 +836,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
     //Set operating system
     POPString r_arch;
     od.getArch(r_arch);
-    if(r_arch != NULL) {
+    if(r_arch.Length() > 0) {
         r.setOperatingSystem(r_arch);
     }
 
@@ -1041,7 +1041,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
             POPString walltime_str;
             if(Query("walltime",walltime_str)) {
                 int walltime_l[4];
-                int n=sscanf(walltime_str,"%d:%d:%d:%d",walltime_l,walltime_l+1,walltime_l+2,walltime_l+3);
+                int n=sscanf(walltime_str.c_str(),"%d:%d:%d:%d",walltime_l,walltime_l+1,walltime_l+2,walltime_l+3);
                 if(n<=0) {
                     LOG_ERROR( "[JM] Bad walltime expression");
                 } else {
@@ -1168,7 +1168,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness) {
             POPString walltime_str;
             if(Query("walltime",walltime_str)) {
                 int walltime_l[4];
-                int n=sscanf(walltime_str,"%d:%d:%d:%d",walltime_l,walltime_l+1,walltime_l+2,walltime_l+3);
+                int n=sscanf(walltime_str.c_str(),"%d:%d:%d:%d",walltime_l,walltime_l+1,walltime_l+2,walltime_l+3);
                 if(n<=0) {
                     LOG_ERROR( "[JM] Bad walltime expression");
                 } else {
@@ -1318,7 +1318,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
         //Check if the next IP is in the trace or not. If not, add...
         try {
             watch.Reset();
-            LOG_DEBUG("\tForward request to %s (trace=%d)",(const char *)contact, tracesize);
+            LOG_DEBUG("\tForward request to %s (trace=%d)",contact.c_str(), tracesize);
 
             paroc_accesspoint childaddr;
             childaddr.SetAccessString(contact);
@@ -1394,7 +1394,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                 }
             }
         } catch(...) {
-            LOG_CORE( "[JM] Exception on contact %s", (const char *)contact);
+            LOG_CORE( "[JM] Exception on contact %s", contact.c_str());
             if(info.nodetype!=NODE_STATIC) {
                 neighbors.Remove(contact);
                 continue;
@@ -1418,7 +1418,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
             if(index[i]==-1) {
                 index[i]=1;
                 POPString t(jobcontacts[i].GetAccessString());
-                if(t == NULL || paroc_utils::isEqual(t,local)) {
+                if(t.Length() <= 0 || paroc_utils::isEqual(t.c_str(),local.c_str())) {
                     continue;
                 }
                 NodeInfo info;
@@ -1552,7 +1552,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
 
     if(strcmp(first, pt_java_exec) != 0) {
 
-        if(Query("jobmgr",str) && str!=NULL) {
+        if(Query("jobmgr",str) && str.c_str()!=NULL) {
             char *tok=popc_strtok_r(str.GetString(),sep,&tmp);
             while(tok!=NULL) {
                 argv[n++]=tok;
@@ -1668,7 +1668,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     POPString mycodefile;
     try {
         CodeMgr code(localservice);
-        if(!code.QueryCode(objname,paroc_system::platform,mycodefile) || mycodefile == NULL) {
+        if(!code.QueryCode(objname,paroc_system::platform,mycodefile) || mycodefile.c_str() == NULL) {
             CancelReservation(reserveIDs,howmany);
             POPString tmpObjname = objname;
             POPString tmpPlatform = paroc_system::platform;
@@ -1717,7 +1717,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     POPString cburl;
     tmpsock.GetUrl(cburl);
     char tmpstr[1024];
-    sprintf(tmpstr,"-callback=%s",(const char *)cburl);
+    sprintf(tmpstr,"-callback=%s",cburl.c_str());
     argv[n++]=popc_strdup(tmpstr);
 
 #ifdef OD_DISCONNECT
@@ -1728,8 +1728,8 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 #endif
 
     // Add the working directory as argument
-    if(cwd!=NULL && *cwd!=0) {
-        sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
+    if(cwd.Length() > 0) {
+        sprintf(tmpstr,"-cwd=%s",cwd.c_str());
         argv[n++]=popc_strdup(tmpstr);
     }
     argv[n]=NULL;
@@ -1829,7 +1829,7 @@ void JobMgr::dump() {
         auto& t=keys[i];
         NodeInfo info;
         if(neighbors.GetInfo(t,info)) {
-            fprintf(f,"%ld: %s\t%g\t%d\n",i,(const char *)t, info.heuristic,int(info.nodetype));
+            fprintf(f,"%ld: %s\t%g\t%d\n",i,t.c_str(), info.heuristic,int(info.nodetype));
         }
     }
     fclose(f);

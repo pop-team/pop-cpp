@@ -270,7 +270,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         pc->GetProtocol(protocolName);
 
         char argument[1024];
-        sprintf(argument, "-%s_port=", (const char *)protocolName);
+        sprintf(argument, "-%s_port=", protocolName.c_str());
         char *portstr=paroc_utils::checkremove(argc,argv,argument);
         if(portstr!=NULL) {
             int port;
@@ -304,11 +304,11 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     accesspoint.SetAccessString(url.GetString());
 
     char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
-    if(tmp!=NULL && classname!=NULL) {
+    if(tmp!=NULL && classname.Length() > 0){
         paroc_request r;
         paroc_buffer_raw tmp;
         r.data=&tmp;
-        if(!FindMethodInfo(classname,r.methodId[0],r.methodId[1]) || r.methodId[1]!=10) {
+        if(!FindMethodInfo(classname.c_str(),r.methodId[0],r.methodId[1]) || r.methodId[1]!=10) {
             LOG_ERROR("POP-C++ Error: [CORE] Broker cannot not find default constructor");
             return false;
         }
@@ -353,7 +353,7 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
     char *ptr;
     char *tok = popc_strtok_r(str," \t\n\r",&ptr);
     while(tok != NULL && !ok) {
-        paroc_combox *tmp = combox_factory->Create(prot);
+        paroc_combox *tmp = combox_factory->Create(prot.c_str());
         tmp->SetTimeout(100000);
         std::string address(tok);
         if(address.find("uds://") == 0) {

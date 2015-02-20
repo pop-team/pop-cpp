@@ -31,11 +31,11 @@ Request::Request(int maxHops, POPString nodeId, POPString operatingSystem, int m
                  POPString encoding) {
     init();
     _maxHops = maxHops;
-    if(nodeId != NULL && nodeId.Length() > 0) {
+    if(nodeId.Length() > 0) {
         _nodeId = nodeId;
         _hasNodeIdSet = true;
     }
-    if(operatingSystem != NULL && operatingSystem.Length() > 0) {
+    if(operatingSystem.Length() > 0) {
         _operatingSystem = operatingSystem;
         _hasOperatingSystemSet = true;
     }
@@ -79,15 +79,14 @@ Request::Request(int maxHops, POPString nodeId, POPString operatingSystem, int m
         _expectedPower = expectedPower;
         _hasExpectedPowerSet = true;
     }
-    if(protocol != NULL && protocol.Length() > 0) {
+    if(protocol.Length() > 0) {
         _protocol = protocol;
         _hasProtocolSet = true;
     }
-    if(encoding != NULL && encoding.Length() > 0) {
+    if(encoding.Length() > 0) {
         _encoding = encoding;
         _hasEncodingSet = true;
     }
-
 }
 
 // method initializing the request. Put the haveXXX to false and init
