@@ -64,10 +64,10 @@ public :
     ~POPCSearchNode();
     seq sync void setJobMgrRef(const paroc_accesspoint &jobmgrRef);
     conc sync paroc_accesspoint getJobMgrRef();
-    seq  sync void setPOPCSearchNodeId(POPString nodeId);
-    conc sync POPString getPOPCSearchNodeId();
-    seq  sync void setOperatingSystem(POPString operatingSys);
-    conc sync POPString getOperatingSystem();
+    seq  sync void setPOPCSearchNodeId(std::string nodeId);
+    conc sync std::string getPOPCSearchNodeId();
+    seq  sync void setOperatingSystem(std::string operatingSys);
+    conc sync std::string getOperatingSystem();
     seq  sync void setPower(float p);
     conc sync float getPower();
     seq  sync void setCpuSpeed(int cpuSpeed);
@@ -78,10 +78,10 @@ public :
     conc sync float getNetworkBandwidth();
     seq  sync void setDiskSpace(int diskSpace);
     conc sync int getDiskSpace();
-    seq  sync void setProtocol(POPString prot);
-    conc sync POPString getProtocol();
-    seq  sync void setEncoding(POPString enc);
-    conc sync POPString getEncoding();
+    seq  sync void setProtocol(std::string prot);
+    conc sync std::string getProtocol();
+    seq  sync void setEncoding(std::string enc);
+    conc sync std::string getEncoding();
     seq sync void setMaxJobs(int maxjobs);
     conc sync int getMaxJobs();
 
@@ -113,16 +113,12 @@ public :
     // Reroute the response by the confidence link
     conc async void rerouteResponse(Response resp, const POPWayback wayback);
 
-
-
-
-
     sync seq void addJob(float power, float memorySize, float bandwidth);
     sync seq void removeJob(float power, float memorySize, float bandwidth, int nbJob);
 
     //TODO put in Secure PSN when created
-    seq sync virtual void setPKI(POPString pk);
-    conc sync virtual POPString getPKI();
+    seq sync virtual void setPKI(std::string pk);
+    conc sync virtual std::string getPKI();
 
     classuid(1001);
 protected:
@@ -146,7 +142,5 @@ protected:
 private:
     int getNextSemCounter();
 };
-
-
 
 #endif

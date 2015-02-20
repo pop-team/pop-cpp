@@ -211,7 +211,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
     //Find service ID (pairs IP-port for tracing
 
     char str[1024];
-    strcpy(str,GetAccessPoint().GetAccessString());
+    strcpy(str,GetAccessPoint().GetAccessString().c_str());
     char *tmp=str;
     while(*tmp!=0 && *tmp!=':') {
         tmp++;
@@ -272,7 +272,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
     str[1023]=0;
     char mycontact[1024];
 
-    strcpy(mycontact,(GetAccessPoint()).GetAccessString());
+    strcpy(mycontact,(GetAccessPoint()).GetAccessString().c_str());
     LOG_DEBUG( "[JM] jobmgr access string %s", mycontact);
     while(!feof(f)) {
         if(fgets(str,1023,f)==NULL) {
@@ -434,11 +434,11 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 
     //Setting the POPCSearchNode ID (its access point)
     psn.setPOPCSearchNodeId(_localPSN.GetAccessString());
-    LOG_DEBUG( "[JM] Node ID : %s", psn.getPOPCSearchNodeId().GetString());
+    LOG_DEBUG( "[JM] Node ID : %s", psn.getPOPCSearchNodeId().c_str());
 
     //Setting the current operating system (The one of the JobMgr's machine)
     psn.setOperatingSystem(paroc_system::platform);
-    LOG_DEBUG( "[JM] Node opertating system : %s", psn.getOperatingSystem().GetString());
+    LOG_DEBUG( "[JM] Node opertating system : %s", psn.getOperatingSystem().c_str());
 
     //Setting the total computing power of this JobMgr
     psn.setPower(total.flops);
@@ -564,7 +564,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
                     continue;
                 }
 
-                sprintf(tmp,"APP=%s/JOB=%s\n", (char *)(r.appservice.GetAccessString()),(char *)(r.contact.GetAccessString()));
+                sprintf(tmp,"APP=%s/JOB=%s\n", r.appservice.GetAccessString().c_str(),r.contact.GetAccessString().c_str());
                 val+=tmp;
             }
         }
@@ -644,11 +644,13 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                             JobMgr jobmgr(ac);
 
                             jobmgr.CancelReservation(reserveIDs.data()+i,1);
-                            for(int j=i+1; j<howmany; j++) if(fitness[j]>0 && paroc_utils::isEqual(acstr,jobcontacts[j].GetAccessString())) {
-                                    jobcontacts[j].SetAccessString(NULL);
+                            for(int j=i+1; j<howmany; j++){
+                                if(fitness[j]>0 && ac.GetAccessString() == jobcontacts[j].GetAccessString()){
+                                    jobcontacts[j].SetAccessString("");
                                     fitness[j]=0;
                                     jobmgr.CancelReservation(reserveIDs.data()+j,1);
                                 }
+                            }
                         } catch(...) {
                             LOG_WARNING("Exception while canceling reservations");
                         }
@@ -668,10 +670,12 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                         JobMgr jobmgr(ac);
                         sz=0;
                         tmpids[sz++]=reserveIDs[i];
-                        for(int j=i+1; j<howmany; j++) if(paroc_utils::isEqual(acstr,jobcontacts[j].GetAccessString())) {
-                                jobcontacts[j].SetAccessString(NULL);
+                        for(int j=i+1; j<howmany; j++) {
+                            if(ac.GetAccessString() == jobcontacts[j].GetAccessString()) {
+                                jobcontacts[j].SetAccessString("");
                                 tmpids[sz++]=reserveIDs[j];
                             }
+                        }
                         *(remotejobcontacts+count) = jobcontacts[i];
                         int execRet = jobmgr.ExecObj(objname, od, sz, tmpids.data(), localservice, objcontacts+count);
                         if(execRet!=0) {
@@ -743,7 +747,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
         POPString codefile;
 
         //MATCHING LOCALLY
-        LOG_DEBUG( "[JM] Resource discovery request: obj=%s, local service: %s (trace=%d)",(const char *)objname,localservice.GetAccessString(),tracesize);
+        LOG_DEBUG( "[JM] Resource discovery request: obj=%s, local service: %s (trace=%d)", objname.c_str(), localservice.GetAccessString().c_str(),tracesize);
         try {
             if(CheckPauseList(localservice)) {
                 LOG_DEBUG( "[JM] Local resource matching is temporary paused due to previous errors!");
@@ -896,7 +900,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
     ni = nodes.begin();
     for(jobindex = 0; jobindex < howmany; jobindex++) {
         paroc_accesspoint n_ac;
-        n_ac.SetAccessString(ni->nodeId);
+        n_ac.SetAccessString(std::string(ni->nodeId));
         //Contact the POPSearchNode
         POPCSearchNode n(n_ac);
         paroc_accesspoint jm_ap = n.getJobMgrRef();
@@ -908,7 +912,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
         //if reserve ID is egal to 0, the reservation process failed. If we can't reserver on any responding machine, we trow an exception
         if(reserveIDs[jobindex] == 0) {
             jobindex--;
-            LOG_ERROR( "[JM] UNABLE TO RESERVE ON %s", jm_ap.GetAccessString());
+            LOG_ERROR( "[JM] UNABLE TO RESERVE ON %s", jm_ap.GetAccessString().c_str());
             failedReservation++;
             if(failedReservation==n_response) {
                 return false;
@@ -918,7 +922,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 
             //setting the remote JobMgr info to execute the parallel object
             jobcontacts[jobindex].SetAccessString(jm_ap.GetAccessString());
-            LOG_DEBUG( "[JM] RESID;%d;NODEID;%s", reserveIDs[jobindex], jm_ap.GetAccessString());
+            LOG_DEBUG( "[JM] RESID;%d;NODEID;%s", reserveIDs[jobindex], jm_ap.GetAccessString().c_str());
             //Setting the fitness
             fitness[jobindex] = t;
         }
@@ -1244,7 +1248,7 @@ bool JobMgr::MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoi
                 JobMgr res(jobcontacts[pos]);
                 res.CancelReservation(reserveIDs+pos,1);
             } catch(...) {
-                LOG_ERROR( "[JM] Fail to cancel reservation #%d on %s",reserveIDs[pos],jobcontacts[pos].GetAccessString());
+                LOG_ERROR( "[JM] Fail to cancel reservation #%d on %s",reserveIDs[pos],jobcontacts[pos].GetAccessString().c_str());
             }
         }
         reserveIDs[pos]=id;
@@ -1426,7 +1430,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                 }
 
                 for(int j=i+1; j<howmany; j++){
-                    if(index[j]==-1 && paroc_utils::isEqual(jobcontacts[i].GetAccessString(), jobcontacts[j].GetAccessString())) {
+                    if(index[j]==-1 && jobcontacts[i].GetAccessString() == jobcontacts[j].GetAccessString()) {
                         index[j]=1;
                     }
                 }
@@ -1461,7 +1465,7 @@ void JobMgr::SelfRegister() {
             psn.addNeighbor(remoteNode);
             //End of add
         } catch(...) {
-            LOG_ERROR( "[JM] can not register the local job service [%s] to %s",GetAccessPoint().GetAccessString(), tmp.GetAccessString());
+            LOG_ERROR( "[JM] can not register the local job service [%s] to %s",GetAccessPoint().GetAccessString().c_str(), tmp.GetAccessString().c_str());
         }
     }
     lasttime=service_timer.Elapsed();
@@ -1693,14 +1697,14 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     argv[n++]=obj_arg.GetString();
 
     //Setup Global job service
-    POPString jobservice_arg("-jobservice=");
+    std::string jobservice_arg("-jobservice=");
     jobservice_arg+=GetAccessPoint().GetAccessString();
-    argv[n++]=jobservice_arg.GetString();
+    argv[n++]=popc_strdup(jobservice_arg.c_str());
     //Setup application specific services...
-    POPString localservice_arg("-appservice=");
+    std::string localservice_arg("-appservice=");
     if(!localservice.IsEmpty()) {
         localservice_arg+=localservice.GetAccessString();
-        argv[n++]=localservice_arg.GetString();
+        argv[n++]=popc_strdup(localservice_arg.c_str());
     }
 
     paroc_combox_socket tmpsock;
@@ -1855,7 +1859,7 @@ bool JobMgr::CheckPauseList(const paroc_accesspoint &app) {
                 it = pause_apps.erase(it);
                 end = pause_apps.end();
             } else if(t.app.IsEmpty() || t.app==app) {
-                LOG_DEBUG("CheckPauseList return true (app=%s)",t.app.GetAccessString());
+                LOG_DEBUG("CheckPauseList return true (app=%s)",t.app.GetAccessString().c_str());
                 return true;
             }
         }
@@ -1914,7 +1918,7 @@ bool JobMgr::NodeInTrace(int trace[MAX_HOPS], int tracesize, paroc_accesspoint &
         return false;
     }
     char host[1024];
-    strcpy(host,contact.GetAccessString());
+    strcpy(host,contact.GetAccessString().c_str());
 
     char *hostname=host;
 

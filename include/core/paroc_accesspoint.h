@@ -21,11 +21,11 @@ public:
     paroc_accesspoint();
     //  paroc_accesspoint(const char *hostport);
     paroc_accesspoint(const paroc_accesspoint &p);
-    ~paroc_accesspoint();
+    //~paroc_accesspoint();
 
+    void SetAccessString(std::string hostport);
+    std::string GetAccessString() const;
 
-    void SetAccessString(const char *hostport);
-    char *GetAccessString() const;
     bool IsEmpty() const;
     bool operator ==(const paroc_accesspoint &p) const;
     paroc_accesspoint & operator =(const paroc_accesspoint &p);
@@ -38,7 +38,7 @@ public:
 
     virtual void Serialize(paroc_buffer &buf, bool pack);
 private:
-    char *endpoint;
+    std::string endpoint;
     bool _service;
     bool _noaddref;
     int _security;

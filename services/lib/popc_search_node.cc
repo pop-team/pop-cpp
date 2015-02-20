@@ -50,23 +50,23 @@ POPCSearchNode::~POPCSearchNode() {
 
 
 // Set the ID of the POPCSearchNode
-void POPCSearchNode::setPOPCSearchNodeId(POPString nodeId) {
-    nodeInfo.nodeId = nodeId;
-    LOG_DEBUG(  "[PSN] POPCSearchNode id : %s", nodeInfo.nodeId.GetString());
+void POPCSearchNode::setPOPCSearchNodeId(std::string nodeId) {
+    nodeInfo.nodeId = std::move(nodeId);
+    LOG_DEBUG(  "[PSN] POPCSearchNode id : %s", nodeInfo.nodeId.c_str());
 }
 
 // Get the ID of this POPCSearchNode
-POPString POPCSearchNode::getPOPCSearchNodeId() {
+std::string POPCSearchNode::getPOPCSearchNodeId() {
     return nodeInfo.nodeId;
 }
 
 // Set the operating system
-void POPCSearchNode::setOperatingSystem(POPString operatingSystem) {
-    nodeInfo.operatingSystem = operatingSystem;
+void POPCSearchNode::setOperatingSystem(std::string operatingSystem) {
+    nodeInfo.operatingSystem = std::move(operatingSystem);
 }
 
 // Get the operating system
-POPString POPCSearchNode::getOperatingSystem() {
+std::string POPCSearchNode::getOperatingSystem() {
     return nodeInfo.operatingSystem;
 }
 
@@ -121,22 +121,22 @@ int POPCSearchNode::getDiskSpace() {
 }
 
 //Set the protocol
-void POPCSearchNode::setProtocol(POPString prot) {
-    nodeInfo.protocol = prot;
+void POPCSearchNode::setProtocol(std::string prot) {
+    nodeInfo.protocol = std::move(prot);
 }
 
 //Get the protocol
-POPString POPCSearchNode::getProtocol() {
+std::string POPCSearchNode::getProtocol() {
     return nodeInfo.protocol;
 }
 
 //Set the encoding
-void POPCSearchNode::setEncoding(POPString enc) {
-    nodeInfo.encoding = enc;
+void POPCSearchNode::setEncoding(std::string enc) {
+    nodeInfo.encoding = std::move(enc);
 }
 
 //Get the encoding
-POPString POPCSearchNode::getEncoding() {
+std::string POPCSearchNode::getEncoding() {
     return nodeInfo.encoding;
 }
 
@@ -144,17 +144,16 @@ POPString POPCSearchNode::getEncoding() {
 
 // Add a POPCSearchNode as a neighbor of this POPCSearchNode
 void POPCSearchNode::addNeighbor(POPCSearchNode &node) {
-    LOG_DEBUG(  "[PSN] NODE_ADD;%s", node.GetAccessPoint().GetAccessString());
+    LOG_DEBUG(  "[PSN] NODE_ADD;%s", node.GetAccessPoint().GetAccessString().c_str());
     neighborsList.push_back(new POPCSearchNode(node));
 }
 
 // Remove a POPCSearchNode as a neighbor of this POPCSearchNode
 void POPCSearchNode::removeNeighbor(POPCSearchNode &node) {
-    LOG_DEBUG(  "[PSN] NODE_REMOVE;%s", node.GetAccessPoint().GetAccessString());
-    list<POPCSearchNode *>::iterator i;
-    for(i=neighborsList.begin(); i != neighborsList.end(); i++) {
-        paroc_accesspoint crt = (*i)->GetAccessPoint();
-        if(strcmp(crt.GetAccessString(), node.GetAccessPoint().GetAccessString()) == 0) {
+    LOG_DEBUG(  "[PSN] NODE_REMOVE;%s", node.GetAccessPoint().GetAccessString().c_str());
+    for(auto i=neighborsList.begin(); i != neighborsList.end(); i++) {
+        auto crt = (*i)->GetAccessPoint();
+        if(crt.GetAccessString() == node.GetAccessPoint().GetAccessString()) {
             neighborsList.erase(i);
             break;
         }
@@ -188,7 +187,7 @@ void POPCSearchNode::unlockDiscovery(POPString reqid) {
 
 POPString POPCSearchNode::getUID() {
     char uId[MAXREQUNIQUEIDLENGTH];
-    sprintf(uId,"%s__%d", getPOPCSearchNodeId().GetString(), logicalClock);
+    sprintf(uId,"%s__%d", getPOPCSearchNodeId().c_str(), logicalClock);
     POPString uniqueId(uId);
     logicalClock++;
     return uniqueId;
@@ -324,7 +323,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
             JobMgr jmg(getJobMgrRef());
             jmg.ApplicationEnd(req.getPOPAppId(), false);
         } else {
-            LOG_DEBUG(  "[PSN] ASKRDISCOVERY;ASKER;%s;REQID;%s", node_ap.GetAccessString(), req.getUniqueId().GetString());
+            LOG_DEBUG(  "[PSN] ASKRDISCOVERY;ASKER;%s;REQID;%s", node_ap.GetAccessString().c_str(), req.getUniqueId().c_str());
 
             // check if the request has already been asked
 
@@ -365,15 +364,15 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                 the message */
                 if(!req.getWayBack().isLastNode()) {
                     POPString listwb = req.getWayBack().getAsString();
-                    LOG_DEBUG(  "[PSN] NEED_REROUTE;WAYBACK;%s", listwb.GetString());
+                    LOG_DEBUG(  "[PSN] NEED_REROUTE;WAYBACK;%s", listwb.c_str());
                     rerouteResponse(*resp, req.getWayBack());
                 } else {
                     try {
                         POPCSearchNode asker(node_ap);
-                        LOG_DEBUG(  "[PSN] SEND_REP;DEST;%s", node_ap.GetAccessString());
+                        LOG_DEBUG(  "[PSN] SEND_REP;DEST;%s", node_ap.GetAccessString().c_str());
                         asker.callbackResult(*resp);
                     } catch(POPException* ex) {
-                        LOG_WARNING(  "[PSN] Can't connect to %s", node_ap.GetAccessString());
+                        LOG_WARNING(  "[PSN] Can't connect to %s", node_ap.GetAccessString().c_str());
                     }
 
                 }
@@ -390,7 +389,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                     if(!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
                         POPString nid;
                         nid = (*i)->getPOPCSearchNodeId();
-                        LOG_DEBUG(  "[PSN] FORWARD;DEST;%s", nid.GetString());
+                        LOG_DEBUG(  "[PSN] FORWARD;DEST;%s", nid.c_str());
                         paroc_accesspoint dummy;
                         (*i)->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
                     }
@@ -447,7 +446,7 @@ void POPCSearchNode::callbackResult(Response resp) {
         //Just for test purpose, must be removed in production release
         POPCSearchNodeInfo dni = resp.getFoundNodeInfo();
         actualReqSyn.lock();
-        LOG_DEBUG( "[PSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().GetString() , dni.nodeId.GetString());
+        LOG_DEBUG( "[PSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().c_str() , dni.nodeId.c_str());
         map<POPString, POPCSearchNodeInfos>::iterator i;
         // visit the currently running list
         for(i=actualReq.begin(); i != actualReq.end(); i++) {
@@ -588,12 +587,12 @@ paroc_accesspoint POPCSearchNode::getJobMgrRef() {
 }
 
 //Set the SSH public key
-void POPCSearchNode::setPKI(POPString pk) {
-    nodeInfo.pki=pk;
+void POPCSearchNode::setPKI(std::string pk) {
+    nodeInfo.pki=std::move(pk);
 }
 
 //Get the SSH Public key
-POPString POPCSearchNode::getPKI() {
+std::string POPCSearchNode::getPKI() {
     return nodeInfo.pki;
 }
 
@@ -647,7 +646,7 @@ POPString POPCSearchNode::getNeighborsAsString() {
     std::string strlst;
 
     for(list<POPCSearchNode *>::iterator i = neighborsList.begin(); i != neighborsList.end(); i++) {
-        strlst.append((*i)->getPOPCSearchNodeId().GetString());
+        strlst.append((*i)->getPOPCSearchNodeId().c_str());
         strlst.append(";");
     }
 

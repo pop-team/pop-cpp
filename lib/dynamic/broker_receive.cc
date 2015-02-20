@@ -74,7 +74,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
             break;
         }
     }
-    LOG_DEBUG("Exiting receive thread %s", paroc_broker::accesspoint.GetAccessString());
+    LOG_DEBUG("Exiting receive thread %s", paroc_broker::accesspoint.GetAccessString().c_str());
     server->Close();
 }
 

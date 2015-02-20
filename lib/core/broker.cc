@@ -96,7 +96,7 @@ POPString paroc_broker::classname;
 
 
 void broker_killed(int sig) {
-    LOG_ERROR("FATAL: SIGNAL %d on %s@%s",sig, (const char *)paroc_broker::classname,paroc_broker::accesspoint.GetAccessString());
+    LOG_ERROR("FATAL: SIGNAL %d on %s@%s",sig, paroc_broker::classname.c_str(), paroc_broker::accesspoint.GetAccessString().c_str());
     exit(1);
 }
 

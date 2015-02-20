@@ -86,9 +86,8 @@ int ObjectMonitor::CheckObjects() {
 
 void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
     mutex {
-        const char *newstr=p.GetAccessString();
         for(auto& t : objects){
-            if(paroc_utils::isEqual(t.GetAccessString(), newstr)) {
+            if(t.GetAccessString() == p.GetAccessString()) {
                 return;
             }
         }
@@ -98,15 +97,14 @@ void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
 
 void ObjectMonitor::UnManageObject(paroc_accesspoint &p) {
     mutex {
-        const char *newstr=p.GetAccessString();
         auto pos=objects.begin();
         while(pos!=objects.end()) {
-            if(paroc_utils::isEqual(pos->GetAccessString(), newstr)) {
+            if(pos->GetAccessString() == p.GetAccessString()) {
                 pos = objects.erase(pos);
                 return;
             }
             ++pos;
         }
-        LOG_WARNING("ObjectMonitor: unable to unmanage ap: %s",newstr);
+        LOG_WARNING("ObjectMonitor: unable to unmanage ap: %s (not in list)", p.GetAccessString().c_str());
     }
 }

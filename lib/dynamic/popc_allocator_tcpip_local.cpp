@@ -166,12 +166,12 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     argv[n++]=popc_strdup(tmpstr);
 
     if(!paroc_system::appservice.IsEmpty()) {
-        sprintf(tmpstr,"-appservice=%s",paroc_system::appservice.GetAccessString());
+        sprintf(tmpstr,"-appservice=%s",paroc_system::appservice.GetAccessString().c_str());
         argv[n++]=popc_strdup(tmpstr);
     }
 
     if(!paroc_system::jobservice.IsEmpty()) {
-        sprintf(tmpstr,"-jobservice=%s",paroc_system::jobservice.GetAccessString());
+        sprintf(tmpstr,"-jobservice=%s",paroc_system::jobservice.GetAccessString().c_str());
         argv[n++]=popc_strdup(tmpstr);
     }
 

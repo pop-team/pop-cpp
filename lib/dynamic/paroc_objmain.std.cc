@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
             return 1;
         }
     } else if(status == 0) {
-        LOG_INFO("%s", (const char *)paroc_broker::accesspoint.GetAccessString());
+        LOG_INFO("%s", paroc_broker::accesspoint.GetAccessString().c_str());
     }
 
     // set the current working directory

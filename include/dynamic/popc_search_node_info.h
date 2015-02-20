@@ -35,17 +35,17 @@ public:
     // Inherited method to serialize the object
     virtual void Serialize(POPBuffer &buf, bool pack);
 
-    paroc_string   nodeId;           // node's unique identifier
+    std::string   nodeId;           // node's unique identifier
     paroc_accesspoint jobmgr;
-    paroc_string   operatingSystem;  // node's operating system
+    std::string   operatingSystem;  // node's operating system
     float               power;            // node's compute power in MFlops
     int            cpuSpeed;         // node's cpu speed
     float          memorySize;       // node's memory size
     float          networkBandwidth; // node's network bandwidth
     int            diskSpace;        // node's disk space
-    paroc_string    protocol;     // node's supported protocol
-    paroc_string    encoding;     // node's supported encoding
-    paroc_string   pki;
+    std::string    protocol;     // node's supported protocol
+    std::string    encoding;     // node's supported encoding
+    std::string    pki;
 
     paroc_string getPOPCSearchNodeId();
     paroc_string getPKI();  //Return SSH Public key
