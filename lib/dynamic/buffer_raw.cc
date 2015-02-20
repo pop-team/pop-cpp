@@ -17,7 +17,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "paroc_interface.h"
+//#include "paroc_interface.h"
 #include "paroc_buffer_raw.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"
@@ -145,17 +145,25 @@ void paroc_buffer_raw::UnPack(signed char *data, int n) {
 
 void paroc_buffer_raw::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in paroc_buffer_raw::CheckUnPack");
     }
 }
 
+/**
+ * Send the packed data to the matching combox
+ * @param s
+ * @param conn
+ * @return
+ */
 bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
     char *dat = packeddata.data();
 
     if(dat == NULL) {
+        LOG_ERROR("fail 1");
         return false;
     }
+
     int n = packeddata.size();
     int h[5];
     memset(h, 0, 5 * sizeof(int));
@@ -199,6 +207,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     n = 20;
     do {
         if((i = s.Recv(dat,n, conn)) <= 0) {
+            LOG_ERROR("[CORE] combox recv returned %d", i);
             return false;
         }
         n -= i;
@@ -228,6 +237,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
         header.SetMethodID(h[3]);
         break;
     default:
+        LOG_ERROR("Unknown type %d", type);
         return false;
     }
 
@@ -238,13 +248,16 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
 
     // Recv data if there is some
     i = 0;
-    while(n > 0) {
+
+    while(n) {
         if((i = s.Recv(dat, n, conn)) <= 0) {
+            LOG_ERROR("[CORE] combox recv returned %d", i);
             return false;
         }
         dat += i;
         n -= i;
     }
+
     return true;
 }
 
@@ -256,9 +269,10 @@ char* paroc_buffer_raw::get_load() {
     // Pack the header (20 bytes)
     char *dat = packeddata.data();
 
-    if(dat == NULL) {
+    if(!dat) {
         return NULL;
     }
+
     int n = packeddata.size();
     int h[5];
     memset(h,0, 5 * sizeof(int));
@@ -282,9 +296,12 @@ char* paroc_buffer_raw::get_load() {
         h[3] = header.GetMethodID();
         break;
     default:
+        LOG_ERROR("fail 2");
         return NULL;
     }
+
     memcpy(dat, h, 20);
+
     return packeddata.data();
 }
 
@@ -296,12 +313,14 @@ void paroc_buffer_raw::load(char* data, int length) {
 bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
         paroc_connection* t = (paroc_connection*) s.Wait();
-        if(t == NULL) {
-            paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive");
+        if(!t) {
+            paroc_exception::paroc_throw("Remote Object not alive (1)");
         }
+
         if(!Recv(s, t)) {
             paroc_exception::paroc_throw(errno);
         }
+
         if(header.GetType() == TYPE_RESPONSE) {
             if(header.GetClassID() == 0 && header.GetMethodID() == 6) {
                 return true;
@@ -313,7 +332,7 @@ bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 auto t = (paroc_connection *) s.Wait();
 
                 if(!t) {
-                    paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive");
+                    paroc_exception::paroc_throw("Remote Object not alive (2)");
                 }
 
                 if(!Recv(s, t)) {
@@ -324,9 +343,11 @@ bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 header = h;
                 unpackpos = unpackposold;
                 packeddata = packeddataold;
+
                 return false;
             }
         }
     }
 }
+
 #endif

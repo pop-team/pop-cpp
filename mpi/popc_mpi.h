@@ -149,7 +149,8 @@ bool  POPMPI<T>::startMPI(T *&array, int np) {
         }
     }
 
-    catch(...) {
+    catch(std::exception& e) {
+        LOG_WARNING("Exception: %s", e.what());
         if(array!=NULL) {
             for(int j=0; j<i; j++) {
                 array[j].~T();

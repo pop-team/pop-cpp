@@ -80,6 +80,7 @@ void POPCSearchNodeInfos::Serialize(POPBuffer &buf, bool pack) {
         int nElts;
         buf.UnPack(&nElts, 1);
         int i;
+        //_nodeInfos.clear(); // LWK: Added this line for safety
         for(i=0; i<nElts; i++) {
             POPCSearchNodeInfo info;
             info.Serialize(buf, false);

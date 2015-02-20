@@ -47,7 +47,6 @@ paroc_combox * combox_socket_creator() {
     return new paroc_combox_socket;
 }
 
-// TODO LW: Why doesn't the compiler complain about this with Werror ? Could we have different flags here ?
 paroc_combox* combox_uds_creator() {
  //   return new popc_combox_uds; // TODO LW: This should be uncommented !
     return nullptr;

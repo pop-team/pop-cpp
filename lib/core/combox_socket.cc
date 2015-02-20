@@ -13,6 +13,7 @@
 
 #include "paroc_combox_socket.h"
 #include "paroc_system.h"
+#include "popc_logger.h"
 
 #define PROTO_TCP 6
 #define PROTO_UDP 17
@@ -738,6 +739,7 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
         if(!iopeer) {
             t=(paroc_connection_sock *)Wait();
             if(!t) {
+                LOG_ERROR("[CORE] Wait failed with code %d", t);
                 return -1;
             }
 
@@ -747,6 +749,7 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
         }
 
         if(fd<0) {
+            LOG_ERROR("[CORE] Cannot open socket");
             return -1;
         }
 
@@ -762,6 +765,7 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
                 continue;
             }
 
+            LOG_DEBUG("[CORE] CloseSock failed iopeer=%d", iopeer); // TODO LWK: Is this a bug or not ??
             return -1;
         }
 #else
@@ -770,6 +774,7 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
                 continue;
             }
 
+            LOG_ERROR("[CORE] CloseSock failed");
             return -1;
         }
 #endif

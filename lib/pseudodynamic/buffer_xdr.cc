@@ -18,7 +18,7 @@
 
 #include <rpc/types.h>
 #include <rpc/xdr.h>
-#include "paroc_interface.h"
+// #include "paroc_interface.h"
 #include "paroc_buffer_xdr.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"
@@ -352,7 +352,7 @@ void paroc_buffer_xdr::UnPack(signed char *data, int n) {
 
 void paroc_buffer_xdr::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in paroc_buffer_xdr::CheckUnPack");
     }
 }
 
@@ -459,6 +459,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
         header.SetMethodID(popc_ntohl(h[3]));
         break;
     default:
+        LOG_ERROR("Unknown type %d", type);
         return false;
     }
 

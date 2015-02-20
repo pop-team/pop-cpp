@@ -29,13 +29,13 @@
 /**
  * Allocator over TCP/IP with local mechanism constructor
  */
-POPC_Allocator_tcpip_ssh::POPC_Allocator_tcpip_ssh() {
+POPC_Allocator_tcpip_service::POPC_Allocator_tcpip_service() {
 }
 
 /**
  * Allocator over TCP/IP with local mechanism destrcutor
  */
-POPC_Allocator_tcpip_ssh::~POPC_Allocator_tcpip_ssh() {
+POPC_Allocator_tcpip_service::~POPC_Allocator_tcpip_service() {
 }
 
 /**
@@ -44,7 +44,7 @@ POPC_Allocator_tcpip_ssh::~POPC_Allocator_tcpip_ssh() {
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od) {
+POPString POPC_Allocator_tcpip_service::allocate(POPString& objectname, paroc_od& od) {
     paroc_accesspoint jobcontact, objectaddress, remotejobcontact;
 
     //Exec using JobMgr interface...
@@ -54,7 +54,7 @@ POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od
     if(platforms.Length()<=0) {
         CodeMgr mgr(paroc_system::appservice);
         if(mgr.GetPlatform(objectname, platforms)<=0) {
-            paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, objectname);
+            paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, objectname, "No platform found");
         }
         od.setPlatforms(platforms);
     }
@@ -92,12 +92,12 @@ POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od
         //}
 
         if(ret!=0) {
-            paroc_exception::paroc_throw(ret,objectname);
+            paroc_exception::paroc_throw(ret,objectname,"CreateObject returned error code");
         }
 
-    } catch(paroc_exception & e) {
-        paroc_system::perror(&e);
-        paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"POP-C++ error: Cannot create object via POP-C++ Job Manager",e.what());
+    } catch(std::exception & e) {
+        LOG_ERROR("Cannot create object via POP-C++ Job Manager: %s", e.what());
+        paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"Cannot create object via POP-C++ job service",e.what());
     }
 
     return objectaddress.GetAccessString();
@@ -110,7 +110,7 @@ POPString POPC_Allocator_tcpip_ssh::allocate(POPString& objectname, paroc_od& od
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* POPC_Allocator_tcpip_ssh::allocate_group(POPString& objectname, paroc_od& od, int nb) {
+paroc_combox* POPC_Allocator_tcpip_service::allocate_group(POPString& objectname, paroc_od& od, int nb) {
 
     /* Allocation process here */
 

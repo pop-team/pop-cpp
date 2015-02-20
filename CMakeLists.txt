@@ -106,7 +106,7 @@ add_subdirectory(include/dynamic)
 
 # Instruction to enable the MPI support for POP-C++
 if(MPI_SUPPORT)
-  message(STATUS "MPI Support for POP-C++ is enable")
+  message(STATUS "MPI Support for POP-C++ is enabled")
   add_subdirectory(include/pseudodynamic)
   add_subdirectory(mpi)
   add_subdirectory(interconnector)
@@ -114,7 +114,7 @@ endif(MPI_SUPPORT)
 
 # Instruction to enable the XMP support for POP-C++
 if(XMP_SUPPORT)
-  message(STATUS "XMP Support for POP-C++ is enable")
+  message(STATUS "XMP Support for POP-C++ is enabled")
   add_subdirectory(xmp)
 endif(XMP_SUPPORT)
 

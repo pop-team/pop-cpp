@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
                 } //switch
             } //try
 
-            catch(POPException *e) {
+            catch(POPException &e) {
                 printf("Exception: main has catched the POP exception (%d)!!\n", i);
             } catch(std::exception& e) {
                 printf("Exception: main has catched the std::exception '%s' (%d)!!\n", e.what(), i);

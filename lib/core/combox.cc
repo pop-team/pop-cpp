@@ -99,12 +99,12 @@ bool paroc_combox::SendAck(paroc_connection *conn) {
 bool paroc_combox::RecvAck(paroc_connection * /*conn*/) {
     paroc_connection * connex= Wait();
     if(connex==NULL) {
-        paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"[paroc_combox_socket.cc]");
+        paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"Wait() returned NULL");
     }
     char buf[4];
     int n = Recv(buf,3, connex);
     if(n!=3||strcmp(buf,"ACK")) {
-        paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"[paroc_combox_socket.cc]");
+        paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"Did not receive \"ACK\"");
     }
 
     return true;

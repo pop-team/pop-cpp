@@ -2,11 +2,11 @@
 
 
 TestObject::TestObject(POPString address) {
-    printf("TestObject created");
+    printf("TestObject created\n");
 }
 
 TestObject::~TestObject() {
-    printf("TestObject destroyed");
+    printf("TestObject destroyed\n");
 }
 
 void TestObject::syncConcMethod(POPString label, int waitingTime) {

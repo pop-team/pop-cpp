@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
         o1.Set(0);
 
         cout << "Result : " << o1.Get() << endl;
-    } catch(POPException *e) {
+    } catch(POPException &e) {
         cout<<"Exception occurs in application..."<<endl;
         e->Print();
         return -1;

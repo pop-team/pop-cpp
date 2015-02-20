@@ -34,13 +34,6 @@
 
 #define POPC_ALLOC_RETRY 3
 
-/*! \brief Run a command using fork
- * This method simply calls a command by creating a fork.
- * @param argv Command and arguments
- * @param env
- * @return Zero */
-int RunCmd(int argc, char **argv, char *env[], int *status=NULL);
-
 
 /**
  * @class paroc_interface
@@ -55,7 +48,6 @@ public:
     paroc_interface();
     paroc_interface(const paroc_accesspoint &p);
     paroc_interface(const paroc_interface &inf);
-    paroc_interface(paroc_combox *combox, paroc_buffer *buffer);
 
     virtual ~paroc_interface();
 
@@ -75,6 +67,7 @@ public:
     virtual void Serialize(paroc_buffer &buf, bool pack);
 
     //Find the resource that satisfies the OD, output the resource name or the jobcontact..
+    // This method only exist in the pseudodynamic version of the code (this may cause a linking error is used)
     bool TryLocal(paroc_accesspoint &objaccess);
 
     //Connect the interface to the existed object located at resource dest...

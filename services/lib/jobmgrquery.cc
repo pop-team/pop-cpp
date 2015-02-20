@@ -42,9 +42,8 @@ int main(int argc, char **argv) {
                 printf("%s= NOT FOUND\n",str1);
             }
         }
-    } catch(paroc_exception *e) {
-        paroc_system::perror(e);
-        delete e;
+    } catch(std::exception &e) {
+    	    LOG_ERROR("Exception in query: %s", e.what());
     }
     return 0;
 }

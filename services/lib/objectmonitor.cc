@@ -21,7 +21,7 @@
 static ObjectMonitor *myObjMonitor=NULL;
 
 static void LocalServiceTerminate(int sig) {
-    LOG_ERROR( "LOCAL SERVICE SIGNAL %d!!!!",sig);
+    LOG_ERROR( "Local service received signal %d!!!! Kill all objects",sig);
     if(myObjMonitor!=NULL) {
         myObjMonitor->KillAll();
     }
@@ -36,9 +36,11 @@ ObjectMonitor::ObjectMonitor(const POPString &challenge): paroc_service_base(cha
 #endif
     popc_signal(popc_SIGTERM,LocalServiceTerminate);
     isActive=true;
+    LOG_DEBUG("Create object monitor");
 }
 
 ObjectMonitor::~ObjectMonitor() {
+    LOG_DEBUG("Destroy object monitor");
 }
 
 void ObjectMonitor::KillAll() {
@@ -48,8 +50,8 @@ void ObjectMonitor::KillAll() {
             try {
                 paroc_interface tmp(t);
                 tmp.Kill();
-            } catch(...) {
-                LOG_WARNING("Exception while killing objects");
+            } catch(std::exception& e) {
+                LOG_WARNING("Exception while killing objects: %s", e.what());
             }
         }
         objects.clear();
@@ -72,10 +74,10 @@ int ObjectMonitor::CheckObjects() {
                 if(!active && !isActive) {
                     test.DecRef();
                 }
-            } catch(...) {
-                LOG_WARNING("Exception in CheckObjects");
+            } catch(std::exception &e) {
+                LOG_WARNING("Exception in CheckObjects: %s",e.what());
                 pos = objects.erase(old);
-            }
+	        }
         }
         isActive=active;
 
@@ -92,6 +94,7 @@ void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
                 return;
             }
         }
+        LOG_DEBUG("Add object %s", newstr);
         objects.push_back(p);
     }
 }

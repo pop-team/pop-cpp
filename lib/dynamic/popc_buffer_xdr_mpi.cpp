@@ -363,7 +363,7 @@ void popc_buffer_xdr_mpi::UnPack(signed char *data, int n) {
 
 void popc_buffer_xdr_mpi::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong packed data size");
     }
 }
 
@@ -557,7 +557,7 @@ bool popc_buffer_xdr_mpi::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                                          "[paroc_buffer_xdr.cc] : Remote Object not alive");
         }
         if(!Recv(s, t)) {
-            paroc_exception::paroc_throw(errno);
+            paroc_exception::paroc_throw("Recv failed");
         }
         if(header.GetType() == TYPE_RESPONSE) {
             if(header.GetClassID() == 0 && header.GetMethodID() == 6) {
@@ -572,7 +572,7 @@ bool popc_buffer_xdr_mpi::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                                                  "[paroc_buffer_xdr.cc] : Remote Object not alive");
                 }
                 if(!Recv(s, t)) {
-                    paroc_exception::paroc_throw(errno);
+                    paroc_exception::paroc_throw("Recv failed 2");
                 }
                 Reset();
                 header = h;

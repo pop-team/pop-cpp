@@ -104,7 +104,10 @@ const paroc_message_header & paroc_buffer::GetHeader() const {
     return header;
 }
 
-void paroc_buffer::Push(const char* /*paramname*/, const char* /*paramtype*/, int /*nelem*/) {
+void paroc_buffer::Push(const char* paramname, const char* paramtype, int /*nelem*/) {
+    (void)paramname;
+    (void)paramtype;
+    LOG_DEBUG("push %s of type %s", paramname, paramtype);
 }
 
 void paroc_buffer::Pop() {
@@ -200,6 +203,7 @@ METH_VECT_UNPACK(std::string)
 
 bool paroc_buffer::Send(paroc_connection *conn) {
     if(conn == NULL) {
+        LOG_ERROR("conn==NULL");
         return false;
     }
     auto combox = conn->GetCombox();
@@ -208,7 +212,7 @@ bool paroc_buffer::Send(paroc_connection *conn) {
 
 bool paroc_buffer::Recv(paroc_connection *conn) {
     if(conn==NULL) {
-        LOG_INFO("conn==NULL");
+        LOG_ERROR("conn==NULL");
         return false;
     }
     auto combox = conn->GetCombox();
@@ -294,6 +298,7 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paro
     return except.Send(s);
 }
 
+/// Check if an exception was thrown by the remote method and propagate (if thrown)
 void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
     const paroc_message_header &h=except.GetHeader();
 
@@ -301,6 +306,7 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
         return;
     }
     int code=h.GetExceptionCode();
+    LOG_INFO("Exception thrown type=%d", code);
     switch(code) {
     case EXCEPTION_INT: {
         int t;
@@ -378,6 +384,7 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
         t.Serialize(except,false);
         throw &t;
     }
+    /* TODO LW: Is this really used ?? */
     case EXCEPTION_OBJECT: {
         paroc_interface t;
         t.Serialize(except,false);
@@ -385,7 +392,7 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
         throw t;
     }
     default:
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+        paroc_exception::paroc_throw("Unknown exception in paroc_buffer::CheckAndThrow");
     }
 }
 

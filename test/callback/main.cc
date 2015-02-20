@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
             printf("CallBack: test failed, destroying objects ...\n");
             return 1;
         }
-    } catch(POPException e) {
+    } catch(POPException& e) {
         printf("CallBack: test failed, error no.%d, destroying objects:\n",
                e.Code());
         return 1;

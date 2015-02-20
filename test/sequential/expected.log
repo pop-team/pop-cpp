@@ -1,4 +1,5 @@
-TestObject createdTest with synchronous methods
+TestObject created
+Test with synchronous methods
 Concurrent method (call1) starts
 Concurrent method (call1) ends (execution time 100000 ns)
 Concurrent method (call2) starts

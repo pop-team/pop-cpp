@@ -15,6 +15,7 @@
 #include "popc_allocator_uds_interconnector.h"
 #include "popc_allocator_tcpip.h"
 #include "popc_allocator_mpi_pseudo.h"
+#include "popc_logger.h"
 
 const char* POPC_AllocatorFactory::PREFIX_UDS = "uds";
 const char* POPC_AllocatorFactory::PREFIX_TCP = "socket";
@@ -63,6 +64,7 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
         case POPC_Allocator::INTERCONNECTOR :
             return new POPC_Allocator_uds_interconnector();
         default:
+            LOG_WARNING("No allocator found");
             return NULL; // TODO lwk security: there should be a safety if this is returned in a constructor: e.g. assert(false)
         }
     }
@@ -72,8 +74,9 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
         case POPC_Allocator::LOCAL :
             return new POPC_Allocator_tcpip_local();
         case POPC_Allocator::SSH :
-            return new POPC_Allocator_tcpip_ssh();
+            return new POPC_Allocator_tcpip_service();
         default:
+            LOG_WARNING("No allocator found");
             return NULL;
         }
     }
@@ -83,10 +86,12 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
         case POPC_Allocator::PSEUDODYNAMIC :
 //            return new POPC_Allocator_mpi_pseudo();
         default:
+            LOG_WARNING("No allocator found");
             return NULL;
         }
     }
     default:
+        LOG_WARNING("No allocator found");
         return NULL;
     }
 }

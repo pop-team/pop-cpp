@@ -131,8 +131,6 @@ protected:
     paroc_request_fifo_list request_fifo; // Queue storing the request received by the broker
     paroc_condition execCond;
     int instanceCount;  //
-    int addrefcount;     //Count the number of add ref on an object
-    int decrefcount;     //Count the number of dec ref on an object
     int connclosecount;  //Count the number of connection close on an object
     int state; // 0=Running, 1=Terminate, 2= Abort
 };

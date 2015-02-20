@@ -7,7 +7,8 @@
  * @date 2012/12/04
  * @brief
  *
- *
+ * Modifications:
+ * - Rename POPC_Allocator_tcpip_ssh to _service for clarity
  */
 
 #ifndef POPC_ALLOCATOR_TCPIP_H_
@@ -34,11 +35,11 @@ public:
 
 };
 
-/* POPC_ALLOCATOR_TCPIP_SSH_H_ */
-class POPC_Allocator_tcpip_ssh : public POPC_Allocator {
+/* POPC_ALLOCATOR_TCPIP_SERVICE_H_ */
+class POPC_Allocator_tcpip_service : public POPC_Allocator {
 public:
-    POPC_Allocator_tcpip_ssh();
-    ~POPC_Allocator_tcpip_ssh();
+    POPC_Allocator_tcpip_service();
+    ~POPC_Allocator_tcpip_service();
     virtual POPString allocate(POPString& objectname, paroc_od& od);
     virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb);
     virtual POPC_Protocol get_protocol() {

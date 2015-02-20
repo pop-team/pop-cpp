@@ -47,97 +47,6 @@
 #define POPC_CONNECT_TIMEOUT 10000
 #endif
 
-int RunCmd(int argc, char **argv, char *env[], int *status) {
-    (void)argc;
-    char *file=NULL;
-
-    POPString str;
-
-    if(argv==NULL || argv[0]==NULL) {
-        return ENOENT;
-    }
-    file=argv[0];
-    //  if (access(file,X_OK)!=0)
-    //    {
-    //      return -1;
-    //    }
-#ifndef __WIN32__
-    popc_signal(popc_SIGCHLD, ((status==NULL) ? popc_SIG_IGN : popc_SIG_DFL));
-#endif
-
-#ifndef UC_LINUX
-#ifndef __WIN32__
-    int pid=popc_fork();
-    if(pid==-1) {
-        int err=errno;
-        LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
-        return err;
-    } else if(pid==0) {
-        int nf=popc_getdtablesize();
-        for(int fd=3; fd<nf; fd++) {
-            popc_close(fd);
-        }
-        if(env!=NULL) {
-            while(*env!=NULL) {
-                putenv(popc_strdup(*env));
-                env++;
-            }
-        }
-        if(status==NULL) {
-            popc_setpgid(0,0);
-        }
-        //Child process
-        popc_execvp(file,argv);
-        LOG_ERROR("[CORE] Execution of [%s] fails",file);
-        popc__exit(-1);
-    }
-#else
-    argv[argc] = 0;
-    char command_line[1024]="";
-
-    strcat(command_line,"sh ");
-    for(int i =0; i<argc; i++) {
-        strcat(command_line,argv[i]);
-        strcat(command_line," ");
-    }
-
-    STARTUPINFO sInfoSource;
-    PROCESS_INFORMATION pInfoSource;
-
-    ZeroMemory(&sInfoSource, sizeof(sInfoSource));
-    sInfoSource.cb = sizeof(sInfoSource);
-
-    if(!CreateProcess(NULL, command_line, NULL, NULL, FALSE, 0, NULL, NULL, &sInfoSource, &pInfoSource)) {
-        LOG_ERROR("CreateProcess failed (%d).", GetLastError());
-        return -1;
-    }
-
-    WaitForSingleObject(pInfoSource.hProcess,INFINITE);
-
-    CloseHandle(pInfoSource.hThread);
-    CloseHandle(pInfoSource.hProcess);
-#endif
-#else
-#ifndef __WIN32__
-    int pid=popc_vfork();
-    if(pid==-1) {
-        int err=errno;
-        LOG_ERROR("[CORE] Fork fails to execute! errno=%d", errno);
-        return err;
-    } else if(pid==0) {
-        execve(file,argv,env);
-        LOG_ERROR("[CORE] Execution of [%s] fail (popc_vfork)",file);
-        popc__exit(-1);
-    }
-#endif
-#endif
-#ifndef __WIN32__
-    if(status!=NULL) {
-        popc_waitpid(pid, status, 0);
-    }
-#endif
-    return 0;
-}
 
 paroc_accesspoint paroc_interface::_paroc_nobind;
 
@@ -147,7 +56,7 @@ int paroc_interface::paroc_bind_timeout=10000;
 //paroc_interface base class
 
 paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
-    LOG_DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("Create interface for class %s (OD secure:%s)", ClassName(), (od.isSecureSet())?"true":"false");
 
     if(od.isSecureSet()) {
         accesspoint.SetSecure();
@@ -197,6 +106,7 @@ paroc_interface::paroc_interface(const paroc_interface &inf) {
     Bind(inf.GetAccessPoint());
 }
 
+/* TODO LW: Used by pseudodyn version ?
 paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
     _ssh_tunneling=false;
     __paroc_combox = combox;
@@ -212,6 +122,7 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
         }
     }
 }
+*/
 
 
 /**
@@ -280,6 +191,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
     paroc_buffer *old = NULL;
 
     if(&buf == __paroc_buf) {
+        LOG_WARNING("Buffers share the same address");// TODO LW: Where does this come from ?
         old = &buf;
         __paroc_buf = __paroc_combox->GetBufferFactory()->CreateBuffer();
     }
@@ -296,6 +208,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
         if(ref > 0) {
             Bind(accesspoint);
+            LOG_DEBUG("Bound %s", accesspoint.GetAccessString());
             //AddRef();
             DecRef();
         }
@@ -404,11 +317,11 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
             try {
                 Bind(addr);
                 return;
-            } catch(paroc_exception *e) {
-                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e->what());
-                delete e;
+            } catch(std::exception &e) {
+                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
                 continue;
             }
+            LOG_DEBUG("Successful bind to %s", addr);
         }
     } else {
         //The user specify the protocol in OD, select the preference and match with the access point...
@@ -421,9 +334,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                     try {
                         Bind(addr);
                         return;
-                    } catch(paroc_exception *e) {
-                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e->what());
-                        delete e;
+                    } catch(std::exception &e) {
+                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
                         continue;
                     }
                 }
@@ -431,7 +343,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
         }
     }
 
-    paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName());
+    LOG_WARNING("Cannot find suitable protocol");
+    paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName(), "Cannot find suitable protocol");
 }
 
 void paroc_interface::Bind(const char *dest) {
@@ -458,15 +371,15 @@ void paroc_interface::Bind(const char *dest) {
     // Create combox factory
     paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
     POPString p;
-    fact->GetNames(p);
     if(!fact) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
     }
+    fact->GetNames(p);
 
     // Create combox
     __paroc_combox = fact->Create(prot);
     if(!__paroc_combox) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot create factory");
     }
 
     // Create associated buffer
@@ -560,67 +473,19 @@ void paroc_interface::Bind(const char *dest) {
         }
 
         default:
-            LOG_WARNING("INTERFACE: Unknown binding status");
+            LOG_WARNING("Unknown binding status");
             Release();
-            paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName());
+            paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
         }
     } else {
         int code = errno;
 
-        LOG_WARNING("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
-        LOG_WARNING("Create socket fails. Reason: %s.",strerror(code));
+        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s",(const char *)paroc_system::GetHost(),dest,strerror(code));
         Release();
-        paroc_exception::paroc_throw(code, ClassName());
+        paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
 
     __paroc_combox->SetTimeout(-1);
-}
-
-bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
-    /* TODO should have been restored for version TCP/IP
-      POPString hostname;
-      POPString rarch;
-      POPString codefile;
-      POPString batch;
-
-      POPString objname(ClassName());
-      bool localFlag = od.IsLocal();
-      od.getURL(hostname);
-      od.getArch(rarch);
-      od.getBatch(batch);
-
-
-      if (localFlag || hostname != NULL || batch != NULL) {
-
-          if (hostname == NULL) hostname=paroc_system::GetHost();
-
-          od.getExecutable(codefile);
-
-          //Hostname existed
-          if (codefile == NULL) {
-              //Lookup local code manager for the binary source....
-              assert(!paroc_system::appservice.IsEmpty());
-              CodeMgr mgr(paroc_system::appservice);
-              if (rarch==NULL)rarch=paroc_system::platform;
-              if (!mgr.QueryCode(objname,rarch,codefile))
-              {
-                  paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, ClassName());
-                  //else return false;
-              }
-          }
-
-          //Local exec using sh or rsh
-          char *hoststr = hostname.GetString();
-
-          int status = LocalExec(hoststr, codefile, ClassName(), paroc_system::jobservice, paroc_system::appservice,&objaccess,1,od);
-
-          if (status!=0) {
-              paroc_exception::paroc_throw(status, ClassName());
-          }
-          return (status==0);
-      }
-      */
-    return false;
 }
 
 
@@ -684,6 +549,7 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
 
 int paroc_interface::AddRef() {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_WARNING("AddRef cannot be called");
         return -1;
     }
 
@@ -705,6 +571,7 @@ int paroc_interface::AddRef() {
 
 int paroc_interface::DecRef() {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_WARNING("DecRef cannot be called");
         return -1;
     }
 
@@ -727,6 +594,7 @@ int paroc_interface::DecRef() {
 
 bool paroc_interface::Encoding(POPString encoding) {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_WARNING("Encoding cannot be called");
         return false;
     }
 
@@ -766,6 +634,7 @@ bool paroc_interface::Encoding(POPString encoding) {
 
 void paroc_interface::Kill() {
     if(!__paroc_combox) {
+        LOG_WARNING("Kill cannot be called");
         return;
     }
 
@@ -783,6 +652,7 @@ void paroc_interface::Kill() {
 
 bool paroc_interface::ObjectActive() {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_DEBUG("ObjectActive cannot be called");
         return false;
     }
 
@@ -809,6 +679,7 @@ bool paroc_interface::RecvCtrl() {
     od.getCheckConnection(time_alive, time_control);
     if(!__paroc_combox || !__paroc_buf) {
         __paroc_combox->SetTimeout(oldTimeout);
+        LOG_ERROR("Error");
         return false;
     };
 
@@ -821,7 +692,7 @@ bool paroc_interface::RecvCtrl() {
         if(t != NULL) {
             if(!__paroc_buf->Recv(*__paroc_combox,t)) {
                 __paroc_combox->SetTimeout(oldTimeout);
-                paroc_exception::paroc_throw(errno);
+                paroc_exception::paroc_throw("Error in od disconnect 1");
             } else {
                 __paroc_combox->SetTimeout(oldTimeout);
                 return true;
@@ -833,7 +704,7 @@ bool paroc_interface::RecvCtrl() {
 
         if(!__paroc_buf->Send(*__paroc_combox)) {
             __paroc_combox->SetTimeout(oldTimeout);
-            paroc_exception::paroc_throw(errno);
+            paroc_exception::paroc_throw("Error in od disconnect 2");
         }
         __paroc_combox->SetTimeout(time_alive);
         if(!__paroc_buf->RecvCtrl(*__paroc_combox)) {
@@ -883,13 +754,15 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
         }
     }
 
-    paroc_exception::paroc_throw(POPC_NO_ENCODING, ClassName());
+    paroc_exception::paroc_throw(POPC_NO_ENCODING, ClassName(), "NegociateEncoding failed");
 }
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od) {
-    LOG_ERROR("This method has been commented"); // Note: No, I do not know who did this or why. TODO LWK
+    LOG_ERROR("This method has been commented"); // Note: This method is only used by add ons at the moment
     /* TODO should have been restored at least for TCP/IP version
-      if (codefile==NULL) return ENOENT;
+    if(codefile==NULL) {
+        return ENOENT;
+    }
       popc_signal(SIGCHLD, SIG_IGN);
 
       while (isspace(*codefile)) codefile++;
@@ -1157,16 +1030,16 @@ void paroc_interface::ApplyCommPattern(const char *pattern, std::vector<char*>& 
 // DEPRECATED
 void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
     if(!buf->Send(*__paroc_combox)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer sent failed (old)");
     }
 }
 
 // DEPRECATED // TODO LW: See what to do
 void paroc_interface::paroc_Response(paroc_buffer *buf) {
     if(!buf->Recv(*__paroc_combox)) {
-        LOG_INFO("Throw from response");
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer receive failed (old)");
     }
+
     paroc_buffer::CheckAndThrow(*buf);
 }
 
@@ -1175,7 +1048,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf) {
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Send((*__paroc_combox), conn)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer sent failed");
     }
     LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == NULL) ? "is null" : "is not null");
 }
@@ -1185,7 +1058,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
  */
 void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Recv((*__paroc_combox), conn)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer receive failed");
     }
     LOG_DEBUG("INTERFACE: paroc_response will disconnect the connection");
     paroc_buffer::CheckAndThrow(*buf);
@@ -1254,8 +1127,9 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
         return local_port;
     } else {
         //paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
+        LOG_WARNING("Executable not found");
     }
-
+    LOG_WARNING("CreateSSHTunnel returned with error code %d", error_code);
     return error_code;
 }
 

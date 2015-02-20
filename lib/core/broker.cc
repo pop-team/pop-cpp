@@ -203,8 +203,8 @@ int paroc_broker::Run() {
                     break;
                 }
             }
-        } catch(...) {
-            LOG_WARNING("Unknown exception in paroc_broker::Run");
+        } catch(std::exception &e) {
+            LOG_WARNING("Unknown exception in paroc_broker::Run: %s", e.what());
             UnhandledException();
         }
     }
@@ -278,7 +278,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
                 return false;
             }
             if(!pc->Create(port, true)) {
-                paroc_system::perror("Broker");
+                paroc_exception::perror("Broker");
                 return false;
             }
         } else {
@@ -287,7 +287,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 #else
             if(!pc->Create(0, true)) {
 #endif
-                paroc_system::perror("Broker");
+                paroc_exception::perror("Broker");
                 return false;
             }
         }
@@ -383,8 +383,8 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
                     buffer->Pop();
                     ok = !ret;
                 }
-            } catch(...) {
-                LOG_WARNING("Unknown exception in paroc_broker::WakeUpReceiveThread");
+            } catch(std::exception &e) {
+                LOG_WARNING("Exception in paroc_broker::WakeUpReceiveThread: %s", e.what());
                 ok = true;
             }
         }

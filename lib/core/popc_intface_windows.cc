@@ -492,6 +492,44 @@ typedef void(* popc_sighandler_t)(int);
 
 
 // RunCmd function
+int RunCmd(int argc, char **argv, char *env[], int *status) {
+    (void)argc;
+    char *file=NULL;
+
+    if(argv==NULL || argv[0]==NULL) {
+        return ENOENT;
+    }
+    file=argv[0];
+
+    argv[argc] = 0;
+    char command_line[1024]="";
+
+    strcat(command_line,"sh ");
+    for(int i =0; i<argc; i++) {
+        strcat(command_line,argv[i]);
+        strcat(command_line," ");
+    }
+
+    STARTUPINFO sInfoSource;
+    PROCESS_INFORMATION pInfoSource;
+
+    ZeroMemory(&sInfoSource, sizeof(sInfoSource));
+    sInfoSource.cb = sizeof(sInfoSource);
+
+    if(!CreateProcess(NULL, command_line, NULL, NULL, FALSE, 0, NULL, NULL, &sInfoSource, &pInfoSource)) {
+        LOG_ERROR("CreateProcess failed (%d).", GetLastError());
+        return -1;
+    }
+
+    WaitForSingleObject(pInfoSource.hProcess,INFINITE);
+
+    CloseHandle(pInfoSource.hThread);
+    CloseHandle(pInfoSource.hProcess);
+    if(status!=NULL) {
+        popc_waitpid(pid, status, 0);
+    }
+    return 0;
+}
 
 int RunCmd(int argc, char *argv[]) {
     argv[argc] = 0;

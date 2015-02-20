@@ -145,7 +145,7 @@ void paroc_buffer_raw::UnPack(signed char *data, int n) {
 
 void paroc_buffer_raw::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format");
     }
 }
 
@@ -218,6 +218,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     /*  n = 20;
         do {
             if ((i = s.Recv(dat,n, conn)) <= 0) {
+            LOG_ERROR("[CORE] combox recv returned %d", i);
                 return false;
             }
             n -= i;
@@ -247,6 +248,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
         header.SetMethodID(h[3]);
         break;
     default:
+        LOG_ERROR("[CORE] unknown type: %d", type);
         return false;
     }
 
@@ -254,20 +256,23 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     n -= 20;
 
     if(n > 0) {
-        dat = packeddata.data()+20;
+        dat = packeddata.data() + 20;
         LOG_INFO("RAW: ready to receive %d", n);
         s.Recv(dat, n, conn);
         LOG_INFO("RAW: received %d", n);
     }
+
     /*
         i = 0;
         while (n > 0) {
             if ((i = s.Recv(dat,n, conn)) <= 0) {
+                LOG_ERROR("[CORE] combox recv returned %d", i);
                 return false;
             }
             dat += i;
             n -= i;
         }*/
+
     return true;
 }
 

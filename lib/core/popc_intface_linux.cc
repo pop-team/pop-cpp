@@ -3,7 +3,8 @@
 #ifdef _POPC_
 #include "popc_logger.h"
 #else
-// TODO LW: This should not be here
+// Note: we redefine two methods of the logger here. This allows to use this file outside of popc
+// This can of course be made in a cleaner way
 #define LOG_INFO(_log_msg, ...)    fprintf(stderr, _log_msg, ##__VA_ARGS__)
 #define LOG_ERROR(_log_msg, ...)   fprintf(stderr, _log_msg, ##__VA_ARGS__)
 #endif
@@ -362,6 +363,64 @@ int popc_strncasecmp(const char * a, const char * b, popc_size_t c) {
 }
 
 // RunCmd function
+int RunCmd(int argc, char **argv, char *env[], int *status) {
+    (void)argc;
+    char *file=NULL;
+
+    if(argv==NULL || argv[0]==NULL) {
+        return ENOENT;
+    }
+    file=argv[0];
+    //  if (access(file,X_OK)!=0)
+    //    {
+    //      return -1;
+    //    }
+    popc_signal(popc_SIGCHLD, ((status==NULL) ? popc_SIG_IGN : popc_SIG_DFL));
+
+#ifndef UC_LINUX
+    int pid=popc_fork();
+    if(pid==-1) {
+        int err=errno;
+        LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
+        return err;
+    } else if(pid==0) {
+        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ? 
+        int nf=popc_getdtablesize();
+        for(int fd=3; fd<nf; fd++) {
+            popc_close(fd);
+        }
+        */
+        if(env!=NULL) {
+            while(*env!=NULL) {
+                putenv(popc_strdup(*env));
+                env++;
+            }
+        }
+        if(status==NULL) {
+            popc_setpgid(0,0);
+        }
+        //Child process
+        popc_execvp(file,argv);
+        LOG_ERROR("[CORE] Execution of [%s] fails",file);
+        popc__exit(-1);
+    }
+#else
+    int pid=popc_vfork();
+    if(pid==-1) {
+        int err=errno;
+        LOG_ERROR("[CORE] Fork fails to execute! errno=%d", errno);
+        return err;
+    } else if(pid==0) {
+        execve(file,argv,env);
+        LOG_ERROR("[CORE] Execution of [%s] fail (popc_vfork)",file);
+        popc__exit(-1);
+    }
+#endif
+    if(status!=NULL) {
+        popc_waitpid(pid, status, 0);
+    }
+    return 0;
+}
 
 int RunCmd(int argc, const char *argv[]) {
 /* TODO: See what to use
@@ -372,7 +431,7 @@ int RunCmd(int argc, const char *argv[]) {
         strcat(cmd,argv[i]);
         strcat(cmd," ");
     }
-    LOG_INFO("Execute %s\n", cmd);
+    LOG_INFO("Execute %s", cmd);
     system(cmd);
 
     return 0;
@@ -387,7 +446,7 @@ int RunCmd(int argc, const char *argv[]) {
         _exit(1);
     } else if(pid == 0) {
         execvp(argv[0], const_cast<char**>(argv));
-        LOG_ERROR( "POP-C++ Error: %s not found\n", argv[0]);
+        LOG_ERROR( "POP-C++ Error: %s not found", argv[0]);
         _exit(1);
     }
     wait(&status);
@@ -402,26 +461,26 @@ int RunPipe(int argc1, const char *argv1[], int argc2, const char *argv2[]) {
 
     int p[2];
     if(pipe(p) != 0) {
-        perror("Error");
+        perror("Error in pipe");
         _exit(1);
     }
 
     int status;
     int pid1=fork();
     if(pid1<0) {
-        perror("ERROR");
+        perror("Error in pid (1)");
         _exit(1);
     } else if(pid1==0) {
         close(p[0]);
         dup2(p[1],1);
         execvp(argv1[0], const_cast<char**>(argv1));
-        LOG_ERROR("POP-C++ Error: %s not found\n",argv1[0]);
+        LOG_ERROR("POP-C++ Error: %s not found",argv1[0]);
         _exit(1);
     }
 
     int pid2 = fork();
     if(pid2<0) {
-        perror("ERROR");
+        perror("Error in pid (2)");
         _exit(1);
     }
 
@@ -429,7 +488,7 @@ int RunPipe(int argc1, const char *argv1[], int argc2, const char *argv2[]) {
         close(p[1]);
         dup2(p[0],0);
         execvp(argv2[0], const_cast<char**>(argv2));
-        LOG_ERROR("POP-C++ Error: %s not found\n",argv2[0]);
+        LOG_ERROR("POP-C++ Error: %s not found",argv2[0]);
         _exit(1);
     }
     close(p[0]);

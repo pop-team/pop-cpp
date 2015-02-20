@@ -884,7 +884,7 @@ void Method::GenerateClient(std::string &output) {
     if(!GetClass()->is_collective()) {
         sprintf(tmpcode, "\n  paroc_mutex_locker __paroc_lock(_paroc_imutex);");
         output += tmpcode;
-        sprintf(tmpcode, "\n  if(!__paroc_combox)paroc_exception::paroc_throw_errno(\"combox was not initialized\");");
+        sprintf(tmpcode, "\n  if(!__paroc_combox)paroc_exception::paroc_throw(\"combox was not initialized\");");
         output += tmpcode;
         sprintf(tmpcode, "\n  paroc_connection* _popc_connection = __paroc_combox->get_connection();\n  __paroc_buf->Reset();\n  paroc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __paroc_buf->SetHeader(__paroc_buf_header);\n", clname, id, invoke_code, name);
         output += tmpcode;
@@ -935,14 +935,14 @@ void Method::GenerateClient(std::string &output) {
 
     if(waitreturn) {
 #ifdef OD_DISCONNECT
-        strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())paroc_exception::paroc_throw_errno();\n\t}");
+        strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())paroc_exception::paroc_throw(\"od.getCheckConnection()\");\n\t}");
         output += tmpcode;
         strcpy(tmpcode,"\n\telse\n");
         output += tmpcode;
 #endif
 
         if(!GetClass()->is_collective()) {
-            strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv((*__paroc_combox), _popc_connection)) paroc_exception::paroc_throw_errno();\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
+            strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv((*__paroc_combox), _popc_connection)) paroc_exception::paroc_throw(\"Buffer receive\");\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
         } else {
             strcpy(tmpcode,"\n  popc_recv_response(_popc_buffer, _popc_connection);");
         }
@@ -1259,7 +1259,7 @@ void Method::GenerateBroker(std::string &output) {
             tempcatch[i]='\0';
         }
 
-        sprintf(tempcatch,"\n  } catch(std::exception& e) {\n    printf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what());\n    throw;\n  }\n", name, clname);
+        sprintf(tempcatch,"\n  } catch(std::exception& e) {\n    printf(\"POP-C++ Warning: Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what());\n    throw;\n  }\n", name, clname); // TODO lwk: message never printed on a remote object (same below)
         strcat(methodcall,tempcatch);
 
 
@@ -1313,7 +1313,7 @@ void Method::GenerateBroker(std::string &output) {
             strcpy(str, "\n    _popc_connection->reset();\n  }\n}\n");
             output += str;
         } else {
-            strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw_errno();\n}\n");
+            strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw(\"buffer send\");\n}\n");
             output += str;
             strcpy(str,"\nif(__interface_output != 0)\n__interface_output->reset();\n}\n");
             output += str;

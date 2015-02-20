@@ -86,8 +86,8 @@ int main(int argc, char **argv) {
             tmp.CancelReservation(&r,1);
         }
         resources.RemoveAll();
-    } catch(...) {
-        LOG_WARNING("Exception in alloctest");
+    } catch(std::exception &e) {
+        LOG_WARNING("Exception in alloctest: %s", e.what());
         return 1;
     }
 

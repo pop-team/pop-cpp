@@ -194,14 +194,10 @@ cmd="$PROG $args -initparoc -appservicecode=$MYAPPSERVICE $MY_PROXY -codeconf=$P
 
 retval=0
 if [ $drun -eq 1 ]; then
-    echo Exec: $cmd
+    echo "$cmd $logging_cmd"
 else
-	#echo "popc_debug = " $POPC_DEBUG
-	echo "#!/bin/bash" > __cmd_to_execute__
-	echo $cmd $logging_cmd >> __cmd_to_execute__
-	chmod a+x __cmd_to_execute__
-	./__cmd_to_execute__
-	rm __cmd_to_execute__
+    # execute command
+    echo "$cmd $logging_cmd" | bash
     retval=$?
 fi
 exit $retval

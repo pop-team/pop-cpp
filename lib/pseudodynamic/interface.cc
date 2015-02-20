@@ -71,10 +71,12 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
         LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
         return err;
     } else if(pid==0) {
+        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ?
         int nf=popc_getdtablesize();
         for(int fd=3; fd<nf; fd++) {
             popc_close(fd);
         }
+        */
         if(env!=NULL) {
             while(*env!=NULL) {
                 putenv(popc_strdup(*env));
@@ -148,7 +150,7 @@ paroc_accesspoint * paroc_interface::batchaccesspoint=NULL;
 //paroc_interface base class
 
 paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
-    LOG_DEBUG("CREATING INTERFACE DEFAULT %s (OD:%s)", ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("Create interface for class %s (OD secure:%s)", ClassName(), (od.isSecureSet())?"true":"false");
 
     if(od.isSecureSet()) {
         accesspoint.SetSecure();
@@ -197,23 +199,6 @@ paroc_interface::paroc_interface(const paroc_interface &inf) {
 
     Bind(inf.GetAccessPoint());
 }
-
-paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
-    _ssh_tunneling=false;
-    __paroc_combox = combox;
-    __paroc_buf = buffer;
-
-    //_popc_async_construction_thread=NULL;
-    if(combox != NULL) {
-        POPString url;
-        combox->GetUrl(url);
-        accesspoint.SetAccessString(url);
-        if(__paroc_buf == NULL) {
-            __paroc_buf=combox->GetBufferFactory()->CreateBuffer();
-        }
-    }
-}
-
 
 /**
  * Interface destructor
@@ -297,7 +282,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
         if(ref > 0) {
             Bind(accesspoint);
-            LOG_DEBUG("binded %s", accesspoint.GetAccessString());
+            LOG_DEBUG("Bound %s", accesspoint.GetAccessString());
             AddRef();
             //DecRef();
         }
@@ -318,8 +303,9 @@ void paroc_interface::allocate_only() {
     Allocate();
 }
 
+// note LWK: In the future the Allocate method should use allocators and allocators factories. Just as in the dynamic version
 void paroc_interface::Allocate() {
-LOG_DEBUG("INTERFACE: Allocate start");
+    LOG_DEBUG("INTERFACE: Allocate start");
     Release();
     POPString protocol;
     od.getProtocol(protocol);
@@ -337,13 +323,13 @@ LOG_DEBUG("INTERFACE: Allocate start");
     } else if(!TryLocal(objaccess)) {
 
         POPString objname(ClassName());
-LOG_DEBUG("INTERFACE: Will try to create a parallel object: %s", objname.GetString());
+	LOG_DEBUG("INTERFACE: Will try to create a parallel object: %s", objname.GetString());
         //Exec using JobMgr interface...
         POPString platforms;
         od.getPlatforms(platforms);
 
         if(platforms.Length()<=0) {
-LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::appservice.GetAccessString());
+		LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::appservice.GetAccessString());
             /*CodeMgr mgr(paroc_system::appservice);
             if (mgr.GetPlatform(objname, platforms)<=0) {
                 paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
@@ -368,41 +354,6 @@ LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::
             sprintf(str,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
             jobcontact.SetAccessString(str);
         }
-
-        /*  try
-            {
-                LOG_DEBUG("JOBMGR --> connect to %s\n", jobcontact.GetAccessString());
-                JobCoreService resources(jobcontact);
-                int ret;
-                if (batchindex==0 && batchsize>1)
-                {
-                    if (batchaccesspoint!=NULL) delete [] batchaccesspoint;
-                    batchaccesspoint=new paroc_accesspoint[batchsize];
-                    LOG_DEBUG("Create Object : %s\n", ClassName());
-                //TODO put an other array than batchaccesspoint
-                    ret=resources.CreateObject(paroc_system::appservice,objname,od, batchsize,  batchaccesspoint, batchsize, batchaccesspoint);
-                    if (ret==0) objaccess=batchaccesspoint[batchindex++];
-                LOG_DEBUG("Return %d", ret);
-                } else{
-
-                    LOG_DEBUG("Create Object : %s\n", ClassName());
-                ret=resources.CreateObject(paroc_system::appservice,objname,od, 1,  &objaccess, 1, &remotejobcontact);
-                LOG_DEBUG("Return %d", ret);
-                }
-
-                if (ret != 0)
-                  paroc_exception::paroc_throw(ret,ClassName());
-
-
-
-          // Get the POPAppID
-          AppCoreService acs(paroc_system::appservice);
-          popAppId = acs.GetPOPCAppID();
-
-            } catch (paroc_exception * e) {
-                paroc_system::perror(e);
-                paroc_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"POP-C++ error: Cannot create object via POP-C++ Job Manager");
-            } */
     }
     Bind(objaccess);
 }
@@ -435,11 +386,11 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
             try {
                 Bind(addr);
                 return;
-            } catch(paroc_exception *e) {
-                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e->what());
-                delete e;
+            } catch(std::exception &e) {
+                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
                 continue;
             }
+            LOG_DEBUG("Successful bind to %s", addr);
         }
     } else {
         //The user specify the protocol in OD, select the preference and match with the access point...
@@ -452,9 +403,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
                     try {
                         Bind(addr);
                         return;
-                    } catch(paroc_exception *e) {
-                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e->what());
-                        delete e;
+                    } catch(std::exception &e) {
+                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
                         continue;
                     }
                 }
@@ -462,7 +412,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
         }
     }
 
-    paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName());
+    LOG_WARNING("Cannot find suitable protocol");
+    paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName(), "Cannot find suitable protocol");
 }
 
 void paroc_interface::Bind(const char *dest) {
@@ -475,16 +426,16 @@ void paroc_interface::Bind(const char *dest) {
 
     paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
     POPString p;
-    fact->GetNames(p);
     if(!fact) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
     }
+    fact->GetNames(p);
 
     // Create combox
     __paroc_combox = fact->Create("mpi");
 
     if(!__paroc_combox) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName());
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
     }
 
     // Create associated buffer
@@ -526,17 +477,16 @@ void paroc_interface::Bind(const char *dest) {
         }
 
         default:
-            LOG_WARNING("INTERFACE: Unknown binding status");
+            LOG_WARNING("Unknown binding status");
             Release();
-            paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, ClassName());
+            paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
         }
     } else {
         int code = errno;
 
-        LOG_WARNING("Fail to connect from [%s] to [%s]",(const char *)paroc_system::GetHost(),dest);
-        LOG_WARNING("Create socket fails. Reason: %s.",strerror(code));
+        LOG_WARNING("Fail to connect from [%s] to [%s]. Error code: %s",(const char *)paroc_system::GetHost(),dest,strerror(code));
         Release();
-        paroc_exception::paroc_throw(code, ClassName());
+        paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
 
     __paroc_combox->SetTimeout(-1);
@@ -581,7 +531,7 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
         int status = LocalExec(hoststr, codefile, ClassName(), paroc_system::jobservice, paroc_system::appservice,&objaccess,1,od);
 
         if(status != 0) {
-            paroc_exception::paroc_throw(status, ClassName());
+            paroc_exception::paroc_throw(status, "Invalid status", ClassName());
         }
         return (status==0);
     }
@@ -649,6 +599,7 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
 
 int paroc_interface::AddRef() {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_WARNING("AddRef cannot be called");
         return -1;
     }
 
@@ -670,6 +621,7 @@ int paroc_interface::AddRef() {
 
 int paroc_interface::DecRef() {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_WARNING("DecRef cannot be called");
         return -1;
     }
 
@@ -692,6 +644,7 @@ int paroc_interface::DecRef() {
 
 bool paroc_interface::Encoding(POPString encoding) {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_WARNING("Encoding cannot be called");
         return false;
     }
 
@@ -732,6 +685,7 @@ bool paroc_interface::Encoding(POPString encoding) {
 
 void paroc_interface::Kill() {
     if(!__paroc_combox) {
+        LOG_WARNING("Kill cannot be called");
         return;
     }
 
@@ -749,6 +703,7 @@ void paroc_interface::Kill() {
 
 bool paroc_interface::ObjectActive() {
     if(!__paroc_combox || !__paroc_buf) {
+        LOG_DEBUG("ObjectActive cannot be called");
         return false;
     }
 
@@ -775,6 +730,7 @@ bool paroc_interface::RecvCtrl() {
     od.getCheckConnection(time_alive, time_control);
     if(!__paroc_combox || !__paroc_buf) {
         __paroc_combox->SetTimeout(oldTimeout);
+        LOG_ERROR("Error");
         return false;
     };
 
@@ -787,7 +743,7 @@ bool paroc_interface::RecvCtrl() {
         if(t != NULL) {
             if(!__paroc_buf->Recv(*__paroc_combox,t)) {
                 __paroc_combox->SetTimeout(oldTimeout);
-                paroc_exception::paroc_throw(errno);
+                paroc_exception::paroc_throw("Error in od disconnect 1");
             } else {
                 __paroc_combox->SetTimeout(oldTimeout);
                 return true;
@@ -799,7 +755,7 @@ bool paroc_interface::RecvCtrl() {
 
         if(!__paroc_buf->Send(*__paroc_combox)) {
             __paroc_combox->SetTimeout(oldTimeout);
-            paroc_exception::paroc_throw(errno);
+            paroc_exception::paroc_throw("Error in od disconnect 2");
         }
         __paroc_combox->SetTimeout(time_alive);
         if(!__paroc_buf->RecvCtrl(*__paroc_combox)) {
@@ -849,7 +805,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
         }
     }
 
-    paroc_exception::paroc_throw(POPC_NO_ENCODING, ClassName());
+    paroc_exception::paroc_throw(POPC_NO_ENCODING, ClassName(), "NegociateEncoding failed");
 }
 
         /**
@@ -863,7 +819,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     if(codefile==NULL) {
         return ENOENT;
     }
-    signal(SIGCHLD, SIG_IGN);
+    popc_signal(SIGCHLD, SIG_IGN);
 
       while (isspace(*codefile)) codefile++;
 
@@ -1033,7 +989,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     MPI::COMM_WORLD.Recv(&dest, 1, MPI_INT, 1, 13);
 
     if(dest < 0) {
-        paroc_exception::paroc_throw(ALLOCATION_EXCEPTION,"POP-C++ error: Cannot create object via POP-C++ (MPI pool of object is not big enough)");
+        paroc_exception::paroc_throw(ALLOCATION_EXCEPTION,"Cannot create object via POP-C++ (MPI pool of object is not big enough)");
     }
 
     /*LOG_INFO("INTERFACE: allocate idle %d with %s %s", dest, codefile, executable_args.c_str());
@@ -1182,15 +1138,15 @@ void paroc_interface::ApplyCommPattern(const char *pattern, std::vector<char*>& 
 // DEPRECATED
 void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
     if(!buf->Send(*__paroc_combox)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer sent failed (old)");
     }
 }
 
 // DEPRECATED // TODO LW: See what to do
 void paroc_interface::paroc_Response(paroc_buffer *buf) {
     if(!buf->Recv(*__paroc_combox)) {
-        LOG_INFO("Throw from response");
-        paroc_exception::paroc_throw_errno();
+        printf("Throw from response");
+        paroc_exception::paroc_throw("Buffer receive failed (old)");
     }
     paroc_buffer::CheckAndThrow(*buf);
 }
@@ -1200,7 +1156,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf) {
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Send((*__paroc_combox), conn)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer sent failed");
     }
     LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == NULL) ? "is null" : "is not null");
 }
@@ -1210,7 +1166,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
  */
 void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Recv((*__paroc_combox), conn)) {
-        paroc_exception::paroc_throw_errno();
+        paroc_exception::paroc_throw("Buffer receive failed");
     }
     LOG_DEBUG("INTERFACE: paroc_response will disconnect the connection");
     paroc_buffer::CheckAndThrow(*buf);
@@ -1279,8 +1235,9 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
         return local_port;
     } else {
         //paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
+        LOG_WARNING("Executable not found");
     }
-
+    LOG_WARNING("CreateSSHTunnel returned with error code %d", error_code);
     return error_code;
 }
 
@@ -1317,8 +1274,8 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
     }
     int pid = atoi(buf);
     LOG_WARNING("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
-    if(pid!=0)
-       popc_kill(pid, popc_SIGKILL);
+    /*if(pid!=0)
+       popc_kill(pid, popc_SIGKILL);*/
     return pid;
 }
 

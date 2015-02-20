@@ -88,9 +88,6 @@ public:
      */
     static paroc_string GetDefaultInterface();
 
-    static void perror(const char *msg);
-    static void perror(const paroc_exception *e);
-
     /**
      * @brief Sets object execution on a given CPU
      */
@@ -106,7 +103,6 @@ public:
     static std::ostringstream _popc_cout;
 
 private:
-    static const char *paroc_errstr[17];
     static paroc_string POPC_HostName;  //V1.3m
 
     static AppCoreService *CreateAppCoreService(char *codelocation);

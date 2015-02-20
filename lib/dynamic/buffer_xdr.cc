@@ -18,7 +18,7 @@
 
 #include <rpc/types.h>
 #include <rpc/xdr.h>
-#include "paroc_interface.h"
+// #include "paroc_interface.h"
 #include "paroc_buffer_xdr.h"
 #include "paroc_exception.h"
 
@@ -351,7 +351,7 @@ void paroc_buffer_xdr::UnPack(signed char *data, int n) {
 
 void paroc_buffer_xdr::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT);
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in paroc_buffer_xdr::CheckUnPack");
     }
 }
 
@@ -413,6 +413,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     n = 20;
     do {
         if((i = s.Recv(dat, n, conn)) <= 0) {
+            LOG_DEBUG("combox recv returned %d", i);
             return false;
         }
         n -= i;
@@ -442,6 +443,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
         header.SetMethodID(popc_ntohl(h[3]));
         break;
     default:
+        LOG_ERROR("Unknown type %d", type);
         return false;
     }
 
@@ -453,6 +455,7 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
 
     while(n) {
         if((i = s.Recv(dat,n, conn)) <= 0) {
+            LOG_DEBUG("combox recv returned %d", i);
             return false;
         }
         dat += i;
@@ -545,7 +548,7 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
         paroc_connection * t = (paroc_connection *) s.Wait();
         if(!t) {
-            paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive");
+            paroc_exception::paroc_throw("Remote Object not alive (1)");
         }
 
         if(!Recv(s, t)) {
@@ -562,7 +565,7 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 auto t = (paroc_connection *) s.Wait();
 
                 if(!t) {
-                    paroc_exception::paroc_throw(9998, "[paroc_buffer_xdr.cc] : Remote Object not alive");
+                    paroc_exception::paroc_throw("Remote Object not alive (2)");
                 }
 
                 if(!Recv(s, t)) {

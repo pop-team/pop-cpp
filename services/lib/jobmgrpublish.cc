@@ -39,9 +39,8 @@ int main(int argc, char **argv) {
             node.SetAccessString(slaver);
             info.RegisterNode(node);
         }
-    } catch(paroc_exception *e) {
-        LOG_WARNING("Exception occured. Extra info: %s", (const char *)e->Extra());
-        delete e;
+    } catch(std::exception &e) {
+        LOG_ERROR("Exception occured. Extra info: %s", e.what());
     }
     return 0;
 }

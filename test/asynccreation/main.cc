@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
         printf("Before calling method 2 on POPObject o3\n");
         o3.secondMethod();
         printf("Method with void parameter: test succeeded, destroying objects ...\n");
-    } catch(POPException e) {
+    } catch(POPException& e) {
         printf("Method with void parameter: test failed, error no.%d, destroying objects:\n", e.Code());
         return 1;
     } catch(std::exception& e) {

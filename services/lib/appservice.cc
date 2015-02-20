@@ -18,7 +18,7 @@
 #include <locale>
 #include "appservice.ph"
 
-#include "jobmgr.ph"
+// #include "jobmgr.ph"
 #include "popc_logger.h"
 
 using namespace std;
@@ -49,27 +49,31 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
     }
     LoadAddOn();
 
+    LOG_DEBUG("Create AppCoreService");
 }
 
 AppCoreService::~AppCoreService() {
+	/* Commented LWK: This raises errors and seems pointless here
     try {
+        // Try to end the application on job mgr
         JobMgr jm(paroc_system::jobservice);
         jm.ApplicationEnd(_popcAppId, true);
     } catch(std::exception &e) {
         LOG_WARNING("Exception while destroying JobMgr: %s", e.what());
-    } catch(...) {
-        LOG_WARNING("Exception while destroying JobMgr");
     }
+    */
 
     for(auto& t : servicelist){
         free(t.name);
         try {
             t.service->Stop(mychallenge);
-        } catch(...) {
-            LOG_WARNING("Exception while stopping service");
+        } catch(std::exception& e) {
+            LOG_WARNING("Exception while stopping service: %s", e.what());
         }
         delete t.service;
     }
+
+    LOG_DEBUG("Destroyed AppCoreService");
 }
 
 bool AppCoreService::QueryService(const POPString &name, paroc_service_base &service) {
@@ -110,8 +114,8 @@ bool AppCoreService::RegisterService(const POPString &name, const paroc_service_
     try {
         t.service=new paroc_service_base(newservice);
         t.name=popc_strdup(name);
-    } catch(...) {
-        LOG_WARNING("Exception while creating service");
+    } catch(std::exception& e) {
+        LOG_WARNING("Exception while creating service: %s", e.what());
         return false;
     }
     servicelist.push_back(t);
@@ -184,8 +188,8 @@ void AppCoreService::LoadAddOn() {
         try {
             paroc_service_base s(ap);
             s.Start(mychallenge);
-        } catch(...) {
-            LOG_WARNING("Can not connect to %s",service);
+        } catch(std::exception& e) {
+            LOG_WARNING("Can not connect to %s: %s",service, e.what());
             continue;
         }
         if(tmp!=NULL && sscanf(tmp+8,"%s",service)==1) {
