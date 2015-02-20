@@ -19,6 +19,9 @@ add_definitions(-Wall -Wextra -Werror)
 # Compile in C++11 mode
 add_definitions(-std=c++11)
 
+# Indicate that we are compiling for pseudo dynamic
+add_definitions(-DPOP_PSEUDO)
+
 add_library(popc_common_psdyn
     broker_receive.cc
     buffer_raw.cc
