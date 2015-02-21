@@ -458,7 +458,7 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
         header.SetMethodID(h[3]);
         break;
     default:
-        LOG_ERROR("[CORE] unknown type: %d", type);
+        LOG_ERROR("Unknown type %d", type);
         return false;
     }
 
@@ -495,6 +495,7 @@ char* paroc_buffer_raw::get_load() {
     if(dat == NULL) {
         return NULL;
     }
+
     int n = packeddata.size();
     int h[5];
     memset(h,0, 5 * sizeof(int));
@@ -520,7 +521,9 @@ char* paroc_buffer_raw::get_load() {
     default:
         return NULL;
     }
+
     memcpy(dat, h, 20);
+
     return packeddata.data();
 }
 
@@ -532,12 +535,14 @@ void paroc_buffer_raw::load(char* data, int length) {
 bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
         paroc_connection* t = (paroc_connection*) s.Wait();
-        if(t == NULL) {
-            paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive");
+        if(!t) {
+            paroc_exception::paroc_throw("Remote Object not alive (1)");
         }
+
         if(!Recv(s, t)) {
             paroc_exception::paroc_throw(errno);
         }
+
         if(header.GetType() == TYPE_RESPONSE) {
             if(header.GetClassID() == 0 && header.GetMethodID() == 6) {
                 return true;
@@ -547,7 +552,7 @@ bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 paroc_array<char> packeddataold = packeddata;
                 paroc_connection * t = (paroc_connection *) s.Wait();
                 if(t == NULL) {
-                    paroc_exception::paroc_throw(9999, "[paroc_buffer_raw.cc] : Remote Object not alive");
+                    paroc_exception::paroc_throw("Remote Object not alive (2)");
                 }
                 if(!Recv(s, t)) {
                     paroc_exception::paroc_throw(errno);
@@ -556,9 +561,11 @@ bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 header = h;
                 unpackpos = unpackposold;
                 packeddata = packeddataold;
+
                 return false;
             }
         }
     }
 }
+
 #endif

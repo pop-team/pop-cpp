@@ -312,6 +312,7 @@ POPString paroc_system::GetDefaultInterface() {
     return POPString(iface);
 }
 
+// TODO LW: Should probably be in intface
 bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
 #ifndef __WIN32__
     (void) iface;
@@ -402,27 +403,9 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
         }
         //paroc_system::appservice=mgr->GetAccessPoint();
         paroc_system::appservice.SetAsService();
-    } catch(POPException &e) {
-        LOG_WARNING("POP-C++ Exception occurs in paroc_system::Initialize: %s", e.what());
-#ifndef DEFINE_UDS_SUPPORT
-        /*if (mgr!=NULL) {
-            mgr->KillAll();
-            mgr->Stop(challenge);
-            delete mgr;
-            mgr=NULL;
-        }*/
-#endif
-        return false;
-    } catch(std::exception &e) {
+     } catch(std::exception &e) {
         LOG_WARNING("Exception occurs in paroc_system::Initialize: %s", e.what());
- #ifndef DEFINE_UDS_SUPPORT
-       /*if (mgr!=NULL) {
-            mgr->KillAll();
-            mgr->Stop(challenge);
-            delete mgr;
-            mgr=NULL;
-        }*/
-#endif
+        Finalize(false);
         return false;
     }
 
