@@ -81,6 +81,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         CodeMgr mgr(paroc_system::appservice);
         if(rarch.empty()) {
             rarch=paroc_system::platform;
+            od.setArch(rarch); // TODO LW: Fix this cleanly!
         }
         if(!mgr.QueryCode(objectname,rarch, codefile)) {
             paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname, "QueryCode failed");
