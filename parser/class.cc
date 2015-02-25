@@ -18,6 +18,9 @@
 #include "paroc_utils.h"
 
 #define MIN_CLASSID 1000
+
+using namespace std;
+
 char Class::interface_base[]="paroc_interface";
 char Class::broker_base[]="paroc_broker";
 char Class::object_base[]="paroc_object";
@@ -314,7 +317,7 @@ bool Class::findPureVirtual(CArrayMethod &lst) {
     return returnFlag;
 }
 
-bool Class::GenerateClient(std::string &code/*, bool isPOPCPPCompilation*/) {
+bool Class::GenerateClient(string &code/*, bool isPOPCPPCompilation*/) {
     char tmpcode[10240];
 
     if(is_collective()) {
@@ -322,10 +325,10 @@ bool Class::GenerateClient(std::string &code/*, bool isPOPCPPCompilation*/) {
         code += tmpcode;
     }
 
-    char *outfile=GetCodeFile()->GetOutputName();
-    if(outfile != NULL) {
+    const string& outfile=GetCodeFile()->GetOutputName();
+    if(!outfile.empty()) {
         int lines=CountCodeLines(code);
-        sprintf(tmpcode,"\n# %d \"%s\"\n",lines+3, outfile);
+        sprintf(tmpcode,"\n# %d \"%s\"\n",lines+3, outfile.c_str());
         code += tmpcode;
 
         if(strcmp(strnamespace.c_str(), "") != 0) {
@@ -427,9 +430,9 @@ bool Class::GenerateClient(std::string &code/*, bool isPOPCPPCompilation*/) {
         code += tmpcode;
     }
 
-    char *fname = GetCodeFile()->GetFileName();
-    if(endline > 0 && fname != NULL) {
-        sprintf(tmpcode,"\n# %d \"%s\"\n", endline, fname);
+    const string& fname = GetCodeFile()->GetFileName();
+    if(endline > 0 && !fname.empty()) {
+        sprintf(tmpcode,"\n# %d \"%s\"\n", endline, fname.c_str());
         code += tmpcode;
     }
     return true;
@@ -467,15 +470,15 @@ bool Class::generate_broker_header_pog(std::string &code) {
     char str[1024];
     char tmpcode[10240];
     char brokername[256];
-    char *outfile = GetCodeFile()->GetOutputName();
+    const string& outfile = GetCodeFile()->GetOutputName();
 
     // Print a comment in the generated code
     sprintf(tmpcode, "\n// Generate broker-side code for a POG\n");
     code += tmpcode;
 
-    if(outfile != NULL) {
+    if(!outfile.empty()) {
         int lines = CountCodeLines(code);
-        sprintf(tmpcode, "\n# %d \"%s\"\n", lines+3, outfile);
+        sprintf(tmpcode, "\n# %d \"%s\"\n", lines+3, outfile.c_str());
         code += tmpcode;
     }
 
@@ -527,9 +530,9 @@ bool Class::generate_broker_header_pog(std::string &code) {
     strcpy(str,"\n}\n;");
     code += str;
 
-    char *fname = GetCodeFile()->GetFileName();
-    if(endline > 0 && fname != NULL) {
-        sprintf(str, "\n# %d \"%s\"\n", endline, fname);
+    const string& fname = GetCodeFile()->GetFileName();
+    if(endline > 0 && !fname.empty()) {
+        sprintf(str, "\n# %d \"%s\"\n", endline, fname.c_str());
         code += str;
     }
     return true;
@@ -538,9 +541,9 @@ bool Class::generate_broker_header_pog(std::string &code) {
 bool Class::generate_header_pog(std::string &code, bool interface) {
     char tmpcode[10240];
     char str[1024];
-    char *fname = GetCodeFile()->GetFileName();
-    if(startline > 0 && fname != NULL) {
-        sprintf(str, "\n# %d \"%s\"\n", startline, fname);
+    const string& fname = GetCodeFile()->GetFileName();
+    if(startline > 0 && !fname.empty()) {
+        sprintf(str, "\n# %d \"%s\"\n", startline, fname.c_str());
         code += str;
     }
 
@@ -695,8 +698,8 @@ bool Class::generate_header_pog(std::string &code, bool interface) {
     strcpy(str,"\n};\n");
     code += str;
 
-    if(endline>0 && fname!=NULL) {
-        sprintf(str,"\n# %d \"%s\"\n",endline,fname);
+    if(endline>0 && !fname.empty()) {
+        sprintf(str,"\n# %d \"%s\"\n",endline,fname.c_str());
         code += str;
     }
 
@@ -707,9 +710,9 @@ bool Class::GenerateHeader(std::string &code, bool interface/*, bool isPOPCPPCom
     char tmpcode[10240];
     char str[1024];
 
-    char *fname=GetCodeFile()->GetFileName();
-    if(startline>0 && fname!=NULL) {
-        sprintf(str,"\n# %d \"%s\"\n",startline,fname);
+    const string& fname = GetCodeFile()->GetFileName();
+    if(startline>0 && !fname.empty()) {
+        sprintf(str,"\n# %d \"%s\"\n",startline,fname.c_str());
         code += str;
     }
 
@@ -875,8 +878,8 @@ bool Class::GenerateHeader(std::string &code, bool interface/*, bool isPOPCPPCom
 
 
 
-    if(endline>0 && fname!=NULL) {
-        sprintf(str,"\n# %d \"%s\"\n",endline,fname);
+    if(endline>0 && !fname.empty()) {
+        sprintf(str,"\n# %d \"%s\"\n",endline,fname.c_str());
         code += str;
     }
 
@@ -896,10 +899,10 @@ bool Class::GenerateBrokerHeader(std::string &code/*, bool isPOPCPPCompilation*/
         code += tmpcode;
     }
 
-    char *outfile = GetCodeFile()->GetOutputName();
-    if(outfile != NULL) {
+    const string& outfile = GetCodeFile()->GetOutputName();
+    if(!outfile.empty()) {
         int lines = CountCodeLines(code);
-        sprintf(tmpcode, "\n# %d \"%s\"\n", lines+3, outfile);
+        sprintf(tmpcode, "\n# %d \"%s\"\n", lines+3, outfile.c_str());
         code += tmpcode;
     }
     sprintf(brokername,"%s%s",name, Class::POG_BROKER_POSTFIX);
@@ -952,9 +955,9 @@ bool Class::GenerateBrokerHeader(std::string &code/*, bool isPOPCPPCompilation*/
 
     code += str;
 
-    char *fname=GetCodeFile()->GetFileName();
-    if(endline>0 && fname!=NULL) {
-        sprintf(str,"\n# %d \"%s\"\n",endline,fname);
+    const string& fname=GetCodeFile()->GetFileName();
+    if(endline>0 && !fname.empty()) {
+        sprintf(str,"\n# %d \"%s\"\n",endline,fname.c_str());
         code += str;
     }
     return true;
@@ -977,10 +980,10 @@ bool Class::GenerateBroker(std::string &code/*, bool isPOPCPPCompilation*/) {
 
     CodeFile *codefile=GetCodeFile();
 
-    char *outfile = codefile->GetOutputName();
-    if(outfile != NULL) {
+    const string& outfile = codefile->GetOutputName();
+    if(!outfile.empty()) {
         int lines = CountCodeLines(code);
-        sprintf(tmpcode, "\n# %d \"%s\"\n", lines+3, outfile);
+        sprintf(tmpcode, "\n# %d \"%s\"\n", lines+3, outfile.c_str());
         code += tmpcode;
     }
 
@@ -1099,9 +1102,9 @@ bool Class::GenerateBroker(std::string &code/*, bool isPOPCPPCompilation*/) {
     }
     code += tmpcode;
 
-    char *fname = GetCodeFile()->GetFileName();
-    if(endline > 0 && fname != NULL) {
-        sprintf(str, "\n# %d \"%s\"\n", endline, fname);
+    const string& fname = GetCodeFile()->GetFileName();
+    if(endline > 0 && !fname.empty()) {
+        sprintf(str, "\n# %d \"%s\"\n", endline, fname.c_str());
         code += str;
     }
 

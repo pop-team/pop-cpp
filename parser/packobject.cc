@@ -3,15 +3,17 @@
 #include "paroc_utils.h"
 #include <assert.h>
 
+using namespace std;
+
 //PackObject implementation
 
 PackObject::PackObject(CodeFile *file): CodeData(file), startline(-1), endline(-1) {}
 
 void PackObject::GenerateCode(std::string &output) {
     char str[1024];
-    char *fname = GetCodeFile()->GetFileName();
-    if(startline > 0 && fname != NULL) {
-        sprintf(str,"\n# %d \"%s\"\n",startline,fname);
+    const string& fname = GetCodeFile()->GetFileName();
+    if(startline > 0 && !fname.empty()) {
+        sprintf(str,"\n# %d \"%s\"\n",startline,fname.c_str());
         output += str;
     }
 
@@ -39,13 +41,13 @@ void PackObject::GenerateCode(std::string &output) {
     }
     strcpy(str,"\n\treturn false;\n}\n");
     output += str;
-    if(endline>0 && fname!=NULL) {
-        sprintf(str,"\n# %d \"%s\"\n",endline,fname);
+    if(endline>0 && !fname.empty()) {
+        sprintf(str,"\n# %d \"%s\"\n",endline,fname.c_str());
         output += str;
     }
 
-    if(endline>0 && fname!=NULL) {
-        sprintf(str,"\n# %d \"%s\"\n",endline,fname);
+    if(endline>0 && !fname.empty()) {
+        sprintf(str,"\n# %d \"%s\"\n",endline,fname.c_str());
         output += str;
     }
     return;

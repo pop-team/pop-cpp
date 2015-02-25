@@ -1059,7 +1059,7 @@ member_declaration:  enum_declaration ';'
 | attribute_definition ';'
 {
     if (accessmodifier == PUBLIC) {
-      sprintf(tmp,"%s:%d: attributes of a parallel class must be private or protected.\n",thisCodeFile->GetFileName(), linenumber);
+      sprintf(tmp,"%s:%d: attributes of a parallel class must be private or protected.\n",thisCodeFile->GetFileName().c_str(), linenumber);
       errormsg(tmp);
       exit(1);
     }
@@ -2401,7 +2401,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
     }
 
     linenumber = 1;
-    thisCodeFile = new CodeFile(NULL);
+    thisCodeFile = new CodeFile("");
 
     if (outfile) {
         thisCodeFile->SetOutputName(outfile);

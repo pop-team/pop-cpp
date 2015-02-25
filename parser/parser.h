@@ -158,18 +158,22 @@ protected:
  */
 class CodeFile {
 public:
-    CodeFile(char *fname);
+    CodeFile(const std::string& fname);
     ~CodeFile();
     void AddCodeData(CodeData *code);
     void EmptyCodeData();
     void GenerateCode(std::string &output, bool client=true, bool broker=true/*, bool isPOPCPPCompilation=false*/);
     CArrayCodeData *GetCodes();
     bool HasClass();
-    char *GetFileName();
-    void SetFileName(char *name);
 
-    char *GetOutputName();
-    void SetOutputName(char *name);
+    inline const std::string& GetFileName() const  {return filename;}
+    inline void SetFileName(const std::string name) {filename = name;}
+
+    inline const std::string& GetPath() const  {return path;}
+    inline void SetPath(const std::string name) {path = name;}
+
+    inline const std::string& GetOutputName() const {return outfile;}
+    void SetOutputName(const std::string& name) {outfile = name;}
 
     Class *FindClass(char *clname);
     /**
@@ -195,12 +199,13 @@ public:
     bool IsAsyncAllocationDisable();
 
 
-    static bool SameFile(char *file1, char *file2);
+    static bool SameFile(const char *file1, const char *file2);
 
 
 protected:
-    char *filename;
-    char *outfile;
+    std::string filename;
+    std::string path;
+    std::string outfile;
     bool isCoreCompilation;
     bool isAsyncAllocationDisable;
     CArrayCodeData codes;

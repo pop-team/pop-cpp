@@ -14,11 +14,10 @@
 #include "parser.h"
 #include "paroc_utils.h"
 
-CodeFile::CodeFile(char *fname) {
+CodeFile::CodeFile(const std::string& fname) {
     isCoreCompilation = false;              // Core compilation is disable by default.
     isAsyncAllocationDisable = false;   // Asynchronous allocation is enable by default.
-    filename = (fname == NULL) ? NULL : popc_strdup(fname);
-    outfile=NULL;
+    filename = fname;
     DataType *std;
     for(int i=0; i<MAXSTDTYPES; i++) {
         std=new DataType(DataType::stdType[i]);
@@ -27,14 +26,6 @@ CodeFile::CodeFile(char *fname) {
 }
 
 CodeFile::~CodeFile() {
-    if(filename != NULL) {
-        free(filename);
-    }
-
-    if(outfile != NULL) {
-        free(outfile);
-    }
-
     EmptyCodeData();
 }
 
@@ -66,7 +57,7 @@ void CodeFile::GenerateCode(std::string &output, bool client, bool broker) {
         if(codes[j]->Type() == TYPE_CLASS) {
             Class &cl = *(Class *)(codes[j]);
             char *clfname = cl.GetFileInfo();
-            if(filename == NULL || clfname == NULL || SameFile(clfname, filename)) {
+            if(filename.empty() || clfname == NULL || SameFile(clfname, filename.c_str())) {
                 if(client) {
                     cl.GenerateClient(output);
                 }
@@ -83,28 +74,6 @@ CArrayCodeData *CodeFile::GetCodes() {
 }
 bool CodeFile::HasClass() {
     return (classlist.size()>0);
-}
-
-char *CodeFile::GetFileName() {
-    return filename;
-}
-
-void CodeFile::SetFileName(char *name) {
-    if(filename != NULL) {
-        free(filename);
-    }
-    filename = (name == NULL) ? NULL : popc_strdup(name);
-}
-
-char *CodeFile::GetOutputName() {
-    return outfile;
-}
-
-void CodeFile::SetOutputName(char *name) {
-    if(outfile != NULL) {
-        free(outfile);
-    }
-    outfile = (name == NULL) ? NULL : popc_strdup(name);
 }
 
 Class *CodeFile::FindClass(char *clname) {
@@ -205,12 +174,12 @@ void CodeFile::AddDataType(DataType *type) {
 
 }
 
-bool CodeFile::SameFile(char *file1, char *file2) {
+bool CodeFile::SameFile(const char *file1, const char *file2) {
     if(paroc_utils::isEqual(file1,file2)) {
         return true;
     }
-    char *fn1=strrchr(file1,'/');
-    char *fn2=strrchr(file2,'/');
+    const char *fn1=strrchr(file1,'/');
+    const char *fn2=strrchr(file2,'/');
     char dir1[256], dir2[256];
 
     if(fn1==NULL && fn2==NULL) {

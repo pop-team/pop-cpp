@@ -125,7 +125,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     if (t2 != NULL) {
       *t2=0;
       strcpy(filename,t1);
-      if (thisCodeFile->GetFileName()==NULL) {
+      if (thisCodeFile->GetFileName().empty()) {
         thisCodeFile->SetFileName(filename);
       }
       *t2='"';
@@ -144,7 +144,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     if (t2 != NULL) {
       *t2=0;
       strcpy(filename,t1);
-      if (thisCodeFile->GetFileName()==NULL) {
+      if (thisCodeFile->GetFileName().empty()) {
         thisCodeFile->SetFileName(filename);
       }
       *t2='"';
