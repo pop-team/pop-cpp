@@ -25,6 +25,8 @@
 #include "batchmgr.ph"
 #include "appservice.ph"
 
+using namespace std;
+
 #define ALLOC_TIMEOUT 60
 /**
  * Allocator over TCP/IP with local mechanism constructor
@@ -45,13 +47,7 @@ POPC_Allocator_tcpip_local::~POPC_Allocator_tcpip_local() {
  * @return A string representation of the access-point
  */
 POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& od) {
-    POPString hostname;
     POPString codefile;
-    POPString ruser;
-    POPString rcore;
-    POPString rarch;
-    POPString batch;
-    POPString cwd;
 
     char tmpstr[10240];
     char *argv[1024];
@@ -59,31 +55,31 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     const char *rport = NULL;
     bool isManual=od.getIsManual();
 
-    od.getURL(hostname);
-    od.getUser(ruser);
-    od.getCore(rcore);
-    od.getArch(rarch);
-    od.getBatch(batch);
-    od.getDirectory(cwd);
+    string hostname = od.getURL();
+    const string& ruser = od.getUser();
+    const string& rcore = od.getCore();
+    POPString rarch = od.getArch().c_str();
+    const string& batch = od.getBatch();
+    const string& cwd = od.getCwd();
 
     int n = 0;
 
-    if(hostname==NULL) {
-        hostname=paroc_system::GetHost();
+    if(hostname.empty()) {
+        hostname=paroc_system::GetHost().c_str();
     }
 
-    if(hostname !=NULL &&(tmp=(char*)strchr(hostname, ':')) !=NULL) {
+    if(!hostname.empty() &&(tmp=(char*)strchr(hostname.c_str(), ':')) !=NULL) {
         *tmp=0;
         rport=tmp+1;
     }
 
     // Get the executable path name
-    od.getExecutable(codefile);
+    codefile = od.getExecutable().c_str();
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
     if(codefile.Length() <= 0) {
         assert(!paroc_system::appservice.IsEmpty());
         CodeMgr mgr(paroc_system::appservice);
-        if(rarch==NULL) {
+        if(rarch.empty()) {
             rarch=paroc_system::platform;
         }
         if(!mgr.QueryCode(objectname,rarch, codefile)) {
@@ -92,26 +88,26 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 
     POPString myhost = paroc_system::GetHost();
-    bool isLocal = (isManual || hostname==NULL || *hostname==0 || paroc_utils::SameContact(myhost, hostname) || paroc_utils::isEqual(hostname, "localhost") || paroc_utils::isEqual(hostname, "127.0.0.1"));
-    if(batch==NULL) {
+    bool isLocal = (isManual || hostname.empty() || paroc_utils::SameContact(myhost.c_str(), hostname.c_str()) || (hostname == "localhost") || (hostname == "127.0.0.1"));
+    if(batch.empty()) {
         if(!isLocal) {
             char *tmp=getenv("POPC_RSH");
             argv[n++]=popc_strdup((tmp==NULL)? "/usr/bin/ssh" :tmp);
-            if(ruser!=NULL && *ruser!=0) {
+            if(!ruser.empty()) {
                 char tmpstr[100];
-                sprintf(tmpstr, "%s@%s", (const char*)ruser, (const char*)hostname);
+                sprintf(tmpstr, "%s@%s", ruser.c_str(), hostname.c_str());
                 argv[n++] = popc_strdup(tmpstr);
             } else {
-                argv[n++] = popc_strdup(hostname);
+                argv[n++] = popc_strdup(hostname.c_str());
             }
         }
     } else {
         char tmpstr[100];
         tmp=getenv("POPC_LOCATION");
         if(tmp!=NULL) {
-            sprintf(tmpstr, "%s/services/popcobjrun.%s", tmp, (const char*)batch);
+            sprintf(tmpstr, "%s/services/popcobjrun.%s", tmp, batch.c_str());
         } else {
-            sprintf(tmpstr, "popcobjrun.%s", (const char*)batch);
+            sprintf(tmpstr, "popcobjrun.%s", batch.c_str());
         }
         argv[n++]=popc_strdup(tmpstr);
         /*if (!isLocal)
@@ -176,8 +172,8 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 
     // Select core
-    if(rcore!=NULL&&rcore!=0) {
-        sprintf(tmpstr,"-core=%s",(const char*)rcore);
+    if(!rcore.empty()) {
+        sprintf(tmpstr,"-core=%s",rcore.c_str());
         argv[n++]=popc_strdup(tmpstr);
     }
 
@@ -199,8 +195,8 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 
     // Add the working directory as argument
-    if(cwd!=NULL && *cwd!=0) {
-        sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
+    if(!cwd.empty()) {
+        sprintf(tmpstr,"-cwd=%s",cwd.c_str());
         argv[n++]=popc_strdup(tmpstr);
     }
 

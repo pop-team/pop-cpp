@@ -41,6 +41,8 @@
 
 #define min(a,b) ((a)<(b) ? (a) : (b))
 
+using namespace std;
+
 class paroc_timerthread: public paroc_thread {
 public:
     paroc_timerthread(int parent_update, int service_timeout, IMPLEMENT_TYPE(JobMgr) *myjobmgr);
@@ -830,9 +832,8 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
     }
 
     //Set operating system
-    POPString r_arch;
-    od.getArch(r_arch);
-    if(r_arch != NULL) {
+    string r_arch = od.getArch();
+    if(!r_arch.empty()) {
         r.setOperatingSystem(r_arch);
     }
 
@@ -1628,8 +1629,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     char env_np[256];
     char env_walltime[256];
     *env_walltime=0;
-    POPString cwd;
-    od.getDirectory(cwd);
+    string cwd = od.getCwd();
     sprintf(env_np,"POPC_NP=%d",howmany);
     *curenv=env_np;
     curenv++;
@@ -1727,8 +1727,8 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 #endif
 
     // Add the working directory as argument
-    if(cwd!=NULL && *cwd!=0) {
-        sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
+    if(!cwd.empty()) {
+        sprintf(tmpstr,"-cwd=%s", cwd.c_str());
         argv[n++]=popc_strdup(tmpstr);
     }
     argv[n]=NULL;

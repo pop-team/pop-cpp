@@ -20,6 +20,7 @@
 #include "paroc_broker.h"
 #include "popc_logger.h"
 
+using namespace std;
 
 /**
  * Allocator constructor
@@ -40,8 +41,9 @@ POPC_Allocator_uds_interconnector::~POPC_Allocator_uds_interconnector() {
  * @return A string representation of the access-point
  */
 POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, paroc_od& od) {
-    POPString p;
-    od.getProtocol(p);
+    // TODO LW : unused ?
+    // POPString p;
+    //od.getProtocol(p);
 
     // Get object description important for this kind
     int node = od.get_node(); // Defined the node on which the parallel object is allocated
@@ -56,11 +58,10 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
     }
 
     // Get the executable path name
-    POPString codefile;
-    od.getExecutable(codefile);
+    const string& codefile = od.getExecutable();
 
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
-    if(codefile.Length() <= 0) {
+    if(codefile.empty()) {
         LOG_ERROR("Code file executable path is NULL ! Abort !");
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "Code file executable path is NULL ! Abort !");
     }
@@ -137,10 +138,9 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
  */
 paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(POPString& objectname, paroc_od& od, int nb) {
 
-    POPString codefile;
-    od.getExecutable(codefile);
+    const string codefile = od.getExecutable();
 
-    if(codefile.Length() <= 0) {
+    if(codefile.empty()) {
         std::cerr << "POP-C++ Error [Core]" << "Cannot allocate group of objects because executbale is not specified" << std::endl;
         return NULL;
     }

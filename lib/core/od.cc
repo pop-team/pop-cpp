@@ -19,6 +19,8 @@
 #include "paroc_od.h"
 #include "paroc_utils.h"
 
+using namespace std;
+
 bool paroc_od::defaultLocalJob=false;
 
 paroc_od::paroc_od() {
@@ -27,8 +29,9 @@ paroc_od::paroc_od() {
     time_alive=time_control=-1;
 #endif
     isManual=false;
-    batchSystem=getenv("POPC_BATCH");
-    if(batchSystem!=NULL) {
+    char *tmp = getenv("POPC_BATCH");
+    if(tmp!=NULL) {
+        batchSystem = tmp;
         hostname=batchSystem;    // To avoid letting the hostname empty
     }
     isLocalJob = defaultLocalJob;
@@ -132,10 +135,10 @@ void paroc_od::walltime(float t) {
     time=t;
 }
 
-void paroc_od::url(const char *str) {
+void paroc_od::url(const string& str) {
     char h[256];
     char *tmpstr;
-    strcpy(h,str);
+    strcpy(h,str.c_str());
 
     // Read if user specified for rsh/ssh
     if((tmpstr=strchr(h,'@'))) {
@@ -158,38 +161,16 @@ void paroc_od::url(const char *str) {
     }
 
     hostname = h;
-    if(!strcmp(hostname, "localhost")) {
+    if(hostname == "localhost") {
         runLocal(true);
     }
 }
 
-void paroc_od::url(const char *h, const char *arch) {
+void paroc_od::url(const string& h, const string& arch) {
     hostarch = arch;
     url(h);
 }
 
-void paroc_od::joburl(const char *jobservice) {
-    jobcontact=jobservice;
-}
-
-void paroc_od::executable(const char *code) {
-    codefile=code;
-}
-
-
-void paroc_od::protocol(const char *myproto) {
-    if(myproto==NULL) {
-        return;
-    }
-    proto=myproto;
-}
-
-void paroc_od::encoding(const char *myencode) {
-    if(myencode==NULL) {
-        return;
-    }
-    encode=myencode;
-}
 
 void paroc_od::manual(bool a) {
     url("localhost");
@@ -198,11 +179,6 @@ void paroc_od::manual(bool a) {
 
 void paroc_od::runLocal(bool isLocal) {
     isLocalJob=isLocal;
-}
-
-// Set working directory
-void paroc_od::directory(const char *h) {
-    cwd=h;
 }
 
 //Set working dir to the current dir on interface side
@@ -278,49 +254,9 @@ float paroc_od::getWallTime() const {
     return time;
 }
 
-void paroc_od::getDirectory(POPString &str) const {
-    str=cwd;
-}
-
-void paroc_od::getURL(POPString &url) const {
-    url=hostname;
-}
-
-void paroc_od::getUser(POPString &s) const {
-    s=hostuser;
-}
-
-void paroc_od::getCore(POPString &s) const {
-    s=hostcore;
-}
-
-void paroc_od::getArch(POPString &s) const {
-    s=hostarch;
-}
-
-void paroc_od::getJobURL(POPString &joburl) const {
-    joburl=jobcontact;
-}
-
-void paroc_od::getExecutable(POPString &exec) const {
-    exec=codefile;
-}
-
-void paroc_od::getProtocol(POPString &myproto) const {
-    LOG_DEBUG("Set protocol in OD %s", myproto.GetString());
-    myproto=proto;
-}
-
-void paroc_od::getEncoding(POPString &myencode) const {
-    myencode=encode;
-}
 
 bool paroc_od::getIsManual() const {
     return isManual;
-}
-
-void paroc_od::getBatch(POPString& batch) const {
-    batch=batchSystem;
 }
 
 
@@ -369,11 +305,11 @@ paroc_od &paroc_od::operator =(const paroc_od &od) {
         od.getMemory(ram,min_ram);
         od.getBandwidth(net,min_net);
         time=od.getWallTime();
-        od.getURL(hostname);
-        od.getJobURL(jobcontact);
-        od.getExecutable(codefile);
-        od.getProtocol(proto);
-        od.getEncoding(encode);
+        hostname = od.getURL();
+        jobcontact = od.getJobURL();
+        codefile = od.getExecutable();
+        proto = od.getProtocol();
+        encode = od.getEncoding();
 #ifdef OD_DISCONNECT
         od.getCheckConnection(time_alive, time_control);
 #endif
@@ -383,21 +319,13 @@ paroc_od &paroc_od::operator =(const paroc_od &od) {
 }
 
 bool paroc_od::IsEmpty() const {
-    return (mflops<0 && min_mflops<0 && ram<0 && min_ram<0 && net<0 && min_net<0 && time<0 && hostname==NULL /*&& time_alive < 0 && time_control < 0*/);
+    return (mflops<0 && min_mflops<0 && ram<0 && min_ram<0 && net<0 && min_net<0 && time<0 && hostname.empty() /*&& time_alive < 0 && time_control < 0*/);
 }
 
 bool paroc_od::IsLocal() const {
     return isLocalJob;
 }
 
-void paroc_od::setPlatforms(const char *objplatforms) {
-    platforms=objplatforms;
-}
-
-
-void paroc_od::getPlatforms(POPString &objplatforms) const {
-    objplatforms=platforms;
-}
 
 void paroc_od::setValue(const POPString &key, const POPString &val) {
     keys.emplace_back(key);
@@ -421,7 +349,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
     float val[2];
     int valInt[2];
     int valSearch[3];
-    POPString t;
+    std::string t;
     if(pack) {
 
         getPower(val[0],val[1]);
@@ -449,7 +377,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pack(valInt,1);
         buf.Pop();
 
-        getDirectory(t);
+        t = getCwd();
         buf.Push("cwd","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();
@@ -463,54 +391,54 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
         //End of add
 
-        getURL(t);
+        t = getURL();
         buf.Push("url","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();
 
-        getUser(t);
+        t = getUser();
         buf.Push("user","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();
 
-        getCore(t);
+        t = getCore();
         buf.Push("core","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();
 
-        getArch(t);
+        t = getArch();
         buf.Push("arch","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();
 
-        getBatch(t);
+        t = getBatch();
         buf.Push("batch","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();
 
 
 
-        getJobURL(t);
+        t = getJobURL();
         buf.Push("joburl","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();
 
-        getExecutable(t);
+        t = getExecutable();
         buf.Push("executable","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();
 
-        getPlatforms(t);
+        t = getPlatforms();
         buf.Push("platforms","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();
 
-        getProtocol(t);
+        t = getProtocol();
         buf.Push("protocol","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();
 
-        getEncoding(t);
+        t = getEncoding();
         buf.Push("encoding","POPString",1);
         buf.Pack(&t,1);
         buf.Pop();

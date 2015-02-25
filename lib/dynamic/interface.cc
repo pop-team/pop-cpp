@@ -47,6 +47,8 @@
 #define POPC_CONNECT_TIMEOUT 10000
 #endif
 
+using namespace std;
+
 
 paroc_accesspoint paroc_interface::_paroc_nobind;
 
@@ -228,20 +230,12 @@ void paroc_interface::allocate_only() {
     Release();
     POPString objectname = ClassName();
     POPString objectaddress;
-    POPString hostname;
-    POPString batch;
-    POPString protocol;
 
     bool localFlag = od.IsLocal();
 
-    od.getURL(hostname);
-    od.getBatch(batch);
-    od.getProtocol(protocol);
-
-    std::string str_protocol;
-    if(protocol.GetString()){
-        str_protocol = protocol.GetString();
-    }
+    const string& hostname = od.getURL();
+    const string& batch    = od.getBatch();
+    const string& protocol = od.getProtocol();
 
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
@@ -249,10 +243,10 @@ void paroc_interface::allocate_only() {
 
 
     // for obscure reason, cannot use strcmp here
-    if(str_protocol.compare(POPC_AllocatorFactory::PREFIX_UDS) == 0) {
+    if(protocol == POPC_AllocatorFactory::PREFIX_UDS) {
         allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
     } else {
-        if(localFlag || hostname!=NULL || batch!=NULL) {
+        if(localFlag || !hostname.empty() || !batch.empty()) {
             allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
         } else {
             allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
@@ -302,8 +296,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
 
     //Choose the protocol and then bind
     POPString prots = dest.GetAccessString();
-    POPString od_prots;
-    od.getProtocol(od_prots);
+    POPString od_prots = od.getProtocol().c_str();
 
     auto accesslist = Tokenize(prots);
     ApplyCommPattern(getenv("POPC_COMM_PATTERN"),accesslist);
@@ -719,8 +712,7 @@ bool paroc_interface::RecvCtrl() {
 
 void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatform) {
     LOG_DEBUG("INTERFACE: Negotiate encoding start");
-    POPString pref;
-    od.getEncoding(pref);
+    POPString pref = od.getEncoding().c_str();
 
     auto enc_pref = Tokenize(pref);
     auto enc_avail = Tokenize(enclist);

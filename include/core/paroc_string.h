@@ -65,6 +65,9 @@ public:
      */
     char *GetString();
 
+    // for compatibility with std::string
+    inline bool empty() const {return this == NULL;}
+
 protected:
     char *data;
 };

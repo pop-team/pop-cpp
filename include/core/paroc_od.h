@@ -61,7 +61,7 @@ public:
      * @brief Specifies the working directory of the object
      * @param h dir
      */
-    void directory(const char *h);
+    inline void directory(const std::string& str){cwd = str;}
     /**
      * @brief Set remote working directory to the current directory on interface side
      */
@@ -72,7 +72,7 @@ public:
      * Syntaxe : user@ip{core}:port
      * @param h machine ip or name
      */
-    void url(const char *h);
+    void url(const std::string& h);
 
     void node(int value);
     void core(int value);
@@ -86,15 +86,15 @@ public:
     * @param h machine ip or name
     * @param arch machine architecture
     */
-    void url(const char *h, const char *arch);
+    void url(const std::string& h, const std::string& arch);
     //void url(const std::string h);
 
     //void url(const std::string h, std::string arch);
-    void joburl(const char *jobcontact);
-    void executable(const char *codefile);
+    inline void joburl(const std::string& str) {jobcontact = str;};
+    inline void executable(const std::string& str) {codefile = str;}
 
-    void protocol(const char *myproto);
-    void encoding(const char *myencode);
+    inline void protocol(const std::string& myproto){proto = myproto;}
+    inline void encoding(const std::string& myencode) {encode = myencode;}
 
     /**
      * @brief Specifies that the command to launch the object is to be printed instead, (no JobMgr used)
@@ -125,19 +125,19 @@ public:
     void getMemory(float &require, float &min) const;
     void getBandwidth(float &require, float &min) const;
     float getWallTime() const;
-    void getDirectory(paroc_string & cwd) const;
-    void getURL(paroc_string & url) const;
-    void getUser(paroc_string & s) const;
-    void getCore(paroc_string & s) const;
-    void getArch(paroc_string & s) const;
-    void getJobURL(paroc_string &joburl) const;
-    void getExecutable(paroc_string &exec) const;
+    inline const std::string& getCwd() const {return cwd;}           // Formerly getDirectory
+    inline const std::string& getURL() const {return hostname;}
+    inline const std::string& getUser() const {return hostuser;}
+    inline const std::string& getCore() const {return hostcore;}
+    inline const std::string& getArch() const {return hostarch;}
+    inline const std::string& getJobURL() const {return jobcontact;}
+    inline const std::string& getExecutable() const {return codefile;}
 
     int get_node() const;
     int get_core() const;
 
-    void getProtocol(paroc_string &proto) const;
-    void getEncoding(paroc_string &encode) const;
+    inline const std::string& getProtocol() const {return proto;}
+    inline const std::string& getEncoding() const {return encode;}
     bool getIsManual() const;
 #ifdef OD_DISCONNECT
     void checkConnection(int time_alive, int time_control);
@@ -145,15 +145,15 @@ public:
     bool getCheckConnection() const;
     void getCheckConnection(int &time_alive, int &time_control) const;
 #endif
-    void getBatch(paroc_string& batch) const;
+    inline const std::string&  getBatch() const {return batchSystem;}
 
     paroc_od &operator =(const paroc_od &od);
 
     bool IsEmpty() const;
     bool IsLocal() const;
 
-    void setPlatforms(const char *objplatforms);
-    void getPlatforms(paroc_string &objplatforms) const;
+    inline void setPlatforms(const std::string& str) {platforms = str;}
+    inline const std::string& getPlatforms() const {return platforms;}
 
     void setValue(const paroc_string &key, const paroc_string &val);
     void getValue(const paroc_string &key, paroc_string &val);
@@ -178,21 +178,21 @@ protected:
     int node_value;
     int core_value;
 
-    paroc_string cwd;
+    std::string cwd;
 
-    paroc_string hostname; /*only for use with od.url*/
-    paroc_string hostuser; /*only for use with od.url*/
-    paroc_string hostcore; /*only for use with od.url*/
-    paroc_string hostarch; /*only for use with od.url*/
-    paroc_string batchSystem;
+    std::string hostname; /*only for use with od.url*/
+    std::string hostuser; /*only for use with od.url*/
+    std::string hostcore; /*only for use with od.url*/
+    std::string hostarch; /*only for use with od.url*/
+    std::string batchSystem;
 
-    paroc_string jobcontact;
-    paroc_string codefile;
+    std::string jobcontact;
+    std::string codefile;
 
-    paroc_string platforms;
+    std::string platforms;
 
-    paroc_string proto; //space-separate protocol lists
-    paroc_string encode; //space-separate encoding lists
+    std::string proto; //space-separate protocol lists
+    std::string encode; //space-separate encoding lists
 
     std::vector<paroc_string> keys;
     std::vector<paroc_string> values;
