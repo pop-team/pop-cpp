@@ -119,7 +119,7 @@ int main(int argc, char **argv) {
         if(ret!=0)
             LOG_WARNING("main returned error code %d. Finalize method will kill all remaining objects", ret);
         // note LW: waiting here allows destroyed objects to unregister themselves and avoid unnecessary error messages due to simultaneous destruction
-        sleep(1);
+        // sleep(1); // TODO: Check if works now
         app.Finalize(ret==0);
         return ret;
     } catch(std::exception &e) {

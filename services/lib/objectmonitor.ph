@@ -53,7 +53,7 @@ public:
     /** @brief  check number of running parallel objects
      * @return number of parallel objects alive
     */
-    sync conc virtual int CheckObjects();
+    sync conc virtual int CheckObjects(bool pingObjects);
 
     classuid(4);
 protected:

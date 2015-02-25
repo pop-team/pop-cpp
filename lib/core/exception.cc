@@ -44,10 +44,6 @@ const char *paroc_exception::paroc_errstr[17]= { // Error number: 1000 + ...
 
 
 
-paroc_exception::paroc_exception() {
-    errcode=0;
-}
-
 paroc_exception::paroc_exception(int code) {
     errcode=code;
     if(code == UNKNOWN_EXCEPTION) {
@@ -60,6 +56,26 @@ paroc_exception::paroc_exception(int code) {
         info = "System error(";
         info += strerror(code);
         info += ")";
+    }
+}
+
+paroc_exception::paroc_exception(int code, const char *reason1, const char *reason2)
+    : paroc_exception(code) {
+    if(reason1!=NULL) {
+        AddInfo(reason1);
+    }
+    if(reason2!=NULL) {
+        AddInfo(reason2);
+    }
+}
+
+paroc_exception::paroc_exception(const char *reason1, const char *reason2)
+    : paroc_exception(UNKNOWN_EXCEPTION) {
+    if(reason1!=NULL) {
+        AddInfo(reason1);
+    }
+    if(reason2!=NULL) {
+        AddInfo(reason2);
     }
 }
 
@@ -84,25 +100,11 @@ int paroc_exception::Code()const {
 }
 
 void paroc_exception::paroc_throw(int code, const char *reason1, const char *reason2) {
-    paroc_exception e(code);
-    if(reason1!=NULL) {
-        e.AddInfo(reason1);
-    }
-    if(reason2!=NULL) {
-        e.AddInfo(reason2);
-    }
-    throw e;
+    throw paroc_exception(code, reason1, reason2);
 }
 
 void paroc_exception::paroc_throw(const char *reason1, const char *reason2) {
-    paroc_exception e(UNKNOWN_EXCEPTION);
-    if(reason1!=NULL) {
-        e.AddInfo(reason1);
-    }
-    if(reason2!=NULL) {
-        e.AddInfo(reason2);
-    }
-    throw e;
+    throw paroc_exception(reason1, reason2);
 }
 
 const char* paroc_exception::what() const throw() {
