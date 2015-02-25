@@ -31,7 +31,7 @@ paroc_buffer_xdr::~paroc_buffer_xdr() {}
 
 void paroc_buffer_xdr::Reset() {
     unpackpos=20;
-    packeddata.RemoveAll();
+    packeddata.clear();
     packeddata.resize(unpackpos);
 }
 
@@ -123,7 +123,7 @@ void paroc_buffer_xdr::UnPack(long *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_long);
+    xdr_vector(&xdr, (char*)data,n,sizeof(long),(xdrproc_t)xdr_long);
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -237,7 +237,7 @@ void paroc_buffer_xdr::Pack(const bool *data, int n) {
     }
 }
 void paroc_buffer_xdr::UnPack(bool *data, int n) {
-    if(n<=0) {
+    if(n <= 0) {
         return;
     }
     CheckUnPack(n);
@@ -245,11 +245,11 @@ void paroc_buffer_xdr::UnPack(bool *data, int n) {
 
     char *dat = packeddata.data() + unpackpos;
     while(n-->0) {
-        *data=(*dat!=0);
+        *data = (*dat != 0);
         dat++;
         data++;
     }
-    unpackpos+=((n-1)/4+1)*4;
+    unpackpos += ((n-1)/4+1) * 4;
 }
 
 void paroc_buffer_xdr::Pack(const char *data, int n) {
@@ -350,219 +350,8 @@ void paroc_buffer_xdr::UnPack(signed char *data, int n) {
     UnPack((char *)data,n);
 }
 
-/*void paroc_buffer_xdr::Pack(const long long *data, int n)
-{
-  // This method has to be written
-}
-
-void paroc_buffer_xdr::UnPack(long long *data, int n)
-{
-  // This method has to be written
-}
-
-void paroc_buffer_xdr::Pack(const long double *data, int n)
-{
-  // This method has to be written
-}
-
-void paroc_buffer_xdr::UnPack(long double *data, int n)
-{
-  // This method has to be written
-}*/
-
-
-
-// void paroc_buffer_xdr::Pack(const paroc_accesspoint *list, int n)
-// {
-//   if (n<=0 || list==NULL) return;
-//   int len;
-//   for (int i=0;i<n;i++,list++)
-//     {
-//       const char *res=list->GetAccessString();
-//       int len=(res==NULL)? 0 : (strlen(res)+1);
-//       Pack(&len,1);
-//       if (len) Pack(res,len);
-//     }
-// }
-
-// void paroc_buffer_xdr::UnPack(paroc_accesspoint *list, int n)
-// {
-//   if (n<=0 || list==NULL) return;
-//   paroc_array<char> tmpstr;
-//   int len;
-//   for (int i=0;i<n;i++,list++)
-//     {
-//       UnPack(&len,1);
-//       if (len)
-//  {
-//    tmpstr.resize(len);
-//    UnPack(tmpstr,len);
-//    list->SetAccessString(tmpstr);
-//  }
-//       else list->SetAccessString(NULL);
-//     }
-// }
-
-// void paroc_buffer_xdr::Pack(const POPString *list, int n)
-// {
-//   if (n<=0 || list==NULL) return;
-//   for (int i=0;i<n;i++,list++)
-//     {
-//       const char *res=(*list);
-//       int len=list->Length()+1;
-//       Pack(&len,1);
-//       if (len>0) Pack(res,len);
-//     }
-// }
-
-// void paroc_buffer_xdr::UnPack(POPString *list, int n)
-// {
-//   if (n<=0 || list==NULL) return;
-//   paroc_array<char> tmpstr;
-//   int len;
-//   for (int i=0;i<n;i++,list++)
-//     {
-//       UnPack(&len,1);
-//       if (len>0)
-//  {
-//    tmpstr.resize(len);
-//    UnPack(tmpstr,len);
-//    (*list)=(char *)tmpstr;
-//  }
-//       else (*list)=NULL;
-//     }
-// }
-
-// void paroc_buffer_xdr::Pack(const paroc_od *list, int n)
-// {
-//   float val[7];
-//   POPString t;
-//   while (n>0)
-//     {
-//       list->getPower(val[0],val[1]);
-//       list->getMemory(val[2],val[3]);
-//       list->getBandwidth(val[4],val[5]);
-//       val[6]=list->getWallTime();
-//       Pack(val,7);
-
-//       list->getURL(t);
-//       Pack(&t,1);
-
-//       list->getJobURL(t);
-//       Pack(&t,1);
-
-//       list->getExecutable(t);
-//       Pack(&t,1);
-
-//       list->getProtocol(t);
-//       Pack(&t,1);
-
-//       list->getEncoding(t);
-//       Pack(&t,1);
-
-//       n--;
-//       list++;
-//     }
-
-// }
-
-// void paroc_buffer_xdr::UnPack(paroc_od *list, int n)
-// {
-//   float val[7];
-//   POPString t;
-//   while (n>0)
-//     {
-//       UnPack(val,7);
-//       list->power(val[0],val[1]);
-//       list->memory(val[2],val[3]);
-//       list->bandwidth(val[4],val[5]);
-//       list->walltime(val[6]);
-//       UnPack(&t,1);
-//       list->url(t);
-//       UnPack(&t,1);
-//       list->joburl(t);
-
-//       UnPack(&t,1);
-//       list->executable(t);
-
-//       UnPack(&t,1);
-//       list->protocol(t);
-
-//       UnPack(&t,1);
-//       list->encoding(t);
-//       n--;
-//       list++;
-//     }
-// }
-
-// void paroc_buffer_xdr::Pack(paroc_interface *inf, int n)
-// {
-//    if (n<=0) return;
-//   int len;
-//   for (int i=0;i<n;i++,inf++)
-//     {
-//       int ref=inf->AddRef();
-//       Pack(&(inf->GetAccessPoint()),1);
-//       Pack(&ref,1);
-//       const paroc_od &myod=inf->GetOD();
-//       Pack(&myod,1);
-//     }
-// }
-
-// void paroc_buffer_xdr::UnPack(paroc_interface *inf, int n)
-// {
-//   if (n<=0 || inf==NULL) return;
-//   paroc_od myod;
-//   paroc_accesspoint entry;
-//   int len;
-//   for (int i=0;i<n;i++,inf++)
-//     {
-//       int ref;
-//       UnPack(&entry,1);
-//       UnPack(&ref,1);
-//       UnPack(&myod,1);
-
-//       inf->SetOD(myod);
-
-//       if (ref>0)
-//  {
-//    inf->Bind(entry);
-//    inf->DecRef();
-//  }
-//     }
-// }
-
-// void paroc_buffer_xdr::Pack(paroc_exception *e, int n)
-// {
-//    if (n<=0) return;
-//   for (int i=0;i<n;i++,e++)
-//     {
-//       int t=e->Code();
-//       Pack(&t,1);
-//       char *extra=e->Extra();
-//       t=strlen(extra)+1;
-//       Pack(&t,1);
-//       Pack(extra,t);
-//     }
-// }
-
-// void paroc_buffer_xdr::UnPack(paroc_exception *e, int n)
-// {
-//    if (n<=0) return;
-//   for (int i=0;i<n;i++,e++)
-//     {
-//       int t;
-//       UnPack(&t,1);
-//       e->Code()=t;
-//       char *extra=e->Extra();
-//       UnPack(&t,1);
-//       UnPack(extra,t);
-//     }
-// }
-
-
 void paroc_buffer_xdr::CheckUnPack(int sz) {
-    if(sz+unpackpos > packeddata.size()) {
+    if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in paroc_buffer_xdr::CheckUnPack");
     }
 }
@@ -575,7 +364,7 @@ void paroc_buffer_xdr::CheckUnPack(int sz) {
  */
 bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
-    char *dat=packeddata.data();
+    char *dat = packeddata.data();
 
     if(dat == NULL) {
         LOG_ERROR("fail 1");
@@ -610,7 +399,6 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
 
     memcpy(dat, h, 20);
 
-
     // Send the message header first as it has fixed size
     char* data_header = new char[20];
     memcpy(data_header, h, 20);
@@ -631,8 +419,6 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
         }
     }
 
-
-
     return true;
 }
 
@@ -646,16 +432,10 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     // Recv the header
     char *dat = (char *)h;
 
-
     // Receiving the real data
-LOG_DEBUG("XDR: recv header");
+    LOG_DEBUG("XDR: recv header");
     s.Recv(dat, 20, conn);
     Reset();
-    /* for(int i = 0; i < 5; i++) {
-       memcpy(&h[i], dat+(i*4), 4);
-     }*/
-
-
 
     n = popc_ntohl(h[0]);
     if(n < 20) {
@@ -684,16 +464,12 @@ LOG_DEBUG("XDR: recv header");
     }
 
     packeddata.resize(n);
-    n-=20;
+    n -= 20;
 
     if(n > 0) {
         dat = packeddata.data()+20;
-        // LOG_DEBUG("XDR: %s ready to receive %d",(isServer) ? "server":"client",  n);
         s.Recv(dat, n, conn);
-        // LOG_DEBUG("XDR: %s received %d",(isServer) ? "server":"client",  n);
     }
-
-
 
     return true;
 }
@@ -779,7 +555,6 @@ void paroc_buffer_xdr::load(char* data, int length) {
     packeddata.resize(length);
 }
 
-
 #ifdef OD_DISCONNECT
 bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
@@ -798,8 +573,9 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
             } else {
                 paroc_message_header h = header;
                 int unpackposold = unpackpos;
-                paroc_array<char> packeddataold = packeddata;
-                paroc_connection * t = (paroc_connection *) s.Wait();
+                auto packeddataold = packeddata;
+                auto t = (paroc_connection *) s.Wait();
+
                 if(!t) {
                     paroc_exception::paroc_throw("Remote Object not alive (2)");
                 }

@@ -71,7 +71,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
         LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
         return err;
     } else if(pid==0) {
-        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ? 
+        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ?
         int nf=popc_getdtablesize();
         for(int fd=3; fd<nf; fd++) {
             popc_close(fd);
@@ -173,7 +173,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) {
     }
 
     if(!p.IsEmpty()) {
-      Bind(p);
+        Bind(p);
     }
 
     if(p.GetNoAddRef()) {
@@ -199,7 +199,6 @@ paroc_interface::paroc_interface(const paroc_interface &inf) {
 
     Bind(inf.GetAccessPoint());
 }
-
 
 /**
  * Interface destructor
@@ -257,7 +256,7 @@ const paroc_accesspoint &  paroc_interface::GetAccessPointForThis() {
 void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
 
     buf.Push("od", "paroc_od", 1);
-    od.Serialize(buf,pack);
+    od.Serialize(buf, pack);
     buf.Pop();
 
     buf.Push("accesspoint", "paroc_accesspoint", 1);
@@ -375,20 +374,15 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     POPString od_prots;
     od.getProtocol(od_prots);
 
-    paroc_list<char *> accesslist, pref;
-
-    Tokenize(prots,accesslist);
+    auto accesslist = Tokenize(prots);
     ApplyCommPattern(getenv("POPC_COMM_PATTERN"),accesslist);
 
-    Tokenize(od_prots,pref);
+    auto pref = Tokenize(od_prots);
 
-    if(pref.IsEmpty()) {
+    if(pref.empty()) {
         LOG_DEBUG("INTERFACE: Bind without preference");
         //No preferred protocol in OD specified, try the first protocol in dest
-        POSITION pos = accesslist.GetHeadPosition();
-        while(pos !=NULL) {
-            char *addr = accesslist.GetNext(pos);
-
+        for(auto& addr : accesslist){
             try {
                 Bind(addr);
                 return;
@@ -400,16 +394,12 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
         }
     } else {
         //The user specify the protocol in OD, select the preference and match with the access point...
-        POSITION protpos = pref.GetHeadPosition();
-        while(protpos != NULL) {
-            char *myprot = pref.GetNext(protpos);
-            //Find access string that match myprot
-            POSITION pos=accesslist.GetHeadPosition();
-            while(pos!=NULL) {
-                char *addr=accesslist.GetNext(pos);
+        for(auto& myprot : pref){
+            // Find access string that match myprot
+            for(auto& addr : accesslist){
                 char pattern[1024];
-                sprintf(pattern, "%s://*", myprot);
-                if(paroc_utils::MatchWildcard(addr, pattern)) {
+                sprintf(pattern,"%s://*",myprot);
+                if(paroc_utils::MatchWildcard(addr,pattern)) {
                     try {
                         Bind(addr);
                         return;
@@ -560,18 +550,13 @@ void paroc_interface::Release() {
 
         // Destroy the combox
         __paroc_combox->Destroy();
-        __paroc_combox=NULL;
+        __paroc_combox = NULL;
     }
 
-    if(__paroc_buf!=NULL) {
+    if(__paroc_buf != NULL) {
         __paroc_buf->Destroy();
-        __paroc_buf=NULL;
+        __paroc_buf = NULL;
     }
-
-    /*if(_ssh_tunneling){
-          int ret=0;
-          ret = KillSSHTunnel(_ssh_user.c_str(), _ssh_dest_ip.c_str(), _ssh_dest_port, _ssh_local_port);
-       }      */
 }
 
 
@@ -581,9 +566,6 @@ bool paroc_interface::isBinded() {
     }
     return true;
 }
-
-
-
 
 // ParocCall
 void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info) {
@@ -673,7 +655,7 @@ bool paroc_interface::Encoding(POPString encoding) {
         return false;
     }
 
-    paroc_message_header h(0, 3, INVOKE_SYNC , "Encoding");
+    paroc_message_header h(0, 3, INVOKE_SYNC, "Encoding");
     paroc_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
@@ -693,7 +675,7 @@ bool paroc_interface::Encoding(POPString encoding) {
 
     if(ret) {
         __paroc_buf->Destroy();
-        __paroc_buf=fact->CreateBuffer();
+        __paroc_buf = fact->CreateBuffer();
         __paroc_combox->SetBufferFactory(fact);
     }
 
@@ -790,41 +772,32 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
     LOG_DEBUG("INTERFACE: Negotiate encoding start");
     POPString pref;
     od.getEncoding(pref);
-    paroc_list<char *> enc_pref, enc_avail;
-    Tokenize(pref, enc_pref);
-    Tokenize(enclist,enc_avail);
+
+    auto enc_pref = Tokenize(pref);
+    auto enc_avail = Tokenize(enclist);
 
     POPString cur_enc;
     __paroc_combox->GetBufferFactory()->GetBufferName(cur_enc);
 
-    if(enc_pref.IsEmpty()) {
-        POSITION pos=enc_avail.GetHeadPosition();
-        while(pos) {
-            char *enc=enc_avail.GetNext(pos);
-
-            if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform, paroc_system::platform)) {
+    if(enc_pref.empty()) {
+        for(auto& enc : enc_avail){
+            if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform,paroc_system::platform)) {
                 continue;
             }
 
-            if(paroc_utils::isncaseEqual(enc, cur_enc) || Encoding(enc)) {
+            if(paroc_utils::isncaseEqual(enc,cur_enc) || Encoding(enc)) {
                 return;
             }
         }
     } else {
-        POSITION prefpos = enc_pref.GetHeadPosition();
-        while(prefpos) {
-            char *test = enc_pref.GetNext(prefpos);
-
-            POSITION pos=enc_avail.GetHeadPosition();
-            while(pos) {
-                char *enc=enc_avail.GetNext(pos);
-
+        for(auto& test : enc_pref){
+            for(auto& enc : enc_avail){
                 if(paroc_utils::MatchWildcard(enc,test)) {
-                    if(paroc_utils::isncaseEqual(enc, "raw") && !paroc_utils::isEqual(peerplatform,paroc_system::platform)) {
+                    if(paroc_utils::isncaseEqual(enc,"raw") && !paroc_utils::isEqual(peerplatform,paroc_system::platform)) {
                         continue;
                     }
 
-                    if(paroc_utils::isncaseEqual(enc, cur_enc) || Encoding(enc)) {
+                    if(paroc_utils::isncaseEqual(enc,cur_enc) || Encoding(enc)) {
                         return;
                     }
                 }
@@ -1102,54 +1075,62 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     return 0;
 }
 
-
-void paroc_interface::Tokenize(POPString &s, paroc_list<char *> &tokens) {
-    char *t = s.GetString();
-    if(t == NULL) {
-        return;
+std::vector<char*> paroc_interface::Tokenize(POPString &s) {
+    char *t=s.GetString();
+    if(!t) {
+        return {};
     }
-    char sep[] = " \n\t";
+
+    std::vector<char*> result;
+
+    char sep[]=" \n\t";
     char *ptrptr;
     char *tok=popc_strtok_r(t,sep,&ptrptr);
 
-    while(tok != NULL) {
-        tokens.AddTail(tok);
+    while(tok!=NULL) {
+        result.push_back(tok);
         tok=popc_strtok_r(NULL,sep,&ptrptr);
     }
+
+    return result;
 }
 
-void paroc_interface::ApplyCommPattern(const char *pattern, paroc_list<char *> &accesslist) {
-    if(pattern == NULL) {
+void paroc_interface::ApplyCommPattern(const char *pattern, std::vector<char*>& accesslist) {
+    if(!pattern) {
         return;
     }
+
     POPString p(pattern);
+    auto patternlist = Tokenize(p);
 
-    paroc_list<char *> patternlist;
-    Tokenize(p, patternlist);
+    auto ptpos = patternlist.begin();
+    auto headpos = accesslist.begin();
 
-    POSITION ptpos = patternlist.GetHeadPosition();
-    POSITION headpos = accesslist.GetHeadPosition();
-    while(ptpos!=NULL) {
-        char *ptstr = patternlist.GetNext(ptpos);
-        if(ptstr == NULL) {
+    while(ptpos != patternlist.end()){
+        auto ptstr = *ptpos++;
+
+        if(!ptstr) {
             continue;
         }
-        POSITION pos = headpos;
-        while(pos!=NULL) {
-            POSITION old = pos;
-            char *t = accesslist.GetNext(pos);
-            if(paroc_utils::MatchWildcard(t,ptstr)) {
+
+        auto pos = headpos;
+
+        while(pos != accesslist.end()){
+            auto old = pos;
+            auto t = *pos++;
+
+            if(paroc_utils::MatchWildcard(t, ptstr)) {
                 if(headpos != old) {
-                    accesslist.InsertBefore(headpos, t);
-                    accesslist.RemoveAt(old);
+                    //TODO(BW) this does not seem very smart since iterators will probably be invalidated
+                    accesslist.insert(headpos, t);
+                    accesslist.erase(old);
                 } else {
-                    accesslist.GetNext(headpos);
-                    if(headpos == NULL) {
+                    ++headpos;
+                    if(headpos == accesslist.end()) {
                         return;
                     }
                 }
             }
-
         }
     }
 }
@@ -1161,7 +1142,7 @@ void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
     }
 }
 
-// DEPRECATED
+// DEPRECATED // TODO LW: See what to do
 void paroc_interface::paroc_Response(paroc_buffer *buf) {
     if(!buf->Recv(*__paroc_combox)) {
         printf("Throw from response");
@@ -1279,7 +1260,7 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
     int BUF_SIZE=100;
     char buf[BUF_SIZE];
 
-//warning_remove   int error_code=0;
+    //warning_remove   int error_code=0;
 
     std::ostringstream cmd;
     cmd << "ps aux | grep \"/usr/bin/ssh -f -N -q -o ExitOnForwardFailure=yes -L" << local_port << ":127.0.0.1:" << dest_port << " " << dest_ip << "\" | grep -v grep | head -n 1 | awk -F\" \" '{print $2}'";
@@ -1296,7 +1277,7 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
     /*if(pid!=0)
        popc_kill(pid, popc_SIGKILL);*/
     return pid;
- }
+}
 
 /**
  * ViSaG : clementval

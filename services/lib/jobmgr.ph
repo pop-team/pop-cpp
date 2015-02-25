@@ -22,12 +22,12 @@
 #ifndef JOBMGR_PH
 #define JOBMGR_PH
 
+#include <unordered_map>
 #include <time.h>
 #include <sys/time.h>
 #include "paroc_service_base.ph"
 #include <timer.h>
 #include <paroc_accesspoint.h>
-#include <paroc_list.h>
 
 /**
  * ViSaG : clementval
@@ -109,11 +109,6 @@ struct PauseInfo {
 struct HostInfo {
     paroc_string  name;
     paroc_string val;
-    HostInfo & operator = (const HostInfo &t) {
-        name=t.name;
-        val=t.val;
-        return *this;
-    };
 };
 
 struct RequestTrace {
@@ -121,10 +116,9 @@ struct RequestTrace {
     double timestamp;
 };
 
-typedef paroc_list<HostInfo> HostInfoDB;
-typedef paroc_list<NodeInfo> NodeInfoList;
-typedef paroc_list<paroc_string> paroc_list_string;
-typedef paroc_list<Resources> ResourceList;
+typedef std::vector<HostInfo> HostInfoDB;
+typedef std::vector<NodeInfo> NodeInfoList;
+typedef std::vector<Resources> ResourceList;
 typedef std::vector<PauseInfo> PauseList;
 typedef std::vector<RequestTrace> TraceList;
 
@@ -138,7 +132,7 @@ class NodeInfoMap {
 public:
     NodeInfoMap();
 //Manipulate neighbor nodes (thread safe)
-    void GetContacts(paroc_list_string &contacts);
+    std::vector<paroc_string> GetContacts();
     bool HasContact(const paroc_string &contact);
 
     bool GetInfo(const paroc_string &contact, NodeInfo &info);
@@ -148,14 +142,7 @@ public:
     bool Remove(const paroc_string &key);
     bool Add(const paroc_string &contact, NodeInfo &info);
 private:
-    int Hash(const paroc_string &key);
-
-    struct NodeInfoExt {
-        paroc_string key;
-        NodeInfo data;
-    };
-    paroc_list<NodeInfoExt> map[HASH_SIZE];
-    int keycount;
+    std::unordered_map<std::string, NodeInfo> hashmap;
     paroc_mutex maplock;
 };
 
@@ -261,7 +248,6 @@ protected:
     bool ReleaseJob(int id);
 
     HostInfoDB info;
-
 
     NodeInfoMap neighbors;
 

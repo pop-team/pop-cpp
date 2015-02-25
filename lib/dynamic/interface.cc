@@ -153,7 +153,7 @@ paroc_interface & paroc_interface::operator = (const paroc_interface & obj) {
 }
 
 void paroc_interface::SetOD(const paroc_od &myod) {
-    od=myod;
+    od = myod;
 }
 
 const paroc_od & paroc_interface::GetOD() const {
@@ -203,10 +203,10 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
     } else {
         int ref;
-        buf.Push("refcount","int",1);
-        buf.UnPack(&ref,1);
+        buf.Push("refcount", "int", 1);
+        buf.UnPack(&ref, 1);
         buf.Pop();
-        if(ref>0) {
+        if(ref > 0) {
             Bind(accesspoint);
             LOG_DEBUG("Bound %s", accesspoint.GetAccessString());
             //AddRef();
@@ -214,7 +214,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         }
     }
 
-    if(old!=NULL) {
+    if(old != NULL) {
         __paroc_buf->Destroy();
         __paroc_buf = old;
     }
@@ -301,24 +301,19 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     accesspoint = dest;
 
     //Choose the protocol and then bind
-    POPString prots=dest.GetAccessString();
+    POPString prots = dest.GetAccessString();
     POPString od_prots;
     od.getProtocol(od_prots);
 
-    paroc_list<char *> accesslist, pref;
-
-    Tokenize(prots,accesslist);
+    auto accesslist = Tokenize(prots);
     ApplyCommPattern(getenv("POPC_COMM_PATTERN"),accesslist);
 
-    Tokenize(od_prots,pref);
+    auto pref = Tokenize(od_prots);
 
-    if(pref.IsEmpty()) {
+    if(pref.empty()) {
         LOG_DEBUG("INTERFACE: Bind without preference");
         //No preferred protocol in OD specified, try the first protocol in dest
-        POSITION pos = accesslist.GetHeadPosition();
-        while(pos != NULL) {
-            char *addr = accesslist.GetNext(pos);
-
+        for(auto& addr : accesslist){
             try {
                 Bind(addr);
                 return;
@@ -330,13 +325,9 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
         }
     } else {
         //The user specify the protocol in OD, select the preference and match with the access point...
-        POSITION protpos=pref.GetHeadPosition();
-        while(protpos!=NULL) {
-            char *myprot = pref.GetNext(protpos);
+        for(auto& myprot : pref){
             // Find access string that match myprot
-            POSITION pos=accesslist.GetHeadPosition();
-            while(pos!=NULL) {
-                char *addr=accesslist.GetNext(pos);
+            for(auto& addr : accesslist){
                 char pattern[1024];
                 sprintf(pattern,"%s://*",myprot);
                 if(paroc_utils::MatchWildcard(addr,pattern)) {
@@ -474,8 +465,8 @@ void paroc_interface::Bind(const char *dest) {
             LOG_INFO("Forward current session to %s", (const char *)info);
             Bind(newap);
 
-            if(status==BIND_FORWARD_SESSION) {
-                accesspoint=old;
+            if(status == BIND_FORWARD_SESSION) {
+                accesspoint = old;
             }
 
             break;
@@ -487,7 +478,7 @@ void paroc_interface::Bind(const char *dest) {
             paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
         }
     } else {
-        int code=errno;
+        int code = errno;
 
         LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s",(const char *)paroc_system::GetHost(),dest,strerror(code));
         Release();
@@ -516,11 +507,6 @@ void paroc_interface::Release() {
         __paroc_buf->Destroy();
         __paroc_buf = NULL;
     }
-
-    /*if(_ssh_tunneling){
-      int ret=0;
-      ret = KillSSHTunnel(_ssh_user.c_str(), _ssh_dest_ip.c_str(), _ssh_dest_port, _ssh_local_port);
-      } */
 }
 
 
@@ -531,16 +517,13 @@ bool paroc_interface::isBinded() {
     return true;
 }
 
-
-
-
 // ParocCall
 void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info) {
     if(!__paroc_combox || !__paroc_buf) {
         return;
     }
 
-    paroc_message_header h(0, 0, INVOKE_SYNC ,"BindStatus");
+    paroc_message_header h(0, 0, INVOKE_SYNC, "BindStatus");
     paroc_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
@@ -592,7 +575,7 @@ int paroc_interface::DecRef() {
         return -1;
     }
 
-    paroc_message_header h(0,2, INVOKE_SYNC,"DecRef");
+    paroc_message_header h(0, 2, INVOKE_SYNC,"DecRef");
     paroc_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
@@ -738,18 +721,15 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
     LOG_DEBUG("INTERFACE: Negotiate encoding start");
     POPString pref;
     od.getEncoding(pref);
-    paroc_list<char *> enc_pref, enc_avail;
-    Tokenize(pref,enc_pref);
-    Tokenize(enclist,enc_avail);
+
+    auto enc_pref = Tokenize(pref);
+    auto enc_avail = Tokenize(enclist);
 
     POPString cur_enc;
     __paroc_combox->GetBufferFactory()->GetBufferName(cur_enc);
 
-    if(enc_pref.IsEmpty()) {
-        POSITION pos=enc_avail.GetHeadPosition();
-        while(pos) {
-            char *enc=enc_avail.GetNext(pos);
-
+    if(enc_pref.empty()) {
+        for(auto& enc : enc_avail){
             if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform,paroc_system::platform)) {
                 continue;
             }
@@ -759,14 +739,8 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
             }
         }
     } else {
-        POSITION prefpos=enc_pref.GetHeadPosition();
-        while(prefpos) {
-            char *test=enc_pref.GetNext(prefpos);
-
-            POSITION pos=enc_avail.GetHeadPosition();
-            while(pos) {
-                char *enc=enc_avail.GetNext(pos);
-
+        for(auto& test : enc_pref){
+            for(auto& enc : enc_avail){
                 if(paroc_utils::MatchWildcard(enc,test)) {
                     if(paroc_utils::isncaseEqual(enc,"raw") && !paroc_utils::isEqual(peerplatform,paroc_system::platform)) {
                         continue;
@@ -993,54 +967,62 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     return 0;
 }
 
-
-void paroc_interface::Tokenize(POPString &s, paroc_list<char *> &tokens) {
+std::vector<char*> paroc_interface::Tokenize(POPString &s) {
     char *t=s.GetString();
-    if(t==NULL) {
-        return;
+    if(!t) {
+        return {};
     }
+
+    std::vector<char*> result;
+
     char sep[]=" \n\t";
     char *ptrptr;
     char *tok=popc_strtok_r(t,sep,&ptrptr);
 
     while(tok!=NULL) {
-        tokens.AddTail(tok);
+        result.push_back(tok);
         tok=popc_strtok_r(NULL,sep,&ptrptr);
     }
+
+    return result;
 }
 
-void paroc_interface::ApplyCommPattern(const char *pattern, paroc_list<char *> &accesslist) {
-    if(pattern==NULL) {
+void paroc_interface::ApplyCommPattern(const char *pattern, std::vector<char*>& accesslist) {
+    if(!pattern) {
         return;
     }
+
     POPString p(pattern);
+    auto patternlist = Tokenize(p);
 
-    paroc_list<char *> patternlist;
-    Tokenize(p,patternlist);
+    auto ptpos = patternlist.begin();
+    auto headpos = accesslist.begin();
 
-    POSITION ptpos=patternlist.GetHeadPosition();
-    POSITION headpos=accesslist.GetHeadPosition();
-    while(ptpos!=NULL) {
-        char *ptstr=patternlist.GetNext(ptpos);
-        if(ptstr==NULL) {
+    while(ptpos != patternlist.end()){
+        auto ptstr = *ptpos++;
+
+        if(!ptstr) {
             continue;
         }
-        POSITION pos=headpos;
-        while(pos!=NULL) {
-            POSITION old=pos;
-            char *t=accesslist.GetNext(pos);
-            if(paroc_utils::MatchWildcard(t,ptstr)) {
-                if(headpos!=old) {
-                    accesslist.InsertBefore(headpos, t);
-                    accesslist.RemoveAt(old);
+
+        auto pos = headpos;
+
+        while(pos != accesslist.end()){
+            auto old = pos;
+            auto t = *pos++;
+
+            if(paroc_utils::MatchWildcard(t, ptstr)) {
+                if(headpos != old) {
+                    //TODO(BW) this does not seem very smart since iterators will probably be invalidated
+                    accesslist.insert(headpos, t);
+                    accesslist.erase(old);
                 } else {
-                    accesslist.GetNext(headpos);
-                    if(headpos==NULL) {
+                    ++headpos;
+                    if(headpos == accesslist.end()) {
                         return;
                     }
                 }
             }
-
         }
     }
 }
@@ -1057,6 +1039,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf) {
     if(!buf->Recv(*__paroc_combox)) {
         paroc_exception::paroc_throw("Buffer receive failed (old)");
     }
+
     paroc_buffer::CheckAndThrow(*buf);
 }
 

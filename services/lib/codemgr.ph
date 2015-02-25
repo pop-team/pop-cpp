@@ -12,7 +12,7 @@
 #ifndef CODEMGR_PH
 #define CODEMGR_PH
 
-#include "paroc_array.h"
+#include <vector>
 #include "paroc_service_base.ph"
 
 #define CODE_MAX_STRING_SIZE 1024
@@ -28,10 +28,10 @@ struct codedata {
 struct codedb {
     codedb() {};
     long_string objname;
-    paroc_array<codedata> platform;
+    std::vector<codedata> platform;
 };
 
-typedef paroc_array<codedb> CodeDBArray;
+typedef std::vector<codedb> CodeDBArray;
 
 /**
  * @class CodeMgr

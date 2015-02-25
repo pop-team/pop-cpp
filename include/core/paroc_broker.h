@@ -15,6 +15,7 @@
 
 #include <assert.h>
 #include <strings.h>
+#include <deque>
 
 #define INVOKE_SYNC 1
 //#define INVOKE_ASYNC 2
@@ -34,7 +35,6 @@
 #include "paroc_buffer.h"
 #include "paroc_buffer_xdr.h"
 #include "paroc_accesspoint.h"
-#include "paroc_memspool.h"
 #include "paroc_combox_factory.h"
 #include "paroc_combox_socket.h"
 #include "paroc_object.h"
@@ -49,7 +49,7 @@ struct paroc_request {
     paroc_request(const paroc_request &r);
 };
 
-typedef paroc_list<paroc_request> paroc_request_fifo_list;
+typedef std::deque<paroc_request> paroc_request_fifo_list;
 
 //Method names....
 struct paroc_method_info {
@@ -63,7 +63,7 @@ struct paroc_class_info {
     int sz;
 };
 
-typedef paroc_list<paroc_class_info> paroc_method_map_list;
+typedef std::vector<paroc_class_info> paroc_method_map_list;
 
 /**
  * @class paroc_broker
@@ -87,8 +87,6 @@ public:
     virtual bool Invoke(unsigned method[3], paroc_buffer &buf, paroc_connection *peer);
 
     virtual int Run();
-
-    //  static bool Init(int *argc, char ***argv, paroc_array<paroc_combox *> & comboxList);
 
     bool Initialize(int *argc, char ***argv);
     bool WakeupReceiveThread(paroc_combox *mycombox);
@@ -127,7 +125,7 @@ protected:
     int mutexCount;             // Number of mutex call pending
     int concPendings;           // Number of concurrent call pending
 
-    paroc_array<paroc_combox*> comboxArray;
+    std::vector<paroc_combox*> comboxArray;
 
     paroc_object *obj;                    // Real object associated with this broker
     paroc_request_fifo_list request_fifo; // Queue storing the request received by the broker

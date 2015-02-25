@@ -3,6 +3,8 @@ POP-C++ 3.0:
 - Stabilization of version 2.9
 - Switch to Git
 - Refactorings / Cleanup of the source base
+- Got rid of paroc_list / paroc_array
+- Minimization of the duplicates
 
 
 POP-C++ 2.9:

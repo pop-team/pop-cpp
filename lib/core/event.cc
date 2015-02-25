@@ -22,7 +22,7 @@ EventQueue::~EventQueue() {
 
 void EventQueue::PostEvent(int e) {
     cond.lock();
-    queue.AddTail(e);
+    queue.push_back(e);
     cond.unlock();
     cond.broadcast();
 }
@@ -36,13 +36,13 @@ int EventQueue::WaitEvent(int e, int timeout) {
     }
     bool done=false;
     while(!done) {
-        POSITION pos=queue.GetHeadPosition();
-        while(pos!=NULL) {
-            POSITION old=pos;
-            int &ev=queue.GetNext(pos);
+        auto pos=queue.begin();
+        while(pos!=queue.end()) {
+            auto old=pos;
+            int &ev=*pos++;
             if(e==ANY_EVENT || e==ev) {
                 e=ev;
-                queue.RemoveAt(old);
+                pos = queue.erase(old);
                 done=true;
                 break;
             }
@@ -63,4 +63,3 @@ int EventQueue::WaitEvent(int e, int timeout) {
 
     return e;
 }
-

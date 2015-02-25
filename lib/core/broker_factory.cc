@@ -19,34 +19,24 @@
     POPC_BrokerFactory instead of paroc_broker_factory
  */
 
-// #include <mpi.h>
 #include "popc_intface.h"
-
-//#include <unistd.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <fcntl.h>
-
 #include "paroc_broker_factory.h"
 #include "paroc_utils.h"
 #include "paroc_system.h"
 
-paroc_list_broker *paroc_broker_factory::brokerlist=NULL;
+std::vector<paroc_broker_init> *paroc_broker_factory::brokerlist=NULL;
 ispackedfunc paroc_broker_factory::CheckIfPacked=NULL;
 
 paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name) {
-    if(brokerlist==NULL) {
-        brokerlist= new paroc_list_broker;
+    if(!brokerlist) {
+        brokerlist = new std::vector<paroc_broker_init>;
     }
-    if(name==NULL || func==NULL) {
+
+    if(!name || !func || test(name)) {
         return;
     }
-    if(test(name)) {
-        return;
-    }
-    paroc_broker_init &t=brokerlist->AddTailNew();
-    t.func=func;
-    t.objname=name;
+
+    brokerlist->push_back({func, name});
 }
 
 paroc_broker *paroc_broker_factory::Create(const char *objname) {
@@ -55,25 +45,21 @@ paroc_broker *paroc_broker_factory::Create(const char *objname) {
         return NULL;
     }
 
-    POSITION pos = brokerlist->GetHeadPosition();
-    while(pos != NULL) {
-        paroc_broker_init &t = brokerlist->GetNext(pos);
+    for(auto& t : *brokerlist){
         if(paroc_utils::isEqual(objname, t.objname)) {
             return t.func();
         }
     }
+
     return NULL;
 }
 
-void paroc_broker_factory::List(paroc_list_string &objlist) {
+void paroc_broker_factory::List(std::vector<paroc_string>& objlist) {
     if(brokerlist == NULL) {
         return;
     }
-    POSITION pos = brokerlist->GetHeadPosition();
-    while(pos != NULL) {
-        paroc_broker_init &t = brokerlist->GetNext(pos);
-        POPString &str = objlist.AddTailNew();
-        str = t.objname;
+    for(auto& t : *brokerlist){
+        objlist.emplace_back(t.objname);
     }
 }
 
@@ -81,9 +67,7 @@ bool paroc_broker_factory::test(const char *objname) {
     if(brokerlist == NULL) {
         return false;
     }
-    POSITION pos = brokerlist->GetHeadPosition();
-    while(pos != NULL) {
-        paroc_broker_init &test = brokerlist->GetNext(pos);
+    for(auto& test : *brokerlist){
         if(paroc_utils::isEqual(objname, test.objname)) {
             return true;
         }
@@ -197,10 +181,8 @@ void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
     if(!longformat) {
         printf("List of parallel object classes:\n====\n");
     }
-    if(brokerlist!=NULL) {
-        POSITION pos=brokerlist->GetHeadPosition();
-        while(pos!=NULL) {
-            paroc_broker_init &t=brokerlist->GetNext(pos);
+    if(brokerlist) {
+        for(auto& t : *brokerlist){
             if(!(paroc_broker_factory::CheckIfPacked!=NULL && !paroc_broker_factory::CheckIfPacked(t.objname))) {
                 if(longformat) {
                     printf("%s %s %s\n",(const char *)t.objname, (const char *)paroc_system::platform, abspath);

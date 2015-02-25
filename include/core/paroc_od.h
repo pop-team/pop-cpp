@@ -20,9 +20,7 @@
 #define _POPC_OD_H
 #include <paroc_string.h>
 #include <paroc_base.h>
-#include <paroc_list.h>
 
-typedef paroc_list<paroc_string> paroc_list_string;
 /**
  * @class paroc_od
  * @brief Object description class, used by POP-C++ runtime.
@@ -196,7 +194,8 @@ protected:
     paroc_string proto; //space-separate protocol lists
     paroc_string encode; //space-separate encoding lists
 
-    paroc_list_string keys, values;
+    std::vector<paroc_string> keys;
+    std::vector<paroc_string> values;
 
     //Added by clementval
     int max_depth;  //Maximum depth for the request propagation

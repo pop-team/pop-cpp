@@ -143,12 +143,8 @@ void paroc_buffer_raw::UnPack(signed char *data, int n) {
     UnPack((char *)data,n);
 }
 
-
-
-
-
 void paroc_buffer_raw::CheckUnPack(int sz) {
-    if(sz+unpackpos > packeddata.size()) {
+    if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in paroc_buffer_raw::CheckUnPack");
     }
 }
@@ -170,7 +166,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
 
     int n = packeddata.size();
     int h[5];
-    memset(h,0, 5 * sizeof(int));
+    memset(h, 0, 5 * sizeof(int));
 
     int type = header.GetType();
 
@@ -246,8 +242,9 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     }
 
     packeddata.resize(n);
-    dat = packeddata.data() + 20;
     n -= 20;
+
+    dat = packeddata.data() + 20;
 
     // Recv data if there is some
     i = 0;
@@ -315,7 +312,7 @@ void paroc_buffer_raw::load(char* data, int length) {
 #ifdef OD_DISCONNECT
 bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
-        paroc_connection * t = (paroc_connection *) s.Wait();
+        paroc_connection* t = (paroc_connection*) s.Wait();
         if(!t) {
             paroc_exception::paroc_throw("Remote Object not alive (1)");
         }
@@ -330,8 +327,10 @@ bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
             } else {
                 paroc_message_header h = header;
                 int unpackposold = unpackpos;
-                paroc_array<char> packeddataold = packeddata;
-                paroc_connection * t = (paroc_connection *) s.Wait();
+
+                auto packeddataold = packeddata;
+                auto t = (paroc_connection *) s.Wait();
+
                 if(!t) {
                     paroc_exception::paroc_throw("Remote Object not alive (2)");
                 }

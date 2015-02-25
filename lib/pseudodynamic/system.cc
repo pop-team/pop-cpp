@@ -65,9 +65,9 @@ POPString paroc_system::challenge;
 paroc_system::paroc_system() {
     paroc_combox_factory::GetInstance();
     paroc_buffer_factory_finder::GetInstance();
-    char *tmp=getenv("POPC_PLATFORM");
-    if(tmp!=NULL) {
-        platform=tmp;
+    char *tmp = getenv("POPC_PLATFORM");
+    if(tmp != NULL) {
+        platform = tmp;
     } else {
         char str[128];
 #ifndef POPC_ARCH
@@ -84,7 +84,7 @@ paroc_system::paroc_system() {
         strcpy(str, "win32");
 #endif
 #endif
-        platform=str;
+        platform = str;
     }
     POPC_HostName = POPString("");
 }
@@ -358,8 +358,8 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
  */
 bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
-    char *info = paroc_utils::checkremove(argc, argv, "-jobservice=");
-    if(info == NULL) {
+    char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
+    if(info==NULL) {
         LOG_ERROR("missing -jobservice argument");
         return false;
     }

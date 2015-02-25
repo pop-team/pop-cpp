@@ -35,7 +35,7 @@ popc_buffer_xdr_mpi::~popc_buffer_xdr_mpi() {
  */
 void popc_buffer_xdr_mpi::Reset() {
     unpackpos=20;
-    packeddata.RemoveAll();
+    packeddata.clear();
     packeddata.resize(unpackpos);
 }
 
@@ -362,7 +362,7 @@ void popc_buffer_xdr_mpi::UnPack(signed char *data, int n) {
 }
 
 void popc_buffer_xdr_mpi::CheckUnPack(int sz) {
-    if(sz+unpackpos > packeddata.size()) {
+    if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong packed data size");
     }
 }

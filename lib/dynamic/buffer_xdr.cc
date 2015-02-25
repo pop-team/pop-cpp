@@ -30,7 +30,7 @@ paroc_buffer_xdr::~paroc_buffer_xdr() {}
 
 void paroc_buffer_xdr::Reset() {
     unpackpos=20;
-    packeddata.RemoveAll();
+    packeddata.clear();
     packeddata.resize(unpackpos);
 }
 
@@ -349,10 +349,8 @@ void paroc_buffer_xdr::UnPack(signed char *data, int n) {
     UnPack((char *)data,n);
 }
 
-
-
 void paroc_buffer_xdr::CheckUnPack(int sz) {
-    if(sz+unpackpos > packeddata.size()) {
+    if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in paroc_buffer_xdr::CheckUnPack");
     }
 }
@@ -365,7 +363,7 @@ void paroc_buffer_xdr::CheckUnPack(int sz) {
  */
 bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
-    char *dat=packeddata.data();
+    char *dat = packeddata.data();
 
     if(dat == NULL) {
         LOG_ERROR("fail 1");
@@ -450,8 +448,8 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
     }
 
     packeddata.resize(n);
-    dat = packeddata.data()+20;
     n -= 20;
+    dat = packeddata.data()+20;
 
     i = 0;
 
@@ -545,7 +543,6 @@ void paroc_buffer_xdr::load(char* data, int length) {
     packeddata.resize(length);
 }
 
-
 #ifdef OD_DISCONNECT
 bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
@@ -564,8 +561,9 @@ bool paroc_buffer_xdr::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
             } else {
                 paroc_message_header h = header;
                 int unpackposold = unpackpos;
-                paroc_array<char> packeddataold = packeddata;
-                paroc_connection * t = (paroc_connection *) s.Wait();
+                auto packeddataold = packeddata;
+                auto t = (paroc_connection *) s.Wait();
+
                 if(!t) {
                     paroc_exception::paroc_throw("Remote Object not alive (2)");
                 }

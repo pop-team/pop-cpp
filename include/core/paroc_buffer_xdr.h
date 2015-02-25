@@ -13,7 +13,8 @@
 #ifndef _POPC_BUFFER_XDR_H
 #define _POPC_BUFFER_XDR_H
 
-#include "paroc_array.h"
+#include <vector>
+
 #include "paroc_buffer.h"
 
 /**
@@ -82,8 +83,6 @@ public:
     virtual char* get_load();
     virtual void load(char* data, int length);
 
-
-
 #ifdef OD_DISCONNECT
     virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0);
 #endif
@@ -92,7 +91,7 @@ protected:
     void CheckUnPack(int sz);
 
     int unpackpos;
-    paroc_array<char> packeddata;
+    std::vector<char> packeddata;
 };
 
 #endif

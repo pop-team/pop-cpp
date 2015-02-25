@@ -62,10 +62,8 @@ AppCoreService::~AppCoreService() {
         LOG_WARNING("Exception while destroying JobMgr: %s", e.what());
     }
     */
-    
-    auto pos=servicelist.GetHeadPosition();
-    while(pos) {
-        auto& t = servicelist.GetNext(pos);
+
+    for(auto& t : servicelist){
         free(t.name);
         try {
             t.service->Stop(mychallenge);
@@ -74,6 +72,7 @@ AppCoreService::~AppCoreService() {
         }
         delete t.service;
     }
+
     LOG_DEBUG("Destroyed AppCoreService");
 }
 
@@ -82,9 +81,7 @@ bool AppCoreService::QueryService(const POPString &name, paroc_service_base &ser
         return false;
     }
 
-    auto pos=servicelist.GetHeadPosition();
-    while(pos) {
-        auto& t=servicelist.GetNext(pos);
+    for(auto& t : servicelist){
         if(paroc_utils::isncaseEqual(name,t.name)) {
             service=(*t.service);
             return true;
@@ -98,9 +95,7 @@ bool AppCoreService::QueryService(const POPString &name, paroc_accesspoint &serv
         return false;
     }
 
-    auto  pos=servicelist.GetHeadPosition();
-    while(pos) {
-        auto& t = servicelist.GetNext(pos);
+    for(auto& t : servicelist){
         if(paroc_utils::isncaseEqual(name,t.name)) {
             service=t.service->GetAccessPoint();
             return true;
@@ -123,7 +118,7 @@ bool AppCoreService::RegisterService(const POPString &name, const paroc_service_
         LOG_WARNING("Exception while creating service: %s", e.what());
         return false;
     }
-    servicelist.AddTail(t);
+    servicelist.push_back(t);
     return true;
 }
 
@@ -132,14 +127,14 @@ bool AppCoreService::UnregisterService(const POPString &name) {
         return false;
     }
 
-    auto pos=servicelist.GetHeadPosition();
-    while(pos) {
+    auto pos=servicelist.begin();
+    while(pos != servicelist.end()) {
         auto old = pos;
-        auto& t = servicelist.GetNext(pos);
+        auto& t = *pos++;
         if(paroc_utils::isncaseEqual(name,t.name)) {
             delete t.service;
             free(t.name);
-            servicelist.RemoveAt(old);
+            servicelist.erase(pos);
             return true;
         }
     }

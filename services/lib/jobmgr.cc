@@ -25,12 +25,12 @@
 #include <list>
 #include <cstring>
 #include <algorithm>
+#include <mutex>
+#include <vector>
 
 #include "codemgr.ph"
 #include "timer.h"
-#include "paroc_array.h"
 #include "jobmgr.ph"
-#include "priolist.h"
 #include "paroc_thread.h"
 
 /**
@@ -87,167 +87,97 @@ void paroc_timerthread::start() {
 
 //CLASS NEIGHBOR NODE: IMPLEMENT THREAD-SAFE NEIGHBOR NODE ACCESS BASED ON KEYS
 NodeInfoMap::NodeInfoMap() {
-    keycount=0;
+    //keycount=0;
 }
 
-void NodeInfoMap::GetContacts(paroc_list_string &contacts) {
-    contacts.RemoveAll();
-    paroc_list<double> h;
+std::vector<paroc_string> NodeInfoMap::GetContacts() {
+    std::vector<paroc_string> contacts;
 
-    maplock.lock();;
-    for(int i=0; i<HASH_SIZE; i++) {
-        paroc_list<NodeInfoExt> &node=map[i];
-        POSITION pos=node.GetHeadPosition();
-        while(pos!=NULL) {
-            NodeInfoExt &t=node.GetNext(pos);
-            double heuristic=t.data.heuristic;
+    std::vector<double> h;
 
-            POSITION hpos=h.GetHeadPosition();
-            POSITION cpos=contacts.GetHeadPosition();
-            while(hpos!=NULL) {
-                POSITION old=hpos;
-                double &tmp=h.GetNext(hpos);
-                if(tmp>=heuristic) {
-                    contacts.InsertBefore(cpos, t.key);
-                    h.InsertBefore(old, heuristic);
-                    break;
-                }
-                contacts.GetNext(cpos);
+    std::unique_lock<paroc_mutex> lock(maplock);
+
+    for(auto& t : hashmap){
+        double heuristic=t.second.heuristic;
+
+        auto hpos = h.begin();
+        auto cpos = contacts.begin();
+        while(hpos != h.end()) {
+            auto old = hpos;
+            auto& tmp = *hpos++;
+
+            if(tmp>=heuristic) {
+                contacts.insert(cpos, paroc_string(t.first));
+                h.insert(old, heuristic);
+                break;
             }
-            if(cpos==NULL) {
-                contacts.AddTail(t.key);
-                h.AddTail(heuristic);
-            }
+
+            ++cpos;
+        }
+
+        if(cpos == contacts.end()) {
+            contacts.push_back(paroc_string(t.first));
+            h.push_back(heuristic);
         }
     }
 
-    maplock.unlock();
+    return contacts;
 }
 
 bool NodeInfoMap::HasContact(const POPString &contact) {
-    int i=Hash(contact);
-    paroc_list<NodeInfoExt> &node=map[i];
-    bool ret=false;
+    std::unique_lock<paroc_mutex> lock(maplock);
 
-    maplock.lock();
-
-    POSITION pos=node.GetHeadPosition();
-    while(pos!=NULL) {
-        NodeInfoExt &t=node.GetNext(pos);
-        if(paroc_utils::SameContact(t.key, contact)) {
-            ret=true;
-            break;
+    for(auto& v : hashmap){
+        if(paroc_utils::SameContact(paroc_string(v.first), contact)){
+            return true;
         }
     }
-    maplock.unlock();
-    return ret;
+
+    return false;
 }
 
 bool NodeInfoMap::GetInfo(const POPString &contact, NodeInfo &info) {
-    int i=Hash(contact);
-    maplock.lock();
-    paroc_list<NodeInfoExt> &node=map[i];
-    POSITION pos=node.GetHeadPosition();
-    bool ret=false;
-    while(pos!=NULL) {
-        NodeInfoExt &t=node.GetNext(pos);
-        if(paroc_utils::isEqual(t.key,contact)) {
-            info=t.data;
-            ret=true;
-            break;
-        }
+    std::unique_lock<paroc_mutex> lock(maplock);
+
+    if(hashmap.count(contact)){
+        info = hashmap[contact];
+        return true;
+    } else {
+        return false;
     }
-    maplock.unlock();
-    return ret;
 }
 
 int NodeInfoMap::GetCount() {
-    maplock.lock();
-    int count=0;
-    for(int i=0; i<HASH_SIZE; i++) {
-        count+=map[i].GetCount();
-    }
-    maplock.unlock();
-    return count;
+    std::unique_lock<paroc_mutex> lock(maplock);
+    return hashmap.size();
 }
 
 bool NodeInfoMap::Update(const POPString &contact, NodeInfo &info) {
-    int i=Hash(contact);
-    maplock.lock();
-    paroc_list<NodeInfoExt> &node=map[i];
-    POSITION pos=node.GetHeadPosition();
-    bool ret=false;
-    while(pos!=NULL) {
-        NodeInfoExt &t=node.GetNext(pos);
-        if(paroc_utils::isEqual(t.key,contact)) {
-            info=t.data;
-            ret=true;
-            break;
-        }
+    std::unique_lock<paroc_mutex> lock(maplock);
+
+    if(hashmap.count(contact)){
+        hashmap[contact] = info;
+        return true;
     }
-    maplock.unlock();
-    return ret;
+
+    return false;
 }
 
 bool NodeInfoMap::Remove(const POPString &contact) {
-    int i=Hash(contact);
-    if(i<0) {
-        i=-i;
-    }
-    maplock.lock();
-    paroc_list<NodeInfoExt> &node=map[i];
-    POSITION pos=node.GetHeadPosition();
-    bool ret=false;
-    while(pos!=NULL) {
-        POSITION oldpos=pos;
-        NodeInfoExt &t=node.GetNext(pos);
-        if(paroc_utils::isEqual(t.key, contact)) {
-            node.RemoveAt(oldpos);
-            ret=true;
-            break;
-        }
-    }
-    maplock.unlock();
-    return ret;
+    std::unique_lock<paroc_mutex> lock(maplock);
+    auto erased = hashmap.erase(contact);
+    return erased > 0;
 }
 
 bool NodeInfoMap::Add(const POPString &contact, NodeInfo &info) {
-    maplock.lock();
+    std::unique_lock<paroc_mutex> lock(maplock);
 
-    int i=Hash(contact);
-    paroc_list<NodeInfoExt> &node=map[i];
-
-    POSITION pos=node.GetHeadPosition();
-    bool ret=true;
-    while(pos!=NULL) {
-
-        NodeInfoExt &t=node.GetNext(pos);
-        if(paroc_utils::isEqual(t.key, contact)) {
-            ret=false;
-            break;
-        }
+    if(!hashmap.count(contact)){
+        hashmap[contact] = info;
+        return true;
     }
-    if(ret) {
-        NodeInfoExt &t=node.AddTailNew();
-        t.key=contact;
-        t.data=info;
-    }
-    maplock.unlock();
-    return ret;
 
-}
-
-int NodeInfoMap::Hash(const POPString &key) {
-    const char *s=key;
-    if(s==NULL) {
-        return 0;
-    }
-    int sum=0;
-    while(*s!=0) {
-        sum+=*s;
-        s++;
-    }
-    return sum%HASH_SIZE;
+    return false;
 }
 
 //*********************    JobMgr implementation    *********************
@@ -403,7 +333,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
             }
             paroc_accesspoint t;
             t.SetAccessString(val);
-            parents.AddTail(t);
+            parents.push_back(t);
         } else if(paroc_utils::isEqual(name,"maxjobs")) {
             if(sscanf(val,"%d",&maxjobs)!=1 || maxjobs<0) {
                 maxjobs=100;
@@ -432,9 +362,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
         } else if(paroc_utils::isEqual(name,"platform")) {
             paroc_system::platform=val;
         } else {
-            HostInfo &t=info.AddTailNew();
-            t.name=name;
-            t.val=val;
+            info.push_back({name, val});
         }
     }
     fclose(f);
@@ -448,9 +376,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
         //We do benchmark now to find the computing power of the machine...
         total.flops=paroc_utils::benchmark_power();
         sprintf(val,"%g",total.flops);
-        HostInfo &t=info.AddHeadNew();
-        t.name="power";
-        t.val=val;
+        info.push_back({"power", val});
     }
 
     if(Query("ram",tmpstr)) {
@@ -623,7 +549,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
     if(paroc_utils::isEqual(type,"jobs")) {
         //  Update();
         mutex {
-            sprintf(tmp,"%d/%d", jobs.GetCount() ,maxjobs);
+            sprintf(tmp,"%ld/%d", jobs.size() ,maxjobs);
             val=tmp;
         }
         return 1;
@@ -633,9 +559,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
         val="";
 
         mutex {
-            POSITION pos=jobs.GetHeadPosition();
-            while(pos!=NULL) {
-                Resources &r=jobs.GetNext(pos);
+            for(auto& r : jobs){
                 if(r.contact.IsEmpty() || r.appservice.IsEmpty()) {
                     continue;
                 }
@@ -663,9 +587,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
         return 1;
     }
 
-    POSITION pos=info.GetHeadPosition();
-    while(pos!=NULL) {
-        HostInfo &t=info.GetNext(pos);
+    for(auto& t : info){
         if(paroc_utils::isEqual(type,t.name)) {
             val=t.val;
             return 1;
@@ -683,9 +605,9 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
     int retry=3;
     try {
         int traceip[MAX_HOPS];
-        paroc_array<paroc_accesspoint> jobcontacts(howmany);
-        paroc_array<int> reserveIDs(howmany);
-        paroc_array<float> fitness(howmany);
+        std::vector<paroc_accesspoint> jobcontacts(howmany);
+        std::vector<int> reserveIDs(howmany);
+        std::vector<float> fitness(howmany);
 
         int requestInfo[3];
 
@@ -735,7 +657,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                 break;
             }
             //Now we will call ExecObj...
-            paroc_array<int> tmpids(howmany);
+            std::vector<int> tmpids(howmany);
             int sz;
 
             for(int i=count; i<howmany; i++) {
@@ -1018,19 +940,20 @@ void JobMgr::CancelReservation(int *req, int howmany) {
         return;
     }
     mutex {
-        POSITION pos=jobs.GetHeadPosition();
-        while(pos!=NULL) {
-            POSITION oldpos=pos;
-            Resources &t=jobs.GetNext(pos);
-            for(int i=0; i<howmany; i++)
+        auto pos = jobs.begin();
+        while(pos!=jobs.end()) {
+            auto oldpos = pos;
+            auto& t = *pos++;
+            for(int i=0; i<howmany; i++){
                 if(t.Id==req[i] && t.contact.IsEmpty()) {
                     available.flops+=t.flops;
                     available.mem+=t.mem;
                     available.bandwidth+=t.bandwidth;
-                    jobs.RemoveAt(oldpos);
+                    jobs.erase(oldpos);
                     POPCSearchNode psn(_localPSN);
                     psn.removeJob(t.flops, t.mem, t.bandwidth, 1);
                 }
+            }
         }
     }
 }
@@ -1055,7 +978,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
     float require, min;
 
     mutex {
-        if(jobs.GetCount()>=maxjobs) {
+        if(jobs.size()>=maxjobs) {
             return 0;
         }
 
@@ -1135,13 +1058,14 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId,
             }
         }
         inoutfitness=fitness;
-        Resources &t=jobs.AddTailNew();
+        Resources t;
         t.Id=counter;
         t.flops=flops;
         t.mem=mem;
         t.bandwidth=bandwidth;
         t.start=time(NULL);
         t.walltime=walltime;
+        jobs.push_back(t);
 
         /**
          * ViSaG : clementval
@@ -1179,7 +1103,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness) {
     float require, min;
 
     mutex {
-        if(jobs.GetCount()>=maxjobs) {
+        if(jobs.size()>=maxjobs) {
             return 0;
         }
 
@@ -1261,13 +1185,14 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness) {
             }
         }
         inoutfitness=fitness;
-        Resources &t=jobs.AddTailNew();
+        Resources t;
         t.Id=counter;
         t.flops=flops;
         t.mem=mem;
         t.bandwidth=bandwidth;
         t.start=time(NULL);
         t.walltime=walltime;
+        jobs.push_back(t);
 
         available.flops-=flops;
         available.mem-=mem;
@@ -1331,11 +1256,12 @@ bool JobMgr::MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoi
 void JobMgr::Update() {
     mutex {
         //Check if a reservation timeout/job termination....then reget the resource...
-        POSITION pos=jobs.GetHeadPosition();
+        auto pos=jobs.begin();
         POPCSearchNode psn(_localPSN);
-        while(pos!=NULL) {
-            POSITION old=pos;
-            Resources &t=jobs.GetNext(pos);
+        while(pos!=jobs.end()) {
+            auto old=pos;
+            Resources &t=*pos++;
+
             time_t now=time(NULL);
 
             if(t.contact.IsEmpty()) {
@@ -1343,7 +1269,7 @@ void JobMgr::Update() {
                     available.flops+=t.flops;
                     available.mem+=t.mem;
                     available.bandwidth+=t.bandwidth;
-                    jobs.RemoveAt(old);
+                    pos = jobs.erase(old);
                     psn.removeJob(t.flops, t.mem, t.bandwidth, 1);
                 }
             } else if(now-t.start>5) { // Do not check twice within 5 seconds
@@ -1353,7 +1279,7 @@ void JobMgr::Update() {
                     available.flops+=t.flops;
                     available.mem+=t.mem;
                     available.bandwidth+=t.bandwidth;
-                    jobs.RemoveAt(old);
+                    pos = jobs.erase(old);
                     psn.removeJob(t.flops, t.mem, t.bandwidth, 1);
                 }
             }
@@ -1368,15 +1294,11 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
     //Since this method can be invoked concurently,
     //we need to copy the data to local memony stack and process on these data
 
-    paroc_list_string nodes;
-    neighbors.GetContacts(nodes);
-    POSITION pos=nodes.GetHeadPosition();
     Timer watch;
     watch.Start();
     bool ret=false;
 
-    while(pos!=NULL) {
-        POPString &contact=nodes.GetNext(pos);
+    for(auto& contact : neighbors.GetContacts()){
         NodeInfo info;
         if(!neighbors.GetInfo(contact,info)) {
             continue;
@@ -1404,9 +1326,10 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
             //Separate the Fitness into 2 parts. Only forward the parts whose fitness<1...
             int good=0;
             int nswap=0;
-            for(int j=0; j<howmany; j++)
+            for(int j=0; j<howmany; j++){
                 if(fitness[j]<1) {
-                    for(int k=howmany-1-nswap; k>j; k--) if(fitness[k]>=1) {
+                    for(int k=howmany-1-nswap; k>j; k--){
+                        if(fitness[k]>=1) {
                             float f=fitness[k];
                             fitness[k]=fitness[j];
                             fitness[j]=f;
@@ -1421,14 +1344,17 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                             nswap++;
                             break;
                         }
+                    }
+
                     if(fitness[j]<1) {
                         break;
                     }
-                    good++;
 
+                    good++;
                 } else {
                     good++;
                 }
+            }
 
             int count=howmany-good;
             if(count<=0) {
@@ -1436,8 +1362,8 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
             }
             JobMgr child(childaddr);
 
-            paroc_array<float> oldfitness;
-            oldfitness.InsertAt(-1,fitness+good,count);
+            std::vector<float> oldfitness;
+            std::copy(fitness+good, fitness+good+count, std::back_inserter(oldfitness));
 
             if(child.AllocResource(localservice,objname,od, count , fitness+good,jobcontacts+good, reserveIDs+good, requestInfo, iptrace, tracesize)) {
                 ret=true;
@@ -1463,9 +1389,9 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
                     info.heuristic=MAX_HEURISTICS;
                 }
             }
-
         } catch(std::exception& e) {
             LOG_CORE( "[JM] Exception on contact %s: %s", (const char *)contact, e.what());
+
             if(info.nodetype!=NODE_STATIC) {
                 neighbors.Remove(contact);
                 continue;
@@ -1489,7 +1415,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
             if(index[i]==-1) {
                 index[i]=1;
                 POPString t(jobcontacts[i].GetAccessString());
-                if(t==NULL || paroc_utils::isEqual(t,local)) {
+                if(t == NULL || paroc_utils::isEqual(t,local)) {
                     continue;
                 }
                 NodeInfo info;
@@ -1524,9 +1450,7 @@ void JobMgr::SelfRegister() {
     lasttime=service_timer.Elapsed()+36000;
 
     LOG_DEBUG("Updating my contact to parent nodes...");
-    POSITION pos=parents.GetHeadPosition();
-    while(pos!=NULL) {
-        paroc_accesspoint &tmp=parents.GetNext(pos);
+    for(auto& tmp : parents){
         try {
             tmp.SetAsService();
             JobMgr remote(tmp);
@@ -1543,8 +1467,6 @@ void JobMgr::SelfRegister() {
     }
     lasttime=service_timer.Elapsed();
 }
-
-
 
 void JobMgr::Start() {
     JobCoreService::Start();
@@ -1745,7 +1667,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     POPString mycodefile;
     try {
         CodeMgr code(localservice);
-        if(!code.QueryCode(objname,paroc_system::platform,mycodefile) || mycodefile==NULL) {
+        if(!code.QueryCode(objname,paroc_system::platform,mycodefile) || mycodefile == NULL) {
             CancelReservation(reserveIDs,howmany);
             POPString tmpObjname = objname;
             POPString tmpPlatform = paroc_system::platform;
@@ -1895,27 +1817,22 @@ void JobMgr::dump() {
             *tmp='_';
         }
     f=fopen(tmp,"w+t");
-    if(f==NULL) {
+    if(!f) {
         return;
     }
 
-    paroc_list_string keys;
-    neighbors.GetContacts(keys);
-    fprintf(f,"Neighbour nodes (%d)\n", keys.GetCount());
-    POSITION pos=keys.GetHeadPosition();
-    int i=0;
-    while(pos!=NULL) {
-        i++;
-        POPString &t=keys.GetNext(pos);
+    auto keys = neighbors.GetContacts();
+    fprintf(f,"Neighbour nodes (%ld)\n", keys.size());
+
+    for(std::size_t i = 0; i < keys.size(); ++i){
+        auto& t=keys[i];
         NodeInfo info;
-        if(!neighbors.GetInfo(t,info)) {
-            continue;
+        if(neighbors.GetInfo(t,info)) {
+            fprintf(f,"%ld: %s\t%g\t%d\n",i,(const char *)t, info.heuristic,int(info.nodetype));
         }
-        fprintf(f,"%d: %s\t%g\t%d\n",i,(const char *)t, info.heuristic,int(info.nodetype));
     }
     fclose(f);
 #endif
-
 }
 
 void JobMgr::Pause(const paroc_accesspoint &app, int duration) {
@@ -2043,9 +1960,7 @@ bool JobMgr::ObjectAlive(paroc_accesspoint &t) {
 
 Resources* JobMgr::VerifyReservation(int reserveId, bool updatetime) {
     mutex {
-        POSITION pos=jobs.GetHeadPosition();
-        while(pos!=NULL) {
-            Resources &tmp=jobs.GetNext(pos);
+        for(auto& tmp : jobs){
             if(tmp.Id==reserveId) {
                 if(updatetime) {
                     tmp.start=time(NULL);
@@ -2059,9 +1974,7 @@ Resources* JobMgr::VerifyReservation(int reserveId, bool updatetime) {
 
 bool JobMgr::ValidateReservation(int id, const paroc_accesspoint &objcontact, const paroc_accesspoint &appserv) {
     mutex {
-        POSITION pos=jobs.GetHeadPosition();
-        while(pos!=NULL) {
-            Resources &tmp=jobs.GetNext(pos);
+        for(auto& tmp : jobs){
             if(tmp.Id==id) {
                 tmp.contact=objcontact;
                 tmp.appservice=appserv;
@@ -2079,15 +1992,15 @@ bool JobMgr::ReleaseJob(int id) {
         return false;
     }
     mutex {
-        POSITION pos=jobs.GetHeadPosition();
-        while(pos!=NULL) {
-            POSITION oldpos=pos;
-            Resources &t=jobs.GetNext(pos);
+        auto  pos=jobs.begin();
+        while(pos!=jobs.end()) {
+            auto oldpos=pos;
+            auto &t=*pos++;
             if(t.Id==id && !t.contact.IsEmpty()) {
                 available.flops+=t.flops;
                 available.mem+=t.mem;
                 available.bandwidth+=t.bandwidth;
-                jobs.RemoveAt(oldpos);
+                jobs.erase(oldpos);
                 POPCSearchNode psn(_localPSN);
                 psn.removeJob(t.flops, t.mem, t.bandwidth, 1);
                 return true;
@@ -2125,17 +2038,17 @@ void JobMgr::ApplicationEnd(POPString popAppId, bool initiator) {
     bool hasRemoved=false;
     int nbJob=0;
     mutex {
-        POSITION pos=jobs.GetHeadPosition();
+        auto pos=jobs.begin();
+        while(pos!=jobs.end()) {
+            auto oldpos=pos;
+            auto &t=*pos++;
 
-        while(pos!=NULL) {
-            POSITION oldpos=pos;
-            Resources &t=jobs.GetNext(pos);
             if(strcmp(t.popAppId.GetString(), popAppId.GetString())==0) {
                 available.flops+=t.flops;
                 available.mem+=t.mem;
                 available.bandwidth+=t.bandwidth;
                 nbJob++;
-                jobs.RemoveAt(oldpos);
+                pos = jobs.erase(oldpos);
                 hasRemoved=true;
             }
         }

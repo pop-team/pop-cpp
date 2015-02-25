@@ -23,9 +23,6 @@ struct ServiceEntry {
     paroc_service_base *service;
 };
 
-typedef paroc_list<ServiceEntry> paroc_list_service;
-
-
 /**
  * @class AppCoreService
  * @brief Parclass : Application service interface, used by POP-C++ runtime.
@@ -88,7 +85,7 @@ public:
 
 
 private:
-    paroc_list_service servicelist;
+    std::vector<ServiceEntry> servicelist;
     void LoadAddOn();
 
     /**

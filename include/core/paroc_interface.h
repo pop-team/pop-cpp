@@ -24,7 +24,6 @@
 #include <paroc_accesspoint.h>
 #include <paroc_od.h>
 #include <paroc_buffer.h>
-#include <paroc_list.h>
 #include <paroc_allocobj.h>
 #include "popwayback.h"
 
@@ -170,8 +169,8 @@ private:
     POPString popAppId;
 
     void NegotiateEncoding(paroc_string &enclist, paroc_string &peerplatform);
-    void Tokenize(paroc_string &s, paroc_list<char *> &tokens);
-    void ApplyCommPattern(const char *pattern, paroc_list<char *> &accesslist);
+    std::vector<char*> Tokenize(paroc_string &s);
+    void ApplyCommPattern(const char *pattern, std::vector<char*> &accesslist);
     int CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port);
     int KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port);
     bool IsTunnelAlive(const char *user, const char *dest_ip, int dest_port, int local_port);

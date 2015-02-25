@@ -13,7 +13,8 @@
 #ifndef _POPC_BUFFER_XDR_MPI_H
 #define _POPC_BUFFER_XDR_MPI_H
 
-#include "paroc_array.h"
+#include <vector>
+
 #include "paroc_buffer.h"
 
 /**
@@ -85,7 +86,7 @@ protected:
     void CheckUnPack(int sz);
 
     int unpackpos;
-    paroc_array<char> packeddata;
+    std::vector<char> packeddata;
 };
 
 #endif /* _POPC_BUFFER_XDR_MPI_H */

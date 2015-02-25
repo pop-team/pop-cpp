@@ -62,5 +62,3 @@ protected:
 };
 
 #endif
-
-//[in, proc=marshalstring]

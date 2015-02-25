@@ -290,7 +290,7 @@ POPString paroc_system::GetDefaultInterface() {
             if(num < 2) {
                 paroc_exception::paroc_throw("GetDefaultInterface failed: num < 2");
             }
-            // LOG_DEBUG( "iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
+            // LOG_DEBUG("iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
 
             if(!strcmp(net_addr,"00000000")) {
                 LOG_DEBUG("Default gateway : %s", iface);
@@ -352,7 +352,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
     if(info==NULL) {
         LOG_ERROR("missing -jobservice argument");
-         return false;
+        return false;
     }
     paroc_system::jobservice.SetAccessString(info);
     paroc_system::jobservice.SetAsService();
@@ -367,14 +367,14 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     }
 
     // Get application service contact address
-    char *appcontact=paroc_utils::checkremove(argc,argv,"-appservicecontact=");
+    char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
     if(codeser==NULL && appcontact==NULL) {
         LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");
         return false;
     }
     try {
-        if(appcontact==NULL) {
+        if(appcontact == NULL) {
             char url[1024];
             if(proxy==NULL) {
                 strcpy(url,codeser);

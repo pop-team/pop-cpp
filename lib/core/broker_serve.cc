@@ -70,22 +70,22 @@ bool paroc_broker::GetRequest(paroc_request &req) {
     paroc_mutex_locker locker(execCond);
 
     //If the queue is empty then wait for the request....
-    while(request_fifo.IsEmpty()) {
+    while(request_fifo.empty()) {
         if((obj!=NULL && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING) {
             return false;
         }
         execCond.wait(); //Wait for new request
     }
 
-    POSITION pos=request_fifo.GetHeadPosition();
+    auto pos=request_fifo.begin();
     if(concPendings) {
-        POSITION pos1=pos;
-        while(pos1!=NULL) {
-            POSITION old=pos1;
-            paroc_request &tmp=request_fifo.GetNext(pos1);
+        auto pos1=pos;
+        while(pos1!=request_fifo.end()) {
+            auto old=pos1;
+            paroc_request &tmp=*pos1++;
             if(tmp.methodId[2] & INVOKE_CONC) {
                 req=tmp;
-                request_fifo.RemoveAt(old);
+                request_fifo.erase(old);
                 concPendings--;
                 return true;
             } else if(tmp.methodId[2] & INVOKE_MUTEX) {
@@ -94,8 +94,8 @@ bool paroc_broker::GetRequest(paroc_request &req) {
         }
     }
 
-    req=request_fifo.GetAt(pos);
-    request_fifo.RemoveHead();
+    req=*pos;
+    request_fifo.pop_front();
 
     //Top request is of type mutex
     if(req.methodId[2] & INVOKE_MUTEX) {
@@ -103,6 +103,7 @@ bool paroc_broker::GetRequest(paroc_request &req) {
             execCond.wait();
         }
     }
+
     return true;
 }
 
