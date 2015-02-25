@@ -1629,7 +1629,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     char env_np[256];
     char env_walltime[256];
     *env_walltime=0;
-    string cwd = od.getCwd();
+    const string& cwd = od.getCwd();
     sprintf(env_np,"POPC_NP=%d",howmany);
     *curenv=env_np;
     curenv++;

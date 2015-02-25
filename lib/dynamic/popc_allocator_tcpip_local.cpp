@@ -74,7 +74,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 
     // Get the executable path name
-    codefile = od.getExecutable().c_str();
+    codefile = od.getExecutable();
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
     if(codefile.Length() <= 0) {
         assert(!paroc_system::appservice.IsEmpty());

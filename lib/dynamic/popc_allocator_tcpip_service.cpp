@@ -26,6 +26,8 @@
 #include "appservice.ph"
 #define ALLOC_TIMEOUT 60
 
+using namespace std;
+
 /**
  * Allocator over TCP/IP with local mechanism constructor
  */
@@ -48,10 +50,9 @@ POPString POPC_Allocator_tcpip_service::allocate(POPString& objectname, paroc_od
     paroc_accesspoint jobcontact, objectaddress, remotejobcontact;
 
     //Exec using JobMgr interface...
-    POPString platforms;
-    od.getPlatforms(platforms);
+    POPString platforms = od.getPlatforms();
 
-    if(platforms.Length()<=0) {
+    if(!platforms.empty()) {
         CodeMgr mgr(paroc_system::appservice);
         if(mgr.GetPlatform(objectname, platforms)<=0) {
             paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, objectname, "No platform found");
@@ -60,11 +61,10 @@ POPString POPC_Allocator_tcpip_service::allocate(POPString& objectname, paroc_od
     }
     //Global Resource management system --> Find a resource.
 
-    POPString joburl;
-    od.getJobURL(joburl);
+    POPString joburl = od.getJobURL();
 
 
-    if(joburl!=NULL) {
+    if(!joburl.empty()) {
         jobcontact.SetAccessString(joburl);
     } else {
         jobcontact=paroc_system::jobservice;

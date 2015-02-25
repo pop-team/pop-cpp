@@ -41,7 +41,7 @@ POPC_Allocator_uds_interconnector::~POPC_Allocator_uds_interconnector() {
  * @return A string representation of the access-point
  */
 POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, paroc_od& od) {
-    // TODO LW : unused ?
+    // Note LW: Commented since it is unused
     // POPString p;
     //od.getProtocol(p);
 

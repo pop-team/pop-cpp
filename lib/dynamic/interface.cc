@@ -296,7 +296,7 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
 
     //Choose the protocol and then bind
     POPString prots = dest.GetAccessString();
-    POPString od_prots = od.getProtocol().c_str();
+    POPString od_prots = od.getProtocol();
 
     auto accesslist = Tokenize(prots);
     ApplyCommPattern(getenv("POPC_COMM_PATTERN"),accesslist);
@@ -712,7 +712,7 @@ bool paroc_interface::RecvCtrl() {
 
 void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatform) {
     LOG_DEBUG("INTERFACE: Negotiate encoding start");
-    POPString pref = od.getEncoding().c_str();
+    POPString pref = od.getEncoding();
 
     auto enc_pref = Tokenize(pref);
     auto enc_avail = Tokenize(enclist);
