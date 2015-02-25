@@ -169,9 +169,6 @@ public:
     inline const std::string& GetFileName() const  {return filename;}
     inline void SetFileName(const std::string name) {filename = name;}
 
-    inline const std::string& GetPath() const  {return path;}
-    inline void SetPath(const std::string name) {path = name;}
-
     inline const std::string& GetOutputName() const {return outfile;}
     void SetOutputName(const std::string& name) {outfile = name;}
 
@@ -204,7 +201,6 @@ public:
 
 protected:
     std::string filename;
-    std::string path;
     std::string outfile;
     bool isCoreCompilation;
     bool isAsyncAllocationDisable;

@@ -424,11 +424,14 @@ void paroc_system::Finalize(bool normalExit) {
     if(mgr!=NULL) {
         try {
             if(normalExit) {
-                //Wait all object to be terminated!
+                //Wait for all object to be terminated!
                 int timeout=1;
                 int oldcount=0, count;
                 int loop=0;
-                while((count=mgr->CheckObjects())>0) {
+
+                // after 5 tries the system tries to contact the objects
+                // if we ping the objects directly the socket might still be closing --> collision
+                while((count=mgr->CheckObjects(loop > 5))>0) {
                     if(timeout<1800 && oldcount==count) {
                         // sleep an increasing amount of time
                         timeout=timeout*4/3;
@@ -445,7 +448,7 @@ void paroc_system::Finalize(bool normalExit) {
                     oldcount=count;
                 }
             } else {
-	        LOG_DEBUG("Finalize killall");
+	            LOG_INFO("Main routine did not return 0. This is treated as an error by POP-C++.");
                 mgr->KillAll();
             }
           LOG_DEBUG("Finalize stop");

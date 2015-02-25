@@ -45,8 +45,9 @@ ObjectMonitor::~ObjectMonitor() {
 
 void ObjectMonitor::KillAll() {
     mutex {
-        LOG_INFO("POP-C++: End of all parallel objects is being processed");
+        LOG_INFO("Kill all remaining parallel objects");
         for(auto& t : objects){
+            LOG_INFO("Kill object %s", t.GetAccessString());
             try {
                 paroc_interface tmp(t);
                 tmp.Kill();
@@ -58,28 +59,31 @@ void ObjectMonitor::KillAll() {
     }
 }
 
-int ObjectMonitor::CheckObjects() {
+int ObjectMonitor::CheckObjects(bool pingObjects) {
     mutex {
-        bool active=false;
+        if(pingObjects){
+            bool active=false;
 
-        auto pos = objects.begin();
-        while(pos!=objects.end()) {
-            auto old=pos;
-            auto &t=*pos++;
-            try {
-                paroc_interface test(t);
-                if(!active && test.ObjectActive()) {
-                    active=true;
+            auto pos = objects.begin();
+            while(pos!=objects.end()) {
+                auto old=pos;
+                auto &t=*pos++;
+                try {
+                    paroc_interface test(t);
+                    if(!active && test.ObjectActive()) {
+                        active=true;
+                    }
+                    if(!active && !isActive) {
+                        LOG_WARNING("Object %s is already inactive", t.GetAccessString());
+                        test.DecRef();
+                    }
+                } catch(std::exception &e) {
+                    LOG_WARNING("An object might have been destroyed prematurely: exception while calling %s: %s",t.GetAccessString(),e.what());
+                    pos = objects.erase(old);
                 }
-                if(!active && !isActive) {
-                    test.DecRef();
-                }
-            } catch(std::exception &e) {
-                LOG_WARNING("Exception in CheckObjects: %s",e.what());
-                pos = objects.erase(old);
-	        }
+            }
+            isActive=active;
         }
-        isActive=active;
 
         LOG_DEBUG("Check parallel objects....%ld object alive", objects.size());
         return objects.size();
@@ -89,12 +93,13 @@ int ObjectMonitor::CheckObjects() {
 void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
     mutex {
         const char *newstr=p.GetAccessString();
+        LOG_DEBUG("Manage object with ap %s", newstr);
         for(auto& t : objects){
             if(paroc_utils::isEqual(t.GetAccessString(), newstr)) {
+                LOG_WARNING("Found object with a similar ap: %s", newstr);
                 return;
             }
         }
-        LOG_DEBUG("Add object %s", newstr);
         objects.push_back(p);
     }
 }
@@ -102,6 +107,7 @@ void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
 void ObjectMonitor::UnManageObject(paroc_accesspoint &p) {
     mutex {
         const char *newstr=p.GetAccessString();
+        LOG_DEBUG("Unanage object with ap %s", newstr);
         auto pos=objects.begin();
         while(pos!=objects.end()) {
             if(paroc_utils::isEqual(pos->GetAccessString(), newstr)) {
