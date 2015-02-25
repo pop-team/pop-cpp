@@ -31,11 +31,11 @@ Request::Request(int maxHops, POPString nodeId, POPString operatingSystem, int m
                  POPString encoding) {
     init();
     _maxHops = maxHops;
-    if(nodeId != NULL && nodeId.Length() > 0) {
+    if(!nodeId.empty()) {
         _nodeId = nodeId;
         _hasNodeIdSet = true;
     }
-    if(operatingSystem != NULL && operatingSystem.Length() > 0) {
+    if(!operatingSystem.empty()) {
         _operatingSystem = operatingSystem;
         _hasOperatingSystemSet = true;
     }
@@ -79,11 +79,11 @@ Request::Request(int maxHops, POPString nodeId, POPString operatingSystem, int m
         _expectedPower = expectedPower;
         _hasExpectedPowerSet = true;
     }
-    if(protocol != NULL && protocol.Length() > 0) {
+    if(!protocol.empty()) {
         _protocol = protocol;
         _hasProtocolSet = true;
     }
-    if(encoding != NULL && encoding.Length() > 0) {
+    if(!encoding.empty()) {
         _encoding = encoding;
         _hasEncodingSet = true;
     }

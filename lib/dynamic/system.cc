@@ -108,7 +108,7 @@ paroc_system::~paroc_system() {
 // ELSE call GetIP()
 //----------------------------------------------------------------------------
 POPString paroc_system::GetHost() {
-    if(POPC_HostName.Length()<1) {
+    if(POPC_HostName.empty()) {
         char str[128];
         char *t=getenv("POPC_HOST");
         if(t==NULL || *t==0) {
@@ -159,7 +159,7 @@ POPString paroc_system::GetIP() {
             }
         } else { // Env. Variable POP_IFACE is not defined
             iface=GetDefaultInterface();
-            if(iface.Length()>0) {
+            if(!iface.empty()) {
                 if(!(GetIPFromInterface(iface,ip))) {
                     setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
                     LOG_WARNING("host IP not found, using '%s' as IP address.",LOCALHOST);

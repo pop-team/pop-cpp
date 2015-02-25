@@ -328,7 +328,7 @@ void paroc_interface::Allocate() {
         POPString platforms;
         od.getPlatforms(platforms);
 
-        if(platforms.Length()<=0) {
+        if(platforms.empty()) {
 		LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::appservice.GetAccessString());
             /*CodeMgr mgr(paroc_system::appservice);
             if (mgr.GetPlatform(objname, platforms)<=0) {

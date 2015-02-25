@@ -77,7 +77,7 @@ AppCoreService::~AppCoreService() {
 }
 
 bool AppCoreService::QueryService(const POPString &name, paroc_service_base &service) {
-    if(name.Length()<=0) {
+    if(name.empty()) {
         return false;
     }
 
@@ -91,7 +91,7 @@ bool AppCoreService::QueryService(const POPString &name, paroc_service_base &ser
 }
 
 bool AppCoreService::QueryService(const POPString &name, paroc_accesspoint &service) {
-    if(name.Length()<=0) {
+    if(name.empty()) {
         return false;
     }
 
@@ -106,7 +106,7 @@ bool AppCoreService::QueryService(const POPString &name, paroc_accesspoint &serv
 }
 
 bool AppCoreService::RegisterService(const POPString &name, const paroc_service_base &newservice) {
-    if(name.Length()<=0) {
+    if(name.empty()) {
         return false;
     }
 
@@ -123,7 +123,7 @@ bool AppCoreService::RegisterService(const POPString &name, const paroc_service_
 }
 
 bool AppCoreService::UnregisterService(const POPString &name) {
-    if(name.Length()<=0) {
+    if(name.empty()) {
         return false;
     }
 

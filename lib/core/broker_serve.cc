@@ -198,7 +198,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         LOG_WARNING("POP-C++ exception in paroc_broker::DoInvoke");
         if(request.from!=NULL) {
             POPString extra=e->Info();
-            if(e->Info().Length()==0) {
+            if(e->Info().empty()) {
                 extra= classname + "@" + accesspoint.GetAccessString();
             } else {
                 extra=classname + "@" + accesspoint.GetAccessString() + ": " + extra;
@@ -214,7 +214,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         if(request.from!=NULL) {
 
             POPString extra=e.Info();
-            if(e.Info().Length()==0) {
+            if(e.Info().empty()) {
                 extra=classname+"@"+accesspoint.GetAccessString();
             } else {
                 extra=classname+"@"+accesspoint.GetAccessString()+": "+extra;

@@ -90,7 +90,7 @@ const POPString paroc_exception::Info()const {
 }
 
 void paroc_exception::AddInfo(const char* str) {
-    if(info.Length() != 0)
+    if(!info.empty())
 	    info += ": ";
     info += str;
 }
