@@ -73,8 +73,7 @@ public:
      * @param h machine ip or name
      */
     void url(const std::string& h);
-    inline void setArch(const std::string& str){hostarch = str;}
-
+    
     void node(int value);
     void core(int value);
 

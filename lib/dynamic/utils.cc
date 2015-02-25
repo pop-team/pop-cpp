@@ -20,15 +20,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-//#include <string.h>
-//#include <stdarg.h>
-//#include <stdio.h>
-//#include <ctype.h>
-//#include <unistd.h>
-//#include <stdlib.h>
-
-
-
 #include "paroc_utils.h"
 
 char *paroc_utils::checkremove(int *argc, char ***argv, const char *opt) {

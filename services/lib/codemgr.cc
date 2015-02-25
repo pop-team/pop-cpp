@@ -81,6 +81,7 @@ int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPS
     }
 
     if(i>=n) {
+        LOG_WARNING("Found no code file for %s", objname.c_str());
         return 0;
     }
 
@@ -93,6 +94,7 @@ int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPS
     }
 
     if(i>=n) {
+        LOG_WARNING("Found no code file for %s", platform.c_str());
         return 0;
     }
 
