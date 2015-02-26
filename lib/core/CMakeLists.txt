@@ -38,31 +38,6 @@ elseif(UNIX)
     set(intface_cc_file popc_intface_linux.cc)
 endif(WIN32)
 
-# Compile a .ph file into a .ph.stub_client.o
-function(popcc_compile_ph ph_file)
-add_custom_command(
-    OUTPUT ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o
-    COMMAND ${POPCC_PARCLASS_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o ${ph_file} ${POPCPP_DYNAMIC_INCLUDE_PATH}
-    DEPENDS ${ph_file}
-    DEPENDS popcc
-    DEPENDS popcpp
-)
-endfunction(popcc_compile_ph)
-
-# Compile a cxx file into a .o
-function(popcc_compile_cxx cxx_file)
-add_custom_command(
-    OUTPUT ${POPCC_OUTPUT_DIR}/${cxx_file}.o
-    COMMAND ${POPCC_PARCLASS_SERVICE_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${cxx_file} ${POPCPP_DYNAMIC_INCLUDE_PATH}
-    DEPENDS ${cxx_file}
-    DEPENDS popcc
-    DEPENDS popcpp
-)
-endfunction(popcc_compile_cxx)
-
-# Build .ph files
-
-# popcc_compile_cxx(utils.cc)
 
 set(POPCC_GENERATED_STUBS
 #    ${POPCC_OUTPUT_DIR}/paroc_service_base.ph.stub_client.o

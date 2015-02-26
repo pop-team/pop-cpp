@@ -57,7 +57,7 @@ add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o)
 function(popcc_compile_ph ph_file)
 add_custom_command(
     OUTPUT ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o
-    COMMAND ${POPCC_PARCLASS_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o ${ph_file} ${POPCPP_DYNAMIC_INCLUDE_PATH}
+    COMMAND ${POPCC_PARCLASS_COMMAND} ${POPCC_OUTPUT_DIR}/${ph_file}.stub_client.o ${CMAKE_CURRENT_SOURCE_DIR}/${ph_file} ${POPCPP_DYNAMIC_INCLUDE_PATH}
     DEPENDS ${ph_file}
     DEPENDS popcc
     DEPENDS popcpp
@@ -68,7 +68,7 @@ endfunction(popcc_compile_ph)
 function(popcc_compile_cxx cxx_file)
 add_custom_command(
     OUTPUT ${POPCC_OUTPUT_DIR}/${cxx_file}.o
-    COMMAND ${POPCC_PARCLASS_SERVICE_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${cxx_file} ${POPCPP_DYNAMIC_INCLUDE_PATH}
+    COMMAND ${POPCC_PARCLASS_SERVICE_COMMAND} ${POPCC_OUTPUT_DIR}/${cxx_file}.o ${CMAKE_CURRENT_SOURCE_DIR}/${cxx_file} ${POPCPP_DYNAMIC_INCLUDE_PATH}
     DEPENDS ${cxx_file}
     DEPENDS popcc
     DEPENDS popcpp
