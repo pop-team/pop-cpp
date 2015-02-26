@@ -88,7 +88,7 @@ void paroc_string::operator +=(const char *x) {
     if(data==NULL) {
         *this=x;
     } else if(x!=NULL) {
-        int newsz=Length()+strlen(x)+1;
+        int newsz=size()+strlen(x)+1;
         if(newsz) {
             char *tmp=(char *)realloc(data,newsz+1);
             if(tmp==NULL) {
@@ -125,7 +125,7 @@ void paroc_string::substring(int start, int end, paroc_string &sub) {
     }
 }
 
-int paroc_string::Length() const {
+int paroc_string::size() const {
     if(data==NULL) {
         return -1;
     }

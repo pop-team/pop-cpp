@@ -59,14 +59,14 @@ public:
      */
     void substring(int start, int end, paroc_string &sub);
 
-    int Length() const;
+    int size() const;
     /**
      * @brief Returns a pointer to the (char*) data
      */
     char *GetString();
 
     // for compatibility with std::string
-    inline bool empty() const {return (this == NULL || Length() <= 0);}
+    inline bool empty() const {return (this == NULL || size() <= 0);}
 
 protected:
     char *data;

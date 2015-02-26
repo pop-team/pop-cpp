@@ -119,7 +119,7 @@ void paroc_buffer::Pack(const POPString *list, int n) {
     }
     for(int i=0; i<n; i++,list++) {
         const char *res=(*list);
-        int len=list->Length()+1;
+        int len=list->size()+1;
         Pack(&len,1);
         if(len>0) {
             Pack(res,len);

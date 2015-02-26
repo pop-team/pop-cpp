@@ -25,9 +25,9 @@ CodeMgr::~CodeMgr() {
 }
 
 void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, const POPString &codefile) {
-    if(objname.Length() >= CODE_MAX_STRING_SIZE || platform.Length() >= CODE_MAX_STRING_SIZE || codefile.Length() >= CODE_MAX_STRING_SIZE) {
+    if(objname.size() >= CODE_MAX_STRING_SIZE || platform.size() >= CODE_MAX_STRING_SIZE || codefile.size() >= CODE_MAX_STRING_SIZE) {
         LOG_ERROR( "Could not register code, information longer than %i: %i %i %i",
-                    CODE_MAX_STRING_SIZE, objname.Length(), platform.Length(), codefile.Length());
+                    CODE_MAX_STRING_SIZE, objname.size(), platform.size(), codefile.size());
         LOG_ERROR( "RegisterCode %s %s %s", objname.c_str(), platform.c_str(), codefile.c_str());
 
         //TODO: Throw exception
