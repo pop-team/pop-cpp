@@ -71,6 +71,7 @@ paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
 }
 
 paroc_interface::paroc_interface(const paroc_accesspoint &p) {
+    LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString(), ClassName(), (od.isSecureSet())?"true":"false");
     _ssh_tunneling = false;
     __paroc_combox = NULL;
     __paroc_buf = NULL;
@@ -91,6 +92,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) {
 }
 
 paroc_interface::paroc_interface(const paroc_interface &inf) {
+    LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)", inf.GetAccessPoint().GetAccessString(), ClassName(), (od.isSecureSet())?"true":"false");
     paroc_accesspoint infAP = inf.GetAccessPoint();
     _ssh_tunneling=false;
     __paroc_combox=NULL;

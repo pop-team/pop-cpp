@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     a.SetInternalData(10);
     a.SetMyData(100);
     a.SetMyData(256, 3.1415926);
-    o.SetData(a, a);
+    o.SetData(a, a); // TODO LW: There is an error here: the dynamic and static types are different ---> error at serialization
 
     printf("Heritparam3: Current internal data =%d\n", o.GetData().GetInternalData());
     printf("Heritparam3: My current data =%d\n", o.GetData().GetMyData());

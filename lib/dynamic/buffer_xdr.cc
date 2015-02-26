@@ -351,6 +351,7 @@ void paroc_buffer_xdr::UnPack(signed char *data, int n) {
 
 void paroc_buffer_xdr::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
+        LOG_ERROR("Wrong buffer format: %d + %d > %d", sz, unpackpos, packeddata.size()); // TODO LW: Why is it allowed to have <
         paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in paroc_buffer_xdr::CheckUnPack");
     }
 }

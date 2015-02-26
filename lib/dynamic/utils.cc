@@ -296,6 +296,7 @@ int rprintf(const char *format,...) {
         return 0;
     }
     try {
+        // TODO LW: Each time we call rprintf a new connection to the remote is created. Can we be more efficient ?
         RemoteLog log(paroc_system::appservice);
         POPString msg(str);
         log.Log(msg);

@@ -448,7 +448,7 @@ void paroc_system::Finalize(bool normalExit) {
                     oldcount=count;
                 }
             } else {
-	            LOG_INFO("Main routine did not return 0. This is treated as an error by POP-C++.");
+	            LOG_INFO("Main routine did not exit normally or did not return 0. This is treated as an error by POP-C++.");
                 mgr->KillAll();
             }
           LOG_DEBUG("Finalize stop");
