@@ -155,7 +155,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     paroc_connection *connection = tmpsock->get_connection();
     POPString cburl;
     tmpsock->GetUrl(cburl);
-    sprintf(tmpstr,"-callback=%s", (const char*)cburl);
+    sprintf(tmpstr,"-callback=%s", cburl.c_str());
     argv[n++]=popc_strdup(tmpstr);
 
     sprintf(tmpstr,"-object=%s", objectname.GetString());

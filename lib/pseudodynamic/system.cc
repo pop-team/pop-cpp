@@ -137,7 +137,7 @@ POPString paroc_system::GetHost() {
             POPC_HostName=t;
         }
     }
-    LOG_DEBUG("GetHost returns %s", (const char*)POPC_HostName);
+    LOG_DEBUG("GetHost returns %s", POPC_HostName.c_str());
     return POPC_HostName;
 }
 
@@ -162,7 +162,7 @@ POPString paroc_system::GetIP() {
             if(!(GetIPFromInterface(iface,ip))) {
                 // Not found
                 setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
-                LOG_WARNING("Cannot find an IP for interface %s, using '%s' as IP address.",(const char*)iface, LOCALHOST);
+                LOG_WARNING("Cannot find an IP for interface %s, using '%s' as IP address.",iface.c_str(), LOCALHOST);
             }
         } else { // Env. Variable POP_IFACE is not defined
             iface=GetDefaultInterface();
@@ -265,7 +265,7 @@ int paroc_system::GetIP(const char *hostname, int *iplist, int listsize) {
 
 int paroc_system::GetIP(int *iplist, int listsize) {
     assert(listsize==1); /* This method cannot return more than one ip*/
-    char* parocip=popc_strdup((const char*)GetIP());
+    char* parocip=popc_strdup(GetIP().c_str());
     int n;
     int addr;
     char *tmp;

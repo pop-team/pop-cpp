@@ -109,7 +109,7 @@ void paroc_exception::paroc_throw(const char *reason1, const char *reason2) {
 
 const char* paroc_exception::what() const throw() {
     errno=Code();
-    return (const char*)info;
+    return info.c_str();
 }
 
 

@@ -933,7 +933,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     }*/
     // Select core
     if(rcore!=NULL&&rcore!=0) {
-        sprintf(tmpstr,"-core=%s",(const char*)rcore);
+        sprintf(tmpstr,"-core=%s",rcore.c_str());
           argv[n++]=popc_strdup(tmpstr);
     }
 
@@ -956,7 +956,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 
     // Add the working directory as argument
     if(cwd!=NULL && *cwd!=0) {
-        sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
+        sprintf(tmpstr,"-cwd=%s",cwd.c_str());
         argv[n++]=strdup(tmpstr);
     }
 

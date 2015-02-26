@@ -260,8 +260,8 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
     FILE *f=fopen(conf,"rt");
     char val[256];
     if(f==NULL) {
-        LOG_WARNING("Open config file [%s] fail",(const char*)conf);
-        paroc_exception::paroc_throw(errno,(const char*)conf);
+        LOG_WARNING("Open config file [%s] fail",conf.c_str());
+        paroc_exception::paroc_throw(errno,conf.c_str());
     }
 
     maxjobs=100;

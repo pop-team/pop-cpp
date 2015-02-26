@@ -252,7 +252,7 @@ bool popc_combox_mpi::GetUrl(POPString& accesspoint) {
     POPString protocol;
     GetProtocol(protocol);
     char url[1024];
-    sprintf(url, "%s://%d", (const char*)protocol, _node_id);
+    sprintf(url, "%s://%d", protocol.c_str(), _node_id);
     accesspoint = url;
     return true;
 }
