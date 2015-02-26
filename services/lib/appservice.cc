@@ -32,7 +32,7 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
     time_t now = time(NULL);
     POPString ip = paroc_system::GetIP();
     char id[100];
-    string tmp(tmpChallenge.GetString());
+    string tmp(tmpChallenge.c_str());
     locale loc;
     const collate<char>& coll = use_facet<collate<char> >(loc);
     long hash = coll.hash(tmp.data(), tmp.data()+tmp.length());
@@ -40,7 +40,7 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
         hash = hash*-1;
     }
     long int timenow = now-0;
-    sprintf(id, "POPAPPID_%ld_%ld_%s_%d", timenow, hash, ip.GetString(), popc_getpid());
+    sprintf(id, "POPAPPID_%ld_%ld_%s_%d", timenow, hash, ip.c_str(), popc_getpid());
     _popcAppId = id;
     /* ViSaG */
 

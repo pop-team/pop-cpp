@@ -52,7 +52,7 @@ POPCSearchNode::~POPCSearchNode() {
 // Set the ID of the POPCSearchNode
 void POPCSearchNode::setPOPCSearchNodeId(POPString nodeId) {
     nodeInfo.nodeId = nodeId;
-    LOG_DEBUG(  "[PSN] POPCSearchNode id : %s", nodeInfo.nodeId.GetString());
+    LOG_DEBUG(  "[PSN] POPCSearchNode id : %s", nodeInfo.nodeId.c_str());
 }
 
 // Get the ID of this POPCSearchNode
@@ -175,7 +175,7 @@ void POPCSearchNode::deleteNeighbors() {
 void POPCSearchNode::unlockDiscovery(POPString reqid) {
     try {
         // Get the request identifier to unlock the right sempahore
-        std::string _reqid = reqid.GetString();
+        std::string _reqid = reqid.c_str();
         // Post the semaphore to unlock the resource discovery
         sem_post(reqsem[_reqid]);
         // Log
@@ -188,7 +188,7 @@ void POPCSearchNode::unlockDiscovery(POPString reqid) {
 
 POPString POPCSearchNode::getUID() {
     char uId[MAXREQUNIQUEIDLENGTH];
-    sprintf(uId,"%s__%d", getPOPCSearchNodeId().GetString(), logicalClock);
+    sprintf(uId,"%s__%d", getPOPCSearchNodeId().c_str(), logicalClock);
     POPString uniqueId(uId);
     logicalClock++;
     return uniqueId;
@@ -230,7 +230,7 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
                 LOG_DEBUG( "[PSN] SEMFAILED TO OPEN (DARWIN)");
             }
 
-            std::string sem_name_reqid(req.getUniqueId().GetString());
+            std::string sem_name_reqid(req.getUniqueId().c_str());
             reqsem.insert(pair<std::string,sem_t*>(sem_name_reqid, current_sem));
 
             if(reqsem[sem_name_reqid.c_str()] == NULL) {
@@ -243,7 +243,7 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
             askResourcesDiscovery(req, GetAccessPoint(), GetAccessPoint(), dummy);
 
             // Starting a timed thread to be able to unlock the resource discovery after a certain time
-            NodeThread *timer = new NodeThread(UNLOCK_TIMEOUT, GetAccessPoint(), req.getUniqueId().GetString());
+            NodeThread *timer = new NodeThread(UNLOCK_TIMEOUT, GetAccessPoint(), req.getUniqueId().c_str());
             timer->create();
             if(sem_wait(current_sem) != 0) {
                 if(sem_wait(current_sem) != 0) {
@@ -273,7 +273,7 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
         // ! for-statement because of problem with map comparison and POPString !
         for(i=actualReq.begin(); i != actualReq.end(); i++) {
             POPString id = (*i).first;
-            if(strcmp(id.GetString(), req.getUniqueId().GetString()) == 0) {
+            if(strcmp(id.c_str(), req.getUniqueId().c_str()) == 0) {
                 results = i->second;
                 break;
             }
@@ -324,14 +324,14 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
             JobMgr jmg(getJobMgrRef());
             jmg.ApplicationEnd(req.getPOPAppId(), false);
         } else {
-            LOG_DEBUG(  "[PSN] ASKRDISCOVERY;ASKER;%s;REQID;%s", node_ap.GetAccessString(), req.getUniqueId().GetString());
+            LOG_DEBUG(  "[PSN] ASKRDISCOVERY;ASKER;%s;REQID;%s", node_ap.GetAccessString(), req.getUniqueId().c_str());
 
             // check if the request has already been asked
 
             list<POPString>::iterator k;
             for(k = knownRequests.begin(); k != knownRequests.end(); k++) {
-                if(strcmp(k->GetString(),req.getUniqueId().GetString()) == 0) {
-                    LOG_DEBUG(  "[PSN] ALREADY_ASKED_REQUEST;%s", req.getUniqueId().GetString());
+                if(strcmp(k->c_str(),req.getUniqueId().c_str()) == 0) {
+                    LOG_DEBUG(  "[PSN] ALREADY_ASKED_REQUEST;%s", req.getUniqueId().c_str());
                     POPCSearchNode nsender(sender);
                     JobMgr jsender(nsender.getJobMgrRef());
                     jsender.UnregisterNode(GetAccessPoint());
@@ -365,7 +365,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                 the message */
                 if(!req.getWayBack().isLastNode()) {
                     POPString listwb = req.getWayBack().getAsString();
-                    LOG_DEBUG(  "[PSN] NEED_REROUTE;WAYBACK;%s", listwb.GetString());
+                    LOG_DEBUG(  "[PSN] NEED_REROUTE;WAYBACK;%s", listwb.c_str());
                     rerouteResponse(*resp, req.getWayBack());
                 } else {
                     try {
@@ -390,7 +390,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                     if(!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
                         POPString nid;
                         nid = (*i)->getPOPCSearchNodeId();
-                        LOG_DEBUG(  "[PSN] FORWARD;DEST;%s", nid.GetString());
+                        LOG_DEBUG(  "[PSN] FORWARD;DEST;%s", nid.c_str());
                         paroc_accesspoint dummy;
                         (*i)->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
                     }
@@ -415,12 +415,12 @@ void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb) {
             //Create the interface to contact the POPCSearchNode
             paroc_accesspoint nextNodeAP;
             POPString nextNodeStr = wb.getNextNode();
-            nextNodeAP.SetAccessString(nextNodeStr.GetString());
+            nextNodeAP.SetAccessString(nextNodeStr.c_str());
             POPCSearchNode nextNode(nextNodeAP);
             //Give the response to the initiator
             nextNode.callbackResult(resp);
             //Print a log
-            LOG_DEBUG(  "[PSN] REROUTE;SEND_FINAL;%s", nextNodeStr.GetString());
+            LOG_DEBUG(  "[PSN] REROUTE;SEND_FINAL;%s", nextNodeStr.c_str());
         } else {
             //Get the next node to contact
             POPString nextNodeStr = wb.getNextNode();
@@ -428,12 +428,12 @@ void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb) {
 
             //Create the interface to contact the POPCSearchNode
             paroc_accesspoint nextNodeAP;
-            nextNodeAP.SetAccessString(nextNodeStr.GetString());
+            nextNodeAP.SetAccessString(nextNodeStr.c_str());
             POPCSearchNode nextNode(nextNodeAP);
             //Send the response to the next node
             nextNode.rerouteResponse(resp, wb);
             //Print a log
-            LOG_DEBUG(  "[PSN] REROUTE;TO;%s;WAYBACK;%s", nextNodeStr.GetString(), wb.getAsString().GetString());
+            LOG_DEBUG(  "[PSN] REROUTE;TO;%s;WAYBACK;%s", nextNodeStr.c_str(), wb.getAsString().c_str());
         }
     } catch(std::exception& e) {
         LOG_ERROR( "[PSN] Exception caught in reroute: %s", e.what());
@@ -447,14 +447,14 @@ void POPCSearchNode::callbackResult(Response resp) {
         //Just for test purpose, must be removed in production release
         POPCSearchNodeInfo dni = resp.getFoundNodeInfo();
         actualReqSyn.lock();
-        LOG_DEBUG( "[PSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().GetString() , dni.nodeId.GetString());
+        LOG_DEBUG( "[PSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().c_str() , dni.nodeId.c_str());
         map<POPString, POPCSearchNodeInfos>::iterator i;
         // visit the currently running list
         for(i=actualReq.begin(); i != actualReq.end(); i++) {
             POPString id = (*i).first;
             // if the request's uniqueId is present, add the response to the list
             // and break the for-statement.
-            if(strcmp(id.GetString(), resp.getReqUniqueId().GetString()) == 0) {
+            if(strcmp(id.c_str(), resp.getReqUniqueId().c_str()) == 0) {
                 i->second.addANodeInfo(resp.getFoundNodeInfo());
                 break;
             }
@@ -462,7 +462,7 @@ void POPCSearchNode::callbackResult(Response resp) {
         actualReqSyn.unlock();
 
         // Unlock the semaphore for this request
-        std::string _reqid = resp.getReqUniqueId().GetString();
+        std::string _reqid = resp.getReqUniqueId().c_str();
         if(reqsem[_reqid] != NULL) {
             LOG_DEBUG( "[PSN] CALLBACK UNLOCK SEMAPHORE");
             sem_post(reqsem[_reqid]);
@@ -647,7 +647,7 @@ POPString POPCSearchNode::getNeighborsAsString() {
     std::string strlst;
 
     for(list<POPCSearchNode *>::iterator i = neighborsList.begin(); i != neighborsList.end(); i++) {
-        strlst.append((*i)->getPOPCSearchNodeId().GetString());
+        strlst.append((*i)->getPOPCSearchNodeId().c_str());
         strlst.append(";");
     }
 

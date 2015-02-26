@@ -23,7 +23,7 @@ RemoteLog::~RemoteLog() {
 void RemoteLog::Log(const POPString &info) {
     POPString prt=info;
     //By doing a fprintf we avoid to go through rprintf (it'll be a bit faster and easier to understand)
-    fprintf(stdout, "%s",prt.GetString());
+    fprintf(stdout, "%s",prt.c_str());
     fflush(stdout);
 }
 
@@ -35,11 +35,11 @@ void RemoteLog::LogPJ(const POPString &appID, const POPString &info) {
     POPString prt=info;
     POPString id=appID;
     std::string filename("/tmp/popjava_logremote_");
-    filename.append(id.GetString());
+    filename.append(id.c_str());
     std::ofstream logfile;
     logfile.open(filename.c_str(), std::ios::app);
     if(logfile.is_open()) {
-        logfile << prt.GetString();
+        logfile << prt.c_str();
         logfile.close();
     }
 }

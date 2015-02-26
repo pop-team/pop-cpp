@@ -43,13 +43,13 @@ POPFileManager::~POPFileManager() {
  * @return TRUE if the file was created successfully. FALSE in all others cases.
  */
 bool POPFileManager::createStrip(POPString absolutePath) {
-    popfile_log("[POPFILEMANAGER] Creating strip: %s", absolutePath.GetString());
+    popfile_log("[POPFILEMANAGER] Creating strip: %s", absolutePath.c_str());
     std::ofstream strip;
-    strip.open(absolutePath.GetString());
+    strip.open(absolutePath.c_str());
 
     if(strip.is_open()) {
         strip.close();
-        popfile_log("[POPFILEMANAGER] Strip created on local storage: %s", absolutePath.GetString());
+        popfile_log("[POPFILEMANAGER] Strip created on local storage: %s", absolutePath.c_str());
         return true;
     }
 
@@ -65,12 +65,12 @@ bool POPFileManager::createStrip(POPString absolutePath) {
  */
 void POPFileManager::writeToStrip(POPString stringName, POPString data) {
     std::ofstream strip;
-    strip.open(stringName.GetString(), std::ios::out | std::ios::app);
+    strip.open(stringName.c_str(), std::ios::out | std::ios::app);
     if(strip.is_open()) {
-        strip << data.GetString();
+        strip << data.c_str();
         strip.close();
     } else {
-        popfile_log("[POPFILEMANAGER] Attempt to write data to %s failed", stringName.GetString());
+        popfile_log("[POPFILEMANAGER] Attempt to write data to %s failed", stringName.c_str());
     }
 }
 
@@ -98,7 +98,7 @@ void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, pa
 POPString POPFileManager::readFromStrip(POPString stripName, long start, long offset) {
     int length=0;
     std::ifstream strip;
-    strip.open(stripName.GetString(), ios::binary);
+    strip.open(stripName.c_str(), ios::binary);
 
     strip.seekg(0, ios::end);       // Seek to end
     length = strip.tellg();         // Get length of the strip
@@ -138,7 +138,7 @@ void POPFileManager::setPSNAccessPoint(paroc_accesspoint ap) {
 void POPFileManager::getNeighborsFromPSN() {
     POPCSearchNode psn(psn_ap);
     POPString neighborsList = psn.getNeighborsAsString();
-    std::string lstNeighbors = neighborsList.GetString();
+    std::string lstNeighbors = neighborsList.c_str();
 
     std::size_t found=lstNeighbors.find_first_of(";");
 
@@ -182,7 +182,7 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
         index=1;
         nb -= 1;
     }
-    std::string str_stripname(stripPrefix.GetString());
+    std::string str_stripname(stripPrefix.c_str());
     str_stripname.append("_strip");
     popfile_log("[POPFILEMANAGER] Look for %d nodes for strips", nb);
 
@@ -198,7 +198,7 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
         if(tmpPfm.createStrip(stripname)) {
             candidates[index] = (*it);      //store accesspoint of the node on which the strip is created
             stripNames[index] = stripname;  //store the strip name
-            popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.GetString());
+            popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.c_str());
             index++;
             if(index == maxStrip) {
                 break;

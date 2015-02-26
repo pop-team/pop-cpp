@@ -436,11 +436,11 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 
     //Setting the POPCSearchNode ID (its access point)
     psn.setPOPCSearchNodeId(_localPSN.GetAccessString());
-    LOG_DEBUG( "[JM] Node ID : %s", psn.getPOPCSearchNodeId().GetString());
+    LOG_DEBUG( "[JM] Node ID : %s", psn.getPOPCSearchNodeId().c_str());
 
     //Setting the current operating system (The one of the JobMgr's machine)
     psn.setOperatingSystem(paroc_system::platform);
-    LOG_DEBUG( "[JM] Node opertating system : %s", psn.getOperatingSystem().GetString());
+    LOG_DEBUG( "[JM] Node opertating system : %s", psn.getOperatingSystem().c_str());
 
     //Setting the total computing power of this JobMgr
     psn.setPower(total.flops);
@@ -1671,8 +1671,8 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
             CancelReservation(reserveIDs,howmany);
             POPString tmpObjname = objname;
             POPString tmpPlatform = paroc_system::platform;
-            LOG_ERROR( "[JM] Exec failed: CodeMgr was looking for %s on platform %s", tmpObjname.GetString(),
-                        tmpPlatform.GetString());
+            LOG_ERROR( "[JM] Exec failed: CodeMgr was looking for %s on platform %s", tmpObjname.c_str(),
+                        tmpPlatform.c_str());
             return ENOENT;
         }
     } catch(std::exception& e) {
@@ -1683,8 +1683,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
 
     char *argv[1024];
     int n=0;
-    char *code;
-    code=mycodefile.GetString();
+    // char *code=mycodefile.c_str();
     char *tmp;
     char *tok=popc_strtok_r(mycodefile.GetString()," \t\n",&tmp);
     while(tok!=NULL) {
@@ -2043,7 +2042,7 @@ void JobMgr::ApplicationEnd(POPString popAppId, bool initiator) {
             auto oldpos=pos;
             auto &t=*pos++;
 
-            if(strcmp(t.popAppId.GetString(), popAppId.GetString())==0) {
+            if(strcmp(t.popAppId.c_str(), popAppId.c_str())==0) {
                 available.flops+=t.flops;
                 available.mem+=t.mem;
                 available.bandwidth+=t.bandwidth;
