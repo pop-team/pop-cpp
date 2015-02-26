@@ -685,11 +685,11 @@ int main(int argc, char* argv[]) {
                             data[0] = 15;
                             data[1] = alloc_id;
 
-                            int length = strlen(objectaddress.GetString());
+                            int length = objectaddress.size();
                             pthread_mutex_lock(&mpi_mutex);
                             MPI::COMM_WORLD.Issend(&data, 2, MPI_INT, status.Get_source(), 0);
                             MPI::COMM_WORLD.Issend(&length, 1, MPI_INT, status.Get_source(), 14);
-                            MPI::Request sreq = MPI::COMM_WORLD.Issend(objectaddress.GetString(), length, MPI_CHAR, status.Get_source(), 15);
+                            MPI::Request sreq = MPI::COMM_WORLD.Issend(objectaddress.c_str(), length, MPI_CHAR, status.Get_source(), 15);
                             pthread_mutex_unlock(&mpi_mutex);
 
                             MPI::Status status;
@@ -740,8 +740,8 @@ int main(int argc, char* argv[]) {
 
                         // Send signal to the remote node
                         data[0] = 11;
-                        int objectname_length = strlen(objectname.GetString());
-                        int codefile_length = strlen(codefile.GetString());
+                        int objectname_length = objectname.size()
+                        int codefile_length = codefile.size();
 
                         MPI::Status status;
                         pthread_mutex_lock(&mpi_mutex);
@@ -751,9 +751,9 @@ int main(int argc, char* argv[]) {
 
                         MPI::COMM_WORLD.Issend(&allocation_id, 1, MPI_INT, node, 17);
                         MPI::COMM_WORLD.Issend(&objectname_length, 1, MPI_INT, node, 10);
-                        MPI::COMM_WORLD.Issend(objectname.GetString(), objectname_length, MPI_CHAR, node, 11);
+                        MPI::COMM_WORLD.Issend(objectname.c_str(), objectname_length, MPI_CHAR, node, 11);
                         MPI::COMM_WORLD.Issend(&codefile_length, 1, MPI_INT, node, 12);
-                        MPI::COMM_WORLD.Issend(codefile.GetString(), codefile_length, MPI_CHAR, node, 13);
+                        MPI::COMM_WORLD.Issend(codefile.c_str(), codefile_length, MPI_CHAR, node, 13);
                         MPI::COMM_WORLD.Issend(&usercore, 1, MPI_INT, node, 16);
                         pthread_mutex_unlock(&mpi_mutex);
 
@@ -779,7 +779,7 @@ int main(int argc, char* argv[]) {
                         receiver.Create(receiver_address.c_str(), true);
 
                         std::string _objectname("-object=");
-                        _objectname.append(objectname.GetString());
+                        _objectname.append(objectname.c_str());
                         std::string _objectaddress("-address=");
                         _objectaddress.append(tmp);
                         std::string objurl("uds://");
@@ -807,14 +807,14 @@ int main(int argc, char* argv[]) {
                         pid_t allocatepid = fork();
                         if(allocatepid == 0) {
                             char* argv1[7];
-                            argv1[0] = codefile.GetString();                        // Object executable
+                            argv1[0] = codefile.c_str();                        // Object executable
                             argv1[1] = const_cast<char*>(_objectname.c_str());      // Object name
                             argv1[2] = const_cast<char*>(_objectaddress.c_str());   // Object address
                             argv1[3] = const_cast<char*>(_receiveraddress.c_str()); // Address of ready call
                             argv1[4] = localrank;                                   // Rank of the creator process
                             argv1[5] = coreoption;                                  // Specify the core on which to execute the process
                             argv1[6] = (char*)0;
-//            printf("Exec object %s %s %s %s %s %s\n", codefile.GetString(), _objectname.c_str(), _objectaddress.c_str(), _receiveraddress.c_str(), localrank, coreoption);
+//            printf("Exec object %s %s %s %s %s %s\n", codefile.c_str(), _objectname.c_str(), _objectaddress.c_str(), _receiveraddress.c_str(), localrank, coreoption);
                             execv(argv1[0], argv1);
                         }
                         delete localrank;
@@ -1027,7 +1027,7 @@ int main(int argc, char* argv[]) {
                     request.data->Pop();
 
                     std::string object_option("-object=");
-                    object_option.append(objectname.GetString());
+                    object_option.append(objectname.c_str());
                     const char* argv0[] = { object_option.c_str(), (char*)0 };
 
 //          printf("SPAWN will create %d processes (COMM size = %d)\n", nb_node, comm_self.Get_size());
@@ -1038,7 +1038,7 @@ int main(int argc, char* argv[]) {
                     MPI::Info infos[nb_node];
 
                     for(int i = 0; i < nb_node; i++) {
-                        commands[i] = codefile.GetString();
+                        commands[i] = codefile.c_str();
                         aargv[i] = argv0;
                         maxprocs[i] = 1;
                     }
