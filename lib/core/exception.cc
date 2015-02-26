@@ -22,6 +22,8 @@
 #include "paroc_system.h"
 #include "popc_logger.h"
 
+using namespace std;
+
 const char *paroc_exception::paroc_errstr[17]= { // Error number: 1000 + ...
     "Out of resource",                           // 1
     "Fail to bind to the remote object broker",  // 2
@@ -59,22 +61,22 @@ paroc_exception::paroc_exception(int code) {
     }
 }
 
-paroc_exception::paroc_exception(int code, const char *reason1, const char *reason2)
+paroc_exception::paroc_exception(int code, const string& reason1, const string& reason2)
     : paroc_exception(code) {
-    if(reason1!=NULL) {
+    if(!reason1.empty()) {
         AddInfo(reason1);
     }
-    if(reason2!=NULL) {
+    if(!reason2.empty()) {
         AddInfo(reason2);
     }
 }
 
-paroc_exception::paroc_exception(const char *reason1, const char *reason2)
+paroc_exception::paroc_exception(const string& reason1, const string& reason2)
     : paroc_exception(UNKNOWN_EXCEPTION) {
-    if(reason1!=NULL) {
+    if(!reason1.empty()) {
         AddInfo(reason1);
     }
-    if(reason2!=NULL) {
+    if(!reason2.empty()) {
         AddInfo(reason2);
     }
 }
@@ -85,11 +87,11 @@ paroc_exception & paroc_exception::operator =(paroc_exception &e) {
     return *this;
 }
 
-const POPString paroc_exception::Info()const {
+const string& paroc_exception::Info()const {
     return info;
 }
 
-void paroc_exception::AddInfo(const char* str) {
+void paroc_exception::AddInfo(const string& str) {
     if(!info.empty())
 	    info += ": ";
     info += str;
@@ -99,11 +101,11 @@ int paroc_exception::Code()const {
     return errcode;
 }
 
-void paroc_exception::paroc_throw(int code, const char *reason1, const char *reason2) {
+void paroc_exception::paroc_throw(int code, const string& reason1, const string& reason2) {
     throw paroc_exception(code, reason1, reason2);
 }
 
-void paroc_exception::paroc_throw(const char *reason1, const char *reason2) {
+void paroc_exception::paroc_throw(const string& reason1, const string& reason2) {
     throw paroc_exception(reason1, reason2);
 }
 
@@ -119,7 +121,7 @@ void paroc_exception::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pack(&errcode,1);
         buf.Pop();
 
-        buf.Push("info","POPString",1);
+        buf.Push("info","string",1);
         buf.Pack(&info,1);
         buf.Pop();
     } else {
@@ -127,7 +129,7 @@ void paroc_exception::Serialize(paroc_buffer &buf, bool pack) {
         buf.UnPack(&errcode,1);
         buf.Pop();
 
-        buf.Push("info","POPString",1);
+        buf.Push("info","string",1);
         buf.UnPack(&info,1);
         buf.Pop();
     }
@@ -137,16 +139,16 @@ void paroc_exception::Serialize(paroc_buffer &buf, bool pack) {
 ///
 /// perror is the old way to manage errors. It simply prints an error message to stderr
 ///
-void paroc_exception::perror(const char *msg) {
+void paroc_exception::perror(const string& msg) {
     LOG_ERROR("paroc_system::perror : %d",errno);
     if(errno>USER_DEFINE_ERROR && errno<USER_DEFINE_LASTERROR) {
-        if(msg==NULL) {
-            msg="POP-C++ Error";
-        }
-        LOG_ERROR("%s: %s (errno %d)",msg,paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
+        if(!msg.empty())
+            LOG_ERROR("POP-C++ Error: %s (errno %d)",paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
+        else
+            LOG_ERROR("%s: %s (errno %d)",msg.c_str(),paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
     } else if(errno>USER_DEFINE_LASTERROR) {
-        LOG_ERROR("%s: Unknown error (errno %d)",msg, errno);
+        LOG_ERROR("%s: Unknown error (errno %d)",msg.c_str(), errno);
     } else {
-        ::perror(msg);
+        ::perror(msg.c_str());
     }
 }

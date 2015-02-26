@@ -61,30 +61,30 @@ class paroc_exception: public paroc_base, public std::exception {
 public:
     paroc_exception();
     paroc_exception(int code);
-    paroc_exception(int code, const char *reason1, const char *reason2=NULL);
-    paroc_exception(const char *reason1, const char *reason2=NULL);
+    paroc_exception(int code, const std::string& reason1, const std::string& reason2="");
+    paroc_exception(const std::string& reason1, const std::string& reason2="");
     ~paroc_exception()throw() {}
 
     paroc_exception & operator = (paroc_exception &e);
-    static void paroc_throw(int code, const char *reason1=NULL, const char *reason2=NULL);
-    static void paroc_throw(const char *reason1, const char *reason2=NULL);
+    static void paroc_throw(int code, const std::string& reason1="", const std::string& reason2="");
+    static void paroc_throw(const std::string& reason1, const std::string& reason2="");
 
     virtual void Serialize(paroc_buffer &buf, bool pack);
 
-    const paroc_string Info()const;
-    void AddInfo(const char* str);
+    const std::string& Info()const;
+    void AddInfo(const std::string& str);
     int Code()const;
 
     // Redefine the virtual what method of exception
     const char* what() const throw();
 
     // Old way: only prints an error message to stderr
-    static void perror(const char *msg);
+    static void perror(const std::string& msg);
 
 protected:
 
     static const char *paroc_errstr[17];
-    paroc_string info;
+    std::string info;
     int errcode;
 };
 
