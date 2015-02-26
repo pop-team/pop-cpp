@@ -158,7 +158,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     sprintf(tmpstr,"-callback=%s", cburl.c_str());
     argv[n++]=popc_strdup(tmpstr);
 
-    sprintf(tmpstr,"-object=%s", objectname.GetString());
+    sprintf(tmpstr,"-object=%s", objectname.c_str());
     argv[n++]=popc_strdup(tmpstr);
 
     if(!paroc_system::appservice.IsEmpty()) {

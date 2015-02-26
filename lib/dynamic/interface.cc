@@ -263,7 +263,7 @@ void paroc_interface::allocate_only() {
     }
 
     objectaddress = allocator->allocate(objectname, od);
-    accesspoint.SetAccessString(objectaddress.GetString());
+    accesspoint.SetAccessString(objectaddress.c_str());
 }
 
 /**
@@ -962,16 +962,14 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 }
 
 std::vector<char*> paroc_interface::Tokenize(POPString &s) {
-    char *t=s.GetString();
-    if(!t) {
+    if(s.empty()) {
         return {};
     }
-
     std::vector<char*> result;
 
     char sep[]=" \n\t";
     char *ptrptr;
-    char *tok=popc_strtok_r(t,sep,&ptrptr);
+    char *tok=popc_strtok_r(s,sep,&ptrptr);
 
     while(tok!=NULL) {
         result.push_back(tok);

@@ -86,40 +86,42 @@ bool paroc_utils::isncaseEqual(const char *s1, const char *s2) {
     return (*s1==*s2);
 }
 
-bool paroc_utils::MatchWildcard(const char *str, const char *wildcard) {
+bool paroc_utils::MatchWildcard(const std::string& str, const std::string& wildcard) {
     if(str==wildcard) {
         return true;
     }
-    if(str==NULL || wildcard==NULL) {
+    if(str=="" || wildcard=="") {
         return false;
     }
-    while(*str!=0 && (*str==*wildcard || *wildcard=='?')) {
-        if(*wildcard=='*') {
+    const char* pstr = str.c_str();
+    const char* pwil = wildcard.c_str();
+    while(*pstr!=0 && (*pstr==*pwil || *pwil=='?')) {
+        if(*pwil=='*') {
             break;
         }
-        str++;
-        wildcard++;
+        pstr++;
+        pwil++;
     }
 
-    if(*wildcard==0) {
-        return (*str==0);
+    if(*pwil==0) {
+        return (*pstr==0);
     }
-    if(*wildcard!='*') {
+    if(*pwil!='*') {
         return false;
     }
 
-    while(*wildcard=='*') {
-        wildcard++;
+    while(*pwil=='*') {
+        pwil++;
     }
-    if(*wildcard==0) {
+    if(*pwil==0) {
         return true;
     }
 
-    const char *t=str;
+    const char *t=pstr;
 
     while(*t!=0) {
-        if(*t==*wildcard || *wildcard=='?') {
-            if(MatchWildcard(t+1,wildcard+1)) {
+        if(*t==*pwil || *pwil=='?') {
+            if(MatchWildcard(t+1,pwil+1)) {
                 return true;
             }
         }
@@ -162,7 +164,9 @@ void paroc_utils::FindAbsolutePath(const char *fname, char *abspath) {
 #ifdef _POPC_
 #include "paroc_system.h"
 
-bool paroc_utils::SameContact(const char *contact1, const char *contact2) {
+bool paroc_utils::SameContact(const std::string& _contact1, const std::string& _contact2) {
+    const char* contact1 = _contact1.c_str();
+    const char* contact2 = _contact2.c_str();
     if(contact1==contact2) {
         return true;
     }
@@ -173,10 +177,8 @@ bool paroc_utils::SameContact(const char *contact1, const char *contact2) {
         return true;
     }
 
-    POPString str2(contact2);
-    char *token, *ptr;
-
-    token=popc_strtok_r(str2.GetString()," \n\r\t",&ptr);
+    char *ptr;
+    char* token=popc_strtok_r(contact2," \n\r\t",&ptr);
     while(token!=NULL) {
         if(strstr(contact1,token)!=NULL) {
             return true;
@@ -190,22 +192,15 @@ bool paroc_utils::SameContact(const char *contact1, const char *contact2) {
 bool paroc_utils::IsRemoteDest(const char *dest) {
     std::string destination(dest);
 
-    //Get local ip and hostame
-    POPString ip = paroc_system::GetIP();
-
     char host[256];
     popc_gethostname(host, 256);
 
     //Three string to test with
-    std::string _local("127.0.0.1");
-    std::string _ip(ip.GetString());
     std::string _host(host);
 
-
-    size_t c1, c2, c3;
-    c1=destination.find(_local);
-    c2=destination.find(_ip);
-    c3=destination.find(_host);
+    size_t c1=destination.find("127.0.0.1");
+    size_t c2=destination.find(paroc_system::GetIP()); // local ip
+    size_t c3=destination.find(_host);
     //If one of the 3 strings above is find in the destination, this is a local destination
     if(c1==std::string::npos && c2==std::string::npos && c3==std::string::npos) {
         return true;
@@ -369,8 +364,7 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
  * @param
  *
  */
-bool paroc_utils::isIPv4Address(POPString value) {
-    std::string ip(value.GetString());
+bool paroc_utils::isIPv4Address(POPString ip) {
 
     //check max size
     if(ip.size() > 15) {
@@ -406,8 +400,7 @@ bool paroc_utils::isIPv4Address(POPString value) {
  * @retrun
  */
 
-bool paroc_utils::isValidName(POPString value) {
-    std::string checked(value.GetString());
+bool paroc_utils::isValidName(POPString checked) {
     for(size_t i=0; i<checked.length(); i++) {
         char c = checked.at(i);
         if((c != '_') && !isdigit(c) && !isalpha(c)) {

@@ -103,7 +103,7 @@ bool ExplorationList::isIn(POPString nodeId) {
     explorationList::iterator i;
     for(i = visitedNodes.begin(); i != visitedNodes.end(); i++) {
         POPString crtNodeId = (*i).first;
-        if(strcmp(crtNodeId.GetString(), nodeId.GetString()) == 0) {
+        if(nodeId == crtNodeId) {
             return true;
         }
         neighborsList neighbors = (*i).second;
@@ -112,7 +112,7 @@ bool ExplorationList::isIn(POPString nodeId) {
             POPString nId = (*j);
             //Modified by clementval
             // old comparaison was strcmp(crtNodeId.GetString(), nId.GetString() but that was incorrect
-            if(strcmp(nodeId.GetString(), nId.GetString()) == 0) {
+            if(nodeId==nId) {
                 //End of modification
                 return true;
             }

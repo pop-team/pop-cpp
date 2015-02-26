@@ -146,7 +146,7 @@ int main(int argc, char **argv) {
 #endif
 
             paroc_accesspoint jobmgr_ap;
-            jobmgr_ap.SetAccessString(host);
+            jobmgr_ap.SetAccessString(host.c_str());
 
 
 

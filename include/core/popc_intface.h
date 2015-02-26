@@ -19,6 +19,8 @@
 #include "popc_intface_lin.h"
 #endif
 
+#include <string>
+
 // functions below are derivated from <unistd.h>
 
 void popc__exit(int);
@@ -45,7 +47,7 @@ int popc_dup2(int, int);
 
 //
 
-int popc_execvp(const char *, char * const[]);
+int popc_execvp(const std::string&, char * const[]);
 
 //
 
@@ -115,7 +117,8 @@ char * popc_strdup(const char *);
 
 //
 
-char * popc_strtok_r(char *, const char *, char **);
+char * popc_strtok_r(const std::string&, const std::string&, char **);
+char * popc_strtok(const std::string&, const std::string&);
 
 // functions below are derivated from <sys/wait.h>
 

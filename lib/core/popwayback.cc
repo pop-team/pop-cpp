@@ -58,7 +58,7 @@ POPString POPWayback::getAsString() const {
     while(!tmp.empty()) {
         POPString e = tmp.front();
         tmp.pop_front();
-        wb.append(e.GetString());
+        wb.append(e);
         wb.append("//");
     }
     POPString wbstr = wb.c_str();
@@ -76,7 +76,7 @@ void POPWayback::insertNode(POPString nodeId) {
         _lst_wb.push_back(nodeId);
     } else {
         POPString tmp = getNextNode();
-        if(strcmp(tmp.GetString(), nodeId.GetString())!=0) {
+        if(tmp== nodeId) {
             _lst_wb.push_back(nodeId);
         }
     }

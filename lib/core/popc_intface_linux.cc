@@ -47,8 +47,11 @@ int popc_dup2(int a, int b) {
     return dup2(a, b);
 }
 
-int popc_execvp(const char * a, char * const b[]) {
-    return execvp(a, b);
+int popc_execvp(const std::string& a, char * const b[]){
+    char* dup = strdup(a.c_str());
+    int ret = execvp(dup, b);
+    free(dup);
+    return ret;
 }
 
 int popc_fork(void) {
@@ -122,8 +125,17 @@ char * popc_strdup(const char * a) {
     return strdup(a);
 }
 
-char * popc_strtok_r(char * a , const char * b , char ** c) {
-    return strtok_r(a, b, c);
+char * popc_strtok(const std::string& a, const std::string& b)
+{
+    char * dup = strdup(a.c_str());
+    return strtok(dup, b.c_str());
+    // TODO fix leak: free(dup);
+}
+
+char * popc_strtok_r(const std::string& a , const std::string& b , char ** c) {
+    char * dup = strdup(a.c_str());
+    return strtok_r(dup, b.c_str(), c);
+    // TODO fix leak: free(dup);
 }
 
 
