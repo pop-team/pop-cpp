@@ -47,7 +47,7 @@ void paroc_service_base::Start() {
 }
 
 void paroc_service_base::Start(const POPString &challenge) {
-    if(paroc_utils::isEqual(mychallenge,challenge) || mychallenge==NULL) {
+    if(paroc_utils::isEqual(mychallenge,challenge) || mychallenge.empty()) {
         while(GetRefCount()>1) {
             DecRef();
         }
@@ -58,7 +58,7 @@ void paroc_service_base::Start(const POPString &challenge) {
 }
 
 bool paroc_service_base::Stop(const POPString &challenge) {
-    if(paroc_utils::isEqual(mychallenge,challenge) || mychallenge==NULL) {
+    if(paroc_utils::isEqual(mychallenge,challenge) || mychallenge.empty()) {
         daemonMode=false;
         //      while (DecRef()>0);
         return true;

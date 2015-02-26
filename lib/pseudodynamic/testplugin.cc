@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
             } else {
                 POPString str;
                 test->GetBufferName(str);
-                LOG_INFO("Buffer name:%s", (const char *)str);
+                LOG_INFO("Buffer name:%s", str);
                 test->Destroy();
             }
         }

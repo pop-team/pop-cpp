@@ -128,7 +128,8 @@ void paroc_broker::ServeRequest(paroc_request &req) {
             if(req.from!=NULL) {
 
                 paroc_exception e(ret);
-                e.AddInfo(classname+"@"+accesspoint.GetAccessString());
+                e.AddInfo(classname);
+                e.AddInfo(accesspoint.GetAccessString());
                 paroc_buffer::SendException(*req.data, req.from, e);
             } else {
                 LOG_ERROR("fail to create a new thread for %s@%s (method:%d:%d)\n",classname.c_str(), accesspoint.GetAccessString(), req.methodId[0], req.methodId[1]);

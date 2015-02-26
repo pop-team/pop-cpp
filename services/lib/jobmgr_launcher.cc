@@ -89,9 +89,9 @@ int main(int argc, char **argv) {
     if((tmp=paroc_utils::checkremove(&argc,&argv,"-servicepoint="))==NULL) {
         tmp=paroc_utils::checkremove(&argc,&argv,"-port=");
         if(tmp==NULL) {
-            sprintf(str,"%s:2711",(const char *)paroc_system::GetHost());
+            sprintf(str,"%s:2711",paroc_system::GetHost().c_str());
         } else {
-            sprintf(str,"%s:%s",(const char *)paroc_system::GetHost(),tmp);
+            sprintf(str,"%s:%s",paroc_system::GetHost().c_str(),tmp);
         }
     } else {
         strcpy(str,tmp);
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
             popfile_service = false;
     }*/
     host=str;
-    sprintf(str,"%s:2712",(const char *)paroc_system::GetHost());
+    sprintf(str,"%s:2712",paroc_system::GetHost().c_str());
     hostpfm=str;
 
 

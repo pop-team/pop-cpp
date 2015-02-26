@@ -48,7 +48,7 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
     } else {
         info.resize(n+1);
         element=&(info[n]);
-        strcpy(element->objname,objname);
+        strcpy(element->objname,objname.c_str());
     }
 
     n=element->platform.size();
@@ -59,8 +59,8 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
     }
 
     if(i<n) {
-        LOG_DEBUG("Changing (%s, %s) -> %s",element->objname,element->platform[i].platform,(const char *)codefile);
-        strcpy(element->platform[i].codefile,codefile);
+        LOG_DEBUG("Changing (%s, %s) -> %s",element->objname,element->platform[i].platform,codefile.c_str());
+        strcpy(element->platform[i].codefile,codefile.c_str());
     } else {
         element->platform.resize(n+1);
         strcpy(element->platform[n].codefile,codefile);

@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
     if(!broker) {
         status = 1;
     } else if(!broker->Initialize(&argc, &argv)) {
-        LOG_INFO("Fail to initialize the broker for class %s",(const char *)paroc_broker::classname);
+        LOG_INFO("Fail to initialize the broker for class %s",paroc_broker::classname.c_str());
         status = 1;
     }
 
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
             return 1;
         }
     } else if(status == 0) {
-        LOG_INFO("%s", (const char *)paroc_broker::accesspoint.GetAccessString());
+        LOG_INFO("%s", paroc_broker::accesspoint.GetAccessString());
     }
 
     // set the current working directory

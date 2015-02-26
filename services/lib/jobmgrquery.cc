@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
             }
             paroc_string type(str1), val;
             if(info.Query(type,val)) {
-                printf("%s= %s\n",str1,(const char *)val);
+                printf("%s= %s\n",str1,val);
             } else {
                 printf("%s= NOT FOUND\n",str1);
             }

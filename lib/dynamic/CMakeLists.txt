@@ -35,7 +35,7 @@ set(POPCC_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 # TARGET_LINK_LIBRARIES(popc_common ${POPCCOMMON})
 
 add_custom_command(OUTPUT paroc_infmain.std.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_infmain.std.o paroc_infmain.std.cc
+    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_infmain.std.o ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.std.cc
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
     DEPENDS paroc_infmain.std.cc
     DEPENDS popcc
@@ -43,7 +43,7 @@ add_custom_command(OUTPUT paroc_infmain.std.o
     COMMENT "Compile POP-C++ Master main")
 
 add_custom_command(OUTPUT paroc_objmain.std.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_objmain.std.o paroc_objmain.std.cc
+    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_objmain.std.o ${CMAKE_CURRENT_SOURCE_DIR}/paroc_objmain.std.cc
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
     DEPENDS paroc_objmain.std.cc
     DEPENDS popcc

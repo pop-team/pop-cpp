@@ -113,7 +113,7 @@ int main(int argc, char **argv) {
         status = 1;
     } else if(!broker_factory->Initialize(&argc, &argv)) {
         // Initialize broker
-        LOG_ERROR("Fail to initialize the broker for class %s", (const char *)paroc_broker::classname);
+        LOG_ERROR("Fail to initialize the broker for class %s", paroc_broker::classname.c_str());
         status = 1;
     }
     LOG_DEBUG("broker: init");

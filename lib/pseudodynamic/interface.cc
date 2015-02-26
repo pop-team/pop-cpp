@@ -350,8 +350,8 @@ void paroc_interface::Allocate() {
 
         if(jobcontact.IsEmpty()) {
             char str[1024];
-            LOG_DEBUG("INTERFACE - JOBMGR %s", (const char *)paroc_system::GetHost());
-            sprintf(str,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
+            LOG_DEBUG("INTERFACE - JOBMGR %s", paroc_system::GetHost());
+            sprintf(str,"%s:%d",paroc_system::GetHost(),DEFAULTPORT);
             jobcontact.SetAccessString(str);
         }
     }
@@ -466,7 +466,7 @@ void paroc_interface::Bind(const char *dest) {
             paroc_accesspoint old(accesspoint);
             paroc_accesspoint newap;
             newap.SetAccessString(info);
-            LOG_INFO("Forward current session to %s", (const char *)info);
+            LOG_INFO("Forward current session to %s", info);
             Bind(newap);
 
             if(status == BIND_FORWARD_SESSION) {
@@ -484,7 +484,7 @@ void paroc_interface::Bind(const char *dest) {
     } else {
         int code = errno;
 
-        LOG_WARNING("Fail to connect from [%s] to [%s]. Error code: %s",(const char *)paroc_system::GetHost(),dest,strerror(code));
+        LOG_WARNING("Fail to connect from [%s] to [%s]. Error code: %s",paroc_system::GetHost(),dest,strerror(code));
         Release();
         paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
@@ -651,7 +651,7 @@ bool paroc_interface::Encoding(POPString encoding) {
     paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(encoding);
 
     if(!fact) {
-        LOG_ERROR("[CORE] No encoding factory for %s", (const char *)encoding);
+        LOG_ERROR("[CORE] No encoding factory for %s", encoding);
         return false;
     }
 

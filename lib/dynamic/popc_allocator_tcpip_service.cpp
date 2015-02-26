@@ -65,14 +65,14 @@ POPString POPC_Allocator_tcpip_service::allocate(POPString& objectname, paroc_od
 
 
     if(!joburl.empty()) {
-        jobcontact.SetAccessString(joburl);
+        jobcontact.SetAccessString(joburl.c_str());
     } else {
         jobcontact=paroc_system::jobservice;
     }
 
     if(jobcontact.IsEmpty()) {
         char str[1024];
-        sprintf(str,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
+        sprintf(str,"%s:%d", paroc_system::GetHost().c_str(),DEFAULTPORT);
         jobcontact.SetAccessString(str);
     }
 
