@@ -84,7 +84,7 @@ paroc_combox_factory::paroc_combox_factory() {
             if(h) {
                 if(std::find(plugins.begin(), plugins.end(), h) == plugins.end()) {
                     plugins.push_back(h);
-                    Register(name,metrics,creator);
+                    Register(name.c_str(),metrics,creator);
                 }
             }
             mod=strtok(nullptr,": ");
@@ -99,10 +99,10 @@ paroc_combox_factory::paroc_combox_factory() {
         }
 #endif
 
-        if(plugindir!=nullptr) {
+        if(!plugindir.empty()) {
             POPString pluginmap(plugindir);
             pluginmap+="/paroc_combox.map";
-            FILE *map=fopen(pluginmap,"r");
+            FILE *map=fopen(pluginmap.c_str(),"r");
             if(map!=nullptr) {
                 char line[1024];
                 char fname[1024];
@@ -122,14 +122,14 @@ paroc_combox_factory::paroc_combox_factory() {
                     if(h!=nullptr) {
                         if(std::find(plugins.begin(), plugins.end(), h) == plugins.end()) {
                             plugins.push_back(h);
-                            Register(name,metrics,creator);
+                            Register(name.c_str(),metrics,creator);
                         }
                     }
                 }
                 fclose(map);
             } else {
-                LOG_DEBUG("unable to open plugin mapfile: %s",(const char *)pluginmap); // note: level set to debug
-                DIR *dir=opendir(plugindir);
+                LOG_DEBUG("unable to open plugin mapfile: %s", pluginmap.c_str()); // note: level set to debug
+                DIR *dir=opendir(plugindir.c_str());
                 if(dir!=nullptr) {
                     dirent *t;
                     while((t=readdir(dir))!=nullptr) {
@@ -137,12 +137,12 @@ paroc_combox_factory::paroc_combox_factory() {
                             continue;
                         }
                         char fname[1024];
-                        sprintf(fname,"%s/%s", (const char *)plugindir, t->d_name);
+                        sprintf(fname,"%s/%s", plugindir.c_str(), t->d_name);
                         void *h=LoadPlugin(fname, name, creator);
                         if(h!=nullptr) {
                             if(std::find(plugins.begin(), plugins.end(), h) == plugins.end()) {
                                 plugins.push_back(h);
-                                Register(name, metrics, creator);
+                                Register(name.c_str(), metrics, creator);
                             }
                         }
                     }

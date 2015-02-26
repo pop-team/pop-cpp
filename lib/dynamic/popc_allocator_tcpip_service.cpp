@@ -55,7 +55,7 @@ POPString POPC_Allocator_tcpip_service::allocate(POPString& objectname, paroc_od
     if(!platforms.empty()) {
         CodeMgr mgr(paroc_system::appservice);
         if(mgr.GetPlatform(objectname, platforms)<=0) {
-            paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, objectname, "No platform found");
+            paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, "No platform found", objectname.c_str());
         }
         od.setPlatforms(platforms);
     }

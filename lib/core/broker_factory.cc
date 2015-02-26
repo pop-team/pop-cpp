@@ -46,7 +46,7 @@ paroc_broker *paroc_broker_factory::Create(const char *objname) {
     }
 
     for(auto& t : *brokerlist){
-        if(paroc_utils::isEqual(objname, t.objname)) {
+        if(paroc_utils::isEqual(objname, t.objname.c_str())) {
             return t.func();
         }
     }
@@ -68,7 +68,7 @@ bool paroc_broker_factory::test(const char *objname) {
         return false;
     }
     for(auto& test : *brokerlist){
-        if(paroc_utils::isEqual(objname, test.objname)) {
+        if(paroc_utils::isEqual(objname, test.objname.c_str())) {
             return true;
         }
     }
@@ -164,7 +164,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
         popc_open("/dev/null",O_RDONLY);
 #ifndef NDEBUG
         char fname[256];
-        sprintf(fname,"/tmp/object_%s_%d.log", (const char *)paroc_broker::classname,popc_getpid());
+        sprintf(fname,"/tmp/object_%s_%d.log", paroc_broker::classname.c_str(),popc_getpid());
         popc_open(fname,O_WRONLY | O_CREAT,S_IRWXU | S_IRGRP);
         popc_dup2(1,2);
 #else
@@ -183,17 +183,17 @@ void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
     }
     if(brokerlist) {
         for(auto& t : *brokerlist){
-            if(!(paroc_broker_factory::CheckIfPacked!=NULL && !paroc_broker_factory::CheckIfPacked(t.objname))) {
+            if(!(paroc_broker_factory::CheckIfPacked!=NULL && !paroc_broker_factory::CheckIfPacked(t.objname.c_str()))) {
                 if(longformat) {
-                    printf("%s %s %s\n",(const char *)t.objname, (const char *)paroc_system::platform, abspath);
+                    printf("%s %s %s\n", t.objname.c_str(), paroc_system::platform.c_str(), abspath);
                 } else {
-                    printf("%s\n",(const char *)t.objname);
+                    printf("%s\n",t.objname.c_str());
                 }
             }
         }
     }
     if(!longformat) {
-        printf("====\nArchitecture=%s\n",(const char *)paroc_system::platform);
+        printf("====\nArchitecture=%s\n",paroc_system::platform.c_str());
     }
 }
 

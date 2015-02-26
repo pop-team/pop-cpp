@@ -31,7 +31,7 @@ public:
 
     int GetFactoryCount();
     paroc_buffer_factory * GetFactory(int index);
-    paroc_buffer_factory * FindFactory(const paroc_string name);
+    paroc_buffer_factory * FindFactory(const paroc_string& name);
     static paroc_buffer_factory_finder * GetInstance();
     bool GetBufferName(int index, paroc_string & bufferName);
 

@@ -176,7 +176,7 @@ void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack) {
         buf.Push("url","POPString",1);
         buf.UnPack(&s,1);
         buf.Pop();
-        SetAccessString(s);
+        SetAccessString(s.c_str());
 
         int sec;
         buf.Push("_security", "int", 1);

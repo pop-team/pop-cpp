@@ -454,8 +454,8 @@ void paroc_interface::Bind(const char *dest) {
         case BIND_FORWARD_PERMANENT: {
             paroc_accesspoint old(accesspoint);
             paroc_accesspoint newap;
-            newap.SetAccessString(info);
-            LOG_INFO("Forward current session to %s", (const char *)info);
+            newap.SetAccessString(info.c_str());
+            LOG_INFO("Forward current session to %s", info.c_str());
             Bind(newap);
 
             if(status == BIND_FORWARD_SESSION) {
@@ -473,7 +473,7 @@ void paroc_interface::Bind(const char *dest) {
     } else {
         int code = errno;
 
-        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s",(const char *)paroc_system::GetHost(),dest,strerror(code));
+        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s", paroc_system::GetHost().c_str(),dest,strerror(code));
         Release();
         paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
@@ -594,7 +594,7 @@ bool paroc_interface::Encoding(POPString encoding) {
     paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(encoding);
 
     if(!fact) {
-        LOG_ERROR("[CORE] No encoding factory for %s", (const char *)encoding);
+        LOG_ERROR("[CORE] No encoding factory for %s", encoding.c_str());
         return false;
     }
 
@@ -722,11 +722,11 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
 
     if(enc_pref.empty()) {
         for(auto& enc : enc_avail){
-            if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform,paroc_system::platform)) {
+            if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform.c_str(),paroc_system::platform.c_str())) {
                 continue;
             }
 
-            if(paroc_utils::isncaseEqual(enc,cur_enc) || Encoding(enc)) {
+            if(paroc_utils::isncaseEqual(enc,cur_enc.c_str()) || Encoding(enc)) {
                 return;
             }
         }
@@ -734,11 +734,11 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
         for(auto& test : enc_pref){
             for(auto& enc : enc_avail){
                 if(paroc_utils::MatchWildcard(enc,test)) {
-                    if(paroc_utils::isncaseEqual(enc,"raw") && !paroc_utils::isEqual(peerplatform,paroc_system::platform)) {
+                    if(paroc_utils::isncaseEqual(enc,"raw") && !paroc_utils::isEqual(peerplatform.c_str(),paroc_system::platform.c_str())) {
                         continue;
                     }
 
-                    if(paroc_utils::isncaseEqual(enc,cur_enc) || Encoding(enc)) {
+                    if(paroc_utils::isncaseEqual(enc,cur_enc.c_str()) || Encoding(enc)) {
                         return;
                     }
                 }

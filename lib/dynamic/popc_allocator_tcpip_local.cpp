@@ -83,7 +83,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
             rarch=paroc_system::platform;
         }
         if(!mgr.QueryCode(objectname,rarch, codefile)) {
-            paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname, "QueryCode failed");
+            paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname.c_str(), "QueryCode failed");
         }
     }
 
@@ -126,7 +126,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
     argv[n++]=popc_strdup(tmpstr);
 
-    strcpy(tmpstr,codefile);
+    strcpy(tmpstr,codefile.c_str());
     char *tok=popc_strtok_r(tmpstr," \t\n",&tmp);
     while(tok!=NULL) {
         argv[n++]=popc_strdup(tok);
@@ -139,12 +139,12 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
     if(combox_factory == NULL) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "Combox factory is null");
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
     }
 
     paroc_combox* tmpsock = combox_factory->Create("socket");
     if(tmpsock == NULL) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "Creation of combox failed");
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }
 
     bool isServer=true;
@@ -229,7 +229,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     if(ret==-1) {
         LOG_WARNING("Can not start the object: code %d", ret);
-        paroc_exception::paroc_throw(err, objectname, "Can not start the object");
+        paroc_exception::paroc_throw(err, objectname.c_str(), "Can not start the object");
     }
 
     //Now get the return paroc_accesspoint....
@@ -249,7 +249,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     tmpbuffer->Pop();
 
     if(n!=0) {
-        paroc_exception::paroc_throw(n, objectname, "n is null");
+        paroc_exception::paroc_throw(n, objectname.c_str(), "n is null");
     }
 
     POPString objectaddress;

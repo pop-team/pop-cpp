@@ -45,7 +45,7 @@ paroc_string::paroc_string(std::string x) {
 }
 
 paroc_string::paroc_string(const paroc_string &x) {
-    data= (x==NULL)? NULL : popc_strdup(x);
+    data= (x.empty())? NULL : popc_strdup(x.c_str());
 }
 
 paroc_string::~paroc_string() {
@@ -79,7 +79,7 @@ const paroc_string &paroc_string::operator =(const paroc_string &x) {
         if(data!=NULL) {
             free(data);
         }
-        data=(x==NULL)? NULL: popc_strdup(x);
+        data=(x.empty())? NULL: popc_strdup(x.c_str());
     }
     return (*this);
 }
