@@ -8,12 +8,17 @@
 int main(int argc, char** argv) {
     try {
         printf("Method with void parameter: Starting test...\n");
-        POPObject o;
-        o.voidMethod(o);
+        POPObject o1(10001);
+        o1.voidMethod(o1);
+
+        POPObject o2(10002);
+        o1.voidMethod(o2);
+        o2.voidMethod(o1);
+
         printf("Method with void parameter: test succeeded, destroying objects ...\n");
-    } catch(POPException& e) {
+
+    } catch(std::exception& e) {
         printf("Exception: %s\n", e.what());
-        printf("Method with void parameter: test failed, error no.%d, destroying objects:\n", e.Code());
         return 1;
     }
     return 0;

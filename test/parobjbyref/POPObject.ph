@@ -11,12 +11,14 @@ parclass POPObject {
     classuid(1500);
 
 public:
-    POPObject() @{ od.url("localhost");};
+    POPObject(int id) @{ od.url("localhost");};
     ~POPObject();
     sync seq void voidMethod(POPObject& o);
+    sync conc int GetId();
 
 
 private:
+    int id;
 
 };
 
