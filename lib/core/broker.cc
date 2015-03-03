@@ -301,7 +301,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         }
     }
 
-    accesspoint.SetAccessString(url.GetString());
+    accesspoint.SetAccessString(url.c_str());
 
     char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
     if(tmp!=NULL && !classname.empty()) {
@@ -345,13 +345,13 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
     mycombox->GetProtocol(prot);
     mycombox->GetUrl(url);
 
-    char *str=url.GetString();
+    char *str=strdup(url.c_str());
     if(str==NULL) {
         return false;
     }
 
     char *ptr;
-    char *tok = popc_strtok_r(str," \t\n\r",&ptr);
+    const char *tok = popc_strtok_r(str," \t\n\r",&ptr);
     while(tok != NULL && !ok) {
         paroc_combox *tmp = combox_factory->Create(prot.c_str());
         tmp->SetTimeout(100000);

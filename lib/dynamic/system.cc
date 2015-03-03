@@ -386,7 +386,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
             mgr = CreateAppCoreService(url);
 #endif
         } else {
-            challenge=NULL;
+            challenge="";
             paroc_accesspoint app;
             app.SetAccessString(appcontact);
             app.SetAsService();

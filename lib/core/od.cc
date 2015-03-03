@@ -336,7 +336,7 @@ void paroc_od::getValue(const POPString &key, POPString &val) {
     for(std::size_t i = 0; i < keys.size(); ++i){
         auto& t1 = keys[i];
         auto& t2 = values[i];
-        if(paroc_utils::isEqual(t1,key)) {
+        if(t1 == key) {
             val=t2;
             return;
         }

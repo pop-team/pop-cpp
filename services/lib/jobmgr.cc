@@ -461,7 +461,7 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 
     //Check and set environment variables....
     if(Query("env",tmpstr)) {
-        char *tok=strtok(tmpstr.GetString(),"()");
+        char *tok=popc_strtok(tmpstr,"()");
         char var[1024], val[1024], str[1024];
         while(tok!=NULL) {
             if(sscanf(tok,"%s %s",var,val)!=2) {
@@ -540,15 +540,15 @@ void JobMgr::UnregisterNode(const paroc_accesspoint &url) {
 
 int JobMgr::Query(const POPString &type, POPString  &val) {
     char tmp[1024];
-    if(paroc_utils::isEqual(type,"platform")) {
+    if(type=="platform") {
         val=paroc_system::platform;
         return 1;
     }
-    if(paroc_utils::isEqual(type,"host")) {
+    if(type=="host") {
         val=paroc_system::GetHost();
         return 1;
     }
-    if(paroc_utils::isEqual(type,"jobs")) {
+    if(type=="jobs") {
         //  Update();
         mutex {
             sprintf(tmp,"%ld/%d", jobs.size() ,maxjobs);
@@ -556,7 +556,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
         }
         return 1;
     }
-    if(paroc_utils::isEqual(type,"joblist")) {
+    if(type=="joblist") {
         //  Update();
         val="";
 
@@ -573,7 +573,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
         return 1;
     }
 
-    if(paroc_utils::isEqual(type,"pausejobs")) {
+    if(type=="pausejobs") {
         //  Update();
         mutex {
             sprintf(tmp,"%lu", pause_apps.size());
@@ -582,7 +582,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
         return 1;
     }
 
-    if(paroc_utils::isEqual(type,"power_available")) {
+    if(type=="power_available") {
         //  Update();
         sprintf(tmp,"%g/%g", available.flops ,total.flops);
         val=tmp;
@@ -590,7 +590,7 @@ int JobMgr::Query(const POPString &type, POPString  &val) {
     }
 
     for(auto& t : info){
-        if(paroc_utils::isEqual(type,t.name)) {
+        if(type==t.name) {
             val=t.val;
             return 1;
         }
@@ -646,7 +646,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                             JobMgr jobmgr(ac);
 
                             jobmgr.CancelReservation(reserveIDs.data()+i,1);
-                            for(int j=i+1; j<howmany; j++) if(fitness[j]>0 && paroc_utils::isEqual(acstr,jobcontacts[j].GetAccessString())) {
+                            for(int j=i+1; j<howmany; j++) if(fitness[j]>0 && acstr==jobcontacts[j].GetAccessString()) {
                                     jobcontacts[j].SetAccessString(NULL);
                                     fitness[j]=0;
                                     jobmgr.CancelReservation(reserveIDs.data()+j,1);
@@ -670,7 +670,8 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                         JobMgr jobmgr(ac);
                         sz=0;
                         tmpids[sz++]=reserveIDs[i];
-                        for(int j=i+1; j<howmany; j++) if(paroc_utils::isEqual(acstr,jobcontacts[j].GetAccessString())) {
+                        for(int j=i+1; j<howmany; j++) 
+                            if(acstr==jobcontacts[j].GetAccessString()) {
                                 jobcontacts[j].SetAccessString(NULL);
                                 tmpids[sz++]=reserveIDs[j];
                             }
@@ -1416,7 +1417,7 @@ bool JobMgr::Forward(const paroc_accesspoint &localservice, const POPString &obj
             if(index[i]==-1) {
                 index[i]=1;
                 POPString t(jobcontacts[i].GetAccessString());
-                if(t.empty() || paroc_utils::isEqual(t,local)) {
+                if(t.empty() || t==local) {
                     continue;
                 }
                 NodeInfo info;
@@ -1551,7 +1552,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
     if(strcmp(first, pt_java_exec) != 0) {
 
         if(Query("jobmgr",str) && !str.empty()) {
-            char *tok=popc_strtok_r(str.GetString(),sep,&tmp);
+            char *tok=popc_strtok_r(str,sep,&tmp);
             while(tok!=NULL) {
                 argv[n++]=tok;
                 tok=popc_strtok_r(NULL,sep,&tmp);
@@ -1685,24 +1686,24 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     int n=0;
     // char *code=mycodefile.c_str();
     char *tmp;
-    char *tok=popc_strtok_r(mycodefile.GetString()," \t\n",&tmp);
+    char *tok=popc_strtok_r(mycodefile," \t\n",&tmp);
     while(tok!=NULL) {
         argv[n++]=tok;
         tok=popc_strtok_r(NULL," \t\n",&tmp);
     }
     POPString obj_arg("-object=");
     obj_arg+=objname;
-    argv[n++]=obj_arg.GetString();
+    argv[n++]=strdup(obj_arg.c_str()); // TODO leak
 
     //Setup Global job service
     POPString jobservice_arg("-jobservice=");
     jobservice_arg+=GetAccessPoint().GetAccessString();
-    argv[n++]=jobservice_arg.GetString();
+    argv[n++]=strdup(jobservice_arg.c_str()); // TODO leak
     //Setup application specific services...
     POPString localservice_arg("-appservice=");
     if(!localservice.IsEmpty()) {
         localservice_arg+=localservice.GetAccessString();
-        argv[n++]=localservice_arg.GetString();
+        argv[n++]=strdup(localservice_arg.c_str()); // TODO leak
     }
 
     paroc_combox_socket tmpsock;

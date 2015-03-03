@@ -64,7 +64,7 @@ AppCoreService::~AppCoreService() {
     */
 
     for(auto& t : servicelist){
-        free(t.name);
+        t.name="";
         try {
             t.service->Stop(mychallenge);
         } catch(std::exception& e) {
@@ -82,7 +82,7 @@ bool AppCoreService::QueryService(const POPString &name, paroc_service_base &ser
     }
 
     for(auto& t : servicelist){
-        if(paroc_utils::isncaseEqual(name,t.name)) {
+        if(paroc_utils::isncaseEqual(name.c_str(),t.name.c_str())) {
             service=(*t.service);
             return true;
         }
@@ -96,7 +96,7 @@ bool AppCoreService::QueryService(const POPString &name, paroc_accesspoint &serv
     }
 
     for(auto& t : servicelist){
-        if(paroc_utils::isncaseEqual(name,t.name)) {
+        if(paroc_utils::isncaseEqual(name.c_str(),t.name.c_str())) {
             service=t.service->GetAccessPoint();
             return true;
         }
@@ -113,7 +113,7 @@ bool AppCoreService::RegisterService(const POPString &name, const paroc_service_
     ServiceEntry t;
     try {
         t.service=new paroc_service_base(newservice);
-        t.name=popc_strdup(name);
+        t.name=name;
     } catch(std::exception& e) {
         LOG_WARNING("Exception while creating service: %s", e.what());
         return false;
@@ -131,9 +131,9 @@ bool AppCoreService::UnregisterService(const POPString &name) {
     while(pos != servicelist.end()) {
         auto old = pos;
         auto& t = *pos++;
-        if(paroc_utils::isncaseEqual(name,t.name)) {
+        if(paroc_utils::isncaseEqual(name.c_str(),t.name.c_str())) {
             delete t.service;
-            free(t.name);
+            t.name="";
             servicelist.erase(pos);
             return true;
         }

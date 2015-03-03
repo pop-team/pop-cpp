@@ -32,13 +32,13 @@ public:
     static bool check_remove(int *argc, char ***argv, const char *opt);
     static bool isEqual(const char *s1, const char *s2);
     static bool isncaseEqual(const char *s1, const char *s2);
-    static bool MatchWildcard(const char *str, const char *wildcard);
+    static bool MatchWildcard(const std::string& str, const std::string& wildcard);
     static void FindAbsolutePath(const char *fname, char *abspath);
     static void Assert(bool a);
 
 
 #ifdef _POPC_
-    static bool SameContact(const char *contact1, const char *contact2);
+    static bool SameContact(const std::string& contact1, const std::string& contact2);
     static bool IsRemoteDest(const char *dest);
     static int GetPortFromURL(const char *url);
     static const char *GetIPFromURL(const char *url);

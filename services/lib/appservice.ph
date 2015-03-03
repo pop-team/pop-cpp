@@ -19,7 +19,7 @@
 
 
 struct ServiceEntry {
-    char *name;
+    std::string name;
     paroc_service_base *service;
 };
 
