@@ -49,8 +49,9 @@ void Chat::ForwardContact(Chat& from) {
         try {
             contacts[i]->AddContact(from);
             from.AddContact(contacts[i]->GetRef());
-        } catch(std::exception &e) {}
-       LOG_WARNING("Exception occurs: %s", e.what());
+        } catch(std::exception &e){
+	    LOG_WARNING("Exception occurs: %s", e.what());
+	}
     }
 }
 
@@ -60,7 +61,9 @@ void Chat::SendAll(POPString str1) {
     for(int i=0; i<nbContacts; i++) {
         try {
             contacts[i]->Print(str2);
-        } catch(std::exception &e) {}
+        } catch(std::exception &e) {
+            LOG_WARNING("Exception occurs: %s", e.what());
+        }
     }
 }
 

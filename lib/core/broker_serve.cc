@@ -211,7 +211,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         }
         delete e;
     } catch(paroc_exception e) {
-        LOG_WARNING("POP-C++ exception in paroc_broker::DoInvoke");
+        LOG_WARNING("POP-C++ exception in paroc_broker::DoInvoke %s", e.what());
         if(request.from!=NULL) {
 
             POPString extra=e.Info();
