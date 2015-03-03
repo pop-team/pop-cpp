@@ -24,6 +24,7 @@
 #include <iostream>
 #include <sstream>
 
+// TODO LW: This creates a bug in case the user does a for(...) cout ... without {} 
 #define cout paroc_system::_popc_cout.str(""); \
              paroc_system::_popc_cout
 #define popcendl std::endl; \
