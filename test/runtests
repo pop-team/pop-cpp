@@ -2,7 +2,7 @@
 
 NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
-EXCLUDEDTEST="asynccreation\|runtests\|runtests_short\|stressallocation\|CMake\|xmp1\|xmp2\|xmp3\|xmp4\|xmp-raw\|static1"
+EXCLUDEDTEST="runtests\|runtests_short\|stressallocation\|CMake\|xmp1\|xmp2\|xmp3\|xmp4\|xmp-raw\|static1"
 SXXLOCATION=/usr/local/popc/sbin
 TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 RESULTS=$TEST_DIR/tests_results
