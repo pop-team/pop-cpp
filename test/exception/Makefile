@@ -1,6 +1,6 @@
 all: main object
 
-main:
+main: exception.ph exception.cc IOExceptions.cc main.cc
 	popcc -o main exception.ph exception.cc IOExceptions.cc main.cc
 
 object:
