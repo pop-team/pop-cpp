@@ -76,7 +76,7 @@ Method *method;
  bool isWarningEnable;
  bool isImplicitPackEnable;
  bool isPOPCPPCompilation;
- bool isAsyncAllocationDisable;
+ bool isAsyncAllocationEnabled;
  char holdnamespace[500];
  char tmp[10240];
  char typetmp[100];
@@ -86,7 +86,7 @@ Method *method;
 
  void UpdateMarshalParam(int flags, Param *t);
 
- int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation, bool isAsyncAllocationDisable);
+ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool isWarningEnable, bool isImplicitPackEnable, bool isPOPCPPCompilation, bool isAsyncAllocationEnabled);
  char *CheckAndCreateDir(char *fname,char *name);
 
  int AfterParsing(int status, char *classname, char *stubproc, bool gen_stub);
@@ -911,9 +911,9 @@ class_key: PARCLASS_KEYWORD ID
       t->SetAsCoreCompilation();
     }
 
-        if(thisCodeFile->IsAsyncAllocationDisable()) {
-      t->DisableAsyncAllocation();
-        }
+    if(thisCodeFile->IsAsyncAllocationEnabled()) {
+      t->EnableAsyncAllocation();
+    }
 
     if(isWarningEnable) {
       t->EnableWarning();
@@ -2310,7 +2310,7 @@ int main(int argc, char **argv)
     isWarningEnable=true;
     isImplicitPackEnable=false;
     isPOPCPPCompilation=false;
-    isAsyncAllocationDisable=false;
+    isAsyncAllocationEnabled=false;
 
     if (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL){
 
@@ -2343,7 +2343,7 @@ int main(int argc, char **argv)
 
     }
     if (paroc_utils::checkremove(&argc,&argv,"-async-allocation")!=NULL) {
-        isAsyncAllocationDisable=true;
+        isAsyncAllocationEnabled=true;
 
     }
 
@@ -2356,7 +2356,7 @@ int main(int argc, char **argv)
         Usage();
 
     } else {
-        if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker, isWarningEnable, isImplicitPackEnable, isPOPCPPCompilation, isAsyncAllocationDisable))!=0) {
+        if ((ret=ParseFile(argv[1], ((argc>2) ? argv[2] : NULL), client, broker, isWarningEnable, isImplicitPackEnable, isPOPCPPCompilation, isAsyncAllocationEnabled))!=0) {
             fprintf(stderr,"Parse POP-C++ code failed (error=%d)\n",ret);
             exit(ret);
         }
@@ -2385,7 +2385,7 @@ int yywrap() {
 
 int base=1;
 
-int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWarningEnable*/, bool /*isImplicitPackEnable*/, bool isPOPCPPCompilation, bool isAsyncAllocationDisable)
+int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWarningEnable*/, bool /*isImplicitPackEnable*/, bool isPOPCPPCompilation, bool isAsyncAllocationEnabled)
 {
     if (!infile || *infile == '-') {
         yyin = stdin;
@@ -2411,9 +2411,9 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
     if(isPOPCPPCompilation)
         thisCodeFile->SetAsCoreCompilation();
 
-    // Disable asynchronous parallel object allocation if the compilation flag is present.
-    if(isAsyncAllocationDisable)
-        thisCodeFile->DisableAsyncAllocation();
+    if(isAsyncAllocationEnabled){
+        thisCodeFile->EnableAsyncAllocation();
+    }
 
     insideClass = false;
     othercodes.resize(0);

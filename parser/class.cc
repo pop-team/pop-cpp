@@ -52,7 +52,7 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
     _is_collective = false;
 
     isCoreCompilation = false;
-    isAsyncAllocationDisable = false;
+    asyncAllocationEnabled = false;
 
     my_interface_base=popc_strdup(interface_base);
     my_object_base=popc_strdup(object_base);
@@ -337,7 +337,7 @@ bool Class::GenerateClient(string &code/*, bool isPOPCPPCompilation*/) {
         }
     }
 
-    if(!IsCoreCompilation() && IsAsyncAllocationDisable()) {
+    if(!IsCoreCompilation() && IsAsyncAllocationEnabled()) {
         sprintf(tmpcode,"// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", name);
         code += tmpcode;
 
@@ -1161,19 +1161,19 @@ bool Class::IsWarningEnable() {
 }
 
 /**
- * Disable the asynchronous parallel object allocation mechanism.
+ * Enable the asynchronous parallel object allocation mechanism.
  * @return void
  */
-void Class::DisableAsyncAllocation() {
-    isAsyncAllocationDisable = true;
+void Class::EnableAsyncAllocation() {
+    asyncAllocationEnabled = true;
 }
 
 /**
- * Check if asynchronous parallel object allocation is disable
+ * Check if asynchronous parallel object allocation is enabled
  * @return TRUE if asynchronous allocation is disable. FALSE otherwise.
  */
-bool Class::IsAsyncAllocationDisable() {
-    return isAsyncAllocationDisable;
+bool Class::IsAsyncAllocationEnabled() {
+    return asyncAllocationEnabled;
 }
 
 /**

@@ -192,18 +192,16 @@ public:
     void SetAsCoreCompilation();
     bool IsCoreCompilation();
 
-    void DisableAsyncAllocation();
-    bool IsAsyncAllocationDisable();
-
+    void EnableAsyncAllocation();
+    bool IsAsyncAllocationEnabled();
 
     static bool SameFile(const char *file1, const char *file2);
-
 
 protected:
     std::string filename;
     std::string outfile;
     bool isCoreCompilation;
-    bool isAsyncAllocationDisable;
+    bool asyncAllocationEnabled;
     CArrayCodeData codes;
     CArrayClass classlist;
 
@@ -637,11 +635,11 @@ public:
     bool IsCoreCompilation();
     void EnableWarning();
     bool IsWarningEnable();
-    void DisableAsyncAllocation();
-    bool IsAsyncAllocationDisable();
     void set_as_collective();
     bool is_collective();
 
+    void EnableAsyncAllocation();
+    bool IsAsyncAllocationEnabled();
 
     static const char* POG_BASE_INTERFACE_NAME;
     static const char* POG_BASE_OBJECT_NAME;
@@ -667,7 +665,7 @@ protected:
     bool basePureVirtual;
     bool isCoreCompilation;
     bool hasWarningEnable;
-    bool isAsyncAllocationDisable;
+    bool asyncAllocationEnabled;
     bool _is_collective;
 
     char *my_interface_base;
