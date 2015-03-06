@@ -59,7 +59,7 @@ bool popc_combox_uds::Create(int , bool) {
  * @return TRUE if the combox has been created successfully, FALSE in any other cases.
  */
 bool popc_combox_uds::Create(const char* address, bool server) {
-    LOG_DEBUG("UDS", "create %s", address);
+    LOG_DEBUG_T("UDS", "Create %s", address);
 
     _is_server = server;
     _uds_address.clear();
