@@ -231,7 +231,6 @@ paroc_od paroc_interface::get_object_description() {
 void paroc_interface::allocate_only() {
     Release();
     POPString objectname = ClassName();
-    POPString objectaddress;
 
     bool localFlag = od.IsLocal();
 
@@ -262,7 +261,7 @@ void paroc_interface::allocate_only() {
         LOG_ERROR("[Core] Allocator is NULL");
     }
 
-    objectaddress = allocator->allocate(objectname, od);
+    auto objectaddress = allocator->allocate(objectname, od);
     accesspoint.SetAccessString(objectaddress.GetString());
 }
 
