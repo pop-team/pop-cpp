@@ -31,7 +31,7 @@
 
 #include "paroc_combox_factory.h"
 #include "paroc_combox_socket.h"
-//#include "popc_combox_uds.h"
+#include "popc_combox_uds.h"
 #include "paroc_utils.h"
 #ifdef MPI_SUPPORT
 // Note by LWK: Added MPI_SUPPORT here to use 1 version of the file for both pseudodyn and dynamic
@@ -48,8 +48,7 @@ paroc_combox * combox_socket_creator() {
 }
 
 paroc_combox* combox_uds_creator() {
- //   return new popc_combox_uds; // TODO LW: This should be uncommented !
-    return nullptr;
+    return new popc_combox_uds;
 }
 
 #ifdef MPI_SUPPORT
@@ -62,9 +61,9 @@ paroc_combox_factory *paroc_combox_factory::fact=nullptr;
 
 
 paroc_combox_factory::paroc_combox_factory() {
-//Note(BW): UDS initialization by the broker fails, therefore, disabled for now
-//    Register("uds", 0, combox_uds_creator);
     Register("socket", 0, combox_socket_creator);
+    Register("uds", 0, combox_uds_creator);
+
 #ifdef MPI_SUPPORT
     Register("mpi", 0, combox_mpi_creator);
 #endif
@@ -93,6 +92,7 @@ paroc_combox_factory::paroc_combox_factory() {
     } else {
         POPString plugindir;
         plugindir=getenv("POPC_PLUGIN_LOCATION");
+
 #ifdef _PLUGINDIR
         if(plugindir==nullptr) {
             plugindir=_PLUGINDIR;

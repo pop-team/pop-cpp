@@ -59,16 +59,19 @@ bool popc_combox_uds::Create(int , bool) {
  * @return TRUE if the combox has been created successfully, FALSE in any other cases.
  */
 bool popc_combox_uds::Create(const char* address, bool server) {
-    LOG_DEBUG("UDS: create %s", address);
+    LOG_DEBUG("UDS", "create %s", address);
+
     _is_server = server;
     _uds_address.clear();
     _uds_address.append(address);
 
     _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
     if(_socket_fd < 0) {
-        LOG_WARNING("socket() failed");
+        LOG_ERROR_T("UDS", "socket() failed");
         return false;
     }
+
+    LOG_DEBUG_T("UDS", "socket created");
 
     memset(&_sock_address, 0, sizeof(struct sockaddr_un));
     _sock_address.sun_family = AF_UNIX;
@@ -79,13 +82,12 @@ bool popc_combox_uds::Create(const char* address, bool server) {
         unlink(address);
 
         if(bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
-            LOG_WARNING("bind() failed");
+            LOG_WARNING_T("UDS", "bind() failed");
             return false;
         }
 
-
         if(listen(_socket_fd, 10) != 0) {
-            LOG_WARNING("listen() failed");
+            LOG_WARNING_T("UDS", "listen() failed");
             return false;
         }
 
@@ -93,9 +95,8 @@ bool popc_combox_uds::Create(const char* address, bool server) {
         active_connection[0].events = POLLIN;
         active_connection[0].revents = 0;
         _active_connection_nb++;
-
-        return true;
     }
+
     return true;
 }
 

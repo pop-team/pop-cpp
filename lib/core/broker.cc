@@ -237,14 +237,10 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         paroc_od::defaultLocalJob=true;
     }
 
-    char *address = paroc_utils::checkremove(argc,argv,"-address=");
-    (void)address; // Note: this line avoids a warning
+    auto comboxFactory = paroc_combox_factory::GetInstance();
 
-    paroc_combox_factory  *comboxFactory = paroc_combox_factory::GetInstance();
     int comboxCount = comboxFactory->GetCount();
     comboxArray.resize(comboxCount);
-    POPString protocolName;
-    POPString url;
 
     int count=0;
     for(int i = 0; i < comboxCount; i++) {
@@ -265,9 +261,17 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         return false;
     }
 
+    auto address = paroc_utils::checkremove(argc,argv,"-address=");
+
+    POPString url;
+
     for(int i=0; i<comboxCount; i++) {
-        paroc_combox * pc = comboxArray[i];
+        auto pc = comboxArray[i];
+
+        POPString protocolName;
         pc->GetProtocol(protocolName);
+
+        LOG_DEBUG("Broker: Create combox %s", protocolName.c_str());
 
         char argument[1024];
         sprintf(argument, "-%s_port=", protocolName.c_str());
@@ -282,16 +286,27 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
                 return false;
             }
         } else {
-#ifdef DEFINE_UDS_SUPPORT
-            if(!pc->Create(address, true)) {
-#else
-            if(!pc->Create(0, true)) {
-#endif
-                paroc_exception::perror("Broker");
-                return false;
+            if(pc->need_address()){
+                if(!address){
+                    std::string default_address = "uds_0." + std::to_string(paroc_system::pop_current_local_address);
+
+                    if(!pc->Create(default_address.c_str(), true)) {
+                        paroc_exception::perror("Broker");
+                        return false;
+                    }
+                } else {
+                    if(!pc->Create(address, true)) {
+                        paroc_exception::perror("Broker");
+                        return false;
+                    }
+                }
+            } else {
+                if(!pc->Create(0, true)) {
+                    paroc_exception::perror("Broker");
+                    return false;
+                }
             }
         }
-
 
         POPString ap;
         pc->GetUrl(ap);
@@ -300,6 +315,8 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
             url+=PROTO_DELIMIT_CHAR;
         }
     }
+
+    LOG_DEBUG("Broker: %d combox have been created", comboxCount);
 
     accesspoint.SetAccessString(url.GetString());
 
@@ -329,7 +346,6 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     popc_signal(popc_SIGQUIT, broker_killed);
     popc_signal(popc_SIGPIPE, popc_SIG_IGN);
 #endif
-
 
     return true;
 }
