@@ -271,7 +271,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         POPString protocolName;
         pc->GetProtocol(protocolName);
 
-        LOG_DEBUG("Broker: Create combox %s", protocolName.c_str());
+        LOG_DEBUG_T("[BRKR]", "Create combox %s", protocolName.c_str());
 
         char argument[1024];
         sprintf(argument, "-%s_port=", protocolName.c_str());
@@ -316,7 +316,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         }
     }
 
-    LOG_DEBUG("Broker: %d combox have been created", comboxCount);
+    LOG_DEBUG_T("[BRKR]", "%d combox have been created", comboxCount);
 
     accesspoint.SetAccessString(url.GetString());
 
@@ -326,7 +326,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         paroc_buffer_raw tmp;
         r.data=&tmp;
         if(!FindMethodInfo(classname.c_str(),r.methodId[0],r.methodId[1]) || r.methodId[1]!=10) {
-            LOG_ERROR("POP-C++ Error: [CORE] Broker cannot not find default constructor");
+            LOG_ERROR_T("[BRKR]", "POP-C++ Error: [CORE] Broker cannot not find default constructor");
             return false;
         }
         r.methodId[2]=INVOKE_CONSTRUCTOR;
