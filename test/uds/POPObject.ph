@@ -5,7 +5,7 @@ parclass POPObject {
     classuid(1500);
 
 public:
-    POPObject() @{ od.url("localhost"); od.executable("./POPObject.obj");};
+    POPObject() @{ od.protocol("uds"); od.executable("./POPObject.obj");};
     ~POPObject();
 
     sync seq void firstMethod();
