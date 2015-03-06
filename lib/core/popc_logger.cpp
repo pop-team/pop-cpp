@@ -60,10 +60,6 @@ const char* get_prefix(LOGLEVEL level){
 
 } //end of anonymous namespace
 
-int popc_logger(LOGLEVEL level, const char* file, int line, const char* function, const char *format,...) {
-    return popc_logger_t(level, file, line, function, nullptr, format);
-}
-
 int popc_logger_t(LOGLEVEL level, const char* file, int line, const char* function, const char* tag, const char *format,...) {
     // Check if message level in higher than our threshold (hard-coded for now)
     // TODO: Implement different logging levels

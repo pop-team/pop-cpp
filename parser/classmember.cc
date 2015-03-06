@@ -1263,7 +1263,7 @@ void Method::GenerateBroker(std::string &output) {
             tempcatch[i]='\0';
         }
 
-        sprintf(tempcatch,"\n  } catch(std::exception& e) {\n    popc_logger(__DEBUG__,\"(classmember.cc)\", 0, \"\", \"Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what());\n    throw;\n  }\n", name, clname); // TODO lwk: message never printed on a remote object (same below)
+        sprintf(tempcatch,"\n  } catch(std::exception& e) {\n    popc_logger_t(__DEBUG__,\"(classmember.cc)\", 0, \"\", 0, \"Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what());\n    throw;\n  }\n", name, clname); // TODO lwk: message never printed on a remote object (same below)
         strcat(methodcall,tempcatch);
 
 
