@@ -68,6 +68,9 @@ protected:
 public:
     virtual bool Create(int port, bool server)=0;
     virtual bool Create(const char *address, bool server)=0;
+
+    virtual bool need_address(){ return false; }
+
     virtual bool Connect(const char *url)=0;
 
     // Note: these 2 methods exist only for compatibility between dynamic and pseudodynamic versions of popc

@@ -34,6 +34,7 @@ public:
 
     virtual bool Create(int port=0, bool server=false);
     virtual bool Create(const char *address, bool server=false);
+    virtual bool need_address(){ return true; }
 
     virtual bool Connect(const char *url);
 
