@@ -852,38 +852,24 @@ bool Class::GenerateHeader(std::string &code, bool interface/*, bool isPOPCPPCom
         strcpy(str," { Bind(obj->GetAccessPoint());};\n");
         code += str;
 
-        sprintf(str,"\n~%s() {};",name);
+        sprintf(str,"\n~%s()",name);
         code += str;
 
-        /*  if(!IsCoreCompilation()){
-                // Generate method declaration for asynchronous object creation
-                sprintf(str,"void %s_AsynchronousAllocation();\n", name);
-                code += str;
-            }*/
-
-
-//       if (!defaultconstructor && interface)
-//  {
-//    sprintf(str,"\n\t%s ()",name);
-//    code += str;
-//    if (n)
-//      {
-//        code += tmpcode;
-//      }
-//    code.InsertAt(-1," {};\n",5);
-//  }
+        //In case of async allocation, we need a body for synchronization purpose
+        if(!IsCoreCompilation() && IsAsyncAllocationEnabled()) {
+            code += ";";
+        } else {
+            code += "{}\n";
+        }
     }
+
     strcpy(str,"\n};\n");
     code += str;
-
-
 
     if(endline>0 && !fname.empty()) {
         sprintf(str,"\n# %d \"%s\"\n",endline,fname.c_str());
         code += str;
     }
-
-
 
     return true;
 }
