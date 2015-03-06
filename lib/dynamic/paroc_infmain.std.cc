@@ -75,6 +75,7 @@ int main(int argc, char **argv) {
         LOG_DEBUG( "Call parocmain");
         int ret = parocmain(argc, argv);
         LOG_DEBUG( "End of parocmain");
+
         /**
         * POP-C++ on the K Computer
         * Terminate the MPI Communicators network by sending a termination message to the local MPI Communicator with rank 0

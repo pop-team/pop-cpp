@@ -353,7 +353,6 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 
 
 bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
-
     paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
     POPString url, prot;
 
@@ -369,19 +368,25 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
     char *ptr;
     char *tok = popc_strtok_r(str," \t\n\r",&ptr);
     while(tok != NULL && !ok) {
-        paroc_combox *tmp = combox_factory->Create(prot.c_str());
+        auto tmp = combox_factory->Create(prot.c_str());
         tmp->SetTimeout(100000);
+
         std::string address(tok);
         if(address.find("uds://") == 0) {
             address = address.substr(6);
         }
-        paroc_buffer_factory* buffer_factory = tmp->GetBufferFactory();
-        paroc_buffer* buffer = buffer_factory->CreateBuffer();
-#ifdef DEFINE_UDS_SUPPORT
-        if(tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
-#else
-        if(tmp->Create(0, false) && tmp->Connect(tok)) {
-#endif
+
+        auto buffer_factory = tmp->GetBufferFactory();
+        auto buffer = buffer_factory->CreateBuffer();
+
+        bool connected = false;
+        if(tmp->need_address()){
+            connected = tmp->Create(address.c_str(), false) && tmp->Connect(NULL);
+        } else {
+            connected = tmp->Create(0, false) && tmp->Connect(tok);
+        }
+
+        if(connected) {
             try {
                 paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
                 buffer->Reset();
