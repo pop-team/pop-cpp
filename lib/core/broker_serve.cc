@@ -170,7 +170,7 @@ void paroc_broker::UnhandledException() {
 bool paroc_broker::DoInvoke(paroc_request &request) {
     try {
         if(!Invoke(request.methodId, *request.data, request.from)) {
-            LOG_ERROR("Mismatched method was invoked: id=%d", request.methodId);
+            LOG_ERROR("Mismatched method was invoked: classid=%d, methodid=%d", request.methodId[0], request.methodId[1]);
             paroc_exception::paroc_throw(OBJECT_MISMATCH_METHOD, "Mismatched method was invoked");
         }
     }
