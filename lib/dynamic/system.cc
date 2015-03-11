@@ -367,7 +367,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     }
 
     // Get application service contact address
-    char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
+    const char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
     if(codeser==NULL && appcontact==NULL) {
         LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");

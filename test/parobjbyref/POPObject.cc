@@ -13,7 +13,7 @@ POPObject::POPObject(int x_id) {
 }
 
 POPObject::~POPObject() {
-    cout << "POPCobject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPCobject: on machine:" << POPSystem::GetHost() <<" is being destroyed" << popcendl;
 }
 
 int POPObject::GetId()
