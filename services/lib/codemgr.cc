@@ -69,7 +69,7 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
 }
 
 int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPString &codefile) {
-    codefile=nullptr;
+    codefile="";
     auto n=info.size();
     codedb *element;
 

@@ -620,7 +620,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 
             for(int i=0; i<howmany; i++) {
                 fitness[i]=0;
-                jobcontacts[i].SetAccessString(NULL);
+                jobcontacts[i].SetAccessString("");
             }
 
             if(!AllocResource(localservice,objname,od, howmany-count, fitness.data()+count, jobcontacts.data()+count, reserveIDs.data()+count, requestInfo,traceip, 0)) {
@@ -645,7 +645,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
 
                             jobmgr.CancelReservation(reserveIDs.data()+i,1);
                             for(int j=i+1; j<howmany; j++) if(fitness[j]>0 && acstr==jobcontacts[j].GetAccessString()) {
-                                    jobcontacts[j].SetAccessString(NULL);
+                                    jobcontacts[j].SetAccessString("");
                                     fitness[j]=0;
                                     jobmgr.CancelReservation(reserveIDs.data()+j,1);
                                 }
@@ -670,7 +670,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const POPString &objna
                         tmpids[sz++]=reserveIDs[i];
                         for(int j=i+1; j<howmany; j++) 
                             if(acstr==jobcontacts[j].GetAccessString()) {
-                                jobcontacts[j].SetAccessString(NULL);
+                                jobcontacts[j].SetAccessString("");
                                 tmpids[sz++]=reserveIDs[j];
                             }
                         *(remotejobcontacts+count) = jobcontacts[i];

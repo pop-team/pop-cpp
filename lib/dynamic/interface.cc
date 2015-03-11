@@ -301,7 +301,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     POPString od_prots = od.getProtocol();
 
     auto accesslist = Tokenize(prots);
-    ApplyCommPattern(getenv("POPC_COMM_PATTERN"),accesslist);
+    const char* tmp = getenv("POPC_COMM_PATTERN");
+    ApplyCommPattern(tmp?tmp:"",accesslist);
 
     auto pref = Tokenize(od_prots);
 

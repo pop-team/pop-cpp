@@ -129,8 +129,8 @@ void popc_tokenize(std::vector<std::string>& xr_result, const std::string& x_str
     char* tmpstr = strdup(x_str.c_str());
     char *tok=strtok(tmpstr,x_sep.c_str());
     while(tok!=NULL) {
-        tok=strtok(NULL,x_sep.c_str());
         xr_result.push_back(std::string(tok));
+        tok=strtok(NULL,x_sep.c_str());
     }
     free(tmpstr);
 }
@@ -140,8 +140,8 @@ void popc_tokenize_r(std::vector<std::string>& xr_result, const std::string& x_s
     char *tmp = NULL;
     char *tok=strtok_r(tmpstr,x_sep.c_str(),&tmp);
     while(tok!=NULL) {
-        tok=strtok_r(NULL,x_sep.c_str(),&tmp);
         xr_result.push_back(std::string(tok));
+        tok=strtok_r(NULL,x_sep.c_str(),&tmp);
     }
     free(tmpstr);
 }

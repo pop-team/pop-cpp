@@ -26,7 +26,7 @@ MatWorker::MatWorker(int i, int nbLineA, int nbColA, int nbColB, POPString machi
 
     sizeB=0;
     nextBbloc=false;
-    printf("Worker %d created on machine:%s\n",i, POPSystem::GetHost()i.c_str());
+    printf("Worker %d created on machine:%s\n",i, POPSystem::GetHost().c_str());
 }
 
 MatWorker::~MatWorker() {
