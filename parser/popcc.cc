@@ -33,7 +33,6 @@ struct popc_options {
     bool mpi = false;
     bool usepipe = false;
     bool advanced = false;
-    bool kcomputer = false;
     bool nobroker = false;
     bool nointerface = false;
     bool psdyn = false;
@@ -437,7 +436,6 @@ int main(int argc, char *argv[]) {
     options.asyncallocation = paroc_utils::check_remove(&argc, &argv, "-async-allocation");
     options.nobroker = paroc_utils::check_remove(&argc, &argv, "-parclass-nobroker");
     options.nointerface = paroc_utils::check_remove(&argc, &argv, "-parclass-nointerface");
-    options.kcomputer = paroc_utils::check_remove(&argc, &argv, "-kcomputer");
     options.xmp = paroc_utils::check_remove(&argc, &argv, "-xmp");
     options.mpi = paroc_utils::check_remove(&argc, &argv, "-mpi");
     options.advanced = paroc_utils::check_remove(&argc, &argv, "-advanced");
@@ -459,7 +457,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Check for POP-C++ installation directory
-    char *tmp;
+    const char *tmp;
     if((tmp = paroc_utils::checkremove(&argc, &argv, "-popcdir="))) {
         strcpy(parocdir, tmp);
     } else if((tmp = getenv("POPC_LOCATION"))) {

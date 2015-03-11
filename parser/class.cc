@@ -52,7 +52,7 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
     _is_collective = false;
 
     isCoreCompilation = false;
-    isAsyncAllocationDisable = false;
+    asyncAllocationEnabled = false;
 
     my_interface_base=popc_strdup(interface_base);
     my_object_base=popc_strdup(object_base);
@@ -180,6 +180,7 @@ void Class::GenerateCode(std::string &output/*, bool isPOPCPPCompilation*/) {
     if(!pureVirtual) {
         CArrayMethod puremethods;
         bool flag = findPureVirtual(puremethods);
+        // printf("%s class is pureVirtual: %d methods are virtual\n", GetName(), (int)puremethods.size());
         if(puremethods.size()>0) {
             SetPureVirtual(true);
             SetBasePureVirtual(flag);
@@ -291,6 +292,7 @@ bool Class::methodInBaseClass(Method &x) {
 bool Class::findPureVirtual(CArrayMethod &lst) {
     bool returnFlag = true;
 
+    // Find pure virtual classes in parents
     for(auto& bc : baseClass){
         if(bc->type!=PUBLIC) {
             continue;
@@ -307,6 +309,7 @@ bool Class::findPureVirtual(CArrayMethod &lst) {
             if(t->isPureVirtual) {
                 lst.push_back(t);
             } else {
+                // Remove pure virtual methods if implemented in current class
                 lst.erase(
                     std::remove_if(lst.begin(), lst.end(), [t](Method* v){ return *v == *t; }),
                     lst.end());
@@ -337,7 +340,7 @@ bool Class::GenerateClient(string &code/*, bool isPOPCPPCompilation*/) {
         }
     }
 
-    if(!IsCoreCompilation() && IsAsyncAllocationDisable()) {
+    if(!IsCoreCompilation() && IsAsyncAllocationEnabled()) {
         sprintf(tmpcode,"// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", name);
         code += tmpcode;
 
@@ -379,12 +382,12 @@ bool Class::GenerateClient(string &code/*, bool isPOPCPPCompilation*/) {
 
     int n = memberList.size();
     for(int i=0; i<n; i++) {
-        if(memberList[i]->Type() != TYPE_METHOD || memberList[i]->GetMyAccess() != PUBLIC) {
+         if(memberList[i]->Type() != TYPE_METHOD || memberList[i]->GetMyAccess() != PUBLIC) {
             continue;
         }
 
         Method *met = (Method *)memberList[i];
-        if(pureVirtual && met->MethodType() == METHOD_CONSTRUCTOR && IsCoreCompilation()) {
+        if(pureVirtual && met->MethodType() == METHOD_CONSTRUCTOR && IsCoreCompilation()) { // TODO LW: Why do we generate virtual clients if not core ! Why do we generate clients at all for virtual classes ?
             continue;
         }
 
@@ -852,38 +855,24 @@ bool Class::GenerateHeader(std::string &code, bool interface/*, bool isPOPCPPCom
         strcpy(str," { Bind(obj->GetAccessPoint());};\n");
         code += str;
 
-        sprintf(str,"\n~%s() {};",name);
+        sprintf(str,"\n~%s()",name);
         code += str;
 
-        /*  if(!IsCoreCompilation()){
-                // Generate method declaration for asynchronous object creation
-                sprintf(str,"void %s_AsynchronousAllocation();\n", name);
-                code += str;
-            }*/
-
-
-//       if (!defaultconstructor && interface)
-//  {
-//    sprintf(str,"\n\t%s ()",name);
-//    code += str;
-//    if (n)
-//      {
-//        code += tmpcode;
-//      }
-//    code.InsertAt(-1," {};\n",5);
-//  }
+        //In case of async allocation, we need a body for synchronization purpose
+        if(!IsCoreCompilation() && IsAsyncAllocationEnabled()) {
+            code += ";";
+        } else {
+            code += "{}\n";
+        }
     }
+
     strcpy(str,"\n};\n");
     code += str;
-
-
 
     if(endline>0 && !fname.empty()) {
         sprintf(str,"\n# %d \"%s\"\n",endline,fname.c_str());
         code += str;
     }
-
-
 
     return true;
 }
@@ -1161,19 +1150,19 @@ bool Class::IsWarningEnable() {
 }
 
 /**
- * Disable the asynchronous parallel object allocation mechanism.
+ * Enable the asynchronous parallel object allocation mechanism.
  * @return void
  */
-void Class::DisableAsyncAllocation() {
-    isAsyncAllocationDisable = true;
+void Class::EnableAsyncAllocation() {
+    asyncAllocationEnabled = true;
 }
 
 /**
- * Check if asynchronous parallel object allocation is disable
+ * Check if asynchronous parallel object allocation is enabled
  * @return TRUE if asynchronous allocation is disable. FALSE otherwise.
  */
-bool Class::IsAsyncAllocationDisable() {
-    return isAsyncAllocationDisable;
+bool Class::IsAsyncAllocationEnabled() {
+    return asyncAllocationEnabled;
 }
 
 /**

@@ -91,8 +91,8 @@ paroc_combox_factory::paroc_combox_factory() {
         }
         free(libs);
     } else {
-        POPString plugindir;
-        plugindir=getenv("POPC_PLUGIN_LOCATION");
+        const char* tmp = getenv("POPC_PLUGIN_LOCATION");
+        POPString plugindir=tmp ? tmp : "";
 #ifdef _PLUGINDIR
         if(plugindir==nullptr) {
             plugindir=_PLUGINDIR;

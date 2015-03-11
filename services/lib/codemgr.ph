@@ -17,17 +17,16 @@
 
 #define CODE_MAX_STRING_SIZE 1024
 
-typedef char long_string[CODE_MAX_STRING_SIZE];
 
 struct codedata {
     codedata() {};
-    long_string platform;
-    long_string codefile;
+    std::string platform;
+    std::string codefile;
 };
 
 struct codedb {
     codedb() {};
-    long_string objname;
+    std::string objname;
     std::vector<codedata> platform;
 };
 

@@ -867,17 +867,21 @@ void Method::GenerateClient(std::string &output) {
      * The code below is generated to support the APOA in POP-C++ application.
      * Generated at the beginning of each remote method invocation (not for constructor method).
      */
-    if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && GetClass()->IsAsyncAllocationDisable()) {
-        sprintf(tmpcode, "\n  // Waiting for APOA to be done before executing any method\n");
-        output += tmpcode;
-        sprintf(tmpcode, "  void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n");
-        output += tmpcode;
+    if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && GetClass()->IsAsyncAllocationEnabled()) {
+        output += "\n  // Waiting for APOA to be done before executing any method\n";
+
+        output += "  if(!_popc_async_joined){\n";
+        output += "    void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
+        output += "    _popc_async_joined = true;\n";
+        output += "  }\n";
+
         char* nameOfRetType = returnparam.GetType()->GetName();
         if(MethodType()==METHOD_NORMAL &&!returnparam.GetType()->Same((char*)"void")) {
             sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    %s *tempObject = 0;\n    return (*tempObject);\n  }\n", nameOfRetType);
         } else  if(MethodType()==METHOD_NORMAL && returnparam.GetType()->Same((char*)"void")) {
             sprintf(tmpcode, "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n    return;\n  }\n");
         }
+
         output += tmpcode;
     } // End of APOA Support
 
@@ -1494,7 +1498,7 @@ void Constructor::GenerateClientPrefixBody(std::string &output) {
      * The code below is generated to support the APOA in POP-C++ application.
      */
 
-    if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()) {
+    if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationEnabled()) {
         strcpy(tmpcode, "\n");
         output += tmpcode;
         od.Generate(tmpcode);   // Generates the object description
@@ -1519,7 +1523,7 @@ void Constructor::GenerateClientPrefixBody(std::string &output) {
             output += tmpcode;
         }
 
-        sprintf(tmpcode, "  int ret;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread%d, arguments);\n", GetClass()->GetName(), get_id());
+        sprintf(tmpcode, "  int ret;\n   _popc_async_joined = false;\n  ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread%d, arguments);\n", GetClass()->GetName(), get_id());
         output += tmpcode;
         strcpy(tmpcode, "  if(ret != 0) {\n    printf(\"Thread creation failed\\n\");\n    perror(\"pthread_create\");\n    pthread_attr_destroy(&attr);\n    return;\n  }\n  pthread_attr_destroy(&attr);\n");
         output += tmpcode;
@@ -1569,7 +1573,7 @@ void Constructor::GenerateClientPrefixBody(std::string &output) {
 
 
     // APOA Code generation
-    if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationDisable()) {
+    if(!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationEnabled()) {
         sprintf(tmpcode,"\n// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", GetClass()->GetName());
         output += tmpcode;
         sprintf(tmpcode,"extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg)\n  {\n", GetClass()->GetName(), get_id());
@@ -1587,19 +1591,18 @@ void Constructor::GenerateClientPrefixBody(std::string &output) {
             output += tmpcode;
         }
 
-        sprintf(tmpcode, "    try{\n      _this_interface->Allocate();\n      _this_interface->_paroc_Construct(");
+        output += "    try{\n      _this_interface->Allocate();\n      _this_interface->_paroc_Construct(";
 
         auto nb = params.size();
         for(std::size_t j=0; j<nb; j++) {
             Param &p = *(params[j]);
-            strcat(tmpcode,p.GetName());
+            output += p.GetName();
             if(j<nb-1) {
-                strcat(tmpcode,", ");
+                output += ", ";
             }
         }
 
-        strcat(tmpcode, ");\n");
-        output += tmpcode;
+        output += ");\n";
 
         sprintf(tmpcode, "    } catch(paroc_exception* ex) {\n      printf(\"Async allocation: %%s\", ex->what()); \n    }\n   free(arg);\n  return 0;\n  }\n}\n");
         output += tmpcode;
@@ -1649,8 +1652,29 @@ void Constructor::GenerateClientPrefixBody(std::string &output) {
 Destructor::Destructor(Class *cl, AccessType myaccess): Method(cl, myaccess) {
 }
 
-void Destructor::GenerateClient(std::string& /*output*/) {
-    //Ignore the destructor of the interface....
+void Destructor::GenerateClient(std::string& output) {
+    /**
+     * Asynchronous Parallel Object Allocation (APOA)
+     * The code below is generated to support the APOA in POP-C++ application.
+     * Generated at the beginning of each remote method invocation (not for constructor method).
+     */
+    if(!GetClass()->IsCoreCompilation() && MethodType() != METHOD_CONSTRUCTOR && GetClass()->IsAsyncAllocationEnabled()) {
+        auto class_name = GetClass()->GetName();
+
+        output += class_name;
+        output += "::~";
+        output += class_name;
+
+        output += "(){\n";
+        output += "  if(!_popc_async_joined){\n";
+        output += "    void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
+        output += "    _popc_async_joined = true;\n";
+        output += "  }\n";
+        output += "  if(!isBinded()) {\n";
+        output += "     printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n";
+        output += "  }\n";
+        output += "}";
+    }
 }
 
 void Destructor::GenerateReturn(std::string &output, bool header) {

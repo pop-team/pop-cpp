@@ -71,7 +71,7 @@ paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
 }
 
 paroc_interface::paroc_interface(const paroc_accesspoint &p) {
-    LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString(), ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     _ssh_tunneling = false;
     __paroc_combox = NULL;
     __paroc_buf = NULL;
@@ -92,7 +92,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) {
 }
 
 paroc_interface::paroc_interface(const paroc_interface &inf) {
-    LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)", inf.GetAccessPoint().GetAccessString(), ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)", inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     paroc_accesspoint infAP = inf.GetAccessPoint();
     _ssh_tunneling=false;
     __paroc_combox=NULL;
@@ -148,7 +148,7 @@ paroc_interface & paroc_interface::operator = (const paroc_interface & obj) {
 
     Release();
     accesspoint = obj.GetAccessPoint();
-    if(GetAccessPoint().GetAccessString()) {
+    if(GetAccessPoint().GetAccessString().c_str()) {
         Bind(accesspoint);
         //AddRef();
     }
@@ -212,7 +212,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
         if(ref > 0) {
             Bind(accesspoint);
-            LOG_DEBUG("Bound %s", accesspoint.GetAccessString());
+            LOG_DEBUG("Bound %s", accesspoint.GetAccessString().c_str());
             //AddRef();
             DecRef();
         }
@@ -263,7 +263,7 @@ void paroc_interface::allocate_only() {
     }
 
     objectaddress = allocator->allocate(objectname, od);
-    accesspoint.SetAccessString(objectaddress.GetString());
+    accesspoint.SetAccessString(objectaddress.c_str());
 }
 
 /**
@@ -301,7 +301,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     POPString od_prots = od.getProtocol();
 
     auto accesslist = Tokenize(prots);
-    ApplyCommPattern(getenv("POPC_COMM_PATTERN"),accesslist);
+    const char* tmp = getenv("POPC_COMM_PATTERN");
+    ApplyCommPattern(tmp?tmp:"",accesslist);
 
     auto pref = Tokenize(od_prots);
 
@@ -310,13 +311,13 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
         //No preferred protocol in OD specified, try the first protocol in dest
         for(auto& addr : accesslist){
             try {
-                Bind(addr);
+                Bind(addr.c_str());
                 return;
             } catch(std::exception &e) {
-                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
+                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr.c_str(),e.what());
                 continue;
             }
-            LOG_DEBUG("Successful bind to %s", addr);
+            LOG_DEBUG("Successful bind to %s", addr.c_str());
         }
     } else {
         //The user specify the protocol in OD, select the preference and match with the access point...
@@ -324,13 +325,13 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
             // Find access string that match myprot
             for(auto& addr : accesslist){
                 char pattern[1024];
-                sprintf(pattern,"%s://*",myprot);
+                sprintf(pattern,"%s://*",myprot.c_str());
                 if(paroc_utils::MatchWildcard(addr,pattern)) {
                     try {
-                        Bind(addr);
+                        Bind(addr.c_str());
                         return;
                     } catch(std::exception &e) {
-                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
+                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr.c_str(),e.what());
                         continue;
                     }
                 }
@@ -728,7 +729,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
                 continue;
             }
 
-            if(paroc_utils::isncaseEqual(enc,cur_enc.c_str()) || Encoding(enc)) {
+            if(paroc_utils::isncaseEqual(enc.c_str(),cur_enc.c_str()) || Encoding(enc)) {
                 return;
             }
         }
@@ -740,7 +741,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
                         continue;
                     }
 
-                    if(paroc_utils::isncaseEqual(enc,cur_enc.c_str()) || Encoding(enc)) {
+                    if(paroc_utils::isncaseEqual(enc,cur_enc) || Encoding(enc)) {
                         return;
                     }
                 }
@@ -961,43 +962,27 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     return 0;
 }
 
-std::vector<char*> paroc_interface::Tokenize(POPString &s) {
-    char *t=s.GetString();
-    if(!t) {
+std::vector<std::string> paroc_interface::Tokenize(const POPString &s) {
+    if(s.empty()) {
         return {};
     }
-
-    std::vector<char*> result;
-
-    char sep[]=" \n\t";
-    char *ptrptr;
-    char *tok=popc_strtok_r(t,sep,&ptrptr);
-
-    while(tok!=NULL) {
-        result.push_back(tok);
-        tok=popc_strtok_r(NULL,sep,&ptrptr);
-    }
-
-    return result;
+    std::vector<std::string> tokens;
+    popc_tokenize_r(tokens,s, " \n\t");
+    return tokens;
 }
 
-void paroc_interface::ApplyCommPattern(const char *pattern, std::vector<char*>& accesslist) {
-    if(!pattern) {
+void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<std::string>& accesslist) {
+    if(pattern.empty()) {
         return;
     }
 
-    POPString p(pattern);
-    auto patternlist = Tokenize(p);
-
-    auto ptpos = patternlist.begin();
+    auto patternlist = Tokenize(pattern);
     auto headpos = accesslist.begin();
 
-    while(ptpos != patternlist.end()){
-        auto ptstr = *ptpos++;
-
-        if(!ptstr) {
-            continue;
-        }
+    for(auto ptstr : patternlist){
+        // if(!ptstr) {
+            // continue;
+        // }
 
         auto pos = headpos;
 

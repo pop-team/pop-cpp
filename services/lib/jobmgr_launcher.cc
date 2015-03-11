@@ -146,7 +146,7 @@ int main(int argc, char **argv) {
 #endif
 
             paroc_accesspoint jobmgr_ap;
-            jobmgr_ap.SetAccessString(host);
+            jobmgr_ap.SetAccessString(host.c_str());
 
 
 
@@ -329,7 +329,7 @@ int main(int argc, char **argv) {
 
         // Start the POP-C++ Search Node service
         POPCSearchNode psn(challenge, daemon);
-        LOG_INFO("[POP-C++ Runtime] PSN Started [%s]", psn.GetAccessPoint().GetAccessString());
+        LOG_INFO("[POP-C++ Runtime] PSN Started [%s]", psn.GetAccessPoint().GetAccessString().c_str());
 #endif
 
 
@@ -422,7 +422,7 @@ int main(int argc, char **argv) {
             paroc_accesspoint empty;
             psn.GetAccessPoint();
             JobMgr info(daemon, conf, challenge, host, psn.GetAccessPoint(), empty);
-            LOG_INFO("[POP-C++ Runtime] JM created [%s]", info.GetAccessPoint().GetAccessString());
+            LOG_INFO("[POP-C++ Runtime] JM created [%s]", info.GetAccessPoint().GetAccessString().c_str());
 
             // Start the POPFile manager if no option is specified
             /** TO BE REMOVE FOR 2.5 BUT KEEP FOR 3.0

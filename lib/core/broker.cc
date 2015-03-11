@@ -96,7 +96,7 @@ POPString paroc_broker::classname;
 
 
 void broker_killed(int sig) {
-    LOG_ERROR("FATAL: SIGNAL %d on %s@%s",sig, paroc_broker::classname.c_str(), paroc_broker::accesspoint.GetAccessString());
+    LOG_ERROR("FATAL: SIGNAL %d on %s@%s",sig, paroc_broker::classname.c_str(), paroc_broker::accesspoint.GetAccessString().c_str());
     exit(1);
 }
 
@@ -301,7 +301,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         }
     }
 
-    accesspoint.SetAccessString(url.GetString());
+    accesspoint.SetAccessString(url.c_str());
 
     char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
     if(tmp!=NULL && !classname.empty()) {
@@ -345,17 +345,19 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
     mycombox->GetProtocol(prot);
     mycombox->GetUrl(url);
 
-    char *str=url.GetString();
+    char *str=strdup(url.c_str());
     if(str==NULL) {
         return false;
     }
 
-    char *ptr;
-    char *tok = popc_strtok_r(str," \t\n\r",&ptr);
-    while(tok != NULL && !ok) {
+    std::vector<std::string> tokens;
+    popc_tokenize_r(tokens,str," \t\n\r");
+    for(auto tok : tokens){
+        if(!ok)
+            break;
         paroc_combox *tmp = combox_factory->Create(prot.c_str());
         tmp->SetTimeout(100000);
-        std::string address(tok);
+        std::string address = tok;
         if(address.find("uds://") == 0) {
             address = address.substr(6);
         }
@@ -364,7 +366,7 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
 #ifdef DEFINE_UDS_SUPPORT
         if(tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
 #else
-        if(tmp->Create(0, false) && tmp->Connect(tok)) {
+        if(tmp->Create(0, false) && tmp->Connect(tok.c_str())) {
 #endif
             try {
                 paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
@@ -390,7 +392,6 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
         }
         buffer->Destroy();
         tmp->Destroy();
-        tok = popc_strtok_r(NULL, " \t\n\r", &ptr);
     }
 
     return ok;

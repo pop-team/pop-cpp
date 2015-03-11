@@ -39,7 +39,7 @@ void paroc_service_base::Start() {
         try {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.UnManageObject(myself);
-            paroc_system::appservice.SetAccessString(NULL);
+            paroc_system::appservice.SetAccessString("");
         } catch(std::exception& e) {
             LOG_WARNING("Failed to unregister the service from ObjectMonitor: %s", e.what());
         }
@@ -47,7 +47,7 @@ void paroc_service_base::Start() {
 }
 
 void paroc_service_base::Start(const POPString &challenge) {
-    if(paroc_utils::isEqual(mychallenge,challenge) || mychallenge.empty()) {
+    if((mychallenge==challenge) || mychallenge.empty()) {
         while(GetRefCount()>1) {
             DecRef();
         }
@@ -58,7 +58,7 @@ void paroc_service_base::Start(const POPString &challenge) {
 }
 
 bool paroc_service_base::Stop(const POPString &challenge) {
-    if(paroc_utils::isEqual(mychallenge,challenge) || mychallenge.empty()) {
+    if(mychallenge==challenge || mychallenge.empty()) {
         daemonMode=false;
         //      while (DecRef()>0);
         return true;

@@ -187,7 +187,7 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
     popfile_log("[POPFILEMANAGER] Look for %d nodes for strips", nb);
 
     for(std::list<paroc_accesspoint>::iterator it = pfm_neighbors.begin(); it != pfm_neighbors.end(); it++) {
-        popfile_log("[POPFILEMANAGER] Check creation of strip on %s", (*it).GetAccessString());
+        popfile_log("[POPFILEMANAGER] Check creation of strip on %s", (*it).GetAccessString().c_str());
         POPFileManager tmpPfm((*it));
         std::string strip = str_stripname;
         std::stringstream intconverter;
@@ -198,7 +198,7 @@ int POPFileManager::findResourcesForStrip(int nb, paroc_accesspoint* candidates,
         if(tmpPfm.createStrip(stripname)) {
             candidates[index] = (*it);      //store accesspoint of the node on which the strip is created
             stripNames[index] = stripname;  //store the strip name
-            popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString(), stripname.c_str());
+            popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString().c_str(), stripname.c_str());
             index++;
             if(index == maxStrip) {
                 break;
