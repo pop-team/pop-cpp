@@ -144,17 +144,17 @@ POPString POPCSearchNode::getEncoding() {
 
 // Add a POPCSearchNode as a neighbor of this POPCSearchNode
 void POPCSearchNode::addNeighbor(POPCSearchNode &node) {
-    LOG_DEBUG(  "[PSN] NODE_ADD;%s", node.GetAccessPoint().GetAccessString());
+    LOG_DEBUG(  "[PSN] NODE_ADD;%s", node.GetAccessPoint().GetAccessString().c_str());
     neighborsList.push_back(new POPCSearchNode(node));
 }
 
 // Remove a POPCSearchNode as a neighbor of this POPCSearchNode
 void POPCSearchNode::removeNeighbor(POPCSearchNode &node) {
-    LOG_DEBUG(  "[PSN] NODE_REMOVE;%s", node.GetAccessPoint().GetAccessString());
+    LOG_DEBUG(  "[PSN] NODE_REMOVE;%s", node.GetAccessPoint().GetAccessString().c_str());
     list<POPCSearchNode *>::iterator i;
     for(i=neighborsList.begin(); i != neighborsList.end(); i++) {
         paroc_accesspoint crt = (*i)->GetAccessPoint();
-        if(strcmp(crt.GetAccessString(), node.GetAccessPoint().GetAccessString()) == 0) {
+        if(crt.GetAccessString() == node.GetAccessPoint().GetAccessString().c_str()) {
             neighborsList.erase(i);
             break;
         }
@@ -324,7 +324,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
             JobMgr jmg(getJobMgrRef());
             jmg.ApplicationEnd(req.getPOPAppId(), false);
         } else {
-            LOG_DEBUG(  "[PSN] ASKRDISCOVERY;ASKER;%s;REQID;%s", node_ap.GetAccessString(), req.getUniqueId().c_str());
+            LOG_DEBUG(  "[PSN] ASKRDISCOVERY;ASKER;%s;REQID;%s", node_ap.GetAccessString().c_str(), req.getUniqueId().c_str());
 
             // check if the request has already been asked
 
@@ -370,10 +370,10 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                 } else {
                     try {
                         POPCSearchNode asker(node_ap);
-                        LOG_DEBUG(  "[PSN] SEND_REP;DEST;%s", node_ap.GetAccessString());
+                        LOG_DEBUG(  "[PSN] SEND_REP;DEST;%s", node_ap.GetAccessString().c_str());
                         asker.callbackResult(*resp);
                     } catch(POPException& e) {
-                        LOG_WARNING(  "[PSN] Can't connect to %s: %s", node_ap.GetAccessString(), e.what());
+                        LOG_WARNING(  "[PSN] Can't connect to %s: %s", node_ap.GetAccessString().c_str(), e.what());
                     }
 
                 }

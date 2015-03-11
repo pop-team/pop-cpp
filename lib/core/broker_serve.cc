@@ -132,7 +132,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
                 e.AddInfo(accesspoint.GetAccessString());
                 paroc_buffer::SendException(*req.data, req.from, e);
             } else {
-                LOG_ERROR("fail to create a new thread for %s@%s (method:%d:%d)\n",classname.c_str(), accesspoint.GetAccessString(), req.methodId[0], req.methodId[1]);
+                LOG_ERROR("fail to create a new thread for %s@%s (method:%d:%d)\n",classname.c_str(), accesspoint.GetAccessString().c_str(), req.methodId[0], req.methodId[1]);
             }
             delete thr;
 
@@ -157,7 +157,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
 void paroc_broker::UnhandledException() {
     if(!paroc_system::appservice.IsEmpty()) {
         //char tmp[1024];
-        LOG_WARNING("Unhandled exception on %s@%s", classname.c_str(), accesspoint.GetAccessString());
+        LOG_WARNING("Unhandled exception on %s@%s", classname.c_str(), accesspoint.GetAccessString().c_str());
 //      sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
         /*AppCoreService app(paroc_system::appservice);
         app.Log(tmp);

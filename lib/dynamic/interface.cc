@@ -71,7 +71,7 @@ paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
 }
 
 paroc_interface::paroc_interface(const paroc_accesspoint &p) {
-    LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString(), ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     _ssh_tunneling = false;
     __paroc_combox = NULL;
     __paroc_buf = NULL;
@@ -92,7 +92,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) {
 }
 
 paroc_interface::paroc_interface(const paroc_interface &inf) {
-    LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)", inf.GetAccessPoint().GetAccessString(), ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)", inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     paroc_accesspoint infAP = inf.GetAccessPoint();
     _ssh_tunneling=false;
     __paroc_combox=NULL;
@@ -148,7 +148,7 @@ paroc_interface & paroc_interface::operator = (const paroc_interface & obj) {
 
     Release();
     accesspoint = obj.GetAccessPoint();
-    if(GetAccessPoint().GetAccessString()) {
+    if(GetAccessPoint().GetAccessString().c_str()) {
         Bind(accesspoint);
         //AddRef();
     }
@@ -212,7 +212,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
         if(ref > 0) {
             Bind(accesspoint);
-            LOG_DEBUG("Bound %s", accesspoint.GetAccessString());
+            LOG_DEBUG("Bound %s", accesspoint.GetAccessString().c_str());
             //AddRef();
             DecRef();
         }

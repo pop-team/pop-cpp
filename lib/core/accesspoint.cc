@@ -24,7 +24,6 @@
  * Accesspoint constructor
  */
 paroc_accesspoint::paroc_accesspoint() {
-    endpoint=NULL;
     _security=NONSECURE;
     _service=false;
     _noaddref=false;
@@ -34,7 +33,7 @@ paroc_accesspoint::paroc_accesspoint() {
  * Accesspoint copy constructor
  */
 paroc_accesspoint::paroc_accesspoint(const paroc_accesspoint &p) {
-    endpoint=NULL;
+    endpoint="";
     SetAccessString(p.GetAccessString());
     if(p.IsSecure()) {
         _security = SECURE;
@@ -51,37 +50,25 @@ paroc_accesspoint::paroc_accesspoint(const paroc_accesspoint &p) {
  * Accesspoint destructor
  */
 paroc_accesspoint::~paroc_accesspoint() {
-    if(endpoint!=NULL) {
-        free(endpoint);
-    }
 }
 
 /**
  * Set the different access in a string format. Each access is separated by a whit space.
  * @param hostport  Access string to set as mai access
  */
-void paroc_accesspoint::SetAccessString(const char *hostport) {
-    if(endpoint!=hostport) {
-        if(endpoint!=NULL) {
-            free(endpoint);
-        }
-        if(hostport!=NULL) {
-            endpoint=strdup(hostport);
-        } else {
-            endpoint=NULL;
-        }
-    }
+void paroc_accesspoint::SetAccessString(const std::string& hostport) {
+    endpoint=hostport;
 }
-char* paroc_accesspoint::GetAccessString() const {
+const std::string& paroc_accesspoint::GetAccessString() const {
     return endpoint;
 }
 
 bool paroc_accesspoint::IsEmpty() const {
-    return (endpoint==NULL);
+    return (endpoint=="");
 }
 
 bool paroc_accesspoint::operator ==(const paroc_accesspoint &p) const {
-    return paroc_utils::isEqual(endpoint,p.GetAccessString());
+    return endpoint == p.GetAccessString();
 }
 
 paroc_accesspoint & paroc_accesspoint::operator =(const paroc_accesspoint &p) {
