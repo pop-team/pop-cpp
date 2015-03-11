@@ -130,6 +130,7 @@ public:
      * to generate code.
      */
     pthread_t _popc_async_construction_thread;
+    volatile bool _popc_async_joined;
 
     //Find a resource that satisfies the Qos and allocate an object on it
     void Allocate();

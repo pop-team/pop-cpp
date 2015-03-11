@@ -16,7 +16,7 @@
 
 CodeFile::CodeFile(const std::string& fname) {
     isCoreCompilation = false;              // Core compilation is disable by default.
-    isAsyncAllocationDisable = false;   // Asynchronous allocation is enable by default.
+    asyncAllocationEnabled = false;       // Asynchronous allocation is disabled by default.
     filename = fname;
     DataType *std;
     for(int i=0; i<MAXSTDTYPES; i++) {
@@ -240,17 +240,17 @@ bool CodeFile::IsCoreCompilation() {
 }
 
 /**
- * Disable the asynchronous parallel object allocation mechanism.
+ * Enable the asynchronous parallel object allocation mechanism.
  * @return void
  */
-void CodeFile::DisableAsyncAllocation() {
-    isAsyncAllocationDisable = true;
+void CodeFile::EnableAsyncAllocation() {
+    asyncAllocationEnabled = true;
 }
 
 /**
- * Check if asynchronous parallel object allocation is disable
- * @return TRUE if asynchronous allocation is disable. FALSE otherwise.
+ * Check if asynchronous parallel object allocation is enabled
+ * @return true if asynchronous allocation is enabled. false otherwise.
  */
-bool CodeFile::IsAsyncAllocationDisable() {
-    return isAsyncAllocationDisable;
+bool CodeFile::IsAsyncAllocationEnabled() {
+    return asyncAllocationEnabled;
 }

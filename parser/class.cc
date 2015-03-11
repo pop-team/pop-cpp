@@ -52,7 +52,7 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
     _is_collective = false;
 
     isCoreCompilation = false;
-    isAsyncAllocationDisable = false;
+    asyncAllocationEnabled = false;
 
     my_interface_base=popc_strdup(interface_base);
     my_object_base=popc_strdup(object_base);
@@ -337,7 +337,7 @@ bool Class::GenerateClient(string &code/*, bool isPOPCPPCompilation*/) {
         }
     }
 
-    if(!IsCoreCompilation() && IsAsyncAllocationDisable()) {
+    if(!IsCoreCompilation() && IsAsyncAllocationEnabled()) {
         sprintf(tmpcode,"// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n", name);
         code += tmpcode;
 
@@ -852,38 +852,24 @@ bool Class::GenerateHeader(std::string &code, bool interface/*, bool isPOPCPPCom
         strcpy(str," { Bind(obj->GetAccessPoint());};\n");
         code += str;
 
-        sprintf(str,"\n~%s() {};",name);
+        sprintf(str,"\n~%s()",name);
         code += str;
 
-        /*  if(!IsCoreCompilation()){
-                // Generate method declaration for asynchronous object creation
-                sprintf(str,"void %s_AsynchronousAllocation();\n", name);
-                code += str;
-            }*/
-
-
-//       if (!defaultconstructor && interface)
-//  {
-//    sprintf(str,"\n\t%s ()",name);
-//    code += str;
-//    if (n)
-//      {
-//        code += tmpcode;
-//      }
-//    code.InsertAt(-1," {};\n",5);
-//  }
+        //In case of async allocation, we need a body for synchronization purpose
+        if(!IsCoreCompilation() && IsAsyncAllocationEnabled()) {
+            code += ";";
+        } else {
+            code += "{}\n";
+        }
     }
+
     strcpy(str,"\n};\n");
     code += str;
-
-
 
     if(endline>0 && !fname.empty()) {
         sprintf(str,"\n# %d \"%s\"\n",endline,fname.c_str());
         code += str;
     }
-
-
 
     return true;
 }
@@ -1161,19 +1147,19 @@ bool Class::IsWarningEnable() {
 }
 
 /**
- * Disable the asynchronous parallel object allocation mechanism.
+ * Enable the asynchronous parallel object allocation mechanism.
  * @return void
  */
-void Class::DisableAsyncAllocation() {
-    isAsyncAllocationDisable = true;
+void Class::EnableAsyncAllocation() {
+    asyncAllocationEnabled = true;
 }
 
 /**
- * Check if asynchronous parallel object allocation is disable
+ * Check if asynchronous parallel object allocation is enabled
  * @return TRUE if asynchronous allocation is disable. FALSE otherwise.
  */
-bool Class::IsAsyncAllocationDisable() {
-    return isAsyncAllocationDisable;
+bool Class::IsAsyncAllocationEnabled() {
+    return asyncAllocationEnabled;
 }
 
 /**
