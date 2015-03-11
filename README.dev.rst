@@ -59,3 +59,24 @@ refactorings are possible, for instance:
 * Replacing some old structures by STL equivalents
 * Replacing const char* by std::string when appropriate
 * Replace some handcrafted loops by a STL algorithm
+
+
+Debugging
+=========
+
+This sections describes the different possibilities that developers have to debug POP-C++.
+
+Core dump
+---------
+The runtime of popc runs different processes such as jobmgr or appservice. If one of this process crashes (e.g. segfault) there may be no traces in the logs. However the system can be taught to create a core dump file. To enable core dumps on Linux:
+
+.. code:: bash
+    
+    cd test/barrier
+    ulimit -c unlimited     # Enable core dumps for the session
+    rm core
+    make run
+    ls core                 # Check if something was dumped
+    gdb barrier.obj core    # Replace barrier.obj with your executable. In case of doubt, gdb will correct you
+
+In gdb use the "bt" command to get the stack trace of the dump. If POP-C++ and your program were compiled with -g the line number are given.
