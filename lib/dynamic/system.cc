@@ -349,7 +349,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
  */
 bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
-    char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
+    const char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
     if(info==NULL) {
         LOG_ERROR("missing -jobservice argument");
         return false;
@@ -358,8 +358,8 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     paroc_system::jobservice.SetAsService();
 
     // Get path of the application service executable
-    char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
-    char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
+    const char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
+    const char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
 
     // Check if need to run on local node only
     if(paroc_utils::checkremove(argc,argv,"-runlocal")) {

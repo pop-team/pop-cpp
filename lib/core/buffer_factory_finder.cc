@@ -74,8 +74,8 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
         free(libs);
     }
 
-    POPString plugindir;
-    plugindir = getenv("POPC_PLUGIN_LOCATION");
+    const char* tmp = getenv("POPC_PLUGIN_LOCATION");
+    POPString plugindir = tmp ? tmp : "";
 #ifdef _PLUGINDIR
     if(plugindir == NULL) {
         plugindir = _PLUGINDIR;
