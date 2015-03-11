@@ -20,8 +20,6 @@
 #include "paroc_broker.h"
 #include "popc_logger.h"
 
-using namespace std;
-
 /**
  * Allocator constructor
  */
@@ -58,7 +56,7 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
     }
 
     // Get the executable path name
-    const string& codefile = od.getExecutable();
+    const std::string& codefile = od.getExecutable();
 
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
     if(codefile.empty()) {
@@ -138,7 +136,7 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
  */
 paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(POPString& objectname, paroc_od& od, int nb) {
 
-    const string codefile = od.getExecutable();
+    const std::string codefile = od.getExecutable();
 
     if(codefile.empty()) {
         std::cerr << "POP-C++ Error [Core]" << "Cannot allocate group of objects because executbale is not specified" << std::endl;

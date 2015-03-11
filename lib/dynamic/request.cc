@@ -555,7 +555,7 @@ POPString Request::getMainPKI() {
 
 // Add a list of nodes in the exploration list (neighbors of the nodeId's node)
 void Request::addNodeToExplorationList(POPString nodeId,
-                                       list<POPString> neighbors) {
+                                       std::list<POPString> neighbors) {
     explorationList.addListNode(nodeId,neighbors);
     // decrement max hops if not unlimited
     if(_maxHops != UNLIMITED_HOPS) {

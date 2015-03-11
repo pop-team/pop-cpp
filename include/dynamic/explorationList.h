@@ -20,15 +20,12 @@
 #include "paroc_base.h"
 #define NEIGHBORSPATH 5
 
-using namespace std;
-
-
 
 // Type representing a list of nodeId.
-typedef list<paroc_string> neighborsList;
+typedef std::list<std::string> neighborsList;
 
 // Type linking a nodeId (string) to a list of nodeId(neighborsList).
-typedef map<paroc_string, neighborsList> explorationList;
+typedef std::map<std::string, neighborsList> explorationList;
 
 /*
  *  Class representing a list of exploration of nodes. This class must inherit
@@ -47,7 +44,7 @@ public :
 
     // Method used to add a list of nodes in the list
     void         addListNode(paroc_string nodeId,
-                             list<paroc_string> neighbors);
+                             std::list<paroc_string> neighbors);
     // Method indicating if a node (identified by its nodeId) is present
     // or not in the list
     bool         isIn(paroc_string nodeId);

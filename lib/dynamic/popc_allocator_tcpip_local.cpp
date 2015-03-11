@@ -25,8 +25,6 @@
 #include "batchmgr.ph"
 #include "appservice.ph"
 
-using namespace std;
-
 #define ALLOC_TIMEOUT 60
 /**
  * Allocator over TCP/IP with local mechanism constructor
@@ -55,12 +53,12 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     const char *rport = NULL;
     bool isManual=od.getIsManual();
 
-    string hostname = od.getURL();
-    const string& ruser = od.getUser();
-    const string& rcore = od.getCore();
+    std::string hostname = od.getURL();
+    const std::string& ruser = od.getUser();
+    const std::string& rcore = od.getCore();
     POPString rarch = od.getArch().c_str();
-    const string& batch = od.getBatch();
-    const string& cwd = od.getCwd();
+    const std::string& batch = od.getBatch();
+    const std::string& cwd = od.getCwd();
 
 
     if(hostname.empty()) {

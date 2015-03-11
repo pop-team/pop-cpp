@@ -26,8 +26,6 @@
 #include "appservice.ph"
 #define ALLOC_TIMEOUT 60
 
-using namespace std;
-
 /**
  * Allocator over TCP/IP with local mechanism constructor
  */

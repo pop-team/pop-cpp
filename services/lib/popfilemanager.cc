@@ -98,18 +98,18 @@ void POPFileManager::writeToRemoteStrip(POPString stringName, POPString data, pa
 POPString POPFileManager::readFromStrip(POPString stripName, long start, long offset) {
     int length=0;
     std::ifstream strip;
-    strip.open(stripName.c_str(), ios::binary);
+    strip.open(stripName.c_str(), std::ios::binary);
 
-    strip.seekg(0, ios::end);       // Seek to end
+    strip.seekg(0, std::ios::end);       // Seek to end
     length = strip.tellg();         // Get length of the strip
     if(start >= length) {
         POPString p;
         return p;
     }
 
-    strip.seekg(0, ios::beg);
+    strip.seekg(0, std::ios::beg);
     int crt_pos = strip.tellg();
-    strip.seekg(start, ios::cur);
+    strip.seekg(start, std::ios::cur);
     char* buffer;
     buffer = new char[offset+1];
     buffer[offset] = '\0';

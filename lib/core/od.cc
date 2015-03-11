@@ -19,8 +19,6 @@
 #include "paroc_od.h"
 #include "paroc_utils.h"
 
-using namespace std;
-
 bool paroc_od::defaultLocalJob=false;
 
 paroc_od::paroc_od() {
@@ -135,7 +133,7 @@ void paroc_od::walltime(float t) {
     time=t;
 }
 
-void paroc_od::url(const string& str) {
+void paroc_od::url(const std::string& str) {
     char h[256];
     char *tmpstr;
     strcpy(h,str.c_str());
@@ -166,7 +164,7 @@ void paroc_od::url(const string& str) {
     }
 }
 
-void paroc_od::url(const string& h, const string& arch) {
+void paroc_od::url(const std::string& h, const std::string& arch) {
     hostarch = arch;
     url(h);
 }

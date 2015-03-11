@@ -19,7 +19,6 @@
 
 #include <string.h>
 
-using namespace std;
 
 /**
  * ViSaG : clementval
@@ -53,7 +52,7 @@ const POPWayback & POPWayback::operator =(const POPWayback &rhs) {
  * @return The formatted string corresponding to this object
  */
 POPString POPWayback::getAsString() const {
-    list<POPString> tmp = _lst_wb;
+    std::list<POPString> tmp = _lst_wb;
     std::string wb;
     while(!tmp.empty()) {
         POPString e = tmp.front();

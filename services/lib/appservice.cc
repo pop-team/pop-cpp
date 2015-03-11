@@ -21,8 +21,6 @@
 // #include "jobmgr.ph"
 #include "popc_logger.h"
 
-using namespace std;
-
 AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const POPString &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge) {
     /**
       * ViSaG : clementval
@@ -32,9 +30,9 @@ AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const PO
     time_t now = time(NULL);
     POPString ip = paroc_system::GetIP();
     char id[100];
-    string tmp(tmpChallenge.c_str());
-    locale loc;
-    const collate<char>& coll = use_facet<collate<char> >(loc);
+    std::string tmp(tmpChallenge.c_str());
+    std::locale loc;
+    const std::collate<char>& coll = std::use_facet<std::collate<char> >(loc);
     long hash = coll.hash(tmp.data(), tmp.data()+tmp.length());
     if(hash < 0) {
         hash = hash*-1;

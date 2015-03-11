@@ -25,8 +25,6 @@
 #define MAXREQUNIQUEIDLENGTH 100    // Maximum length of uniqueId of a request
 #define UNLIMITED_HOPS -20         // Fixed value indicating unlimited hops
 
-using namespace std;
-
 /*
  *  Class representing a request of resource discovery. This class must
  *  inherit from POPBase to be passed in the network.
@@ -142,7 +140,7 @@ public :
 
 
     // method allowing adding nodes to the exploration list of the request
-    void addNodeToExplorationList(POPString nodeId, list<POPString> neighbors);
+    void addNodeToExplorationList(POPString nodeId, std::list<POPString> neighbors);
 
     // return the exploration list of the request
     ExplorationList getExplorationList();

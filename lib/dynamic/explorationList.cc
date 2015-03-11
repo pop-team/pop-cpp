@@ -62,7 +62,7 @@ void ExplorationList::Serialize(POPBuffer &buf, bool pack) {
             buf.UnPack(&nodeId, 1);
             int nNeighbors;
             buf.UnPack(&nNeighbors, 1);
-            list<POPString> neighbors;
+            std::list<POPString> neighbors;
             for(j=0; j<nNeighbors; j++) {
                 POPString neighborId;
                 buf.UnPack(&neighborId, 1);
@@ -75,14 +75,14 @@ void ExplorationList::Serialize(POPBuffer &buf, bool pack) {
 
 // method used to add node's neighbors
 void ExplorationList::addListNode(POPString nodeId,
-                                  list<POPString> neighbors) {
+                                  std::list<POPString> neighbors) {
     explorationList::iterator i;
     explorationList::reverse_iterator j;
     explorationList::reverse_iterator k;
     int crtNeighborsPath = 0;
 
     i=visitedNodes.end();
-    visitedNodes.insert(i, pair <POPString, list<POPString> >
+    visitedNodes.insert(i, std::pair <POPString, std::list<POPString> >
                         (nodeId, neighbors));
 
 

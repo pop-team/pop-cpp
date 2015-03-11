@@ -18,7 +18,6 @@
 #include "paroc_string.h"
 #include "paroc_base.h"
 
-using namespace std;
 
 /*
  *  Class representing information about a node. This class must inherit from
@@ -70,9 +69,9 @@ public:
     void addANodeInfo(POPCSearchNodeInfo nodeInfo);
 
     // Method returning a list of NodeInfo from this set
-    list<POPCSearchNodeInfo> getNodeInfos();
+    std::list<POPCSearchNodeInfo> getNodeInfos();
 private:
-    list<POPCSearchNodeInfo> _nodeInfos;  // The nodes'"NodeInfo" to store
+    std::list<POPCSearchNodeInfo> _nodeInfos;  // The nodes'"NodeInfo" to store
 };
 
 #endif

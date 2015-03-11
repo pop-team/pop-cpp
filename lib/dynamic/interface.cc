@@ -47,8 +47,6 @@
 #define POPC_CONNECT_TIMEOUT 10000
 #endif
 
-using namespace std;
-
 
 paroc_accesspoint paroc_interface::_paroc_nobind;
 
@@ -235,9 +233,9 @@ void paroc_interface::allocate_only() {
 
     bool localFlag = od.IsLocal();
 
-    const string& hostname = od.getURL();
-    const string& batch    = od.getBatch();
-    const string& protocol = od.getProtocol();
+    const std::string& hostname = od.getURL();
+    const std::string& batch    = od.getBatch();
+    const std::string& protocol = od.getProtocol();
 
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();

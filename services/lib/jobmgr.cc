@@ -41,8 +41,6 @@
 
 #define min(a,b) ((a)<(b) ? (a) : (b))
 
-using namespace std;
-
 class paroc_timerthread: public paroc_thread {
 public:
     paroc_timerthread(int parent_update, int service_timeout, IMPLEMENT_TYPE(JobMgr) *myjobmgr);
@@ -831,7 +829,7 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
     }
 
     //Set operating system
-    string r_arch = od.getArch();
+    std::string r_arch = od.getArch();
     if(!r_arch.empty()) {
         r.setOperatingSystem(r_arch);
     }
@@ -887,9 +885,9 @@ bool JobMgr::AllocResource(const paroc_accesspoint &localservice, const POPStrin
 
 
     // Distribute object creation request on responses
-    list<POPCSearchNodeInfo> nodes;
+    std::list<POPCSearchNodeInfo> nodes;
     nodes = responses.getNodeInfos();
-    list<POPCSearchNodeInfo>::iterator ni;
+    std::list<POPCSearchNodeInfo>::iterator ni;
     int jobindex = 0;
     int n_response = responses.getNodeInfos().size();
     int failedReservation=0;
@@ -1624,7 +1622,7 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     char env_np[256];
     char env_walltime[256];
     *env_walltime=0;
-    const string& cwd = od.getCwd();
+    const std::string& cwd = od.getCwd();
     sprintf(env_np,"POPC_NP=%d",howmany);
     *curenv=env_np;
     curenv++;

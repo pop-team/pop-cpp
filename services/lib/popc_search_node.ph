@@ -48,8 +48,6 @@
 #define MAXREQTOSAVE 10     // Maximum number of request to save in the history
 #define UNLOCK_TIMEOUT 20   //Timeout to unlock the discovery process is no responses are coming
 
-using namespace std;
-
 /*
  *  Class representing POPCSearchNode to discover resource on the grid, inherite from paroc_service_base
  */
@@ -126,18 +124,18 @@ public :
 
     classuid(1001);
 protected:
-    map<std::string, sem_t*> reqsem;            // Map of semaphores used for null waiting time
+    std::map<std::string, sem_t*> reqsem;            // Map of semaphores used for null waiting time
 
     int logicalClock;                           // own request's counter
     int sem_logicalClock;                       // Logical clock used to name semaphore on Darwin architecture
     POPCSearchNodeInfo nodeInfo;            // node's information
-    list<POPCSearchNode *> neighborsList;   // node's neighbors list
-    list<POPString> knownRequests;          // already-asked requests
-    map<POPString, POPCSearchNodeInfos> actualReq;     // own actual requests
+    std::list<POPCSearchNode *> neighborsList;   // node's neighbors list
+    std::list<POPString> knownRequests;          // already-asked requests
+    std::map<POPString, POPCSearchNodeInfos> actualReq;     // own actual requests
     POPSynchronizer actualReqSyn;            // sync. for actual req.
 
     // internal method returning a list of neighbors
-    conc sync list<POPString> getNeighbors();
+    conc sync std::list<POPString> getNeighbors();
     int psn_currentJobs;
     int psn_maxjobs;
     struct timeval start, end;  //for test purpose
