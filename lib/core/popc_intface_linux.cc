@@ -125,17 +125,25 @@ char * popc_strdup(const char * a) {
     return strdup(a);
 }
 
-char * popc_strtok(const std::string& a, const std::string& b)
-{
-    char * dup = strdup(a.c_str());
-    return strtok(dup, b.c_str());
-    // TODO fix leak: free(dup);
+void popc_tokenize(std::vector<std::string>& xr_result, const std::string& x_str , const std::string& x_sep) {
+    char* tmpstr = strdup(x_str.c_str());
+    char *tok=strtok(tmpstr,x_sep.c_str());
+    while(tok!=NULL) {
+        tok=strtok(NULL,x_sep.c_str());
+        xr_result.push_back(std::string(tok));
+    }
+    free(tmpstr);
 }
 
-char * popc_strtok_r(const std::string& a , const std::string& b , char ** c) {
-    char * dup = strdup(a.c_str());
-    return strtok_r(dup, b.c_str(), c);
-    // TODO fix leak: free(dup);
+void popc_tokenize_r(std::vector<std::string>& xr_result, const std::string& x_str , const std::string& x_sep) {
+    char* tmpstr = strdup(x_str.c_str());
+    char *tmp = NULL;
+    char *tok=strtok_r(tmpstr,x_sep.c_str(),&tmp);
+    while(tok!=NULL) {
+        tok=strtok_r(NULL,x_sep.c_str(),&tmp);
+        xr_result.push_back(std::string(tok));
+    }
+    free(tmpstr);
 }
 
 
@@ -372,6 +380,31 @@ int popc_strcasecmp(const char * a, const char * b) {
 
 int popc_strncasecmp(const char * a, const char * b, popc_size_t c) {
     return strncasecmp(a, b, c);
+}
+
+// Create an array of arguments from an array of const string. Used to pass args to execve
+char** popc_createArgsFromVect(const std::vector<std::string>& x_vect)
+{
+    char** result = reinterpret_cast<char**>(malloc((x_vect.size() + 1) * sizeof(char*)));
+    char** pres   = result;
+    for(const auto& elem : x_vect)
+    {
+        *pres = strdup(elem.c_str());
+        pres++;
+    }
+    *pres = NULL;
+    return result;
+}
+
+// Free an array of arguments
+void popc_freeArgs(char** args){
+    char** p = args;
+    while(*p != NULL)
+    {
+        free(*p);
+        p++;
+    }
+    free(args);
 }
 
 // RunCmd function

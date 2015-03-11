@@ -310,13 +310,13 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
         //No preferred protocol in OD specified, try the first protocol in dest
         for(auto& addr : accesslist){
             try {
-                Bind(addr);
+                Bind(addr.c_str());
                 return;
             } catch(std::exception &e) {
-                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
+                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr.c_str(),e.what());
                 continue;
             }
-            LOG_DEBUG("Successful bind to %s", addr);
+            LOG_DEBUG("Successful bind to %s", addr.c_str());
         }
     } else {
         //The user specify the protocol in OD, select the preference and match with the access point...
@@ -324,13 +324,13 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
             // Find access string that match myprot
             for(auto& addr : accesslist){
                 char pattern[1024];
-                sprintf(pattern,"%s://*",myprot);
+                sprintf(pattern,"%s://*",myprot.c_str());
                 if(paroc_utils::MatchWildcard(addr,pattern)) {
                     try {
-                        Bind(addr);
+                        Bind(addr.c_str());
                         return;
                     } catch(std::exception &e) {
-                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
+                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr.c_str(),e.what());
                         continue;
                     }
                 }
@@ -728,7 +728,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
                 continue;
             }
 
-            if(paroc_utils::isncaseEqual(enc,cur_enc.c_str()) || Encoding(enc)) {
+            if(paroc_utils::isncaseEqual(enc.c_str(),cur_enc.c_str()) || Encoding(enc)) {
                 return;
             }
         }
@@ -740,7 +740,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
                         continue;
                     }
 
-                    if(paroc_utils::isncaseEqual(enc,cur_enc.c_str()) || Encoding(enc)) {
+                    if(paroc_utils::isncaseEqual(enc,cur_enc) || Encoding(enc)) {
                         return;
                     }
                 }
@@ -961,41 +961,27 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     return 0;
 }
 
-std::vector<char*> paroc_interface::Tokenize(POPString &s) {
+std::vector<std::string> paroc_interface::Tokenize(const POPString &s) {
     if(s.empty()) {
         return {};
     }
-    std::vector<char*> result;
-
-    char sep[]=" \n\t";
-    char *ptrptr;
-    char *tok=popc_strtok_r(s,sep,&ptrptr);
-
-    while(tok!=NULL) {
-        result.push_back(tok);
-        tok=popc_strtok_r(NULL,sep,&ptrptr);
-    }
-
-    return result;
+    std::vector<std::string> tokens;
+    popc_tokenize_r(tokens,s, " \n\t");
+    return tokens;
 }
 
-void paroc_interface::ApplyCommPattern(const char *pattern, std::vector<char*>& accesslist) {
-    if(!pattern) {
+void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<std::string>& accesslist) {
+    if(pattern.empty()) {
         return;
     }
 
-    POPString p(pattern);
-    auto patternlist = Tokenize(p);
-
-    auto ptpos = patternlist.begin();
+    auto patternlist = Tokenize(pattern);
     auto headpos = accesslist.begin();
 
-    while(ptpos != patternlist.end()){
-        auto ptstr = *ptpos++;
-
-        if(!ptstr) {
-            continue;
-        }
+    for(auto ptstr : patternlist){
+        // if(!ptstr) {
+            // continue;
+        // }
 
         auto pos = headpos;
 

@@ -61,13 +61,15 @@ bool paroc_utils::isEqual(const char *s1, const char *s2) {
     return (*s1==*s2);
 }
 
-bool paroc_utils::isncaseEqual(const char *s1, const char *s2) {
-    if(s1==s2) {
+bool paroc_utils::isncaseEqual(const std::string& x_s1, const std::string& x_s2) {
+    if(&x_s1==&x_s2) {
         return true;
     }
-    if(s1==NULL || s2==NULL) {
+    if(x_s1.empty() || x_s2.empty()) {
         return false;
     }
+    const char* s1 = x_s1.c_str();
+    const char* s2 = x_s2.c_str();
     while(*s1!=0 && *s2!=0) {
         char ch1=*s1;
         char ch2=*s2;
@@ -178,12 +180,13 @@ bool paroc_utils::SameContact(const std::string& _contact1, const std::string& _
     }
 
     char *ptr;
-    char* token=popc_strtok_r(contact2," \n\r\t",&ptr);
-    while(token!=NULL) {
-        if(strstr(contact1,token)!=NULL) {
+
+    std::vector<std::string> tokens;
+    popc_tokenize_r(tokens,contact2," \n\r\t");
+    for(auto token : tokens) {
+        if(strstr(contact1,token.c_str())!=NULL) {
             return true;
         }
-        token=popc_strtok_r(NULL," \n\r\t",&ptr);
     }
     return false;
 }

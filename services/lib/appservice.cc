@@ -82,7 +82,7 @@ bool AppCoreService::QueryService(const POPString &name, paroc_service_base &ser
     }
 
     for(auto& t : servicelist){
-        if(paroc_utils::isncaseEqual(name.c_str(),t.name.c_str())) {
+        if(paroc_utils::isncaseEqual(name,t.name)) {
             service=(*t.service);
             return true;
         }

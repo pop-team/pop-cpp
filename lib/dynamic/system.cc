@@ -261,16 +261,17 @@ int paroc_system::GetIP(int *iplist, int listsize) {
     char* parocip=popc_strdup(GetIP().c_str());
     int n;
     int addr;
-    char *tmp;
-    char *tok=popc_strtok_r(parocip," \n\r\t",&tmp);
+    std::vector<std::string> tokens;
+    popc_tokenize_r(tokens, parocip," \n\r\t");
     n=0;
-    while(tok!=NULL && n<listsize) {
-        if((int)(addr = popc_inet_addr(tok)) != -1) {
+    for(auto tok : tokens) {
+        if(!n<listsize)
+            break;
+        if((int)(addr = popc_inet_addr(tok.c_str())) != -1) {
             *iplist=popc_ntohl(addr);
             iplist++;
             n++;
         }
-        tok=popc_strtok_r(NULL," \n\r\t",&tmp);
     }
     return n;
 }

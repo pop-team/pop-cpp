@@ -170,8 +170,8 @@ private:
     POPString popAppId;
 
     void NegotiateEncoding(paroc_string &enclist, paroc_string &peerplatform);
-    std::vector<char*> Tokenize(paroc_string &s);
-    void ApplyCommPattern(const char *pattern, std::vector<char*> &accesslist);
+    std::vector<std::string> Tokenize(const paroc_string &s);
+    void ApplyCommPattern(const std::string& pattern, std::vector<std::string> &accesslist);
     int CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port);
     int KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port);
     bool IsTunnelAlive(const char *user, const char *dest_ip, int dest_port, int local_port);

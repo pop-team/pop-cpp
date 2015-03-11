@@ -459,16 +459,16 @@ JobMgr::JobMgr(bool daemon, const POPString &conf, const POPString &challenge, c
 
     //Check and set environment variables....
     if(Query("env",tmpstr)) {
-        char *tok=popc_strtok(tmpstr,"()");
+        std::vector<std::string> tokens;
+        popc_tokenize(tokens,tmpstr,"()");
         char var[1024], val[1024], str[1024];
-        while(tok!=NULL) {
-            if(sscanf(tok,"%s %s",var,val)!=2) {
-                LOG_ERROR( "[JM] can not parse the environment variable string [%s]",tok);
+        for(auto tok : tokens){
+            if(sscanf(tok.c_str(),"%s %s",var,val)!=2) {
+                LOG_ERROR( "[JM] can not parse the environment variable string [%s]",tok.c_str());
             } else {
                 sprintf(str,"%s=%s",var,val);
                 putenv(popc_strdup(str));
             }
-            tok=strtok(NULL,"()");
         }
     }
 
@@ -1528,13 +1528,10 @@ void JobMgr::Start() {
  */
 int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, POPString reqID) {
 
-    char *file=NULL;
-    char *argv[1024];
-    char *tmp=NULL;
+    std::vector<std::string> argv;
     char *first=NULL;
     char sep[]=" \n\r\t";
     POPString str;
-    int n=0;
 
     char java_exec[100];
     char *pt_java_exec;
@@ -1543,31 +1540,28 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
         pt_java_exec = java_exec;
     }
 
-    if(*arguments!=NULL && n<1023) {
+    if(*arguments!=NULL) {
         first = *arguments;
     }
 
     if(strcmp(first, pt_java_exec) != 0) {
 
         if(Query("jobmgr",str) && !str.empty()) {
-            char *tok=popc_strtok_r(str,sep,&tmp);
-            while(tok!=NULL) {
-                argv[n++]=tok;
-                tok=popc_strtok_r(NULL,sep,&tmp);
-            }
+            popc_tokenize_r(argv,str,sep);
         }
     }
+    int n = 0;
     while(*arguments!=NULL && n<1023) {
-        argv[n++]=*arguments;
+        argv.push_back(*arguments);
         arguments++;
+        n++;
     }
-    argv[n]=NULL;
 
 
-    if(n==0) {
+    if(argv.empty()) {
         return ENOENT;
     }
-    file=argv[0];
+    const std::string& file=argv[0];
 
 #ifndef UC_LINUX
     pid=popc_fork();
@@ -1598,8 +1592,10 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, POPString popAppId, PO
         }
 
         //Child process
-        popc_execvp(file,argv);
-        LOG_ERROR( "[JM] Execution of [%s] fail",file);
+        char** argvc = popc_createArgsFromVect(argv);
+        popc_execvp(file.c_str(),argvc);
+        popc_freeArgs(argvc);
+        LOG_ERROR( "[JM] Execution of [%s] fail",file.c_str());
         popc__exit(-1);
     }
 #else
@@ -1680,28 +1676,23 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
         return ENOENT;
     }
 
-    char *argv[1024];
+    std::vector<std::string> argv;
     int n=0;
     // char *code=mycodefile.c_str();
-    char *tmp;
-    char *tok=popc_strtok_r(mycodefile," \t\n",&tmp);
-    while(tok!=NULL) {
-        argv[n++]=tok;
-        tok=popc_strtok_r(NULL," \t\n",&tmp);
-    }
+    popc_tokenize_r(argv,mycodefile," \t\n");
     POPString obj_arg("-object=");
     obj_arg+=objname;
-    argv[n++]=strdup(obj_arg.c_str()); // TODO leak
+    argv.push_back(obj_arg);
 
     //Setup Global job service
     POPString jobservice_arg("-jobservice=");
     jobservice_arg+=GetAccessPoint().GetAccessString();
-    argv[n++]=strdup(jobservice_arg.c_str()); // TODO leak
+    argv.push_back(jobservice_arg.c_str());
     //Setup application specific services...
     POPString localservice_arg("-appservice=");
     if(!localservice.IsEmpty()) {
         localservice_arg+=localservice.GetAccessString();
-        argv[n++]=strdup(localservice_arg.c_str()); // TODO leak
+        argv.push_back(localservice_arg);
     }
 
     paroc_combox_socket tmpsock;
@@ -1715,21 +1706,19 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     tmpsock.GetUrl(cburl);
     char tmpstr[1024];
     sprintf(tmpstr,"-callback=%s",cburl.c_str());
-    argv[n++]=popc_strdup(tmpstr);
+    argv.push_back(tmpstr);
 
 #ifdef OD_DISCONNECT
     if(od.getCheckConnection()) {
-        sprintf(tmpstr,"-checkConnection");
-        argv[n++]=popc_strdup(tmpstr);
+        argv.push_back("-checkConnection");
     }
 #endif
 
     // Add the working directory as argument
     if(!cwd.empty()) {
         sprintf(tmpstr,"-cwd=%s", cwd.c_str());
-        argv[n++]=popc_strdup(tmpstr);
+        argv.push_back(tmpstr);
     }
-    argv[n]=NULL;
 #ifndef NDEBUG
     std::stringstream ss;
     ss << "--->";
@@ -1741,7 +1730,9 @@ int JobMgr::ExecObj(const POPString  &objname, const paroc_od &od, int howmany, 
     int pid;
     /* Visag add crtPopAppId */
 
-    int ret=Exec(argv,env, pid, crtPopAppId, crtReqID);
+    char** argvc = popc_createArgsFromVect(argv);
+    int ret=Exec(argvc,env, pid, crtPopAppId, crtReqID);
+    popc_freeArgs(argvc);
 
     if(ret!=0) {
         Pause(localservice, SLEEP_TIME_ON_ERROR);

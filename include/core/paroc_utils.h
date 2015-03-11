@@ -31,7 +31,7 @@ public:
     static char *checkremove(int *argc, char ***argv, const char *opt);
     static bool check_remove(int *argc, char ***argv, const char *opt);
     static bool isEqual(const char *s1, const char *s2);
-    static bool isncaseEqual(const char *s1, const char *s2);
+    static bool isncaseEqual(const std::string& s1, const std::string& s2);
     static bool MatchWildcard(const std::string& str, const std::string& wildcard);
     static void FindAbsolutePath(const char *fname, char *abspath);
     static void Assert(bool a);
