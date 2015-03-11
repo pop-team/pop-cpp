@@ -67,7 +67,7 @@ protected:
  * @brief Parclass : Provide the POP-C++ application-runtime service interface for creating parallel object, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  * @ingroup runtime
- * JobCoreService provides an abstraction for POP-C++ applications to accesss the POP-C++ job service for creating parallel objects
+ * JobCoreService provides an abstraction for POP-C++ applications to access the POP-C++ job service for creating parallel objects
  */
 parclass JobCoreService:
 public paroc_service_base {
@@ -88,7 +88,7 @@ public:
     * @param remotejobcontacts   Store the job contact of the JobMgr which has created the object
      * @return 0 (successful) or error code otherwise.
     */
-    sync conc virtual int CreateObject(paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts, int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts)=0;
+    sync conc virtual int CreateObject(paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts, int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts)=0;
 
     sync conc virtual paroc_accesspoint getPSMRef()=0;
 

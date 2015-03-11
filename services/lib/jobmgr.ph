@@ -156,8 +156,7 @@ parclass JobMgr :
 public JobCoreService {
 public:
     /* ViSaG : clementval : Add reference to the PSM */
-    JobMgr(bool daemon, [in] const paroc_string &conf, [in] const paroc_string &challenge, const paroc_string &url,
-    const paroc_accesspoint &nodeAccess, const paroc_accesspoint &localPSM) @{ od.url(url); od.runLocal(true); od.service(true);};
+    JobMgr(bool daemon, [in] const paroc_string &conf, [in] const paroc_string &challenge, const paroc_string &url, const paroc_accesspoint &nodeAccess, const paroc_accesspoint &localPSM) @{ od.url(url); od.runLocal(true); od.service(true);};
     /* End */
 
     ~JobMgr();  //Method ID 11
