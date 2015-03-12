@@ -1,4 +1,4 @@
-TEST_FLAGS=-g
+FLAGS=-g
 
 all: main object
 

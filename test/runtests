@@ -8,6 +8,10 @@ TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 RESULTS=$TEST_DIR/tests_results
 CWD=$( pwd )
 
+## Note: Test flags can be passed to all tests via command line :
+## e.g.: TEST_FLAGS=-pseudo-dynamic ./runtest -all
+TEST_FLAGS=${TEST_FLAGS:-g}
+
 if [ "x" != "x$POPC_LOCATION" ]
 then
 SXXLOCATION=$POPC_LOCATION/sbin/
@@ -30,7 +34,7 @@ then
         cd $test
         ((NUMBEROFTEST++))
         make clean
-        make
+        make        FLAGS="$TEST_FLAGS"
         make run
         if [ "$?" = "0" ]
         then
@@ -89,7 +93,7 @@ else
             echo "Start of \"$1\" test"
             echo ""
             make clean
-            make
+	    make        FLAGS="$TEST_FLAGS"
             echo "---------------------------------------------------------------------------"
             echo "*** $1 test ***"
             echo "---------------------------------------------------------------------------"
