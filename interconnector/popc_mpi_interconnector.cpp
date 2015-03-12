@@ -276,13 +276,13 @@ void *mpireceivedthread(void *t) {
             objaccess[objaccess_length] = '\0';
 
             // Return objaccess
-            POPString objectaddress(objaccess);
+            std::string objectaddress(objaccess);
             delete [] objaccess;
 
             ipcwaker_buffer->Reset();
             paroc_message_header h("_allocate");
             ipcwaker_buffer->SetHeader(h);
-            ipcwaker_buffer->Push("objectaddress", "POPString", 1);
+            ipcwaker_buffer->Push("objectaddress", "std::string", 1);
             ipcwaker_buffer->Pack(&objectaddress, 1);
             ipcwaker_buffer->Pop();
             ipcwaker_buffer->Send(allocation_return[id]);
@@ -639,7 +639,7 @@ int main(int argc, char* argv[]) {
                     std::string objurl("uds://");
                     objurl.append(tmp);
                     delete [] tmp;
-                    POPString objectaddress(objurl.c_str());
+                    std::string objectaddress(objurl.c_str());
                     std::string _receiveraddress("-callback=");
                     _receiveraddress.append(receiver_address);
                     char *localrank = new char[20];
@@ -712,12 +712,12 @@ int main(int argc, char* argv[]) {
                 } else if(request.methodId[1] == 200000) {
                     // Allocation a new parallel object from IPC
 
-                    POPString objectname, codefile;
+                    std::string objectname, codefile;
                     int node, usercore;
-                    request.data->Push("objectname", "POPString", 1);
+                    request.data->Push("objectname", "std::string", 1);
                     request.data->UnPack(&objectname, 1);
                     request.data->Pop();
-                    request.data->Push("codefile", "POPString", 1);
+                    request.data->Push("codefile", "std::string", 1);
                     request.data->UnPack(&codefile, 1);
                     request.data->Pop();
                     request.data->Push("node", "int", 1);
@@ -785,7 +785,7 @@ int main(int argc, char* argv[]) {
                         std::string objurl("uds://");
                         objurl.append(tmp);
                         delete [] tmp;
-                        POPString objectaddress(objurl.c_str());
+                        std::string objectaddress(objurl.c_str());
                         std::string _receiveraddress("-callback=");
                         _receiveraddress.append(receiver_address);
                         char *localrank = new char[20];
@@ -833,7 +833,7 @@ int main(int argc, char* argv[]) {
                                 request.data->Reset();
                                 paroc_message_header h("_allocate");
                                 request.data->SetHeader(h);
-                                request.data->Push("objectaddress", "POPString", 1);
+                                request.data->Push("objectaddress", "std::string", 1);
                                 request.data->Pack(&objectaddress, 1);
                                 request.data->Pop();
                                 request.data->Send(request.from);
@@ -841,8 +841,8 @@ int main(int argc, char* argv[]) {
                                 request.data->Reset();
                                 paroc_message_header h("_allocate");
                                 request.data->SetHeader(h);
-                                request.data->Push("objectaddress", "POPString", 1);
-                                POPString empty;
+                                request.data->Push("objectaddress", "std::string", 1);
+                                std::string empty;
                                 request.data->Pack(&empty, 1);
                                 request.data->Pop();
                                 request.data->Send(request.from);
@@ -887,13 +887,13 @@ int main(int argc, char* argv[]) {
                     objaccess[objaccess_length] = '\0';
 
                     // Return objaccess
-                    POPString objectaddress(objaccess);
+                    std::string objectaddress(objaccess);
                     delete [] objaccess;
 
                     request.data->Reset();
                     paroc_message_header h("_allocate");
                     request.data->SetHeader(h);
-                    request.data->Push("objectaddress", "POPString", 1);
+                    request.data->Push("objectaddress", "std::string", 1);
                     request.data->Pack(&objectaddress, 1);
                     request.data->Pop();
                     request.data->Send(allocation_return[id]);
@@ -1012,14 +1012,14 @@ int main(int argc, char* argv[]) {
                     delete [] data;
 
                 } else if(request.methodId[1] == 210000) { // Special allocation for XMP process parallel object
-                    POPString objectname, codefile;
+                    std::string objectname, codefile;
                     int nb_node;
 
-                    request.data->Push("objectname", "POPString", 1);
+                    request.data->Push("objectname", "std::string", 1);
                     request.data->UnPack(&objectname, 1);
                     request.data->Pop();
 
-                    request.data->Push("codefile", "POPString", 1);
+                    request.data->Push("codefile", "std::string", 1);
                     request.data->UnPack(&codefile, 1);
                     request.data->Pop();
 
@@ -1061,11 +1061,11 @@ int main(int argc, char* argv[]) {
                     nb_comm++;
 
 
-                    POPString objectaddress("uds://uds_10.0 uds://uds_11.0");
+                    std::string objectaddress("uds://uds_10.0 uds://uds_11.0");
                     request.data->Reset();
                     paroc_message_header h("_allocate");
                     request.data->SetHeader(h);
-                    request.data->Push("objectaddress", "POPString", 1);
+                    request.data->Push("objectaddress", "std::string", 1);
                     request.data->Pack(&objectaddress, 1);
                     request.data->Pop();
                     request.data->Send(request.from);

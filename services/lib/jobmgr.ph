@@ -83,8 +83,8 @@ struct Resources {
      * Add the popAppId into the Resources struct
      * Add the reqID into the Resources struct
      */
-    POPString popAppId;
-    POPString reqID;
+    std::string popAppId;
+    std::string reqID;
 
     time_t start;
     paroc_accesspoint contact;
@@ -184,7 +184,7 @@ public:
      * @param popAppID The POP Application ID
      * @return The reservation ID
      */
-    sync conc virtual int Reserve(const paroc_od &od, float &inoutfitness, POPString popAppId, POPString reqID); //16
+    sync conc virtual int Reserve(const paroc_od &od, float &inoutfitness, std::string popAppId, std::string reqID); //16
 
     seq async virtual void CancelReservation([in, size=howmany] int *req, int howmany); //17
 
@@ -196,7 +196,7 @@ public:
 
     async void SelfRegister();
 
-//  async conc virtual void ApplicationEnd(POPString popAppId);
+//  async conc virtual void ApplicationEnd(std::string popAppId);
 
     //Added by clementval
 
@@ -211,7 +211,7 @@ public:
      * ViSaG : clementval
      * Method called when an application is finished
      */
-    async conc virtual void ApplicationEnd(POPString popAppId, bool initiator);
+    async conc virtual void ApplicationEnd(std::string popAppId, bool initiator);
     //End of add
 
     /**
@@ -224,7 +224,7 @@ public:
     classuid(15);
 protected:
     virtual void Update();
-    virtual int Exec(char **arguments, char **env, int &pid, POPString popAppId, POPString reqID);
+    virtual int Exec(char **arguments, char **env, int &pid, std::string popAppId, std::string reqID);
     virtual int MatchAndReserve(const paroc_od &od, float & fitness);
     virtual bool MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int howmany);
     virtual bool Forward(const paroc_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, float *fitness,       paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize);

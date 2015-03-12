@@ -313,7 +313,7 @@ void popc_combox_uds::Close() {
 
 /**
  * Get the protocol name for this combox
- * @param Reference to a POPString object to store the protocol name
+ * @param Reference to a std::string object to store the protocol name
  * @return TRUE in any cases.
  */
 bool popc_combox_uds::GetProtocol(std::string & protocolName) {

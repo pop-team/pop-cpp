@@ -40,7 +40,7 @@ void NodeThread::start() {
         }
     }
     if(_unlock) {
-        POPString r(_reqid.c_str());
+        std::string r(_reqid.c_str());
         n.unlockDiscovery(r);
     }
 }

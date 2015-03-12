@@ -44,8 +44,8 @@ POPC_Allocator_tcpip_local::~POPC_Allocator_tcpip_local() {
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& od) {
-    POPString codefile;
+std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_od& od) {
+    std::string codefile;
 
     char tmpstr[10240];
     std::vector<std::string> argv;
@@ -56,7 +56,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     std::string hostname = od.getURL();
     const std::string& ruser = od.getUser();
     const std::string& rcore = od.getCore();
-    POPString rarch = od.getArch().c_str();
+    std::string rarch = od.getArch().c_str();
     const std::string& batch = od.getBatch();
     const std::string& cwd = od.getCwd();
 
@@ -84,7 +84,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         }
     }
 
-    POPString myhost = paroc_system::GetHost();
+    std::string myhost = paroc_system::GetHost();
     bool isLocal = (isManual || hostname.empty() || paroc_utils::SameContact(myhost.c_str(), hostname.c_str()) || (hostname == "localhost") || (hostname == "127.0.0.1"));
     if(batch.empty()) {
         if(!isLocal) {
@@ -145,7 +145,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 
     paroc_connection *connection = tmpsock->get_connection();
-    POPString cburl;
+    std::string cburl;
     tmpsock->GetUrl(cburl);
     sprintf(tmpstr,"-callback=%s", cburl.c_str());
     argv.push_back(tmpstr);
@@ -241,7 +241,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         paroc_exception::paroc_throw(n, objectname.c_str(), "n is null");
     }
 
-    POPString objectaddress;
+    std::string objectaddress;
     tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
     tmpbuffer->UnPack(&objectaddress, 1);
     tmpbuffer->Pop();
@@ -259,7 +259,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* POPC_Allocator_tcpip_local::allocate_group(POPString& objectname, paroc_od& od, int nb) {
+paroc_combox* POPC_Allocator_tcpip_local::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
     /* Allocation process here */
 

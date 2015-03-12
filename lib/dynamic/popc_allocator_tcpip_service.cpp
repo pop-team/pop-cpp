@@ -44,11 +44,11 @@ POPC_Allocator_tcpip_service::~POPC_Allocator_tcpip_service() {
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-POPString POPC_Allocator_tcpip_service::allocate(POPString& objectname, paroc_od& od) {
+std::string POPC_Allocator_tcpip_service::allocate(std::string& objectname, paroc_od& od) {
     paroc_accesspoint jobcontact, objectaddress, remotejobcontact;
 
     //Exec using JobMgr interface...
-    POPString platforms = od.getPlatforms();
+    std::string platforms = od.getPlatforms();
 
     if(!platforms.empty()) {
         CodeMgr mgr(paroc_system::appservice);
@@ -59,7 +59,7 @@ POPString POPC_Allocator_tcpip_service::allocate(POPString& objectname, paroc_od
     }
     //Global Resource management system --> Find a resource.
 
-    POPString joburl = od.getJobURL();
+    std::string joburl = od.getJobURL();
 
 
     if(!joburl.empty()) {
@@ -108,7 +108,7 @@ POPString POPC_Allocator_tcpip_service::allocate(POPString& objectname, paroc_od
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* POPC_Allocator_tcpip_service::allocate_group(POPString& objectname, paroc_od& od, int nb) {
+paroc_combox* POPC_Allocator_tcpip_service::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
     /* Allocation process here */
 

@@ -267,13 +267,13 @@ const char* paroc_utils::GetCurrentUser() {
     return username;
 }
 
-POPString paroc_utils::MakeContact(const char *host, int port) {
+std::string paroc_utils::MakeContact(const char *host, int port) {
     if(port<=0) {
         return host;
     }
     char tmpcontact[256];
     sprintf(tmpcontact,"%s:%d",host,port);
-    return POPString(tmpcontact);
+    return std::string(tmpcontact);
 }
 
 
@@ -296,7 +296,7 @@ int rprintf(const char *format,...) {
     try {
         // TODO LW: Each time we call rprintf a new connection to the remote is created. Can we be more efficient ?
         RemoteLog log(paroc_system::appservice);
-        POPString msg(str);
+        std::string msg(str);
         log.Log(msg);
     } catch(std::exception e) {
         LOG_ERROR("Exception in rprintf: %s", e.what());
@@ -367,7 +367,7 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
  * @param
  *
  */
-bool paroc_utils::isIPv4Address(POPString ip) {
+bool paroc_utils::isIPv4Address(std::string ip) {
 
     //check max size
     if(ip.size() > 15) {
@@ -403,7 +403,7 @@ bool paroc_utils::isIPv4Address(POPString ip) {
  * @retrun
  */
 
-bool paroc_utils::isValidName(POPString checked) {
+bool paroc_utils::isValidName(std::string checked) {
     for(size_t i=0; i<checked.length(); i++) {
         char c = checked.at(i);
         if((c != '_') && !isdigit(c) && !isalpha(c)) {

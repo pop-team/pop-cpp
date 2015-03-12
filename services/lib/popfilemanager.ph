@@ -22,25 +22,25 @@ public:
     classuid(50);
 
     //POPFileManager constructor
-    POPFileManager(const POPString &challenge, bool deamon, POPString host) @{ od.runLocal(true); od.service(true); od.url(host); };
+    POPFileManager(const std::string &challenge, bool deamon, std::string host) @{ od.runLocal(true); od.service(true); od.url(host); };
 
     //POPFileManager destrcutor
     ~POPFileManager();
 
     //Create a new strip on this node
-    sync seq bool createStrip(POPString abslotuePath);
+    sync seq bool createStrip(std::string abslotuePath);
 
     //Find resource to create strips
-    sync conc int findResourcesForStrip(int nb, [in, out, size=nb] paroc_accesspoint* candidate, [in, out, size=nb] POPString* stripNames, POPString stripPrefix, bool local);
+    sync conc int findResourcesForStrip(int nb, [in, out, size=nb] paroc_accesspoint* candidate, [in, out, size=nb] std::string* stripNames, std::string stripPrefix, bool local);
 
     //Write to strip
-    async conc void writeToStrip(POPString stripName, POPString data);
+    async conc void writeToStrip(std::string stripName, std::string data);
 
     //Write to a remote strip
-    async conc void writeToRemoteStrip(POPString stringName, POPString data, paroc_accesspoint ap);
+    async conc void writeToRemoteStrip(std::string stringName, std::string data, paroc_accesspoint ap);
 
     // Read a block of data from the strip
-    sync conc POPString readFromStrip(POPString stripName, long start, long offset);
+    sync conc std::string readFromStrip(std::string stripName, long start, long offset);
 
     //Save the accesspoint of the POPSearchNode
     sync seq void setPSNAccessPoint(paroc_accesspoint ap);

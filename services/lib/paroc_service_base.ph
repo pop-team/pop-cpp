@@ -27,7 +27,7 @@ public:
     /** @brief  Constructor
      * @param challenge The challenge string will will be require on stoping the service
     */
-    paroc_service_base([in] const POPString &challenge);
+    paroc_service_base([in] const std::string &challenge);
 
     paroc_service_base();
 
@@ -40,14 +40,14 @@ public:
      * This method will make the object running even if there is no reference to the object.
      * @param challenge
     */
-    seq sync virtual void Start(const POPString &challenge);
+    seq sync virtual void Start(const std::string &challenge);
 
 
     /** @brief Stop the service.
      * @param challenge The challenge string will be tested with the one previously provided through the constructor.
      * @return true if the service has been stopped successfully. Otherwise, false is returned.
     */
-    seq sync virtual bool Stop([in] const POPString &challenge);
+    seq sync virtual bool Stop([in] const std::string &challenge);
 
     __hidden virtual int AddRef();
     __hidden virtual int DecRef();
@@ -56,7 +56,7 @@ public:
     classuid(0);
 
 protected:
-    POPString mychallenge;
+    std::string mychallenge;
     paroc_accesspoint appservice;
     bool daemonMode;
 };
@@ -76,7 +76,7 @@ public:
     /** @brief  Constructor
      * @param challenge The challenge string will will be require on stoping the service
     */
-    JobCoreService([in] const POPString &challenge);
+    JobCoreService([in] const std::string &challenge);
 
     /** @brief Perform resource discovery and create the parallel object on the remote resource.
      * @param localservice the application scope service access point. This accesspoint will be used to connect to the CodeMgr to check for supported platform and executable URL

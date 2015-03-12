@@ -19,7 +19,7 @@
 
 #include <strings.h>
 
-paroc_service_base::paroc_service_base(const POPString &challenge):mychallenge(challenge), appservice(paroc_system::appservice) {
+paroc_service_base::paroc_service_base(const std::string &challenge):mychallenge(challenge), appservice(paroc_system::appservice) {
     daemonMode=false;
 }
 
@@ -46,7 +46,7 @@ void paroc_service_base::Start() {
     }
 }
 
-void paroc_service_base::Start(const POPString &challenge) {
+void paroc_service_base::Start(const std::string &challenge) {
     if((mychallenge==challenge) || mychallenge.empty()) {
         while(GetRefCount()>1) {
             DecRef();
@@ -57,7 +57,7 @@ void paroc_service_base::Start(const POPString &challenge) {
 
 }
 
-bool paroc_service_base::Stop(const POPString &challenge) {
+bool paroc_service_base::Stop(const std::string &challenge) {
     if(mychallenge==challenge || mychallenge.empty()) {
         daemonMode=false;
         //      while (DecRef()>0);
@@ -88,11 +88,11 @@ bool paroc_service_base::CanKill() {
 }
 
 
-JobCoreService::JobCoreService(const POPString &challenge): paroc_service_base(challenge) {
+JobCoreService::JobCoreService(const std::string &challenge): paroc_service_base(challenge) {
 }
 
 /*
-int JobCoreService::CreateObject(const paroc_accesspoint &localservice, const POPString &objname, const paroc_od &od, int howmany, paroc_accesspoint *objcontacts)
+int JobCoreService::CreateObject(const paroc_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, paroc_accesspoint *objcontacts)
 {
   return POPC_JOBSERVICE_FAIL;
 }

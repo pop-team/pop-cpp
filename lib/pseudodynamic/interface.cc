@@ -217,7 +217,7 @@ void paroc_interface::allocate_only() {
 void paroc_interface::Allocate() {
     LOG_DEBUG("INTERFACE: Allocate start");
     Release();
-    POPString protocol = od.getProtocol();
+    std::string protocol = od.getProtocol();
     paroc_accesspoint jobcontact, objaccess, remotejobcontact;
 
     // With the actual code, batchsize is always zero
@@ -231,10 +231,10 @@ void paroc_interface::Allocate() {
         }
     } else if(!TryLocal(objaccess)) {
 
-        POPString objname(ClassName());
+        std::string objname(ClassName());
 	LOG_DEBUG("INTERFACE: Will try to create a parallel object: %s", objname.c_str());
         //Exec using JobMgr interface...
-        const POPString& platforms(od.getPlatforms());
+        const std::string& platforms(od.getPlatforms());
 
         if(platforms.empty()) {
 		LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::appservice.GetAccessString().c_str());
@@ -246,7 +246,7 @@ void paroc_interface::Allocate() {
         }
         //Global Resource management system --> Find a resource.
 
-        const POPString& joburl(od.getJobURL());
+        const std::string& joburl(od.getJobURL());
 
 
         if(!joburl.empty()) {
@@ -277,8 +277,8 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     accesspoint = dest;
 
     //Choose the protocol and then bind
-    POPString prots = dest.GetAccessString();
-    POPString od_prots = od.getProtocol();
+    std::string prots = dest.GetAccessString();
+    std::string od_prots = od.getProtocol();
 
     auto accesslist = Tokenize(prots);
     const char* tmp = getenv("POPC_COMM_PATTERN");
@@ -332,7 +332,7 @@ void paroc_interface::Bind(const char *dest) {
 
 
     paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
-    POPString p;
+    std::string p;
     if(!fact) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
     }
@@ -357,8 +357,8 @@ void paroc_interface::Bind(const char *dest) {
     if(combox_create_return && combox_connect_return) {
         LOG_DEBUG("INTERFACE: Interface connected");
         int status;
-        POPString info;
-        POPString peerplatform;
+        std::string info;
+        std::string peerplatform;
         BindStatus(status, peerplatform, info);
         LOG_DEBUG("INTERFACE: Got bind status %d", status);
 
@@ -401,11 +401,11 @@ void paroc_interface::Bind(const char *dest) {
 
 bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
     LOG_DEBUG("INTERFACE: TryLocal start");
-    POPString hostname(od.getURL());
-    const POPString& rarch(od.getArch());
-    const POPString& batch(od.getBatch());
+    std::string hostname(od.getURL());
+    const std::string& rarch(od.getArch());
+    const std::string& batch(od.getBatch());
 
-    const POPString& objname(ClassName());
+    const std::string& objname(ClassName());
     bool localFlag=od.IsLocal();
 
 
@@ -413,7 +413,7 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
 
           if (hostname.empty()) hostname=paroc_system::GetHost();
 
-          const POPString& codefile(od.getExecutable());
+          const std::string& codefile(od.getExecutable());
 
         //Hostname existed
         if(codefile.empty()) {
@@ -471,7 +471,7 @@ bool paroc_interface::isBinded() {
 }
 
 // ParocCall
-void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info) {
+void paroc_interface::BindStatus(int &code, std::string &platform, std::string &info) {
     if(!__paroc_combox || !__paroc_buf) {
         return;
     }
@@ -489,11 +489,11 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
     __paroc_buf->UnPack(&code, 1);
     __paroc_buf->Pop();
 
-    __paroc_buf->Push("platform", "POPString", 1);
+    __paroc_buf->Push("platform", "std::string", 1);
     __paroc_buf->UnPack(&platform, 1);
     __paroc_buf->Pop();
 
-    __paroc_buf->Push("info", "POPString", 1);
+    __paroc_buf->Push("info", "std::string", 1);
     __paroc_buf->UnPack(&info, 1);
     __paroc_buf->Pop();
     LOG_DEBUG("INTERFACE: request bindstatus done");
@@ -545,7 +545,7 @@ int paroc_interface::DecRef() {
 }
 
 
-bool paroc_interface::Encoding(POPString encoding) {
+bool paroc_interface::Encoding(std::string encoding) {
     if(!__paroc_combox || !__paroc_buf) {
         LOG_WARNING("Encoding cannot be called");
         return false;
@@ -563,7 +563,7 @@ bool paroc_interface::Encoding(POPString encoding) {
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
 
-    __paroc_buf->Push("encoding", "POPString", 1);
+    __paroc_buf->Push("encoding", "std::string", 1);
     __paroc_buf->Pack(&encoding, 1);
     __paroc_buf->Pop();
 
@@ -671,14 +671,14 @@ bool paroc_interface::RecvCtrl() {
 }
 #endif
 
-void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatform) {
+void paroc_interface::NegotiateEncoding(std::string &enclist, std::string &peerplatform) {
     LOG_DEBUG("INTERFACE: Negotiate encoding start");
-    POPString pref = od.getEncoding();
+    std::string pref = od.getEncoding();
 
     auto enc_pref = Tokenize(pref);
     auto enc_avail = Tokenize(enclist);
 
-    POPString cur_enc;
+    std::string cur_enc;
     __paroc_combox->GetBufferFactory()->GetBufferName(cur_enc);
 
     if(enc_pref.empty()) {
@@ -733,17 +733,17 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 #ifdef OD_DISCONNECT
     bool checkConnection=od.getCheckConnection();
 #endif
-    const POPString& ruser(od.getUser());
-    const POPString& rcore(od.getCore());
-    const POPString& batch(od.getBatch());
-    const POPString& cwd(od.getCwd());
+    const std::string& ruser(od.getUser());
+    const std::string& rcore(od.getCore());
+    const std::string& batch(od.getBatch());
+    const std::string& cwd(od.getCwd());
 
     if(hostname == NULL && (tmp = (char*)strchr(hostname, ':')) != NULL) { // TODO LW: This cast is dangerous
         *tmp = 0;
     }
 
     int n = 0;
-    /*POPString myhost = paroc_system::GetHost();
+    /*std::string myhost = paroc_system::GetHost();
     bool islocal = (isManual || hostname == NULL || *hostname == 0 || paroc_utils::SameContact(myhost, hostname) || paroc_utils::isEqual(hostname, "localhost") || paroc_utils::isEqual(hostname, "127.0.0.1"));
     if (batch == NULL) {
         if (!islocal) {
@@ -794,7 +794,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
       //paroc_combox_socket tmpsock;
     // bool isServer = true;
       // if (!tmpsock.Create(0,isServer)) paroc_exception::paroc_throw_errno();
-      // POPString cburl;
+      // std::string cburl;
       // tmpsock.GetUrl(cburl);
 
 
@@ -806,7 +806,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 //  paroc_combox* callback_combox =  comboxFactory->Create((const char*)"mpi");
 //  if(!callback_combox->Create(NULL, 0, true))
 //    paroc_exception::paroc_throw_errno();
-//  POPString callback_url;
+//  std::string callback_url;
 //  callback_combox->GetUrl(callback_url);
 
 //  sprintf(tmpstr, "-callback=%s", (const char*)callback_url);
@@ -973,7 +973,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     return 0;
 }
 
-std::vector<std::string> paroc_interface::Tokenize(const POPString &s) {
+std::vector<std::string> paroc_interface::Tokenize(const std::string &s) {
     if(s.empty()) {
         return {};
     }

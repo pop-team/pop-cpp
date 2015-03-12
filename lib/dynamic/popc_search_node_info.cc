@@ -50,11 +50,11 @@ void POPCSearchNodeInfo::Serialize(POPBuffer &buf, bool pack) {
     }
 }
 
-POPString POPCSearchNodeInfo::getPOPCSearchNodeId() {
+std::string POPCSearchNodeInfo::getPOPCSearchNodeId() {
     return nodeId;
 }
 
-POPString POPCSearchNodeInfo::getPKI() {
+std::string POPCSearchNodeInfo::getPKI() {
     return pki;
 }
 

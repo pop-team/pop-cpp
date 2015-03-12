@@ -45,16 +45,16 @@ paroc_accesspoint paroc_system::jobservice;
 int paroc_system::pop_current_local_address;
 
 int paroc_system::popc_local_mpi_communicator_rank;
-POPString paroc_system::platform;
+std::string paroc_system::platform;
 std::ostringstream paroc_system::_popc_cout;
 
 //V1.3m
-POPString paroc_system::POPC_HostName;
+std::string paroc_system::POPC_HostName;
 #define LOCALHOST "localhost"
 //End modif
 
 AppCoreService *paroc_system::mgr=NULL;
-POPString paroc_system::challenge;
+std::string paroc_system::challenge;
 
 paroc_system::paroc_system() {
     paroc_combox_factory::GetInstance();
@@ -80,7 +80,7 @@ paroc_system::paroc_system() {
 #endif
         platform = str;
     }
-    POPC_HostName = POPString("");
+    POPC_HostName = std::string("");
 }
 
 
@@ -107,7 +107,7 @@ paroc_system::~paroc_system() {
 // ELSE IF try to use gethostname() and possibly env. variable POPC_DOMAIN
 // ELSE call GetIP()
 //----------------------------------------------------------------------------
-POPString paroc_system::GetHost() {
+std::string paroc_system::GetHost() {
     if(POPC_HostName.empty()) {
         char str[128];
         char *t=getenv("POPC_HOST");
@@ -139,11 +139,11 @@ POPString paroc_system::GetHost() {
 // Try to determine the IP address of the machine.
 // If fail return the localhost IP = LOCALHOST
 //------------------------------------------------------
-POPString paroc_system::GetIP() {
+std::string paroc_system::GetIP() {
 #ifndef __WIN32__
-    POPString iface,ip;
+    std::string iface,ip;
     char* tmp;
-    ip = POPString(LOCALHOST);
+    ip = std::string(LOCALHOST);
 
     tmp=getenv("POPC_IP");
     if(tmp!=NULL) {     // Env. variable POPC_IP is defined
@@ -276,7 +276,7 @@ int paroc_system::GetIP(int *iplist, int listsize) {
     return n;
 }
 
-POPString paroc_system::GetDefaultInterface() {
+std::string paroc_system::GetDefaultInterface() {
     char buff[1024], iface[16], net_addr[128];
     //char flags[64], mask_addr[128], gate_addr[128];
     //int iflags, metric, refcnt, use, mss, window, irtt;
@@ -303,11 +303,11 @@ POPString paroc_system::GetDefaultInterface() {
     if(!found) {
         iface[0] = '\0';    // if not found iface = ""
     }
-    return POPString(iface);
+    return std::string(iface);
 }
 
 // TODO LW: Should probably be in intface
-bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
+bool paroc_system::GetIPFromInterface(std::string &iface, std::string &str_ip) {
 #ifndef __WIN32__
     struct ifaddrs *addrs, *iap;
     struct sockaddr_in *sa;

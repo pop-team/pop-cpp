@@ -23,10 +23,10 @@
 Response::Response() {}
 
 // Constructor with all response's information
-Response::Response(POPString reqUniqueId,
+Response::Response(std::string reqUniqueId,
                    POPCSearchNodeInfo foundNodeInfo,
                    ExplorationList finalExplorationList,
-                   POPString appid) {
+                   std::string appid) {
     // save the params
     _reqUniqueId = reqUniqueId;
     _foundNodeInfo=foundNodeInfo;
@@ -66,7 +66,7 @@ void Response::Serialize(POPBuffer &buf, bool pack) {
 }
 
 // Get the request's uniqueId
-POPString Response::getReqUniqueId() {
+std::string Response::getReqUniqueId() {
     return _reqUniqueId;
 }
 
@@ -77,7 +77,7 @@ POPCSearchNodeInfo Response::getFoundNodeInfo() {
 }
 
 // Get the application services access point
-POPString Response::getPOPAppId() {
+std::string Response::getPOPAppId() {
     return _appid;
 }
 

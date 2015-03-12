@@ -67,7 +67,7 @@ void POPC_GroupBrokerFactory::list_all(popc_list_string &objlist) {
     popc_broker_map::iterator it;
 
     for(it = (*_internal_broker_map).begin() ; it != (*_internal_broker_map).end(); it++) {
-        POPString &str = objlist.AddTailNew();
+        std::string &str = objlist.AddTailNew();
         str = ((*it).first).c_str();
     }
 }

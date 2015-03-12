@@ -45,8 +45,8 @@ public:
     static const char *GetIPFromURL(const char *url);
     static const char* GetCurrentUser();
     static std::string MakeContact(const char *host, int port);
-    static bool isIPv4Address(POPString value);
-    static bool isValidName(POPString value);
+    static bool isIPv4Address(std::string value);
+    static bool isValidName(std::string value);
     static float benchmark_power();
 
     static int InitCodeService(char *fileconf, AppCoreService *service);

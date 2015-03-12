@@ -26,7 +26,7 @@
  * @param
  * @param
  */
-POPCSearchNode::POPCSearchNode(const POPString &challenge, bool deamon) : paroc_service_base(challenge) {
+POPCSearchNode::POPCSearchNode(const std::string &challenge, bool deamon) : paroc_service_base(challenge) {
     // Init variables
     logicalClock=0;
     sem_logicalClock=0;
@@ -50,23 +50,23 @@ POPCSearchNode::~POPCSearchNode() {
 
 
 // Set the ID of the POPCSearchNode
-void POPCSearchNode::setPOPCSearchNodeId(POPString nodeId) {
+void POPCSearchNode::setPOPCSearchNodeId(std::string nodeId) {
     nodeInfo.nodeId = nodeId;
     LOG_DEBUG(  "[PSN] POPCSearchNode id : %s", nodeInfo.nodeId.c_str());
 }
 
 // Get the ID of this POPCSearchNode
-POPString POPCSearchNode::getPOPCSearchNodeId() {
+std::string POPCSearchNode::getPOPCSearchNodeId() {
     return nodeInfo.nodeId;
 }
 
 // Set the operating system
-void POPCSearchNode::setOperatingSystem(POPString operatingSystem) {
+void POPCSearchNode::setOperatingSystem(std::string operatingSystem) {
     nodeInfo.operatingSystem = operatingSystem;
 }
 
 // Get the operating system
-POPString POPCSearchNode::getOperatingSystem() {
+std::string POPCSearchNode::getOperatingSystem() {
     return nodeInfo.operatingSystem;
 }
 
@@ -121,22 +121,22 @@ int POPCSearchNode::getDiskSpace() {
 }
 
 //Set the protocol
-void POPCSearchNode::setProtocol(POPString prot) {
+void POPCSearchNode::setProtocol(std::string prot) {
     nodeInfo.protocol = prot;
 }
 
 //Get the protocol
-POPString POPCSearchNode::getProtocol() {
+std::string POPCSearchNode::getProtocol() {
     return nodeInfo.protocol;
 }
 
 //Set the encoding
-void POPCSearchNode::setEncoding(POPString enc) {
+void POPCSearchNode::setEncoding(std::string enc) {
     nodeInfo.encoding = enc;
 }
 
 //Get the encoding
-POPString POPCSearchNode::getEncoding() {
+std::string POPCSearchNode::getEncoding() {
     return nodeInfo.encoding;
 }
 
@@ -172,7 +172,7 @@ void POPCSearchNode::deleteNeighbors() {
 }
 
 // Called from the timer to unlock the semaphor used when the waiting time is set to 0
-void POPCSearchNode::unlockDiscovery(POPString reqid) {
+void POPCSearchNode::unlockDiscovery(std::string reqid) {
     try {
         // Get the request identifier to unlock the right sempahore
         std::string _reqid = reqid.c_str();
@@ -186,10 +186,10 @@ void POPCSearchNode::unlockDiscovery(POPString reqid) {
 }
 
 
-POPString POPCSearchNode::getUID() {
+std::string POPCSearchNode::getUID() {
     char uId[MAXREQUNIQUEIDLENGTH];
     sprintf(uId,"%s__%d", getPOPCSearchNodeId().c_str(), logicalClock);
-    POPString uniqueId(uId);
+    std::string uniqueId(uId);
     logicalClock++;
     return uniqueId;
 }
@@ -268,11 +268,11 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
         actualReqSyn.lock();
 
         POPCSearchNodeInfos results;
-        std::map<POPString, POPCSearchNodeInfos>::iterator i;
+        std::map<std::string, POPCSearchNodeInfos>::iterator i;
 
-        // ! for-statement because of problem with map comparison and POPString !
+        // ! for-statement because of problem with map comparison and std::string !
         for(i=actualReq.begin(); i != actualReq.end(); i++) {
-            POPString id = (*i).first;
+            std::string id = (*i).first;
             if(strcmp(id.c_str(), req.getUniqueId().c_str()) == 0) {
                 results = i->second;
                 break;
@@ -314,7 +314,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                 // received exploration list
                 for(i = neighborsList.begin(); i != neighborsList.end(); i++) {
                     if(!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
-                        POPString nid;
+                        std::string nid;
                         nid = (*i)->getPOPCSearchNodeId();
                         paroc_accesspoint dummy;
                         (*i)->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
@@ -328,7 +328,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
 
             // check if the request has already been asked
 
-            std::list<POPString>::iterator k;
+            std::list<std::string>::iterator k;
             for(k = knownRequests.begin(); k != knownRequests.end(); k++) {
                 if(strcmp(k->c_str(),req.getUniqueId().c_str()) == 0) {
                     LOG_DEBUG(  "[PSN] ALREADY_ASKED_REQUEST;%s", req.getUniqueId().c_str());
@@ -364,7 +364,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                 /* If it's the local node or it's the last node, send directly the answer. Otherwise, send to the next node to reroute
                 the message */
                 if(!req.getWayBack().isLastNode()) {
-                    POPString listwb = req.getWayBack().getAsString();
+                    std::string listwb = req.getWayBack().getAsString();
                     LOG_DEBUG(  "[PSN] NEED_REROUTE;WAYBACK;%s", listwb.c_str());
                     rerouteResponse(*resp, req.getWayBack());
                 } else {
@@ -388,7 +388,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                 // received exploration list
                 for(i = neighborsList.begin(); i != neighborsList.end(); i++) {
                     if(!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
-                        POPString nid;
+                        std::string nid;
                         nid = (*i)->getPOPCSearchNodeId();
                         LOG_DEBUG(  "[PSN] FORWARD;DEST;%s", nid.c_str());
                         paroc_accesspoint dummy;
@@ -414,7 +414,7 @@ void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb) {
         if(wb.isLastNode()) {
             //Create the interface to contact the POPCSearchNode
             paroc_accesspoint nextNodeAP;
-            POPString nextNodeStr = wb.getNextNode();
+            std::string nextNodeStr = wb.getNextNode();
             nextNodeAP.SetAccessString(nextNodeStr.c_str());
             POPCSearchNode nextNode(nextNodeAP);
             //Give the response to the initiator
@@ -423,7 +423,7 @@ void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb) {
             LOG_DEBUG(  "[PSN] REROUTE;SEND_FINAL;%s", nextNodeStr.c_str());
         } else {
             //Get the next node to contact
-            POPString nextNodeStr = wb.getNextNode();
+            std::string nextNodeStr = wb.getNextNode();
             wb.deleteNextNode();
 
             //Create the interface to contact the POPCSearchNode
@@ -448,10 +448,10 @@ void POPCSearchNode::callbackResult(Response resp) {
         POPCSearchNodeInfo dni = resp.getFoundNodeInfo();
         actualReqSyn.lock();
         LOG_DEBUG( "[PSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().c_str() , dni.nodeId.c_str());
-        std::map<POPString, POPCSearchNodeInfos>::iterator i;
+        std::map<std::string, POPCSearchNodeInfos>::iterator i;
         // visit the currently running list
         for(i=actualReq.begin(); i != actualReq.end(); i++) {
-            POPString id = (*i).first;
+            std::string id = (*i).first;
             // if the request's uniqueId is present, add the response to the list
             // and break the for-statement.
             if(strcmp(id.c_str(), resp.getReqUniqueId().c_str()) == 0) {
@@ -568,8 +568,8 @@ bool POPCSearchNode::checkResource(Request req) {
 }
 
 // Return a list of neighbors' nodeId
-std::list<POPString> POPCSearchNode::getNeighbors() {
-    std::list<POPString> neighbors;
+std::list<std::string> POPCSearchNode::getNeighbors() {
+    std::list<std::string> neighbors;
     std::list<POPCSearchNode *>::iterator i;
     for(i = neighborsList.begin(); i != neighborsList.end(); i++) {
         neighbors.push_back((*i)->getPOPCSearchNodeId());
@@ -588,12 +588,12 @@ paroc_accesspoint POPCSearchNode::getJobMgrRef() {
 }
 
 //Set the SSH public key
-void POPCSearchNode::setPKI(POPString pk) {
+void POPCSearchNode::setPKI(std::string pk) {
     nodeInfo.pki=pk;
 }
 
 //Get the SSH Public key
-POPString POPCSearchNode::getPKI() {
+std::string POPCSearchNode::getPKI() {
     return nodeInfo.pki;
 }
 
@@ -643,7 +643,7 @@ void POPCSearchNode::removeJob(float power, float memorySize, float bandwidth, i
     psn_currentJobs-=nbJob;
 }
 
-POPString POPCSearchNode::getNeighborsAsString() {
+std::string POPCSearchNode::getNeighborsAsString() {
     std::string strlst;
 
     for(std::list<POPCSearchNode *>::iterator i = neighborsList.begin(); i != neighborsList.end(); i++) {
@@ -653,6 +653,6 @@ POPString POPCSearchNode::getNeighborsAsString() {
 
     LOG_DEBUG( "[PSN] NODENEIGH:%s", strlst.c_str());
 
-    POPString lst = strlst.c_str();
+    std::string lst = strlst.c_str();
     return lst;
 }

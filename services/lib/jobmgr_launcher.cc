@@ -70,12 +70,12 @@ void Usage() {
 }
 
 int main(int argc, char **argv) {
-    POPString host;
-    POPString hostpfm;
-    POPString conf;
-    POPString virtconf;
-    POPString objcode;
-    POPString challenge;
+    std::string host;
+    std::string hostpfm;
+    std::string conf;
+    std::string virtconf;
+    std::string objcode;
+    std::string challenge;
     char str[1024];
     /** TO BE REMOVED FOR 2.5 BUT KEEP FOR 3.0
     bool popfile_service = true; */

@@ -55,7 +55,7 @@ public:
     std::string buffer_get_offset();
 
     // Add data in the input buffer
-    void add_data(POPString data);
+    void add_data(std::string data);
 
     // Get size of data in the buffer
     long get_size_input_data();
@@ -90,7 +90,7 @@ private:
     int identifier;
 
     //Absolute path of the strip associated with this buffer
-    POPString stripPath;
+    std::string stripPath;
 
     //Access point of the PFM associated with this buffer
     paroc_accesspoint associatedPFM;

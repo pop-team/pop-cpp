@@ -21,14 +21,14 @@
 // #include "jobmgr.ph"
 #include "popc_logger.h"
 
-AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const POPString &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge) {
+AppCoreService::AppCoreService(const std::string &challenge, bool daemon, const std::string &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge) {
     /**
       * ViSaG : clementval
       * Generate the POP Application Unique ID
       */
-    POPString tmpChallenge = challenge;
+    std::string tmpChallenge = challenge;
     time_t now = time(NULL);
-    POPString ip = paroc_system::GetIP();
+    std::string ip = paroc_system::GetIP();
     char id[100];
     std::string tmp(tmpChallenge.c_str());
     std::locale loc;
@@ -74,7 +74,7 @@ AppCoreService::~AppCoreService() {
     LOG_DEBUG("Destroyed AppCoreService");
 }
 
-bool AppCoreService::QueryService(const POPString &name, paroc_service_base &service) {
+bool AppCoreService::QueryService(const std::string &name, paroc_service_base &service) {
     if(name.empty()) {
         return false;
     }
@@ -88,7 +88,7 @@ bool AppCoreService::QueryService(const POPString &name, paroc_service_base &ser
     return false;
 }
 
-bool AppCoreService::QueryService(const POPString &name, paroc_accesspoint &service) {
+bool AppCoreService::QueryService(const std::string &name, paroc_accesspoint &service) {
     if(name.empty()) {
         return false;
     }
@@ -103,7 +103,7 @@ bool AppCoreService::QueryService(const POPString &name, paroc_accesspoint &serv
     return false;
 }
 
-bool AppCoreService::RegisterService(const POPString &name, const paroc_service_base &newservice) {
+bool AppCoreService::RegisterService(const std::string &name, const paroc_service_base &newservice) {
     if(name.empty()) {
         return false;
     }
@@ -120,7 +120,7 @@ bool AppCoreService::RegisterService(const POPString &name, const paroc_service_
     return true;
 }
 
-bool AppCoreService::UnregisterService(const POPString &name) {
+bool AppCoreService::UnregisterService(const std::string &name) {
     if(name.empty()) {
         return false;
     }
@@ -202,9 +202,9 @@ void AppCoreService::LoadAddOn() {
 /**
  * ViSaG : clementval
  * Getter for the POP Application Unique ID
- * @return a POPString containing the POPAppID
+ * @return a std::string containing the POPAppID
  */
-POPString AppCoreService::GetPOPCAppID() {
+std::string AppCoreService::GetPOPCAppID() {
     return _popcAppId;
 }
 

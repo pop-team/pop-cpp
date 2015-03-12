@@ -16,7 +16,7 @@
 #include "codemgr.ph"
 #include "popc_logger.h"
 
-CodeMgr::CodeMgr(const POPString &challenge): paroc_service_base(challenge) {
+CodeMgr::CodeMgr(const std::string &challenge): paroc_service_base(challenge) {
     //Nothing else to init
 }
 
@@ -24,7 +24,7 @@ CodeMgr::~CodeMgr() {
     LOG_DEBUG("Now destroy CodeMgr");
 }
 
-void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, const POPString &codefile) {
+void CodeMgr::RegisterCode(const std::string &objname, const std::string &platform, const std::string &codefile) {
     if(objname.size() >= CODE_MAX_STRING_SIZE || platform.size() >= CODE_MAX_STRING_SIZE || codefile.size() >= CODE_MAX_STRING_SIZE) {
         LOG_ERROR( "Could not register code, information longer than %i: %i %i %i",
                     CODE_MAX_STRING_SIZE, objname.size(), platform.size(), codefile.size());
@@ -68,7 +68,7 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
     }
 }
 
-int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPString &codefile) {
+int CodeMgr::QueryCode(const std::string &objname, const std::string &platform, std::string &codefile) {
     codefile="";
     auto n=info.size();
     codedb *element;
@@ -103,7 +103,7 @@ int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPS
     return 1;
 }
 
-int CodeMgr::GetPlatform(const POPString &objname, POPString &platform) {
+int CodeMgr::GetPlatform(const std::string &objname, std::string &platform) {
     platform=nullptr;
     auto n=info.size();
 

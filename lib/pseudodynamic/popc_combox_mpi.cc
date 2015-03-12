@@ -236,7 +236,7 @@ void popc_combox_mpi::Close() {
  * @param Return "mpi" as the protocol name
  * @return TRUE in any cases
  */
-bool popc_combox_mpi::GetProtocol(POPString& protocolName) {
+bool popc_combox_mpi::GetProtocol(std::string& protocolName) {
     protocolName="mpi";
     return true;
 }
@@ -247,9 +247,9 @@ bool popc_combox_mpi::GetProtocol(POPString& protocolName) {
  * @param accesspoint Formed URL to access this combox under the form mpi://<port_name>
  * @return TRUE if the URL can be formed, FALSE in any other cases.
  */
-bool popc_combox_mpi::GetUrl(POPString& accesspoint) {
+bool popc_combox_mpi::GetUrl(std::string& accesspoint) {
     // Form the URL with protocol and port_name
-    POPString protocol;
+    std::string protocol;
     GetProtocol(protocol);
     char url[1024];
     sprintf(url, "%s://%d", protocol.c_str(), _node_id);

@@ -139,8 +139,8 @@ void paroc_accesspoint::SetNoAddRef() {
 
 void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack) {
     if(pack) {
-        POPString s(endpoint);
-        buf.Push("url","POPString",1);
+        std::string s(endpoint);
+        buf.Push("url","std::string",1);
         buf.Pack(&s,1);
         buf.Pop();
 
@@ -159,8 +159,8 @@ void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pack(&noadd,1);
         buf.Pop();
     } else {
-        POPString s;
-        buf.Push("url","POPString",1);
+        std::string s;
+        buf.Push("url","std::string",1);
         buf.UnPack(&s,1);
         buf.Pop();
         SetAccessString(s.c_str());
