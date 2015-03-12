@@ -373,7 +373,7 @@ void paroc_interface::Bind(const char *dest) {
     // Create combox
     __paroc_combox = fact->Create(prot);
     if(!__paroc_combox) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot create factory");
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot create combox from factory");
     }
 
     // Create associated buffer

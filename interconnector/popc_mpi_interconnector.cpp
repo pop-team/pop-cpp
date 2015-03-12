@@ -740,7 +740,7 @@ int main(int argc, char* argv[]) {
 
                         // Send signal to the remote node
                         data[0] = 11;
-                        int objectname_length = objectname.size()
+                        int objectname_length = objectname.size();
                         int codefile_length = codefile.size();
 
                         MPI::Status status;
@@ -807,7 +807,8 @@ int main(int argc, char* argv[]) {
                         pid_t allocatepid = fork();
                         if(allocatepid == 0) {
                             char* argv1[7];
-                            argv1[0] = codefile.c_str();                        // Object executable
+                            // TODO LW: These casts are dangerous, use an array of std::string instead
+                            argv1[0] = const_cast<char*>(codefile.c_str());         // Object executable
                             argv1[1] = const_cast<char*>(_objectname.c_str());      // Object name
                             argv1[2] = const_cast<char*>(_objectaddress.c_str());   // Object address
                             argv1[3] = const_cast<char*>(_receiveraddress.c_str()); // Address of ready call

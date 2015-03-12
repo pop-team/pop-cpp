@@ -21,6 +21,7 @@
 // #include "paroc_interface.h"
 #include "paroc_buffer_xdr.h"
 #include "paroc_exception.h"
+#include "popc_logger.h"
 
 paroc_buffer_xdr::paroc_buffer_xdr() {
     Reset();

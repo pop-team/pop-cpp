@@ -268,16 +268,17 @@ int paroc_system::GetIP(int *iplist, int listsize) {
     char* parocip=popc_strdup(GetIP().c_str());
     int n;
     int addr;
-    char *tmp;
-    char *tok=popc_strtok_r(parocip," \n\r\t",&tmp);
+    std::vector<std::string> tokens;
+    popc_tokenize_r(tokens, parocip," \n\r\t");
     n=0;
-    while(tok!=NULL && n<listsize) {
-        if((int)(addr = popc_inet_addr(tok)) != -1) {
+    for(auto tok : tokens) {
+        if(!n<listsize)
+            break;
+        if((int)(addr = popc_inet_addr(tok.c_str())) != -1) {
             *iplist=popc_ntohl(addr);
             iplist++;
             n++;
         }
-        tok=popc_strtok_r(NULL," \n\r\t",&tmp);
     }
     return n;
 }
@@ -323,13 +324,13 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
 
     getifaddrs(&addrs);
 
-    LOG_DEBUG("Looking for interface: %s --->",(const char*)iface);
+    LOG_DEBUG("Looking for interface: %s --->",iface.c_str());
     for (iap = addrs; iap != NULL; iap = iap->ifa_next){
         LOG_DEBUG("name=%s, addr=%p, flag=%d (%d), familly=%d (%d)",iap->ifa_name, iap->ifa_addr, iap->ifa_flags, IFF_UP, iap->ifa_addr->sa_family, AF_INET);
       if ( iap->ifa_addr &&
            (iap->ifa_flags & IFF_UP) &&
            (iap->ifa_addr->sa_family == AF_INET) &&
-           !strcmp(iap->ifa_name, (const char*)iface)) {
+                !strcmp(iap->ifa_name, iface.c_str())) {
         sa = (struct sockaddr_in *)(iap->ifa_addr);
         inet_ntop(iap->ifa_addr->sa_family,
                   (void *)&(sa->sin_addr),
@@ -358,7 +359,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
  */
 bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
-    char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
+    const char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
     if(info==NULL) {
         LOG_ERROR("missing -jobservice argument");
         return false;
@@ -367,8 +368,8 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     paroc_system::jobservice.SetAsService();
 
     // Get path of the application service executable
-    char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
-    //char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
+    const char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
+    // const char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
 
     // Check if need to run on local node only
     if(paroc_utils::checkremove(argc,argv,"-runlocal")) {
@@ -376,7 +377,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     }
 
     // Get application service contact address
-    char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
+    const char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
     if(codeser==NULL && appcontact==NULL) {
         LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");
@@ -393,7 +394,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
             // LOG_DEBUG("POP-C++ Application Service created %s", mgr->GetAccessPoint().GetAccessString());
 #endif
         } else {
-            challenge=NULL;
+            challenge="";
             paroc_accesspoint app;
             app.SetAccessString(appcontact);
             app.SetAsService();
@@ -454,7 +455,7 @@ void paroc_system::Finalize(bool /*normalExit*/) {
               oldcount = count;
             }
           } else {
-	        LOG_DEBUG("Finalize killall");
+	            LOG_INFO("Main routine did not exit normally or did not return 0. This is treated as an error by POP-C++.");
             mgr->KillAll();
           }
           LOG_DEBUG("Finalize stop");
