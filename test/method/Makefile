@@ -1,10 +1,11 @@
+FLAGS=-g
 all: app object
 
 app:
-	popcc -o main method.ph method.cc main.cc 
+	popcc ${FLAGS} -o main method.ph method.cc main.cc 
 
 object:
-	popcc -object -o method.obj method.cc method.ph
+	popcc ${FLAGS} -object -o method.obj method.cc method.ph
 	./method.obj -listlong > obj.map
 
 clean:

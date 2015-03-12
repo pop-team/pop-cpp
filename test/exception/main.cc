@@ -49,6 +49,11 @@ int main(int argc, char **argv) {
         } //for
 
     printf("Exception: test succeeded, destroying objects...\n");
-    return check != "aaaccc";
+    if(check != "aaaccc")
+    {
+    	    printf("Error in main: exceptions were not caught correctly: %s\n", check.c_str());
+    	    return 1;
+    }
+    return 0;
 }
 
