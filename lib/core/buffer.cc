@@ -348,7 +348,7 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
     case EXCEPTION_POPC_STD: {
         paroc_exception t(0);
         t.Serialize(except,false);
-        throw &t;
+        throw t;
     }
     /* TODO LW: Is this really used ?? */
     case EXCEPTION_OBJECT: {
