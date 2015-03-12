@@ -1,7 +1,7 @@
 all: app object
 
 app:
-	popcc -o main -parclass-nobroker main.cc classA.cc classA.ph classB.cc classB.ph	
+	popcc -o main -parclass-nobroker main.cc classA.ph classB.ph
 
 object:
 	popcc -c -parclass-nobroker classB.ph
