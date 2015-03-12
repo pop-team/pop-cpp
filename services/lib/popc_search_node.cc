@@ -97,7 +97,7 @@ void POPCSearchNode::setMemorySize(float memorySize) {
 
 // Get the memory size
 int POPCSearchNode::getMemorySize() {
-    return (int)(nodeInfo.memorySize);
+    return static_cast<int>(nodeInfo.memorySize);
 }
 
 // Set the network bandwidth
@@ -188,7 +188,7 @@ void POPCSearchNode::unlockDiscovery(std::string reqid) {
 
 std::string POPCSearchNode::getUID() {
     char uId[MAXREQUNIQUEIDLENGTH];
-    sprintf(uId,"%s__%d", getPOPCSearchNodeId().c_str(), logicalClock);
+    snprintf(uId, sizeof(uId),"%s__%d", getPOPCSearchNodeId().c_str(), logicalClock);
     std::string uniqueId(uId);
     logicalClock++;
     return uniqueId;

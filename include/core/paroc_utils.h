@@ -34,7 +34,7 @@ public:
     static bool isEqual(const char *s1, const char *s2);
     static bool isncaseEqual(const std::string& s1, const std::string& s2);
     static bool MatchWildcard(const std::string& str, const std::string& wildcard);
-    static void FindAbsolutePath(const char *fname, char *abspath);
+    static std::string FindAbsolutePath(const std::string& fname);
     static void Assert(bool a);
 
 

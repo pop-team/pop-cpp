@@ -133,32 +133,32 @@ bool paroc_utils::MatchWildcard(const std::string& str, const std::string& wildc
 
 }
 
-void paroc_utils::FindAbsolutePath(const char *fname, char *abspath) {
-    if(*fname=='/') {
-        strcpy(abspath,fname);
-        return;
-    }
+std::string paroc_utils::FindAbsolutePath(const std::string& fname) {
+    if(fname.empty())
+        return "";
+    if(fname.at(0)=='/')
+        return fname;
 
-    char *t=(char*)strrchr(fname,'/');
+    unsigned pos = fname.find_last_of('/');
     char dir[1024];
 
-    if(t==NULL) {
+    if(pos >= fname.size()) {
+        // not found
         if(popc_getcwd(dir,1024)==NULL) {
             *dir=0;
         }
-        sprintf(abspath,"%s/%s",dir,fname);
-        return;
+        std::string s(dir);
+        return s + "/" + fname;
     }
     char olddir[1024];
     popc_getcwd(olddir,1024);
-    *t=0;
-    popc_chdir(fname);
-    *t='/';
+    popc_chdir(fname.substr(0,pos-1).c_str());
     if(popc_getcwd(dir,1024)==NULL) {
         *dir=0;
     }
     popc_chdir(olddir);
-    sprintf(abspath,"%s/%s",dir,t+1);
+    std::string s1(dir);
+    return s1 + "/" + fname.substr(pos+1);
 }
 
 

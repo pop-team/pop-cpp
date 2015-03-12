@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
         srand(time(NULL));
         char tmpstr[256];
         for(int i=0; i<255; i++) {
-            tmpstr[i]=(char)('A'+23.0*rand()/(RAND_MAX+1.0));
+            tmpstr[i]=static_cast<char>('A'+23.0*rand()/(RAND_MAX+1.0));
         }
         tmpstr[255]=0;
         challenge=tmpstr;

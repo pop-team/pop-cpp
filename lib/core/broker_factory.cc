@@ -97,13 +97,11 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
 */
     char *tmp=paroc_utils::checkremove(argc,argv,"-list");
     if(tmp!=NULL) {
-        char abspath[1024];
         char *thisfile=getenv("POPC_EXE");
         if(thisfile==NULL) {
             thisfile=(*argv)[0];
         }
-        paroc_utils::FindAbsolutePath(thisfile,abspath);
-        PrintBrokers(abspath, strcmp(tmp,"long")==0);
+        PrintBrokers(paroc_utils::FindAbsolutePath(thisfile).c_str(), strcmp(tmp,"long")==0);
         exit(0);
     }
 
