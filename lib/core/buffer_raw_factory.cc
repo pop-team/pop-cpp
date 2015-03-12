@@ -30,7 +30,7 @@ paroc_buffer * paroc_buffer_raw_factory::CreateBuffer() {
     return bufRAW;
 }
 
-bool paroc_buffer_raw_factory::GetBufferName(POPString & bufferName) {
+bool paroc_buffer_raw_factory::GetBufferName(std::string & bufferName) {
     bufferName="raw";
     return true;
 }

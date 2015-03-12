@@ -15,7 +15,6 @@
 #define POPC_ALLOCATOR_H_
 
 #include "paroc_od.h"
-#include "paroc_string.h"
 #include "paroc_accesspoint.h"
 #include "paroc_combox.h"
 
@@ -26,8 +25,8 @@ public:
 
     POPC_Allocator() {}
     virtual ~POPC_Allocator() {}
-    virtual POPString allocate(POPString& objectname, paroc_od& od) = 0;
-    virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb) = 0;
+    virtual std::string allocate(std::string& objectname, paroc_od& od) = 0;
+    virtual paroc_combox* allocate_group(std::string& objectname, paroc_od& od, int nb) = 0;
     virtual POPC_Protocol get_protocol() = 0;
     virtual POPC_AllocationMechanism get_mechanism() = 0;
 };

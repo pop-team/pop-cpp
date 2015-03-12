@@ -15,13 +15,14 @@
 
 #ifndef POPC_UTILS_H
 #define POPC_UTILS_H
-#include "paroc_string.h"
 #include "popc_logger.h"
 
 #define SSH_TUNNEL_ERROR 65280
 #define SSH_PORT_MOD 16383
 #define SSH_PORT_FIRST 49152
 #define SSH_MAX_ATTEMPT 10
+
+typedef std::string POPString;
 
 class AppCoreService;
 
@@ -43,7 +44,7 @@ public:
     static int GetPortFromURL(const char *url);
     static const char *GetIPFromURL(const char *url);
     static const char* GetCurrentUser();
-    static paroc_string MakeContact(const char *host, int port);
+    static std::string MakeContact(const char *host, int port);
     static bool isIPv4Address(POPString value);
     static bool isValidName(POPString value);
     static float benchmark_power();

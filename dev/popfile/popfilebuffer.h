@@ -17,7 +17,6 @@
 #include <sstream>
 
 #include "paroc_accesspoint.h"
-#include "paroc_string.h"
 
 //Forward declaration of POPFileManager interface. It's currently needed as POPCC can't parse .h file.
 class POPFileManager;

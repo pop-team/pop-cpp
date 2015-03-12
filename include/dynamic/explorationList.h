@@ -16,7 +16,6 @@
 #include <list>
 #include <iterator>
 #include <utility>
-#include "paroc_string.h"
 #include "paroc_base.h"
 #define NEIGHBORSPATH 5
 
@@ -43,11 +42,11 @@ public :
     virtual void Serialize(POPBuffer &buf, bool pack);
 
     // Method used to add a list of nodes in the list
-    void         addListNode(paroc_string nodeId,
-                             std::list<paroc_string> neighbors);
+    void         addListNode(std::string nodeId,
+                             std::list<std::string> neighbors);
     // Method indicating if a node (identified by its nodeId) is present
     // or not in the list
-    bool         isIn(paroc_string nodeId);
+    bool         isIn(std::string nodeId);
 
 private :
     explorationList visitedNodes; // The exploration list of visited nodes

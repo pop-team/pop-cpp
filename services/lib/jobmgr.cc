@@ -90,8 +90,8 @@ NodeInfoMap::NodeInfoMap() {
     //keycount=0;
 }
 
-std::vector<paroc_string> NodeInfoMap::GetContacts() {
-    std::vector<paroc_string> contacts;
+std::vector<std::string> NodeInfoMap::GetContacts() {
+    std::vector<std::string> contacts;
 
     std::vector<double> h;
 
@@ -107,7 +107,7 @@ std::vector<paroc_string> NodeInfoMap::GetContacts() {
             auto& tmp = *hpos++;
 
             if(tmp>=heuristic) {
-                contacts.insert(cpos, paroc_string(t.first));
+                contacts.insert(cpos, std::string(t.first));
                 h.insert(old, heuristic);
                 break;
             }
@@ -116,7 +116,7 @@ std::vector<paroc_string> NodeInfoMap::GetContacts() {
         }
 
         if(cpos == contacts.end()) {
-            contacts.push_back(paroc_string(t.first));
+            contacts.push_back(std::string(t.first));
             h.push_back(heuristic);
         }
     }
@@ -128,7 +128,7 @@ bool NodeInfoMap::HasContact(const POPString &contact) {
     std::unique_lock<paroc_mutex> lock(maplock);
 
     for(auto& v : hashmap){
-        if(paroc_utils::SameContact(paroc_string(v.first), contact)){
+        if(paroc_utils::SameContact(std::string(v.first), contact)){
             return true;
         }
     }

@@ -71,7 +71,6 @@ add_library(popc_core
     od.cc
     popc_logger.cpp
     popwayback.cc
-    string.cc
     thread.cc
     timer.cc
     ${intface_cc_file}

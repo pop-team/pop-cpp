@@ -58,13 +58,13 @@ void ExplorationList::Serialize(POPBuffer &buf, bool pack) {
 
         // unmarshalling the neighbors
         for(i=0; i<nElts; i++) {
-            POPString nodeId;
+            std::string nodeId;
             buf.UnPack(&nodeId, 1);
             int nNeighbors;
             buf.UnPack(&nNeighbors, 1);
-            std::list<POPString> neighbors;
+            std::list<std::string> neighbors;
             for(j=0; j<nNeighbors; j++) {
-                POPString neighborId;
+                std::string neighborId;
                 buf.UnPack(&neighborId, 1);
                 neighbors.push_back(neighborId);
             }
@@ -74,15 +74,15 @@ void ExplorationList::Serialize(POPBuffer &buf, bool pack) {
 }
 
 // method used to add node's neighbors
-void ExplorationList::addListNode(POPString nodeId,
-                                  std::list<POPString> neighbors) {
+void ExplorationList::addListNode(std::string nodeId,
+                                  std::list<std::string> neighbors) {
     explorationList::iterator i;
     explorationList::reverse_iterator j;
     explorationList::reverse_iterator k;
     int crtNeighborsPath = 0;
 
     i=visitedNodes.end();
-    visitedNodes.insert(i, std::pair <POPString, std::list<POPString> >
+    visitedNodes.insert(i, std::pair <std::string, std::list<std::string> >
                         (nodeId, neighbors));
 
 
@@ -99,17 +99,17 @@ void ExplorationList::addListNode(POPString nodeId,
 }
 
 // method saying if a node is contained in the exploration list
-bool ExplorationList::isIn(POPString nodeId) {
+bool ExplorationList::isIn(std::string nodeId) {
     explorationList::iterator i;
     for(i = visitedNodes.begin(); i != visitedNodes.end(); i++) {
-        POPString crtNodeId = (*i).first;
+        std::string crtNodeId = (*i).first;
         if(nodeId == crtNodeId) {
             return true;
         }
         neighborsList neighbors = (*i).second;
         neighborsList::iterator j;
         for(j = neighbors.begin(); j!= neighbors.end(); j++) {
-            POPString nId = (*j);
+            std::string nId = (*j);
             //Modified by clementval
             // old comparaison was strcmp(crtNodeId.GetString(), nId.GetString() but that was incorrect
             if(nodeId==nId) {

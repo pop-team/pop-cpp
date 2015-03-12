@@ -32,7 +32,6 @@
 /**
  * ViSaG : clementval
  */
-#include "paroc_string.h"
 
 //Added by clementval
 #include <list>
@@ -107,8 +106,8 @@ struct PauseInfo {
 };
 
 struct HostInfo {
-    paroc_string  name;
-    paroc_string val;
+    std::string  name;
+    std::string val;
 };
 
 struct RequestTrace {
@@ -132,15 +131,15 @@ class NodeInfoMap {
 public:
     NodeInfoMap();
 //Manipulate neighbor nodes (thread safe)
-    std::vector<paroc_string> GetContacts();
-    bool HasContact(const paroc_string &contact);
+    std::vector<std::string> GetContacts();
+    bool HasContact(const std::string &contact);
 
-    bool GetInfo(const paroc_string &contact, NodeInfo &info);
+    bool GetInfo(const std::string &contact, NodeInfo &info);
     int GetCount();
 
-    bool Update(const paroc_string &contact, NodeInfo &info);
-    bool Remove(const paroc_string &key);
-    bool Add(const paroc_string &contact, NodeInfo &info);
+    bool Update(const std::string &contact, NodeInfo &info);
+    bool Remove(const std::string &key);
+    bool Add(const std::string &contact, NodeInfo &info);
 private:
     std::unordered_map<std::string, NodeInfo> hashmap;
     paroc_mutex maplock;
@@ -156,7 +155,7 @@ parclass JobMgr :
 public JobCoreService {
 public:
     /* ViSaG : clementval : Add reference to the PSM */
-    JobMgr(bool daemon, [in] const paroc_string &conf, [in] const paroc_string &challenge, const paroc_string &url, const paroc_accesspoint &nodeAccess, const paroc_accesspoint &localPSM) @{ od.url(url); od.runLocal(true); od.service(true);};
+    JobMgr(bool daemon, [in] const std::string &conf, [in] const std::string &challenge, const std::string &url, const paroc_accesspoint &nodeAccess, const paroc_accesspoint &localPSM) @{ od.url(url); od.runLocal(true); od.service(true);};
     /* End */
 
     ~JobMgr();  //Method ID 11
@@ -169,13 +168,13 @@ public:
      * @param type input
      * @param val output
      */
-    sync seq virtual int Query([in] const paroc_string &type, [out] paroc_string &val); //Method ID 13
+    sync seq virtual int Query([in] const std::string &type, [out] std::string &val); //Method ID 13
 
 //Global service...
-    sync conc virtual int CreateObject(paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts,  int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts); //Method ID 14
+    sync conc virtual int CreateObject(paroc_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts,  int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts); //Method ID 14
 
 
-    sync conc virtual bool  AllocResource(const paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, [in,out, size=howmany] float *fitness, [in,out, size=howmany] paroc_accesspoint *jobcontacts, [in,out, size=howmany] int *reserveIDs, [in] int requestInfo[3], [in] int trace[MAX_HOPS], [in] int tracesize); //method ID 15
+    sync conc virtual bool  AllocResource(const paroc_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in,out, size=howmany] float *fitness, [in,out, size=howmany] paroc_accesspoint *jobcontacts, [in,out, size=howmany] int *reserveIDs, [in] int requestInfo[3], [in] int trace[MAX_HOPS], [in] int tracesize); //method ID 15
 
     /**
      * ViSaG : clementval
@@ -189,7 +188,7 @@ public:
 
     seq async virtual void CancelReservation([in, size=howmany] int *req, int howmany); //17
 
-    conc sync virtual int ExecObj(const paroc_string &objname, const paroc_od &od, int howmany, [in, size=howmany] int *reserveIDs, const paroc_accesspoint &localservice,  [out, size=howmany] paroc_accesspoint *objcontacts);
+    conc sync virtual int ExecObj(const std::string &objname, const paroc_od &od, int howmany, [in, size=howmany] int *reserveIDs, const paroc_accesspoint &localservice,  [out, size=howmany] paroc_accesspoint *objcontacts);
 
     seq async void dump();
 
@@ -228,7 +227,7 @@ protected:
     virtual int Exec(char **arguments, char **env, int &pid, POPString popAppId, POPString reqID);
     virtual int MatchAndReserve(const paroc_od &od, float & fitness);
     virtual bool MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int howmany);
-    virtual bool Forward(const paroc_accesspoint &localservice, const paroc_string &objname, const paroc_od &od, int howmany, float *fitness,       paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize);
+    virtual bool Forward(const paroc_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, float *fitness,       paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize);
 
     virtual bool MatchUser(const paroc_accesspoint &localservice);
 

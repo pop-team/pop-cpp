@@ -177,13 +177,13 @@ POPString paroc_system::GetIP() {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
     if(popc_gethostname(hostname,256)!=0) {
-        return paroc_string("127.0.0.1");
+        return std::string("127.0.0.1");
     }
     struct hostent *hp=gethostbyname(hostname);
     unsigned ip=(unsigned(127)<<24)+1;
 
     if(hp==NULL || *(hp->h_addr_list)==NULL) {
-        return paroc_string("127.0.0.1");
+        return std::string("127.0.0.1");
     }
 
     char **p=hp->h_addr_list;

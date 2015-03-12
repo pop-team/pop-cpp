@@ -18,7 +18,6 @@
 
 #ifndef _POPC_OD_H
 #define _POPC_OD_H
-#include <paroc_string.h>
 #include <paroc_base.h>
 
 /**
@@ -155,8 +154,8 @@ public:
     inline void setPlatforms(const std::string& str) {platforms = str;}
     inline const std::string& getPlatforms() const {return platforms;}
 
-    void setValue(const paroc_string &key, const paroc_string &val);
-    void getValue(const paroc_string &key, paroc_string &val);
+    void setValue(const std::string &key, const std::string &val);
+    void getValue(const std::string &key, std::string &val);
 
 
     virtual void Serialize(paroc_buffer &buf, bool pack);
@@ -194,8 +193,8 @@ protected:
     std::string proto; //space-separate protocol lists
     std::string encode; //space-separate encoding lists
 
-    std::vector<paroc_string> keys;
-    std::vector<paroc_string> values;
+    std::vector<std::string> keys;
+    std::vector<std::string> values;
 
     //Added by clementval
     int max_depth;  //Maximum depth for the request propagation

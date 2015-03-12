@@ -146,7 +146,7 @@ Fractal::Fractal() {
     // nothing
 }
 // added lwk
-Fractal::Fractal(paroc_string machine) {
+Fractal::Fractal(POPString machine) {
     //rprintf("Object Fractal put on %s by ssh\n",(const char *)paroc_system::GetHost());
 }
 

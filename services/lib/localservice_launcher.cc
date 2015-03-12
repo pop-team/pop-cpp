@@ -19,7 +19,7 @@ void Usage() {
 int main(int argc, char **argv) {
     int port;
     char objcode[256], host[256];
-    paroc_string challenge;
+    std::string challenge;
 
     char *tmp;
     bool stop=(paroc_utils::checkremove(&argc,&argv,"stop")!=NULL);

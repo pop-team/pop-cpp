@@ -17,14 +17,13 @@
 #include "popc_allocator.h"
 
 #include "paroc_od.h"
-#include "paroc_string.h"
 
 class POPC_Allocator_uds_interconnector : public POPC_Allocator {
 public:
     POPC_Allocator_uds_interconnector();
     ~POPC_Allocator_uds_interconnector();
-    virtual POPString allocate(POPString& objectname, paroc_od& od);
-    virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb);
+    virtual std::string allocate(std::string& objectname, paroc_od& od);
+    virtual paroc_combox* allocate_group(std::string& objectname, paroc_od& od, int nb);
     virtual POPC_Protocol get_protocol() {
         return POPC_Allocator::UDS;
     }

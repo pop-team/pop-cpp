@@ -316,17 +316,17 @@ void popc_combox_uds::Close() {
  * @param Reference to a POPString object to store the protocol name
  * @return TRUE in any cases.
  */
-bool popc_combox_uds::GetProtocol(POPString & protocolName) {
+bool popc_combox_uds::GetProtocol(std::string & protocolName) {
     protocolName = UDS_PROTOCOL_NAME;
     return true;
 }
 
 /**
  * Get the current url of this combox. Format of the url is uds://uds_rank.object_id
- * @param Reference to a POPString object to store the url.
+ * @param Reference to a string object to store the url.
  * @return FALSE if the combox has no url. TRUE otherwise.
  */
-bool popc_combox_uds::GetUrl(POPString & accesspoint) {
+bool popc_combox_uds::GetUrl(std::string & accesspoint) {
     if(_uds_address.length() == 0) {
         return false;
     }

@@ -17,7 +17,7 @@
 #define _POPC_INTERFACE_CORE_H
 
 #include <stdio.h>
-#include <string.h>
+#include <string>
 #include <pthread.h>    // Added for asynchronous object construction
 
 #include <paroc_base.h>
@@ -77,7 +77,7 @@ public:
     //Disconnect the interface from its object
     void Release();
     //Get Binding status...
-    void BindStatus(int &code, paroc_string &platform, paroc_string &info);
+    void BindStatus(int &code, std::string &platform, std::string &info);
 
     bool isBinded();
 
@@ -88,7 +88,7 @@ public:
     int DecRef();
 
     //Ask the server to use specific encoding method
-    bool Encoding(paroc_string encoding);
+    bool Encoding(std::string encoding);
 
     // Force the remote object to be terminated...
     void Kill();
@@ -167,10 +167,10 @@ private:
     std::string _ssh_dest_ip;
     std::string _ssh_user;
     POPWayback wayToNode;   //Save the way to the node running the object
-    POPString popAppId;
+    std::string popAppId;
 
-    void NegotiateEncoding(paroc_string &enclist, paroc_string &peerplatform);
-    std::vector<std::string> Tokenize(const paroc_string &s);
+    void NegotiateEncoding(std::string &enclist, std::string &peerplatform);
+    std::vector<std::string> Tokenize(const std::string &s);
     void ApplyCommPattern(const std::string& pattern, std::vector<std::string> &accesslist);
     int CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port);
     int KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port);

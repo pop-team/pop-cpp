@@ -14,7 +14,7 @@ parclass ParObject {
 
 public:
     ParObject() @{od.url("localhost");};
-    ParObject(paroc_string machine) @{od.url(machine);};
+    ParObject(POPString machine) @{od.url(machine);};
     ParObject(float f) @{od.power(f);};
     ~ ParObject();
 

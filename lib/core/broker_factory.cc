@@ -54,7 +54,7 @@ paroc_broker *paroc_broker_factory::Create(const char *objname) {
     return NULL;
 }
 
-void paroc_broker_factory::List(std::vector<paroc_string>& objlist) {
+void paroc_broker_factory::List(std::vector<std::string>& objlist) {
     if(brokerlist == NULL) {
         return;
     }

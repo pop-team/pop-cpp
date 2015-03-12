@@ -41,7 +41,7 @@ int Screen::run(int argc, char cmdline[32][32]) {
             ima = IMAG_MAX, imi = IMAG_MIN,
             rs, is;
 
-    paroc_string* machine[nbMaxMachines];
+    POPString* machine[nbMaxMachines];
     FILE *f;
     int nbOfMachines  = 0;
     int  nbWorker;
@@ -69,13 +69,13 @@ int Screen::run(int argc, char cmdline[32][32]) {
         char* s;
         s=(char*)malloc(100);
         while(fscanf(f, "%s", s)!=EOF) {
-            machine[nbOfMachines] = new paroc_string(s);
+            machine[nbOfMachines] = new POPString(s);
             nbOfMachines++;
         }
         fclose(f);
     } else
         for(nbOfMachines=0; nbOfMachines<nbWorker; nbOfMachines++) {
-            machine[nbOfMachines] = new paroc_string("localhost");
+            machine[nbOfMachines] = new POPString("localhost");
         }
 
     printf("Available machines:\n");

@@ -28,7 +28,7 @@ char DataType::stdType[MAXSTDTYPES][32]= {"bool",
                                           "float",
                                           "double",
                                           "void",
-                                          "paroc_string",
+                                          "std::string",
                                           "std::string",
                                           "string"
                                          };

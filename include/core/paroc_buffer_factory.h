@@ -14,6 +14,7 @@
 #define POPC_BUFFER_FACTORY_H
 
 #include "paroc_buffer.h"
+#include <string>
 
 /*This abstract class declares an interface creating abstract buffer*/
 class paroc_buffer;
@@ -34,7 +35,7 @@ public:
 
     virtual paroc_buffer* CreateBuffer()=0;
 
-    virtual bool GetBufferName(paroc_string & bufferName)=0;
+    virtual bool GetBufferName(std::string & bufferName)=0;
 };
 
 #endif // POPC_BUFFER_FACTORY_H

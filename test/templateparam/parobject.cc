@@ -6,7 +6,7 @@ ParObject::ParObject() {
     theData.GetData()->SetIdent(0);
 }
 
-ParObject::ParObject(paroc_string machine) {
+ParObject::ParObject(POPString machine) {
     printf("TemplateParam: Object ParObject created on %s\n"/*,POPGetHost()*/);
     theData.GetData()->SetIdent(1);
 }

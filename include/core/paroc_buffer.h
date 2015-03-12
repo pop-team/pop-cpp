@@ -13,7 +13,6 @@
 #ifndef _POPC_DATAPACK_MARSHAL_H
 #define _POPC_DATAPACK_MARSHAL_H
 
-#include "paroc_string.h"
 #include "paroc_combox.h"
 #include <string>
 #include <vector>

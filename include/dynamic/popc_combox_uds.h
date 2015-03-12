@@ -49,8 +49,8 @@ public:
 
     virtual void Close();
 
-    virtual bool GetUrl(paroc_string & accesspoint);
-    virtual bool GetProtocol(paroc_string & protocolName);
+    virtual bool GetUrl(std::string & accesspoint);
+    virtual bool GetProtocol(std::string & protocolName);
 
     void set_timeout(int value);
 

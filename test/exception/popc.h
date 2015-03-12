@@ -5,7 +5,7 @@
 #define sync
 #define conc
 #define mutex
-#define paroc_string char*
+#define POPString char*
 #endif
 
 #ifdef _PAROC_
