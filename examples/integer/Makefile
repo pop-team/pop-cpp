@@ -1,16 +1,13 @@
-POPCC=../../parser/popcc
-POPCPP=../../parser/popcpp
-POPCPATH=../..
-CROSSCOMPILE=-cxx=FCCpx -Xg -pthread -cpp="FCCpx -E"
-POPCCOMPILE=-noclean -popc-static -popcdir=$(POPCPATH) -popcpp=$(POPCPP)  -verbose
+POPCC=popcc
+FLAGS=-pseudo-dynamic -verbose
 
 all: main integer.obj
 
 main: main.cc integer.ph integer.cc
-	$(POPCC) $(POPCCOMPILE) -o main integer.ph integer.cc main.cc 
+	$(POPCC) $(FLAGS) -o main integer.ph integer.cc main.cc 
 
 integer.obj: integer.ph integer.cc
-	$(POPCC) $(POPCCOMPILE) -object -o integer.obj integer.cc integer.ph 
+	$(POPCC) $(FLAGS) -object -o integer.obj integer.cc integer.ph 
 
 clean:
 	rm -f *.o *.obj main obj.map _popc* popc_mpi_interconnector

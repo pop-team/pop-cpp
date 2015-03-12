@@ -12,12 +12,11 @@ int main(int argc, char **argv) {
 
         cout << "Result : " << o1.Get() << endl;
     } catch(POPException &e) {
-        cout<<"Exception occurs in application..."<<endl;
-        e->Print();
-        return -1;
+        cout<<"Exception occurs in application... "<< e.what() <<endl;
+        return 1;
     } catch(...) {
         cout<<"Unknown exception occurs in application..."<<endl;
-        return -1;
+        return 1;
 
     }
     cout << "it's finished ... " << endl;

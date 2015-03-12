@@ -4,6 +4,7 @@
 
 parclass Child :
 public Mother { // Inherit form Mother class
+
     classuid(1001);
 
 public:
@@ -13,4 +14,5 @@ public:
     virtual void callMethod(Mother &c, int v);
 
 };
+
 #endif

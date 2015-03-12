@@ -2,7 +2,7 @@
 #define _MOTHER_PH
 
 parclass Mother {
-    classuid(1000);
+    classuid(1002);
 
 public:
 
@@ -16,4 +16,5 @@ public:
 protected:
     int val;
 };
+
 #endif

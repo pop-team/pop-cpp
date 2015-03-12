@@ -1,3 +1,8 @@
+/**
+ * @author  P.Kuonen
+ * @date    2012.09.04
+ * This program tests using hierarchy of class as parameters
+ */
 #include <stdlib.h>
 #include <iostream>
 #include "mother.ph"
@@ -13,8 +18,8 @@ void callMethod(Mother c, int v) {
 }
 
 int main(int argc, char** argv) {
-    cout << endl << "Heritage: Starting..." << endl;
-
+    cout << endl << "Heritage: Starting test..." << endl;
+    
     cout << "Heritage: Creation of object c of class Mother" << endl;
     Mother c;
 
@@ -38,3 +43,6 @@ int main(int argc, char** argv) {
     return 0;
 
 }
+
+
+

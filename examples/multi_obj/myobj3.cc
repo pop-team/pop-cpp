@@ -3,7 +3,7 @@
 
 
 MyObj3::MyObj3(POPString machine) {
-    rprintf("Remote object MyObj3 on %s\n",(const char *)POPSystem::GetHost());
+    rprintf("Remote object MyObj3 on %s\n",POPSystem::GetHost().c_str());
 }
 
 MyObj3::~MyObj3() {
