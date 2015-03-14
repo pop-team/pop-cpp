@@ -210,29 +210,24 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
 #endif
     //Find service ID (pairs IP-port for tracing
 
-    char str[1024];
-    strcpy(str,GetAccessPoint().GetAccessString().c_str());
-    char *tmp=str;
-    while(*tmp!=0 && *tmp!=':') {
-        tmp++;
-    }
-    *tmp=0;
+    std::vector<std::string> acc;
+    popc_tokenize(acc,GetAccessPoint().GetAccessString(), ":");
 
-    srand(time(NULL));
+    unsigned int seed = time(NULL);
 
     int ret=paroc_system::GetIP(serviceID,1);
     if(ret!=1) {
         LOG_ERROR( "[JM] Can't find IP address");
-        serviceID[0]=rand();
+        serviceID[0]=rand_r(&seed);
     }
 
-    if(sscanf(tmp+1,"%d", serviceID+1)!=1) {
-        serviceID[1]=rand();
+    if(sscanf(acc.at(1).c_str(),"%d", serviceID+1)!=1) {
+        serviceID[1]=rand_r(&seed);
     }
 
     LOG_DEBUG( "MyID=%d:%d",serviceID[0], serviceID[1]);
 
-    LOG_DEBUG_IF(ret<=0, "[JM] Can not find IP address of %s for resource discovery tracking",str);
+    LOG_DEBUG_IF(ret<=0, "[JM] Can not find IP address of %s for resource discovery tracking", GetAccessPoint().GetAccessString().c_str());
 
 
     int service_timeout=0;
@@ -269,7 +264,8 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
 
     LOG_INFO( "[JM] Loading information from %s", conf.c_str());
 
-    str[1023]=0;
+    char str[1024];
+
     const char* mycontact = GetAccessPoint().GetAccessString().c_str();
     LOG_DEBUG( "[JM] jobmgr access string %s", mycontact);
     while(!feof(f)) {

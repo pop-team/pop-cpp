@@ -38,7 +38,7 @@ AppCoreService::AppCoreService(const std::string &challenge, bool daemon, const 
         hash = hash*-1;
     }
     long int timenow = now-0;
-    sprintf(id, "POPAPPID_%ld_%ld_%s_%d", timenow, hash, ip.c_str(), popc_getpid());
+    snprintf(id, sizeof(id), "POPAPPID_%ld_%ld_%s_%d", timenow, hash, ip.c_str(), popc_getpid());
     _popcAppId = id;
     /* ViSaG */
 

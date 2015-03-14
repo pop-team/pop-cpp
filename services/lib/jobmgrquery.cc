@@ -5,8 +5,8 @@
 
 int main(int argc, char **argv) {
     try {
-        char master[256];
-        char str1[256];
+        std::string master;
+        std::String str1;
 
         if(paroc_utils::checkremove(&argc,&argv,"-help")!=NULL) {
             printf("Usage: jobmgrquery [-help] [jobmgr contact | jobmgr host]\n");
@@ -14,13 +14,13 @@ int main(int argc, char **argv) {
         }
 
         if(argc<=1) {
-            strcpy(master,paroc_system::GetHost());
+            master = paroc_system::GetHost();
         } else {
-            strcpy(master,argv[1]);
+            master = argv[1];
         }
 
-        if(strchr(master,':')==NULL) {
-            strcat(master,":2711");
+        if(master.find(':') == std::string::npos) {
+            master += ":2711";
         }
 
 

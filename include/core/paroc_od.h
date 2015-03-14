@@ -89,7 +89,7 @@ public:
     //void url(const std::string h);
 
     //void url(const std::string h, std::string arch);
-    inline void joburl(const std::string& str) {jobcontact = str;};
+    inline void joburl(const std::string& str) {jobcontact = str;}
     inline void executable(const std::string& str) {codefile = str;}
 
     inline void protocol(const std::string& myproto){proto = myproto;}

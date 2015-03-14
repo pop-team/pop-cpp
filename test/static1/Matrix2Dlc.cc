@@ -97,7 +97,10 @@ void Matrix2Dlc::display()
 
 void Matrix2Dlc::display(int n)
 {
-	if (n>nbLine) n=nbLine; if (n>nbCol) n=nbCol;
+	if (n>nbLine)
+	    n=nbLine;
+	if (n>nbCol)
+	    n=nbCol;
 	for (int i=0; i<n; i++)
 	{
 		for (int j=0; j<n; j++)

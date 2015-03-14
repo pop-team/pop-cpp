@@ -76,7 +76,7 @@ paroc_container<T>::operator T* () {
 
 template<class T>
 paroc_interface_container<T>::paroc_interface_container(int count) {
-    data=(count>0)? (T *)malloc(count*sizeof(T)) : NULL;
+    data=(count>0)? reinterpret_cast<T *>(malloc(count*sizeof(T))) : NULL;
     n=count;
     for(T *tmp=data; count>0; count--, tmp++) {
         new(tmp) T(paroc_interface::_paroc_nobind);
