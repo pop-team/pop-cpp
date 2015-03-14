@@ -235,9 +235,10 @@ protected:
     virtual bool CheckPauseList(const paroc_accesspoint &app);
 
     bool AddRequest(int reqId[3]);
-
+    
+    // TODO LW: Why do we have to specify size for NodeInTrace and not AddTrace
     bool AddTrace(int trace[MAX_HOPS], int &tracesize);
-    bool NodeInTrace(int trace[MAX_HOPS], int tracesize, paroc_accesspoint &contact);
+    bool NodeInTrace([in,size=tracesize]int trace[MAX_HOPS], int tracesize, paroc_accesspoint &contact);
 
 
     bool ObjectAlive(paroc_accesspoint &t);
