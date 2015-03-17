@@ -3,6 +3,9 @@
 #include <string.h>
 #include "jobmgr.ph"
 
+
+// TODO LW: This is not compiled
+
 int main(int argc, char **argv) {
     char master[256];
     char slaver[256];

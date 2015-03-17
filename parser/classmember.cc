@@ -141,9 +141,9 @@ bool Param::DeclareParam(char *output, bool header) {
     char tmpvar[1024];
 
     if(isRef) {
-        sprintf(tmpvar,"&%s", name);
+        snprintf(tmpvar,sizeof(tmpvar),"&%s", name);
     } else if(isArray) {
-        sprintf(tmpvar,"%s", name);
+        snprintf(tmpvar,sizeof(tmpvar),"%s", name);
     } else {
         strcpy(tmpvar,name);
     }
@@ -197,14 +197,14 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
             base->GetDeclaration(nullptr,basetype);
 
             if(nptr==1 && base->IsParClass()) {
-                sprintf(decl, "paroc_interface_container<%s> __paroc_container_%s(%s);\n%s =__paroc_container_%s;\n", basetype,name,paramSize,name,name);
+                snprintf(decl, sizeof(decl), "paroc_interface_container<%s> __paroc_container_%s(%s);\n%s =__paroc_container_%s;\n", basetype,name,paramSize,name,name);
             } else {
                 char tmpstr[1024];
                 strcpy(tmpstr,base->GetName());
                 for(int i=1; i<nptr; i++) {
                     strcat(tmpstr,"*");
                 }
-                sprintf(decl, "paroc_container<%s> __paroc_container_%s(%s);\n%s=__paroc_container_%s;\n", tmpstr,name ,paramSize,   name, name);
+                snprintf(decl, sizeof(decl), "paroc_container<%s> __paroc_container_%s(%s);\n%s=__paroc_container_%s;\n", tmpstr,name ,paramSize,   name, name);
 
             }
             strcat(output,decl);

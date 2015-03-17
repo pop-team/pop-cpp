@@ -29,8 +29,12 @@ Matrix2Dlc Matrix2Dlc::getLinesBloc(int noLine, int nbLines)
 		tmp.nbLine = nbLines;
 		tmp.dataSize = dataSize;
 		tmp.value = &(value[noLine*nbCol]);
-		if (shared==NULL) tmp.shared = value; else tmp.shared=shared;
-		if (tmp.shared!=NULL) (tmp.shared[dataSize])= (tmp.shared[dataSize])+(ValueType)1;
+		if (shared==NULL)
+			tmp.shared = value;
+		else
+			tmp.shared=shared;
+		if (tmp.shared!=NULL)
+			tmp.shared[dataSize]= (tmp.shared[dataSize])+(ValueType)1;
 		//tmp.showState("Getting lines DONE:", true);
 		return tmp;
 	}
@@ -49,7 +53,7 @@ void Matrix2Dlc::setBloc(int noLine, int noCol, Matrix2Dlc v)
 		if (value==NULL)
 		{
 			dataSize = nbLine*nbCol;
-			value = (ValueType*)malloc((dataSize+1)*ValueTypeSize);
+			value = reinterpret_cast<ValueType*>(malloc((dataSize+1)*ValueTypeSize));
 			if (value==NULL) {printf("\nMEMORY OVERFLOW !!!!\n"); exit(0);}
 			value[dataSize]=0;
 			shared = NULL;
@@ -70,7 +74,7 @@ void Matrix2Dlc::setLinesBloc(int noLine, Matrix2Dlc v)
 		if (value==NULL)
 		{
 			dataSize = nbLine*nbCol;
-			value = (ValueType*)malloc((dataSize+1)*ValueTypeSize);
+			value = reinterpret_cast<ValueType*>(malloc((dataSize+1)*ValueTypeSize));
 			if (value==NULL) {printf("\nMEMORY OVERFLOW !!!!\n"); exit(0);}
 			value[dataSize]=0;
 			shared = NULL;
@@ -86,12 +90,14 @@ void Matrix2Dlc::setLinesBloc(int noLine, Matrix2Dlc v)
 void Matrix2Dlc::display()
 {
 	if (value!=NULL)
+	{
 		for (int i=0; i<nbLine; i++)
 		{
 			for (int j=0; j<nbCol; j++)
-				printf("%8.1lf ",(double)value[i*nbCol+j]);
+				printf("%8.1lf ",static_cast<double>(value[i*nbCol+j]));
 			printf("\n");
 		}
+	}
 	printf("....................\n");
 }
 
@@ -104,7 +110,7 @@ void Matrix2Dlc::display(int n)
 	for (int i=0; i<n; i++)
 	{
 		for (int j=0; j<n; j++)
-			printf("%6.1f ",(float)value[i*nbCol+j]);
+			printf("%6.1f ",static_cast<float>(value[i*nbCol+j]));
 		printf("..\n");
 	}
 	printf("....................\n");

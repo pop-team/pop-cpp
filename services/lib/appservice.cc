@@ -149,7 +149,7 @@ void AppCoreService::LoadAddOn() {
     } else if((parocdir=getenv("POPC_LOCATION"))==NULL) {
         return;
     } else {
-        sprintf(fname,"%s/etc/appservice.conf",parocdir);
+        snprintf(fname,sizeof(fname),"%s/etc/appservice.conf",parocdir);
     }
 
     FILE *f=fopen(fname,"r");
@@ -178,7 +178,7 @@ void AppCoreService::LoadAddOn() {
         paroc_accesspoint ap;
         paroc_accesspoint jobmgr;
         paroc_od od; // Note : the od is empty !
-        sprintf(exec, "%s -constructor",objfile);
+        snprintf(exec, sizeof(exec), "%s -constructor",objfile);
         if(paroc_interface::LocalExec(NULL,exec, NULL, jobmgr, GetAccessPoint(), &ap,1,od)!=0) {
             LOG_DEBUG("Fail to start the add-on [%s]", buf);
             continue;
@@ -212,7 +212,7 @@ int popc_appservice_log(const char *format,...) {
     char *tmp=getenv("POPC_TEMP");
     char logfile[256];
     if(tmp!=NULL) {
-        sprintf(logfile,"%s/popc_appservice_log",tmp);
+        snprintf(logfile,sizeof(logfile),"%s/popc_appservice_log",tmp);
     } else {
         strcpy(logfile, "/tmp/pop_appservice.log");
     }

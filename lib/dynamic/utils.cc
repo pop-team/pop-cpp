@@ -272,7 +272,7 @@ std::string paroc_utils::MakeContact(const char *host, int port) {
         return host;
     }
     char tmpcontact[256];
-    sprintf(tmpcontact,"%s:%d",host,port);
+    snprintf(tmpcontact,sizeof(tmpcontact),"%s:%d",host,port);
     return std::string(tmpcontact);
 }
 
@@ -283,7 +283,7 @@ int rprintf(const char *format,...) {
 
     va_list ap;
     va_start(ap, format);
-    vsnprintf(str,1023, format, ap);
+    vsnprintf(str,sizeof(str), format, ap);
     va_end(ap);
     if(paroc_system::appservice.IsEmpty()) {
         //At this point, we arrive from an object that has no appservice, namely a local object (RemoteLog for instance)

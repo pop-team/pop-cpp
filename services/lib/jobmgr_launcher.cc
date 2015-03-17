@@ -70,13 +70,12 @@ void Usage() {
 }
 
 int main(int argc, char **argv) {
-    std::string host;
     std::string hostpfm;
     std::string conf;
     std::string virtconf;
     std::string objcode;
     std::string challenge;
-    char str[1024];
+    std::string str;
     /** TO BE REMOVED FOR 2.5 BUT KEEP FOR 3.0
     bool popfile_service = true; */
 
@@ -89,14 +88,14 @@ int main(int argc, char **argv) {
     if((tmp=paroc_utils::checkremove(&argc,&argv,"-servicepoint="))==NULL) {
         tmp=paroc_utils::checkremove(&argc,&argv,"-port=");
         if(tmp==NULL) {
-            sprintf(str,"%s:2711",paroc_system::GetHost().c_str());
+            str = paroc_system::GetHost() + ":2711";
         } else {
-            sprintf(str,"%s:%s",paroc_system::GetHost().c_str(),tmp);
+            str = paroc_system::GetHost() + ":" + tmp;
         }
     } else {
-        strcpy(str,tmp);
-        if(strchr(str,':')==NULL) {
-            strcat(str,":2711");
+        str = tmp;
+        if(str.find(':')==std::string::npos) {
+            str += ":2711";
         }
     }
 
@@ -105,8 +104,8 @@ int main(int argc, char **argv) {
         if(paroc_utils::checkremove(&argc, &argv, "popfile"))
             popfile_service = false;
     }*/
-    host=str;
-    sprintf(str,"%s:2712",paroc_system::GetHost().c_str());
+    std::string host=str;
+    str = paroc_system::GetHost() + ":2712";
     hostpfm=str;
 
 
@@ -115,10 +114,10 @@ int main(int argc, char **argv) {
         challenge=tmp;
     } else if((tmp=paroc_utils::checkremove(&argc,&argv,"-genchallenge="))!=NULL && !stop) {
 
-        srand(time(NULL));
+        unsigned int seed = time(NULL);
         char tmpstr[256];
         for(int i=0; i<255; i++) {
-            tmpstr[i]=static_cast<char>('A'+23.0*rand()/(RAND_MAX+1.0));
+            tmpstr[i]=static_cast<char>('A'+23.0*rand_r(&seed)/(RAND_MAX+1.0));
         }
         tmpstr[255]=0;
         challenge=tmpstr;
@@ -241,20 +240,21 @@ int main(int argc, char **argv) {
 
 
         if((tmp=paroc_utils::checkremove(&argc,&argv,"-conf="))==NULL && (tmp=getenv("JOBMGR_CONF"))==NULL) {
-            char *paroc_location=getenv("POPC_LOCATION");
-            if(paroc_location==NULL) {
+            const char *tmp2=getenv("POPC_LOCATION");
+            if(tmp2==NULL) {
                 LOG_ERROR("POPC_LOCATION environment variable is not set.");
                 Usage();
             }
+            std::string paroc_location(tmp2);
 
 #ifdef POPC_GLOBUS
-            sprintf(str,"%s/etc/jobmgr.globus.conf",paroc_location);
+            str = paroc_location + "/etc/jobmgr.globus.conf";
 #else
-            sprintf(str,"%s/etc/jobmgr.conf",paroc_location);
+            str = paroc_location + "/etc/jobmgr.conf";
 #endif
             conf=str;
 
-            sprintf(str, "%s/etc/virtual.conf", paroc_location);
+            str = paroc_location + "/etc/virtual.conf";
             virtconf=str;
 
         } else {
@@ -283,11 +283,11 @@ int main(int argc, char **argv) {
          */
 #ifdef POPC_SECURE_VIRTUAL
         VirtSecurePOPCSearchNode psn(challenge, daemon);
-        LOG_INFO("[POP-C++ Runtime] VSPSN Started [%s]", psn.GetAccessPoint().GetAccessString());
+        LOG_INFO("[POP-C++ Runtime] VSPSN Started [%s]", psn.GetAccessPoint().GetAccessString().c_str());
 
         //Create the VPSM
         VirtualPOPCSecurityManager psm(challenge, daemon);
-        LOG_INFO("[POP-C++ Runtime] VPSM Started [%s]", psm.GetAccessPoint().GetAccessString());
+        LOG_INFO("[POP-C++ Runtime] VPSM Started [%s]", psm.GetAccessPoint().GetAccessString().c_str());
 
         //Give reference to other services
         psm.setPSNRef(psn.GetAccessPoint());

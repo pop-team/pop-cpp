@@ -75,7 +75,7 @@ void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, 
     char iterator[256];
     char value[256];
     char decl[1024];
-    sprintf(iterator,"_elem%d", counter++);
+    snprintf(iterator,sizeof(iterator),"_elem%d", counter++);
 
     // In case we have a vector template, it is much faster to Pack the memory as one block (since it is contiguous !)
     if((strcmp(name, "vector")==0 || strcmp(name, "std::vector")==0) && elements[0]->IsStandardType()) {
@@ -85,63 +85,63 @@ void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, 
             strcpy(paramname,"unkown");
         }
 
-        sprintf(tmpcode,"int %s_size=%s.size();\n", iterator, varname);
+        snprintf(tmpcode,sizeof(tmpcode),"int %s_size=%s.size();\n", iterator, varname);
         output += tmpcode;
 
-        sprintf(tmpcode,"%s.Push(\"@size\",\"int\",1);\n%s.Pack(&%s_size, 1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
+        snprintf(tmpcode,sizeof(tmpcode),"%s.Push(\"@size\",\"int\",1);\n%s.Pack(&%s_size, 1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
         output += tmpcode;
 
-        sprintf(tmpcode,"%s.Pack((%s*)&(%s)[0], %s_size);\n%s.Pop();\n",bufname, elements[0]->GetName(), varname, iterator, bufname);
+        snprintf(tmpcode,sizeof(tmpcode),"%s.Pack((%s*)&(%s)[0], %s_size);\n%s.Pop();\n",bufname, elements[0]->GetName(), varname, iterator, bufname);
         output += tmpcode;
 
     } else if((strcmp(name, "map")==0 || strcmp(name, "std::map")==0)) {
-        sprintf(tmpcode, "int %s_size=%s.size();\n",iterator,varname);
+        snprintf(tmpcode,sizeof(tmpcode), "int %s_size=%s.size();\n",iterator,varname);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Push(\"@size\",\"int\",1);\n%s.Pack(&%s_size,1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
+        snprintf(tmpcode,sizeof(tmpcode), "%s.Push(\"@size\",\"int\",1);\n%s.Pack(&%s_size,1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
         output += tmpcode;
 
         GetDeclaration(nullptr,decl);
-        sprintf(tmpcode, "for (%s::const_iterator it_%s=%s.begin();it_%s!=%s.end();it_%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "for (%s::const_iterator it_%s=%s.begin();it_%s!=%s.end();it_%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
         output += tmpcode;
 
         elements[0]->GetDeclaration(nullptr,decl);
-        sprintf(value,"((%s &)(it_%s->first))", decl, iterator);
+        snprintf(value,sizeof(value),"((%s &)(it_%s->first))", decl, iterator);
         elements[0]->Marshal(value, bufname,nullptr, output);
 
         elements[1]->GetDeclaration(nullptr,decl);
-        sprintf(value,"((%s &)(it_%s->second))", decl, iterator);
+        snprintf(value,sizeof(value),"((%s &)(it_%s->second))", decl, iterator);
         elements[1]->Marshal(value, bufname,nullptr, output);
 
-        sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
+        snprintf(tmpcode,sizeof(tmpcode),"}\n%s.Pop();\n", bufname);
         output += tmpcode;
     } else {
 
         elements[0]->GetDeclaration(nullptr,decl);
-        sprintf(value,"((%s &)(*%s))", decl, iterator);
+        snprintf(value,sizeof(value),"((%s &)(*%s))", decl, iterator);
 
         GetDeclaration(nullptr,decl);
 
-        sprintf(tmpcode, "int %s_size=%s.size();\n",iterator,varname);
+        snprintf(tmpcode,sizeof(tmpcode), "int %s_size=%s.size();\n",iterator,varname);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Push(\"@size\",\"int\",1);\n%s.Pack(&%s_size,1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
+        snprintf(tmpcode,sizeof(tmpcode), "%s.Push(\"@size\",\"int\",1);\n%s.Pack(&%s_size,1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
         output += tmpcode;
 
-        sprintf(tmpcode, "for (%s::iterator %s=%s.begin();%s!=%s.end();%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "for (%s::iterator %s=%s.begin();%s!=%s.end();%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
         output += tmpcode;
         elements[0]->Marshal(value, bufname,nullptr, output);
 
-        sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
+        snprintf(tmpcode,sizeof(tmpcode),"}\n%s.Pop();\n", bufname);
         output += tmpcode;
     }
 }
@@ -153,7 +153,7 @@ void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/,
     char iterator[32];
     char value[256];
     char decl[1024];
-    sprintf(iterator,"_elem%d", counter++);
+    snprintf(iterator,sizeof(iterator),"_elem%d", counter++);
 
     // In case we have a vector template, it is much faster to Pack the memory as one block (since it is contiguous !)
     if((strcmp(name, "vector")==0 || strcmp(name, "std::vector")==0) && elements[0]->IsStandardType()) {
@@ -163,68 +163,68 @@ void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/,
             strcpy(paramname,"unkown");
         }
 
-        sprintf(tmpcode,"int %s_size=0;\n%s.Push(\"@size\",\"int\", 1);\n%s.UnPack(&%s_size,1);\n%s.Pop();\n",iterator, bufname, bufname, iterator, bufname);
+        snprintf(tmpcode,sizeof(tmpcode),"int %s_size=0;\n%s.Push(\"@size\",\"int\", 1);\n%s.UnPack(&%s_size,1);\n%s.Pop();\n",iterator, bufname, bufname, iterator, bufname);
         output += tmpcode;
 
-        sprintf(tmpcode,"%s.resize(%s_size);\n", varname, iterator);
+        snprintf(tmpcode,sizeof(tmpcode),"%s.resize(%s_size);\n", varname, iterator);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
         output += tmpcode;
 
-        sprintf(tmpcode,"%s.UnPack((%s*)&%s[0],%s_size);\n%s.Pop();\n",bufname,elements[0]->GetName(),varname,iterator, bufname);
+        snprintf(tmpcode,sizeof(tmpcode),"%s.UnPack((%s*)&%s[0],%s_size);\n%s.Pop();\n",bufname,elements[0]->GetName(),varname,iterator, bufname);
         output += tmpcode;
     } else if((strcmp(name, "map")==0 || strcmp(name, "std::map")==0)) {
 
-        sprintf(tmpcode, "int %s_size=0;\n",iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "int %s_size=0;\n",iterator);
         output += tmpcode;
 
         elements[0]->GetDeclaration(nullptr,decl);
-        sprintf(tmpcode, "%s %s_key;\n",decl, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "%s %s_key;\n",decl, iterator);
         output += tmpcode;
         elements[1]->GetDeclaration(nullptr,decl);
-        sprintf(tmpcode, "%s %s_value;\n",decl, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "%s %s_value;\n",decl, iterator);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Push(\"@size\",\"int\",1);\n%s.UnPack(&%s_size,1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
+        snprintf(tmpcode,sizeof(tmpcode), "%s.Push(\"@size\",\"int\",1);\n%s.UnPack(&%s_size,1);\n%s.Pop();\n", bufname, bufname, iterator, bufname);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.clear();\nfor(int i=0;i<%s_size;i++){\n",varname,iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "%s.clear();\nfor(int i=0;i<%s_size;i++){\n",varname,iterator);
         output += tmpcode;
 
         elements[0]->GetDeclaration(nullptr,decl);
-        sprintf(value,"((%s &)(%s_key))", decl, iterator);
+        snprintf(value,sizeof(value),"((%s &)(%s_key))", decl, iterator);
         elements[0]->DeMarshal(value, bufname,nullptr, output);
         elements[1]->GetDeclaration(nullptr,decl);
-        sprintf(value,"((%s &)(%s_value))", decl, iterator);
+        snprintf(value,sizeof(value),"((%s &)(%s_value))", decl, iterator);
         elements[1]->DeMarshal(value, bufname,nullptr, output);
 
-        sprintf(tmpcode, "%s[%s_key]=%s_value;\n",varname,iterator,iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "%s[%s_key]=%s_value;\n",varname,iterator,iterator);
         output += tmpcode;
 
-        sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
+        snprintf(tmpcode,sizeof(tmpcode),"}\n%s.Pop();\n", bufname);
         output += tmpcode;
 
     } else {
         elements[0]->GetDeclaration(nullptr,decl);
-        sprintf(value,"((%s &)(*%s))", decl, iterator);
+        snprintf(value,sizeof(value),"((%s &)(*%s))", decl, iterator);
 
         GetDeclaration(nullptr,decl);
 
-        sprintf(tmpcode, "int %s_size;\n%s.Push(\"@size\",\"int\", 1);\n%s.UnPack(&%s_size,1);\n%s.Pop();\n%s.resize(%s_size);\n", iterator,bufname,bufname, iterator, bufname,varname,iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "int %s_size;\n%s.Push(\"@size\",\"int\", 1);\n%s.UnPack(&%s_size,1);\n%s.Pop();\n%s.resize(%s_size);\n", iterator,bufname,bufname, iterator, bufname,varname,iterator);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
         output += tmpcode;
 
-        sprintf(tmpcode, "for (%s::iterator %s=%s.begin();%s!=%s.end();%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
+        snprintf(tmpcode,sizeof(tmpcode), "for (%s::iterator %s=%s.begin();%s!=%s.end();%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
         output += tmpcode;
         elements[0]->DeMarshal(value, bufname,nullptr, output);
 
-        sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
+        snprintf(tmpcode,sizeof(tmpcode),"}\n%s.Pop();\n", bufname);
         output += tmpcode;
     }
 }

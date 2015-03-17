@@ -407,12 +407,6 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 
     LOG_DEBUG_IF(codeconf==NULL,"No code config file");
 
-    /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
-    {
-        return false;
-    }
-    else return true;*/
-
 #ifdef DEFINE_UDS_SUPPORT
     return false;
 #else

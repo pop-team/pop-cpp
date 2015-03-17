@@ -369,7 +369,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
     } else {
         //We do benchmark now to find the computing power of the machine...
         total.flops=paroc_utils::benchmark_power();
-        sprintf(val,"%g",total.flops);
+        snprintf(val,sizeof(val),"%g",total.flops);
         info.push_back({"power", val});
     }
 
@@ -460,7 +460,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
             if(sscanf(tok.c_str(),"%s %s",var,val)!=2) {
                 LOG_ERROR( "[JM] can not parse the environment variable string [%s]",tok.c_str());
             } else {
-                sprintf(str,"%s=%s",var,val);
+                snprintf(str,sizeof(str),"%s=%s",var,val);
                 putenv(popc_strdup(str));
             }
         }
@@ -543,7 +543,7 @@ int JobMgr::Query(const std::string &type, std::string  &val) {
     if(type=="jobs") {
         //  Update();
         mutex {
-            sprintf(tmp,"%ld/%d", jobs.size() ,maxjobs);
+            snprintf(tmp,sizeof(tmp),"%ld/%d", jobs.size() ,maxjobs);
             val=tmp;
         }
         return 1;
@@ -558,7 +558,7 @@ int JobMgr::Query(const std::string &type, std::string  &val) {
                     continue;
                 }
 
-                sprintf(tmp,"APP=%s/JOB=%s\n", r.appservice.GetAccessString().c_str(), r.contact.GetAccessString().c_str());
+                snprintf(tmp,sizeof(tmp),"APP=%s/JOB=%s\n", r.appservice.GetAccessString().c_str(), r.contact.GetAccessString().c_str());
                 val+=tmp;
             }
         }
@@ -568,7 +568,7 @@ int JobMgr::Query(const std::string &type, std::string  &val) {
     if(type=="pausejobs") {
         //  Update();
         mutex {
-            sprintf(tmp,"%lu", pause_apps.size());
+            snprintf(tmp,sizeof(tmp),"%lu", pause_apps.size());
             val=tmp;
         }
         return 1;
@@ -576,7 +576,7 @@ int JobMgr::Query(const std::string &type, std::string  &val) {
 
     if(type=="power_available") {
         //  Update();
-        sprintf(tmp,"%g/%g", available.flops ,total.flops);
+        snprintf(tmp,sizeof(tmp),"%g/%g", available.flops ,total.flops);
         val=tmp;
         return 1;
     }
@@ -1475,17 +1475,17 @@ void JobMgr::Start() {
     char filename[256];
 #ifndef NDEBUG
     if(tmp!=NULL) {
-        sprintf(filename,"%s/jobmgr_stdout_%d",tmp,pid);
+        snprintf(filename,sizeof(filename),"%s/jobmgr_stdout_%d",tmp,pid);
     } else {
-        sprintf(filename,"/tmp/jobmgr_stdout_%d",pid);
+        snprintf(filename,sizeof(filename),"/tmp/jobmgr_stdout_%d",pid);
     }
 
     popc_open(filename,O_WRONLY | O_CREAT,S_IRWXU | S_IRGRP);
 
     if(tmp!=NULL) {
-        sprintf(filename,"%s/jobmgr_stderr_%d",tmp,pid);
+        snprintf(filename,sizeof(filename),"%s/jobmgr_stderr_%d",tmp,pid);
     } else {
-        sprintf(filename,"/tmp/jobmgr_stderr_%d", pid);
+        snprintf(filename,sizeof(filename),"/tmp/jobmgr_stderr_%d", pid);
     }
 
     popc_open(filename,O_WRONLY | O_CREAT, S_IRWXU | S_IRGRP);
@@ -1496,7 +1496,7 @@ void JobMgr::Start() {
 #endif
 
     if(tmp!=NULL) {
-        sprintf(filename,"%s/jobmgr.pid",tmp);
+        snprintf(filename,sizeof(filename),"%s/jobmgr.pid",tmp);
     } else {
         strcpy(filename,"/tmp/jobmgr.pid");
     }
@@ -1619,7 +1619,7 @@ int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany
     char env_walltime[256];
     *env_walltime=0;
     const std::string& cwd = od.getCwd();
-    sprintf(env_np,"POPC_NP=%d",howmany);
+    snprintf(env_np,sizeof(env_np),"POPC_NP=%d",howmany);
     *curenv=env_np;
     curenv++;
     //Visag 1l
@@ -1642,10 +1642,10 @@ int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany
             }
 
             if(r->walltime>0 && *env_walltime==0) {
-                int hours=int(r->walltime/3600);
+                int hours=static_cast<int>(r->walltime/3600);
                 int minutes=int ((r->walltime-hours*3600)/60);
                 float sec=r->walltime-hours*3600-minutes*60;
-                sprintf(env_walltime,"POPC_JOB_WALLTIME=%d:%d:%g",hours,minutes,sec);
+                snprintf(env_walltime,sizeof(env_walltime),"POPC_JOB_WALLTIME=%d:%d:%g",hours,minutes,sec);
                 *curenv=env_walltime;
                 curenv++;
             }
@@ -1699,7 +1699,7 @@ int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany
     std::string cburl;
     tmpsock.GetUrl(cburl);
     char tmpstr[1024];
-    sprintf(tmpstr,"-callback=%s",cburl.c_str());
+    snprintf(tmpstr,sizeof(tmpstr),"-callback=%s",cburl.c_str());
     argv.push_back(tmpstr);
 
 #ifdef OD_DISCONNECT
@@ -1710,7 +1710,7 @@ int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany
 
     // Add the working directory as argument
     if(!cwd.empty()) {
-        sprintf(tmpstr,"-cwd=%s", cwd.c_str());
+        snprintf(tmpstr,sizeof(tmpstr),"-cwd=%s", cwd.c_str());
         argv.push_back(tmpstr);
     }
 #ifndef NDEBUG
@@ -1794,7 +1794,7 @@ void JobMgr::dump() {
 #ifndef NDEBUG
     FILE *f;
     char str[256];
-    sprintf(str,"%s/JobMgr_%d",DUMP_PATH,popc_getpid());
+    snprintf(str,sizeof(str),"%s/JobMgr_%d",DUMP_PATH,popc_getpid());
     char *tmp=str;
     for(char *tmp=str; *tmp!=0; tmp++) if(*tmp==':') {
             *tmp='_';
@@ -1811,7 +1811,7 @@ void JobMgr::dump() {
         auto& t=keys[i];
         NodeInfo info;
         if(neighbors.GetInfo(t,info)) {
-            fprintf(f,"%ld: %s\t%g\t%d\n",i,t.c_str(), info.heuristic,int(info.nodetype));
+            fprintf(f,"%ld: %s\t%g\t%d\n",i,t.c_str(), info.heuristic,static_cast<int>(info.nodetype));
         }
     }
     fclose(f);

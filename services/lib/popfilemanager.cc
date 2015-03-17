@@ -219,7 +219,7 @@ int popfile_log(const char *format,...) {
     char logfile[256];
 
     if(tmp) {
-        sprintf(logfile,"%s/popfile_log",tmp);
+        snprintf(logfile,sizeof(logfile),"%s/popfile_log",tmp);
     } else {
         strcpy(logfile, "/tmp/popfile.log");
     }

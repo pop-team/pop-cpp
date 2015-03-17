@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
             LOG_WARNING("Local service point to stop is missing");
             Usage();
         } else {
-            sprintf(host,"%s:2711",paroc_system::GetHost().c_str());
+            snprintf(host,sizeof(host),"%s:2711",paroc_system::GetHost().c_str());
         }
     } else {
         strcpy(host,tmp);
@@ -64,9 +64,9 @@ int main(int argc, char **argv) {
                 Usage();
             }
 #ifdef POPC_GLOBUS
-            sprintf(objcode,"%s/services/appservice.globus",tmp);
+            snprintf(objcode,sizeof(objcode),"%s/services/appservice.globus",tmp);
 #else
-            sprintf(objcode,"%s/services/appservice",tmp);
+            snprintf(objcode,sizeof(objcode),"%s/services/appservice",tmp);
 #endif
 
         } else {

@@ -14,7 +14,7 @@ Matrix2D::Matrix2D(int line, int col)
 {
 	nbLine=line; nbCol=col;
 	dataSize =nbLine*nbCol;
-	value=(ValueType*)malloc((dataSize+1)*ValueTypeSize);
+	value=reinterpret_cast<ValueType*>(malloc((dataSize+1)*ValueTypeSize))
 	if (value==NULL) {printf("\nMEMORY OVERFLOW !!!!\n"); exit(0);}
 	value[dataSize]=0;
 	shared = NULL;
@@ -30,8 +30,12 @@ Matrix2D::Matrix2D(const Matrix2D &m)
 	nbCol = m.nbCol;
 	dataSize = m.dataSize;
 	value = m.value;
-	if (m.shared==NULL) shared = value; else shared = m.shared;
-	if (shared!=NULL) shared[dataSize] = shared[dataSize] + (ValueType)1;
+	if (m.shared==NULL)
+		shared = value;
+	else
+		shared = m.shared;
+	if (shared!=NULL)
+		shared[dataSize] = shared[dataSize] + (ValueType)1;
 	//showState("Copying DONE: ", false);
 }
 
@@ -78,29 +82,37 @@ void Matrix2D::init()   //random
 {
 	srand(time(NULL));
 	if (value!=NULL)
+	{
 		for (int i=0; i<nbCol*nbLine; i++)
 			value[i] = ((ValueType)(rand()%200))/7;
+	}
 }
 
 void Matrix2D::init(char* filename) // from file
 { // Still to write
 	if (value!=NULL)
+	{
 		for (int i=0; i<nbCol*nbLine; i++)
 			value[i]=(ValueType)0;
+	}
 }
 
 void Matrix2D::fill(ValueType v) // fill with v
 {
 	if (value!=NULL)
+	{
 		for (int i=0; i<nbCol*nbLine; i++)
 			value[i]=(ValueType)v;
+	}
 }
 
 void Matrix2D::zero() // fill with 0
 {
 	if (value!=NULL)
+	{
 		for (int i=0; i<nbCol*nbLine; i++)
 			value[i]=(ValueType)0;
+	}
 }
 
 void Matrix2D::null()  // if possible free memory space used by data
@@ -131,8 +143,12 @@ void Matrix2D::operator=(Matrix2D m)
 	nbCol = m.nbCol;
 	dataSize = m.dataSize;
 	value = m.value;
-	if (m.shared==NULL) shared = m.value; else shared = m.shared;
-	if (shared!=NULL) shared[dataSize] = shared[dataSize] +(ValueType)1;
+	if (m.shared==NULL)
+		shared = m.value;
+	else
+		shared = m.shared;
+	if (shared!=NULL)
+		shared[dataSize] = shared[dataSize] +(ValueType)1;
 	//printf("OPERATOR DONE:Mlc%dx%d, value=%d, shared=%d\n", nbLine, nbCol, (int)(value), (int)(shared));
 }
 
