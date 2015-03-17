@@ -5,7 +5,7 @@ Child::Child() {
     val = -1;
 }
 
-int Child::Method1() {
+void Child::Method1() {
     printf("Heritage: Executing Method1 in Child no:%d\n", val);
 }
 

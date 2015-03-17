@@ -371,7 +371,7 @@ bool popc_buffer_xdr_mpi::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
     char *dat=packeddata.data();
 
-    if(dat == NULL) {
+    if(dat == nullptr) {
         LOG_ERROR("fail 1");
         return false;
     }
@@ -474,8 +474,8 @@ int popc_buffer_xdr_mpi::get_size() {
 char* popc_buffer_xdr_mpi::get_load() {
     char *dat = packeddata.data();
 
-    if(dat == NULL) {
-        return NULL;
+    if(dat == nullptr) {
+        return nullptr;
     }
     int n = packeddata.size();
     int h[5];
@@ -501,7 +501,7 @@ char* popc_buffer_xdr_mpi::get_load() {
         break;
     default:
         LOG_ERROR("fail 2");
-        return NULL;
+        return nullptr;
     }
     memcpy(dat, h, 20);
 

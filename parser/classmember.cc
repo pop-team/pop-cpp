@@ -27,26 +27,26 @@ Param::Param(DataType *ptype) {
     name[0]=0;
     mytype=ptype;
 
-    paramSize=marshalProc=defaultVal=NULL;
+    paramSize=marshalProc=defaultVal=nullptr;
     isVoid=isArray=isRef=isConst=isInput=isOutput=false;
 }
 
 Param::Param() {
     name[0]=0;
-    mytype=NULL;
+    mytype=nullptr;
 
-    paramSize=marshalProc=defaultVal=NULL;
+    paramSize=marshalProc=defaultVal=nullptr;
     isVoid=isArray=isRef=isConst=isInput=isOutput=false;
 }
 
 Param::~Param() {
-    if(paramSize!=NULL) {
+    if(paramSize!=nullptr) {
         free(paramSize);
     }
-    if(marshalProc!=NULL) {
+    if(marshalProc!=nullptr) {
         free(marshalProc);
     }
-    if(defaultVal!=NULL) {
+    if(defaultVal!=nullptr) {
         free(defaultVal);
     }
 }
@@ -119,11 +119,11 @@ int  Param::GetAttr() {
 }
 
 bool Param::CanMarshal() {
-    if(mytype==NULL) {
+    if(mytype==nullptr) {
         return false;
     }
     int stat=mytype->CanMarshal();
-    if(marshalProc!=NULL || stat==1 || (stat==2 && paramSize!=NULL)) {
+    if(marshalProc!=nullptr || stat==1 || (stat==2 && paramSize!=nullptr)) {
         return true;
     }
     return false;
@@ -131,7 +131,7 @@ bool Param::CanMarshal() {
 }
 
 bool Param::DeclareParam(char *output, bool header) {
-    if(mytype == NULL) {
+    if(mytype == nullptr) {
         return false;
     }
     if(isConst) {
@@ -151,7 +151,7 @@ bool Param::DeclareParam(char *output, bool header) {
     if(!mytype->GetDeclaration(tmpvar, output)) {
         return false;
     }
-    if(defaultVal!=NULL && header) {
+    if(defaultVal!=nullptr && header) {
         strcat(output,"=");
         strcat(output,defaultVal);
     }
@@ -159,7 +159,7 @@ bool Param::DeclareParam(char *output, bool header) {
 }
 
 bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
-    if(mytype==NULL) {
+    if(mytype==nullptr) {
         return false;
     }
     if(isVoid) {
@@ -167,9 +167,9 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
     }
 
     int nptr=mytype->IsPointer();
-    if(nptr==1 && paramSize==NULL) {
+    if(nptr==1 && paramSize==nullptr) {
         DataType *base=mytype->GetBaseType();
-        assert(base!=NULL);
+        assert(base!=nullptr);
         if(!base->GetDeclaration(name, output)) {
             return false;
         }
@@ -189,12 +189,12 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
         strcat(output,";\n");
 
         //Check and allocate memory....
-        if(allocmem && paramSize!=NULL && nptr) {
+        if(allocmem && paramSize!=nullptr && nptr) {
             char decl[1024];
             DataType *base=mytype->GetBaseType();
-            assert(base!=NULL);
+            assert(base!=nullptr);
             char basetype[1024];
-            base->GetDeclaration(NULL,basetype);
+            base->GetDeclaration(nullptr,basetype);
 
             if(nptr==1 && base->IsParClass()) {
                 sprintf(decl, "paroc_interface_container<%s> __paroc_container_%s(%s);\n%s =__paroc_container_%s;\n", basetype,name,paramSize,name,name);
@@ -214,7 +214,7 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
 }
 
 bool Param::DeclareVariable(char *output) {
-    if(mytype==NULL) {
+    if(mytype==nullptr) {
         return false;
     }
 
@@ -233,7 +233,7 @@ bool Param::DeclareVariable(char *output) {
 }
 
 bool Param::Marshal(char *bufname, bool reformat,bool inf_side, std::string &output) {
-    if(mytype==NULL) {
+    if(mytype==nullptr) {
         return false;
     }
 
@@ -260,7 +260,7 @@ bool Param::Marshal(char *bufname, bool reformat,bool inf_side, std::string &out
     char sizeinfo[1024];
     *sizeinfo=0;
 
-    if(paramSize!=NULL && !reformat) {
+    if(paramSize!=nullptr && !reformat) {
         char decl[1024];
         sprintf(decl, "int __paroc_size1_%s=%s;\n%s.Push(\"%sSize\",\"int\",1);\n%s.Pack(& __paroc_size1_%s,1);\n%s.Pop();\n",name,paramSize,bufname, name, bufname,name, bufname);
         sprintf(sizeinfo,"__paroc_size1_%s",name);
@@ -268,18 +268,18 @@ bool Param::Marshal(char *bufname, bool reformat,bool inf_side, std::string &out
         output += decl;
     }
 
-    if(marshalProc!=NULL) {
+    if(marshalProc!=nullptr) {
         char tmpcode[1024];
         sprintf(tmpcode,"%s(%s,%s, %s, %d, 0);\n",marshalProc,bufname,tmpvar, (*sizeinfo==0)? "0" : sizeinfo,flags);
         output += tmpcode;
     } else {
-        mytype->Marshal(tmpvar,bufname,(*sizeinfo==0)? NULL : sizeinfo,output);
+        mytype->Marshal(tmpvar,bufname,(*sizeinfo==0)? nullptr : sizeinfo,output);
     }
     return true;
 }
 
 bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_side, std::string &output) {
-    if(mytype==NULL) {
+    if(mytype==nullptr) {
         return false;
     }
 
@@ -296,7 +296,7 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
     char sizeinfo[1024];
     *sizeinfo=0;
 
-    if(paramSize!=NULL && !reformat) {
+    if(paramSize!=nullptr && !reformat) {
         char decl[1024];
         sprintf(decl, "int __paroc_size2_%s;\n%s.Push(\"%sSize\",\"int\",1);\n \n%s.UnPack(& __paroc_size2_%s,1);\n%s.Pop();\n",name,bufname, name, bufname,name, bufname);
 
@@ -309,9 +309,9 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
         if(alloc_mem && nptr) {
             char alloccode[1024];
             DataType *base=mytype->GetBaseType();
-            assert(base!=NULL);
+            assert(base!=nullptr);
             char basetype[1024];
-            base->GetDeclaration(NULL,basetype);
+            base->GetDeclaration(nullptr,basetype);
 
             if(nptr==1 && base->IsParClass()) {
                 sprintf(alloccode, "paroc_interface_container<%s> __paroc_container_%s(__paroc_size2_%s);\n %s=__paroc_container_%s;\n", basetype,name,name,name, name);
@@ -327,26 +327,26 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
             output += alloccode;
         }
     }
-    if(marshalProc!=NULL) {
+    if(marshalProc!=nullptr) {
         char tmpcode[1024];
 
         sprintf(tmpcode,"%s(%s,%s,%s,%d,%s);",marshalProc,bufname,tmpvar, (*sizeinfo==0)?  "0" : sizeinfo,flags,(inf_side ? "0" : "&_internal_mem"));
         output += tmpcode;
     } else {
-        mytype->DeMarshal(tmpvar,bufname,(*sizeinfo==0)? NULL : sizeinfo,output);
+        mytype->DeMarshal(tmpvar,bufname,(*sizeinfo==0)? nullptr : sizeinfo,output);
     }
 
     return true;
 }
 
 bool Param::UserProc(char *output) {
-    if(mytype==NULL) {
+    if(mytype==nullptr) {
         return false;
     }
 
     *output=0;
 
-    if(marshalProc==0) {
+    if(marshalProc==nullptr) {
         return false;
     }
 
@@ -362,17 +362,17 @@ bool Param::UserProc(char *output) {
 
 //BEGIN OD - object description class
 ObjDesc::ObjDesc() {
-    odstr=NULL;
+    odstr=nullptr;
 }
 ObjDesc::~ObjDesc() {
-    if(odstr!=NULL) {
+    if(odstr!=nullptr) {
         free(odstr);
     }
 }
 
 void ObjDesc::Generate(char *code) {
     code[0]=0;
-    if(odstr == NULL) {
+    if(odstr == nullptr) {
         return;
     }
     strcpy(code, "\n  ");
@@ -380,10 +380,10 @@ void ObjDesc::Generate(char *code) {
 }
 
 void ObjDesc::SetCode(char *code) {
-    if(odstr!=NULL) {
+    if(odstr!=nullptr) {
         free(odstr);
     }
-    odstr=(code==NULL)? NULL : popc_strdup(code);
+    odstr=(code==nullptr)? nullptr : popc_strdup(code);
 }
 
 //END ObjectDesc - object description class
@@ -420,7 +420,7 @@ void ClassMember::generate_header_pog(std::string &output, bool interface) {
 
 void ClassMember::GenerateHeader(std::string& output, bool /*interface*/) {
     char *fname;
-    if(line>0 && (fname=myclass->GetFileInfo())!=NULL) {
+    if(line>0 && (fname=myclass->GetFileInfo())!=nullptr) {
         char str[1024];
         sprintf(str,"\n# %d \"%s\"\n", line, fname);
         output += str;
@@ -449,7 +449,7 @@ void Attribute::GenerateHeader(std::string &output, bool interface) {
 }
 
 Param *Attribute::NewAttribute() {
-    Param *t=new Param;
+    auto  t=new Param;
     attributes.push_back(t);
     return t;
 }
@@ -597,13 +597,13 @@ Directive::Directive(Class *cl, char *directive): ClassMember(cl, PUBLIC) {
 }
 
 Directive::~Directive() {
-    if(code!=NULL) {
+    if(code!=nullptr) {
         free(code);
     }
 }
 
 void Directive::GenerateHeader(std::string &output, bool /*interface*/) {
-    if(code!=NULL) {
+    if(code!=nullptr) {
         output += "\n";
         output += code;
         output += "\n";
@@ -618,7 +618,7 @@ const int Method::POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID = 9;
 const int Method::POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE = 0;
 const char* Method::POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME = "set_non_collective_rank";
 
-Method::Method(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), returnparam(NULL) {
+Method::Method(Class *cl, AccessType myaccess): ClassMember(cl, myaccess), returnparam(nullptr) {
     name[0]=0;
     id=0;
     invoketype = invokesync;
@@ -718,7 +718,7 @@ void Method::GenerateReturn(std::string &output, bool header) {
 
 void Method::GenerateReturn(std::string &output, bool header, bool interface) {
     DataType *type=returnparam.GetType();
-    if(type==NULL) {
+    if(type==nullptr) {
         return;
     }
     if(header && isVirtual) {
@@ -746,7 +746,7 @@ void Method::GenerateReturn(std::string &output, bool header, bool interface) {
 
     char tmp[1024];
 
-    type->GetDeclaration(NULL,tmp);
+    type->GetDeclaration(nullptr,tmp);
     //if (returnparam.IsConst())sprintf(tmp, "const %s", tmp);
     output += tmp;
 
@@ -1224,7 +1224,7 @@ void Method::GenerateBroker(std::string &output) {
             } else {
                 strcpy(str,"__paroc_buf");
             }
-            if(p.marshalProc!=NULL && !have_memspool) {
+            if(p.marshalProc!=nullptr && !have_memspool) {
                 strcpy(str,"\nparoc_memspool _internal_mem;");
                 output += str;
                 have_memspool=true;
@@ -1259,8 +1259,8 @@ void Method::GenerateBroker(std::string &output) {
         strcat(methodcall,");");
         // Add 'catch' to catch and print all std exceptions raised in the method
         char tempcatch[256];
-        for(int i=0; i<256; i++) {
-            tempcatch[i]='\0';
+        for(auto & elem : tempcatch) {
+            elem='\0';
         }
 
         sprintf(tempcatch,"\n  } catch(std::exception& e) {\n    popc_logger(__DEBUG__,\"(classmember.cc)\", 0, \"\", \"Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what());\n    throw;\n  }\n", name, clname); // TODO lwk: message never printed on a remote object (same below)
@@ -1334,7 +1334,7 @@ void Method::GenerateBroker(std::string &output) {
 }
 
 Param *Method::AddNewParam() {
-    Param *t=new Param;
+    auto  t=new Param;
     params.push_back(t);
     return t;
 }
@@ -1381,7 +1381,7 @@ bool Method::operator ==(Method &other) {
     DataType *type1=returnparam.GetType();
     DataType *type2=other.returnparam.GetType();
 
-    if((type1==NULL || type2==NULL) && type1!=type2) {
+    if((type1==nullptr || type2==nullptr) && type1!=type2) {
         return false;
     }
 

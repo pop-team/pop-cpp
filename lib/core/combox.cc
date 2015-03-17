@@ -27,14 +27,14 @@
 
 
 paroc_connection::paroc_connection(paroc_combox *com) : _is_initial_connection(false) {
-    if(com != NULL) {
+    if(com != nullptr) {
         fact = com->GetBufferFactory();
         combox = com;
     }
 }
 
 paroc_connection::paroc_connection(paroc_combox* com, bool init) {
-    if(com != NULL) {
+    if(com != nullptr) {
         fact = com->GetBufferFactory();
         combox = com;
     }
@@ -76,14 +76,14 @@ const char* paroc_combox::PROTOCOL_SEPARATOR = "://";
 
 paroc_combox::paroc_combox() {
     defaultFact = paroc_buffer_factory_finder::GetInstance()->FindFactory("xdr");
-    if(defaultFact == NULL) {
+    if(defaultFact == nullptr) {
         LOG_ERROR("POP-C++ Error: can not find the xdr buffer factory!");
     }
 
     timeout = -1;
     for(int i = 0; i < 2; i++) {
-        cblist[i] = NULL;
-        cbdata[i] = NULL;
+        cblist[i] = nullptr;
+        cbdata[i] = nullptr;
     }
 }
 
@@ -98,7 +98,7 @@ bool paroc_combox::SendAck(paroc_connection *conn) {
 
 bool paroc_combox::RecvAck(paroc_connection * /*conn*/) {
     paroc_connection * connex= Wait();
-    if(connex==NULL) {
+    if(connex==nullptr) {
         paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"Wait() returned NULL");
     }
     char buf[4];
@@ -144,7 +144,7 @@ paroc_buffer_factory *paroc_combox::GetBufferFactory() {
 
 bool paroc_combox::OnNewConnection(paroc_connection *conn) {
     COMBOX_CALLBACK cb=cblist[COMBOX_NEW];
-    if(cb!=NULL) {
+    if(cb!=nullptr) {
         return cb(cbdata[COMBOX_NEW], conn);
     }
     return true;
@@ -152,7 +152,7 @@ bool paroc_combox::OnNewConnection(paroc_connection *conn) {
 
 bool paroc_combox::OnCloseConnection(paroc_connection *conn) {
     COMBOX_CALLBACK cb=cblist[COMBOX_CLOSE];
-    if(cb!=NULL) {
+    if(cb!=nullptr) {
         return cb(cbdata[COMBOX_CLOSE], conn);
     }
     return true;

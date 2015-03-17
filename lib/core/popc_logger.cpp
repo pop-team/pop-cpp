@@ -46,13 +46,13 @@ int popc_logger(LOGLEVEL level, const char* file, int line, const char* function
 
     // Use file name without path to avoid having the full user path in logs
     const char *basename = strrchr(file, '/');
-    if(basename==NULL)
+    if(basename==nullptr)
         basename=file;
     else basename += 1;
 
     char *tmp=getenv("POPC_TEMP");
     char logfile[256];
-    if(tmp!=NULL) {
+    if(tmp!=nullptr) {
         // note: we need to log in diferent files for each user
         // to avoid that root or any other user locks the log files
         sprintf(logfile,"%s/popc.%s.log", tmp, getenv("USER"));
@@ -87,7 +87,7 @@ int popc_logger(LOGLEVEL level, const char* file, int line, const char* function
 
     // Print the message to file
     FILE *f=fopen(logfile,"a");
-    if(f==NULL) {
+    if(f==nullptr) {
         fprintf(stderr, "ERROR: Impossible to open log file %s\n", logfile);
         return 1;
     }

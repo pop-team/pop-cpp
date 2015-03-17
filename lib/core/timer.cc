@@ -57,7 +57,7 @@ double Timer::Elapsed() {
 
 double Timer::GetCurrentTime() {
     timeval tp;
-    popc_gettimeofday(&tp,NULL);
+    popc_gettimeofday(&tp,nullptr);
     double t=tp.tv_sec+double(tp.tv_usec)*1.0E-6;
     return t;
 }

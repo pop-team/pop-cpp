@@ -23,11 +23,11 @@ paroc_memspool::~paroc_memspool() {
 
 void* paroc_memspool::Alloc(int sz) {
     if(sz<=0) {
-        return NULL;
+        return nullptr;
     }
 
     void* data;
-    if((data=malloc(sz))==NULL) {
+    if((data=malloc(sz))==nullptr) {
         paroc_exception::paroc_throw(errno);
     }
     memtemp.push_back(data);

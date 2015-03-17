@@ -25,7 +25,7 @@
 char *paroc_utils::checkremove(int *argc, char ***argv, const char *opt) {
     int i=0;
     int n=strlen(opt);
-    char* ret=0;
+    char* ret=nullptr;
     while(i<*argc) {
         if(strncmp((*argv)[i],opt,n)==0) {
             ret=(*argv)[i]+n;
@@ -48,7 +48,7 @@ bool paroc_utils::isEqual(const char *s1, const char *s2) {
     if(s1==s2) {
         return true;
     }
-    if(s1==NULL || s2==NULL) {
+    if(s1==nullptr || s2==nullptr) {
         return false;
     }
     while(*s1!=0 && *s2!=0) {
@@ -144,7 +144,7 @@ std::string paroc_utils::FindAbsolutePath(const std::string& fname) {
 
     if(pos >= fname.size()) {
         // not found
-        if(popc_getcwd(dir,1024)==NULL) {
+        if(popc_getcwd(dir,1024)==nullptr) {
             *dir=0;
         }
         std::string s(dir);
@@ -153,7 +153,7 @@ std::string paroc_utils::FindAbsolutePath(const std::string& fname) {
     char olddir[1024];
     popc_getcwd(olddir,1024);
     popc_chdir(fname.substr(0,pos-1).c_str());
-    if(popc_getcwd(dir,1024)==NULL) {
+    if(popc_getcwd(dir,1024)==nullptr) {
         *dir=0;
     }
     popc_chdir(olddir);

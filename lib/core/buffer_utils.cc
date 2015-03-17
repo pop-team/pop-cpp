@@ -16,7 +16,7 @@
 template <class T>
 void packarray(paroc_buffer &buf, T *param, int size, int flag, paroc_memspool* /*temp*/) {
     if(flag & FLAG_MARSHAL) {
-        int n=(param!=0) ?  size : 0;
+        int n=(param!=nullptr) ?  size : 0;
         buf.Pack(&n,1);
         if(n>0) {
             buf.Pack(param,n);
@@ -27,7 +27,7 @@ void packarray(paroc_buffer &buf, T *param, int size, int flag, paroc_memspool* 
         if(n>0) {
             buf.UnPack(param,n);
         } else {
-            param=0;
+            param=nullptr;
         }
     }
 

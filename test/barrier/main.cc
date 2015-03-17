@@ -15,11 +15,12 @@ int main(int argc, char** argv) {
     }
 
     POP_Barrier Bar(Nb_workers);     /*Initialise the barrier */
-    Cworker theWorkers[Nb_workers];  /* Create the workers */
+    std::vector<Cworker> theWorkers;  /* Create the workers */
 
     for(int i = 0; i<Nb_workers; i++) { /*start Working*/
-        theWorkers[i].SetNo(i);
-        theWorkers[i].Work(Bar);
+        theWorkers.push_back(Cworker());
+        theWorkers.back().SetNo(i);
+        theWorkers.back().Work(Bar);
     }
     if(theWorkers[1].GetNo()==1) {
         printf("Barrier: test succeeded, destroying objects...\n");

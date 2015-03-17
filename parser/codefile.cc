@@ -19,8 +19,8 @@ CodeFile::CodeFile(const std::string& fname) {
     asyncAllocationEnabled = false;       // Asynchronous allocation is disabled by default.
     filename = fname;
     DataType *std;
-    for(int i=0; i<MAXSTDTYPES; i++) {
-        std=new DataType(DataType::stdType[i]);
+    for(auto & elem : DataType::stdType) {
+        std=new DataType(elem);
         AddDataType(std);
     }
 }
@@ -57,7 +57,7 @@ void CodeFile::GenerateCode(std::string &output, bool client, bool broker) {
         if(codes[j]->Type() == TYPE_CLASS) {
             Class &cl = *(Class *)(codes[j]);
             char *clfname = cl.GetFileInfo();
-            if(filename.empty() || clfname == NULL || SameFile(clfname, filename.c_str())) {
+            if(filename.empty() || clfname == nullptr || SameFile(clfname, filename.c_str())) {
                 if(client) {
                     cl.GenerateClient(output);
                 }
@@ -92,7 +92,7 @@ Class *CodeFile::FindClass(char *clname) {
     for(int i=0; i<n; i++) if(paroc_utils::isEqual(classlist[i]->GetName(),tmp)) {
             return classlist[i];
         }
-    return 0;
+    return nullptr;
 }
 
 void CodeFile::FindAllClass(CArrayClass &list) {
@@ -166,7 +166,7 @@ DataType *CodeFile::FindDataType(const char *name) {
 
 void CodeFile::AddDataType(DataType *type) {
     type->SetOwnerFile(this);
-    if(type->GetName()==NULL) {
+    if(type->GetName()==nullptr) {
         temptypes.push_back(type);
     } else {
         datatypes.push_back(type);
@@ -182,10 +182,10 @@ bool CodeFile::SameFile(const char *file1, const char *file2) {
     const char *fn2=strrchr(file2,'/');
     char dir1[256], dir2[256];
 
-    if(fn1==NULL && fn2==NULL) {
+    if(fn1==nullptr && fn2==nullptr) {
         return false;
     }
-    if(fn1==NULL) {
+    if(fn1==nullptr) {
         fn1=file1;
         popc_getcwd(dir1,255);
     } else {
@@ -202,7 +202,7 @@ bool CodeFile::SameFile(const char *file1, const char *file2) {
         }
     }
 
-    if(fn2==NULL) {
+    if(fn2==nullptr) {
         fn2=file2;
         popc_getcwd(dir2,255);
     } else {

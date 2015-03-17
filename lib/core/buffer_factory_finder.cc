@@ -27,7 +27,7 @@
 #include <dlfcn.h>
 #endif
 
-paroc_buffer_factory_finder *paroc_buffer_factory_finder::bff=NULL;
+paroc_buffer_factory_finder *paroc_buffer_factory_finder::bff=nullptr;
 
 paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
 
@@ -44,14 +44,14 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
     bfArray[0] = new paroc_buffer_xdr_factory();
 //  bfArray[0] = new paroc_buffer_raw_factory();
     metrics[0] = 0;
-    plugins[0] = NULL;
+    plugins[0] = nullptr;
     size = 1;
 
     char *module = getenv("POPC_LOADABLE_MODULES");
-    if(module != NULL) {
+    if(module != nullptr) {
         char *libs = popc_strdup(module);
         char *mod = strtok(module,":");
-        while(mod != NULL && size < MAX_FACTORY) {
+        while(mod != nullptr && size < MAX_FACTORY) {
             metrics[size] = 1;
 #ifdef HAVE_LIBDL
             plugins[size] = LoadPlugin(mod, bfArray[size]);
@@ -69,7 +69,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
                 }
             }
 #endif
-            mod = strtok(NULL, ":");
+            mod = strtok(nullptr, ":");
         }
         free(libs);
     }
@@ -87,11 +87,11 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
         std::string pluginmap(plugindir);
         pluginmap += "/paroc_buffer.map";
         FILE *map = fopen(pluginmap.c_str(), "r");
-        if(map != NULL) {
+        if(map != nullptr) {
             char line[1024];
             char fname[1024];
             int metric;
-            while(fgets(line,1023,map) != NULL && size < MAX_FACTORY) {
+            while(fgets(line,1023,map) != nullptr && size < MAX_FACTORY) {
                 int t = sscanf(line, "%s %d", fname, &metric);
                 if(t<1) {
                     continue;
@@ -123,9 +123,9 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
             fclose(map);
         } else {
             DIR *dir = opendir(plugindir.c_str());
-            if(dir != NULL) {
+            if(dir != nullptr) {
                 dirent *t;
-                while((t = readdir(dir))!=NULL && size<MAX_FACTORY) {
+                while((t = readdir(dir))!=nullptr && size<MAX_FACTORY) {
                     if(!paroc_utils::MatchWildcard(t->d_name,"*.so")) {
                         continue;
                     }
@@ -169,7 +169,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
 }
 
 paroc_buffer_factory_finder::~paroc_buffer_factory_finder() {
-    bff=NULL;
+    bff=nullptr;
     for(int i=0; i<size; i++) {
         bfArray[i]->Destroy();
     }
@@ -209,14 +209,14 @@ void * paroc_buffer_factory_finder::LoadPlugin(char *fname, paroc_buffer_factory
 #else
     ((void)fname);  //Silence warning
     ((void)f);      //Silence warning
-    return NULL;
+    return nullptr;
 #endif
 }
 
 
 
 paroc_buffer_factory_finder* paroc_buffer_factory_finder::GetInstance() {
-    if(bff==NULL) {
+    if(bff==nullptr) {
         bff=new paroc_buffer_factory_finder();
         return paroc_buffer_factory_finder::bff;
     } else {
@@ -253,7 +253,7 @@ paroc_buffer_factory* paroc_buffer_factory_finder::FindFactory(const std::string
             return bfArray[i];
         }
     }
-    return NULL;
+    return nullptr;
 
 
 }

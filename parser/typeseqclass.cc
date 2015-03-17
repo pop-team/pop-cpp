@@ -22,7 +22,7 @@ int TypeSeqClass::CanMarshal() {
         return 0;
     }
     char *str=GetName();
-    if(str==NULL) {
+    if(str==nullptr) {
         return 0;
     }
     if(strcmp(str,"paroc_base")==0) {

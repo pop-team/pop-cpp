@@ -67,7 +67,7 @@ paroc_message_header::paroc_message_header(int exceptioncode, const char *metnam
 
 paroc_message_header::paroc_message_header() {
     type=-1;
-    methodname=NULL;
+    methodname=nullptr;
 }
 
 void paroc_message_header::operator =(const  paroc_message_header &dat) {
@@ -114,7 +114,7 @@ void paroc_buffer::Pop() {
 }
 
 void paroc_buffer::Pack(const std::string *list, int n) {
-    if(n<=0 || list==NULL) {
+    if(n<=0 || list==nullptr) {
         return;
     }
     for(int i=0; i<n; i++,list++) {
@@ -127,7 +127,7 @@ void paroc_buffer::Pack(const std::string *list, int n) {
 }
 
 void paroc_buffer::UnPack(std::string *list, int n) {
-    if(n<=0 || list==NULL) {
+    if(n<=0 || list==nullptr) {
         return;
     }
     std::vector<char> tmpstr;
@@ -168,7 +168,7 @@ METH_VECT_PACK(std::string)
 METH_VECT_UNPACK(std::string)
 
 bool paroc_buffer::Send(paroc_connection *conn) {
-    if(conn == NULL) {
+    if(conn == nullptr) {
         LOG_ERROR("conn==NULL");
         return false;
     }
@@ -177,7 +177,7 @@ bool paroc_buffer::Send(paroc_connection *conn) {
 }
 
 bool paroc_buffer::Recv(paroc_connection *conn) {
-    if(conn==NULL) {
+    if(conn==nullptr) {
         LOG_ERROR("conn==NULL");
         return false;
     }
@@ -232,7 +232,7 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, char
     except.Reset();
     paroc_message_header tmp(EXCEPTION_STRING,except.GetHeader().GetMethodName());
     except.SetHeader(tmp);
-    int len=(code==NULL)? 0 : strlen(code)+1;
+    int len=(code==nullptr)? 0 : strlen(code)+1;
     except.Pack(&len,1);
     except.Pack(code,len);
 
@@ -327,7 +327,7 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
         int len;
         except.UnPack(&len,1);
         if(len<=0) {
-            throw(char *)NULL;
+            throw(char *)nullptr;
         }
         t=(char *)malloc(len*sizeof(char));
         except.UnPack(t,len);

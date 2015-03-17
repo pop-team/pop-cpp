@@ -32,7 +32,7 @@ int EventQueue::WaitEvent(int e, int timeout) {
 
     if(timeout>0) {
         struct timeval now;
-        popc_gettimeofday(&now, NULL);
+        popc_gettimeofday(&now, nullptr);
     }
     bool done=false;
     while(!done) {

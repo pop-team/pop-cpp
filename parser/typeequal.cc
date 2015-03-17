@@ -2,7 +2,7 @@
 
 TypeEqual::TypeEqual(char *name, DataType *atype): DataType(name) {
     type=atype;
-    if(atype->GetName()==NULL && name!=NULL) {
+    if(atype->GetName()==nullptr && name!=nullptr) {
         atype->SetName(name);
     }
 }
@@ -53,7 +53,7 @@ bool TypeEqual::IsParClass() {
 
 DataType * TypeEqual::GetBaseType() {
     DataType *t=type->GetBaseType();
-    if(t!=NULL) {
+    if(t!=nullptr) {
         return t;
     }
     return type;
@@ -61,9 +61,9 @@ DataType * TypeEqual::GetBaseType() {
 
 bool TypeEqual::GetCastType(char *output) {
     if(!IsArray()) {
-        return GetDeclaration(NULL,output);
+        return GetDeclaration(nullptr,output);
     } else {
-        return type->GetDeclaration(NULL,output);
+        return type->GetDeclaration(nullptr,output);
     }
 }
 

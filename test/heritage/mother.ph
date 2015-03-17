@@ -8,7 +8,7 @@ public:
 
     Mother() @{od.url("localhost");};
 
-    virtual int Method1();
+    virtual void Method1();
     virtual void callMethod(Mother &c, int v);
     void SetVal(int v);
     int GetVal();

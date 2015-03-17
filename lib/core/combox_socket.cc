@@ -131,7 +131,7 @@ bool paroc_combox_socket::Connect(const char *host,int port) {
 paroc_connection* paroc_combox_socket::Wait() {
     if(sockfd<0 || isCanceled) {
         isCanceled=false;
-        return NULL;
+        return nullptr;
     }
 
     if(isServer) {
@@ -596,7 +596,7 @@ paroc_connection *paroc_connection_sock::Clone() {
 }
 
 paroc_combox_socket::paroc_combox_socket() {
-    peer=NULL;
+    peer=nullptr;
     sockfd=-1;
     index=0;
     nready=0;
@@ -609,7 +609,7 @@ paroc_combox_socket::~paroc_combox_socket() {
 }
 
 bool paroc_combox_socket::Connect(const char *url) {
-    if(url==NULL) {
+    if(url==nullptr) {
 #ifdef __WIN32__
         errno=WSAEDESTADDRREQ;
 #else
@@ -670,7 +670,7 @@ int paroc_combox_socket::Send(const char *s,int len) {
 }
 
 int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn) {
-    if(conn==NULL) {
+    if(conn==nullptr) {
         return Send(s,len);
     }
 
@@ -704,7 +704,7 @@ int paroc_combox_socket::Recv(char *s,int len) {
     isCanceled=false;
     do {
         paroc_connection_sock *t=(paroc_connection_sock *)Wait();
-        if(t==NULL) {
+        if(t==nullptr) {
             return -1;
         }
 
@@ -761,7 +761,7 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
 
 #ifndef __WIN32__
         if(n==0){
-            if(CloseSock(fd) && iopeer==NULL) {
+            if(CloseSock(fd) && iopeer==nullptr) {
                 continue;
             }
 

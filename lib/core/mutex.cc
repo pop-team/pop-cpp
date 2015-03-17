@@ -60,7 +60,7 @@ POP-C++ condition implementation....
 */
 
 paroc_condition::paroc_condition() {
-    pthread_cond_init(&_cond,NULL);
+    pthread_cond_init(&_cond,nullptr);
 }
 
 paroc_condition::~paroc_condition() {
@@ -86,7 +86,7 @@ bool paroc_condition::wait(int timeout) {
     } else {
         struct timespec abstimeout;
         struct timeval now;
-        popc_gettimeofday(&now, NULL);
+        popc_gettimeofday(&now, nullptr);
         abstimeout.tv_sec = now.tv_sec + timeout/1000;
         abstimeout.tv_nsec = (now.tv_usec + (timeout%1000)*1000)* 1000;
         int ret=pthread_cond_timedwait(&_cond,&_mutex,&abstimeout);

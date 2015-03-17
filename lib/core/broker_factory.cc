@@ -24,8 +24,8 @@
 #include "paroc_utils.h"
 #include "paroc_system.h"
 
-std::vector<paroc_broker_init> *paroc_broker_factory::brokerlist=NULL;
-ispackedfunc paroc_broker_factory::CheckIfPacked=NULL;
+std::vector<paroc_broker_init> *paroc_broker_factory::brokerlist=nullptr;
+ispackedfunc paroc_broker_factory::CheckIfPacked=nullptr;
 
 paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name) {
     if(!brokerlist) {
@@ -41,8 +41,8 @@ paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name
 
 paroc_broker *paroc_broker_factory::Create(const char *objname) {
     LOG_DEBUG("Create broker for %s", objname);
-    if(brokerlist == NULL || objname == NULL) {
-        return NULL;
+    if(brokerlist == nullptr || objname == nullptr) {
+        return nullptr;
     }
 
     for(auto& t : *brokerlist){
@@ -51,11 +51,11 @@ paroc_broker *paroc_broker_factory::Create(const char *objname) {
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void paroc_broker_factory::List(std::vector<std::string>& objlist) {
-    if(brokerlist == NULL) {
+    if(brokerlist == nullptr) {
         return;
     }
     for(auto& t : *brokerlist){
@@ -64,7 +64,7 @@ void paroc_broker_factory::List(std::vector<std::string>& objlist) {
 }
 
 bool paroc_broker_factory::test(const char *objname) {
-    if(brokerlist == NULL) {
+    if(brokerlist == nullptr) {
         return false;
     }
     for(auto& test : *brokerlist){
@@ -96,9 +96,9 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
     }
 */
     char *tmp=paroc_utils::checkremove(argc,argv,"-list");
-    if(tmp!=NULL) {
+    if(tmp!=nullptr) {
         char *thisfile=getenv("POPC_EXE");
-        if(thisfile==NULL) {
+        if(thisfile==nullptr) {
             thisfile=(*argv)[0];
         }
         PrintBrokers(paroc_utils::FindAbsolutePath(thisfile).c_str(), strcmp(tmp,"long")==0);
@@ -107,14 +107,14 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
 
     char *usage=paroc_utils::checkremove(argc,argv,"-help");
     char *object=paroc_utils::checkremove(argc,argv,"-object=");
-    if(usage!=NULL || object==NULL) {
+    if(usage!=nullptr || object==nullptr) {
         printf("\n Usage:\n\t%s [-help] [-list | -listlong] [-port=<local port>] [-callback=<host:port>] [-appservice=<host:port>] [-nostdio] -object=<objectname>\n",(*argv)[0]);
-        return NULL;
+        return nullptr;
     }
 
 
     tmp=paroc_utils::checkremove(argc,argv,"-appservice=");
-    if(tmp!=NULL) {
+    if(tmp!=nullptr) {
         paroc_system::appservice.SetAccessString(tmp);
         paroc_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
     }
@@ -135,18 +135,18 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
         }
     #endif*/
 
-    bool nostdio=(paroc_utils::checkremove(argc,argv,"-nostdio")!=NULL);
+    bool nostdio=(paroc_utils::checkremove(argc,argv,"-nostdio")!=nullptr);
 
     //Now create the broker
-    if(object==NULL || *object==0) {
-        return NULL;
+    if(object==nullptr || *object==0) {
+        return nullptr;
     }
 
     // Create the real Broker object
     paroc_broker *objbroker=Create(object);
-    if(objbroker==NULL) {
+    if(objbroker==nullptr) {
         printf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
-        return NULL;
+        return nullptr;
     }
 
     // Set the classname for this broker
@@ -181,7 +181,7 @@ void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
     }
     if(brokerlist) {
         for(auto& t : *brokerlist){
-            if(!(paroc_broker_factory::CheckIfPacked!=NULL && !paroc_broker_factory::CheckIfPacked(t.objname.c_str()))) {
+            if(!(paroc_broker_factory::CheckIfPacked!=nullptr && !paroc_broker_factory::CheckIfPacked(t.objname.c_str()))) {
                 if(longformat) {
                     printf("%s %s %s\n", t.objname.c_str(), paroc_system::platform.c_str(), abspath);
                 } else {

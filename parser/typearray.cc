@@ -10,7 +10,7 @@ TypeArray::TypeArray(char *name, char *cardstr, DataType *base): DataType(name) 
 }
 
 TypeArray::~TypeArray() {
-    if(cardinal!=NULL) {
+    if(cardinal!=nullptr) {
         free(cardinal);
     }
 }
@@ -74,14 +74,14 @@ void TypeArray::Marshal(char *varname, char *bufname, char *sizehelper, std::str
     char *tmpsize;
 
 
-    if(sizehelper==NULL) {
+    if(sizehelper==nullptr) {
         GetCardinalSize(size);
         tmpsize=size;
     } else {
         tmpsize=sizehelper;
     }
 
-    if(typebase->IsStandardType() || tmpsize==NULL || strcmp(tmpsize,"1")==0) {
+    if(typebase->IsStandardType() || tmpsize==nullptr || strcmp(tmpsize,"1")==0) {
         sprintf(tmpvar,"(*((%s *)%s))",typebase->GetName(),varname);
         typebase->Marshal(tmpvar,bufname, tmpsize, output);
     } else {
@@ -102,7 +102,7 @@ void TypeArray::Marshal(char *varname, char *bufname, char *sizehelper, std::str
         output += tmpcode;
 
         sprintf(tmpvar,"(*_paroc_elem%d)",counter);
-        typebase->Marshal(tmpvar,bufname, NULL, output);
+        typebase->Marshal(tmpvar,bufname, nullptr, output);
         strcpy(tmpcode,"}\n}\n");
         output += tmpcode;
 
@@ -120,14 +120,14 @@ void TypeArray::DeMarshal(char *varname, char *bufname, char *sizehelper, std::s
     char *tmpsize;
 
 
-    if(sizehelper==NULL) {
+    if(sizehelper==nullptr) {
         GetCardinalSize(size);
         tmpsize=size;
     } else {
         tmpsize=sizehelper;
     }
 
-    if(typebase->IsStandardType() || tmpsize==NULL || strcmp(tmpsize,"1")==0) {
+    if(typebase->IsStandardType() || tmpsize==nullptr || strcmp(tmpsize,"1")==0) {
         sprintf(tmpvar,"(*((%s *)%s))",typebase->GetName(),varname);
         typebase->DeMarshal(tmpvar,bufname, tmpsize, output);
     } else {
@@ -147,7 +147,7 @@ void TypeArray::DeMarshal(char *varname, char *bufname, char *sizehelper, std::s
         output += tmpcode;
 
         sprintf(tmpvar,"(*_paroc_elem%d)",counter);
-        typebase->DeMarshal(tmpvar,bufname, NULL, output);
+        typebase->DeMarshal(tmpvar,bufname, nullptr, output);
         strcpy(tmpcode,"}\n}\n");
         output += tmpcode;
 

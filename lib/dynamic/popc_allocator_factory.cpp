@@ -23,7 +23,7 @@ const char* POPC_AllocatorFactory::PREFIX_MPI = "mpi";
 const char* POPC_AllocatorFactory::PREFIX_SHM = "shm";
 
 // Unique instance of the allocator factory
-POPC_AllocatorFactory* POPC_AllocatorFactory::instance = NULL;
+POPC_AllocatorFactory* POPC_AllocatorFactory::instance = nullptr;
 
 
 /**
@@ -43,7 +43,7 @@ POPC_AllocatorFactory::~POPC_AllocatorFactory() {
  * @return A pointer to the unique instance of the Allocator Factory
  */
 POPC_AllocatorFactory* POPC_AllocatorFactory::get_instance() {
-    if(instance == NULL) {
+    if(instance == nullptr) {
         instance = new POPC_AllocatorFactory();
     }
     return instance;
@@ -65,7 +65,7 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
             return new POPC_Allocator_uds_interconnector();
         default:
             LOG_WARNING("No allocator found");
-            return NULL; // TODO lwk security: there should be a safety if this is returned in a constructor: e.g. assert(false)
+            return nullptr; // TODO lwk security: there should be a safety if this is returned in a constructor: e.g. assert(false)
         }
     }
     // Allocation over TCP/IP socket
@@ -77,7 +77,7 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
             return new POPC_Allocator_tcpip_service();
         default:
             LOG_WARNING("No allocator found");
-            return NULL;
+            return nullptr;
         }
     }
     // Allocation over MPI
@@ -87,12 +87,12 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
 //            return new POPC_Allocator_mpi_pseudo();
         default:
             LOG_WARNING("No allocator found");
-            return NULL;
+            return nullptr;
         }
     }
     default:
         LOG_WARNING("No allocator found");
-        return NULL;
+        return nullptr;
     }
 }
 

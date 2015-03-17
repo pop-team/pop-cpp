@@ -10,7 +10,7 @@ public Mother { // Inherit form Mother class
 public:
     Child() @{od.url("localhost");};
 
-    virtual int Method1();
+    virtual void Method1();
     virtual void callMethod(Mother &c, int v);
 
 };

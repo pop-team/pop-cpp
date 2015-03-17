@@ -28,9 +28,9 @@ TypePtr::TypePtr(char *name, int level, DataType *base): DataType(name)
 
 TypePtr::TypePtr(char *name, int level, DataType *base, std::vector<bool> constPositions): DataType(name) {
     typebase=base;
-    assert(base!=NULL);
+    assert(base!=nullptr);
     //nptr=(level<=0)? 1: level;
-    size=NULL;
+    size=nullptr;
 
     if(level <= 0) {
         nptr=1;
@@ -43,7 +43,7 @@ TypePtr::TypePtr(char *name, int level, DataType *base, std::vector<bool> constP
 }
 
 TypePtr::~TypePtr() {
-    if(size!=NULL) {
+    if(size!=nullptr) {
         free(size);
     }
 }
@@ -64,9 +64,9 @@ int TypePtr::CanMarshal() {
 
 void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpvar[1024];
-    char *tmpsize=(sizehelper!=NULL)? sizehelper: size;
+    char *tmpsize=(sizehelper!=nullptr)? sizehelper: size;
 
-    if(typebase->IsStandardType() || tmpsize==NULL || strcmp(tmpsize,"1")==0) {
+    if(typebase->IsStandardType() || tmpsize==nullptr || strcmp(tmpsize,"1")==0) {
         sprintf(tmpvar,"(*(%s))",varname);
         typebase->Marshal(tmpvar,bufname, tmpsize, output);
     } else {
@@ -82,7 +82,7 @@ void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, std::strin
         sprintf(tmpcode,"\n{for (int _paroc_item=0; _paroc_item < %s; _paroc_item++) { \n", tmpsize);
         output += tmpcode;
         sprintf(tmpvar,"(%s[_paroc_item])",varname);
-        typebase->Marshal(tmpvar,bufname, NULL, output);
+        typebase->Marshal(tmpvar,bufname, nullptr, output);
 
         strcpy(tmpcode,"}\n}\n");
         output += tmpcode;
@@ -95,9 +95,9 @@ void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, std::strin
 
 void TypePtr::DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpvar[1024];
-    char *tmpsize=(sizehelper!=NULL)? sizehelper: size;
+    char *tmpsize=(sizehelper!=nullptr)? sizehelper: size;
 
-    if(typebase->IsStandardType() || tmpsize==NULL || strcmp(tmpsize,"1")==0) {
+    if(typebase->IsStandardType() || tmpsize==nullptr || strcmp(tmpsize,"1")==0) {
         sprintf(tmpvar,"(*(%s))",varname);
         typebase->DeMarshal(tmpvar,bufname, tmpsize, output);
     } else {
@@ -113,7 +113,7 @@ void TypePtr::DeMarshal(char *varname, char *bufname, char *sizehelper, std::str
         sprintf(tmpcode," {\nfor (int _paroc_item=0; _paroc_item < %s; _paroc_item++) { \n", tmpsize);
         output += tmpcode;
         sprintf(tmpvar,"(%s[_paroc_item])",varname);
-        typebase->DeMarshal(tmpvar,bufname, NULL, output);
+        typebase->DeMarshal(tmpvar,bufname, nullptr, output);
 
         strcpy(tmpcode,"}\n}\n");
         output += tmpcode;
@@ -124,12 +124,12 @@ void TypePtr::DeMarshal(char *varname, char *bufname, char *sizehelper, std::str
 }
 
 bool TypePtr::GetDeclaration(const char *varname, char *output) {
-    if(name!=NULL) {
+    if(name!=nullptr) {
         return DataType::GetDeclaration(varname, output);
     }
 
 
-    if(!typebase->GetDeclaration(NULL,output)) {
+    if(!typebase->GetDeclaration(nullptr,output)) {
         return false;
     }
     strcat(output," ");
@@ -143,7 +143,7 @@ bool TypePtr::GetDeclaration(const char *varname, char *output) {
         }
 
     }
-    if(varname!=NULL) {
+    if(varname!=nullptr) {
         strcat(output,varname);
     }
     return true;
@@ -158,10 +158,10 @@ void TypePtr::GetExpandType(char *output) {
 
 
 void TypePtr::resize(char *sizestr) {
-    if(size!=NULL) {
+    if(size!=nullptr) {
         free(size);
     }
-    size=(sizestr==NULL)? NULL : popc_strdup(sizestr);
+    size=(sizestr==nullptr)? nullptr : popc_strdup(sizestr);
 }
 
 int TypePtr::IsPointer() {
@@ -170,7 +170,7 @@ int TypePtr::IsPointer() {
 
 DataType * TypePtr::GetBaseType() {
     DataType *t=typebase->GetBaseType();
-    if(t!=NULL) {
+    if(t!=nullptr) {
         return t;
     }
     return typebase;

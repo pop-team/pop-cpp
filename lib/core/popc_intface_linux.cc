@@ -128,20 +128,20 @@ char * popc_strdup(const char * a) {
 void popc_tokenize(std::vector<std::string>& xr_result, const std::string& x_str , const std::string& x_sep) {
     char* tmpstr = strdup(x_str.c_str());
     char *tok=strtok(tmpstr,x_sep.c_str());
-    while(tok!=NULL) {
+    while(tok!=nullptr) {
         xr_result.push_back(std::string(tok));
-        tok=strtok(NULL,x_sep.c_str());
+        tok=strtok(nullptr,x_sep.c_str());
     }
     free(tmpstr);
 }
 
 void popc_tokenize_r(std::vector<std::string>& xr_result, const std::string& x_str , const std::string& x_sep) {
     char* tmpstr = strdup(x_str.c_str());
-    char *tmp = NULL;
+    char *tmp = nullptr;
     char *tok=strtok_r(tmpstr,x_sep.c_str(),&tmp);
-    while(tok!=NULL) {
+    while(tok!=nullptr) {
         xr_result.push_back(std::string(tok));
-        tok=strtok_r(NULL,x_sep.c_str(),&tmp);
+        tok=strtok_r(nullptr,x_sep.c_str(),&tmp);
     }
     free(tmpstr);
 }
@@ -392,14 +392,14 @@ char** popc_createArgsFromVect(const std::vector<std::string>& x_vect)
         *pres = strdup(elem.c_str());
         pres++;
     }
-    *pres = NULL;
+    *pres = nullptr;
     return result;
 }
 
 // Free an array of arguments
 void popc_freeArgs(char** args){
     char** p = args;
-    while(*p != NULL)
+    while(*p != nullptr)
     {
         free(*p);
         p++;
@@ -410,9 +410,9 @@ void popc_freeArgs(char** args){
 // RunCmd function
 int RunCmd(int argc, char **argv, char *env[], int *status) {
     (void)argc;
-    char *file=NULL;
+    char *file=nullptr;
 
-    if(argv==NULL || argv[0]==NULL) {
+    if(argv==nullptr || argv[0]==nullptr) {
         return ENOENT;
     }
     file=argv[0];
@@ -420,7 +420,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
     //    {
     //      return -1;
     //    }
-    popc_signal(popc_SIGCHLD, ((status==NULL) ? popc_SIG_IGN : popc_SIG_DFL));
+    popc_signal(popc_SIGCHLD, ((status==nullptr) ? popc_SIG_IGN : popc_SIG_DFL));
 
 #ifndef UC_LINUX
     int pid=popc_fork();
@@ -435,13 +435,13 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
             popc_close(fd);
         }
         */
-        if(env!=NULL) {
-            while(*env!=NULL) {
+        if(env!=nullptr) {
+            while(*env!=nullptr) {
                 putenv(popc_strdup(*env));
                 env++;
             }
         }
-        if(status==NULL) {
+        if(status==nullptr) {
             popc_setpgid(0,0);
         }
         //Child process
@@ -461,7 +461,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
         popc__exit(-1);
     }
 #endif
-    if(status!=NULL) {
+    if(status!=nullptr) {
         popc_waitpid(pid, status, 0);
     }
     return 0;
@@ -483,7 +483,7 @@ int RunCmd(int argc, const char *argv[]) {
 */
 
 
-    argv[argc] = 0;
+    argv[argc] = nullptr;
     int status;
     int pid = vfork();
     if(pid<0) {
@@ -501,8 +501,8 @@ int RunCmd(int argc, const char *argv[]) {
 
 // RunPipe function
 int RunPipe(int argc1, const char *argv1[], int argc2, const char *argv2[]) {
-    argv1[argc1] = 0;
-    argv2[argc2] = 0;
+    argv1[argc1] = nullptr;
+    argv2[argc2] = nullptr;
 
     int p[2];
     if(pipe(p) != 0) {

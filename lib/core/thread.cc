@@ -39,7 +39,7 @@ paroc_thread::~paroc_thread() {
 
 void paroc_thread::join() {
     if(iscreated && isjoinable) {
-        pthread_join(th,NULL);
+        pthread_join(th,nullptr);
     }
 }
 
@@ -79,7 +79,7 @@ void *paroc_thread::_threadentry(void *param) {
     pthread_mutex_unlock(&objlock);
     obj->start();
     pthread_cleanup_pop(1);
-    return NULL;
+    return nullptr;
 }
 
 void paroc_thread::_cleanupentry(void *param) {

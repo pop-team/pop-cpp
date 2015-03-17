@@ -28,7 +28,7 @@ paroc_od::paroc_od() {
 #endif
     isManual=false;
     char *tmp = getenv("POPC_BATCH");
-    if(tmp!=NULL) {
+    if(tmp!=nullptr) {
         batchSystem = tmp;
         hostname=batchSystem;    // To avoid letting the hostname empty
     }
@@ -149,7 +149,7 @@ void paroc_od::url(const std::string& str) {
     if((tmpstr=strchr(h, '{'))) {
         *tmpstr=0;
         char * tmpstr2;
-        if((tmpstr2 = strchr(tmpstr+1, '}')) != NULL) {
+        if((tmpstr2 = strchr(tmpstr+1, '}')) != nullptr) {
             *tmpstr2 = 0;
             hostcore = tmpstr+1;
         } else {
@@ -183,7 +183,7 @@ void paroc_od::runLocal(bool isLocal) {
 void paroc_od::sameDirectory(bool a) {
     if(a) {
         char tmp[256];
-        if(popc_getcwd(tmp, sizeof(tmp)) != NULL) {
+        if(popc_getcwd(tmp, sizeof(tmp)) != nullptr) {
             cwd = tmp;
         }
     }

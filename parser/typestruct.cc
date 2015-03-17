@@ -11,7 +11,7 @@ TypeStruct::~TypeStruct() {
 }
 
 void TypeStruct::Add(DataType *elem, char *ename) {
-    assert(ename!=NULL);
+    assert(ename!=nullptr);
     ename=popc_strdup(ename);
     attributes.emplace_back(elem, ename);
 }
@@ -45,7 +45,7 @@ void TypeStruct::Marshal(char *varname, char *bufname, char* /*sizehelper*/, std
 
     for(auto& attr : attributes){
         sprintf(tmpcode,"%s.%s", varname, attr.second);
-        attr.first->Marshal(tmpcode,bufname,NULL,output);
+        attr.first->Marshal(tmpcode,bufname,nullptr,output);
     }
 
     sprintf(tmpcode,"%s.Pop();\n",bufname);
@@ -63,7 +63,7 @@ void TypeStruct::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, s
 
     for(auto& attr : attributes){
         sprintf(tmpcode,"%s.%s",varname,attr.second);
-        attr.first->DeMarshal(tmpcode,bufname,NULL,output);
+        attr.first->DeMarshal(tmpcode,bufname,nullptr,output);
     }
 
     sprintf(tmpcode,"%s.Pop();\n",bufname);

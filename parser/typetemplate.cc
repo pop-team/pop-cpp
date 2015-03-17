@@ -21,7 +21,7 @@ void TypeTemplate::AddTemplate(DataType *eltype, bool isRef) {
 }
 
 bool TypeTemplate::GetDeclaration(const char *varname, char *output) {
-    if(!DataType::GetDeclaration(NULL, output)) {
+    if(!DataType::GetDeclaration(nullptr, output)) {
         return false;
     }
     output+=strlen(output);
@@ -29,7 +29,7 @@ bool TypeTemplate::GetDeclaration(const char *varname, char *output) {
     output+=3;
     int n=elements.size();
     for(int i=0; i<n; i++) {
-        if(!elements[i]->GetDeclaration(NULL,output)) {
+        if(!elements[i]->GetDeclaration(nullptr,output)) {
             return false;
         }
         if(refStatus[i]) {
@@ -41,7 +41,7 @@ bool TypeTemplate::GetDeclaration(const char *varname, char *output) {
         output+=strlen(output);
     }
     strcat(output," > ");
-    if(varname!=NULL) {
+    if(varname!=nullptr) {
         strcat(output, varname);
     }
     return true;
@@ -53,8 +53,8 @@ int TypeTemplate::CanMarshal() {
         return false;
     }
 
-    for(int i=0; i<MAXSTLTYPES; i++){
-        if(strcmp(name, stlType[i])==0) {
+    for(auto & elem : stlType){
+        if(strcmp(name, elem)==0) {
             for(auto& element : elements){
                 if(!element->CanMarshal()) {
                     return false;
@@ -107,26 +107,26 @@ void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, 
         sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",%s_size);\n",bufname,varname,name, iterator);
         output += tmpcode;
 
-        GetDeclaration(NULL,decl);
+        GetDeclaration(nullptr,decl);
         sprintf(tmpcode, "for (%s::const_iterator it_%s=%s.begin();it_%s!=%s.end();it_%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
         output += tmpcode;
 
-        elements[0]->GetDeclaration(NULL,decl);
+        elements[0]->GetDeclaration(nullptr,decl);
         sprintf(value,"((%s &)(it_%s->first))", decl, iterator);
-        elements[0]->Marshal(value, bufname,NULL, output);
+        elements[0]->Marshal(value, bufname,nullptr, output);
 
-        elements[1]->GetDeclaration(NULL,decl);
+        elements[1]->GetDeclaration(nullptr,decl);
         sprintf(value,"((%s &)(it_%s->second))", decl, iterator);
-        elements[1]->Marshal(value, bufname,NULL, output);
+        elements[1]->Marshal(value, bufname,nullptr, output);
 
         sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
         output += tmpcode;
     } else {
 
-        elements[0]->GetDeclaration(NULL,decl);
+        elements[0]->GetDeclaration(nullptr,decl);
         sprintf(value,"((%s &)(*%s))", decl, iterator);
 
-        GetDeclaration(NULL,decl);
+        GetDeclaration(nullptr,decl);
 
         sprintf(tmpcode, "int %s_size=%s.size();\n",iterator,varname);
         output += tmpcode;
@@ -139,7 +139,7 @@ void TypeTemplate:: Marshal(char *varname, char *bufname, char* /*sizehelper*/, 
 
         sprintf(tmpcode, "for (%s::iterator %s=%s.begin();%s!=%s.end();%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
         output += tmpcode;
-        elements[0]->Marshal(value, bufname,NULL, output);
+        elements[0]->Marshal(value, bufname,nullptr, output);
 
         sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
         output += tmpcode;
@@ -179,10 +179,10 @@ void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/,
         sprintf(tmpcode, "int %s_size=0;\n",iterator);
         output += tmpcode;
 
-        elements[0]->GetDeclaration(NULL,decl);
+        elements[0]->GetDeclaration(nullptr,decl);
         sprintf(tmpcode, "%s %s_key;\n",decl, iterator);
         output += tmpcode;
-        elements[1]->GetDeclaration(NULL,decl);
+        elements[1]->GetDeclaration(nullptr,decl);
         sprintf(tmpcode, "%s %s_value;\n",decl, iterator);
         output += tmpcode;
 
@@ -195,12 +195,12 @@ void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/,
         sprintf(tmpcode, "%s.clear();\nfor(int i=0;i<%s_size;i++){\n",varname,iterator);
         output += tmpcode;
 
-        elements[0]->GetDeclaration(NULL,decl);
+        elements[0]->GetDeclaration(nullptr,decl);
         sprintf(value,"((%s &)(%s_key))", decl, iterator);
-        elements[0]->DeMarshal(value, bufname,NULL, output);
-        elements[1]->GetDeclaration(NULL,decl);
+        elements[0]->DeMarshal(value, bufname,nullptr, output);
+        elements[1]->GetDeclaration(nullptr,decl);
         sprintf(value,"((%s &)(%s_value))", decl, iterator);
-        elements[1]->DeMarshal(value, bufname,NULL, output);
+        elements[1]->DeMarshal(value, bufname,nullptr, output);
 
         sprintf(tmpcode, "%s[%s_key]=%s_value;\n",varname,iterator,iterator);
         output += tmpcode;
@@ -209,10 +209,10 @@ void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/,
         output += tmpcode;
 
     } else {
-        elements[0]->GetDeclaration(NULL,decl);
+        elements[0]->GetDeclaration(nullptr,decl);
         sprintf(value,"((%s &)(*%s))", decl, iterator);
 
-        GetDeclaration(NULL,decl);
+        GetDeclaration(nullptr,decl);
 
         sprintf(tmpcode, "int %s_size;\n%s.Push(\"@size\",\"int\", 1);\n%s.UnPack(&%s_size,1);\n%s.Pop();\n%s.resize(%s_size);\n", iterator,bufname,bufname, iterator, bufname,varname,iterator);
         output += tmpcode;
@@ -222,7 +222,7 @@ void TypeTemplate::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/,
 
         sprintf(tmpcode, "for (%s::iterator %s=%s.begin();%s!=%s.end();%s++) {\n", decl,iterator, varname, iterator, varname, iterator);
         output += tmpcode;
-        elements[0]->DeMarshal(value, bufname,NULL, output);
+        elements[0]->DeMarshal(value, bufname,nullptr, output);
 
         sprintf(tmpcode,"}\n%s.Pop();\n", bufname);
         output += tmpcode;

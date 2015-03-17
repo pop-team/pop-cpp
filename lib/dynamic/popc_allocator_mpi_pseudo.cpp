@@ -55,5 +55,5 @@ std::string POPC_Allocator_mpi_pseudo::allocate(std::string& /*objectname*/, par
 paroc_combox* POPC_Allocator_mpi_pseudo::allocate_group(std::string& /*objectname*/, paroc_od& /*od*/, int /*nb*/) {
     /* TODO Allocation process here */
 
-    return NULL;
+    return nullptr;
 }

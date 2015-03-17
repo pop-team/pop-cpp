@@ -402,10 +402,10 @@ void paroc_interface::Bind(const char *dest) {
 bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
     LOG_DEBUG("INTERFACE: TryLocal start");
     std::string hostname(od.getURL());
-    const std::string& rarch(od.getArch());
+    // const std::string& rarch(od.getArch());
     const std::string& batch(od.getBatch());
 
-    const std::string& objname(ClassName());
+    // const std::string& objname(ClassName());
     bool localFlag=od.IsLocal();
 
 
@@ -733,9 +733,9 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 #ifdef OD_DISCONNECT
     bool checkConnection=od.getCheckConnection();
 #endif
-    const std::string& ruser(od.getUser());
+    // const std::string& ruser(od.getUser());
     const std::string& rcore(od.getCore());
-    const std::string& batch(od.getBatch());
+    // const std::string& batch(od.getBatch());
     const std::string& cwd(od.getCwd());
 
     if(hostname == NULL && (tmp = (char*)strchr(hostname, ':')) != NULL) { // TODO LW: This cast is dangerous

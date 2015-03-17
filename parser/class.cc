@@ -38,7 +38,7 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
     *classid = 0;
     initDone = false;
     endid = 11;
-    myFile = NULL;
+    myFile = nullptr;
     constrcutor_id = 0;
 
     startline = endline = 0;
@@ -63,25 +63,25 @@ Class::Class(char *clname, CodeFile *file): CodeData(file), DataType(clname), co
 Class::~Class() {
     int i,n;
     n=baseClass.size();
-    for(i=0; i<n; i++) if(baseClass[i]!=NULL) {
+    for(i=0; i<n; i++) if(baseClass[i]!=nullptr) {
             delete baseClass[i];
         }
 
     n=memberList.size();
-    for(i=0; i<n; i++) if(memberList[i]!=NULL) {
+    for(i=0; i<n; i++) if(memberList[i]!=nullptr) {
             delete memberList[i];
         }
 
-    if(myFile!=NULL) {
+    if(myFile!=nullptr) {
         free(myFile);
     }
-    if(my_interface_base!=NULL) {
+    if(my_interface_base!=nullptr) {
         free(my_interface_base);
     }
-    if(my_object_base!=NULL) {
+    if(my_object_base!=nullptr) {
         free(my_object_base);
     }
-    if(my_broker_base!=NULL) {
+    if(my_broker_base!=nullptr) {
         free(my_broker_base);
     }
 
@@ -146,7 +146,7 @@ Other methods...
 */
 
 void Class::SetFileInfo(char *file) {
-    if(myFile != NULL) {
+    if(myFile != nullptr) {
         free(myFile);
     }
     myFile = popc_strdup(file);
@@ -222,7 +222,7 @@ void Class::AddMember(ClassMember *t) {
 
 
 void Class::SetClassID(char *id) {
-    if(id==NULL) {
+    if(id==nullptr) {
         sprintf(classid,"%u",IDFromString(name));
     } else {
         strncpy(classid,id,63);

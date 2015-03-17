@@ -159,7 +159,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
     char *dat = packeddata.data();
 
-    if(dat == NULL) {
+    if(dat == nullptr) {
         LOG_ERROR("fail 1");
         return false;
     }
@@ -270,7 +270,7 @@ char* paroc_buffer_raw::get_load() {
     char *dat = packeddata.data();
 
     if(!dat) {
-        return NULL;
+        return nullptr;
     }
 
     int n = packeddata.size();
@@ -297,7 +297,7 @@ char* paroc_buffer_raw::get_load() {
         break;
     default:
         LOG_ERROR("fail 2");
-        return NULL;
+        return nullptr;
     }
 
     memcpy(dat, h, 20);

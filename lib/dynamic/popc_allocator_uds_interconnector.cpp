@@ -69,19 +69,19 @@ std::string POPC_Allocator_uds_interconnector::allocate(std::string& objectname,
      * Create a combox to contact the MPI Communicator process to allocate the new parallel object.
      */
     paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
-    if(combox_factory == NULL) {
+    if(combox_factory == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "No combox factory");
     }
 
     paroc_combox* allocating_combox = combox_factory->Create("uds");
 
-    if(allocating_combox == NULL) {
+    if(allocating_combox == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "allocating_combox == NULL");
     }
 
     paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
 
-    char* local_address = new char[15];
+    auto  local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
     if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "Create or Connect failed");
@@ -140,22 +140,22 @@ paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(std::string& obj
 
     if(codefile.empty()) {
         std::cerr << "POP-C++ Error [Core]" << "Cannot allocate group of objects because executbale is not specified" << std::endl;
-        return NULL;
+        return nullptr;
     }
 
     // Contact the local POP-C++ MPI Interconnector to create XMP process
     int rank = paroc_system::popc_local_mpi_communicator_rank;
 
-    char* local_interconnector_address = new char[15];
+    auto  local_interconnector_address = new char[15];
     snprintf(local_interconnector_address, 15, "uds_%d.0", rank);
 
     paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
-    if(combox_factory == NULL) {
+    if(combox_factory == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "ComboxFactory NULL");
     }
 
     paroc_combox* _popc_combox = combox_factory->Create("uds");
-    if(_popc_combox == NULL) {
+    if(_popc_combox == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "Combox NULL");
     }
 
