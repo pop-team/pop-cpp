@@ -2,6 +2,8 @@
 
 #include "type.h"
 
+// TODO LW: Why do we handle class and struct differently ??? This file should not exist
+
 TypeStruct::TypeStruct(char *name): DataType(name) {}
 
 TypeStruct::~TypeStruct() {
