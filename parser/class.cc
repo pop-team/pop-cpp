@@ -180,6 +180,7 @@ void Class::GenerateCode(std::string &output/*, bool isPOPCPPCompilation*/) {
     if(!pureVirtual) {
         CArrayMethod puremethods;
         bool flag = findPureVirtual(puremethods);
+        // printf("%s class is pureVirtual: %d methods are virtual\n", GetName(), (int)puremethods.size());
         if(puremethods.size()>0) {
             SetPureVirtual(true);
             SetBasePureVirtual(flag);
@@ -291,6 +292,7 @@ bool Class::methodInBaseClass(Method &x) {
 bool Class::findPureVirtual(CArrayMethod &lst) {
     bool returnFlag = true;
 
+    // Find pure virtual classes in parents
     for(auto& bc : baseClass){
         if(bc->type!=PUBLIC) {
             continue;
@@ -307,6 +309,7 @@ bool Class::findPureVirtual(CArrayMethod &lst) {
             if(t->isPureVirtual) {
                 lst.push_back(t);
             } else {
+                // Remove pure virtual methods if implemented in current class
                 lst.erase(
                     std::remove_if(lst.begin(), lst.end(), [t](Method* v){ return *v == *t; }),
                     lst.end());
@@ -379,12 +382,12 @@ bool Class::GenerateClient(string &code/*, bool isPOPCPPCompilation*/) {
 
     int n = memberList.size();
     for(int i=0; i<n; i++) {
-        if(memberList[i]->Type() != TYPE_METHOD || memberList[i]->GetMyAccess() != PUBLIC) {
+         if(memberList[i]->Type() != TYPE_METHOD || memberList[i]->GetMyAccess() != PUBLIC) {
             continue;
         }
 
         Method *met = (Method *)memberList[i];
-        if(pureVirtual && met->MethodType() == METHOD_CONSTRUCTOR && IsCoreCompilation()) {
+        if(pureVirtual && met->MethodType() == METHOD_CONSTRUCTOR && IsCoreCompilation()) { // TODO LW: Why do we generate virtual clients if not core ! Why do we generate clients at all for virtual classes ?
             continue;
         }
 

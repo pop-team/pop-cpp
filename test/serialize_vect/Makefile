@@ -1,10 +1,11 @@
+FLAGS=-g
 all: main myobj.obj
 
 main: myobj.ph myobj.cc main.cc
-	popcc -o main myobj.ph myobj.cc main.cc
+	popcc ${FLAGS} -o main myobj.ph myobj.cc main.cc
 
 myobj.obj: myobj.ph myobj.cc
-	popcc -object -o myobj.obj myobj.ph myobj.cc
+	popcc ${FLAGS} -object -o myobj.obj myobj.ph myobj.cc
 
 clean:
 	rm -f *.o  *.obj main obj.map

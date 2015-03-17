@@ -28,7 +28,7 @@ static void LocalServiceTerminate(int sig) {
     popc__exit(1);
 }
 
-ObjectMonitor::ObjectMonitor(const POPString &challenge): paroc_service_base(challenge) {
+ObjectMonitor::ObjectMonitor(const std::string &challenge): paroc_service_base(challenge) {
     myObjMonitor=this;
     popc_signal(popc_SIGINT,LocalServiceTerminate);
 #ifndef __WIN32__
@@ -47,7 +47,7 @@ void ObjectMonitor::KillAll() {
     mutex {
         LOG_INFO("Kill all remaining parallel objects");
         for(auto& t : objects){
-            LOG_INFO("Kill object %s", t.GetAccessString());
+            LOG_INFO("Kill object %s", t.GetAccessString().c_str());
             try {
                 paroc_interface tmp(t);
                 tmp.Kill();
@@ -74,11 +74,11 @@ int ObjectMonitor::CheckObjects(bool pingObjects) {
                         active=true;
                     }
                     if(!active && !isActive) {
-                        LOG_WARNING("Object %s is already inactive", t.GetAccessString());
+                        LOG_WARNING("Object %s is already inactive", t.GetAccessString().c_str());
                         test.DecRef();
                     }
                 } catch(std::exception &e) {
-                    LOG_WARNING("An object might have been destroyed prematurely: exception while calling %s: %s",t.GetAccessString(),e.what());
+                    LOG_WARNING("An object might have been destroyed prematurely: exception while calling %s: %s",t.GetAccessString().c_str(),e.what());
                     pos = objects.erase(old);
                 }
             }
@@ -92,11 +92,11 @@ int ObjectMonitor::CheckObjects(bool pingObjects) {
 
 void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
     mutex {
-        const char *newstr=p.GetAccessString();
-        LOG_DEBUG("Manage object with ap %s", newstr);
+        const std::string& newstr=p.GetAccessString();
+        LOG_DEBUG("Manage object with ap %s", newstr.c_str());
         for(auto& t : objects){
-            if(paroc_utils::isEqual(t.GetAccessString(), newstr)) {
-                LOG_WARNING("Found object with a similar ap: %s", newstr);
+            if(t.GetAccessString() == newstr) {
+                LOG_WARNING("Found object with a similar ap: %s", newstr.c_str());
                 return;
             }
         }
@@ -106,16 +106,16 @@ void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
 
 void ObjectMonitor::UnManageObject(paroc_accesspoint &p) {
     mutex {
-        const char *newstr=p.GetAccessString();
-        LOG_DEBUG("Unanage object with ap %s", newstr);
+        const std::string& newstr=p.GetAccessString();
+        LOG_DEBUG("Unanage object with ap %s", newstr.c_str());
         auto pos=objects.begin();
         while(pos!=objects.end()) {
-            if(paroc_utils::isEqual(pos->GetAccessString(), newstr)) {
+            if(pos->GetAccessString() == newstr) {
                 pos = objects.erase(pos);
                 return;
             }
             ++pos;
         }
-        LOG_WARNING("ObjectMonitor: unable to unmanage ap: %s",newstr);
+        LOG_WARNING("ObjectMonitor: unable to unmanage ap: %s",newstr.c_str());
     }
 }

@@ -48,8 +48,6 @@
 #define MAXREQTOSAVE 10     // Maximum number of request to save in the history
 #define UNLOCK_TIMEOUT 20   //Timeout to unlock the discovery process is no responses are coming
 
-using namespace std;
-
 /*
  *  Class representing POPCSearchNode to discover resource on the grid, inherite from paroc_service_base
  */
@@ -58,16 +56,16 @@ virtual public paroc_service_base {
 
 public :
     //Node's constructore
-    POPCSearchNode(const POPString &challenge, bool deamon) @{ od.runLocal(true); od.service(true);};
+    POPCSearchNode(const std::string &challenge, bool deamon) @{ od.runLocal(true); od.service(true);};
 
     // Destructor
     ~POPCSearchNode();
     seq sync void setJobMgrRef(const paroc_accesspoint &jobmgrRef);
     conc sync paroc_accesspoint getJobMgrRef();
-    seq  sync void setPOPCSearchNodeId(POPString nodeId);
-    conc sync POPString getPOPCSearchNodeId();
-    seq  sync void setOperatingSystem(POPString operatingSys);
-    conc sync POPString getOperatingSystem();
+    seq  sync void setPOPCSearchNodeId(std::string nodeId);
+    conc sync std::string getPOPCSearchNodeId();
+    seq  sync void setOperatingSystem(std::string operatingSys);
+    conc sync std::string getOperatingSystem();
     seq  sync void setPower(float p);
     conc sync float getPower();
     seq  sync void setCpuSpeed(int cpuSpeed);
@@ -78,14 +76,14 @@ public :
     conc sync float getNetworkBandwidth();
     seq  sync void setDiskSpace(int diskSpace);
     conc sync int getDiskSpace();
-    seq  sync void setProtocol(POPString prot);
-    conc sync POPString getProtocol();
-    seq  sync void setEncoding(POPString enc);
-    conc sync POPString getEncoding();
+    seq  sync void setProtocol(std::string prot);
+    conc sync std::string getProtocol();
+    seq  sync void setEncoding(std::string enc);
+    conc sync std::string getEncoding();
     seq sync void setMaxJobs(int maxjobs);
     conc sync int getMaxJobs();
 
-    sync seq POPString getUID();
+    sync seq std::string getUID();
 
     // Method allowing adding Neighbor to the node
     seq sync void addNeighbor(POPCSearchNode &node);
@@ -99,7 +97,7 @@ public :
     // Node's entry point to propagate request
     seq async virtual void askResourcesDiscovery(Request req, paroc_accesspoint jobmgr_ac, paroc_accesspoint sender, paroc_accesspoint psm);
 
-    seq sync POPString getNeighborsAsString();
+    seq sync std::string getNeighborsAsString();
 
     // Service's entry point to ressource discovery
     conc sync virtual POPCSearchNodeInfos launchDiscovery([in, out] Request req, int timeout);
@@ -108,7 +106,7 @@ public :
     conc async virtual void callbackResult(Response resp);
 
     //Unlock the resource discovery when waiting time is set to 0
-    conc async void unlockDiscovery(POPString reqid);
+    conc async void unlockDiscovery(std::string reqid);
 
     // Reroute the response by the confidence link
     conc async void rerouteResponse(Response resp, const POPWayback wayback);
@@ -121,23 +119,23 @@ public :
     sync seq void removeJob(float power, float memorySize, float bandwidth, int nbJob);
 
     //TODO put in Secure PSN when created
-    seq sync virtual void setPKI(POPString pk);
-    conc sync virtual POPString getPKI();
+    seq sync virtual void setPKI(std::string pk);
+    conc sync virtual std::string getPKI();
 
     classuid(1001);
 protected:
-    map<std::string, sem_t*> reqsem;            // Map of semaphores used for null waiting time
+    std::map<std::string, sem_t*> reqsem;            // Map of semaphores used for null waiting time
 
     int logicalClock;                           // own request's counter
     int sem_logicalClock;                       // Logical clock used to name semaphore on Darwin architecture
     POPCSearchNodeInfo nodeInfo;            // node's information
-    list<POPCSearchNode *> neighborsList;   // node's neighbors list
-    list<POPString> knownRequests;          // already-asked requests
-    map<POPString, POPCSearchNodeInfos> actualReq;     // own actual requests
+    std::list<POPCSearchNode *> neighborsList;   // node's neighbors list
+    std::list<std::string> knownRequests;          // already-asked requests
+    std::map<std::string, POPCSearchNodeInfos> actualReq;     // own actual requests
     POPSynchronizer actualReqSyn;            // sync. for actual req.
 
     // internal method returning a list of neighbors
-    conc sync list<POPString> getNeighbors();
+    conc sync std::list<std::string> getNeighbors();
     int psn_currentJobs;
     int psn_maxjobs;
     struct timeval start, end;  //for test purpose

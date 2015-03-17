@@ -14,9 +14,8 @@ object:
 	./Barrier.obj -listlong >> obj.map
 
 clean:
-	rm -f *.o
-	rm -f *.obj
-	rm -f main
-	rm -f obj.map
+	rm -f *.o *.obj main obj.map
+
 run:
 	popcrun obj.map ./main 10
+

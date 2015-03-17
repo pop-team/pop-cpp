@@ -12,7 +12,6 @@
 #ifndef POPC_COMBOX_H_
 #define POPC_COMBOX_H_
 
-#include "paroc_string.h"
 #include "paroc_buffer_factory_finder.h"
 
 class paroc_combox;
@@ -95,8 +94,8 @@ public:
     void SetTimeout(int millisec);
     int  GetTimeout();
 
-    virtual bool GetUrl(paroc_string & accesspoint)=0;
-    virtual bool GetProtocol(paroc_string & protocolName)=0;
+    virtual bool GetUrl(std::string & accesspoint)=0;
+    virtual bool GetProtocol(std::string & protocolName)=0;
 
     virtual void Destroy();
 

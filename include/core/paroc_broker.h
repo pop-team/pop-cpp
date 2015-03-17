@@ -92,7 +92,7 @@ public:
     bool WakeupReceiveThread(paroc_combox *mycombox);
 
     static paroc_accesspoint accesspoint;
-    static paroc_string classname;
+    static std::string classname;
 
 public:
     //Methods for thread that receive requests and put in the fifo list

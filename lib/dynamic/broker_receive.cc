@@ -88,7 +88,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
             break;
         }
     }
-    LOG_DEBUG("Exiting receive thread %s", paroc_broker::accesspoint.GetAccessString());
+    LOG_DEBUG("Exiting receive thread %s", paroc_broker::accesspoint.GetAccessString().c_str());
     server->Close();
 }
 
@@ -233,11 +233,11 @@ bool paroc_broker::ParocCall(paroc_request &req) {
             buf->Reset();
             buf->SetHeader(h);
             int status = 0;
-            POPString enclist;
+            std::string enclist;
             paroc_buffer_factory_finder *finder = paroc_buffer_factory_finder::GetInstance();
             int count = finder->GetFactoryCount();
             for(int i = 0; i < count; i++) {
-                POPString t;
+                std::string t;
                 if(finder->GetBufferName(i, t)) {
                     enclist += t;
                     if(i < count-1) {
@@ -250,11 +250,11 @@ bool paroc_broker::ParocCall(paroc_request &req) {
             buf->Pack(&status, 1);
             buf->Pop();
 
-            buf->Push("platform", "POPString", 1);
+            buf->Push("platform", "std::string", 1);
             buf->Pack(&paroc_system::platform, 1);
             buf->Pop();
 
-            buf->Push("info", "POPString", 1);
+            buf->Push("info", "std::string", 1);
             buf->Pack(&enclist, 1);
             buf->Pop();
 
@@ -302,8 +302,8 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     }
     case 3: {
         // Negotiate encoding call
-        POPString enc;
-        buf->Push("encoding", "POPString", 1);
+        std::string enc;
+        buf->Push("encoding", "std::string", 1);
         buf->UnPack(&enc,1);
         buf->Pop();
         paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(enc);

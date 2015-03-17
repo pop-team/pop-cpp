@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
     printf("Matrix: Available machines:\n");
 
     for(int i=0; i<nbOfMachines; i++) {
-        printf("Matrix  %d = %s \n", i, (const char*)(*machine[i]));
+        printf("Matrix  %d = %s \n", i, machine[i]->c_str());
     }
 
     if((Alines % nbWorker) != 0) {

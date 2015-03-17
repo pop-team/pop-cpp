@@ -30,7 +30,7 @@ paroc_buffer * paroc_buffer_xdr_factory::CreateBuffer() {
     return bufXDR;
 }
 
-bool paroc_buffer_xdr_factory::GetBufferName(POPString & bufferName) {
+bool paroc_buffer_xdr_factory::GetBufferName(std::string & bufferName) {
     bufferName="xdr";
     return true;
 }

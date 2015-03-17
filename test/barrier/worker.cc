@@ -3,6 +3,7 @@
 Cworker::Cworker() {
     myNo = 0;
 }
+
 Cworker::Cworker(int No) {
     myNo = No;
 }

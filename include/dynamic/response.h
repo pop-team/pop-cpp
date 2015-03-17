@@ -15,7 +15,6 @@
 
 #ifndef _RESPONSE_H
 #define _RESPONSE_H
-#include "paroc_string.h"
 #include "paroc_base.h"
 #include "explorationList.h"
 #include "popc_search_node_info.h"
@@ -30,7 +29,7 @@ public :
     Response();
 
     // constructor used to set all information about the response
-    Response(paroc_string reqUniqueId, POPCSearchNodeInfo foundNodeInfo, ExplorationList finalExplorationList, paroc_string appid);
+    Response(std::string reqUniqueId, POPCSearchNodeInfo foundNodeInfo, ExplorationList finalExplorationList, std::string appid);
 
     // destructor
     ~Response();
@@ -39,16 +38,16 @@ public :
     virtual void    Serialize(POPBuffer &buf, bool pack);
 
     // return the uniqueId of the request
-    paroc_string    getReqUniqueId();
+    std::string    getReqUniqueId();
 
     // return the response's 'nodeInfo' object
     POPCSearchNodeInfo        getFoundNodeInfo();
 
-    paroc_string getPOPAppId();
+    std::string getPOPAppId();
 
 private :
-    paroc_string _reqUniqueId;             //indicate request's uniqueId
-    paroc_string _appid;                   //Application services access point
+    std::string _reqUniqueId;             //indicate request's uniqueId
+    std::string _appid;                   //Application services access point
     POPCSearchNodeInfo _foundNodeInfo;     //found node's 'NodeInfo'
     ExplorationList _finalExplorationList; //exploration list to found node
 

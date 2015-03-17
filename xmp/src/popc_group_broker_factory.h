@@ -23,7 +23,7 @@ typedef bool (*ispackedfunc)(const char *objname);
 typedef std::map<std::string, initbrokerfunc_group> popc_broker_map;
 
 // Obsolete to be remove
-typedef paroc_list<paroc_string> popc_list_string;
+typedef paroc_list<std::string> popc_list_string;
 
 class POPC_GroupBrokerFactory {
 public:

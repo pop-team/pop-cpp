@@ -1,10 +1,11 @@
+FLAGS=-g
 all: app object
 
 app:
-	popcc -o main POPCobject.ph POPCobject.cc main.cc
+	popcc ${FLAGS} -o main POPCobject.ph POPCobject.cc main.cc
 
 object:
-	popcc -object -o POPCobject.obj POPCobject.ph POPCobject.cc
+	popcc ${FLAGS} -object -o POPCobject.obj POPCobject.ph POPCobject.cc
 	./POPCobject.obj -listlong > obj.map
 
 run:

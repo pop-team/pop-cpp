@@ -55,7 +55,7 @@ bool POPC_GroupInterface::initialize(int nb) {
         return false;
     }
 
-    POPString objectname = get_class_name();
+    std::string objectname = get_class_name();
 
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
     POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);

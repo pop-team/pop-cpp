@@ -16,4 +16,6 @@ void Child::callMethod(Mother &c, int v) {
     printf("Heritage: In Child, GetVal=%d\n",c.GetVal());
 }
 
+// Warning: Mother parclass and Child parclass must be packed in the same file
 @pack(Child, Mother);
+

@@ -25,8 +25,6 @@
 #include "batchmgr.ph"
 #include "appservice.ph"
 
-using namespace std;
-
 #define ALLOC_TIMEOUT 60
 /**
  * Allocator over TCP/IP with local mechanism constructor
@@ -46,23 +44,22 @@ POPC_Allocator_tcpip_local::~POPC_Allocator_tcpip_local() {
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& od) {
-    POPString codefile;
+std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_od& od) {
+    std::string codefile;
 
     char tmpstr[10240];
-    char *argv[1024];
+    std::vector<std::string> argv;
     char *tmp;
     const char *rport = NULL;
     bool isManual=od.getIsManual();
 
-    string hostname = od.getURL();
-    const string& ruser = od.getUser();
-    const string& rcore = od.getCore();
-    POPString rarch = od.getArch().c_str();
-    const string& batch = od.getBatch();
-    const string& cwd = od.getCwd();
+    std::string hostname = od.getURL();
+    const std::string& ruser = od.getUser();
+    const std::string& rcore = od.getCore();
+    std::string rarch = od.getArch().c_str();
+    const std::string& batch = od.getBatch();
+    const std::string& cwd = od.getCwd();
 
-    int n = 0;
 
     if(hostname.empty()) {
         hostname=paroc_system::GetHost().c_str();
@@ -87,18 +84,18 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         }
     }
 
-    POPString myhost = paroc_system::GetHost();
+    std::string myhost = paroc_system::GetHost();
     bool isLocal = (isManual || hostname.empty() || paroc_utils::SameContact(myhost.c_str(), hostname.c_str()) || (hostname == "localhost") || (hostname == "127.0.0.1"));
     if(batch.empty()) {
         if(!isLocal) {
             char *tmp=getenv("POPC_RSH");
-            argv[n++]=popc_strdup((tmp==NULL)? "/usr/bin/ssh" :tmp);
+            argv.push_back(tmp ? tmp :"/usr/bin/ssh");
             if(!ruser.empty()) {
                 char tmpstr[100];
                 sprintf(tmpstr, "%s@%s", ruser.c_str(), hostname.c_str());
-                argv[n++] = popc_strdup(tmpstr);
+                argv.push_back(tmpstr);
             } else {
-                argv[n++] = popc_strdup(hostname.c_str());
+                argv.push_back(hostname);
             }
         }
     } else {
@@ -109,7 +106,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         } else {
             sprintf(tmpstr, "popcobjrun.%s", batch.c_str());
         }
-        argv[n++]=popc_strdup(tmpstr);
+        argv.push_back(tmpstr);
         /*if (!isLocal)
         {
              BatchMgr batchman(paroc_system::appservice);
@@ -124,14 +121,9 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     } else {
         strcpy(tmpstr, "popcobjrun");
     }
-    argv[n++]=popc_strdup(tmpstr);
+    argv.push_back(tmpstr);
 
-    strcpy(tmpstr,codefile.c_str());
-    char *tok=popc_strtok_r(tmpstr," \t\n",&tmp);
-    while(tok!=NULL) {
-        argv[n++]=popc_strdup(tok);
-        tok=popc_strtok_r(NULL," \t\n",&tmp);
-    }
+    popc_tokenize_r(argv, codefile, " \t\n");
 
     /**
      * Create a combox to allocate the new parallel object.
@@ -153,79 +145,75 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
     }
 
     paroc_connection *connection = tmpsock->get_connection();
-    POPString cburl;
+    std::string cburl;
     tmpsock->GetUrl(cburl);
     sprintf(tmpstr,"-callback=%s", cburl.c_str());
-    argv[n++]=popc_strdup(tmpstr);
+    argv.push_back(tmpstr);
 
-    sprintf(tmpstr,"-object=%s", objectname.GetString());
-    argv[n++]=popc_strdup(tmpstr);
+    sprintf(tmpstr,"-object=%s", objectname.c_str());
+    argv.push_back(tmpstr);
 
     if(!paroc_system::appservice.IsEmpty()) {
-        sprintf(tmpstr,"-appservice=%s",paroc_system::appservice.GetAccessString());
-        argv[n++]=popc_strdup(tmpstr);
+        sprintf(tmpstr,"-appservice=%s",paroc_system::appservice.GetAccessString().c_str());
+        argv.push_back(tmpstr);
     }
 
     if(!paroc_system::jobservice.IsEmpty()) {
-        sprintf(tmpstr,"-jobservice=%s",paroc_system::jobservice.GetAccessString());
-        argv[n++]=popc_strdup(tmpstr);
+        sprintf(tmpstr,"-jobservice=%s",paroc_system::jobservice.GetAccessString().c_str());
+        argv.push_back(tmpstr);
     }
 
     // Select core
     if(!rcore.empty()) {
         sprintf(tmpstr,"-core=%s",rcore.c_str());
-        argv[n++]=popc_strdup(tmpstr);
+        argv.push_back(tmpstr);
     }
 
     // Select core
     if(rport!=NULL&&rport!=0) {
         sprintf(tmpstr,"-socket_port=%s",rport);
-        argv[n++]=popc_strdup(tmpstr);
+        argv.push_back(tmpstr);
     }
 
 #ifdef OD_DISCONNECT
     if(checkConnection) {
         sprintf(tmpstr,"-checkConnection");
-        argv[n++]=popc_strdup(tmpstr);
+        argv.push_back(tmpstr);
     }
 #endif
 
     if(paroc_od::defaultLocalJob) {
-        argv[n++] = popc_strdup("-runlocal");
+        argv.push_back("-runlocal");
     }
 
     // Add the working directory as argument
     if(!cwd.empty()) {
         sprintf(tmpstr,"-cwd=%s",cwd.c_str());
-        argv[n++]=popc_strdup(tmpstr);
+        argv.push_back(tmpstr);
     }
-
-    argv[n]=NULL;
 
     int ret=0, err=0;
 
     if(isManual) {
         printf("\nTo launch this object, run this command on the target machine :\n");
-        for(int i=0; i<n; i++) {
-            printf("%s ", argv[i]);
+        for(auto str : argv) {
+            printf("%s ", str.c_str());
         }
         printf("\n");
     } else {
 #ifndef NDEBUG
         std::stringstream ss;
         ss << "--->";
-        for(int i=0; i<n; i++) {
-            ss << argv[i] << " ";
+        for(auto str : argv) {
+            ss << str << " ";
         }
         LOG_DEBUG("Launching a new object with command : %s", ss.str().c_str());
 #endif
-        ret=RunCmd(n,argv,NULL);
+        char** argvc = popc_createArgsFromVect(argv);
+        ret=RunCmd(argv.size(),argvc,NULL);
+        popc_freeArgs(argvc);
         err=errno;
     }
-
-    for(int i=0; i<n; i++) if(argv[i]!=NULL) {
-            free(argv[i]);
-        }
 
     if(ret==-1) {
         LOG_WARNING("Can not start the object: code %d", ret);
@@ -244,6 +232,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
 
     paroc_buffer::CheckAndThrow(*tmpbuffer);
 
+    int n = 0;
     tmpbuffer->Push("status","int",1);
     tmpbuffer->UnPack(&n,1);
     tmpbuffer->Pop();
@@ -252,7 +241,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
         paroc_exception::paroc_throw(n, objectname.c_str(), "n is null");
     }
 
-    POPString objectaddress;
+    std::string objectaddress;
     tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
     tmpbuffer->UnPack(&objectaddress, 1);
     tmpbuffer->Pop();
@@ -270,7 +259,7 @@ POPString POPC_Allocator_tcpip_local::allocate(POPString& objectname, paroc_od& 
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* POPC_Allocator_tcpip_local::allocate_group(POPString& objectname, paroc_od& od, int nb) {
+paroc_combox* POPC_Allocator_tcpip_local::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
     /* Allocation process here */
 

@@ -71,7 +71,7 @@ paroc_combox_factory::paroc_combox_factory() {
     //Load combox from plugins....
     int metrics=100;
     COMBOX_CREATOR creator;
-    POPString name;
+    std::string name;
 
     char *module=getenv("POPC_COMBOX_MODULES");
     if(module!=nullptr) {
@@ -90,8 +90,8 @@ paroc_combox_factory::paroc_combox_factory() {
         }
         free(libs);
     } else {
-        POPString plugindir;
-        plugindir=getenv("POPC_PLUGIN_LOCATION");
+        const char* tmp = getenv("POPC_PLUGIN_LOCATION");
+        std::string plugindir=tmp ? tmp : "";
 
 #ifdef _PLUGINDIR
         if(plugindir==nullptr) {
@@ -100,7 +100,7 @@ paroc_combox_factory::paroc_combox_factory() {
 #endif
 
         if(!plugindir.empty()) {
-            POPString pluginmap(plugindir);
+            std::string pluginmap(plugindir);
             pluginmap+="/paroc_combox.map";
             FILE *map=fopen(pluginmap.c_str(),"r");
             if(map!=nullptr) {
@@ -194,10 +194,10 @@ paroc_combox* paroc_combox_factory::Create(int index) {
     return list[index].creator();
 }
 
-void paroc_combox_factory::GetNames(POPString &prots) {
+void paroc_combox_factory::GetNames(std::string &prots) {
     prots = std::accumulate(
-        list.begin(), list.end(), POPString(),
-        [](POPString& res, combox_factory_struct& t){ return res + " " + t.name; });
+        list.begin(), list.end(), std::string(),
+        [](std::string& res, combox_factory_struct& t){ return res + " " + t.name; });
 }
 
 int paroc_combox_factory::GetCount() {
@@ -233,7 +233,7 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
     return true;
 }
 
-void * paroc_combox_factory::LoadPlugin(char *fname,  POPString &name, COMBOX_CREATOR &f) {
+void * paroc_combox_factory::LoadPlugin(char *fname,  std::string &name, COMBOX_CREATOR &f) {
 #ifdef HAVE_LIBDL
     LOG_INFO("Load plugin %s", fname);
     void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);

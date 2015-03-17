@@ -145,17 +145,25 @@ void paroc_buffer_raw::UnPack(signed char *data, int n) {
 
 void paroc_buffer_raw::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format");
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in paroc_buffer_raw::CheckUnPack");
     }
 }
 
+/**
+ * Send the packed data to the matching combox
+ * @param s
+ * @param conn
+ * @return
+ */
 bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
     char *dat = packeddata.data();
 
     if(dat == NULL) {
+        LOG_ERROR("fail 1");
         return false;
     }
+
     int n = packeddata.size();
     int h[5];
     memset(h, 0, 5 * sizeof(int));
@@ -311,6 +319,7 @@ char* paroc_buffer_raw::get_load() {
         h[3] = header.GetMethodID();
         break;
     default:
+        LOG_ERROR("fail 2");
         return NULL;
     }
 

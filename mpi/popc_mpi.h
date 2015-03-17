@@ -117,11 +117,11 @@ bool  POPMPI<T>::startMPI(T *&array, int np) {
     const char *name=test.ClassName();
 
     array=NULL;
-    paroc_string codefile;
+    std::string codefile;
     int i=0;
     try {
         CodeMgr mgr(paroc_system::appservice);
-        paroc_string objname(name);
+        std::string objname(name);
 
         if(!mgr.QueryCode(objname,paroc_system::platform,codefile)) {
             printf("startMPI failed: no supported executable\n");

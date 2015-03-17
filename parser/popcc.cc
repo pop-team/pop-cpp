@@ -457,7 +457,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Check for POP-C++ installation directory
-    char *tmp;
+    const char *tmp;
     if((tmp = paroc_utils::checkremove(&argc, &argv, "-popcdir="))) {
         strcpy(parocdir, tmp);
     } else if((tmp = getenv("POPC_LOCATION"))) {

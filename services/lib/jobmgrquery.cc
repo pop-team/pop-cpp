@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
             if(scanf("%s",str1)!=1) {
                 break;
             }
-            paroc_string type(str1), val;
+            std::string type(str1), val;
             if(info.Query(type,val)) {
                 printf("%s= %s\n",str1,val);
             } else {

@@ -59,7 +59,7 @@ void POPFileReader::set_id(int value) {
  */
 void POPFileReader::read_in_strip(long start, long offset) {
     //cout << "[POPFILEREADER] Read in strip " << strip_path.GetString() << " from:" << start << " to:" << start+offset << popcendl;
-    POPString data = pfm_ref->readFromStrip(strip_path, start, offset);
+    std::string data = pfm_ref->readFromStrip(strip_path, start, offset);
     //cout << "[POPFILEREADER] Read from strip (bytes) " << strlen(data.GetString()) << popcendl;
     popfilebuffer_ref->add_data(data);
     sem_post(pt_read_locker);
@@ -68,15 +68,15 @@ void POPFileReader::read_in_strip(long start, long offset) {
 /**
  * Read data in the internal buffer
  * @param size Number of byte to read
- * @return Data read as a POPString object
+ * @return Data read as a std::string object
  */
-POPString POPFileReader::read_current_buffer(long size) {
+std::string POPFileReader::read_current_buffer(long size) {
 
     while(popfilebuffer_ref->get_size_input_data() < size) {
         cout << "Before lock: id = " << identifier << " data = "<< popfilebuffer_ref->get_size_input_data() << "Size" << size <<  popcendl;
         sem_wait(pt_read_locker);
     }
-    POPString data;
+    std::string data;
     if(size != -1) {
         data = popfilebuffer_ref->buffer_get(size).c_str();
     } else {
@@ -119,7 +119,7 @@ paroc_accesspoint POPFileReader::get_pfm_accesspoint() {
  * @param path The absolute strip file path associated with this reader
  * @return void
  */
-void POPFileReader::set_strip_path(POPString path) {
+void POPFileReader::set_strip_path(std::string path) {
     strip_path = path;
 }
 
@@ -127,7 +127,7 @@ void POPFileReader::set_strip_path(POPString path) {
  * Get the associated strip path
  * @return the absolute strip file path associated with this reader
  */
-POPString POPFileReader::get_strip_path() {
+std::string POPFileReader::get_strip_path() {
     return strip_path;
 }
 

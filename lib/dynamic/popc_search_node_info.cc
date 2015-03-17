@@ -50,11 +50,11 @@ void POPCSearchNodeInfo::Serialize(POPBuffer &buf, bool pack) {
     }
 }
 
-POPString POPCSearchNodeInfo::getPOPCSearchNodeId() {
+std::string POPCSearchNodeInfo::getPOPCSearchNodeId() {
     return nodeId;
 }
 
-POPString POPCSearchNodeInfo::getPKI() {
+std::string POPCSearchNodeInfo::getPKI() {
     return pki;
 }
 
@@ -68,7 +68,7 @@ POPCSearchNodeInfos::~POPCSearchNodeInfos() {}
 void POPCSearchNodeInfos::Serialize(POPBuffer &buf, bool pack) {
     if(pack) {
         // marshalling all the 'DNodeInfo' contained in the list '_DNodeInfos'
-        list<POPCSearchNodeInfo>::iterator i;
+        std::list<POPCSearchNodeInfo>::iterator i;
 
         int nElts = _nodeInfos.size();
         buf.Pack(&nElts, 1);
@@ -91,7 +91,7 @@ void POPCSearchNodeInfos::Serialize(POPBuffer &buf, bool pack) {
 void POPCSearchNodeInfos::addANodeInfo(POPCSearchNodeInfo node) {
     _nodeInfos.push_back(node);
 }
-list<POPCSearchNodeInfo> POPCSearchNodeInfos::getNodeInfos() {
+std::list<POPCSearchNodeInfo> POPCSearchNodeInfos::getNodeInfos() {
     return _nodeInfos;
 }
 

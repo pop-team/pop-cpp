@@ -1,10 +1,11 @@
+FLAGS=-g
 all: main object
 
 main:
-	popcc -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
+	popcc ${FLAGS} -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
 
 object:
-	popcc -object -o POPCobject.obj  data.cc structdata.cc POPCobject.ph POPCobject.cc
+	popcc ${FLAGS} -object -o POPCobject.obj  data.cc structdata.cc POPCobject.ph POPCobject.cc
 	./POPCobject.obj -listlong > obj.map
 
 run:
@@ -18,11 +19,11 @@ clean:
 	rm -f _paroc*
 
 debug:
-	../../parser/popcc -noclean -no-pipe -verbose -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
-	../../parser/popcc -noclean -verbose -object -o POPCobject.obj data.cc structdata.cc POPCobject.ph POPCobject.cc
+	popcc ${FLAGS} -noclean -no-pipe -verbose -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
+	popcc ${FLAGS} -noclean -verbose -object -o POPCobject.obj data.cc structdata.cc POPCobject.ph POPCobject.cc
 	./POPCobject.obj -listlong > obj.map
 
 debug_spezial:
-	../../parser/popcc -popcdir=../.. -popcpp=../../parser/popcpp -DHAVE_CONFIG_H -I. -I../.. -noclean -verbose -no-pipe -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
-	../../parser/popcc -popcdir=../.. -popcpp=../../parser/popcpp -noclean -verbose -no-pipe -object -o POPCobject.obj data.cc structdata.cc POPCobject.ph POPCobject.cc
+	popcc ${FLAGS} -popcdir=../.. -popcpp=../../parser/popcpp -DHAVE_CONFIG_H -I. -I../.. -noclean -verbose -no-pipe -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
+	popcc ${FLAGS} -popcdir=../.. -popcpp=../../parser/popcpp -noclean -verbose -no-pipe -object -o POPCobject.obj data.cc structdata.cc POPCobject.ph POPCobject.cc
 	./POPCobject.obj -listlong > obj.map

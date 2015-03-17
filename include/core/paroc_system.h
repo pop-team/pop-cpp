@@ -49,13 +49,13 @@ public:
     /**
      * @brief Returns host of node in string format
      */
-    static paroc_string GetHost();
+    static std::string GetHost();
 
     /**
      * @brief Returns IP of node in string format
      * Note: checks POPC_IP, then ip from POPC_IFACE, then ip from GetDefaultInterface()
      */
-    static paroc_string GetIP();
+    static std::string GetIP();
 
     /**
      * @brief Returns IP of node
@@ -79,14 +79,14 @@ public:
      * @param str_ip returned IP
      * @return true if success
      */
-    static bool GetIPFromInterface(paroc_string& iface, paroc_string& str_ip);
+    static bool GetIPFromInterface(std::string& iface, std::string& str_ip);
 
     /**
      * @brief Returns the default interface
      * @return interface
      * Note: Returned value is based on default gateway
      */
-    static paroc_string GetDefaultInterface();
+    static std::string GetDefaultInterface();
 
     /**
      * @brief Sets object execution on a given CPU
@@ -99,15 +99,15 @@ public:
     static int pop_current_local_address;
     static int popc_local_mpi_communicator_rank;
     // static paroc_accesspoint popcloner;
-    static paroc_string platform;
+    static std::string platform;
     static std::ostringstream _popc_cout;
 
 private:
-    static paroc_string POPC_HostName;  //V1.3m
+    static std::string POPC_HostName;  //V1.3m
 
     static AppCoreService *CreateAppCoreService(char *codelocation);
     static AppCoreService *mgr;
-    static paroc_string challenge;
+    static std::string challenge;
 
 };
 typedef paroc_system POPSystem;

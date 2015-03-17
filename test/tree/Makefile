@@ -1,10 +1,11 @@
+FLAGS=-g
 all: app object
 
 app:
-	popcc -o main tree.ph tree.cc main.cc 
+	popcc ${FLAGS} -o main tree.ph tree.cc main.cc 
 
 object:
-	popcc -object -o tree.obj tree.cc tree.ph
+	popcc ${FLAGS} -object -o tree.obj tree.cc tree.ph
 	./tree.obj -listlong > obj.map
 
 clean:

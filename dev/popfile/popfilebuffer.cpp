@@ -70,7 +70,7 @@ void POPFileBuffer::flush() {
         long mtime, seconds, useconds;
 
         gettimeofday(&start1, NULL);
-        POPString data(popfile_buffer_out.str().c_str());
+        std::string data(popfile_buffer_out.str().c_str());
         localpfmref->writeToRemoteStrip(stripPath, data, associatedPFM);
         gettimeofday(&end1, NULL);
         seconds  = end1.tv_sec  - start1.tv_sec;
@@ -122,7 +122,7 @@ long POPFileBuffer::get_size_input_data() {
  * @param data The data to add in the buffer
  * @return void
  */
-void POPFileBuffer::add_data(POPString data) {
+void POPFileBuffer::add_data(std::string data) {
     popfile_buffer_in << data.GetString();
 }
 

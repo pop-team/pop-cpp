@@ -1,10 +1,11 @@
+FLAGS=-g
 all: main object
 
 main:
-	popcc -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
+	popcc ${FLAGS} -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
 
 object:
-	popcc -object -o POPCobject.obj  data.cc structdata.cc POPCobject.ph POPCobject.cc
+	popcc ${FLAGS} -object -o POPCobject.obj  data.cc structdata.cc POPCobject.ph POPCobject.cc
 	./POPCobject.obj -listlong > obj.map
 
 run:

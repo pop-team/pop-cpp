@@ -27,7 +27,7 @@ public:
 
     paroc_buffer_raw_factory();
     virtual paroc_buffer* CreateBuffer();
-    virtual bool GetBufferName(paroc_string & bufferName);
+    virtual bool GetBufferName(std::string & bufferName);
 
 };
 

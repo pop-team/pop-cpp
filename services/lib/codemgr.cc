@@ -16,7 +16,7 @@
 #include "codemgr.ph"
 #include "popc_logger.h"
 
-CodeMgr::CodeMgr(const POPString &challenge): paroc_service_base(challenge) {
+CodeMgr::CodeMgr(const std::string &challenge): paroc_service_base(challenge) {
     //Nothing else to init
 }
 
@@ -24,7 +24,7 @@ CodeMgr::~CodeMgr() {
     LOG_DEBUG("Now destroy CodeMgr");
 }
 
-void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, const POPString &codefile) {
+void CodeMgr::RegisterCode(const std::string &objname, const std::string &platform, const std::string &codefile) {
     if(objname.size() >= CODE_MAX_STRING_SIZE || platform.size() >= CODE_MAX_STRING_SIZE || codefile.size() >= CODE_MAX_STRING_SIZE) {
         LOG_ERROR( "Could not register code, information longer than %i: %i %i %i",
                     CODE_MAX_STRING_SIZE, objname.size(), platform.size(), codefile.size());
@@ -37,7 +37,7 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
     auto n=info.size();
     int i;
     for(i=0; i<n; i++){
-        if(paroc_utils::isEqual(objname,info[i].objname)) {
+        if(objname==info[i].objname) {
             break;
         }
     }
@@ -48,34 +48,34 @@ void CodeMgr::RegisterCode(const POPString &objname, const POPString &platform, 
     } else {
         info.resize(n+1);
         element=&(info[n]);
-        strcpy(element->objname,objname.c_str());
+        element->objname=objname.c_str();
     }
 
     n=element->platform.size();
     for(i=0; i<n; i++){
-        if(paroc_utils::isEqual(platform,element->platform[i].platform)) {
+        if(platform==element->platform[i].platform) {
             break;
         }
     }
 
     if(i<n) {
-        LOG_DEBUG("Changing (%s, %s) -> %s",element->objname,element->platform[i].platform,codefile.c_str());
-        strcpy(element->platform[i].codefile,codefile.c_str());
+        LOG_DEBUG("Changing (%s, %s) -> %s",element->objname.c_str(),element->platform[i].platform.c_str(),codefile.c_str());
+        element->platform[i].codefile=codefile;
     } else {
         element->platform.resize(n+1);
-        strcpy(element->platform[n].codefile,codefile);
-        strcpy(element->platform[n].platform,platform);
+        element->platform[n].codefile=codefile.c_str();
+        element->platform[n].platform=platform;
     }
 }
 
-int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPString &codefile) {
-    codefile=nullptr;
+int CodeMgr::QueryCode(const std::string &objname, const std::string &platform, std::string &codefile) {
+    codefile="";
     auto n=info.size();
     codedb *element;
 
     int i;
     for(i=0; i<n; i++){
-        if(paroc_utils::isEqual(objname,info[i].objname)) {
+        if(objname==info[i].objname) {
             break;
         }
     }
@@ -103,13 +103,13 @@ int CodeMgr::QueryCode(const POPString &objname, const POPString &platform, POPS
     return 1;
 }
 
-int CodeMgr::GetPlatform(const POPString &objname, POPString &platform) {
+int CodeMgr::GetPlatform(const std::string &objname, std::string &platform) {
     platform=nullptr;
     auto n=info.size();
 
     int i;
     for(i=0; i<n; i++){
-        if(paroc_utils::isEqual(objname,info[i].objname)) {
+        if(objname==info[i].objname) {
             break;
         }
     }

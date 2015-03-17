@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    POPString objname=argv[2];
+    std::string objname=argv[2];
     paroc_accesspoint job;
     job.SetAccessString(argv[1]);
     paroc_list<paroc_accesspoint> resources;

@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
             if(test==NULL) {
                 LOG_ERROR("POP-C++ Error: Fail to create a buffer factory");
             } else {
-                POPString str;
+                std::string str;
                 test->GetBufferName(str);
                 LOG_INFO("Buffer name:%s", str);
                 test->Destroy();

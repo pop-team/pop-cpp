@@ -47,8 +47,11 @@ int popc_dup2(int a, int b) {
     return dup2(a, b);
 }
 
-int popc_execvp(const char * a, char * const b[]) {
-    return execvp(a, b);
+int popc_execvp(const std::string& a, char * const b[]){
+    char* dup = strdup(a.c_str());
+    int ret = execvp(dup, b);
+    free(dup);
+    return ret;
 }
 
 int popc_fork(void) {
@@ -122,8 +125,25 @@ char * popc_strdup(const char * a) {
     return strdup(a);
 }
 
-char * popc_strtok_r(char * a , const char * b , char ** c) {
-    return strtok_r(a, b, c);
+void popc_tokenize(std::vector<std::string>& xr_result, const std::string& x_str , const std::string& x_sep) {
+    char* tmpstr = strdup(x_str.c_str());
+    char *tok=strtok(tmpstr,x_sep.c_str());
+    while(tok!=NULL) {
+        xr_result.push_back(std::string(tok));
+        tok=strtok(NULL,x_sep.c_str());
+    }
+    free(tmpstr);
+}
+
+void popc_tokenize_r(std::vector<std::string>& xr_result, const std::string& x_str , const std::string& x_sep) {
+    char* tmpstr = strdup(x_str.c_str());
+    char *tmp = NULL;
+    char *tok=strtok_r(tmpstr,x_sep.c_str(),&tmp);
+    while(tok!=NULL) {
+        xr_result.push_back(std::string(tok));
+        tok=strtok_r(NULL,x_sep.c_str(),&tmp);
+    }
+    free(tmpstr);
 }
 
 
@@ -360,6 +380,31 @@ int popc_strcasecmp(const char * a, const char * b) {
 
 int popc_strncasecmp(const char * a, const char * b, popc_size_t c) {
     return strncasecmp(a, b, c);
+}
+
+// Create an array of arguments from an array of const string. Used to pass args to execve
+char** popc_createArgsFromVect(const std::vector<std::string>& x_vect)
+{
+    char** result = reinterpret_cast<char**>(malloc((x_vect.size() + 1) * sizeof(char*)));
+    char** pres   = result;
+    for(const auto& elem : x_vect)
+    {
+        *pres = strdup(elem.c_str());
+        pres++;
+    }
+    *pres = NULL;
+    return result;
+}
+
+// Free an array of arguments
+void popc_freeArgs(char** args){
+    char** p = args;
+    while(*p != NULL)
+    {
+        free(*p);
+        p++;
+    }
+    free(args);
 }
 
 // RunCmd function

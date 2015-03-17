@@ -21,7 +21,7 @@ typedef bool (*ispackedfunc)(const char *objname);
 
 struct paroc_broker_init {
     initbrokerfunc func;
-    paroc_string objname;
+    std::string objname;
 };
 
 /**
@@ -48,7 +48,7 @@ public:
      * @brief Returns the list of brokers
      * @param objlist Output
      */
-    static void List(std::vector<paroc_string>& objlist);
+    static void List(std::vector<std::string>& objlist);
 
     /**
      * @brief Create a broker

@@ -1,10 +1,11 @@
+FLAGS=-g
 all: app object
 
 app:
-	popcc -async-allocation -o main POPObject.ph POPObject.cc main.cc
+	popcc ${FLAGS} -async-allocation -o main POPObject.ph POPObject.cc main.cc
 
 object:
-	popcc -async-allocation -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
+	popcc ${FLAGS} -async-allocation -object -o POPObject.obj POPObject.cc POPObject.ph main.cc
 	./POPObject.obj -listlong > obj.map
 
 clean:

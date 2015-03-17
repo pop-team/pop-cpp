@@ -20,8 +20,7 @@ int main(int argc, char* argv[]) {
         printf("End of test\n");
         assert(result == 21);
     } catch(POPException &e) {
-        cout << "Exception occurs in application :" << endl;
-        e.Print();
+        cout << "Exception occurs in application: " << e.what() << endl;
         return -1;
     }
     printf("Integer test ended\n");

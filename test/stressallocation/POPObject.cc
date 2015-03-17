@@ -8,11 +8,11 @@
  */
 
 POPObject::POPObject() {
-    cout << "POPObject is processing its construction on machine:" << (const char*)POPSystem::GetHost() << popcendl;
+    cout << "POPObject is processing its construction on machine:" << POPSystem::GetHost() << popcendl;
 }
 
 POPObject::~POPObject() {
-    cout << "POPObject on machine " << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPObject on machine " << POPSystem::GetHost() <<" is being destroyed" << popcendl;
 }
 
 @pack(POPObject);

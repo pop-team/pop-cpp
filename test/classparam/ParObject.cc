@@ -5,8 +5,8 @@ ParObject::ParObject() {
     printf("Classparam: Creating object ParObject on localhost\n");
 }
 
-ParObject::ParObject(paroc_string machine) {
-    printf("Classparam: Creating object ParObject on %s\n",(const char *)paroc_system::GetHost());
+ParObject::ParObject(POPString machine) {
+    printf("Classparam: Creating object ParObject on %s\n", paroc_system::GetHost().c_str());
 }
 
 ParObject::ParObject(float f) {

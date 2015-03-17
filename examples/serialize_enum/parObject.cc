@@ -7,8 +7,7 @@ ParObject::ParObject() {
 }
 
 ParObject::ParObject(POPString machine) {
-    printf("Creation of object of class ParObject on  %s\n",
-           (const char *)POPSystem::GetHost());
+    printf("Creation of object of class ParObject on  %s\n", POPSystem::GetHost().c_str());
     theData.SetInternalData(1);
 }
 

@@ -88,14 +88,14 @@ if [ $logging = 1 ]; then
 			echo "The file $LOGGING_FILE cannot be written !!!"
 			exit
 		fi
-		logging_cmd=" |tee $LOGGING_FILE"
+		logging_cmd=" tee $LOGGING_FILE"
 	else
 		touch $LOGGING_FILE
 		if [ $? != 0 ]; then
 			echo "The file $LOGGING_FILE cannot be created !!!"
 			exit
 		fi
-		logging_cmd=" |tee $LOGGING_FILE"
+		logging_cmd=" tee $LOGGING_FILE"
 	fi
 fi
 
@@ -197,7 +197,11 @@ if [ $drun -eq 1 ]; then
     echo "$cmd $logging_cmd"
 else
     # execute command
-    echo "$cmd $logging_cmd" | bash
+    if [ "$logging_cmd" != "" ]; then
+        $cmd | $logging_cmd
+    else
+        $cmd
+    fi
     retval=$?
 fi
 exit $retval

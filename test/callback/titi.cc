@@ -2,7 +2,7 @@
 #include "titi.ph"
 
 Titi::Titi() {
-    printf("CallBack: Object Titi created on %s\n", POPGetHost());
+    printf("CallBack: Object Titi created on %s\n", POPGetHost().c_str());
     ident = -1;
 }
 

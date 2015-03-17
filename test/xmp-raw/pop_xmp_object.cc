@@ -1,5 +1,5 @@
 #include "pop_xmp_object.h"
-#include "paroc_string.h"
+#include "POPString.h"
 
 #include <stdio.h>
 

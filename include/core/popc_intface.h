@@ -19,6 +19,9 @@
 #include "popc_intface_lin.h"
 #endif
 
+#include <string>
+#include <vector>
+
 // functions below are derivated from <unistd.h>
 
 void popc__exit(int);
@@ -45,7 +48,7 @@ int popc_dup2(int, int);
 
 //
 
-int popc_execvp(const char *, char * const[]);
+int popc_execvp(const std::string&, char * const[]);
 
 //
 
@@ -113,9 +116,14 @@ int popc_write(int, const void *, int);
 
 char * popc_strdup(const char *);
 
-//
+// Create an array of arguments from an array of const string. Used to pass args to execve
+char** popc_createArgsFromVect(const std::vector<std::string>& x_vect);
 
-char * popc_strtok_r(char *, const char *, char **);
+// Free an array of arguments
+void popc_freeArgs(char** args);
+
+void popc_tokenize_r(std::vector<std::string>& xr_result, const std::string& x_str , const std::string& x_sep);
+void popc_tokenize  (std::vector<std::string>& xr_result, const std::string& x_str , const std::string& x_sep);
 
 // functions below are derivated from <sys/wait.h>
 

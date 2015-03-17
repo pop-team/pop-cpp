@@ -19,7 +19,6 @@
 
 #include <string.h>
 
-using namespace std;
 
 /**
  * ViSaG : clementval
@@ -52,16 +51,16 @@ const POPWayback & POPWayback::operator =(const POPWayback &rhs) {
  * Return the POPWayback object as a fromatted string
  * @return The formatted string corresponding to this object
  */
-POPString POPWayback::getAsString() const {
-    list<POPString> tmp = _lst_wb;
+std::string POPWayback::getAsString() const {
+    std::list<std::string> tmp = _lst_wb;
     std::string wb;
     while(!tmp.empty()) {
-        POPString e = tmp.front();
+        std::string e = tmp.front();
         tmp.pop_front();
-        wb.append(e.GetString());
+        wb.append(e);
         wb.append("//");
     }
-    POPString wbstr = wb.c_str();
+    std::string wbstr = wb.c_str();
     return wbstr;
 }
 
@@ -71,12 +70,12 @@ POPString POPWayback::getAsString() const {
  * parameter.
  * @param nodeId  The node ID to insert in the POPWayback
  */
-void POPWayback::insertNode(POPString nodeId) {
+void POPWayback::insertNode(std::string nodeId) {
     if(_lst_wb.empty()) {
         _lst_wb.push_back(nodeId);
     } else {
-        POPString tmp = getNextNode();
-        if(strcmp(tmp.GetString(), nodeId.GetString())!=0) {
+        std::string tmp = getNextNode();
+        if(tmp== nodeId) {
             _lst_wb.push_back(nodeId);
         }
     }
@@ -87,8 +86,8 @@ void POPWayback::insertNode(POPString nodeId) {
  * return the last Node
  * @return The node ID of the next node in the way back
  */
-POPString POPWayback::getNextNode() const {
-    POPString node = _lst_wb.back();
+std::string POPWayback::getNextNode() const {
+    std::string node = _lst_wb.back();
     return node;
 }
 
@@ -135,7 +134,7 @@ void POPWayback::Serialize(POPBuffer &buf, bool pack) {
         buf.Pack(&size, 1);
         //Pack elements
         while(!_lst_wb.empty()) {
-            POPString elt = _lst_wb.front();
+            std::string elt = _lst_wb.front();
             _lst_wb.pop_front();
             buf.Pack(&elt, 1);
         }
@@ -147,7 +146,7 @@ void POPWayback::Serialize(POPBuffer &buf, bool pack) {
         buf.UnPack(&size, 1);
         //Unpack elements
         for(int i=0; i< size; i++) {
-            POPString elt;
+            std::string elt;
             buf.UnPack(&elt, 1);
             _lst_wb.push_back(elt);
         }

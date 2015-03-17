@@ -19,7 +19,7 @@ void Usage() {
 int main(int argc, char **argv) {
     int port;
     char objcode[256], host[256];
-    paroc_string challenge;
+    std::string challenge;
 
     char *tmp;
     bool stop=(paroc_utils::checkremove(&argc,&argv,"stop")!=NULL);
@@ -98,9 +98,9 @@ int main(int argc, char **argv) {
 
         //print out the contact string....
         if(f==NULL) {
-            LOG_INFO("%s",info.GetAccessPoint().GetAccessString());
+            LOG_INFO("%s",info.GetAccessPoint().GetAccessString().c_str());
         } else {
-            fprintf(f,"%s",info.GetAccessPoint().GetAccessString());
+            fprintf(f,"%s",info.GetAccessPoint().GetAccessString().c_str());
             fclose(f);
         }
 

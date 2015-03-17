@@ -3,12 +3,12 @@
 
 
 Pong::Pong(POPString enc, POPString prot) {
-    rprintf("Pong on %s\n",(const char *)POPSystem::GetHost());
-    if(enc!=NULL) {
-        rprintf("Ping-pong encoding: %s\n",(const char *)enc);
+    rprintf("Pong on %s\n",POPSystem::GetHost().c_str());
+    if(!enc.empty()) {
+        rprintf("Ping-pong encoding: %s\n",enc.c_str());
     }
-    if(prot!=NULL) {
-        rprintf("Ping-pong protocol: %s\n",(const char *)prot);
+    if(!prot.empty()) {
+        rprintf("Ping-pong protocol: %s\n",prot.c_str());
     }
     count=0;
 }
@@ -39,7 +39,7 @@ void Pong::pingSF(float *data, int sz) {
 }
 
 void Pong::GetMachine(char *pong) {
-    strcpy(pong, POPSystem::GetHost());
+    strcpy(pong, POPSystem::GetHost().c_str());
 }
 int Pong::Reset() {
     count=0;
@@ -52,7 +52,7 @@ int Pong::GetCount() {
 
 
 Ping::Ping(POPString enc, POPString prot, int p): test(enc, prot) {
-    rprintf("Ping on %s\n", (const char *)POPSystem::GetHost());
+    rprintf("Ping on %s\n", POPSystem::GetHost().c_str());
 }
 
 void Ping::Run() {
@@ -176,7 +176,7 @@ void Ping::GetResults(int *sizes, double *chrA, double *chrS, double *iA,  doubl
 }
 
 void Ping::GetMachines(char *ping, char *pong) {
-    strcpy(ping,POPSystem::GetHost());
+    strcpy(ping,POPSystem::GetHost().c_str());
     test.GetMachine(pong);
 }
 

@@ -19,8 +19,6 @@
 #include "paroc_od.h"
 #include "paroc_utils.h"
 
-using namespace std;
-
 bool paroc_od::defaultLocalJob=false;
 
 paroc_od::paroc_od() {
@@ -135,7 +133,7 @@ void paroc_od::walltime(float t) {
     time=t;
 }
 
-void paroc_od::url(const string& str) {
+void paroc_od::url(const std::string& str) {
     char h[256];
     char *tmpstr;
     strcpy(h,str.c_str());
@@ -166,7 +164,7 @@ void paroc_od::url(const string& str) {
     }
 }
 
-void paroc_od::url(const string& h, const string& arch) {
+void paroc_od::url(const std::string& h, const std::string& arch) {
     hostarch = arch;
     url(h);
 }
@@ -327,16 +325,16 @@ bool paroc_od::IsLocal() const {
 }
 
 
-void paroc_od::setValue(const POPString &key, const POPString &val) {
+void paroc_od::setValue(const std::string &key, const std::string &val) {
     keys.emplace_back(key);
     values.emplace_back(val);
 }
 
-void paroc_od::getValue(const POPString &key, POPString &val) {
+void paroc_od::getValue(const std::string &key, std::string &val) {
     for(std::size_t i = 0; i < keys.size(); ++i){
         auto& t1 = keys[i];
         auto& t2 = values[i];
-        if(paroc_utils::isEqual(t1,key)) {
+        if(t1 == key) {
             val=t2;
             return;
         }
@@ -378,7 +376,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
 
         t = getCwd();
-        buf.Push("cwd","POPString",1);
+        buf.Push("cwd","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
@@ -392,54 +390,54 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         //End of add
 
         t = getURL();
-        buf.Push("url","POPString",1);
+        buf.Push("url","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
         t = getUser();
-        buf.Push("user","POPString",1);
+        buf.Push("user","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
         t = getCore();
-        buf.Push("core","POPString",1);
+        buf.Push("core","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
         t = getArch();
-        buf.Push("arch","POPString",1);
+        buf.Push("arch","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
         t = getBatch();
-        buf.Push("batch","POPString",1);
+        buf.Push("batch","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
 
 
         t = getJobURL();
-        buf.Push("joburl","POPString",1);
+        buf.Push("joburl","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
         t = getExecutable();
-        buf.Push("executable","POPString",1);
+        buf.Push("executable","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
         t = getPlatforms();
-        buf.Push("platforms","POPString",1);
+        buf.Push("platforms","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
         t = getProtocol();
-        buf.Push("protocol","POPString",1);
+        buf.Push("protocol","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
         t = getEncoding();
-        buf.Push("encoding","POPString",1);
+        buf.Push("encoding","std::string",1);
         buf.Pack(&t,1);
         buf.Pop();
 
@@ -456,13 +454,13 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
                 auto& t1 = keys[i];
                 auto& t2 = values[i];
 
-                buf.Push("element","POPString", 2);
+                buf.Push("element","std::string", 2);
 
-                buf.Push("key", "POPString", 1);
+                buf.Push("key", "std::string", 1);
                 buf.Pack(&t1,1);
                 buf.Pop();
 
-                buf.Push("value", "POPString", 1);
+                buf.Push("value", "std::string", 1);
                 buf.Pack(&t2,1);
                 buf.Pop();
 
@@ -503,7 +501,7 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
         valInt[0]=isManual;
 
-        buf.Push("cwd","POPString",1);
+        buf.Push("cwd","std::string",1);
         buf.UnPack(&cwd,1);
         buf.Pop();
 
@@ -514,48 +512,48 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         search(valSearch[0], valSearch[1], valSearch[2]);
         //End of add
 
-        buf.Push("url","POPString",1);
+        buf.Push("url","std::string",1);
         buf.UnPack(&hostname,1);
         buf.Pop();
         //url(t);
 
-        buf.Push("user","POPString",1);
+        buf.Push("user","std::string",1);
         buf.UnPack(&hostuser,1);
         buf.Pop();
 
-        buf.Push("core","POPString",1);
+        buf.Push("core","std::string",1);
         buf.UnPack(&hostcore,1);
         buf.Pop();
 
-        buf.Push("arch","POPString",1);
+        buf.Push("arch","std::string",1);
         buf.UnPack(&hostarch,1);
         buf.Pop();
 
-        buf.Push("batch","POPString",1);
+        buf.Push("batch","std::string",1);
         buf.UnPack(&batchSystem,1);
         buf.Pop();
 
-        buf.Push("joburl","POPString",1);
+        buf.Push("joburl","std::string",1);
         buf.UnPack(&t,1);
         buf.Pop();
         joburl(t);
 
-        buf.Push("executable","POPString",1);
+        buf.Push("executable","std::string",1);
         buf.UnPack(&t,1);
         buf.Pop();
         executable(t);
 
-        buf.Push("platforms","POPString",1);
+        buf.Push("platforms","std::string",1);
         buf.UnPack(&t,1);
         buf.Pop();
         setPlatforms(t);
 
-        buf.Push("protocol","POPString",1);
+        buf.Push("protocol","std::string",1);
         buf.UnPack(&t,1);
         buf.Pop();
         protocol(t);
 
-        buf.Push("encoding","POPString",1);
+        buf.Push("encoding","std::string",1);
         buf.UnPack(&t,1);
         buf.Pop();
         encoding(t);
@@ -572,14 +570,14 @@ void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
         values.clear();
 
         for(std::size_t i=0; i<static_cast<std::size_t>(count); i++) {
-            POPString t1, t2;
-            buf.Push("element","POPString", 2);
+            std::string t1, t2;
+            buf.Push("element","std::string", 2);
 
-            buf.Push("key", "POPString", 1);
+            buf.Push("key", "std::string", 1);
             buf.UnPack(&t1,1);
             buf.Pop();
 
-            buf.Push("value", "POPString", 1);
+            buf.Push("value", "std::string", 1);
             buf.UnPack(&t2,1);
             buf.Pop();
 

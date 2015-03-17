@@ -25,10 +25,10 @@ Request::Request() {
 }
 
 // Full information constructor
-Request::Request(int maxHops, POPString nodeId, POPString operatingSystem, int minCpuSpeed, int expectedCpuSpeed,
+Request::Request(int maxHops, std::string nodeId, std::string operatingSystem, int minCpuSpeed, int expectedCpuSpeed,
                  float minMemorySize, float expectedMemorySize, int minNetworkBandwidth, int expectedNetworkBandwidth,
-                 int minDiskSpace, int expectedDiskSpace, float minPower, float expectedPower, POPString protocol,
-                 POPString encoding) {
+                 int minDiskSpace, int expectedDiskSpace, float minPower, float expectedPower, std::string protocol,
+                 std::string encoding) {
     init();
     _maxHops = maxHops;
     if(!nodeId.empty()) {
@@ -290,12 +290,12 @@ void Request::Serialize(POPBuffer &buf, bool pack) {
 }
 
 // Set the uniqueId
-void Request::setUniqueId(POPString uniqueId) {
+void Request::setUniqueId(std::string uniqueId) {
     _uniqueId = uniqueId;
 }
 
 // Get the uniqueId
-POPString Request::getUniqueId() {
+std::string Request::getUniqueId() {
     return _uniqueId;
 }
 
@@ -310,13 +310,13 @@ int Request::getMaxHops() {
 }
 
 // Set the nodeId
-void Request::setNodeId(POPString nodeId) {
+void Request::setNodeId(std::string nodeId) {
     _hasNodeIdSet = true;
     _nodeId = nodeId;
 }
 
 // Get the nodeId
-POPString Request::getNodeId() {
+std::string Request::getNodeId() {
     return _nodeId;
 }
 
@@ -326,13 +326,13 @@ bool Request::hasNodeIdSet() {
 }
 
 // Set operating system
-void Request::setOperatingSystem(POPString operatingSystem) {
+void Request::setOperatingSystem(std::string operatingSystem) {
     _hasOperatingSystemSet = true;
     _operatingSystem = operatingSystem;
 }
 
 // Get operating system
-POPString Request::getOperatingSystem() {
+std::string Request::getOperatingSystem() {
     return _operatingSystem;
 }
 
@@ -502,13 +502,13 @@ bool Request::hasExpectedPowerSet() {
 }
 
 // set the protcol
-void Request::setProtocol(POPString prot) {
+void Request::setProtocol(std::string prot) {
     _hasProtocolSet=true;
     _protocol=prot;
 }
 
 // get the protocol
-POPString Request::getProtocol() {
+std::string Request::getProtocol() {
     return _protocol;
 }
 
@@ -518,13 +518,13 @@ bool Request::hasProtocolSet() {
 }
 
 // set the encoding
-void Request::setEncoding(POPString enc) {
+void Request::setEncoding(std::string enc) {
     _hasEncodingSet=true;
     _encoding=enc;
 }
 
 // get the encoding
-POPString Request::getEncoding() {
+std::string Request::getEncoding() {
     return _encoding;
 }
 
@@ -534,28 +534,28 @@ bool Request::hasEncodingSet() {
 }
 
 //Set the PKI of the initiator
-void Request::setPKI(POPString pki) {
+void Request::setPKI(std::string pki) {
     _pki = pki;
 }
 
 //Get the PKI of the initiator
-POPString Request::getPKI() {
+std::string Request::getPKI() {
     return _pki;
 }
 
 
-void Request::setMainPKI(POPString pki) {
+void Request::setMainPKI(std::string pki) {
     _mainPki = pki;
 }
 
-POPString Request::getMainPKI() {
+std::string Request::getMainPKI() {
     return _mainPki;
 }
 
 
 // Add a list of nodes in the exploration list (neighbors of the nodeId's node)
-void Request::addNodeToExplorationList(POPString nodeId,
-                                       list<POPString> neighbors) {
+void Request::addNodeToExplorationList(std::string nodeId,
+                                       std::list<std::string> neighbors) {
     explorationList.addListNode(nodeId,neighbors);
     // decrement max hops if not unlimited
     if(_maxHops != UNLIMITED_HOPS) {
@@ -573,16 +573,16 @@ ExplorationList Request::getExplorationList() {
  * set the POP Application ID
  * @param popAppId The POP Application ID
  */
-void Request::setPOPAppId(POPString popAppId) {
+void Request::setPOPAppId(std::string popAppId) {
     _popappid = popAppId;
 }
 
 /**
  * ViSaG : clementval
  * Get the POP Application ID
- * @return a POPString containing the POP Application ID
+ * @return a std::string containing the POP Application ID
  */
-POPString Request::getPOPAppId() {
+std::string Request::getPOPAppId() {
     return _popappid;
 }
 
@@ -591,7 +591,7 @@ POPString Request::getPOPAppId() {
  * Add a node to the way back
  * @param nodeId access string of the node to add
  */
-void Request::addNodeToWb(POPString nodeId) {
+void Request::addNodeToWb(std::string nodeId) {
     _wb.insertNode(nodeId);
 }
 
@@ -609,8 +609,8 @@ POPWayback Request::getWayBack() const {
  * Get the current way back to the initiator as a string
  * @return a formatted string represtanting the way back to the initiator
  */
-const POPString Request::getWbAsString() const {
-    POPString wb = _wb.getAsString();
+const std::string Request::getWbAsString() const {
+    std::string wb = _wb.getAsString();
     return wb;
 }
 

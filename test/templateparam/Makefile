@@ -1,9 +1,10 @@
+FLAGS=-g
 all: main object
 
 main:
-	popcc  -o main ClassA.cc X.cc parobject.ph parobject.cc main.cc
+	popcc ${FLAGS}  -o main ClassA.cc X.cc parobject.ph parobject.cc main.cc
 object:
-	popcc -object -o parobject.obj ClassA.cc X.cc parobject.ph parobject.cc
+	popcc ${FLAGS} -object -o parobject.obj ClassA.cc X.cc parobject.ph parobject.cc
 	./parobject.obj -listlong > obj.map
 
 clean:

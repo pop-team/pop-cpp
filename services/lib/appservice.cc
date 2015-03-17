@@ -21,20 +21,18 @@
 // #include "jobmgr.ph"
 #include "popc_logger.h"
 
-using namespace std;
-
-AppCoreService::AppCoreService(const POPString &challenge, bool daemon, const POPString &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge) {
+AppCoreService::AppCoreService(const std::string &challenge, bool daemon, const std::string &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge) {
     /**
       * ViSaG : clementval
       * Generate the POP Application Unique ID
       */
-    POPString tmpChallenge = challenge;
+    std::string tmpChallenge = challenge;
     time_t now = time(NULL);
-    POPString ip = paroc_system::GetIP();
+    std::string ip = paroc_system::GetIP();
     char id[100];
-    string tmp(tmpChallenge.c_str());
-    locale loc;
-    const collate<char>& coll = use_facet<collate<char> >(loc);
+    std::string tmp(tmpChallenge.c_str());
+    std::locale loc;
+    const std::collate<char>& coll = std::use_facet<std::collate<char> >(loc);
     long hash = coll.hash(tmp.data(), tmp.data()+tmp.length());
     if(hash < 0) {
         hash = hash*-1;
@@ -64,7 +62,7 @@ AppCoreService::~AppCoreService() {
     */
 
     for(auto& t : servicelist){
-        free(t.name);
+        t.name="";
         try {
             t.service->Stop(mychallenge);
         } catch(std::exception& e) {
@@ -76,7 +74,7 @@ AppCoreService::~AppCoreService() {
     LOG_DEBUG("Destroyed AppCoreService");
 }
 
-bool AppCoreService::QueryService(const POPString &name, paroc_service_base &service) {
+bool AppCoreService::QueryService(const std::string &name, paroc_service_base &service) {
     if(name.empty()) {
         return false;
     }
@@ -90,13 +88,13 @@ bool AppCoreService::QueryService(const POPString &name, paroc_service_base &ser
     return false;
 }
 
-bool AppCoreService::QueryService(const POPString &name, paroc_accesspoint &service) {
+bool AppCoreService::QueryService(const std::string &name, paroc_accesspoint &service) {
     if(name.empty()) {
         return false;
     }
 
     for(auto& t : servicelist){
-        if(paroc_utils::isncaseEqual(name,t.name)) {
+        if(paroc_utils::isncaseEqual(name.c_str(),t.name.c_str())) {
             service=t.service->GetAccessPoint();
             return true;
         }
@@ -105,7 +103,7 @@ bool AppCoreService::QueryService(const POPString &name, paroc_accesspoint &serv
     return false;
 }
 
-bool AppCoreService::RegisterService(const POPString &name, const paroc_service_base &newservice) {
+bool AppCoreService::RegisterService(const std::string &name, const paroc_service_base &newservice) {
     if(name.empty()) {
         return false;
     }
@@ -113,7 +111,7 @@ bool AppCoreService::RegisterService(const POPString &name, const paroc_service_
     ServiceEntry t;
     try {
         t.service=new paroc_service_base(newservice);
-        t.name=popc_strdup(name);
+        t.name=name;
     } catch(std::exception& e) {
         LOG_WARNING("Exception while creating service: %s", e.what());
         return false;
@@ -122,7 +120,7 @@ bool AppCoreService::RegisterService(const POPString &name, const paroc_service_
     return true;
 }
 
-bool AppCoreService::UnregisterService(const POPString &name) {
+bool AppCoreService::UnregisterService(const std::string &name) {
     if(name.empty()) {
         return false;
     }
@@ -131,9 +129,9 @@ bool AppCoreService::UnregisterService(const POPString &name) {
     while(pos != servicelist.end()) {
         auto old = pos;
         auto& t = *pos++;
-        if(paroc_utils::isncaseEqual(name,t.name)) {
+        if(paroc_utils::isncaseEqual(name.c_str(),t.name.c_str())) {
             delete t.service;
-            free(t.name);
+            t.name="";
             servicelist.erase(pos);
             return true;
         }
@@ -204,9 +202,9 @@ void AppCoreService::LoadAddOn() {
 /**
  * ViSaG : clementval
  * Getter for the POP Application Unique ID
- * @return a POPString containing the POPAppID
+ * @return a std::string containing the POPAppID
  */
-POPString AppCoreService::GetPOPCAppID() {
+std::string AppCoreService::GetPOPCAppID() {
     return _popcAppId;
 }
 

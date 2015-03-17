@@ -25,8 +25,6 @@
 #define MAXREQUNIQUEIDLENGTH 100    // Maximum length of uniqueId of a request
 #define UNLIMITED_HOPS -20         // Fixed value indicating unlimited hops
 
-using namespace std;
-
 /*
  *  Class representing a request of resource discovery. This class must
  *  inherit from POPBase to be passed in the network.
@@ -38,8 +36,8 @@ public :
 
     // constructor with all information
     Request(int maxHops,
-            POPString nodeId,
-            POPString operatingSystem,
+            std::string nodeId,
+            std::string operatingSystem,
             int minCpuSpeed,
             int expectedCpuSpeed,
             float minMemorySize,
@@ -50,8 +48,8 @@ public :
             int expectedDiskSpace,
             float minPower,
             float expectedPower,
-            POPString protocol,
-            POPString encoding);
+            std::string protocol,
+            std::string encoding);
 
     // Destructor
     ~Request();
@@ -60,18 +58,18 @@ public :
     virtual void Serialize(POPBuffer &buf, bool pack);
 
     // Getters, setters and havers for different information
-    void         setUniqueId(POPString uniqueId);
-    POPString getUniqueId();
+    void         setUniqueId(std::string uniqueId);
+    std::string getUniqueId();
 
     void         setMaxHops(int maxHops);
     int          getMaxHops();
 
-    void         setNodeId(POPString nodeId);
-    POPString getNodeId();
+    void         setNodeId(std::string nodeId);
+    std::string getNodeId();
     bool         hasNodeIdSet();
 
-    void         setOperatingSystem(POPString operatingSystem);
-    POPString getOperatingSystem();
+    void         setOperatingSystem(std::string operatingSystem);
+    std::string getOperatingSystem();
     bool         hasOperatingSystemSet();
 
     void         setMinCpuSpeed(int cpuSpeed);
@@ -114,27 +112,27 @@ public :
     float        getMinPower();
     bool         hasMinPowerSet();
 
-    void         setProtocol(POPString power);
-    POPString getProtocol();
+    void         setProtocol(std::string power);
+    std::string getProtocol();
     bool         hasProtocolSet();
 
-    void         setEncoding(POPString power);
-    POPString getEncoding();
+    void         setEncoding(std::string power);
+    std::string getEncoding();
     bool         hasEncodingSet();
 
     /**
      * ViSaG : clementval
      */
-    void setPKI(POPString pki);
-    POPString getPKI();
+    void setPKI(std::string pki);
+    std::string getPKI();
 
-    void setMainPKI(POPString pki);
-    POPString getMainPKI();
+    void setMainPKI(std::string pki);
+    std::string getMainPKI();
 
-    void setPOPAppId(POPString pki);
-    POPString getPOPAppId();
-    void addNodeToWb(POPString nodeId);
-    const POPString getWbAsString() const;
+    void setPOPAppId(std::string pki);
+    std::string getPOPAppId();
+    void addNodeToWb(std::string nodeId);
+    const std::string getWbAsString() const;
     POPWayback getWayBack() const;
 
     /* ViSaG */
@@ -142,37 +140,37 @@ public :
 
 
     // method allowing adding nodes to the exploration list of the request
-    void addNodeToExplorationList(POPString nodeId, list<POPString> neighbors);
+    void addNodeToExplorationList(std::string nodeId, std::list<std::string> neighbors);
 
     // return the exploration list of the request
     ExplorationList getExplorationList();
 
     // method telling if a node (identified by its name) is present in the
     // exploration list of the request
-    bool isInExplorationList(POPString nodeId);
+    bool isInExplorationList(std::string nodeId);
 
     bool isEndRequest();
 
     void setAsEndRequest();
 private :
-    POPString _uniqueId;    //Unique identifier of the request
+    std::string _uniqueId;    //Unique identifier of the request
     int _maxHops;              //Maximum number of hops for this request
 
     /**
      * ViSaG : clementval
      */
     POPWayback _wb;         //List containing the way back to the initiator
-    POPString _popappid; //POP Application ID
-    POPString _pki;      //Pki of the initiator node
-    POPString _mainPki;  //Pki of the main node
+    std::string _popappid; //POP Application ID
+    std::string _pki;      //Pki of the initiator node
+    std::string _mainPki;  //Pki of the main node
     bool _endingSignal;
     /* ViSaG */
 
 
     // request parameters
-    POPString _nodeId;
+    std::string _nodeId;
     bool _hasNodeIdSet;
-    POPString _operatingSystem;
+    std::string _operatingSystem;
     bool _hasOperatingSystemSet;
     int _minCpuSpeed;
     bool _hasMinCpuSpeedSet;
@@ -194,9 +192,9 @@ private :
     bool _hasExpectedPowerSet;
     float _minPower;
     bool _hasMinPowerSet;
-    POPString   _protocol;
+    std::string   _protocol;
     bool _hasProtocolSet;
-    POPString   _encoding;
+    std::string   _encoding;
     bool _hasEncodingSet;
 
 

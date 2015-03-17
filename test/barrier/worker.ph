@@ -4,6 +4,7 @@
 
 parclass Cworker {
     classuid(1002);
+
 public:
     Cworker() @{od.url("localhost"); od.executable("./Cworker.obj");};
     Cworker(int No) @{od.url("localhost"); od.executable("./Cworker.obj");};

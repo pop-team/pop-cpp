@@ -51,16 +51,16 @@ paroc_condition paroc_system_mpi::mpi_unlock_wait_cond;
 paroc_condition paroc_system_mpi::mpi_go_wait_cond;
 
 
-POPString paroc_system::platform;
+std::string paroc_system::platform;
 std::ostringstream paroc_system::_popc_cout;
 
 //V1.3m
-POPString paroc_system::POPC_HostName;
+std::string paroc_system::POPC_HostName;
 #define LOCALHOST "localhost"
 //End modif
 
 AppCoreService *paroc_system::mgr=NULL;
-POPString paroc_system::challenge;
+std::string paroc_system::challenge;
 
 paroc_system::paroc_system() {
     paroc_combox_factory::GetInstance();
@@ -86,7 +86,7 @@ paroc_system::paroc_system() {
 #endif
         platform = str;
     }
-    POPC_HostName = POPString("");
+    POPC_HostName = std::string("");
 }
 
 
@@ -114,7 +114,7 @@ paroc_system::~paroc_system() {
 // ELSE IF try to use gethostname() and possibly env. variable POPC_DOMAIN
 // ELSE call GetIP()
 //----------------------------------------------------------------------------
-POPString paroc_system::GetHost() {
+std::string paroc_system::GetHost() {
     if(POPC_HostName.empty()) {
         char str[128];
         char *t=getenv("POPC_HOST");
@@ -146,11 +146,11 @@ POPString paroc_system::GetHost() {
 // Try to determine the IP address of the machine.
 // If fail return the localhost IP = LOCALHOST
 //------------------------------------------------------
-POPString paroc_system::GetIP() {
+std::string paroc_system::GetIP() {
 #ifndef __WIN32__
-    POPString iface,ip;
+    std::string iface,ip;
     char* tmp;
-    ip = POPString(LOCALHOST);
+    ip = std::string(LOCALHOST);
 
     tmp=getenv("POPC_IP");
     if(tmp!=NULL) {     // Env. variable POPC_IP is defined
@@ -184,13 +184,13 @@ POPString paroc_system::GetIP() {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
     if(popc_gethostname(hostname,256)!=0) {
-        return paroc_string("127.0.0.1");
+        return std::string("127.0.0.1");
     }
     struct hostent *hp=gethostbyname(hostname);
     unsigned ip=(unsigned(127)<<24)+1;
 
     if(hp==NULL || *(hp->h_addr_list)==NULL) {
-        return paroc_string("127.0.0.1");
+        return std::string("127.0.0.1");
     }
 
     char **p=hp->h_addr_list;
@@ -268,21 +268,22 @@ int paroc_system::GetIP(int *iplist, int listsize) {
     char* parocip=popc_strdup(GetIP().c_str());
     int n;
     int addr;
-    char *tmp;
-    char *tok=popc_strtok_r(parocip," \n\r\t",&tmp);
+    std::vector<std::string> tokens;
+    popc_tokenize_r(tokens, parocip," \n\r\t");
     n=0;
-    while(tok!=NULL && n<listsize) {
-        if((int)(addr = popc_inet_addr(tok)) != -1) {
+    for(auto tok : tokens) {
+        if(!n<listsize)
+            break;
+        if((int)(addr = popc_inet_addr(tok.c_str())) != -1) {
             *iplist=popc_ntohl(addr);
             iplist++;
             n++;
         }
-        tok=popc_strtok_r(NULL," \n\r\t",&tmp);
     }
     return n;
 }
 
-POPString paroc_system::GetDefaultInterface() {
+std::string paroc_system::GetDefaultInterface() {
     char buff[1024], iface[16], net_addr[128];
     //char flags[64], mask_addr[128], gate_addr[128];
     //int iflags, metric, refcnt, use, mss, window, irtt;
@@ -309,11 +310,11 @@ POPString paroc_system::GetDefaultInterface() {
     if(!found) {
         iface[0] = '\0';    // if not found iface = ""
     }
-    return POPString(iface);
+    return std::string(iface);
 }
 
 // TODO LW: Should probably be in intface
-bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
+bool paroc_system::GetIPFromInterface(std::string &iface, std::string &str_ip) {
 #ifndef __WIN32__
     (void) iface;
     (void) str_ip;
@@ -323,13 +324,13 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
 
     getifaddrs(&addrs);
 
-    LOG_DEBUG("Looking for interface: %s --->",(const char*)iface);
+    LOG_DEBUG("Looking for interface: %s --->",iface.c_str());
     for (iap = addrs; iap != NULL; iap = iap->ifa_next){
         LOG_DEBUG("name=%s, addr=%p, flag=%d (%d), familly=%d (%d)",iap->ifa_name, iap->ifa_addr, iap->ifa_flags, IFF_UP, iap->ifa_addr->sa_family, AF_INET);
       if ( iap->ifa_addr &&
            (iap->ifa_flags & IFF_UP) &&
            (iap->ifa_addr->sa_family == AF_INET) &&
-           !strcmp(iap->ifa_name, (const char*)iface)) {
+                !strcmp(iap->ifa_name, iface.c_str())) {
         sa = (struct sockaddr_in *)(iap->ifa_addr);
         inet_ntop(iap->ifa_addr->sa_family,
                   (void *)&(sa->sin_addr),
@@ -358,7 +359,7 @@ bool paroc_system::GetIPFromInterface(POPString &iface, POPString &str_ip) {
  */
 bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
-    char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
+    const char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
     if(info==NULL) {
         LOG_ERROR("missing -jobservice argument");
         return false;
@@ -367,8 +368,8 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     paroc_system::jobservice.SetAsService();
 
     // Get path of the application service executable
-    char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
-    //char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
+    const char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
+    // const char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
 
     // Check if need to run on local node only
     if(paroc_utils::checkremove(argc,argv,"-runlocal")) {
@@ -376,7 +377,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     }
 
     // Get application service contact address
-    char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
+    const char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
     if(codeser==NULL && appcontact==NULL) {
         LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");
@@ -393,7 +394,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
             // LOG_DEBUG("POP-C++ Application Service created %s", mgr->GetAccessPoint().GetAccessString());
 #endif
         } else {
-            challenge=NULL;
+            challenge="";
             paroc_accesspoint app;
             app.SetAccessString(appcontact);
             app.SetAsService();
@@ -454,7 +455,7 @@ void paroc_system::Finalize(bool /*normalExit*/) {
               oldcount = count;
             }
           } else {
-	        LOG_DEBUG("Finalize killall");
+	            LOG_INFO("Main routine did not exit normally or did not return 0. This is treated as an error by POP-C++.");
             mgr->KillAll();
           }
           LOG_DEBUG("Finalize stop");

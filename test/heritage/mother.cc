@@ -21,6 +21,6 @@ void Mother::callMethod(Mother &c, int v) {
     c.Method1();
     c.SetVal(v);
     c.Method1();
-    printf("Heritage: In Mother, GetVal=%d\n",c.GetVal());
+    printf("Heritage: In Mother, GetVal=%d\n", c.GetVal());
 }
 

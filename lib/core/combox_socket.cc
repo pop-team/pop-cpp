@@ -791,13 +791,13 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
     return n;
 }
 
-bool paroc_combox_socket::GetProtocol(POPString & protocolName) {
+bool paroc_combox_socket::GetProtocol(std::string & protocolName) {
     protocolName="socket";
     return true;
 }
 
-bool paroc_combox_socket::GetUrl(POPString & accesspoint) {
-    POPString prot;
+bool paroc_combox_socket::GetUrl(std::string & accesspoint) {
+    std::string prot;
     GetProtocol(prot);
     int port=GetPort();
     char elem[1024];

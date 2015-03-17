@@ -15,13 +15,13 @@
 #include "remotelog.ph"
 #include "appservice.ph"
 
-RemoteLog::RemoteLog(const POPString &challenge): paroc_service_base(challenge) {
+RemoteLog::RemoteLog(const std::string &challenge): paroc_service_base(challenge) {
 }
 RemoteLog::~RemoteLog() {
 }
 
-void RemoteLog::Log(const POPString &info) {
-    POPString prt=info;
+void RemoteLog::Log(const std::string &info) {
+    std::string prt=info;
     //By doing a fprintf we avoid to go through rprintf (it'll be a bit faster and easier to understand)
     fprintf(stdout, "%s",prt.c_str());
     fflush(stdout);
@@ -31,9 +31,9 @@ void RemoteLog::Log(const POPString &info) {
  * Method used to write remote log into a specific file
  * @param info String to write into the file.
  */
-void RemoteLog::LogPJ(const POPString &appID, const POPString &info) {
-    POPString prt=info;
-    POPString id=appID;
+void RemoteLog::LogPJ(const std::string &appID, const std::string &info) {
+    std::string prt=info;
+    std::string id=appID;
     std::string filename("/tmp/popjava_logremote_");
     filename.append(id.c_str());
     std::ofstream logfile;

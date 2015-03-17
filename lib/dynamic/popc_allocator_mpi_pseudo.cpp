@@ -35,10 +35,10 @@ POPC_Allocator_mpi_pseudo::~POPC_Allocator_mpi_pseudo() {
  * Allocate single object with a pseudo-dynamic allocation mechanism
  * @param objectname  Name of the class to instantiate the object
  * @param od          Object description for the allocation process
- * @return A POPString object representing the access-point of the allocated parallel object.
+ * @return A std::string object representing the access-point of the allocated parallel object.
  */
-POPString POPC_Allocator_mpi_pseudo::allocate(POPString& /*objectname*/, paroc_od& /*od*/) {
-    POPString objectaddress;
+std::string POPC_Allocator_mpi_pseudo::allocate(std::string& /*objectname*/, paroc_od& /*od*/) {
+    std::string objectaddress;
 
     /* TODO Allocation process here */
 
@@ -52,7 +52,7 @@ POPString POPC_Allocator_mpi_pseudo::allocate(POPString& /*objectname*/, paroc_o
  * @param nb          Number of objects to allocate
  * @return A pointer to a combox or an array of combox connected with the group
  */
-paroc_combox* POPC_Allocator_mpi_pseudo::allocate_group(POPString& /*objectname*/, paroc_od& /*od*/, int /*nb*/) {
+paroc_combox* POPC_Allocator_mpi_pseudo::allocate_group(std::string& /*objectname*/, paroc_od& /*od*/, int /*nb*/) {
     /* TODO Allocation process here */
 
     return NULL;

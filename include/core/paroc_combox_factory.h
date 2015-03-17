@@ -15,12 +15,11 @@
 #include <vector>
 
 #include "paroc_combox.h"
-#include "paroc_string.h"
 
 /*This abstract class declares an interface creating abstract combox*/
 
 typedef paroc_combox* (*COMBOX_CREATOR)();
-typedef int (*LOAD_PROTOCOL)(paroc_string &, COMBOX_CREATOR &);
+typedef int (*LOAD_PROTOCOL)(std::string &, COMBOX_CREATOR &);
 
 struct combox_factory_struct {
     char *name;
@@ -50,12 +49,12 @@ public:
     paroc_combox* Create(const char * name);
     paroc_combox* Create(int index);
 
-    void GetNames(paroc_string &prots);
+    void GetNames(std::string &prots);
     int GetCount();
 
     bool Register(const char *name, int metrics, COMBOX_CREATOR creator);
 
-    void *LoadPlugin(char *fname,  paroc_string &name, COMBOX_CREATOR &f);
+    void *LoadPlugin(char *fname,  std::string &name, COMBOX_CREATOR &f);
 
 private:
     static paroc_combox_factory *fact;

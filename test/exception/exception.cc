@@ -4,7 +4,7 @@
 
 ClassExcep::ClassExcep() {
     IOException a("My Exception Constructor", "ICI");
-    printf("Exception: Object ClassExcep starting on \"%s\"\n", POPGetHost());
+    printf("Exception: Object ClassExcep starting on \"%s\"\n", POPGetHost().c_str());
     e = -1;
 }
 

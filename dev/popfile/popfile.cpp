@@ -160,13 +160,13 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, long offset
     if(!popfile_try_open_parallel()) {
         // Create an array of possible popfilemanager accesspoint
         paroc_accesspoint candidates[stripnumber];
-        POPString stripNames[stripnumber];
+        std::string stripNames[stripnumber];
         // Contact the local PFM to get resources
         POPFileManager pfm(pfm_ap);
 
         // If local flag is TRUE, create a strip on the local node.
         if(local) {
-            POPString localStrip(str_filename.c_str());
+            std::string localStrip(str_filename.c_str());
             if(!pfm.createStrip(localStrip)) {
                 cout << "[POPFILE] Error: can't create the local strip ... operation failed" << popcendl;
                 return false;
@@ -177,7 +177,7 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, long offset
         }
 
         int resources;
-        POPString pops_stripPrefix = stripPrefix;
+        std::string pops_stripPrefix = stripPrefix;
         if((resources = pfm.findResourcesForStrip(stripnumber, candidates, stripNames, pops_stripPrefix, local)) != 0) {
             // Set metadata
             std::string metadata_filename(filename);
@@ -561,7 +561,7 @@ POPFileGrip POPFStream::read_in_background(long size) {
                 popfile_reader_ref[i].set_pfm_accesspoint(ap);
 
                 // Set the associated path for the strip
-                POPString path(popfile_metadata.get_filepath_for_strip(i).c_str());
+                std::string path(popfile_metadata.get_filepath_for_strip(i).c_str());
                 popfile_reader_ref[i].set_strip_path(path);
                 // Set the offset of the strip
                 popfile_reader_ref[i].set_offset(popfile_metadata.get_offset_for_strip(i));

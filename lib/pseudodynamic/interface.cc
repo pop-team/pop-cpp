@@ -45,99 +45,6 @@
 #define POPC_CONNECT_TIMEOUT 10000
 #endif
 
-int RunCmd(int argc, char **argv, char *env[], int *status) {
-    (void)argc;
-    char *file=NULL;
-
-    POPString str;
-
-    if(argv==NULL || argv[0]==NULL) {
-        return ENOENT;
-    }
-    file=argv[0];
-    //  if (access(file,X_OK)!=0)
-    //    {
-    //      return -1;
-    //    }
-#ifndef __WIN32__
-    popc_signal(popc_SIGCHLD, ((status==NULL) ? popc_SIG_IGN : popc_SIG_DFL));
-#endif
-
-#ifndef UC_LINUX
-#ifndef __WIN32__
-    int pid=popc_fork();
-    if(pid==-1) {
-        int err=errno;
-        LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
-        return err;
-    } else if(pid==0) {
-        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ?
-        int nf=popc_getdtablesize();
-        for(int fd=3; fd<nf; fd++) {
-            popc_close(fd);
-        }
-        */
-        if(env!=NULL) {
-            while(*env!=NULL) {
-                putenv(popc_strdup(*env));
-                env++;
-            }
-        }
-        if(status==NULL) {
-            popc_setpgid(0,0);
-        }
-        //Child process
-        popc_execvp(file,argv);
-        LOG_ERROR("[CORE] Execution of [%s] fails",file);
-        popc__exit(-1);
-    }
-#else
-    argv[argc] = 0;
-    char command_line[1024]="";
-
-    strcat(command_line,"sh ");
-    for(int i =0; i<argc; i++) {
-        strcat(command_line,argv[i]);
-        strcat(command_line," ");
-    }
-
-    STARTUPINFO sInfoSource;
-    PROCESS_INFORMATION pInfoSource;
-
-    ZeroMemory(&sInfoSource, sizeof(sInfoSource));
-    sInfoSource.cb = sizeof(sInfoSource);
-
-    if(!CreateProcess(NULL, command_line, NULL, NULL, FALSE, 0, NULL, NULL, &sInfoSource, &pInfoSource)) {
-        LOG_ERROR("CreateProcess failed (%d).", GetLastError());
-        return -1;
-    }
-
-    WaitForSingleObject(pInfoSource.hProcess,INFINITE);
-
-    CloseHandle(pInfoSource.hThread);
-    CloseHandle(pInfoSource.hProcess);
-#endif
-#else
-#ifndef __WIN32__
-    int pid=popc_vfork();
-    if(pid==-1) {
-        int err=errno;
-        LOG_ERROR("[CORE] Fork fails to execute! errno=%d", errno);
-        return err;
-    } else if(pid==0) {
-        execve(file,argv,env);
-        LOG_ERROR("[CORE] Execution of [%s] fail (popc_vfork)",file);
-        popc__exit(-1);
-    }
-#endif
-#endif
-#ifndef __WIN32__
-    if(status!=NULL) {
-        popc_waitpid(pid, status, 0);
-    }
-#endif
-    return 0;
-}
 
 paroc_accesspoint paroc_interface::_paroc_nobind;
 
@@ -163,6 +70,7 @@ paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
 }
 
 paroc_interface::paroc_interface(const paroc_accesspoint &p) {
+    LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     _ssh_tunneling = false;
     __paroc_combox = NULL;
     __paroc_buf = NULL;
@@ -183,6 +91,7 @@ paroc_interface::paroc_interface(const paroc_accesspoint &p) {
 }
 
 paroc_interface::paroc_interface(const paroc_interface &inf) {
+    LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)", inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     paroc_accesspoint infAP = inf.GetAccessPoint();
     _ssh_tunneling=false;
     __paroc_combox=NULL;
@@ -219,7 +128,7 @@ paroc_interface & paroc_interface::operator = (const paroc_interface & obj) {
 
     Release();
     accesspoint = obj.GetAccessPoint();
-    if(GetAccessPoint().GetAccessString()) {
+    if(GetAccessPoint().GetAccessString().c_str()) {
         Bind(accesspoint);
         //AddRef();
     }
@@ -266,6 +175,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
     paroc_buffer *old = NULL;
 
     if(&buf == __paroc_buf) {
+        LOG_WARNING("Buffers share the same address");// TODO LW: Where does this come from ?
         old = &buf;
         __paroc_buf = __paroc_combox->GetBufferFactory()->CreateBuffer();
     }
@@ -282,7 +192,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         buf.Pop();
         if(ref > 0) {
             Bind(accesspoint);
-            LOG_DEBUG("Bound %s", accesspoint.GetAccessString());
+            LOG_DEBUG("Bound %s", accesspoint.GetAccessString().c_str());
             AddRef();
             //DecRef();
         }
@@ -307,8 +217,7 @@ void paroc_interface::allocate_only() {
 void paroc_interface::Allocate() {
     LOG_DEBUG("INTERFACE: Allocate start");
     Release();
-    POPString protocol;
-    od.getProtocol(protocol);
+    std::string protocol = od.getProtocol();
     paroc_accesspoint jobcontact, objaccess, remotejobcontact;
 
     // With the actual code, batchsize is always zero
@@ -322,14 +231,13 @@ void paroc_interface::Allocate() {
         }
     } else if(!TryLocal(objaccess)) {
 
-        POPString objname(ClassName());
-	LOG_DEBUG("INTERFACE: Will try to create a parallel object: %s", objname.GetString());
+        std::string objname(ClassName());
+	LOG_DEBUG("INTERFACE: Will try to create a parallel object: %s", objname.c_str());
         //Exec using JobMgr interface...
-        POPString platforms;
-        od.getPlatforms(platforms);
+        const std::string& platforms(od.getPlatforms());
 
         if(platforms.empty()) {
-		LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::appservice.GetAccessString());
+		LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::appservice.GetAccessString().c_str());
             /*CodeMgr mgr(paroc_system::appservice);
             if (mgr.GetPlatform(objname, platforms)<=0) {
                 paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
@@ -338,11 +246,10 @@ void paroc_interface::Allocate() {
         }
         //Global Resource management system --> Find a resource.
 
-        POPString joburl;
-        od.getJobURL(joburl);
+        const std::string& joburl(od.getJobURL());
 
 
-        if(joburl!=NULL) {
+        if(!joburl.empty()) {
             jobcontact.SetAccessString(joburl);
         } else {
             jobcontact=paroc_system::jobservice;
@@ -350,8 +257,8 @@ void paroc_interface::Allocate() {
 
         if(jobcontact.IsEmpty()) {
             char str[1024];
-            LOG_DEBUG("INTERFACE - JOBMGR %s", paroc_system::GetHost());
-            sprintf(str,"%s:%d",paroc_system::GetHost(),DEFAULTPORT);
+            LOG_DEBUG("INTERFACE - JOBMGR %s", paroc_system::GetHost().c_str());
+            sprintf(str,"%s:%d",paroc_system::GetHost().c_str(),DEFAULTPORT);
             jobcontact.SetAccessString(str);
         }
     }
@@ -370,12 +277,12 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
     accesspoint = dest;
 
     //Choose the protocol and then bind
-    POPString prots = dest.GetAccessString();
-    POPString od_prots;
-    od.getProtocol(od_prots);
+    std::string prots = dest.GetAccessString();
+    std::string od_prots = od.getProtocol();
 
     auto accesslist = Tokenize(prots);
-    ApplyCommPattern(getenv("POPC_COMM_PATTERN"),accesslist);
+    const char* tmp = getenv("POPC_COMM_PATTERN");
+    ApplyCommPattern(tmp?tmp:"",accesslist);
 
     auto pref = Tokenize(od_prots);
 
@@ -384,13 +291,13 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
         //No preferred protocol in OD specified, try the first protocol in dest
         for(auto& addr : accesslist){
             try {
-                Bind(addr);
+                Bind(addr.c_str());
                 return;
             } catch(std::exception &e) {
-                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
+                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr.c_str(),e.what());
                 continue;
             }
-            LOG_DEBUG("Successful bind to %s", addr);
+            LOG_DEBUG("Successful bind to %s", addr.c_str());
         }
     } else {
         //The user specify the protocol in OD, select the preference and match with the access point...
@@ -398,13 +305,13 @@ void paroc_interface::Bind(const paroc_accesspoint &dest) {
             // Find access string that match myprot
             for(auto& addr : accesslist){
                 char pattern[1024];
-                sprintf(pattern,"%s://*",myprot);
+                sprintf(pattern,"%s://*",myprot.c_str());
                 if(paroc_utils::MatchWildcard(addr,pattern)) {
                     try {
-                        Bind(addr);
+                        Bind(addr.c_str());
                         return;
                     } catch(std::exception &e) {
-                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr,e.what());
+                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr.c_str(),e.what());
                         continue;
                     }
                 }
@@ -425,7 +332,7 @@ void paroc_interface::Bind(const char *dest) {
 
 
     paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
-    POPString p;
+    std::string p;
     if(!fact) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
     }
@@ -435,7 +342,7 @@ void paroc_interface::Bind(const char *dest) {
     __paroc_combox = fact->Create("mpi");
 
     if(!__paroc_combox) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
+        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot create combox from factory");
     }
 
     // Create associated buffer
@@ -450,8 +357,8 @@ void paroc_interface::Bind(const char *dest) {
     if(combox_create_return && combox_connect_return) {
         LOG_DEBUG("INTERFACE: Interface connected");
         int status;
-        POPString info;
-        POPString peerplatform;
+        std::string info;
+        std::string peerplatform;
         BindStatus(status, peerplatform, info);
         LOG_DEBUG("INTERFACE: Got bind status %d", status);
 
@@ -465,8 +372,8 @@ void paroc_interface::Bind(const char *dest) {
         case BIND_FORWARD_PERMANENT: {
             paroc_accesspoint old(accesspoint);
             paroc_accesspoint newap;
-            newap.SetAccessString(info);
-            LOG_INFO("Forward current session to %s", info);
+            newap.SetAccessString(info.c_str());
+            LOG_INFO("Forward current session to %s", info.c_str());
             Bind(newap);
 
             if(status == BIND_FORWARD_SESSION) {
@@ -484,7 +391,7 @@ void paroc_interface::Bind(const char *dest) {
     } else {
         int code = errno;
 
-        LOG_WARNING("Fail to connect from [%s] to [%s]. Error code: %s",paroc_system::GetHost(),dest,strerror(code));
+        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s", paroc_system::GetHost().c_str(),dest,strerror(code));
         Release();
         paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
@@ -494,26 +401,22 @@ void paroc_interface::Bind(const char *dest) {
 
 bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
     LOG_DEBUG("INTERFACE: TryLocal start");
-    POPString hostname;
-    POPString rarch;
-    POPString codefile;
-    POPString batch;
+    std::string hostname(od.getURL());
+    const std::string& rarch(od.getArch());
+    const std::string& batch(od.getBatch());
 
-    POPString objname(ClassName());
+    const std::string& objname(ClassName());
     bool localFlag=od.IsLocal();
-    od.getURL(hostname);
-    od.getArch(rarch);
-    od.getBatch(batch);
 
 
-    if(localFlag || hostname!=NULL || batch!=NULL) {
+    if(localFlag || !hostname.empty() || !batch.empty()) {
 
-          if (hostname == NULL) hostname=paroc_system::GetHost();
+          if (hostname.empty()) hostname=paroc_system::GetHost();
 
-        od.getExecutable(codefile);
+          const std::string& codefile(od.getExecutable());
 
         //Hostname existed
-        if(codefile==NULL) {
+        if(codefile.empty()) {
             //Lookup local code manager for the binary source....
             assert(!paroc_system::appservice.IsEmpty());
             /*CodeMgr mgr(paroc_system::appservice);
@@ -526,9 +429,9 @@ bool paroc_interface::TryLocal(paroc_accesspoint &objaccess) {
         }
 
         //Local exec using sh or rsh
-        char *hoststr=hostname.GetString();
+        const char *hoststr=hostname.c_str();
 
-        int status = LocalExec(hoststr, codefile, ClassName(), paroc_system::jobservice, paroc_system::appservice,&objaccess,1,od);
+        int status = LocalExec(hoststr, codefile.c_str(), ClassName(), paroc_system::jobservice, paroc_system::appservice,&objaccess,1,od);
 
         if(status != 0) {
             paroc_exception::paroc_throw(status, "Invalid status", ClassName());
@@ -568,7 +471,7 @@ bool paroc_interface::isBinded() {
 }
 
 // ParocCall
-void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info) {
+void paroc_interface::BindStatus(int &code, std::string &platform, std::string &info) {
     if(!__paroc_combox || !__paroc_buf) {
         return;
     }
@@ -586,11 +489,11 @@ void paroc_interface::BindStatus(int &code, POPString &platform, POPString &info
     __paroc_buf->UnPack(&code, 1);
     __paroc_buf->Pop();
 
-    __paroc_buf->Push("platform", "POPString", 1);
+    __paroc_buf->Push("platform", "std::string", 1);
     __paroc_buf->UnPack(&platform, 1);
     __paroc_buf->Pop();
 
-    __paroc_buf->Push("info", "POPString", 1);
+    __paroc_buf->Push("info", "std::string", 1);
     __paroc_buf->UnPack(&info, 1);
     __paroc_buf->Pop();
     LOG_DEBUG("INTERFACE: request bindstatus done");
@@ -642,7 +545,7 @@ int paroc_interface::DecRef() {
 }
 
 
-bool paroc_interface::Encoding(POPString encoding) {
+bool paroc_interface::Encoding(std::string encoding) {
     if(!__paroc_combox || !__paroc_buf) {
         LOG_WARNING("Encoding cannot be called");
         return false;
@@ -651,7 +554,7 @@ bool paroc_interface::Encoding(POPString encoding) {
     paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(encoding);
 
     if(!fact) {
-        LOG_ERROR("[CORE] No encoding factory for %s", encoding);
+        LOG_ERROR("[CORE] No encoding factory for %s", encoding.c_str());
         return false;
     }
 
@@ -660,7 +563,7 @@ bool paroc_interface::Encoding(POPString encoding) {
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
 
-    __paroc_buf->Push("encoding", "POPString", 1);
+    __paroc_buf->Push("encoding", "std::string", 1);
     __paroc_buf->Pack(&encoding, 1);
     __paroc_buf->Pop();
 
@@ -768,24 +671,23 @@ bool paroc_interface::RecvCtrl() {
 }
 #endif
 
-void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatform) {
+void paroc_interface::NegotiateEncoding(std::string &enclist, std::string &peerplatform) {
     LOG_DEBUG("INTERFACE: Negotiate encoding start");
-    POPString pref;
-    od.getEncoding(pref);
+    std::string pref = od.getEncoding();
 
     auto enc_pref = Tokenize(pref);
     auto enc_avail = Tokenize(enclist);
 
-    POPString cur_enc;
+    std::string cur_enc;
     __paroc_combox->GetBufferFactory()->GetBufferName(cur_enc);
 
     if(enc_pref.empty()) {
         for(auto& enc : enc_avail){
-            if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform,paroc_system::platform)) {
+            if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform.c_str(),paroc_system::platform.c_str())) {
                 continue;
             }
 
-            if(paroc_utils::isncaseEqual(enc,cur_enc) || Encoding(enc)) {
+            if(paroc_utils::isncaseEqual(enc.c_str(),cur_enc.c_str()) || Encoding(enc)) {
                 return;
             }
         }
@@ -793,7 +695,7 @@ void paroc_interface::NegotiateEncoding(POPString &enclist, POPString &peerplatf
         for(auto& test : enc_pref){
             for(auto& enc : enc_avail){
                 if(paroc_utils::MatchWildcard(enc,test)) {
-                    if(paroc_utils::isncaseEqual(enc,"raw") && !paroc_utils::isEqual(peerplatform,paroc_system::platform)) {
+                    if(paroc_utils::isncaseEqual(enc,"raw") && !paroc_utils::isEqual(peerplatform.c_str(),paroc_system::platform.c_str())) {
                         continue;
                     }
 
@@ -831,21 +733,17 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 #ifdef OD_DISCONNECT
     bool checkConnection=od.getCheckConnection();
 #endif
-    POPString ruser;
-    POPString rcore;
-    POPString batch;
-    POPString cwd;
+    const std::string& ruser(od.getUser());
+    const std::string& rcore(od.getCore());
+    const std::string& batch(od.getBatch());
+    const std::string& cwd(od.getCwd());
 
-    if(hostname != NULL && (tmp = (char*)strchr(hostname, ':')) != NULL) {
+    if(hostname == NULL && (tmp = (char*)strchr(hostname, ':')) != NULL) { // TODO LW: This cast is dangerous
         *tmp = 0;
     }
-    od.getUser(ruser);
-    od.getCore(rcore);
-    od.getBatch(batch);
-    od.getDirectory(cwd);
 
     int n = 0;
-    /*POPString myhost = paroc_system::GetHost();
+    /*std::string myhost = paroc_system::GetHost();
     bool islocal = (isManual || hostname == NULL || *hostname == 0 || paroc_utils::SameContact(myhost, hostname) || paroc_utils::isEqual(hostname, "localhost") || paroc_utils::isEqual(hostname, "127.0.0.1"));
     if (batch == NULL) {
         if (!islocal) {
@@ -896,7 +794,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
       //paroc_combox_socket tmpsock;
     // bool isServer = true;
       // if (!tmpsock.Create(0,isServer)) paroc_exception::paroc_throw_errno();
-      // POPString cburl;
+      // std::string cburl;
       // tmpsock.GetUrl(cburl);
 
 
@@ -908,7 +806,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 //  paroc_combox* callback_combox =  comboxFactory->Create((const char*)"mpi");
 //  if(!callback_combox->Create(NULL, 0, true))
 //    paroc_exception::paroc_throw_errno();
-//  POPString callback_url;
+//  std::string callback_url;
 //  callback_combox->GetUrl(callback_url);
 
 //  sprintf(tmpstr, "-callback=%s", (const char*)callback_url);
@@ -922,7 +820,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     }
 
     if(!appserv.IsEmpty()) {
-        sprintf(tmpstr,"-appservice=%s",appserv.GetAccessString());
+        sprintf(tmpstr,"-appservice=%s",appserv.GetAccessString().c_str());
           argv[n++]=popc_strdup(tmpstr);
     }
 
@@ -932,7 +830,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
         argv[n++]=popc_strdup(tmpstr);
     }*/
     // Select core
-    if(rcore!=NULL&&rcore!=0) {
+    if(!rcore.empty()) {
         sprintf(tmpstr,"-core=%s",rcore.c_str());
           argv[n++]=popc_strdup(tmpstr);
     }
@@ -955,7 +853,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     }
 
     // Add the working directory as argument
-    if(cwd!=NULL && *cwd!=0) {
+    if(!cwd.empty()) {
         sprintf(tmpstr,"-cwd=%s",cwd.c_str());
         argv[n++]=strdup(tmpstr);
     }
@@ -1066,7 +964,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     // Saving the object accesspoint
     objaccess->SetAccessString(tmp_accesspoint.str().c_str());
 
-    LOG_DEBUG("INTERFACE: objaccess %s", objaccess->GetAccessString());
+    LOG_DEBUG("INTERFACE: objaccess %s", objaccess->GetAccessString().c_str());
 
     /*for (int i=0;i<n;i++)
         if (argv[i]!=NULL)
@@ -1075,43 +973,27 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     return 0;
 }
 
-std::vector<char*> paroc_interface::Tokenize(POPString &s) {
-    char *t=s.GetString();
-    if(!t) {
+std::vector<std::string> paroc_interface::Tokenize(const std::string &s) {
+    if(s.empty()) {
         return {};
     }
-
-    std::vector<char*> result;
-
-    char sep[]=" \n\t";
-    char *ptrptr;
-    char *tok=popc_strtok_r(t,sep,&ptrptr);
-
-    while(tok!=NULL) {
-        result.push_back(tok);
-        tok=popc_strtok_r(NULL,sep,&ptrptr);
-    }
-
-    return result;
+    std::vector<std::string> tokens;
+    popc_tokenize_r(tokens,s, " \n\t");
+    return tokens;
 }
 
-void paroc_interface::ApplyCommPattern(const char *pattern, std::vector<char*>& accesslist) {
-    if(!pattern) {
+void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<std::string>& accesslist) {
+    if(pattern.empty()) {
         return;
     }
 
-    POPString p(pattern);
-    auto patternlist = Tokenize(p);
-
-    auto ptpos = patternlist.begin();
+    auto patternlist = Tokenize(pattern);
     auto headpos = accesslist.begin();
 
-    while(ptpos != patternlist.end()){
-        auto ptstr = *ptpos++;
-
-        if(!ptstr) {
-            continue;
-        }
+    for(auto ptstr : patternlist){
+        // if(!ptstr) {
+            // continue;
+        // }
 
         auto pos = headpos;
 
@@ -1145,9 +1027,9 @@ void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
 // DEPRECATED // TODO LW: See what to do
 void paroc_interface::paroc_Response(paroc_buffer *buf) {
     if(!buf->Recv(*__paroc_combox)) {
-        printf("Throw from response");
         paroc_exception::paroc_throw("Buffer receive failed (old)");
     }
+
     paroc_buffer::CheckAndThrow(*buf);
 }
 

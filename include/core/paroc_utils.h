@@ -15,13 +15,14 @@
 
 #ifndef POPC_UTILS_H
 #define POPC_UTILS_H
-#include "paroc_string.h"
 #include "popc_logger.h"
 
 #define SSH_TUNNEL_ERROR 65280
 #define SSH_PORT_MOD 16383
 #define SSH_PORT_FIRST 49152
 #define SSH_MAX_ATTEMPT 10
+
+typedef std::string POPString;
 
 class AppCoreService;
 
@@ -31,21 +32,21 @@ public:
     static char *checkremove(int *argc, char ***argv, const char *opt);
     static bool check_remove(int *argc, char ***argv, const char *opt);
     static bool isEqual(const char *s1, const char *s2);
-    static bool isncaseEqual(const char *s1, const char *s2);
-    static bool MatchWildcard(const char *str, const char *wildcard);
+    static bool isncaseEqual(const std::string& s1, const std::string& s2);
+    static bool MatchWildcard(const std::string& str, const std::string& wildcard);
     static void FindAbsolutePath(const char *fname, char *abspath);
     static void Assert(bool a);
 
 
 #ifdef _POPC_
-    static bool SameContact(const char *contact1, const char *contact2);
+    static bool SameContact(const std::string& contact1, const std::string& contact2);
     static bool IsRemoteDest(const char *dest);
     static int GetPortFromURL(const char *url);
     static const char *GetIPFromURL(const char *url);
     static const char* GetCurrentUser();
-    static paroc_string MakeContact(const char *host, int port);
-    static bool isIPv4Address(POPString value);
-    static bool isValidName(POPString value);
+    static std::string MakeContact(const char *host, int port);
+    static bool isIPv4Address(std::string value);
+    static bool isValidName(std::string value);
     static float benchmark_power();
 
     static int InitCodeService(char *fileconf, AppCoreService *service);

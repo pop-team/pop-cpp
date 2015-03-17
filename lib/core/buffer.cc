@@ -113,40 +113,6 @@ void paroc_buffer::Push(const char* paramname, const char* paramtype, int /*nele
 void paroc_buffer::Pop() {
 }
 
-void paroc_buffer::Pack(const POPString *list, int n) {
-    if(n<=0 || !list) {
-        return;
-    }
-    for(int i=0; i<n; i++,list++) {
-        const char *res=(*list).c_str();
-        int len=list->size()+1;
-        Pack(&len,1);
-        if(len>0) {
-            Pack(res,len);
-        }
-    }
-}
-
-void paroc_buffer::UnPack(POPString *list, int n) {
-    if(n<=0 || !list) {
-        return;
-    }
-
-    std::vector<char> tmpstr;
-
-    for(int i=0; i<n; i++,list++) {
-        int len;
-        UnPack(&len,1);
-        if(len>0) {
-            tmpstr.resize(len);
-            UnPack(tmpstr.data(), len);
-            *list = tmpstr.data();
-        } else {
-            *list = nullptr;
-        }
-    }
-}
-
 void paroc_buffer::Pack(const std::string *list, int n) {
     if(n<=0 || list==NULL) {
         return;
@@ -382,7 +348,7 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
     case EXCEPTION_POPC_STD: {
         paroc_exception t(0);
         t.Serialize(except,false);
-        throw &t;
+        throw t;
     }
     /* TODO LW: Is this really used ?? */
     case EXCEPTION_OBJECT: {

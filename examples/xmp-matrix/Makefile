@@ -1,3 +1,9 @@
+
+all: mpi
+run: mpirun
+clean:
+
+
 mpi: mpi-matrix.c
 	mpicc -o mpi-main mpi-matrix.c
 

@@ -3,17 +3,17 @@
 
 
 POPCobject::POPCobject(int newID, int wanted, int minp) {
-    printf("POPCobject with ID=%d created (by JobMgr) on machine:%s\n", newID, (const char*)POPSystem::GetHost());
+    printf("POPCobject with ID=%d created (by JobMgr) on machine:%s\n", newID, POPSystem::GetHost().c_str());
     iD=newID;
 }
 
 POPCobject::POPCobject(int newID, POPString machine) {
-    printf("POPCobject with ID=%d created on machine:%s\n", newID, (const char*)POPSystem::GetHost());
+    printf("POPCobject with ID=%d created on machine:%s\n", newID, POPSystem::GetHost().c_str());
     iD=newID;
 }
 
 POPCobject::~POPCobject() {
-    printf("POPCobject:%d on machine:%s is being destroyed\n", iD, (const char*)POPSystem::GetHost());
+    printf("POPCobject:%d on machine:%s is being destroyed\n", iD, POPSystem::GetHost().c_str());
     iD=-1;
 }
 

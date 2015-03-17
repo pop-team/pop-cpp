@@ -16,14 +16,13 @@
 #include "popc_allocator.h"
 
 #include "paroc_od.h"
-#include "paroc_string.h"
 
 class POPC_Allocator_mpi_pseudo : public POPC_Allocator {
 public:
     POPC_Allocator_mpi_pseudo();
     ~POPC_Allocator_mpi_pseudo();
-    virtual POPString allocate(POPString& objectname, paroc_od& od);
-    virtual paroc_combox* allocate_group(POPString& objectname, paroc_od& od, int nb);
+    virtual std::string allocate(std::string& objectname, paroc_od& od);
+    virtual paroc_combox* allocate_group(std::string& objectname, paroc_od& od, int nb);
     virtual POPC_Protocol get_protocol() {
         return POPC_Allocator::MPI;
     }

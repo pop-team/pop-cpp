@@ -61,8 +61,8 @@ public:
      * @param accesspoint Returned URL (protocol://host:port)
      * @return true if success
      */
-    virtual bool GetUrl(paroc_string & accesspoint);
-    virtual bool GetProtocol(paroc_string & protocolName);
+    virtual bool GetUrl(std::string & accesspoint);
+    virtual bool GetProtocol(std::string & protocolName);
     virtual void Destroy();
 
     //bool hasCommunicator();

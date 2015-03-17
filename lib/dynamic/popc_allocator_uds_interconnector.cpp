@@ -20,8 +20,6 @@
 #include "paroc_broker.h"
 #include "popc_logger.h"
 
-using namespace std;
-
 /**
  * Allocator constructor
  */
@@ -40,9 +38,9 @@ POPC_Allocator_uds_interconnector::~POPC_Allocator_uds_interconnector() {
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, paroc_od& od) {
+std::string POPC_Allocator_uds_interconnector::allocate(std::string& objectname, paroc_od& od) {
     // Note LW: Commented since it is unused
-    // POPString p;
+    // std::string p;
     //od.getProtocol(p);
 
     // Get object description important for this kind
@@ -58,7 +56,7 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
     }
 
     // Get the executable path name
-    const string& codefile = od.getExecutable();
+    const std::string& codefile = od.getExecutable();
 
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
     if(codefile.empty()) {
@@ -93,11 +91,11 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
     allocating_buffer->Reset();
     allocating_buffer->SetHeader(header);
 
-    allocating_buffer->Push("objectname", "POPString", 1);
+    allocating_buffer->Push("objectname", "std::string", 1);
     allocating_buffer->Pack(&objectname, 1);
     allocating_buffer->Pop();
 
-    allocating_buffer->Push("codefile", "POPString", 1);
+    allocating_buffer->Push("codefile", "std::string", 1);
     allocating_buffer->Pack(&codefile, 1);
     allocating_buffer->Pop();
 
@@ -119,8 +117,8 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
     }
     paroc_buffer::CheckAndThrow(*allocating_buffer);
 
-    POPString objectaddress;
-    allocating_buffer->Push("objectaddress", "POPString", 1);
+    std::string objectaddress;
+    allocating_buffer->Push("objectaddress", "std::string", 1);
     allocating_buffer->UnPack(&objectaddress, 1);
     allocating_buffer->Pop();
     allocating_buffer->Destroy();
@@ -136,9 +134,9 @@ POPString POPC_Allocator_uds_interconnector::allocate(POPString& objectname, par
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(POPString& objectname, paroc_od& od, int nb) {
+paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
-    const string codefile = od.getExecutable();
+    const std::string codefile = od.getExecutable();
 
     if(codefile.empty()) {
         std::cerr << "POP-C++ Error [Core]" << "Cannot allocate group of objects because executbale is not specified" << std::endl;
@@ -178,12 +176,12 @@ paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(POPString& objec
     _popc_buffer->SetHeader(header);
 
     // Prepare information for the allocation
-    _popc_buffer->Push("objectname", "POPString", 1);
+    _popc_buffer->Push("objectname", "std::string", 1);
     _popc_buffer->Pack(&objectname, 1);
     _popc_buffer->Pop();
 
-    POPString ps_codefile(codefile.c_str());
-    _popc_buffer->Push("codefile", "POPString", 1);
+    std::string ps_codefile(codefile.c_str());
+    _popc_buffer->Push("codefile", "std::string", 1);
     _popc_buffer->Pack(&ps_codefile, 1);
     _popc_buffer->Pop();
 
@@ -205,8 +203,8 @@ paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(POPString& objec
     paroc_buffer::CheckAndThrow(*_popc_buffer);
 
 
-    POPString objectaddress;
-    _popc_buffer->Push("objectaddress", "POPString", 1);
+    std::string objectaddress;
+    _popc_buffer->Push("objectaddress", "std::string", 1);
     _popc_buffer->UnPack(&objectaddress, 1);
     _popc_buffer->Pop();
 

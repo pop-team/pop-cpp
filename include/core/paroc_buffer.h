@@ -13,7 +13,6 @@
 #ifndef _POPC_DATAPACK_MARSHAL_H
 #define _POPC_DATAPACK_MARSHAL_H
 
-#include "paroc_string.h"
 #include "paroc_combox.h"
 #include <string>
 #include <vector>
@@ -166,9 +165,6 @@ public:
 
     virtual void Pack(const double *data, int n)=0;
     virtual void UnPack(double *data, int n)=0;
-
-    virtual void Pack(const paroc_string *list, int n);
-    virtual void UnPack(paroc_string *list, int n);
 
     virtual void Pack(const std::string *list, int n);
     virtual void UnPack(std::string *list, int n);
