@@ -120,6 +120,7 @@ endif(XMP_SUPPORT)
 
 add_subdirectory(scripts)
 add_subdirectory(services)
+add_subdirectory(test/unitTests)
 
 # Add target to clean the distribution of all CMake generated files
   set(DISTCLEANED

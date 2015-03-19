@@ -29,8 +29,8 @@ public:
     ~paroc_buffer_xdr();
     virtual void Reset();
 
-    using paroc_buffer::Pack;
-    using paroc_buffer::UnPack;
+    // using paroc_buffer::Pack;
+    // using paroc_buffer::UnPack;
     virtual void Pack(const int *data, int n);
     virtual void UnPack(int *data, int n);
 

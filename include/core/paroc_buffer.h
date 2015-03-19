@@ -16,6 +16,7 @@
 #include "paroc_combox.h"
 #include <string>
 #include <vector>
+#include <cassert>
 
 
 #define EXCEPTION_INT  1
@@ -212,27 +213,24 @@ public:
 
     virtual void Destroy();
 
-    /* NOTE: The methods below are here for the user (not used in POPC yet)*/
-    void Pack(std::vector<float> *a, int n);
-    void UnPack(std::vector<float> *a, int n);
-    void Pack(std::vector<double> *a, int n);
-    void UnPack(std::vector<double> *a, int n);
-    //void Pack( std::vector<bool> *a, int n);
-    //void UnPack( std::vector<bool> *a, int n);
-    void Pack(std::vector<char> *a, int n);
-    void UnPack(std::vector<char> *a, int n);
-    void Pack(std::vector<unsigned char> *a, int n);
-    void UnPack(std::vector<unsigned char> *a, int n);
-    void Pack(std::vector<short> *a, int n);
-    void UnPack(std::vector<short> *a, int n);
-    void Pack(std::vector<unsigned short> *a, int n);
-    void UnPack(std::vector<unsigned short> *a, int n);
-    void Pack(std::vector<int> *a, int n);
-    void UnPack(std::vector<int> *a, int n);
-    void Pack(std::vector<long> *a, int n);
-    void UnPack(std::vector<long> *a, int n);
-    void Pack(std::vector<std::string> *a, int n);
-    void UnPack(std::vector<std::string> *a, int n);
+    template<typename T>void Pack(const std::vector<T> *vect, int n)
+    {
+        assert(n==1);
+        int s=vect->size();
+        Pack(&s,1);
+        if(s>0)
+            Pack((T*)&(*vect)[0],s);
+    }
+
+    template<typename T>void UnPack( std::vector<T> *vect, int n)
+    {
+        assert(n==1);
+        int s=0;
+        UnPack(&s,1);
+        vect->resize(s);
+        if(s>0)
+            UnPack((T*)&(*vect)[0],s);
+    }
 
 protected:
     paroc_message_header header;

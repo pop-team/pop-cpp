@@ -26,22 +26,6 @@
 #include "paroc_exception.h"
 #include "popc_logger.h"
 
-#define METH_VECT_PACK(type) \
-void paroc_buffer::Pack( std::vector<type> *vect, int /*n*/)\
-{\
-    int s=vect->size();\
-    Pack(&s,1);\
-    Pack((type*)&(*vect)[0],s);\
-}
-
-#define METH_VECT_UNPACK(type) \
-void paroc_buffer::UnPack( std::vector<type> *vect, int /*n*/)\
-{\
-    int s=0;\
-    UnPack(&s,1);\
-    vect->resize(s);\
-    UnPack((type*)&(*vect)[0],s);\
-}
 
 
 //Message header
@@ -144,28 +128,6 @@ void paroc_buffer::UnPack(std::string *list, int n) {
         }
     }
 }
-
-METH_VECT_PACK(float)
-METH_VECT_UNPACK(float)
-METH_VECT_PACK(double)
-METH_VECT_UNPACK(double)
-
-//METH_VECT_PACK(bool)
-//METH_VECT_UNPACK(bool)
-METH_VECT_PACK(char)
-METH_VECT_UNPACK(char)
-METH_VECT_PACK(unsigned char)
-METH_VECT_UNPACK(unsigned char)
-METH_VECT_PACK(short)
-METH_VECT_UNPACK(short)
-METH_VECT_PACK(unsigned short)
-METH_VECT_UNPACK(unsigned short)
-METH_VECT_PACK(int)
-METH_VECT_UNPACK(int)
-METH_VECT_PACK(long)
-METH_VECT_UNPACK(long)
-METH_VECT_PACK(std::string)
-METH_VECT_UNPACK(std::string)
 
 bool paroc_buffer::Send(paroc_connection *conn) {
     if(conn == nullptr) {
