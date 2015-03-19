@@ -1038,7 +1038,7 @@ void paroc_interface::paroc_Response(paroc_buffer *buf) {
  */
 void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn) {
     if(!buf->Send((*__paroc_combox), conn)) {
-        paroc_exception::paroc_throw("Buffer sent failed");
+        paroc_exception::paroc_throw("Buffer send failed");
     }
     LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == NULL) ? "is null" : "is not null");
 }

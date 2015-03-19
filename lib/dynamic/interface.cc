@@ -407,6 +407,7 @@ void paroc_interface::Bind(const char *dest) {
     if(need_redirection) {
 
         // Spoof address with the local MPI Communicator
+        // TODO LW: Why do we have this here ????
         char* local_address = new char[15];
         snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
 
@@ -622,6 +623,7 @@ bool paroc_interface::Encoding(std::string encoding) {
         __paroc_buf = fact->CreateBuffer();
         __paroc_combox->SetBufferFactory(fact);
     }
+    fact->Destroy();
 
     return ret;
 }

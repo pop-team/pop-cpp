@@ -88,10 +88,11 @@ const paroc_message_header & paroc_buffer::GetHeader() const {
     return header;
 }
 
-void paroc_buffer::Push(const char* paramname, const char* paramtype, int /*nelem*/) {
+void paroc_buffer::Push(const char* paramname, const char* paramtype, int nelem) {
     (void)paramname;
     (void)paramtype;
-    LOG_DEBUG("push %s of type %s", paramname, paramtype);
+    (void)nelem;
+    // LOG_DEBUG("push %s of type %s", paramname, paramtype);
 }
 
 void paroc_buffer::Pop() {
