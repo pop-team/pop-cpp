@@ -24,7 +24,6 @@
 // Constant declaration
 const char* popc_combox_uds::UDS_PROTOCOL_NAME = "uds";
 
-
 /**
  * UDS Combox constructor initialize internal values
  */
@@ -86,10 +85,14 @@ bool popc_combox_uds::Create(const char* address, bool server) {
             return false;
         }
 
+        LOG_DEBUG_T("UDS", "socket bound");
+
         if(listen(_socket_fd, 10) != 0) {
             LOG_WARNING_T("UDS", "listen() failed");
             return false;
         }
+
+        LOG_DEBUG_T("UDS", "socket listened");
 
         active_connection[0].fd = _socket_fd;
         active_connection[0].events = POLLIN;
@@ -105,12 +108,15 @@ bool popc_combox_uds::Create(const char* address, bool server) {
  * @param url Path to the file representing the socket to connect to.
  * @return TRUE if the connection is successful. FALSE in any other cases.
  */
-bool popc_combox_uds::Connect(const char*) {
+bool popc_combox_uds::Connect(const char* param) {
     if(connect(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
         LOG_WARNING("Connect failed: %s",_uds_address.c_str());
         perror("Connect failed");
         return false;
     }
+
+    LOG_DEBUG_T("UDS", "Connected to %s (param: %s)", _uds_address.c_str(), param);
+
     _connected = true;
     active_connection[0].fd = _socket_fd;
     active_connection[0].events = POLLIN;
@@ -302,12 +308,27 @@ paroc_connection* popc_combox_uds::Wait() {
  */
 void popc_combox_uds::Close() {
     if(_is_server) {
+        LOG_DEBUG_T("UDS", "Close (server) %s", _uds_address.c_str());
+
         // TODO close all connection fd
 
-        close(_socket_fd);
-        unlink(_uds_address.c_str());
+        if(close(_socket_fd)){
+            LOG_WARNING("close failed: %s", _uds_address.c_str());
+            perror("close failed");
+        }
+
+        if(unlink(_uds_address.c_str())){
+            LOG_WARNING("unlink failed: %s", _uds_address.c_str());
+            perror("unlink failed");
+        }
     } else {
-        close(_socket_fd);
+        LOG_DEBUG_T("UDS", "Close (client) %s", _uds_address.c_str());
+
+        if(close(_socket_fd)){
+            LOG_WARNING("close failed: %s", _uds_address.c_str());
+            perror("close failed");
+        }
+
         _connected = false;
     }
 }

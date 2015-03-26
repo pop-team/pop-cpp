@@ -272,11 +272,12 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         POPString protocolName;
         pc->GetProtocol(protocolName);
 
-        LOG_DEBUG_T("[BRKR]", "Create combox %s", protocolName.c_str());
-
         char argument[1024];
         sprintf(argument, "-%s_port=", protocolName.c_str());
         char *portstr=paroc_utils::checkremove(argc,argv,argument);
+
+        LOG_DEBUG_T("BRKR", "Create combox %s with port: %s", protocolName.c_str(), portstr);
+
         if(portstr!=NULL) {
             int port;
             if(sscanf(portstr,"%d",&port)!=1) {
@@ -291,11 +292,18 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
                 if(!address){
                     std::string default_address = "uds_0." + std::to_string(paroc_system::pop_current_local_address);
 
+                    LOG_DEBUG_T("BRKR", "Create combox (address) with default address \"%s\"", default_address.c_str());
+
+                    //TODO: This is highly unsafe with threads
+                    ++paroc_system::pop_current_local_address;
+
                     if(!pc->Create(default_address.c_str(), true)) {
                         paroc_exception::perror("Broker");
                         return false;
                     }
                 } else {
+                    LOG_DEBUG_T("BRKR", "Create combox (address) with address \"%s\"", address);
+
                     if(!pc->Create(address, true)) {
                         paroc_exception::perror("Broker");
                         return false;
