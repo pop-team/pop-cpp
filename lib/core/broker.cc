@@ -290,14 +290,14 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         } else {
             if(pc->need_address()){
                 if(!address){
-                    std::string default_address = "uds_0." + std::to_string(paroc_system::pop_current_local_address);
+                    //std::string default_address = "uds_0." + std::to_string(paroc_system::pop_current_local_address);
 
-                    LOG_DEBUG_T("BRKR", "Create combox (address) with default address \"%s\"", default_address.c_str());
+                    //LOG_DEBUG_T("BRKR", "Create combox (address) with default address \"%s\"", default_address.c_str());
 
                     //TODO: This is highly unsafe with threads
-                    ++paroc_system::pop_current_local_address;
+                    //++paroc_system::pop_current_local_address;
 
-                    if(!pc->Create(default_address.c_str(), true)) {
+                    if(!pc->Create(nullptr, true)) {
                         paroc_exception::perror("Broker");
                         return false;
                     }

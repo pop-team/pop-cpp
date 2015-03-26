@@ -35,7 +35,7 @@ popc_combox_uds::popc_combox_uds() : _socket_fd(-1), _is_server(false), _active_
  * UDS Combox destructor: Close the connection in case this combox has been connected.
  */
 popc_combox_uds::~popc_combox_uds() {
-    if(_connected) {
+    if(_connected || is_server) {
         Close();
     }
 }
@@ -50,20 +50,14 @@ bool popc_combox_uds::Create(int , bool) {
     return false;
 }
 
-/**
- * Create a combox with a string address. In the case of UDS combox, the string represent the path of the file representing the
- * socket.
- * @param address A path to the file representing the socket
- * @param server  FALSE for a client combox and TRUE for a server combox
- * @return TRUE if the combox has been created successfully, FALSE in any other cases.
- */
 bool popc_combox_uds::Create(const char* address, bool server) {
     LOG_DEBUG_T("UDS", "Create %s", address);
 
     _is_server = server;
-    _uds_address.clear();
-    _uds_address.append(address);
 
+    //TODO if !_is_server && !address there is a big problem
+
+    //1. Create a socket
     _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
     if(_socket_fd < 0) {
         LOG_ERROR_T("UDS", "socket() failed");
@@ -72,17 +66,46 @@ bool popc_combox_uds::Create(const char* address, bool server) {
 
     LOG_DEBUG_T("UDS", "socket created");
 
-    memset(&_sock_address, 0, sizeof(struct sockaddr_un));
-    _sock_address.sun_family = AF_UNIX;
-    strcpy(_sock_address.sun_path, address);
-
     if(_is_server) {
         _timeout = -1;
-        unlink(address);
 
-        if(bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
-            LOG_WARNING_T("UDS", "bind() failed");
-            return false;
+        //If no address are provided, it is necessary to find one
+        if(!address){
+            //TODO This is ugly and probably wrong as well
+            std::size_t i = 0;
+            for(; i < 32768; ++i){
+                std::string str_address = "uds_0." + std::to_string(i);
+
+                //2. Make sure the address is clear
+                memset(&_sock_address, 0, sizeof(struct sockaddr_un));
+                _sock_address.sun_family = AF_UNIX;
+                strcpy(_sock_address.sun_path, str_address.c_str());
+
+                if(!bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
+                    _uds_address = str_address;
+                    LOG_DEBUG_T("UDS", "Selected address: %s",_uds_address.c_str());
+                    break;
+                }
+            }
+
+            if(i >= 32768){
+                LOG_ERROR_T("UDS", "unable to find file for UDS socket");
+                return false;
+            }
+        } else {
+            unlink(address);
+
+            //2. Make sure the address is clear
+            memset(&_sock_address, 0, sizeof(struct sockaddr_un));
+            _sock_address.sun_family = AF_UNIX;
+            strcpy(_sock_address.sun_path, address);
+
+            if(bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
+                LOG_WARNING_T("UDS", "bind() failed");
+                return false;
+            }
+
+            _uds_address = address;
         }
 
         LOG_DEBUG_T("UDS", "socket bound");
@@ -98,7 +121,16 @@ bool popc_combox_uds::Create(const char* address, bool server) {
         active_connection[0].events = POLLIN;
         active_connection[0].revents = 0;
         _active_connection_nb++;
+    } else {
+        //2. Make sure the address is clear
+        memset(&_sock_address, 0, sizeof(struct sockaddr_un));
+        _sock_address.sun_family = AF_UNIX;
+        strcpy(_sock_address.sun_path, address);
+
+        _uds_address = address;
     }
+
+    //_uds_address = address;
 
     return true;
 }
