@@ -266,8 +266,6 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 
     auto address = paroc_utils::checkremove(argc,argv,"-address=");
 
-    POPString url;
-
     for(int i=0; i<comboxCount; i++) {
         auto pc = comboxArray[i];
 
@@ -386,9 +384,9 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
 
         bool connected = false;
         if(tmp->need_address()){
-            connected = tmp->Create(address.c_str(), false) && tmp->Connect(NULL);
+            connected = tmp->Create(address.c_str(), false) && tmp->Connect(nullptr);
         } else {
-            connected = tmp->Create(0, false) && tmp->Connect(tok);
+            connected = tmp->Create(0, false) && tmp->Connect(tok.c_str());
         }
 
         if(connected) {
