@@ -139,8 +139,7 @@ std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }
 
-    bool isServer=true;
-    if(!tmpsock->Create(0, isServer)) {
+    if(!tmpsock->Create(0, true)) {
         paroc_exception::paroc_throw("Creation of socket failed");
     }
 

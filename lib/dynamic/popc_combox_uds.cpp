@@ -154,6 +154,7 @@ bool popc_combox_uds::Connect(const char* param) {
     active_connection[0].events = POLLIN;
     active_connection[0].revents = 0;
     _connection = new popc_connection_uds(_socket_fd, this);
+
     return true;
 }
 
@@ -163,8 +164,9 @@ bool popc_combox_uds::Connect(const char* param) {
  */
 paroc_connection* popc_combox_uds::get_connection() {
     if(!_connected) {
-        return NULL;
+        return nullptr;
     }
+
     return _connection;
 }
 
@@ -172,6 +174,8 @@ paroc_connection* popc_combox_uds::get_connection() {
  * Send bytes to another combox without connection. NOT USED IN UDS COMBOX
  */
 int popc_combox_uds::Send(const char*,int) {
+    LOG_ERROR_T("UDS", "Send(const char*, int) should not be called in UDS mode");
+
     return 0;
 }
 
@@ -182,23 +186,34 @@ int popc_combox_uds::Send(const char*,int) {
  * @param connection  Connection representing the endpoint to write bytes.
  * @return Number of bytes sent
  */
-int popc_combox_uds::Send(const char *s, int len, paroc_connection *connection) {
-    if(connection == NULL) {
+int popc_combox_uds::Send(const char *s, int len, paroc_connection* connection) {
+    if(!connection) {
+        LOG_ERROR_T("UDS", "Cannot send (connection == nullptr)");
         return -1;
     }
-    int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
-    int wbytes = write(socket_fd, s, len);
-    if(wbytes < 0) {
-        perror("UDS Combox: Cannot write to socket");
-    }
 
-    return wbytes;
+    if(len > 0){
+        std::string ver(s, len);
+        LOG_DEBUG_T("UDS", "Write %d bytes (%s)", len, ver.c_str());
+
+        int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
+        int wbytes = write(socket_fd, s, len);
+        if(wbytes < 0) {
+            perror("UDS Combox: Cannot write to socket");
+        }
+
+        return wbytes;
+    } else {
+        return 0;
+    }
 }
 
 /**
  * Receive bytes from another combox without connection. NOT USED IN UDS COMBOX
  */
-int popc_combox_uds::Recv(char*,int) {
+int popc_combox_uds::Recv(char*, int) {
+    LOG_ERROR_T("UDS", "Recv(char*, int) should not be called in UDS mode");
+
     return 0;
 }
 
@@ -218,6 +233,13 @@ int popc_combox_uds::Recv(char *s, int len, paroc_connection *connection) {
             perror("Read");
         }
     } while(nbytes < 0);
+
+    if(len > 0){
+        std::string ver(s, len);
+        LOG_DEBUG_T("UDS", "Read %d bytes (%s)", len, ver.c_str());
+    } else {
+        LOG_DEBUG_T("UDS", "Read %d bytes", len);
+    }
 
     return nbytes;
 }

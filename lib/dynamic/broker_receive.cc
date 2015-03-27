@@ -55,7 +55,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
                 break;
             }
 
-#ifdef POP_PSEUDO            
+#ifdef POP_PSEUDO
 	    // Is it a connection initialization, then just serve a new request
             if(req.from->is_initial_connection()) {
                 /* Note LWK: Apparently wait_unlock is never set
@@ -220,6 +220,7 @@ paroc_object * paroc_broker::GetObject() {
 
 bool paroc_broker::ParocCall(paroc_request &req) {
     if(req.methodId[1] >= 10) {
+        LOG_DEBUG_T("BRK_R", "Methodid >= 10");
         return false;
     }
 
@@ -263,7 +264,8 @@ bool paroc_broker::ParocCall(paroc_request &req) {
         break;
     case 1: {
         //AddRef call...
-        if(obj == NULL) {
+        if(!obj) {
+            LOG_DEBUG_T("BRK_R", "AddRef call with null object");
             return false;
         }
         int ret = obj->AddRef();
@@ -284,6 +286,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     case 2: {
         // Decrement reference
         if(obj == NULL) {
+            LOG_DEBUG_T("BRK_R", "DecRef call with null object");
             return false;
         }
         int ret = obj->DecRef();
@@ -336,6 +339,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     case 5: {
         //ObjectAlive call
         if(!obj) {
+            LOG_DEBUG_T("BRK_R", "ObjectAlive call with null object");
             return false;
         }
         if(methodid[2] & INVOKE_SYNC) {
@@ -355,6 +359,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     case 6: {
         //ObjectAlive call
         if(obj==NULL) {
+            LOG_DEBUG_T("BRK_R", "ObjectAlive call with null object");
             return false;
         }
         if(methodid[2] & INVOKE_SYNC) {
@@ -375,6 +380,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     }
 #endif
     default:
+        LOG_DEBUG_T("BRK_R", "Invalid call type %u", methodid[1]);
         return false;
     }
     return true;
