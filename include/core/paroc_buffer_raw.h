@@ -28,12 +28,6 @@ public:
     ~paroc_buffer_raw();
     virtual void Reset();
 
-    /*   virtual void SetType(int type, const char *name); */
-    /*   virtual int GetType(); */
-
-    using paroc_buffer::Pack; // TODO lwk can we remove ? not a good practice
-    using paroc_buffer::UnPack;
-
     virtual void Pack(const int *data, int n);
     virtual void UnPack(int *data, int n);
 
@@ -70,12 +64,6 @@ public:
     //added by lwk
     virtual void Pack(const signed char *data, int n);
     virtual void UnPack(signed char *data, int n);
-
-    /*virtual void Pack(const long long *data, int n);
-    virtual void UnPack(long long *data, int n);
-
-    virtual void Pack(const long double *data, int n);
-    virtual void UnPack(long double *data, int n);*/
 
     using paroc_buffer::Send;
     virtual bool Send(paroc_combox &s, paroc_connection *conn);

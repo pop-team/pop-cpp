@@ -1513,7 +1513,6 @@ void JobMgr::Start() {
 }
 
 
-//TODO Finish the comment
 /**
  * ViSag : clementval (modification)
  * Execute a parallel object

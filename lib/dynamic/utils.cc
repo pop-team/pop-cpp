@@ -240,31 +240,15 @@ const char* paroc_utils::GetIPFromURL(const char *url) {
 
 //Get the current user
 const char* paroc_utils::GetCurrentUser() {
-    /* int BUF_SIZE=20;  //TODO set as constant
-     char buf[BUF_SIZE];
-     std::ostringstream cmd;
-     std::ostringstream res;
-     res.str("");
-     res.clear();
-     cmd.str("");
-     cmd.clear();
-     cmd << "whoami";
-     FILE *fp;
-     fp=popen(cmd.str().c_str(), "r");
-     if(fp!=nullptr){
-        if(fgets(buf, BUF_SIZE, fp) != nullptr)
-           res << buf;
-        return res.str().c_str();
-     }*/
-    char *username;
 #ifndef __WIN32__
-    username = getlogin();
+    return getlogin();
 #else
+    char *username;
     DWORD i = 256;
     DWORD* temp = &i;
     GetUserName(username, temp);
-#endif
     return username;
+#endif
 }
 
 std::string paroc_utils::MakeContact(const char *host, int port) {

@@ -984,10 +984,6 @@ void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<s
     auto headpos = accesslist.begin();
 
     for(auto ptstr : patternlist){
-        // if(!ptstr) {
-            // continue;
-        // }
-
         auto pos = headpos;
 
         while(pos != accesslist.end()){
