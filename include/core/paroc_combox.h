@@ -94,8 +94,8 @@ public:
     void SetTimeout(int millisec);
     int  GetTimeout();
 
-    virtual bool GetUrl(std::string & accesspoint)=0;
-    virtual bool GetProtocol(std::string & protocolName)=0;
+    virtual std::string GetUrl()=0;
+    virtual std::string GetProtocol()=0;
 
     virtual void Destroy();
 

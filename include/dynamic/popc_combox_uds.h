@@ -50,8 +50,8 @@ public:
 
     virtual void Close();
 
-    virtual bool GetUrl(std::string & accesspoint);
-    virtual bool GetProtocol(std::string & protocolName);
+    virtual std::string GetUrl();
+    virtual std::string GetProtocol();
 
     void set_timeout(int value);
 

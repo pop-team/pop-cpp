@@ -791,20 +791,12 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
     return n;
 }
 
-bool paroc_combox_socket::GetProtocol(std::string & protocolName) {
-    protocolName="socket";
-    return true;
+std::string paroc_combox_socket::GetProtocol() {
+    return "socket";
 }
 
-bool paroc_combox_socket::GetUrl(std::string & accesspoint) {
-    std::string prot;
-    GetProtocol(prot);
-    int port=GetPort();
-    char elem[1024];
-
-    sprintf(elem,"%s://%s:%d",prot.c_str(),paroc_system::GetHost().c_str(),port);
-    accesspoint=elem;
-    return true;
+std::string paroc_combox_socket::GetUrl() {
+    return "socket://" + paroc_system::GetHost() + ":" + std::to_string(GetPort());
 }
 
 int paroc_combox_socket::GetSockInfo(sockaddr &info,socklen_t &len) {

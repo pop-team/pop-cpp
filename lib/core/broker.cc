@@ -269,8 +269,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     for(int i=0; i<comboxCount; i++) {
         auto pc = comboxArray[i];
 
-        POPString protocolName;
-        pc->GetProtocol(protocolName);
+        auto protocolName = pc->GetProtocol();
 
         char argument[1024];
         sprintf(argument, "-%s_port=", protocolName.c_str());
@@ -317,8 +316,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
             }
         }
 
-        std::string ap;
-        pc->GetUrl(ap);
+        auto ap = pc->GetUrl();
 
         url+=ap;
         if(i<comboxCount-1) {
@@ -364,11 +362,11 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 
 bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
     paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
-    std::string url, prot;
 
     bool ok=false;
-    mycombox->GetProtocol(prot);
-    mycombox->GetUrl(url);
+
+    auto prot = mycombox->GetProtocol();
+    auto url = mycombox->GetUrl();
 
     char *str=strdup(url.c_str());
     if(str==NULL) {

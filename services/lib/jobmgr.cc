@@ -666,7 +666,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const std::string &obj
                         JobMgr jobmgr(ac);
                         sz=0;
                         tmpids[sz++]=reserveIDs[i];
-                        for(int j=i+1; j<howmany; j++) 
+                        for(int j=i+1; j<howmany; j++)
                             if(acstr==jobcontacts[j].GetAccessString()) {
                                 jobcontacts[j].SetAccessString("");
                                 tmpids[sz++]=reserveIDs[j];
@@ -1700,8 +1700,7 @@ int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany
         return errno;
     }
 
-    std::string cburl;
-    tmpsock.GetUrl(cburl);
+    auto cburl = tmpsock.GetUrl();
     char tmpstr[1024];
     sprintf(tmpstr,"-callback=%s",cburl.c_str());
     argv.push_back(tmpstr);

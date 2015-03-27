@@ -144,8 +144,7 @@ std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_
     }
 
     paroc_connection *connection = tmpsock->get_connection();
-    std::string cburl;
-    tmpsock->GetUrl(cburl);
+    auto cburl = tmpsock->GetUrl();
     sprintf(tmpstr,"-callback=%s", cburl.c_str());
     argv.push_back(tmpstr);
 

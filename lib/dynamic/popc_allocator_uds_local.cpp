@@ -112,8 +112,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
 
     auto connection = tmp_combox->get_connection();
 
-    std::string cburl;
-    tmp_combox->GetUrl(cburl);
+    auto cburl = tmp_combox->GetUrl();
     sprintf(tmpstr,"-callback=%s", cburl.c_str());
     argv.push_back(tmpstr);
 

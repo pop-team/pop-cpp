@@ -407,12 +407,10 @@ void popc_combox_uds::Close() {
 
 /**
  * Get the protocol name for this combox
- * @param Reference to a std::string object to store the protocol name
- * @return TRUE in any cases.
+ * @return the protocol name
  */
-bool popc_combox_uds::GetProtocol(std::string & protocolName) {
-    protocolName = UDS_PROTOCOL_NAME;
-    return true;
+std::string popc_combox_uds::GetProtocol() {
+    return UDS_PROTOCOL_NAME;
 }
 
 /**
@@ -420,12 +418,6 @@ bool popc_combox_uds::GetProtocol(std::string & protocolName) {
  * @param Reference to a string object to store the url.
  * @return FALSE if the combox has no url. TRUE otherwise.
  */
-bool popc_combox_uds::GetUrl(std::string & accesspoint) {
-    if(_uds_address.length() == 0) {
-        return false;
-    }
-    char elem[1024];
-    sprintf(elem,"%s%s%s", UDS_PROTOCOL_NAME, paroc_combox::PROTOCOL_SEPARATOR, _uds_address.c_str());
-    accesspoint = elem;
-    return true;
+std::string popc_combox_uds::GetUrl() {
+    return "uds://" + _uds_address;
 }
