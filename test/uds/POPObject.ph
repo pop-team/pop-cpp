@@ -9,7 +9,7 @@ public:
     ~POPObject();
 
     sync seq void firstMethod();
-    sync seq void secondMethod();
+    async seq void secondMethod();
 };
 
 #endif /*POPOBJECT_PH_*/
