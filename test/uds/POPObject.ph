@@ -5,11 +5,14 @@ parclass POPObject {
     classuid(1500);
 
 public:
-    POPObject() @{ od.protocol("uds"); od.executable("./POPObject.obj");};
+    POPObject(int id) @{ od.protocol("uds"); od.executable("./POPObject.obj");};
     ~POPObject();
 
     sync seq void firstMethod();
     async seq void secondMethod();
+
+private:
+    int id;
 };
 
 #endif /*POPOBJECT_PH_*/
