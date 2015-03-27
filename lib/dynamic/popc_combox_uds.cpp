@@ -35,7 +35,7 @@ popc_combox_uds::popc_combox_uds() : _socket_fd(-1), _is_server(false), _active_
  * UDS Combox destructor: Close the connection in case this combox has been connected.
  */
 popc_combox_uds::~popc_combox_uds() {
-    if(_connected || is_server) {
+    if(_connected || _is_server) {
         Close();
     }
 }
