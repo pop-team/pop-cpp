@@ -171,7 +171,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
 paroc_buffer_factory_finder::~paroc_buffer_factory_finder() {
     bff=nullptr;
     for(int i=0; i<size; i++) {
-        bfArray[i]->Destroy();
+        delete(bfArray[i]);
     }
 
 #ifdef HAVE_LIBDL

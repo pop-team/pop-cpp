@@ -61,7 +61,6 @@ typedef bool (*COMBOX_CALLBACK)(void *, paroc_connection *);
 class paroc_combox {
 public:
     paroc_combox();
-protected:
     virtual ~paroc_combox();
 
 public:
@@ -96,8 +95,6 @@ public:
 
     virtual std::string GetUrl()=0;
     virtual std::string GetProtocol()=0;
-
-    virtual void Destroy();
 
     bool SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg);
 

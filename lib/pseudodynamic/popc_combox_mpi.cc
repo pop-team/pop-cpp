@@ -218,14 +218,6 @@ paroc_connection* popc_combox_mpi::Wait() {
 }
 
 /**
- * Close and delete the combox
- */
-void popc_combox_mpi::Destroy() {
-    Close();
-    delete this;
-}
-
-/**
  * Close the MPI port and
  */
 void popc_combox_mpi::Close() {

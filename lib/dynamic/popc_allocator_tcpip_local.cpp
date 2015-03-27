@@ -232,7 +232,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
     tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
     tmpbuffer->UnPack(&objectaddress, 1);
     tmpbuffer->Pop();
-    tmpbuffer->Destroy();
+    delete tmpbuffer;
 
     tmpsock->Close();
 

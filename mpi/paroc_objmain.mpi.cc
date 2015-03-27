@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
         }
 
         if(!callback->Create(0, false) || !callback->Connect(addr)) {
-            callback->Destroy();
+            delete callback;
             printf("Error: fail to connect to callback. Check that the URL %s belongs to a node.\n",addr);
             return 1;
         }
@@ -95,8 +95,8 @@ int main(int argc, char **argv) {
         buf->Pop();
 
         bool ret=buf->Send(*callback);
-        buf->Destroy();
-        callback->Destroy();
+        delete buf;
+        delete callback;
         if(!ret) {
             rprintf("Error: fail to send accesspoint via callback\n");
             delete br;

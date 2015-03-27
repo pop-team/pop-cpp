@@ -64,13 +64,9 @@ public:
     virtual std:.string GetUrl();
     virtual std::string GetProtocol();
 
-    virtual void Destroy();
-
     //bool hasCommunicator();
     //void setCommunicator(MPI::Intercomm comm);
     //MPI::Intercomm getCommunicator();
-
-
 
 protected:
     virtual paroc_connection* CreateConnection(int fd);

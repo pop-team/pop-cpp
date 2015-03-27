@@ -112,7 +112,7 @@ paroc_broker::paroc_broker() {
 paroc_broker::~paroc_broker() {
     int n=comboxArray.size();
     for(int i=0; i<n; i++) {
-        comboxArray[i]->Destroy();
+        delete comboxArray[i];
     }
     if(obj!=nullptr) {
         delete obj;
@@ -418,8 +418,8 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
                 ok = true;
             }
         }
-        buffer->Destroy();
-        tmp->Destroy();
+        delete buffer;
+        delete tmp;
     }
 
     return ok;

@@ -95,7 +95,7 @@ paroc_system::~paroc_system() {
 
     paroc_combox_factory *pf=paroc_combox_factory::GetInstance();
     paroc_buffer_factory_finder *bf=paroc_buffer_factory_finder::GetInstance();
-    pf->Destroy();
+    delete pf;
     delete bf;
 }
 

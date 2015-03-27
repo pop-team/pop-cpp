@@ -40,11 +40,11 @@ struct combox_factory_struct {
 class paroc_combox_factory {
 protected:
     paroc_combox_factory();
-    ~paroc_combox_factory();
 
 public:
+    ~paroc_combox_factory();
+
     static paroc_combox_factory *GetInstance();
-    void Destroy(); // TODO LW: this method only deletes fact. Check with BW!
 
     paroc_combox* Create(const char * name);
     paroc_combox* Create(int index);
@@ -62,7 +62,6 @@ private:
 private:
     std::vector<combox_factory_struct> list;
     std::vector<void *> plugins;
-
 };
 
 class paroc_combox_registration {

@@ -121,7 +121,6 @@ private:
 class paroc_buffer {
 public:
     paroc_buffer();
-protected:
     virtual ~paroc_buffer();
 
 public:
@@ -209,8 +208,6 @@ public:
     static bool SendException(paroc_buffer &except, paroc_connection *s, paroc_interface &code);
 
     static void CheckAndThrow(paroc_buffer &except);
-
-    virtual void Destroy();
 
     /* NOTE: The methods below are here for the user (not used in POPC yet)*/
     void Pack(std::vector<float> *a, int n);

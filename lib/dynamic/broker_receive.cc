@@ -72,7 +72,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
             // Is it a POP-C++ core call ? If so serve it right away
             if(ParocCall(req)) {
                 if(req.data!=nullptr) {
-                    req.data->Destroy();
+                    delete req.data;
                 }
                 execCond.broadcast();
                 continue;
@@ -82,7 +82,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
         } catch(std::exception &e) {
             LOG_WARNING("Exception in paroc_broker::ReceiveThread: %s", e.what());
             if(req.data != nullptr) {
-                req.data->Destroy();
+                delete req.data;
             }
             execCond.broadcast();
             break;
@@ -131,7 +131,7 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
             return true;
         }
 
-        req.data->Destroy();
+        delete req.data;
     }
     return false;
 }

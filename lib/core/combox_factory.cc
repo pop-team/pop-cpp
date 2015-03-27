@@ -166,13 +166,6 @@ paroc_combox_factory *paroc_combox_factory::GetInstance() {
     return fact;
 }
 
-void paroc_combox_factory::Destroy() {
-    if(fact!=nullptr) {
-        delete fact;
-    }
-    fact=nullptr;
-}
-
 paroc_combox* paroc_combox_factory::Create(const char * name) {
     LOG_DEBUG("Create a combox : %s", name);
     if(name == nullptr) {

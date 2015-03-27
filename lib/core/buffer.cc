@@ -361,7 +361,3 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
         paroc_exception::paroc_throw("Unknown exception in paroc_buffer::CheckAndThrow");
     }
 }
-
-void paroc_buffer::Destroy() {
-    delete this;
-}

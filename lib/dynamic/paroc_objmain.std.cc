@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
 
         if(!connected){
             callback_combox->Close();
-            callback_combox->Destroy();
+            delete callback_combox;
             LOG_INFO("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.", address);
             return 1;
         }
@@ -107,8 +107,8 @@ int main(int argc, char **argv) {
 
         paroc_connection* connection = callback_combox->get_connection();
         bool ret = buffer->Send((*callback_combox), connection);
-        buffer->Destroy();
-        callback_combox->Destroy();
+        delete buffer;
+        delete callback_combox;
 
         if(!ret) {
             LOG_ERROR("POP-C++ Error: fail to send accesspoint via callback");

@@ -105,7 +105,7 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, paro
     allocating_buffer->Push("objectaddress", "std::string", 1);
     allocating_buffer->UnPack(&objectaddress, 1);
     allocating_buffer->Pop();
-    allocating_buffer->Destroy();
+    delete allocating_buffer;
     allocating_combox->Close();
 
     return objectaddress;

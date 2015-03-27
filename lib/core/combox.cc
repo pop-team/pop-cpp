@@ -118,12 +118,6 @@ int paroc_combox::GetTimeout() {
     return timeout;
 }
 
-void paroc_combox::Destroy() {
-    // TODO LW: Probably remove this thing and see what to do with Destroy() methods in general
-    delete this;
-}
-
-
 bool paroc_combox::SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg) {
     int idx=(int)ev;
     if(idx<0 || idx>=2) {

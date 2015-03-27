@@ -190,7 +190,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
     tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
     tmpbuffer->UnPack(&objectaddress, 1);
     tmpbuffer->Pop();
-    tmpbuffer->Destroy();
+    delete tmpbuffer;
 
     tmp_combox->Close();
 

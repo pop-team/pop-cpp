@@ -217,7 +217,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
     }
 
     if(old != nullptr) {
-        __paroc_buf->Destroy();
+        delete __paroc_buf;
         __paroc_buf = old;
     }
 }
@@ -498,12 +498,12 @@ void paroc_interface::Release() {
         //}
 
         // Destroy the combox
-        __paroc_combox->Destroy();
+        delete __paroc_combox;
         __paroc_combox = nullptr;
     }
 
     if(__paroc_buf != nullptr) {
-        __paroc_buf->Destroy();
+        delete __paroc_buf;
         __paroc_buf = nullptr;
     }
 }
@@ -623,7 +623,7 @@ bool paroc_interface::Encoding(std::string encoding) {
     __paroc_buf->Pop();
 
     if(ret) {
-        __paroc_buf->Destroy();
+        delete __paroc_buf;
         __paroc_buf = fact->CreateBuffer();
         __paroc_combox->SetBufferFactory(fact);
     }

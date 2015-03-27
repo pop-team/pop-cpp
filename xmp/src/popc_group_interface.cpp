@@ -192,7 +192,7 @@ bool POPC_GroupInterface::finalize() {
     popc_recv_response(_popc_buffer, connection);
 
     // Clean buffer and combox
-    _popc_buffer->Destroy();
+    delete _popc_buffer;
     _popc_combox->Close();
     _popc_is_finalized = true;
 

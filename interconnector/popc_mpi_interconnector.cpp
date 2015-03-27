@@ -707,7 +707,7 @@ int main(int argc, char* argv[]) {
                             pthread_mutex_unlock(&mpi_mutex);
                         }
                     }
-                    callback.data->Destroy();
+                    delete callback.data;
                     receiver.Close();
                 } else if(request.methodId[1] == 200000) {
                     // Allocation a new parallel object from IPC
@@ -848,7 +848,7 @@ int main(int argc, char* argv[]) {
                                 request.data->Send(request.from);
                             }
                         }
-                        callback.data->Destroy();
+                        delete callback.data;
                         receiver.Close();
                     }
                 } else if(request.methodId[1] == 200007) {
@@ -1260,7 +1260,7 @@ int main(int argc, char* argv[]) {
                     }
                 }
                 // Delete the buffer
-                request.data->Destroy();
+                delete request.data;
             }
         }
     }

@@ -49,7 +49,7 @@ paroc_invokethread::paroc_invokethread(paroc_broker *br, paroc_request &myreques
 }
 
 paroc_invokethread::~paroc_invokethread() {
-    request.data->Destroy();
+    delete request.data;
     if(request.from!=nullptr) {
         delete request.from;
     }
@@ -147,7 +147,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
             }
             mutexCond.unlock();
         }
-        req.data->Destroy();
+        delete req.data;
         if(req.from!=nullptr) {
             delete req.from;
         }
