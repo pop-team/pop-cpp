@@ -24,10 +24,6 @@
 
 #define ALLOC_TIMEOUT 60
 
-//TODO(BW) Can probably remove this
-popc_allocator_uds_local::popc_allocator_uds_local() {}
-popc_allocator_uds_local::~popc_allocator_uds_local() {}
-
 /**
  * Allocate a single object by using the UDS protocol with a local allocation mechanism
  * @param objectname  Name of the object to be allocated

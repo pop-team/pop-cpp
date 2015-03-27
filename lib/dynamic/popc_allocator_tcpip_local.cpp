@@ -26,17 +26,6 @@
 #include "appservice.ph"
 
 #define ALLOC_TIMEOUT 60
-/**
- * Allocator over TCP/IP with local mechanism constructor
- */
-POPC_Allocator_tcpip_local::POPC_Allocator_tcpip_local() {
-}
-
-/**
- * Allocator over TCP/IP with local mechanism destrcutor
- */
-POPC_Allocator_tcpip_local::~POPC_Allocator_tcpip_local() {
-}
 
 /**
  * Allocate a single object by using the TCP/IP protocol with a local allocation mechanism

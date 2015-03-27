@@ -20,18 +20,6 @@
 #include "paroc_broker.h"
 
 /**
- * Allocator over MPI with pseudo-dynamic allocation mechanism constructor
- */
-POPC_Allocator_mpi_pseudo::POPC_Allocator_mpi_pseudo() {
-}
-
-/**
- * Allocator over MPI with pseudo-dynamic allocation mechanism destructor
- */
-POPC_Allocator_mpi_pseudo::~POPC_Allocator_mpi_pseudo() {
-}
-
-/**
  * Allocate single object with a pseudo-dynamic allocation mechanism
  * @param objectname  Name of the class to instantiate the object
  * @param od          Object description for the allocation process

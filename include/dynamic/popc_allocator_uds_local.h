@@ -16,8 +16,6 @@
 #include "paroc_od.h"
 
 struct popc_allocator_uds_local : public POPC_Allocator {
-    popc_allocator_uds_local();
-    ~popc_allocator_uds_local();
     virtual std::string allocate(std::string& objectname, paroc_od& od);   // TODO LW: Params must be const
     virtual paroc_combox* allocate_group(std::string& objectname, paroc_od& od, int nb);
 

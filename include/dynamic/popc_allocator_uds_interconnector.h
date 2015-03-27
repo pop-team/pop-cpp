@@ -20,8 +20,6 @@
 
 class POPC_Allocator_uds_interconnector : public POPC_Allocator {
 public:
-    POPC_Allocator_uds_interconnector();
-    ~POPC_Allocator_uds_interconnector();
     virtual std::string allocate(std::string& objectname, paroc_od& od);
     virtual paroc_combox* allocate_group(std::string& objectname, paroc_od& od, int nb);
     virtual POPC_Protocol get_protocol() {

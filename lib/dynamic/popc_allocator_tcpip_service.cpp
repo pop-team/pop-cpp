@@ -27,18 +27,6 @@
 #define ALLOC_TIMEOUT 60
 
 /**
- * Allocator over TCP/IP with local mechanism constructor
- */
-POPC_Allocator_tcpip_service::POPC_Allocator_tcpip_service() {
-}
-
-/**
- * Allocator over TCP/IP with local mechanism destrcutor
- */
-POPC_Allocator_tcpip_service::~POPC_Allocator_tcpip_service() {
-}
-
-/**
  * Allocate a single object by using the TCP/IP protocol with a local allocation mechanism
  * @param objectname  Name of the object to be allocated
  * @param od          Object description used for allocation
