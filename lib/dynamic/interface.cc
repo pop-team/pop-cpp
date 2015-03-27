@@ -1006,22 +1006,6 @@ void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<s
     }
 }
 
-// DEPRECATED
-void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
-    if(!buf->Send(*__paroc_combox)) {
-        paroc_exception::paroc_throw("Buffer sent failed (old)");
-    }
-}
-
-// DEPRECATED // TODO LW: See what to do
-void paroc_interface::paroc_Response(paroc_buffer *buf) {
-    if(!buf->Recv(*__paroc_combox)) {
-        paroc_exception::paroc_throw("Buffer receive failed (old)");
-    }
-
-    paroc_buffer::CheckAndThrow(*buf);
-}
-
 /**
  * Send the current request in the buffer to the endpoint designated by the connection
  */
