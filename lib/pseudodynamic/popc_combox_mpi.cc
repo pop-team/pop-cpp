@@ -246,7 +246,7 @@ std::string popc_combox_mpi::GetProtocol() {
  * @param accesspoint Formed URL to access this combox under the form mpi://<port_name>
  * @return TRUE if the URL can be formed, FALSE in any other cases.
  */
-std::string popc_combox_mpi::GetUrl(std::string& accesspoint) {
+std::string popc_combox_mpi::GetUrl() {
     return "mpi://" + std::to_string(_node_id);
 }
 
