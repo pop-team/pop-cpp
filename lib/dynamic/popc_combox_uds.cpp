@@ -81,7 +81,7 @@ bool popc_combox_uds::Create(const char* address, bool server) {
                 _sock_address.sun_family = AF_UNIX;
                 strcpy(_sock_address.sun_path, str_address.c_str());
 
-                if(!bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
+                if(!bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un))) {
                     _uds_address = str_address;
                     LOG_DEBUG_T("UDS", "Selected address: %s",_uds_address.c_str());
                     break;
