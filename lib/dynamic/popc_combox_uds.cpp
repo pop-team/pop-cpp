@@ -249,7 +249,7 @@ paroc_connection* popc_combox_uds::Wait() {
                 LOG_WARNING("TOO MANY CONNECTIONS");
             }
         } while((poll_back == -1) && (errno == EINTR));
-        LOG_DEBUG("Poll %s", _uds_address.c_str());
+        LOG_DEBUG_T("UDS", "Poll %s", _uds_address.c_str());
         if(poll_back > 0) {
             for(int i = 0; i < _active_connection_nb; i++) {
                 if(active_connection[i].revents & POLLIN) {
@@ -269,7 +269,7 @@ paroc_connection* popc_combox_uds::Wait() {
                         }
                     } else {
                         if(active_connection[i].revents & POLLHUP) { // POLLIN and POLLHUP
-                            LOG_DEBUG("write and disconnect");
+                            LOG_DEBUG_T("UDS", "write and disconnect");
                             int tmpfd = active_connection[i].fd;
                             if(_active_connection_nb == 2) {
                                 _active_connection_nb = 1;
@@ -283,16 +283,16 @@ paroc_connection* popc_combox_uds::Wait() {
                                 active_connection[i].events = active_connection[_active_connection_nb].events;
                                 active_connection[i].revents = active_connection[_active_connection_nb].revents;
                             }
-                            LOG_DEBUG("POLLON %s %d", _uds_address.c_str(), active_connection[i].fd);
+                            LOG_DEBUG_T("UDS", "POLLON %s %d", _uds_address.c_str(), active_connection[i].fd);
                             return new popc_connection_uds(tmpfd, this);
                         } else { // Just POLLIN
-                            LOG_DEBUG("POLLIN %s %d", _uds_address.c_str(), active_connection[i].fd);
+                            LOG_DEBUG_T("UDS", "POLLIN %s %d", _uds_address.c_str(), active_connection[i].fd);
                             active_connection[i].revents = 0;
                             return new popc_connection_uds(active_connection[i].fd, this);
                         }
                     }
                 } else if(active_connection[i].revents & POLLHUP) {
-                    LOG_DEBUG("%d fd is disconnected", active_connection[i].fd);
+                    LOG_DEBUG_T("UDS", "%d fd is disconnected", active_connection[i].fd);
                     if(_active_connection_nb == 2) {
                         _active_connection_nb = 1;
                         active_connection[i].fd = 0;
