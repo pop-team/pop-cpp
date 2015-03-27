@@ -32,7 +32,7 @@
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-std::string POPC_Allocator_tcpip_service::allocate(std::string& objectname, paroc_od& od) {
+std::string socket_allocator_service::allocate(std::string& objectname, paroc_od& od) {
     paroc_accesspoint jobcontact, objectaddress, remotejobcontact;
 
     //Exec using JobMgr interface...
@@ -96,7 +96,7 @@ std::string POPC_Allocator_tcpip_service::allocate(std::string& objectname, paro
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* POPC_Allocator_tcpip_service::allocate_group(std::string& objectname, paroc_od& od, int nb) {
+paroc_combox* socket_allocator_service::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
     /* Allocation process here */
 

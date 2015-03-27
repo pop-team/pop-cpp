@@ -19,7 +19,7 @@
 #include "paroc_od.h"
 
 /* POPC_ALLOCATOR_TCPIP_LOCAL_H_ */
-class POPC_Allocator_tcpip_local : public POPC_Allocator {
+class socket_allocator_local : public POPC_Allocator {
 public:
     virtual std::string allocate(std::string& objectname, paroc_od& od);   // TODO LW: Params must be const
     virtual paroc_combox* allocate_group(std::string& objectname, paroc_od& od, int nb);
@@ -33,7 +33,7 @@ public:
 };
 
 /* POPC_ALLOCATOR_TCPIP_SERVICE_H_ */
-class POPC_Allocator_tcpip_service : public POPC_Allocator {
+class socket_allocator_service : public POPC_Allocator {
 public:
     virtual std::string allocate(std::string& objectname, paroc_od& od);
     virtual paroc_combox* allocate_group(std::string& objectname, paroc_od& od, int nb);
