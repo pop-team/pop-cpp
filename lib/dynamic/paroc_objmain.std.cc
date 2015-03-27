@@ -27,6 +27,16 @@
 
 bool CheckIfPacked(const char *objname);
 
+std::string get_proto_name(const char* address){
+    std::string address_str(address);
+
+    if(address_str.find("uds://") == 0) {
+        return "uds";
+    } else {
+        return "socket";
+    }
+}
+
 int main(int argc, char **argv) {
     char *rcore=paroc_utils::checkremove(&argc,&argv,"-core=");
     if(rcore) {
@@ -42,27 +52,30 @@ int main(int argc, char **argv) {
     paroc_system sys;
     char *local_rank = paroc_utils::checkremove(&argc, &argv, "-local_rank=");
 
-    if(local_rank != NULL) {
+    if(local_rank) {
         paroc_system::popc_local_mpi_communicator_rank = atoi(local_rank);
     }
 
     // Connect to callback
     char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");
-    paroc_combox *callback = NULL;
+    paroc_combox *callback_combox = nullptr;
     int status=0;
     if(address != NULL) {
-        paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
-#ifdef DEFINE_UDS_SUPPORT
-        callback = combox_factory->Create("uds");
+        auto combox_factory = paroc_combox_factory::GetInstance();
 
-        if(!callback->Create(address, false) || !callback->Connect(address)) {
-#else
-        callback = combox_factory->Create("socket");
+        auto protocol = get_proto_name(address);
+        callback_combox = combox_factory->Create(protocol.c_str());
 
-        if(!callback->Create(0, false) || !callback->Connect(address)) {
-#endif
-            callback->Close();
-            callback->Destroy();
+        bool connected;
+        if(callback_combox->need_address()){
+            connected = callback_combox->Create(address, false) && callback_combox->Connect(address);
+        } else {
+            connected = callback_combox->Create(0, false) && callback_combox->Connect(address);
+        }
+
+        if(!connected){
+            callback_combox->Close();
+            callback_combox->Destroy();
             LOG_INFO("POP-C++ Error: fail to connect to callback. Check that the URL %s belongs to a node.", address);
             return 1;
         }
@@ -79,8 +92,8 @@ int main(int argc, char **argv) {
     }
 
     // Send ack via callback
-    if(callback != NULL) {
-        paroc_buffer *buffer = callback->GetBufferFactory()->CreateBuffer();
+    if(callback_combox != NULL) {
+        paroc_buffer *buffer = callback_combox->GetBufferFactory()->CreateBuffer();
         paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
         buffer->SetHeader(h);
 
@@ -92,10 +105,10 @@ int main(int argc, char **argv) {
         paroc_broker::accesspoint.Serialize(*buffer, true);
         buffer->Pop();
 
-        paroc_connection* connection = callback->get_connection();
-        bool ret = buffer->Send((*callback), connection);
+        paroc_connection* connection = callback_combox->get_connection();
+        bool ret = buffer->Send((*callback_combox), connection);
         buffer->Destroy();
-        callback->Destroy();
+        callback_combox->Destroy();
 
         if(!ret) {
             LOG_ERROR("POP-C++ Error: fail to send accesspoint via callback");

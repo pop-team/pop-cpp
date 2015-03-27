@@ -232,32 +232,36 @@ void paroc_interface::allocate_only() {
     std::string objectname = ClassName();
     std::string objectaddress;
 
-    bool localFlag = od.IsLocal();
-
-    const std::string& hostname = od.getURL();
-    const std::string& batch    = od.getBatch();
-    const std::string& protocol = od.getProtocol();
-
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
     POPC_Allocator* allocator = NULL;
 
+    if(od.getProtocol() == POPC_AllocatorFactory::PREFIX_UDS) {
+        allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::LOCAL);
 
-    // for obscure reason, cannot use strcmp here
-    if(protocol == POPC_AllocatorFactory::PREFIX_UDS) {
-        allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+        LOG_DEBUG_T("IFACE", "Allocate %s with UDS(local)", objectname.c_str());
+
+        //TODO(BW) In MPI mode, this should be used (add some condition)
+        //allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
     } else {
-        if(localFlag || !hostname.empty() || !batch.empty()) {
+        bool localFlag = od.IsLocal();
+
+        if(localFlag || !od.getURL().empty() || !od.getBatch().empty()) {
             allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
+
+            LOG_DEBUG_T("IFACE", "Allocate %s with TCP(local)", objectname.c_str());
         } else {
             allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
+
+            LOG_DEBUG_T("IFACE", "Allocate %s with TCP(ssh)", objectname.c_str());
+
             //Get the POPAppID
             AppCoreService acs(paroc_system::appservice);
             popAppId = acs.GetPOPCAppID();
         }
     }
 
-    if(allocator == NULL) {
+    if(!allocator) {
         LOG_ERROR("[Core] Allocator is NULL");
     }
 

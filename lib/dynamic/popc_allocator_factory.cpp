@@ -12,6 +12,7 @@
  */
 
 #include "popc_allocator_factory.h"
+#include "popc_allocator_uds_local.h"
 #include "popc_allocator_uds_interconnector.h"
 #include "popc_allocator_tcpip.h"
 #include "popc_allocator_mpi_pseudo.h"
@@ -61,11 +62,13 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
         // Allocation over UDS socket
     case POPC_Allocator::UDS : {
         switch(alloc_mechanism) {
+        case POPC_Allocator::LOCAL :
+            return new popc_allocator_uds_local();
         case POPC_Allocator::INTERCONNECTOR :
             return new POPC_Allocator_uds_interconnector();
         default:
             LOG_WARNING("No allocator found");
-            return NULL; // TODO lwk security: there should be a safety if this is returned in a constructor: e.g. assert(false)
+            return nullptr; // TODO lwk security: there should be a safety if this is returned in a constructor: e.g. assert(false)
         }
     }
     // Allocation over TCP/IP socket

@@ -93,19 +93,23 @@ bool popc_combox_uds::Create(const char* address, bool server) {
                 return false;
             }
         } else {
-            unlink(address);
+            _uds_address = address;
+
+            if(_uds_address.find("uds://") == 0) {
+                _uds_address = _uds_address.substr(6);
+            }
+
+            unlink(_uds_address.c_str());
 
             //2. Make sure the address is clear
             memset(&_sock_address, 0, sizeof(struct sockaddr_un));
             _sock_address.sun_family = AF_UNIX;
-            strcpy(_sock_address.sun_path, address);
+            strcpy(_sock_address.sun_path, _uds_address.c_str());
 
             if(bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
                 LOG_WARNING_T("UDS", "bind() failed");
                 return false;
             }
-
-            _uds_address = address;
         }
 
         LOG_DEBUG_T("UDS", "socket bound");
@@ -122,12 +126,17 @@ bool popc_combox_uds::Create(const char* address, bool server) {
         active_connection[0].revents = 0;
         _active_connection_nb++;
     } else {
+        std::string address_str(address);
+        if(address_str.find("uds://") == 0) {
+            address_str = address_str.substr(6);
+        }
+
+        _uds_address = address_str;
+
         //2. Make sure the address is clear
         memset(&_sock_address, 0, sizeof(struct sockaddr_un));
         _sock_address.sun_family = AF_UNIX;
-        strcpy(_sock_address.sun_path, address);
-
-        _uds_address = address;
+        strcpy(_sock_address.sun_path, _uds_address.c_str());
     }
 
     //_uds_address = address;
@@ -225,8 +234,17 @@ int popc_combox_uds::Recv(char*, int) {
  * @return Number of bytes read
  */
 int popc_combox_uds::Recv(char *s, int len, paroc_connection *connection) {
-    int nbytes;
+    if(!connection){
+        connection = Wait();
+        if(!connection) {
+            LOG_ERROR("[CORE] Wait failed with code");
+            return -1;
+        }
+    }
+
     int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
+
+    int nbytes;
     do {
         nbytes = read(socket_fd, s, len);
         if(nbytes < 0) {
