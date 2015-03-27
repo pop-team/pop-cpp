@@ -49,7 +49,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
 
     while(state == POPC_STATE_RUNNING) {
         paroc_request req;
-        req.data=NULL;
+        req.data=nullptr;
         try {
             if(!ReceiveRequest(server, req)) {
                 break;
@@ -60,7 +60,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
             if(req.from->is_initial_connection()) {
                 /* Note LWK: Apparently wait_unlock is never set
                 if(!req.from->is_wait_unlock()) {
-                    if(obj != NULL) {
+                    if(obj != nullptr) {
                         obj->AddRef();
                     }
                 }
@@ -71,7 +71,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
 
             // Is it a POP-C++ core call ? If so serve it right away
             if(ParocCall(req)) {
-                if(req.data!=NULL) {
+                if(req.data!=nullptr) {
                     req.data->Destroy();
                 }
                 execCond.broadcast();
@@ -81,7 +81,7 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
             RegisterRequest(req);
         } catch(std::exception &e) {
             LOG_WARNING("Exception in paroc_broker::ReceiveThread: %s", e.what());
-            if(req.data != NULL) {
+            if(req.data != nullptr) {
                 req.data->Destroy();
             }
             execCond.broadcast();
@@ -100,7 +100,7 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
         paroc_connection* conn = server->Wait();
 
         // Trouble with the connection
-        if(conn == NULL) {
+        if(conn == nullptr) {
             execCond.broadcast();
             return false;
         }
@@ -147,7 +147,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
     } else {
         // Method call is asynchronous so the connection is not needed anymore
         req.from->reset();
-        req.from = NULL;
+        req.from = nullptr;
     }
 
 
@@ -194,7 +194,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
 }
 
 bool paroc_broker::OnNewConnection(paroc_connection * /*conn*/) {
-    if(obj != NULL) {
+    if(obj != nullptr) {
         obj->AddRef();
     }
     return true;
@@ -204,7 +204,7 @@ bool paroc_broker::OnNewConnection(paroc_connection * /*conn*/) {
  * This method is called when a connection with an interface is closed.
  */
 bool paroc_broker::OnCloseConnection(paroc_connection * /*conn*/) {
-    if(obj != NULL) {
+    if(obj != nullptr) {
         int ret = obj->DecRef();
         if(ret <= 0) {
             execCond.broadcast();
@@ -285,7 +285,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     break;
     case 2: {
         // Decrement reference
-        if(obj == NULL) {
+        if(obj == nullptr) {
             LOG_DEBUG_T("BRK_R", "DecRef call with null object");
             return false;
         }
@@ -358,7 +358,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
 #ifdef OD_DISCONNECT
     case 6: {
         //ObjectAlive call
-        if(obj==NULL) {
+        if(obj==nullptr) {
             LOG_DEBUG_T("BRK_R", "ObjectAlive call with null object");
             return false;
         }

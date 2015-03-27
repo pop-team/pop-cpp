@@ -48,7 +48,7 @@ bool paroc_utils::isEqual(const char *s1, const char *s2) {
     if(s1==s2) {
         return true;
     }
-    if(s1==NULL || s2==NULL) {
+    if(s1==nullptr || s2==nullptr) {
         return false;
     }
     while(*s1!=0 && *s2!=0) {
@@ -142,8 +142,8 @@ void paroc_utils::FindAbsolutePath(const char *fname, char *abspath) {
     char *t=(char*)strrchr(fname,'/');
     char dir[1024];
 
-    if(t==NULL) {
-        if(popc_getcwd(dir,1024)==NULL) {
+    if(t==nullptr) {
+        if(popc_getcwd(dir,1024)==nullptr) {
             *dir=0;
         }
         sprintf(abspath,"%s/%s",dir,fname);
@@ -154,7 +154,7 @@ void paroc_utils::FindAbsolutePath(const char *fname, char *abspath) {
     *t=0;
     popc_chdir(fname);
     *t='/';
-    if(popc_getcwd(dir,1024)==NULL) {
+    if(popc_getcwd(dir,1024)==nullptr) {
         *dir=0;
     }
     popc_chdir(olddir);
@@ -172,10 +172,10 @@ bool paroc_utils::SameContact(const std::string& _contact1, const std::string& _
     if(contact1==contact2) {
         return true;
     }
-    if(contact1==NULL || contact2==NULL) {
+    if(contact1==nullptr || contact2==nullptr) {
         return false;
     }
-    if(strstr(contact1, contact2)!=NULL || strstr(contact2, contact1)!=NULL) {
+    if(strstr(contact1, contact2)!=nullptr || strstr(contact2, contact1)!=nullptr) {
         return true;
     }
 
@@ -184,7 +184,7 @@ bool paroc_utils::SameContact(const std::string& _contact1, const std::string& _
     std::vector<std::string> tokens;
     popc_tokenize_r(tokens,contact2," \n\r\t");
     for(auto token : tokens) {
-        if(strstr(contact1,token.c_str())!=NULL) {
+        if(strstr(contact1,token.c_str())!=nullptr) {
             return true;
         }
     }
@@ -251,8 +251,8 @@ const char* paroc_utils::GetCurrentUser() {
      cmd << "whoami";
      FILE *fp;
      fp=popen(cmd.str().c_str(), "r");
-     if(fp!=NULL){
-        if(fgets(buf, BUF_SIZE, fp) != NULL)
+     if(fp!=nullptr){
+        if(fgets(buf, BUF_SIZE, fp) != nullptr)
            res << buf;
         return res.str().c_str();
      }*/
@@ -308,7 +308,7 @@ int rprintf(const char *format,...) {
 }
 
 int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
-    if(s==NULL || fileconf==NULL) {
+    if(s==nullptr || fileconf==nullptr) {
         return 0;
     }
 
@@ -317,12 +317,12 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
     char line[256];
     char sep[]=" \n\t";
 
-    if(f==NULL) {
+    if(f==nullptr) {
         return 0;
     }
     try {
         while(!feof(f)) {
-            if(fgets(line,256,f)!=NULL) {
+            if(fgets(line,256,f)!=nullptr) {
 
                 int last=strlen(line)-1;
                 while(last>=0 && isspace(line[last])) {
@@ -334,12 +334,12 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
                 }
 
                 char *tmp=strtok(line,sep);
-                if(tmp==NULL) {
+                if(tmp==nullptr) {
                     continue;
                 }
                 strcpy(objname,tmp);
-                tmp=strtok(NULL,sep);
-                if(tmp==NULL) {
+                tmp=strtok(nullptr,sep);
+                if(tmp==nullptr) {
                     continue;
                 }
                 strcpy(arch,tmp);

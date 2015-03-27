@@ -23,7 +23,7 @@
 #include "paroc_system.h"
 #include "popc_logger.h"
 
-#define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=NULL) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
+#define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=nullptr) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 
 class paroc_invokethread: public paroc_thread {
 public:
@@ -50,7 +50,7 @@ paroc_invokethread::paroc_invokethread(paroc_broker *br, paroc_request &myreques
 
 paroc_invokethread::~paroc_invokethread() {
     request.data->Destroy();
-    if(request.from!=NULL) {
+    if(request.from!=nullptr) {
         delete request.from;
     }
 
@@ -71,7 +71,7 @@ bool paroc_broker::GetRequest(paroc_request &req) {
 
     //If the queue is empty then wait for the request....
     while(request_fifo.empty()) {
-        if((obj!=NULL && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING) {
+        if((obj!=nullptr && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING) {
             return false;
         }
         execCond.wait(); //Wait for new request
@@ -125,7 +125,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
             paroc_mutex_locker locker(execCond);
             execCond.broadcast();
 
-            if(req.from!=NULL) {
+            if(req.from!=nullptr) {
 
                 paroc_exception e(ret);
                 e.AddInfo(classname);
@@ -148,7 +148,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
             mutexCond.unlock();
         }
         req.data->Destroy();
-        if(req.from!=NULL) {
+        if(req.from!=nullptr) {
             delete req.from;
         }
     }
@@ -197,7 +197,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
     PROPAGATE_EXCEPTION(char *)
     catch(paroc_exception *e) {
         LOG_WARNING("POP-C++ exception in paroc_broker::DoInvoke");
-        if(request.from!=NULL) {
+        if(request.from!=nullptr) {
             std::string extra=e->Info();
             if(e->Info().empty()) {
                 extra= classname + "@" + accesspoint.GetAccessString();
@@ -212,7 +212,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         delete e;
     } catch(paroc_exception e) {
         LOG_WARNING("POP-C++ exception in paroc_broker::DoInvoke %s", e.what());
-        if(request.from!=NULL) {
+        if(request.from!=nullptr) {
 
             std::string extra=e.Info();
             if(e.Info().empty()) {
@@ -227,7 +227,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         }
     } catch(std::exception *e) {
         LOG_WARNING("Std exception in paroc_broker::DoInvoke");
-        if(request.from != NULL) {
+        if(request.from != nullptr) {
             paroc_exception  e2=paroc_exception(STD_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
             paroc_buffer::SendException(*request.data, request.from, e2);
@@ -237,7 +237,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         }
     } catch(std::exception e) {
         LOG_WARNING("Std exception in paroc_broker::DoInvoke");
-        if(request.from != NULL) {
+        if(request.from != nullptr) {
             paroc_exception  e2=paroc_exception(STD_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
             paroc_buffer::SendException(*request.data, request.from, e2);
@@ -246,7 +246,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         }
     } catch(...) {
         LOG_WARNING("Unknown exception in paroc_broker::DoInvoke");
-        if(request.from!=NULL) {
+        if(request.from!=nullptr) {
             paroc_exception e2(UNKNOWN_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString());
             paroc_buffer::SendException(*request.data, request.from, e2);
@@ -255,9 +255,10 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         }
     }
 
-    if(obj==NULL || obj->GetRefCount()<=0) {
+    if(obj==nullptr || obj->GetRefCount()<=0) {
         return false;
     }
+
     return true;
 }
 

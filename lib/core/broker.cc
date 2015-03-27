@@ -31,9 +31,9 @@
 
 #define MINMETHODID 2
 paroc_request::paroc_request() {
-    from=NULL;
-    data=NULL;
-    userdata=NULL;
+    from=nullptr;
+    data=nullptr;
+    userdata=nullptr;
 }
 
 paroc_request::paroc_request(const paroc_request &r) {
@@ -102,7 +102,7 @@ void broker_killed(int sig) {
 
 
 paroc_broker::paroc_broker() {
-    obj=NULL;
+    obj=nullptr;
     state=POPC_STATE_RUNNING;
     instanceCount=0;
     mutexCount=0;
@@ -114,13 +114,13 @@ paroc_broker::~paroc_broker() {
     for(int i=0; i<n; i++) {
         comboxArray[i]->Destroy();
     }
-    if(obj!=NULL) {
+    if(obj!=nullptr) {
         delete obj;
     }
 }
 
 void paroc_broker::AddMethodInfo(unsigned cid, paroc_method_info *methods, int sz) {
-    if(sz<=0 || methods==NULL) {
+    if(sz<=0 || methods==nullptr) {
         return;
     }
     paroc_class_info t;
@@ -142,11 +142,11 @@ const char *paroc_broker::FindMethodName(unsigned classID, unsigned methodID) {
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned &methodID) {
-    if(name==NULL) {
+    if(name==nullptr) {
         return false;
     }
 
@@ -186,7 +186,7 @@ int paroc_broker::Run() {
         }
     }
 
-    if(obj == NULL) {
+    if(obj == nullptr) {
         popc_alarm(TIMEOUT);
     }
 
@@ -199,7 +199,7 @@ int paroc_broker::Run() {
             ServeRequest(req);
             if(req.methodId[2] & INVOKE_CONSTRUCTOR) {
                 popc_alarm(0);
-                if(obj == NULL) {
+                if(obj == nullptr) {
                     break;
                 }
             }
@@ -210,7 +210,7 @@ int paroc_broker::Run() {
     }
 
 
-    if(obj!=NULL && state==POPC_STATE_RUNNING) {
+    if(obj!=nullptr && state==POPC_STATE_RUNNING) {
         paroc_mutex_locker test(execCond);
 
         //Wait for all invocations terminated....
@@ -248,7 +248,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     int count=0;
     for(int i = 0; i < comboxCount; i++) {
         comboxArray[count] = comboxFactory->Create(i);
-        if(comboxArray[count] == NULL) {
+        if(comboxArray[count] == nullptr) {
             LOG_ERROR("Fail to create combox #%d",i);
         } else {
             count++;
@@ -277,7 +277,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 
         LOG_DEBUG_T("BRKR", "Create combox %s with port: %s", protocolName.c_str(), portstr);
 
-        if(portstr!=NULL) {
+        if(portstr!=nullptr) {
             int port;
             if(sscanf(portstr,"%d",&port)!=1) {
                 return false;
@@ -329,7 +329,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     accesspoint.SetAccessString(url.c_str());
 
     char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
-    if(tmp!=NULL && !classname.empty()) {
+    if(tmp!=nullptr && !classname.empty()) {
         paroc_request r;
         paroc_buffer_raw tmp;
         r.data=&tmp;
@@ -369,7 +369,7 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
     auto url = mycombox->GetUrl();
 
     char *str=strdup(url.c_str());
-    if(str==NULL) {
+    if(str==nullptr) {
         return false;
     }
 

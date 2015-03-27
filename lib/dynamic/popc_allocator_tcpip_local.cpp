@@ -39,7 +39,7 @@ std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_
     char tmpstr[10240];
     std::vector<std::string> argv;
     char *tmp;
-    const char *rport = NULL;
+    const char *rport = nullptr;
     bool isManual=od.getIsManual();
 
     std::string hostname = od.getURL();
@@ -54,7 +54,7 @@ std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_
         hostname=paroc_system::GetHost().c_str();
     }
 
-    if(!hostname.empty() &&(tmp=(char*)strchr(hostname.c_str(), ':')) !=NULL) {
+    if(!hostname.empty() &&(tmp=(char*)strchr(hostname.c_str(), ':')) !=nullptr) {
         *tmp=0;
         rport=tmp+1;
     }
@@ -90,7 +90,7 @@ std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_
     } else {
         char tmpstr[100];
         tmp=getenv("POPC_LOCATION");
-        if(tmp!=NULL) {
+        if(tmp!=nullptr) {
             sprintf(tmpstr, "%s/services/popcobjrun.%s", tmp, batch.c_str());
         } else {
             sprintf(tmpstr, "popcobjrun.%s", batch.c_str());
@@ -105,7 +105,7 @@ std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_
         }*/
     }
     tmp=getenv("POPC_LOCATION");
-    if(tmp!=NULL) {
+    if(tmp!=nullptr) {
         sprintf(tmpstr, "%s/services/popcobjrun", tmp);
     } else {
         strcpy(tmpstr, "popcobjrun");
@@ -119,12 +119,12 @@ std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_
      */
 
     paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
-    if(combox_factory == NULL) {
+    if(combox_factory == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
     }
 
     paroc_combox* tmpsock = combox_factory->Create("socket");
-    if(tmpsock == NULL) {
+    if(tmpsock == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }
 
@@ -157,7 +157,7 @@ std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_
     }
 
     // Select core
-    if(rport!=NULL&&rport!=0) {
+    if(rport!=nullptr&&rport!=0) {
         sprintf(tmpstr,"-socket_port=%s",rport);
         argv.push_back(tmpstr);
     }
@@ -197,7 +197,7 @@ std::string POPC_Allocator_tcpip_local::allocate(std::string& objectname, paroc_
         LOG_DEBUG("Launching a new object with command : %s", ss.str().c_str());
 #endif
         char** argvc = popc_createArgsFromVect(argv);
-        ret=RunCmd(argv.size(),argvc,NULL);
+        ret=RunCmd(argv.size(),argvc,nullptr);
         popc_freeArgs(argvc);
         err=errno;
     }
@@ -250,5 +250,5 @@ paroc_combox* POPC_Allocator_tcpip_local::allocate_group(std::string& objectname
 
     /* Allocation process here */
 
-    return NULL;
+    return nullptr;
 }

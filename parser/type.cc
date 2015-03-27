@@ -40,7 +40,7 @@ DataType::DataType(char *tname) {
     isStandard=false;
     isparclass=false;
 
-    if(tname!=NULL) {
+    if(tname!=nullptr) {
         char str[1024];
         char str1[1024];
         char sep[]=" \n\t\r";
@@ -48,10 +48,10 @@ DataType::DataType(char *tname) {
         strcpy(str,tname);
         char *tmp=strtok(str,sep);
         *str1=0;
-        while(tmp!=NULL) {
+        while(tmp!=nullptr) {
             strcat(str1,tmp);
-            tmp=strtok(NULL,sep);
-            if(tmp!=NULL) {
+            tmp=strtok(nullptr,sep);
+            if(tmp!=nullptr) {
                 strcat(str1," ");
             }
         }
@@ -62,13 +62,13 @@ DataType::DataType(char *tname) {
                 break;
             }
     } else {
-        name=NULL;
+        name=nullptr;
     }
     mark=false;
 }
 
 DataType::~DataType() {
-    if(name!=NULL) {
+    if(name!=nullptr) {
         free(name);
     }
 }
@@ -80,7 +80,7 @@ int DataType::CanMarshal() {
 void DataType::Marshal(char *varname, char *bufname, char *sizehelper,  std::string &output) {
     char tmpcode[1024];
     char paramname[256];
-    const char *sz=(sizehelper==NULL)? "1" : sizehelper;
+    const char *sz=(sizehelper==nullptr)? "1" : sizehelper;
 
     if(strcmp(GetName(), "void") != 0) {
         if(!FindVarName(varname,paramname)) {
@@ -100,7 +100,7 @@ void DataType::Marshal(char *varname, char *bufname, char *sizehelper,  std::str
 void DataType::DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
     char tmpcode[1024];
     char paramname[256];
-    const char *sz=(sizehelper==NULL)? "1" : sizehelper;
+    const char *sz=(sizehelper==nullptr)? "1" : sizehelper;
 
     if(strcmp(GetName(), "void") != 0) {
         if(!FindVarName(varname,paramname)) {
@@ -118,10 +118,10 @@ void DataType::DeMarshal(char *varname, char *bufname, char *sizehelper, std::st
 }
 
 bool DataType::GetDeclaration(const char *varname, char *output) {
-    if(name==NULL) {
+    if(name==nullptr) {
         return false;
     }
-    if(varname!=NULL) {
+    if(varname!=nullptr) {
         sprintf(output,"%s %s",name, varname);
     } else {
         sprintf(output,"%s",name);
@@ -130,12 +130,12 @@ bool DataType::GetDeclaration(const char *varname, char *output) {
 }
 
 bool DataType::GetCastType(char *output) {
-    return GetDeclaration(NULL,output);
+    return GetDeclaration(nullptr,output);
 }
 
 
 void DataType::GetExpandType(char *output) {
-    if(name==NULL) {
+    if(name==nullptr) {
         *output=0;
     } else {
         strcpy(output,name);
@@ -147,11 +147,11 @@ char *DataType::GetName() {
 }
 
 void DataType::SetName(const char *tname) {
-    if(name!=NULL) {
+    if(name!=nullptr) {
         free(name);
     }
-    if(tname==NULL) {
-        name=NULL;
+    if(tname==nullptr) {
+        name=nullptr;
     } else {
         name=popc_strdup(tname);
         isStandard=false;
@@ -197,7 +197,7 @@ bool DataType::Same(char *tname) {
 }
 
 DataType * DataType::GetBaseType() {
-    return NULL;
+    return nullptr;
 }
 
 void DataType::Mark(bool val) {
@@ -217,19 +217,19 @@ CodeFile * DataType::GetOwnerFile() {
 }
 
 bool DataType::FindVarName(const char *var, char name[256]) {
-    if(var==NULL) {
+    if(var==nullptr) {
         return false;
     }
 
     char tmp[1024];
-    char *curname=NULL;
+    char *curname=nullptr;
     strcpy(tmp,var);
     char *tok=curname=strtok(tmp," .->(*)<>[]");
-    while(tok!=NULL) {
+    while(tok!=nullptr) {
         curname=tok;
-        tok=strtok(NULL," .->(*)<>[]");
+        tok=strtok(nullptr," .->(*)<>[]");
     }
-    if(curname==NULL) {
+    if(curname==nullptr) {
         return false;
     }
     strcpy(name,curname);

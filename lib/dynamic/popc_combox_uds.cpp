@@ -169,7 +169,7 @@ bool popc_combox_uds::Connect(const char* param) {
 
 /**
  * Return the connection initialized with "Connect(const char* url)"
- * @return A pointer to the connection or NULL if this combox has no connection
+ * @return A pointer to the connection or nullptr if this combox has no connection
  */
 paroc_connection* popc_combox_uds::get_connection() {
     if(!_connected) {
@@ -338,23 +338,23 @@ paroc_connection* popc_combox_uds::Wait() {
                         active_connection[i].fd = 0;
                         active_connection[i].events = 0;
                         active_connection[i].revents = 0;
-                        return NULL;
+                        return nullptr;
                     } else {
                         // Modify connection tab
                         _active_connection_nb--;
                         active_connection[i].fd = active_connection[_active_connection_nb].fd;
                         active_connection[i].events = active_connection[_active_connection_nb].events;
                         active_connection[i].revents = active_connection[_active_connection_nb].revents;
-                        return NULL;
+                        return nullptr;
                     }
                 }
             }
         } else if(poll_back == 0) {
             perror("combox: timeout");
-            return NULL;
+            return nullptr;
         } else {
             perror("poll");
-            return NULL;
+            return nullptr;
         }
     } else {
         int poll_back = poll(active_connection, 1, _timeout);
@@ -364,13 +364,13 @@ paroc_connection* popc_combox_uds::Wait() {
             }
         } else if(poll_back == 0) {
             perror("timeout");
-            return NULL;
+            return nullptr;
         } else {
             perror("poll");
-            return NULL;
+            return nullptr;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 /**

@@ -53,14 +53,14 @@ std::string paroc_system::POPC_HostName;
 #define LOCALHOST "localhost"
 //End modif
 
-AppCoreService *paroc_system::mgr=NULL;
+AppCoreService *paroc_system::mgr=nullptr;
 std::string paroc_system::challenge;
 
 paroc_system::paroc_system() {
     paroc_combox_factory::GetInstance();
     paroc_buffer_factory_finder::GetInstance();
     char *tmp = getenv("POPC_PLATFORM");
-    if(tmp != NULL) {
+    if(tmp != nullptr) {
         platform = tmp;
     } else {
         char str[128];
@@ -86,11 +86,11 @@ paroc_system::paroc_system() {
 
 paroc_system::~paroc_system() {
 #ifndef DEFINE_UDS_SUPPORT
-    if(mgr!=NULL) {
+    if(mgr!=nullptr) {
         Finalize(false);
         delete mgr;
     }
-    mgr=NULL;
+    mgr=nullptr;
 #endif
 
     paroc_combox_factory *pf=paroc_combox_factory::GetInstance();
@@ -111,22 +111,22 @@ std::string paroc_system::GetHost() {
     if(POPC_HostName.empty()) {
         char str[128];
         char *t=getenv("POPC_HOST");
-        if(t==NULL || *t==0) {
+        if(t==nullptr || *t==0) {
             popc_gethostname(str,127);
-            if(strchr(str,'.')==NULL || strstr(str,".local\0")!=NULL) {
+            if(strchr(str,'.')==nullptr || strstr(str,".local\0")!=nullptr) {
                 int len=strlen(str);
                 char *domain=getenv("POPC_DOMAIN");
-                if(domain!=NULL && domain!=0) {
+                if(domain!=nullptr && domain!=0) {
                     str[len]='.';
                     strcpy(str+len+1,domain);
                     POPC_HostName = str;
-                } else { //(domain!=NULL && domain!=0)
+                } else { //(domain!=nullptr && domain!=0)
                     POPC_HostName = GetIP();
                 }
-            } else { //(strchr(str,'.')==NULL || strstr(str,".local\0")!=NULL)
+            } else { //(strchr(str,'.')==nullptr || strstr(str,".local\0")!=nullptr)
                 POPC_HostName = str;
             }
-        } else { //(t==NULL || *t==0)
+        } else { //(t==nullptr || *t==0)
             POPC_HostName=t;
         }
     }
@@ -146,11 +146,11 @@ std::string paroc_system::GetIP() {
     ip = std::string(LOCALHOST);
 
     tmp=getenv("POPC_IP");
-    if(tmp!=NULL) {     // Env. variable POPC_IP is defined
+    if(tmp!=nullptr) {     // Env. variable POPC_IP is defined
         ip=tmp;
     } else {           //Env. variable POPC_IP is not defined
         tmp=getenv("POPC_IFACE");
-        if(tmp!=NULL) { // Env. Variable POP_IFACE is defined
+        if(tmp!=nullptr) { // Env. Variable POP_IFACE is defined
             iface=tmp;    // Try to determine IP from network interface name
             if(!(GetIPFromInterface(iface,ip))) {
                 // Not found
@@ -182,12 +182,12 @@ std::string paroc_system::GetIP() {
     struct hostent *hp=gethostbyname(hostname);
     unsigned ip=(unsigned(127)<<24)+1;
 
-    if(hp==NULL || *(hp->h_addr_list)==NULL) {
+    if(hp==nullptr || *(hp->h_addr_list)==nullptr) {
         return std::string("127.0.0.1");
     }
 
     char **p=hp->h_addr_list;
-    while(*p!=NULL) {
+    while(*p!=nullptr) {
         memcpy(&ip,*p, sizeof(unsigned));
         ip=ntohl(ip);
         if(ip!=(unsigned(127)<<24)+1) {
@@ -232,7 +232,7 @@ int paroc_system::GetIP(const char *hostname, int *iplist, int listsize) {
         }
         return 0;
     }
-    if(hp==NULL) {
+    if(hp==nullptr) {
         return 0;
     }
     n=0;
@@ -283,7 +283,7 @@ std::string paroc_system::GetDefaultInterface() {
     bool found=false;
     FILE *fp = fopen("/proc/net/route", "r");
 
-    if(fp != NULL) { //else
+    if(fp != nullptr) { //else
         while(fgets(buff, 1023, fp) && !found) {
             //num = sscanf(buff, "%16s %128s %128s %X %d %d %d %128s %d %d %d",
             //       iface, net_addr, gate_addr, &iflags, &refcnt, &use, &metric, mask_addr, &mss, &window, &irtt);
@@ -316,7 +316,7 @@ bool paroc_system::GetIPFromInterface(std::string &iface, std::string &str_ip) {
     getifaddrs(&addrs);
 
     LOG_DEBUG("Looking for interface: %s --->",iface.c_str());
-    for(iap = addrs; iap != NULL; iap = iap->ifa_next) {
+    for(iap = addrs; iap != nullptr; iap = iap->ifa_next) {
         LOG_DEBUG("name=%s, addr=%p, flag=%d (%d), familly=%d (%d)",iap->ifa_name, iap->ifa_addr, iap->ifa_flags, IFF_UP, iap->ifa_addr->sa_family, AF_INET);
         if(iap->ifa_addr &&
                 (iap->ifa_flags & IFF_UP) &&
@@ -351,7 +351,7 @@ bool paroc_system::GetIPFromInterface(std::string &iface, std::string &str_ip) {
 bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
     const char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
-    if(info==NULL) {
+    if(info==nullptr) {
         LOG_ERROR("missing -jobservice argument");
         return false;
     }
@@ -370,14 +370,14 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
     // Get application service contact address
     const char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
 
-    if(codeser==NULL && appcontact==NULL) {
+    if(codeser==nullptr && appcontact==nullptr) {
         LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");
         return false;
     }
     try {
-        if(appcontact == NULL) {
+        if(appcontact == nullptr) {
             char url[1024];
-            if(proxy==NULL) {
+            if(proxy==nullptr) {
                 strcpy(url,codeser);
             } else {
                 sprintf(url,"%s -proxy=%s",codeser, proxy);
@@ -405,9 +405,9 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 
     char *codeconf=paroc_utils::checkremove(argc,argv,"-codeconf=");
 
-    LOG_DEBUG_IF(codeconf==NULL,"No code config file");
+    LOG_DEBUG_IF(codeconf==nullptr,"No code config file");
 
-    /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
+    /*if (codeconf!=nullptr && !paroc_utils::InitCodeService(codeconf,mgr))
     {
         return false;
     }
@@ -416,13 +416,13 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 #ifdef DEFINE_UDS_SUPPORT
     return false;
 #else
-    return !(codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr));
+    return !(codeconf!=nullptr && !paroc_utils::InitCodeService(codeconf,mgr));
 #endif
 }
 
 void paroc_system::Finalize(bool normalExit) {
 #ifndef DEFINE_UDS_SUPPORT
-    if(mgr!=NULL) {
+    if(mgr!=nullptr) {
         try {
             if(normalExit) {
                 //Wait for all object to be terminated!
@@ -458,13 +458,13 @@ void paroc_system::Finalize(bool normalExit) {
         } catch(paroc_exception &e) {
             LOG_ERROR("while finalizing the application: %s", e.what());
         }
-        mgr=NULL;
+        mgr=nullptr;
     }
 #endif
 }
 
 AppCoreService *paroc_system::CreateAppCoreService(char *codelocation) {
-    srand(time(NULL));
+    srand(time(nullptr));
     char tmp[256];
 
     for(int i=0; i<255; i++) {
