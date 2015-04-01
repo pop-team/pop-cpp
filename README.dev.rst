@@ -59,6 +59,7 @@ refactorings are possible, for instance:
 * Replacing some old structures by STL equivalents
 * Replacing const char* by std::string when appropriate
 * Replace some handcrafted loops by a STL algorithm
+* use 'make lint' or 'make check' to analyze the code statically and fix the warnings. Be still careful of what you do.
 
 
 Debugging
@@ -80,3 +81,7 @@ The runtime of popc runs different processes such as jobmgr or appservice. If on
     gdb barrier.obj core    # Replace barrier.obj with your executable. In case of doubt, gdb will correct you
 
 In gdb use the "bt" command to get the stack trace of the dump. If POP-C++ and your program were compiled with -g the line number are given.
+
+Dry run of object
+-----------------
+TODO lwk
