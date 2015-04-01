@@ -12,7 +12,7 @@ SecondObject::SecondObject() : value(10) {
 }
 
 SecondObject::~SecondObject() {
-    cout << "SecondObject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "SecondObject: on machine:" << POPSystem::GetHost() <<" is being destroyed" << popcendl;
 }
 
 int SecondObject::getValue() {
