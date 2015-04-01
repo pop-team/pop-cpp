@@ -706,10 +706,15 @@ int main(int argc, char *argv[]) {
             } else if(paroc_static || staticlib) {
                 sprintf(buf, "%s/lib/dynamic/libpopc_common.a", parocdir);
             } else {
-                // note: apparently the link order should be: -lpopc_core -lpopc_common -lpopc_core due to cross dependancies
+                // note: apparently the link order should be: -lpopc_core -lpopc_common -lpopc_core -lpopc_common due to cross dependancies
                 strcpy(buf, "-lpopc_core");
                 link_cmd[link_count++] = popc_strdup(buf);
 #ifndef __WIN32__
+                strcpy(buf, "-lpopc_common");
+                link_cmd[link_count++] = popc_strdup(buf);
+                // note: added these 2 lines to solve cross-dependancies for more complex compilation cases
+                strcpy(buf, "-lpopc_core");
+                link_cmd[link_count++] = popc_strdup(buf);
                 strcpy(buf, "-lpopc_common");
 #else
                 strcpy(buf, "-lpopc_common -lws2_32 -lxdr");
