@@ -41,4 +41,5 @@ test/*/*.map
 test/*/_popc*
 dev/test/*/_popc*
 dev/test/*/*/_popc*
+test/unitTests/Makefile
 __cmd_to_execute__
