@@ -9,3 +9,4 @@ Directory structure:
 --------------------
 
 test/	: This sub-directory contains test cases for development.
+misc/	: This sub-directory contains various prototypes
