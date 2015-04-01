@@ -3,7 +3,6 @@ echo '====================================================='
 echo CONFIGURING STARTUP SCRIPT FOR YOUR LOCAL MACHINE...
 
 script=SXXpopc
-scriptglobus=SXXpopc.globus
 
 tmpheader=/tmp/SXXpopc_header_$USER
 
@@ -72,7 +71,7 @@ then
 		echo "=================================================================="
 		echo "Enter the delegate service for POP-C++ services (service proxy):"
 		read proxyname
-		
+
 		if [ -n "$proxyname" ]
 		then
 			echo "POPC_JOBMGR_PROXY=$proxyname" >> $tmpheader
@@ -96,7 +95,7 @@ then
 		do
 			echo "Do you want to run the POP-C++ delegate service on this host? (y/n)[n]"
 			read answer
-			
+
 			if [ -z "$answer" ]
 			then
 				answer="n"
@@ -112,12 +111,12 @@ then
 			then
 				proxyport="2811"
 			fi
-			
+
 			echo "PROXY_PORT=$proxyport" >> $tmpheader
 
 			echo "Enter netmask of the local network (only hosts that do not have the same subnet will be connected through the delegate service):"
 			read netmask
-			
+
 			if [ ! "X$netmask" = "X" ]
 			then
 				echo "POPC_PROXY_NETMASK=$netmask" >> $tmpheader
@@ -126,7 +125,7 @@ then
 
 			echo "Enter port range (xxx:yyy) for parallel objects:"
 			read portrange
-			
+
 			if [ ! "X$portrange" = "X" ]
 			then
 				echo "POPC_PROXY_PORTS=$portrange" >> $tmpheader
@@ -135,7 +134,7 @@ then
 
 			echo "Delegate service can be cascaded. If this is the case, what is the parent delegate service?"
 			read parent
-	
+
 			if [ ! "X$parent" = "X" ]
 			then
 				echo "POPC_PROXY_PARENT=$parent" >> $tmpheader

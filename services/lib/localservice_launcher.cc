@@ -3,13 +3,7 @@
 #include <string.h>
 
 #include "paroc_accesspoint.h"
-
-
-#ifdef POPC_GLOBUS
-#include "appservice_globus.ph"
-#else
 #include "appservice.ph"
-#endif
 
 void Usage() {
     printf("Usage: localservice_launcher  [-servicepoint=<host>[:port]]  <start [options]> |  <stop>\n\tOptions:\n\t  [-challenge=<string>] [-code=<appservice codefile>] [-conf=<config file>] [-proxy=<POP-C++ proxy>] [-test] [-out=<file> (default:stdout)]\n");
@@ -63,12 +57,7 @@ int main(int argc, char **argv) {
                 LOG_ERROR("local service code file is not specified");
                 Usage();
             }
-#ifdef POPC_GLOBUS
-            snprintf(objcode,sizeof(objcode),"%s/services/appservice.globus",tmp);
-#else
             snprintf(objcode,sizeof(objcode),"%s/services/appservice",tmp);
-#endif
-
         } else {
             strcpy(objcode,tmp);
         }
@@ -85,11 +74,7 @@ int main(int argc, char **argv) {
             return 1;
         }
 
-#ifdef POPC_GLOBUS
-        GlobusAppCoreService info(challenge, true, objcode);
-#else
         AppCoreService info(challenge, true, objcode);
-#endif
 
         char *conf=paroc_utils::checkremove(&argc,&argv,"-conf=");
         if(conf!=NULL) {

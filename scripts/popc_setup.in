@@ -26,7 +26,7 @@ else
 fi
 
 if [ -f @CMAKE_INSTALL_PREFIX@/sbin/paroc_setup ]
-then 
+then
 	echo "Error : You are installing on top of an older version, please clean your directory with 'rm -rf @CMAKE_INSTALL_PREFIX@/*' and run 'make install' again."
 	exit -1
 fi
@@ -59,7 +59,7 @@ then
 
 
 fi
-# end of block 
+# end of block
 
 echo ""
 echo ""
@@ -116,82 +116,77 @@ echo '====================================================='
 echo GENERATING SERVICE MAPS...
 
 servicemap=$POPC_LOCATION/etc/service.map
-echo "#object platform location" >  $servicemap 
-
-if [ -f $POPC_LOCATION/services/jobmgr.globus ]
-then
-	$POPC_LOCATION/services/jobmgr.globus -listlong | grep Globus >> $servicemap 
-fi 
+echo "#object platform location" >  $servicemap
 
 if [ -f $POPC_LOCATION/services/jobmgr ]
 then
-	$POPC_LOCATION/services/jobmgr -listlong >> $servicemap 
+	$POPC_LOCATION/services/jobmgr -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/virtual_jobmgr ]
 then
-	$POPC_LOCATION/services/virtual_jobmgr -listlong >> $servicemap 
+	$POPC_LOCATION/services/virtual_jobmgr -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/secure_jobmgr ]
 then
-	$POPC_LOCATION/services/secure_jobmgr -listlong >> $servicemap 
+	$POPC_LOCATION/services/secure_jobmgr -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/virtual_secure_jobmgr ]
 then
-	$POPC_LOCATION/services/virtual_secure_jobmgr -listlong >> $servicemap 
+	$POPC_LOCATION/services/virtual_secure_jobmgr -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/popc_search_node ]
 then
-	$POPC_LOCATION/services/popc_search_node -listlong >> $servicemap 
+	$POPC_LOCATION/services/popc_search_node -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/virtual_popc_search_node ]
 then
-	$POPC_LOCATION/services/virtual_popc_search_node -listlong >> $servicemap 
+	$POPC_LOCATION/services/virtual_popc_search_node -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/secure_popc_search_node ]
 then
-	$POPC_LOCATION/services/secure_popc_search_node -listlong >> $servicemap 
+	$POPC_LOCATION/services/secure_popc_search_node -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/virtual_secure_popc_search_node ]
 then
-	$POPC_LOCATION/services/virtual_secure_popc_search_node -listlong >> $servicemap 
+	$POPC_LOCATION/services/virtual_secure_popc_search_node -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/virtual_popc_security_manager ]
 then
-	$POPC_LOCATION/services/virtual_popc_security_manager -listlong >> $servicemap 
+	$POPC_LOCATION/services/virtual_popc_security_manager -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/popc_security_manager ]
 then
-	$POPC_LOCATION/services/popc_security_manager -listlong >> $servicemap 
+	$POPC_LOCATION/services/popc_security_manager -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/popcloner ]
 then
-	$POPC_LOCATION/services/popcloner -listlong >> $servicemap 
+	$POPC_LOCATION/services/popcloner -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/popfilemanager ]
 then
-	$POPC_LOCATION/services/popfilemanager -listlong >> $servicemap 
-fi 
+	$POPC_LOCATION/services/popfilemanager -listlong >> $servicemap
+fi
 
 if [ -f $POPC_LOCATION/services/pqueue ]
 then
-	$POPC_LOCATION/services/pqueue -listlong | grep PQueue >> $servicemap 
+	$POPC_LOCATION/services/pqueue -listlong | grep PQueue >> $servicemap
 fi
 
-#$POPC_LOCATION/services/proxy -listlong >> $servicemap 
+#$POPC_LOCATION/services/proxy -listlong >> $servicemap
 
  if [ X$POPC_SECURE = "Xtrue" ] || [ X$POPC_SECURE_VIRTUAL = "Xtrue" ]
-   then 
+   then
       if [ ! -f $HOME/.ssh/id_rsa.pub ]
       then
          echo "Your SSH public key is not generated yet ! POP-C++ will do it for you ..."
@@ -203,7 +198,6 @@ echo "CONFIGURING POP-C++ SERVICES ON YOUR LOCAL MACHINE..."
 
 conf=$POPC_LOCATION/etc/jobmgr.conf
 runtime_env=$POPC_LOCATION/etc/popc-runtime-env.sh
-confglobus=$POPC_LOCATION/etc/jobmgr.globus.conf
 virtualconf=/tmp/popc_$$.conf
 virtualconfcipher=$POPC_LOCATION/etc/virtual.conf.cr
 
@@ -261,18 +255,18 @@ then
 			break
 		fi
 	done
-	
-	
+
+
 # following block shortcuted to not asking entering of child node / JFR - 06-sep-2011
-	# 
+	#
 	if false
 	then
-	
+
 		while [ 1 ]
 		do
 			echo "Enter the child node:"
 			read host
-			
+
 			if [ "x$host" != "x" ]
 			then
 				myurl=`echo $host | awk -F: '{ if (NF>=3) print $0; else if (NF>=2) print "socket://" $0; else print "socket://" $1 ":2711" }'`
@@ -281,7 +275,7 @@ then
 				break
 			fi
 		done
-		
+
 	fi
 # end of block
 
@@ -289,12 +283,12 @@ then
 	do
 		echo "Enter number of processors available (default:1):"
 		read nprocs
-		
+
 		if [ "x$nprocs" = "x" ]
 		then
-			nprocs=1 
+			nprocs=1
 		fi
-	
+
 		if [ $nprocs -ge 1 ]
 		then
 			echo "np $nprocs" >>  $conf
@@ -310,9 +304,9 @@ then
 		read maxjobs
 		if [ "x$maxjobs" = "x" ]
 		then
-			maxjobs=100 
+			maxjobs=100
 		fi
-	
+
 		if [ $maxjobs -ge 0 ]
 		then
 			echo "maxjobs $maxjobs" >>  $conf
@@ -328,9 +322,9 @@ then
 		read ram
 		if [ "x$ram" = "x" ]
 		then
-			ram=2048 
+			ram=2048
 		fi
-	
+
 		if [ $ram -gt 0 ]
 		then
 			echo "ram $ram" >>  $conf
@@ -372,7 +366,7 @@ then
 	read job_exec
 fi
 
-echo "jobmgr $job_exec $POPC_LOCATION/services/popcobjrun" >> $conf 
+echo "jobmgr $job_exec $POPC_LOCATION/services/popcobjrun" >> $conf
 
 if [ "@pqueue@" = "true" ]
 then
@@ -386,7 +380,7 @@ then
 		echo "export POPC_PQUEUE" >> $runtime_env
 	fi
 
-fi 
+fi
 
 if [ X$insttype = "Xstandard" ]
 then
@@ -402,16 +396,16 @@ then
 fi
 
 
-# ### Added by Wyssen ### 
+# ### Added by Wyssen ###
 if [ X$insttype = "Xstandard" ]
 then
    if [ X$POPC_VIRTUAL = "Xtrue" ] || [ X$POPC_SECURE_VIRTUAL = "Xtrue" ]
    then
       echo "POPC_VIRTUAL=\"y\"" >> $runtime_env
 	   echo "export POPC_VIRTUAL" >> $runtime_env
-	
+
 	   echo "SETTING UP VIRTUAL ENVIRONMENT INFORMATION NOW"
-	     
+
       #ESX(i) host
 	   echo "ESX(i) hypervisor IP address : e.g. 160.98.20.140"
 	   virt_var=""
@@ -420,7 +414,7 @@ then
       then
          echo "popc_esx_uri esx://$virt_var/?no_verify=1" >  $virtualconf
       fi
-      
+
       #ESX(i) username
 	   echo "ESX(i) user name with admin rights (default: root)"
 	   virt_var=""
@@ -430,12 +424,12 @@ then
          virt_var="root"
       fi
       echo "popc_esx_username $virt_var" >>  $virtualconf
-      
+
       #ESX(i) pass
 	   echo "ESX(i) password:"
 	   virt_var=""
       stty_orig=`stty -g`
-      stty -echo 
+      stty -echo
 	   read virt_var
       stty $stty_orig
       echo ""
@@ -473,7 +467,7 @@ then
          virt_var="0"
       fi
       echo "popc_esx_num_clone $virt_var" >>  $virtualconf
-      
+
       #ESX(i) worker name.
 	   echo "ESX(i) worker name (default: popc_worker1)"
 	   virt_var=""
@@ -493,7 +487,7 @@ then
       done
       echo "popc_esx_hostuser $virt_var" >>  $virtualconf
 
-	
+
       #ESX(i) worker OS password.
 	   virt_var=""
       while [ "x$virt_var" = "x" ]; do
@@ -501,8 +495,8 @@ then
     	   read virt_var
       done
       echo "popc_esx_hostpass $virt_var" >>  $virtualconf
-      
-      
+
+
       #ESX(i) clean snapshot.
 	   echo "ESX(i) clean snapshot name (default: popc_clean)"
 	   virt_var=""
@@ -512,7 +506,7 @@ then
          virt_var="popc_clean"
       fi
       echo "popc_esx_snapshot $virt_var" >>  $virtualconf
-	   
+
       echo
       cat $virtualconf | $POPC_LOCATION/bin/popcipher $virtualconfcipher
       rm -f $virtualconf
@@ -575,7 +569,7 @@ then
 	fi
 # following line is required because the block above is shortcuted / JFR - 06-sep-2011
 	$POPC_LOCATION/sbin/popc_script_setup
-	
+
 else
 	$POPC_LOCATION/sbin/popc_script_setup
 fi

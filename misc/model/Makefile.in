@@ -186,8 +186,6 @@ datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
-globusdir = @globusdir@
-globusflavor = @globusflavor@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -218,17 +216,17 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = no-dependencies
-POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp 
+POPC_FLAGS = -popcpp-compilation -no-implicit-pack -popcdir=@top_srcdir@ -popcpp=@top_srcdir@/parser/popcpp
 AM_CXXFLAGS = -cxxmain  $(POPC_FLAGS)
-lib_LIBRARIES = libparoc_tcmodel.a 
-inst_HEADERS = modelgene.h model.h 
-model_DATA = probobj.ph 
+lib_LIBRARIES = libparoc_tcmodel.a
+inst_HEADERS = modelgene.h model.h
+model_DATA = probobj.ph
 instdir = @includedir@
 modeldir = @includedir@
-libparoc_tcmodel_a_SOURCES = model.cc modelgene.cc probobj.cc 
+libparoc_tcmodel_a_SOURCES = model.cc modelgene.cc probobj.cc
 libparoc_tcmodel_a_LIBADD = probobj.stub.o
 EXTRA_DIST = probobj.ph
-CLEANFILES = 
+CLEANFILES =
 all: all-am
 
 .SUFFIXES:
@@ -295,7 +293,7 @@ uninstall-libLIBRARIES:
 
 clean-libLIBRARIES:
 	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
-libparoc_tcmodel.a: $(libparoc_tcmodel_a_OBJECTS) $(libparoc_tcmodel_a_DEPENDENCIES) 
+libparoc_tcmodel.a: $(libparoc_tcmodel_a_OBJECTS) $(libparoc_tcmodel_a_DEPENDENCIES)
 	-rm -f libparoc_tcmodel.a
 	$(libparoc_tcmodel_a_AR) libparoc_tcmodel.a $(libparoc_tcmodel_a_OBJECTS) $(libparoc_tcmodel_a_LIBADD)
 	$(RANLIB) libparoc_tcmodel.a

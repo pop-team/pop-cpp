@@ -9,27 +9,16 @@ clementval  2012/04/12  Add POPFileManager service support
 
 #include "popc_intface.h"
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <unistd.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <fcntl.h>
 #include "../../config.h"
 
 #include "popfilemanager.ph"
-
 
 /**
  * ViSaG : clementval
  * include the right files for the specified version
  */
 
-//Include GlobusJobMgr, VSJOBMGR, VJOBMGR, SJOBMGR or JOBMGR
-#ifdef POPC_GLOBUS
-#include "jobmgr_globus.ph"
-#elif defined POPC_SECURE_VIRTUAL
+#if defined POPC_SECURE_VIRTUAL
 #include "virtual_secure_jobmgr.ph"
 #include "popcloner.ph"
 #elif defined POPC_VIRTUAL
@@ -40,7 +29,6 @@ clementval  2012/04/12  Add POPFileManager service support
 #else
 #include "jobmgr.ph"
 #endif
-
 
 //Include VPSN, SPSN or PSN
 #ifdef POPC_SECURE_VIRTUAL
@@ -53,7 +41,6 @@ clementval  2012/04/12  Add POPFileManager service support
 #include "popc_search_node.ph"
 #endif
 
-
 //Include PSM or VPSM
 #ifdef POPC_SECURE_VIRTUAL
 #include "virtual_popc_security_manager.ph"
@@ -62,6 +49,7 @@ clementval  2012/04/12  Add POPFileManager service support
 #elif defined POPC_SECURE
 #include "popc_security_manager.ph"
 #endif
+
 /* ViSaG */
 
 void Usage() {
@@ -247,11 +235,7 @@ int main(int argc, char **argv) {
             }
             std::string paroc_location(tmp2);
 
-#ifdef POPC_GLOBUS
-            str = paroc_location + "/etc/jobmgr.globus.conf";
-#else
             str = paroc_location + "/etc/jobmgr.conf";
-#endif
             conf=str;
 
             str = paroc_location + "/etc/virtual.conf";
@@ -332,10 +316,7 @@ int main(int argc, char **argv) {
         LOG_INFO("[POP-C++ Runtime] PSN Started [%s]", psn.GetAccessPoint().GetAccessString().c_str());
 #endif
 
-
-#ifdef POPC_GLOBUS
-        GlobusJobMgr info(daemon, conf,challenge, host);
-#elif defined POPC_SECURE_VIRTUAL
+#if defined POPC_SECURE_VIRTUAL
         //Create the POPCloner
         POPCloner cloner(challenge, daemon);
         LOG_INFO("POPCloner Started [%s]", cloner.GetAccessPoint().GetAccessString());

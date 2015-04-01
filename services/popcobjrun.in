@@ -41,54 +41,9 @@ fi
 
 if [ "$drun" = "1" ]; then
     echo "Exec: $POPC_JOB_EXEC $prog $args"
-#elif [ ! "X`which $prog 2>/dev/null`" = "X" ]; then
 else
-    #echo "exec this : $POPC_JOB_EXEC $prog $args" 
+    #echo "exec this : $POPC_JOB_EXEC $prog $args"
     $POPC_JOB_EXEC $prog $args &
     RETVAL=$?
     exit $RETVAL
-#else
-#    TMPDIR=/tmp
-#    wget=`which wget`
-#    pid=$$
-
-#    prog1="$TMPDIR/parobject_$USER_$pid"
-
-#    echo "Downloading the executable file..."
-
-#Check for Globus GridFTP files....
-
-#    gsiprog=`echo $prog | grep ^'gsiftp://'`
-#    if [ "X$gsiprog" = "X" ]; then
-#	$wget -q $prog -O $prog1
-#	RETVAL=$?
-#    else 
-#	if [ "X$GLOBUS_LOCATION" != "X" ]; then
-#	    . $GLOBUS_LOCATION/etc/globus-user-env.sh
-#	fi
-#	gsiftpget=`which globus-url-copy`
-#	if [ "X$gsiftpget" = "X" ]; then
-#	    echo "globus-url-copy is required to stage the executable!"
-#	    exit 1
-#	fi
-#	$gsiftpget $prog file://$prog1
-#	RETVAL=$?
-
-#    fi
-#    if [ $RETVAL -ne 0 ]; then
-#	echo "File not found or failed to download the file : $prog"
-#        exit $RETVAL
-#    fi
-    
-#    if [ ! -f $prog1 ]; then
-#        echo "$prog1 not found"
-#        exit 1
-#    else
-#        chmod +x $prog1
-#        echo "Now EXEC: $POPC_JOB_EXEC $TMPDIR/$prog1 $* $MY_POPC_PROXY"
-#	$POPC_JOB_EXEC $prog1 $args
-#        RETVAL=$?
-#	rm -f $prog1
-#        exit $RETVAL
-#    fi
 fi
