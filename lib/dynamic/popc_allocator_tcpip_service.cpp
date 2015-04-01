@@ -27,24 +27,12 @@
 #define ALLOC_TIMEOUT 60
 
 /**
- * Allocator over TCP/IP with local mechanism constructor
- */
-POPC_Allocator_tcpip_service::POPC_Allocator_tcpip_service() {
-}
-
-/**
- * Allocator over TCP/IP with local mechanism destrcutor
- */
-POPC_Allocator_tcpip_service::~POPC_Allocator_tcpip_service() {
-}
-
-/**
  * Allocate a single object by using the TCP/IP protocol with a local allocation mechanism
  * @param objectname  Name of the object to be allocated
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-std::string POPC_Allocator_tcpip_service::allocate(std::string& objectname, paroc_od& od) {
+std::string socket_allocator_service::allocate(std::string& objectname, paroc_od& od) {
     paroc_accesspoint jobcontact, objectaddress, remotejobcontact;
 
     //Exec using JobMgr interface...
@@ -108,7 +96,7 @@ std::string POPC_Allocator_tcpip_service::allocate(std::string& objectname, paro
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* POPC_Allocator_tcpip_service::allocate_group(std::string& objectname, paroc_od& od, int nb) {
+paroc_combox* socket_allocator_service::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
     /* Allocation process here */
 

@@ -99,7 +99,7 @@ bool paroc_combox::SendAck(paroc_connection *conn) {
 bool paroc_combox::RecvAck(paroc_connection * /*conn*/) {
     paroc_connection * connex= Wait();
     if(connex==nullptr) {
-        paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"Wait() returned NULL");
+        paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"Wait() returned nullptr");
     }
     char buf[4];
     int n = Recv(buf,3, connex);
@@ -117,12 +117,6 @@ void paroc_combox::SetTimeout(int millisec) {
 int paroc_combox::GetTimeout() {
     return timeout;
 }
-
-void paroc_combox::Destroy() {
-    // TODO LW: Probably remove this thing and see what to do with Destroy() methods in general
-    delete this;
-}
-
 
 bool paroc_combox::SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg) {
     int idx=(int)ev;

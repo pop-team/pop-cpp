@@ -21,20 +21,26 @@
 enum LOGLEVEL {
     __DEBUG__,
     __INFO__,
-    __CORE__, 
+    __CORE__,
     __WARNING__,
-    __ERROR__, 
+    __ERROR__,
     __LAST__  // Only for dimensioning array
 };
 
-#define LOG_DEBUG(_log_msg, ...)   popc_logger(__DEBUG__,   __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
-#define LOG_INFO(_log_msg, ...)    popc_logger(__INFO__,    __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
-#define LOG_CORE(_log_msg, ...)    popc_logger(__CORE__,    __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
-#define LOG_WARNING(_log_msg, ...) popc_logger(__WARNING__, __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
-#define LOG_ERROR(_log_msg, ...)   popc_logger(__ERROR__,   __FILE__, __LINE__, __FUNCTION__,_log_msg, ##__VA_ARGS__)
+#define LOG_DEBUG(_log_msg, ...)   popc_logger_t(__DEBUG__,   __FILE__, __LINE__, __FUNCTION__, nullptr, _log_msg, ##__VA_ARGS__)
+#define LOG_INFO(_log_msg, ...)    popc_logger_t(__INFO__,    __FILE__, __LINE__, __FUNCTION__, nullptr, _log_msg, ##__VA_ARGS__)
+#define LOG_CORE(_log_msg, ...)    popc_logger_t(__CORE__,    __FILE__, __LINE__, __FUNCTION__, nullptr, _log_msg, ##__VA_ARGS__)
+#define LOG_WARNING(_log_msg, ...) popc_logger_t(__WARNING__, __FILE__, __LINE__, __FUNCTION__, nullptr, _log_msg, ##__VA_ARGS__)
+#define LOG_ERROR(_log_msg, ...)   popc_logger_t(__ERROR__,   __FILE__, __LINE__, __FUNCTION__, nullptr, _log_msg, ##__VA_ARGS__)
 
-#define LOG_DEBUG_IF(_cond,_log_msg, ...) if(_cond){popc_logger(__DEBUG__, __FILE__, __LINE__, __FUNCTION__, _log_msg, ##__VA_ARGS__);}
+#define LOG_DEBUG_T(tag, _log_msg, ...)   popc_logger_t(__DEBUG__,   __FILE__, __LINE__, __FUNCTION__, tag, _log_msg, ##__VA_ARGS__)
+#define LOG_INFO_T(tag, _log_msg, ...)    popc_logger_t(__INFO__,    __FILE__, __LINE__, __FUNCTION__, tag, _log_msg, ##__VA_ARGS__)
+#define LOG_CORE_T(tag, _log_msg, ...)    popc_logger_t(__CORE__,    __FILE__, __LINE__, __FUNCTION__, tag, _log_msg, ##__VA_ARGS__)
+#define LOG_WARNING_T(tag, _log_msg, ...) popc_logger_t(__WARNING__, __FILE__, __LINE__, __FUNCTION__, tag, _log_msg, ##__VA_ARGS__)
+#define LOG_ERROR_T(tag, _log_msg, ...)   popc_logger_t(__ERROR__,   __FILE__, __LINE__, __FUNCTION__, tag, _log_msg, ##__VA_ARGS__)
 
-int popc_logger(LOGLEVEL level, const char* file, int line, const char* function, const char *format, ...);
+#define LOG_DEBUG_IF(_cond,_log_msg, ...) if(_cond){popc_logger_t(__DEBUG__, __FILE__, __LINE__, __FUNCTION__, nullptr, _log_msg, ##__VA_ARGS__);}
+
+int popc_logger_t(LOGLEVEL level, const char* file, int line, const char* function, const char* tag, const char *format, ...);
 
 #endif /* POPC_LOGGER */

@@ -218,14 +218,6 @@ paroc_connection* popc_combox_mpi::Wait() {
 }
 
 /**
- * Close and delete the combox
- */
-void popc_combox_mpi::Destroy() {
-    Close();
-    delete this;
-}
-
-/**
  * Close the MPI port and
  */
 void popc_combox_mpi::Close() {
@@ -236,9 +228,8 @@ void popc_combox_mpi::Close() {
  * @param Return "mpi" as the protocol name
  * @return TRUE in any cases
  */
-bool popc_combox_mpi::GetProtocol(std::string& protocolName) {
-    protocolName="mpi";
-    return true;
+std::string popc_combox_mpi::GetProtocol() {
+    return "mpi";
 }
 
 
@@ -247,14 +238,8 @@ bool popc_combox_mpi::GetProtocol(std::string& protocolName) {
  * @param accesspoint Formed URL to access this combox under the form mpi://<port_name>
  * @return TRUE if the URL can be formed, FALSE in any other cases.
  */
-bool popc_combox_mpi::GetUrl(std::string& accesspoint) {
-    // Form the URL with protocol and port_name
-    std::string protocol;
-    GetProtocol(protocol);
-    char url[1024];
-    sprintf(url, "%s://%d", protocol.c_str(), _node_id);
-    accesspoint = url;
-    return true;
+std::string popc_combox_mpi::GetUrl() {
+    return "mpi://" + std::to_string(_node_id);
 }
 
 /**

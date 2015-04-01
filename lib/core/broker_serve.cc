@@ -23,7 +23,7 @@
 #include "paroc_system.h"
 #include "popc_logger.h"
 
-#define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=NULL) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
+#define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=nullptr) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 
 class paroc_invokethread: public paroc_thread {
 public:
@@ -49,7 +49,7 @@ paroc_invokethread::paroc_invokethread(paroc_broker *br, paroc_request &myreques
 }
 
 paroc_invokethread::~paroc_invokethread() {
-    request.data->Destroy();
+    delete request.data;
     if(request.from!=nullptr) {
         delete request.from;
     }
@@ -147,7 +147,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
             }
             mutexCond.unlock();
         }
-        req.data->Destroy();
+        delete req.data;
         if(req.from!=nullptr) {
             delete req.from;
         }
@@ -170,7 +170,7 @@ void paroc_broker::UnhandledException() {
 bool paroc_broker::DoInvoke(paroc_request &request) {
     try {
         if(!Invoke(request.methodId, *request.data, request.from)) {
-            LOG_ERROR("Mismatched method was invoked: id=%d", request.methodId);
+            LOG_ERROR("Mismatched method was invoked: classid=%d, methodid=%d", request.methodId[0], request.methodId[1]);
             paroc_exception::paroc_throw(OBJECT_MISMATCH_METHOD, "Mismatched method was invoked");
         }
     }
@@ -258,6 +258,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
     if(obj==nullptr || obj->GetRefCount()<=0) {
         return false;
     }
+
     return true;
 }
 
@@ -265,7 +266,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
 bool paroc_broker::Invoke(unsigned method[3], paroc_buffer &buf, paroc_connection *peer) {
     paroc_request req;
     req.from=peer;
-    memcpy(req.methodId,method, 3*sizeof(unsigned));
+    memcpy(req.methodId, method, 3*sizeof(unsigned));
     req.data=&buf;
     return ParocCall(req);
 }

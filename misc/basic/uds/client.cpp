@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
 
     client.Close();
 
-    // TODO lwk: delete buffer
+    delete[] buffer;
 
     return 0;
 }

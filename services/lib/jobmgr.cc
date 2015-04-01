@@ -58,7 +58,7 @@ paroc_timerthread::paroc_timerthread(int myparent_update, int myservice_timeout,
 }
 
 void paroc_timerthread::start() {
-    if((parent_update<=0 && service_timeout<=0) || jobmgr==NULL) {
+    if((parent_update<=0 && service_timeout<=0) || jobmgr==nullptr) {
         return;
     }
     while(1) {
@@ -213,7 +213,11 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
     std::vector<std::string> acc;
     popc_tokenize(acc,GetAccessPoint().GetAccessString(), ":");
 
+<<<<<<< HEAD
     unsigned int seed = time(NULL);
+=======
+    srand(time(nullptr));
+>>>>>>> 7075317e0ae3e0d03348ad5eca43ba7519e635a2
 
     int ret=paroc_system::GetIP(serviceID,1);
     if(ret!=1) {
@@ -252,7 +256,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
 
     FILE *f=fopen(conf.c_str(),"rt");
     char val[256];
-    if(f==NULL) {
+    if(f==nullptr) {
         LOG_WARNING("Open config file [%s] fail",conf.c_str());
         paroc_exception::paroc_throw(errno,conf.c_str());
     }
@@ -269,7 +273,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
     const char* mycontact = GetAccessPoint().GetAccessString().c_str();
     LOG_DEBUG( "[JM] jobmgr access string %s", mycontact);
     while(!feof(f)) {
-        if(fgets(str,1023,f)==NULL) {
+        if(fgets(str,1023,f)==nullptr) {
             break;
         }
 
@@ -303,7 +307,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
         }
         tmp[1]=0;
         if(paroc_utils::isEqual(name,"node")) {
-            if(strchr(val,':')==NULL) {
+            if(strchr(val,':')==nullptr) {
                 strcat(val,":");
                 strcat(val,DEFAULT_PORT);
             }
@@ -318,7 +322,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
 
             neighbors.Add(contact, tmp);
         } else if(paroc_utils::isEqual(name,"parent")) {
-            if(strchr(val,':')==NULL) {
+            if(strchr(val,':')==nullptr) {
                 strcat(val,":");
                 strcat(val,DEFAULT_PORT);
             }
@@ -407,7 +411,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
     if(Query("localuser",tmpstr)) {
 #ifndef __WIN32__
         passwd *t=popc_getpwnam(tmpstr.c_str());
-        if(t!=NULL) {
+        if(t!=nullptr) {
             localuid=t->pw_uid;
         }
         LOG_INFO("localuid=%d", localuid);
@@ -662,7 +666,7 @@ int JobMgr::CreateObject(paroc_accesspoint &localservice, const std::string &obj
                         JobMgr jobmgr(ac);
                         sz=0;
                         tmpids[sz++]=reserveIDs[i];
-                        for(int j=i+1; j<howmany; j++) 
+                        for(int j=i+1; j<howmany; j++)
                             if(acstr==jobcontacts[j].GetAccessString()) {
                                 jobcontacts[j].SetAccessString("");
                                 tmpids[sz++]=reserveIDs[j];
@@ -1057,7 +1061,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, std::string popAppI
         t.flops=flops;
         t.mem=mem;
         t.bandwidth=bandwidth;
-        t.start=time(NULL);
+        t.start=time(nullptr);
         t.walltime=walltime;
         jobs.push_back(t);
 
@@ -1184,7 +1188,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness) {
         t.flops=flops;
         t.mem=mem;
         t.bandwidth=bandwidth;
-        t.start=time(NULL);
+        t.start=time(nullptr);
         t.walltime=walltime;
         jobs.push_back(t);
 
@@ -1256,7 +1260,7 @@ void JobMgr::Update() {
             auto old=pos;
             Resources &t=*pos++;
 
-            time_t now=time(NULL);
+            time_t now=time(nullptr);
 
             if(t.contact.IsEmpty()) {
                 if(reserve_timeout>0 && now-t.start>reserve_timeout) {
@@ -1474,7 +1478,7 @@ void JobMgr::Start() {
     int pid=popc_getpid();
     char filename[256];
 #ifndef NDEBUG
-    if(tmp!=NULL) {
+    if(tmp!=nullptr) {
         snprintf(filename,sizeof(filename),"%s/jobmgr_stdout_%d",tmp,pid);
     } else {
         snprintf(filename,sizeof(filename),"/tmp/jobmgr_stdout_%d",pid);
@@ -1482,7 +1486,7 @@ void JobMgr::Start() {
 
     popc_open(filename,O_WRONLY | O_CREAT,S_IRWXU | S_IRGRP);
 
-    if(tmp!=NULL) {
+    if(tmp!=nullptr) {
         snprintf(filename,sizeof(filename),"%s/jobmgr_stderr_%d",tmp,pid);
     } else {
         snprintf(filename,sizeof(filename),"/tmp/jobmgr_stderr_%d", pid);
@@ -1495,21 +1499,20 @@ void JobMgr::Start() {
     popc_open("/dev/null",O_WRONLY);
 #endif
 
-    if(tmp!=NULL) {
+    if(tmp!=nullptr) {
         snprintf(filename,sizeof(filename),"%s/jobmgr.pid",tmp);
     } else {
         strcpy(filename,"/tmp/jobmgr.pid");
     }
 
     FILE *f=fopen(filename,"w+");
-    if(f!=NULL) {
+    if(f!=nullptr) {
         fprintf(f,"%d",pid);
         fclose(f);
     }
 }
 
 
-//TODO Finish the comment
 /**
  * ViSag : clementval (modification)
  * Execute a parallel object
@@ -1523,7 +1526,7 @@ void JobMgr::Start() {
 int JobMgr::Exec(char **arguments, char *env[], int &pid, std::string popAppId, std::string reqID) {
 
     std::vector<std::string> argv;
-    char *first=NULL;
+    char *first=nullptr;
     char sep[]=" \n\r\t";
     std::string str;
 
@@ -1534,7 +1537,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, std::string popAppId, 
         pt_java_exec = java_exec;
     }
 
-    if(*arguments!=NULL) {
+    if(*arguments!=nullptr) {
         first = *arguments;
     }
 
@@ -1545,7 +1548,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, std::string popAppId, 
         }
     }
     int n = 0;
-    while(*arguments!=NULL && n<1023) {
+    while(*arguments!=nullptr && n<1023) {
         argv.push_back(*arguments);
         arguments++;
         n++;
@@ -1578,8 +1581,8 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, std::string popAppId, 
             }
         }
 
-        if(env!=NULL) {
-            while(*env!=NULL) {
+        if(env!=nullptr) {
+            while(*env!=nullptr) {
                 putenv(popc_strdup(*env));
                 env++;
             }
@@ -1632,7 +1635,7 @@ int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany
             //Visag 1l
             crtPopAppId = (*r).popAppId;
             crtReqID = (*r).reqID;
-            if(r==NULL) {
+            if(r==nullptr) {
                 CancelReservation(reserveIDs,howmany);
                 LOG_ERROR( "[JM] Exec failed because reservation is null");
 #ifndef __WIN32__
@@ -1652,7 +1655,7 @@ int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany
         }
     }
 
-    *curenv=NULL;
+    *curenv=nullptr;
     std::string mycodefile;
     try {
         CodeMgr code(localservice);
@@ -1696,8 +1699,7 @@ int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany
         return errno;
     }
 
-    std::string cburl;
-    tmpsock.GetUrl(cburl);
+    auto cburl = tmpsock.GetUrl();
     char tmpstr[1024];
     snprintf(tmpstr,sizeof(tmpstr),"-callback=%s",cburl.c_str());
     argv.push_back(tmpstr);
@@ -1905,18 +1907,18 @@ bool JobMgr::NodeInTrace(int trace[MAX_HOPS], int tracesize, paroc_accesspoint &
     char *hostname=host;
 
     char *t=strstr(host, "socket://");
-    if(t!=NULL) {
+    if(t!=nullptr) {
         hostname=t+9;
     } else {
         t=strstr(host, "http://");
-        if(t!=NULL) {
+        if(t!=nullptr) {
             hostname=t+7;
         }
     }
 
     t=strchr(hostname,':');
 
-    if(t!=NULL) {
+    if(t!=nullptr) {
         *t=0;
     }
     int ip;
@@ -1946,13 +1948,13 @@ Resources* JobMgr::VerifyReservation(int reserveId, bool updatetime) {
         for(auto& tmp : jobs){
             if(tmp.Id==reserveId) {
                 if(updatetime) {
-                    tmp.start=time(NULL);
+                    tmp.start=time(nullptr);
                 }
                 return &tmp;
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool JobMgr::ValidateReservation(int id, const paroc_accesspoint &objcontact, const paroc_accesspoint &appserv) {
@@ -1961,7 +1963,7 @@ bool JobMgr::ValidateReservation(int id, const paroc_accesspoint &objcontact, co
             if(tmp.Id==id) {
                 tmp.contact=objcontact;
                 tmp.appservice=appserv;
-                tmp.start=time(NULL);
+                tmp.start=time(nullptr);
                 return true;
             }
         }

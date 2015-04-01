@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Delete the buffer
-        request.data->Destroy();
+        delete request.data;
     }
 
     // Delete created object

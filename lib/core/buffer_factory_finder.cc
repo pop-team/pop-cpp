@@ -37,7 +37,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
     /*bfArray[0] = new paroc_buffer_raw_factory();
     bfArray[1] = new paroc_buffer_xdr_factory();
     metrics[0] = metrics[1]=0;
-    plugins[0] = plugins[1] = NULL;
+    plugins[0] = plugins[1] = nullptr;
     size = 2;*/
 
 
@@ -55,7 +55,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
             metrics[size] = 1;
 #ifdef HAVE_LIBDL
             plugins[size] = LoadPlugin(mod, bfArray[size]);
-            if(plugins[size] != NULL) {
+            if(plugins[size] != nullptr) {
                 bool loaded = false;
                 for(int j = 0; j < size; j++) {
                     if(plugins[size] == plugins[j]) {
@@ -77,7 +77,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
     const char* tmp = getenv("POPC_PLUGIN_LOCATION");
     std::string plugindir = tmp ? tmp : "";
 #ifdef _PLUGINDIR
-    if(plugindir == NULL) {
+    if(plugindir == nullptr) {
         plugindir = _PLUGINDIR;
     }
 #endif
@@ -105,7 +105,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
                 metrics[size] = metric;
 #ifdef HAVE_LIBDL
                 plugins[size] = LoadPlugin(fname, bfArray[size]);
-                if(plugins[size] != NULL) {
+                if(plugins[size] != nullptr) {
                     bool loaded = false;
                     for(int j = 0; j < size; j++) {
                         if(plugins[size] == plugins[j]) {
@@ -134,7 +134,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
                     metrics[size]=1;
 #ifdef HAVE_LIBDL
                     plugins[size]=LoadPlugin(fname, bfArray[size]);
-                    if(plugins[size]!=NULL) {
+                    if(plugins[size]!=nullptr) {
                         bool loaded=false;
                         for(int j=0; j<size; j++) if(plugins[size]==plugins[j]) {
                                 loaded=true;
@@ -171,12 +171,12 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
 paroc_buffer_factory_finder::~paroc_buffer_factory_finder() {
     bff=nullptr;
     for(int i=0; i<size; i++) {
-        bfArray[i]->Destroy();
+        delete(bfArray[i]);
     }
 
 #ifdef HAVE_LIBDL
     for(int i=0; i<size; i++) {
-        if(plugins[i]!=NULL) {
+        if(plugins[i]!=nullptr) {
             popc_dlclose(plugins[i]);
         }
     }
@@ -188,21 +188,21 @@ void * paroc_buffer_factory_finder::LoadPlugin(char *fname, paroc_buffer_factory
 #ifdef HAVE_LIBDL
     void *handle=popc_dlopen(fname,RTLD_LAZY| RTLD_LOCAL);
     if(!handle) {
-        return NULL;
+        return nullptr;
     }
 
     paroc_buffer_factory * (*creator)();
     creator = (paroc_buffer_factory * (*)())popc_dlsym(handle,"ParocBufferFactory");
-    if(creator != NULL) {
+    if(creator != nullptr) {
         f = creator();
         if(!f) {
             popc_dlclose(handle);
-            return NULL;
+            return nullptr;
         }
     } else {
         LOG_ERROR("POP-C++ Error: [CORE]:%s: %s",fname,popc_dlerror());
         popc_dlclose(handle);
-        return NULL;
+        return nullptr;
     }
 
     return handle;

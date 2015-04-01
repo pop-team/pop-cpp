@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
                 std::string str;
                 test->GetBufferName(str);
                 LOG_INFO("Buffer name:%s", str);
-                test->Destroy();
+                delete test;
             }
         }
         dlclose(handler);

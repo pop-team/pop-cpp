@@ -204,20 +204,20 @@ int popc_gettimeofday(popc_timeval * a, __timezone_ptr_t b) {
 #endif
 
 /* Parse S into tokens separated by characters in DELIM.
-   If S is NULL, the saved pointer in SAVE_PTR is used as
+   If S is nullptr, the saved pointer in SAVE_PTR is used as
    the next starting point.  For example:
     char s[] = "-abc-=-def";
     char *sp;
     x = strtok_r(s, "-", &sp);  // x = "abc", sp = "=-def"
-    x = strtok_r(NULL, "-=", &sp);  // x = "def", sp = NULL
-    x = strtok_r(NULL, "=", &sp);   // x = NULL
+    x = strtok_r(nullptr, "-=", &sp);  // x = "def", sp = nullptr
+    x = strtok_r(nullptr, "=", &sp);   // x = nullptr
         // s = "abc\0-def\0"
 */
 char *
 __strtok_r(char *s, const char *delim, char **save_ptr) {
     char *token;
 
-    if(s == NULL) {
+    if(s == nullptr) {
         s = *save_ptr;
     }
 
@@ -225,13 +225,13 @@ __strtok_r(char *s, const char *delim, char **save_ptr) {
     s += strspn(s, delim);
     if(*s == '\0') {
         *save_ptr = s;
-        return NULL;
+        return nullptr;
     }
 
     /* Find the end of the token.  */
     token = s;
     s = strpbrk(token, delim);
-    if(s == NULL)
+    if(s == nullptr)
         /* This token finishes the string.  */
     {
         *save_ptr = __rawmemchr(token, '\0');
@@ -261,7 +261,7 @@ void * popc_dlsym(void *handle, const char *name) {
     /*FARPROC fp;
     fp = GetProcAddress(handle, name);
     if (!fp) {
-        return NULL;
+        return nullptr;
     }
     return fp;*/
 }
@@ -494,9 +494,9 @@ typedef void(* popc_sighandler_t)(int);
 // RunCmd function
 int RunCmd(int argc, char **argv, char *env[], int *status) {
     (void)argc;
-    char *file=NULL;
+    char *file=nullptr;
 
-    if(argv==NULL || argv[0]==NULL) {
+    if(argv==nullptr || argv[0]==nullptr) {
         return ENOENT;
     }
     file=argv[0];
@@ -516,7 +516,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
     ZeroMemory(&sInfoSource, sizeof(sInfoSource));
     sInfoSource.cb = sizeof(sInfoSource);
 
-    if(!CreateProcess(NULL, command_line, NULL, NULL, FALSE, 0, NULL, NULL, &sInfoSource, &pInfoSource)) {
+    if(!CreateProcess(nullptr, command_line, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &sInfoSource, &pInfoSource)) {
         LOG_ERROR("CreateProcess failed (%d).", GetLastError());
         return -1;
     }
@@ -525,7 +525,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
 
     CloseHandle(pInfoSource.hThread);
     CloseHandle(pInfoSource.hProcess);
-    if(status!=NULL) {
+    if(status!=nullptr) {
         popc_waitpid(pid, status, 0);
     }
     return 0;
@@ -569,7 +569,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]) {
     HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-    sa.lpSecurityDescriptor = NULL;
+    sa.lpSecurityDescriptor = nullptr;
     sa.bInheritHandle = TRUE;
 
     /*HANDLE hTemp = CreateFile(argv2[1],
@@ -578,7 +578,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]) {
                             &sa,
                             OPEN_ALWAYS,
                             FILE_ATTRIBUTE_NORMAL,
-                            NULL);*/
+                            nullptr);*/
 
     ZeroMemory(&sInfoSource, sizeof(sInfoSource));
     ZeroMemory(&sInfoDest, sizeof(sInfoDest));
@@ -600,7 +600,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]) {
     sInfoDest.hStdError = sInfoDest.hStdOutput = hOut;
     printf("\n\n\n============================Process1==============================\n");
     printf("Before CreateProcess with command_line1=%s\n\n", command_line1);
-    if(!CreateProcess(NULL, command_line1, NULL, NULL, TRUE, 0, NULL, NULL, &sInfoSource, &pInfoSource)) {
+    if(!CreateProcess(nullptr, command_line1, nullptr, nullptr, TRUE, 0, nullptr, nullptr, &sInfoSource, &pInfoSource)) {
         printf("CreateProcess failed (%d).\n", GetLastError());
         return -1;
     }
@@ -611,7 +611,7 @@ int RunPipe(int argc1, char *argv1[], int argc2, char *argv2[]) {
 
     printf("\n\n\n============================Process2==============================\n");
     printf("Before CreateProcess with command_line2=%s\n\n", command_line2);
-    if(!CreateProcess(NULL, command_line2, NULL, NULL, TRUE, 0, NULL, NULL, &sInfoDest, &pInfoDest)) {
+    if(!CreateProcess(nullptr, command_line2, nullptr, nullptr, TRUE, 0, nullptr, nullptr, &sInfoDest, &pInfoDest)) {
         printf("CreateProcess failed (%d).\n", GetLastError());
         return -1;
     }
@@ -645,7 +645,7 @@ int popc_setenv(const char *name, const char *value, int replace) {
     char string0[MAX_PATH];
     char *string;
 
-    if(getenv(name)!=NULL && replace==0) {
+    if(getenv(name)!=nullptr && replace==0) {
         return 1;
     }
     strcpy(string0, name);

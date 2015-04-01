@@ -199,7 +199,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
     }
 
     if(old != NULL) {
-        __paroc_buf->Destroy();
+        delete __paroc_buf;
         __paroc_buf = old;
     }
 }
@@ -452,12 +452,12 @@ void paroc_interface::Release() {
         }
 
         // Destroy the combox
-        __paroc_combox->Destroy();
+        delete __paroc_combox;
         __paroc_combox = NULL;
     }
 
     if(__paroc_buf != NULL) {
-        __paroc_buf->Destroy();
+        delete __paroc_buf;
         __paroc_buf = NULL;
     }
 }
@@ -577,7 +577,7 @@ bool paroc_interface::Encoding(std::string encoding) {
     __paroc_buf->Pop();
 
     if(ret) {
-        __paroc_buf->Destroy();
+        delete __paroc_buf;
         __paroc_buf = fact->CreateBuffer();
         __paroc_combox->SetBufferFactory(fact);
     }
@@ -991,10 +991,6 @@ void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<s
     auto headpos = accesslist.begin();
 
     for(auto ptstr : patternlist){
-        // if(!ptstr) {
-            // continue;
-        // }
-
         auto pos = headpos;
 
         while(pos != accesslist.end()){
@@ -1015,22 +1011,6 @@ void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<s
             }
         }
     }
-}
-
-// DEPRECATED
-void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
-    if(!buf->Send(*__paroc_combox)) {
-        paroc_exception::paroc_throw("Buffer sent failed (old)");
-    }
-}
-
-// DEPRECATED // TODO LW: See what to do
-void paroc_interface::paroc_Response(paroc_buffer *buf) {
-    if(!buf->Recv(*__paroc_combox)) {
-        paroc_exception::paroc_throw("Buffer receive failed (old)");
-    }
-
-    paroc_buffer::CheckAndThrow(*buf);
 }
 
 /**

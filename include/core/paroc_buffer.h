@@ -122,7 +122,6 @@ private:
 class paroc_buffer {
 public:
     paroc_buffer();
-protected:
     virtual ~paroc_buffer();
 
 public:

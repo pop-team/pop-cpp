@@ -84,10 +84,10 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
      */
 /*
     char *tmp1 = paroc_utils::checkremove(argc,argv,"-printmpi");
-    if(tmp1 != NULL) {
+    if(tmp1 != nullptr) {
         char abspath[1024];
         char *thisfile = getenv("POPC_EXE");
-        if(thisfile == NULL) {
+        if(thisfile == nullptr) {
             thisfile = (*argv)[0];
         }
         paroc_utils::FindAbsolutePath(thisfile,abspath);
@@ -97,6 +97,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
 */
     char *tmp=paroc_utils::checkremove(argc,argv,"-list");
     if(tmp!=nullptr) {
+        // char abspath[1024];
         char *thisfile=getenv("POPC_EXE");
         if(thisfile==nullptr) {
             thisfile=(*argv)[0];
@@ -120,10 +121,10 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
     }
 
     /*#ifndef DEFINE_UDS_SUPPORT
-        if ((tmp=getenv("POPC_JOBSERVICE"))!=NULL) {
+        if ((tmp=getenv("POPC_JOBSERVICE"))!=nullptr) {
             paroc_system::jobservice.SetAccessString(tmp);
           paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
-        } else if ((tmp=paroc_utils::checkremove(argc,argv,"-jobservice=")) != NULL) {
+        } else if ((tmp=paroc_utils::checkremove(argc,argv,"-jobservice=")) != nullptr) {
             paroc_system::jobservice.SetAccessString(tmp);
           paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
         } else {
@@ -197,11 +198,11 @@ void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
 
 /* note: this coded existed in the pseudodynamic version of the code but is now disabled.
 void paroc_broker_factory::PrintBrokersMPI(const char *abspath) {
-    if(brokerlist!=NULL) {
+    if(brokerlist!=nullptr) {
         POSITION pos=brokerlist->GetHeadPosition();
-        while(pos!=NULL) {
+        while(pos!=nullptr) {
             paroc_broker_init &t=brokerlist->GetNext(pos);
-            if(!(paroc_broker_factory::CheckIfPacked!=NULL && !paroc_broker_factory::CheckIfPacked(t.objname))) {
+            if(!(paroc_broker_factory::CheckIfPacked!=nullptr && !paroc_broker_factory::CheckIfPacked(t.objname))) {
                 printf("-host localhost -np 1 %s -mpi -object=%s\n", abspath, (const char *)t.objname);
             }
         }

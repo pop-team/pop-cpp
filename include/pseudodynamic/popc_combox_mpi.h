@@ -61,15 +61,12 @@ public:
      * @param accesspoint Returned URL (protocol://host:port)
      * @return true if success
      */
-    virtual bool GetUrl(std::string & accesspoint);
-    virtual bool GetProtocol(std::string & protocolName);
-    virtual void Destroy();
+    virtual std:.string GetUrl();
+    virtual std::string GetProtocol();
 
     //bool hasCommunicator();
     //void setCommunicator(MPI::Intercomm comm);
     //MPI::Intercomm getCommunicator();
-
-
 
 protected:
     virtual paroc_connection* CreateConnection(int fd);

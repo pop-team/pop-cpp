@@ -61,12 +61,14 @@ typedef bool (*COMBOX_CALLBACK)(void *, paroc_connection *);
 class paroc_combox {
 public:
     paroc_combox();
-protected:
     virtual ~paroc_combox();
 
 public:
     virtual bool Create(int port, bool server)=0;
     virtual bool Create(const char *address, bool server)=0;
+
+    virtual bool need_address(){ return false; }
+
     virtual bool Connect(const char *url)=0;
 
     // Note: these 2 methods exist only for compatibility between dynamic and pseudodynamic versions of popc
@@ -91,10 +93,8 @@ public:
     void SetTimeout(int millisec);
     int  GetTimeout();
 
-    virtual bool GetUrl(std::string & accesspoint)=0;
-    virtual bool GetProtocol(std::string & protocolName)=0;
-
-    virtual void Destroy();
+    virtual std::string GetUrl()=0;
+    virtual std::string GetProtocol()=0;
 
     bool SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg);
 

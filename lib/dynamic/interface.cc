@@ -55,7 +55,7 @@ int paroc_interface::paroc_bind_timeout=10000;
 
 //paroc_interface base class
 
-paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
+paroc_interface::paroc_interface() : __paroc_combox(nullptr), __paroc_buf(nullptr) {
     LOG_DEBUG("Create interface for class %s (OD secure:%s)", ClassName(), (od.isSecureSet())?"true":"false");
 
     if(od.isSecureSet()) {
@@ -63,16 +63,16 @@ paroc_interface::paroc_interface() : __paroc_combox(NULL), __paroc_buf(NULL) {
     }
 
     _ssh_tunneling=false;
-    //__paroc_combox = NULL;
-    //__paroc_buf = NULL;
-    //_popc_async_construction_thread=NULL;
+    //__paroc_combox = nullptr;
+    //__paroc_buf = nullptr;
+    //_popc_async_construction_thread=nullptr;
 }
 
 paroc_interface::paroc_interface(const paroc_accesspoint &p) {
     LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     _ssh_tunneling = false;
-    __paroc_combox = NULL;
-    __paroc_buf = NULL;
+    __paroc_combox = nullptr;
+    __paroc_buf = nullptr;
 
     // For SSH tunneling
     if(p.IsService()) {
@@ -93,9 +93,9 @@ paroc_interface::paroc_interface(const paroc_interface &inf) {
     LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)", inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     paroc_accesspoint infAP = inf.GetAccessPoint();
     _ssh_tunneling=false;
-    __paroc_combox=NULL;
-    __paroc_buf=NULL;
-    //_popc_async_construction_thread=NULL;
+    __paroc_combox=nullptr;
+    __paroc_buf=nullptr;
+    //_popc_async_construction_thread=nullptr;
 
     if(infAP.IsSecure()) {
         accesspoint.SetSecure();
@@ -114,12 +114,12 @@ paroc_interface::paroc_interface(paroc_combox *combox, paroc_buffer *buffer) {
     __paroc_combox = combox;
     __paroc_buf = buffer;
 
-    //_popc_async_construction_thread=NULL;
-    if(combox != NULL) {
+    //_popc_async_construction_thread=nullptr;
+    if(combox != nullptr) {
         std::string url;
         combox->GetUrl(url);
         accesspoint.SetAccessString(url);
-        if(__paroc_buf == NULL) {
+        if(__paroc_buf == nullptr) {
             __paroc_buf=combox->GetBufferFactory()->CreateBuffer();
         }
     }
@@ -136,8 +136,8 @@ paroc_interface::~paroc_interface() {
 }
 
 paroc_interface & paroc_interface::operator = (const paroc_interface & obj) {
-    //  __paroc_combox = NULL;
-    //  __paroc_buf = NULL;
+    //  __paroc_combox = nullptr;
+    //  __paroc_buf = nullptr;
     LOG_DEBUG("Bind");
     //Bind(accesspoint);
     //DecRef();
@@ -190,7 +190,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
     accesspoint.Serialize(buf, pack);
     buf.Pop();
 
-    paroc_buffer *old = NULL;
+    paroc_buffer *old = nullptr;
 
     if(&buf == __paroc_buf) {
         LOG_WARNING("Buffers share the same address");// TODO LW: Where does this come from ?
@@ -216,8 +216,8 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
         }
     }
 
-    if(old != NULL) {
-        __paroc_buf->Destroy();
+    if(old != nullptr) {
+        delete __paroc_buf;
         __paroc_buf = old;
     }
 }
@@ -228,36 +228,41 @@ paroc_od paroc_interface::get_object_description() {
 
 void paroc_interface::allocate_only() {
     Release();
+
     std::string objectname = ClassName();
     std::string objectaddress;
 
-    bool localFlag = od.IsLocal();
-
-    const std::string& hostname = od.getURL();
-    const std::string& batch    = od.getBatch();
-    const std::string& protocol = od.getProtocol();
-
     // Get the right allocator
     POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
-    POPC_Allocator* allocator = NULL;
+    POPC_Allocator* allocator = nullptr;
 
+    if(od.getProtocol() == POPC_AllocatorFactory::PREFIX_UDS) {
+        allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::LOCAL);
 
-    // for obscure reason, cannot use strcmp here
-    if(protocol == POPC_AllocatorFactory::PREFIX_UDS) {
-        allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+        LOG_DEBUG_T("IFACE", "Allocate %s with UDS(local)", objectname.c_str());
+
+        //TODO(BW) In MPI mode, this should be used (add some condition)
+        //allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
     } else {
-        if(localFlag || !hostname.empty() || !batch.empty()) {
+        bool localFlag = od.IsLocal();
+
+        if(localFlag || !od.getURL().empty() || !od.getBatch().empty()) {
             allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
+
+            LOG_DEBUG_T("IFACE", "Allocate %s with TCP(local)", objectname.c_str());
         } else {
             allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
+
+            LOG_DEBUG_T("IFACE", "Allocate %s with TCP(ssh)", objectname.c_str());
+
             //Get the POPAppID
             AppCoreService acs(paroc_system::appservice);
             popAppId = acs.GetPOPCAppID();
         }
     }
 
-    if(allocator == NULL) {
-        LOG_ERROR("[Core] Allocator is NULL");
+    if(!allocator) {
+        LOG_ERROR("[Core] Allocator is nullptr");
     }
 
     objectaddress = allocator->allocate(objectname, od);
@@ -353,7 +358,7 @@ void paroc_interface::Bind(const char *dest) {
     char *tmp = (char*)strstr(dest,protsep);
     char defaultprot[] = "socket";
 
-    if(tmp == NULL) {
+    if(tmp == nullptr) {
         // Default protocol: use TCP socket
         strcpy(prot, defaultprot);
     } else {
@@ -486,27 +491,27 @@ void paroc_interface::Bind(const char *dest) {
 
 void paroc_interface::Release() {
 
-    if(__paroc_combox != NULL) {
+    if(__paroc_combox != nullptr) {
         // Decrement reference when the interface release its resources
         //paroc_connection* connection = __paroc_combox->get_connection();
-        //if(connection != NULL && !accesspoint.IsService()) {
+        //if(connection != nullptr && !accesspoint.IsService()) {
         //DecRef();
         //}
 
         // Destroy the combox
-        __paroc_combox->Destroy();
-        __paroc_combox = NULL;
+        delete __paroc_combox;
+        __paroc_combox = nullptr;
     }
 
-    if(__paroc_buf != NULL) {
-        __paroc_buf->Destroy();
-        __paroc_buf = NULL;
+    if(__paroc_buf != nullptr) {
+        delete __paroc_buf;
+        __paroc_buf = nullptr;
     }
 }
 
 
 bool paroc_interface::isBinded() {
-    if(__paroc_combox == NULL || __paroc_buf == NULL) {
+    if(__paroc_combox == nullptr || __paroc_buf == nullptr) {
         return false;
     }
     return true;
@@ -619,7 +624,7 @@ bool paroc_interface::Encoding(std::string encoding) {
     __paroc_buf->Pop();
 
     if(ret) {
-        __paroc_buf->Destroy();
+        delete __paroc_buf;
         __paroc_buf = fact->CreateBuffer();
         __paroc_combox->SetBufferFactory(fact);
     }
@@ -685,7 +690,7 @@ bool paroc_interface::RecvCtrl() {
     while(true) {
         __paroc_combox->SetTimeout(time_control);
         paroc_connection *t = (paroc_connection *) __paroc_combox->Wait();
-        if(t != NULL) {
+        if(t != nullptr) {
             if(!__paroc_buf->Recv(*__paroc_combox,t)) {
                 __paroc_combox->SetTimeout(oldTimeout);
                 paroc_exception::paroc_throw("Error in od disconnect 1");
@@ -754,8 +759,9 @@ void paroc_interface::NegotiateEncoding(std::string &enclist, std::string &peerp
 
 int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobserv, const paroc_accesspoint &appserv, paroc_accesspoint *objaccess, int howmany, const paroc_od& od) {
     LOG_ERROR("This method has been commented"); // Note: This method is only used by add ons at the moment
+
     /* TODO should have been restored at least for TCP/IP version
-    if(codefile==NULL) {
+    if(codefile==nullptr) {
         return ENOENT;
     }
       popc_signal(SIGCHLD, SIG_IGN);
@@ -772,11 +778,11 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     #endif
       std::string ruser;
       std::string rcore;
-      const char *rport=NULL;
+      const char *rport=nullptr;
       std::string batch;
       std::string cwd;
 
-      if (hostname!=NULL&&(tmp=(char*)strchr(hostname,':'))!=NULL) {
+      if (hostname!=nullptr&&(tmp=(char*)strchr(hostname,':'))!=nullptr) {
           *tmp=0;
           rport=tmp+1;
       }
@@ -787,14 +793,14 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 
       int n=0;
       //std::string myhost = paroc_system::GetHost();
-      //bool islocal=(isManual||hostname==NULL || *hostname==0 || paroc_utils::SameContact(myhost,hostname) || paroc_utils::isEqual(hostname,"localhost") || paroc_utils::isEqual(hostname,"127.0.0.1"));
-      if (batch == NULL) {
+      //bool islocal=(isManual||hostname==nullptr || *hostname==0 || paroc_utils::SameContact(myhost,hostname) || paroc_utils::isEqual(hostname,"localhost") || paroc_utils::isEqual(hostname,"127.0.0.1"));
+      if (batch == nullptr) {
           if (!islocal) {
               char *tmp=getenv("POPC_RSH");
-              argv[n++]=popc_strdup((tmp==NULL)? "/usr/bin/ssh" : tmp);
+              argv[n++]=popc_strdup((tmp==nullptr)? "/usr/bin/ssh" : tmp);
               //      argv[n++]=popc_strdup("-n");
               // Add user name to host for ssh
-              if (ruser!=NULL && *ruser!=0) {
+              if (ruser!=nullptr && *ruser!=0) {
                   char tmpstr[100];
                   sprintf(tmpstr,"%s@%s",(const char*)ruser,(const char*)hostname);
                   argv[n++]=popc_strdup(tmpstr);
@@ -805,7 +811,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
       } else {
           char tmpstr[100];
           tmp=getenv("POPC_LOCATION");
-          if (tmp!=NULL) sprintf(tmpstr,"%s/services/popcobjrun.%s",tmp,(const char*)batch);
+          if (tmp!=nullptr) sprintf(tmpstr,"%s/services/popcobjrun.%s",tmp,(const char*)batch);
           else sprintf(tmpstr,"popcobjrun.%s",(const char*)batch);
           argv[n++]=popc_strdup(tmpstr);
           if (!islocal)
@@ -820,21 +826,21 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
       //  if (strncmp(codefile, "http://",7)==0 || strncmp(codefile,"ftp://",6)==0)
       //    {
       tmp=getenv("POPC_LOCATION");
-      if (tmp!=NULL) sprintf(tmpstr,"%s/services/popcobjrun",tmp);
+      if (tmp!=nullptr) sprintf(tmpstr,"%s/services/popcobjrun",tmp);
       else strcpy(tmpstr,"popcobjrun");
       argv[n++]=popc_strdup(tmpstr);
       //    }
-      //   else  if ((tmp=getenv("POPC_JOB_EXEC"))!=NULL)
+      //   else  if ((tmp=getenv("POPC_JOB_EXEC"))!=nullptr)
       //    {
       //       argv[n++]=popc_strdup(tmp);
       //    }
 
       strcpy(tmpstr,codefile);
       char *tok=popc_strtok_r(tmpstr," \t\n",&tmp);
-      while (tok!=NULL)
+      while (tok!=nullptr)
       {
           argv[n++]=popc_strdup(tok);
-          tok=popc_strtok_r(NULL," \t\n",&tmp);
+          tok=popc_strtok_r(nullptr," \t\n",&tmp);
       }
 
       //paroc_combox_socket tmpsock;
@@ -846,7 +852,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
       // sprintf(tmpstr,"-callback=%s", (const char*)cburl);
       // argv[n++]=popc_strdup(tmpstr);
 
-      if (classname != NULL) {
+      if (classname != nullptr) {
           sprintf(tmpstr,"-object=%s", classname);
           argv[n++]=popc_strdup(tmpstr);
       }
@@ -861,7 +867,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
           argv[n++]=popc_strdup(tmpstr);
       }
       // Select core
-      if (rcore!=NULL&&rcore!=0) {
+      if (rcore!=nullptr&&rcore!=0) {
           sprintf(tmpstr,"-core=%s",(const char*)rcore);
           argv[n++]=popc_strdup(tmpstr);
       }
@@ -875,7 +881,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
 
 
 
-      if (rport!=NULL && *rport!=0)
+      if (rport!=nullptr && *rport!=0)
       {
           sprintf(tmpstr,"-socket_port=%s",rport);
           argv[n++]=popc_strdup(tmpstr);
@@ -893,12 +899,12 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
       }
 
       // Add the working directory as argument
-      if (cwd!=NULL && *cwd!=0) {
+      if (cwd!=nullptr && *cwd!=0) {
           sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
           argv[n++]=popc_strdup(tmpstr);
       }
 
-      argv[n]=NULL;
+      argv[n]=nullptr;
 
       int ret=0, err=0;
       if (isManual) {
@@ -916,11 +922,11 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     #endif
           for (int i=0;i<n;i++) fprintf(stderr,"%s ", argv[i]);
           fprintf(stderr,"\n");
-          ret=RunCmd(argv,NULL);
+          ret=RunCmd(argv,nullptr);
           err=errno;
       }
       for (int i=0;i<n;i++) {
-        if (argv[i]!=NULL) {
+        if (argv[i]!=nullptr) {
           free(argv[i]);
         }
       }
@@ -980,10 +986,6 @@ void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<s
     auto headpos = accesslist.begin();
 
     for(auto ptstr : patternlist){
-        // if(!ptstr) {
-            // continue;
-        // }
-
         auto pos = headpos;
 
         while(pos != accesslist.end()){
@@ -1006,22 +1008,6 @@ void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<s
     }
 }
 
-// DEPRECATED
-void paroc_interface::paroc_Dispatch(paroc_buffer *buf) {
-    if(!buf->Send(*__paroc_combox)) {
-        paroc_exception::paroc_throw("Buffer sent failed (old)");
-    }
-}
-
-// DEPRECATED // TODO LW: See what to do
-void paroc_interface::paroc_Response(paroc_buffer *buf) {
-    if(!buf->Recv(*__paroc_combox)) {
-        paroc_exception::paroc_throw("Buffer receive failed (old)");
-    }
-
-    paroc_buffer::CheckAndThrow(*buf);
-}
-
 /**
  * Send the current request in the buffer to the endpoint designated by the connection
  */
@@ -1029,7 +1015,7 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
     if(!buf->Send((*__paroc_combox), conn)) {
         paroc_exception::paroc_throw("Buffer sent failed");
     }
-    LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == NULL) ? "is null" : "is not null");
+    LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == nullptr) ? "is null" : "is not null");
 }
 
 /**
@@ -1073,7 +1059,7 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
     _ssh_dest_port = dest_port;
 
     _ssh_tunneling = true;
-    srand(time(NULL));   //Init the random generator with the current time
+    srand(time(nullptr));   //Init the random generator with the current time
     int BUF_SIZE=15;
     char buf[BUF_SIZE];
     FILE *fp;
@@ -1093,10 +1079,10 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
 
 
         fp = popen(cmd.str().c_str(), "r");
-        if(fp==NULL) {
+        if(fp==nullptr) {
             error_code=-1;
         }
-        if(fgets(buf, BUF_SIZE, fp) == NULL) {
+        if(fgets(buf, BUF_SIZE, fp) == nullptr) {
             error_code=-1;
         }
     } while(error_code!=0 && attempt++ < SSH_MAX_ATTEMPT);
@@ -1124,7 +1110,7 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
 int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port) {
     LOG_CORE("Kill SSH");
     _ssh_tunneling = false;
-    if(dest_ip == NULL) {
+    if(dest_ip == nullptr) {
         return -1;
     }
 
@@ -1137,10 +1123,10 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
     cmd << "ps aux | grep \"/usr/bin/ssh -f -N -q -o ExitOnForwardFailure=yes -L" << local_port << ":127.0.0.1:" << dest_port << " " << dest_ip << "\" | grep -v grep | head -n 1 | awk -F\" \" '{print $2}'";
     FILE *fp;
     fp = popen(cmd.str().c_str(), "r");
-    if(fp==NULL) {
+    if(fp==nullptr) {
         return -1;
     }
-    if(fgets(buf, BUF_SIZE, fp) == NULL) {
+    if(fgets(buf, BUF_SIZE, fp) == nullptr) {
         return -2;
     }
     int pid = atoi(buf);
@@ -1167,7 +1153,7 @@ bool paroc_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, 
     cmd << "ps aux | grep \"/usr/bin/ssh -f -N -o ExitOnForwardFailure=yes -L" << local_port << ":127.0.0.1:" << dest_port << " " << dest_ip << "\" | grep -v grep | awk -F\" \" '{print $2}'";
 
     fp = popen(cmd.str().c_str(), "r");
-    if(fp == NULL) {
+    if(fp == nullptr) {
         LOG_WARNING("cannot launch %s", cmd.str().c_str());
         return false;
     }

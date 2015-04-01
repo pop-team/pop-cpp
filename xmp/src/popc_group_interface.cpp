@@ -57,11 +57,11 @@ bool POPC_GroupInterface::initialize(int nb) {
 
     std::string objectname = get_class_name();
 
-    POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
-    POPC_Allocator* allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
-    if(allocator == NULL) {
+    auto alloc_factory = POPC_AllocatorFactory::get_instance();
+    auto allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+    if(!allocator) {
         std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;
-        // TODO lwk security: is this all ? Should we not exit ?
+        return false;
     }
 
     _popc_combox = allocator->allocate_group(objectname, od, nb);
@@ -135,7 +135,7 @@ POPC_GroupInterface& POPC_GroupInterface::split(const int group1[], const int gr
  */
 POPC_GroupInterface& POPC_GroupInterface::split(const std::vector<int> group1) {
     if(!is_initialized()) {
-        throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED); TODO
+        throw new POPC_GroupException(POPC_GroupException::NOTINITIALIZED);
     }
 
     // Check if group1
@@ -192,7 +192,7 @@ bool POPC_GroupInterface::finalize() {
     popc_recv_response(_popc_buffer, connection);
 
     // Clean buffer and combox
-    _popc_buffer->Destroy();
+    delete _popc_buffer;
     _popc_combox->Close();
     _popc_is_finalized = true;
 

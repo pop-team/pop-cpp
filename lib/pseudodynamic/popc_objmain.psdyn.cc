@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
         }
 
         if (!callback->Create(NULL, 0, false) || !callback->Connect(addr)) {
-            callback->Destroy();
+            delete callback;
             return 1;
         }
     }*/
@@ -146,10 +146,10 @@ int main(int argc, char **argv) {
 
         bool ret = buf->Send((*callback), connection);
 
-        buf->Destroy();
+        delete buf;
 
         connection->reset();
-        callback->Destroy();
+        delete callback;
 
         if(!ret) {
             LOG_ERROR("fail to send accesspoint via callback");

@@ -21,28 +21,12 @@
 #include "popc_logger.h"
 
 /**
- * Allocator constructor
- */
-POPC_Allocator_uds_interconnector::POPC_Allocator_uds_interconnector() {
-}
-
-/**
- * Allocator destructor
- */
-POPC_Allocator_uds_interconnector::~POPC_Allocator_uds_interconnector() {
-}
-
-/**
  * Allocate a single object by using the UDS protocol with the POP-C++ MPI Interconnector
  * @param objectname  Name of the object to be allocated
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-std::string POPC_Allocator_uds_interconnector::allocate(std::string& objectname, paroc_od& od) {
-    // Note LW: Commented since it is unused
-    // std::string p;
-    //od.getProtocol(p);
-
+std::string uds_allocator_interconnector::allocate(std::string& objectname, paroc_od& od) {
     // Get object description important for this kind
     int node = od.get_node(); // Defined the node on which the parallel object is allocated
     int core = od.get_core(); // Defined the core on which the parallel object is allocated
@@ -121,7 +105,7 @@ std::string POPC_Allocator_uds_interconnector::allocate(std::string& objectname,
     allocating_buffer->Push("objectaddress", "std::string", 1);
     allocating_buffer->UnPack(&objectaddress, 1);
     allocating_buffer->Pop();
-    allocating_buffer->Destroy();
+    delete allocating_buffer;
     allocating_combox->Close();
 
     return objectaddress;
@@ -134,7 +118,7 @@ std::string POPC_Allocator_uds_interconnector::allocate(std::string& objectname,
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* POPC_Allocator_uds_interconnector::allocate_group(std::string& objectname, paroc_od& od, int nb) {
+paroc_combox* uds_allocator_interconnector::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
     const std::string codefile = od.getExecutable();
 

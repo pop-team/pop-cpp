@@ -24,7 +24,6 @@
 // Constant declaration
 const char* popc_combox_uds::UDS_PROTOCOL_NAME = "uds";
 
-
 /**
  * UDS Combox constructor initialize internal values
  */
@@ -36,7 +35,7 @@ popc_combox_uds::popc_combox_uds() : _socket_fd(-1), _is_server(false), _active_
  * UDS Combox destructor: Close the connection in case this combox has been connected.
  */
 popc_combox_uds::~popc_combox_uds() {
-    if(_connected) {
+    if(_connected || _is_server) {
         Close();
     }
 }
@@ -51,51 +50,97 @@ bool popc_combox_uds::Create(int , bool) {
     return false;
 }
 
-/**
- * Create a combox with a string address. In the case of UDS combox, the string represent the path of the file representing the
- * socket.
- * @param address A path to the file representing the socket
- * @param server  FALSE for a client combox and TRUE for a server combox
- * @return TRUE if the combox has been created successfully, FALSE in any other cases.
- */
 bool popc_combox_uds::Create(const char* address, bool server) {
-    LOG_DEBUG("UDS: create %s", address);
-    _is_server = server;
-    _uds_address.clear();
-    _uds_address.append(address);
+    LOG_DEBUG_T("UDS", "Create %s", address);
 
+    _is_server = server;
+
+    //TODO if !_is_server && !address there is a big problem
+
+    //1. Create a socket
     _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
     if(_socket_fd < 0) {
-        LOG_WARNING("socket() failed");
+        LOG_ERROR_T("UDS", "socket() failed");
         return false;
     }
 
-    memset(&_sock_address, 0, sizeof(struct sockaddr_un));
-    _sock_address.sun_family = AF_UNIX;
-    strcpy(_sock_address.sun_path, address);
+    LOG_DEBUG_T("UDS", "socket created");
 
     if(_is_server) {
         _timeout = -1;
-        unlink(address);
 
-        if(bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
-            LOG_WARNING("bind() failed");
-            return false;
+        //If no address are provided, it is necessary to find one
+        if(!address){
+            //TODO This is ugly and probably wrong as well
+            std::size_t i = 0;
+            for(; i < 32768; ++i){
+                std::string str_address = "uds_0." + std::to_string(i);
+
+                //2. Make sure the address is clear
+                memset(&_sock_address, 0, sizeof(struct sockaddr_un));
+                _sock_address.sun_family = AF_UNIX;
+                strcpy(_sock_address.sun_path, str_address.c_str());
+
+                if(!bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un))) {
+                    _uds_address = str_address;
+                    LOG_DEBUG_T("UDS", "Selected address: %s",_uds_address.c_str());
+                    break;
+                }
+            }
+
+            if(i >= 32768){
+                LOG_ERROR_T("UDS", "unable to find file for UDS socket");
+                return false;
+            }
+        } else {
+            _uds_address = address;
+
+            if(_uds_address.find("uds://") == 0) {
+                _uds_address = _uds_address.substr(6);
+            }
+
+            unlink(_uds_address.c_str());
+
+            //2. Make sure the address is clear
+            memset(&_sock_address, 0, sizeof(struct sockaddr_un));
+            _sock_address.sun_family = AF_UNIX;
+            strcpy(_sock_address.sun_path, _uds_address.c_str());
+
+            if(bind(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
+                LOG_WARNING_T("UDS", "bind() failed");
+                return false;
+            }
         }
 
+        LOG_DEBUG_T("UDS", "socket bound");
 
         if(listen(_socket_fd, 10) != 0) {
-            LOG_WARNING("listen() failed");
+            LOG_WARNING_T("UDS", "listen() failed");
             return false;
         }
+
+        LOG_DEBUG_T("UDS", "socket listened");
 
         active_connection[0].fd = _socket_fd;
         active_connection[0].events = POLLIN;
         active_connection[0].revents = 0;
         _active_connection_nb++;
+    } else {
+        std::string address_str(address);
+        if(address_str.find("uds://") == 0) {
+            address_str = address_str.substr(6);
+        }
 
-        return true;
+        _uds_address = address_str;
+
+        //2. Make sure the address is clear
+        memset(&_sock_address, 0, sizeof(struct sockaddr_un));
+        _sock_address.sun_family = AF_UNIX;
+        strcpy(_sock_address.sun_path, _uds_address.c_str());
     }
+
+    //_uds_address = address;
+
     return true;
 }
 
@@ -104,28 +149,33 @@ bool popc_combox_uds::Create(const char* address, bool server) {
  * @param url Path to the file representing the socket to connect to.
  * @return TRUE if the connection is successful. FALSE in any other cases.
  */
-bool popc_combox_uds::Connect(const char*) {
+bool popc_combox_uds::Connect(const char* param) {
     if(connect(_socket_fd, (struct sockaddr *) &_sock_address, sizeof(struct sockaddr_un)) != 0) {
         LOG_WARNING("Connect failed: %s",_uds_address.c_str());
         perror("Connect failed");
         return false;
     }
+
+    LOG_DEBUG_T("UDS", "Connected to %s (param: %s)", _uds_address.c_str(), param);
+
     _connected = true;
     active_connection[0].fd = _socket_fd;
     active_connection[0].events = POLLIN;
     active_connection[0].revents = 0;
     _connection = new popc_connection_uds(_socket_fd, this);
+
     return true;
 }
 
 /**
  * Return the connection initialized with "Connect(const char* url)"
- * @return A pointer to the connection or NULL if this combox has no connection
+ * @return A pointer to the connection or nullptr if this combox has no connection
  */
 paroc_connection* popc_combox_uds::get_connection() {
     if(!_connected) {
         return nullptr;
     }
+
     return _connection;
 }
 
@@ -133,6 +183,8 @@ paroc_connection* popc_combox_uds::get_connection() {
  * Send bytes to another combox without connection. NOT USED IN UDS COMBOX
  */
 int popc_combox_uds::Send(const char*,int) {
+    LOG_ERROR_T("UDS", "Send(const char*, int) should not be called in UDS mode");
+
     return 0;
 }
 
@@ -143,23 +195,34 @@ int popc_combox_uds::Send(const char*,int) {
  * @param connection  Connection representing the endpoint to write bytes.
  * @return Number of bytes sent
  */
-int popc_combox_uds::Send(const char *s, int len, paroc_connection *connection) {
-    if(connection == nullptr) {
+int popc_combox_uds::Send(const char *s, int len, paroc_connection* connection) {
+    if(!connection) {
+        LOG_ERROR_T("UDS", "Cannot send (connection == nullptr)");
         return -1;
     }
-    int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
-    int wbytes = write(socket_fd, s, len);
-    if(wbytes < 0) {
-        perror("UDS Combox: Cannot write to socket");
-    }
 
-    return wbytes;
+    if(len > 0){
+        std::string ver(s, len);
+        LOG_DEBUG_T("UDS", "Write %d bytes (%s)", len, ver.c_str());
+
+        int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
+        int wbytes = write(socket_fd, s, len);
+        if(wbytes < 0) {
+            perror("UDS Combox: Cannot write to socket");
+        }
+
+        return wbytes;
+    } else {
+        return 0;
+    }
 }
 
 /**
  * Receive bytes from another combox without connection. NOT USED IN UDS COMBOX
  */
-int popc_combox_uds::Recv(char*,int) {
+int popc_combox_uds::Recv(char*, int) {
+    LOG_ERROR_T("UDS", "Recv(char*, int) should not be called in UDS mode");
+
     return 0;
 }
 
@@ -171,14 +234,30 @@ int popc_combox_uds::Recv(char*,int) {
  * @return Number of bytes read
  */
 int popc_combox_uds::Recv(char *s, int len, paroc_connection *connection) {
-    int nbytes;
+    if(!connection){
+        connection = Wait();
+        if(!connection) {
+            LOG_ERROR("[CORE] Wait failed with code");
+            return -1;
+        }
+    }
+
     int socket_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
+
+    int nbytes;
     do {
         nbytes = read(socket_fd, s, len);
         if(nbytes < 0) {
             perror("Read");
         }
     } while(nbytes < 0);
+
+    if(len > 0){
+        std::string ver(s, len);
+        LOG_DEBUG_T("UDS", "Read %d bytes (%s)", len, ver.c_str());
+    } else {
+        LOG_DEBUG_T("UDS", "Read %d bytes", len);
+    }
 
     return nbytes;
 }
@@ -210,7 +289,7 @@ paroc_connection* popc_combox_uds::Wait() {
                 LOG_WARNING("TOO MANY CONNECTIONS");
             }
         } while((poll_back == -1) && (errno == EINTR));
-        LOG_DEBUG("Poll %s", _uds_address.c_str());
+        LOG_DEBUG_T("UDS", "Poll %s", _uds_address.c_str());
         if(poll_back > 0) {
             for(int i = 0; i < _active_connection_nb; i++) {
                 if(active_connection[i].revents & POLLIN) {
@@ -230,7 +309,7 @@ paroc_connection* popc_combox_uds::Wait() {
                         }
                     } else {
                         if(active_connection[i].revents & POLLHUP) { // POLLIN and POLLHUP
-                            LOG_DEBUG("write and disconnect");
+                            LOG_DEBUG_T("UDS", "write and disconnect");
                             int tmpfd = active_connection[i].fd;
                             if(_active_connection_nb == 2) {
                                 _active_connection_nb = 1;
@@ -244,16 +323,16 @@ paroc_connection* popc_combox_uds::Wait() {
                                 active_connection[i].events = active_connection[_active_connection_nb].events;
                                 active_connection[i].revents = active_connection[_active_connection_nb].revents;
                             }
-                            LOG_DEBUG("POLLON %s %d", _uds_address.c_str(), active_connection[i].fd);
+                            LOG_DEBUG_T("UDS", "POLLON %s %d", _uds_address.c_str(), active_connection[i].fd);
                             return new popc_connection_uds(tmpfd, this);
                         } else { // Just POLLIN
-                            LOG_DEBUG("POLLIN %s %d", _uds_address.c_str(), active_connection[i].fd);
+                            LOG_DEBUG_T("UDS", "POLLIN %s %d", _uds_address.c_str(), active_connection[i].fd);
                             active_connection[i].revents = 0;
                             return new popc_connection_uds(active_connection[i].fd, this);
                         }
                     }
                 } else if(active_connection[i].revents & POLLHUP) {
-                    LOG_DEBUG("%d fd is disconnected", active_connection[i].fd);
+                    LOG_DEBUG_T("UDS", "%d fd is disconnected", active_connection[i].fd);
                     if(_active_connection_nb == 2) {
                         _active_connection_nb = 1;
                         active_connection[i].fd = 0;
@@ -301,24 +380,37 @@ paroc_connection* popc_combox_uds::Wait() {
  */
 void popc_combox_uds::Close() {
     if(_is_server) {
+        LOG_DEBUG_T("UDS", "Close (server) %s", _uds_address.c_str());
+
         // TODO close all connection fd
 
-        close(_socket_fd);
-        unlink(_uds_address.c_str());
+        if(close(_socket_fd)){
+            LOG_WARNING("close failed: %s", _uds_address.c_str());
+            perror("close failed");
+        }
+
+        if(unlink(_uds_address.c_str())){
+            LOG_WARNING("unlink failed: %s", _uds_address.c_str());
+            perror("unlink failed");
+        }
     } else {
-        close(_socket_fd);
+        LOG_DEBUG_T("UDS", "Close (client) %s", _uds_address.c_str());
+
+        if(close(_socket_fd)){
+            LOG_WARNING("close failed: %s", _uds_address.c_str());
+            perror("close failed");
+        }
+
         _connected = false;
     }
 }
 
 /**
  * Get the protocol name for this combox
- * @param Reference to a std::string object to store the protocol name
- * @return TRUE in any cases.
+ * @return the protocol name
  */
-bool popc_combox_uds::GetProtocol(std::string & protocolName) {
-    protocolName = UDS_PROTOCOL_NAME;
-    return true;
+std::string popc_combox_uds::GetProtocol() {
+    return UDS_PROTOCOL_NAME;
 }
 
 /**
@@ -326,12 +418,6 @@ bool popc_combox_uds::GetProtocol(std::string & protocolName) {
  * @param Reference to a string object to store the url.
  * @return FALSE if the combox has no url. TRUE otherwise.
  */
-bool popc_combox_uds::GetUrl(std::string & accesspoint) {
-    if(_uds_address.length() == 0) {
-        return false;
-    }
-    char elem[1024];
-    sprintf(elem,"%s%s%s", UDS_PROTOCOL_NAME, paroc_combox::PROTOCOL_SEPARATOR, _uds_address.c_str());
-    accesspoint = elem;
-    return true;
+std::string popc_combox_uds::GetUrl() {
+    return "uds://" + _uds_address;
 }

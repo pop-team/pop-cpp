@@ -4,6 +4,7 @@ if [ -z "$*" ]; then
 echo ""
 echo "Usage: popcrun objects.config [-drun] [-runlocal] prog.main args..."
 echo "  -drun     : Print launching command only."
+echo "  -gdb      : Run with gdb."
 echo "  -runlocal : Force to create all objects locally : do not use JobMgr"
 echo "  -debug    : Give some debugging informations"
 echo "  -log=<filename> : put all message in the <filename> file"
@@ -32,6 +33,7 @@ MYJOBSERVICE="`hostname`:2711"
 MYAPPSERVICE=$POPC_LOCATION/services/appservice
 
 drun=0
+gdb=0
 noproxy=0
 
 logging=0
@@ -49,6 +51,8 @@ for arg in $* ; do
 		version=1
     elif [ "$arg" = "-drun" ]; then
 		drun=1
+    elif [ "$arg" = "-gdb" ]; then
+		gdb=1
     elif [ "$arg" = "-runlocal" ]; then
 		localFlag="-runlocal"
     elif [ "$arg" = "-noproxy" ]; then
@@ -195,6 +199,14 @@ cmd="$PROG $args -initparoc -appservicecode=$MYAPPSERVICE $MY_PROXY -codeconf=$P
 retval=0
 if [ $drun -eq 1 ]; then
     echo "$cmd $logging_cmd"
+elif [ $gdb -eq 1 ]; then
+    # execute command
+    if [ "$logging_cmd" != "" ]; then
+        gdb --args $cmd | $logging_cmd
+    else
+        gdb --args $cmd
+    fi
+    retval=$?
 else
     # execute command
     if [ "$logging_cmd" != "" ]; then

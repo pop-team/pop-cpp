@@ -172,10 +172,10 @@ bool paroc_utils::SameContact(const std::string& _contact1, const std::string& _
     if(contact1==contact2) {
         return true;
     }
-    if(contact1==NULL || contact2==NULL) {
+    if(contact1==nullptr || contact2==nullptr) {
         return false;
     }
-    if(strstr(contact1, contact2)!=NULL || strstr(contact2, contact1)!=NULL) {
+    if(strstr(contact1, contact2)!=nullptr || strstr(contact2, contact1)!=nullptr) {
         return true;
     }
 
@@ -184,7 +184,7 @@ bool paroc_utils::SameContact(const std::string& _contact1, const std::string& _
     std::vector<std::string> tokens;
     popc_tokenize_r(tokens,contact2," \n\r\t");
     for(auto token : tokens) {
-        if(strstr(contact1,token.c_str())!=NULL) {
+        if(strstr(contact1,token.c_str())!=nullptr) {
             return true;
         }
     }
@@ -240,31 +240,15 @@ const char* paroc_utils::GetIPFromURL(const char *url) {
 
 //Get the current user
 const char* paroc_utils::GetCurrentUser() {
-    /* int BUF_SIZE=20;  //TODO set as constant
-     char buf[BUF_SIZE];
-     std::ostringstream cmd;
-     std::ostringstream res;
-     res.str("");
-     res.clear();
-     cmd.str("");
-     cmd.clear();
-     cmd << "whoami";
-     FILE *fp;
-     fp=popen(cmd.str().c_str(), "r");
-     if(fp!=NULL){
-        if(fgets(buf, BUF_SIZE, fp) != NULL)
-           res << buf;
-        return res.str().c_str();
-     }*/
-    char *username;
 #ifndef __WIN32__
-    username = getlogin();
+    return getlogin();
 #else
+    char *username;
     DWORD i = 256;
     DWORD* temp = &i;
     GetUserName(username, temp);
-#endif
     return username;
+#endif
 }
 
 std::string paroc_utils::MakeContact(const char *host, int port) {
@@ -308,7 +292,7 @@ int rprintf(const char *format,...) {
 }
 
 int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
-    if(s==NULL || fileconf==NULL) {
+    if(s==nullptr || fileconf==nullptr) {
         return 0;
     }
 
@@ -317,12 +301,12 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
     char line[256];
     char sep[]=" \n\t";
 
-    if(f==NULL) {
+    if(f==nullptr) {
         return 0;
     }
     try {
         while(!feof(f)) {
-            if(fgets(line,256,f)!=NULL) {
+            if(fgets(line,256,f)!=nullptr) {
 
                 int last=strlen(line)-1;
                 while(last>=0 && isspace(line[last])) {
@@ -334,12 +318,12 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
                 }
 
                 char *tmp=strtok(line,sep);
-                if(tmp==NULL) {
+                if(tmp==nullptr) {
                     continue;
                 }
                 strcpy(objname,tmp);
-                tmp=strtok(NULL,sep);
-                if(tmp==NULL) {
+                tmp=strtok(nullptr,sep);
+                if(tmp==nullptr) {
                     continue;
                 }
                 strcpy(arch,tmp);

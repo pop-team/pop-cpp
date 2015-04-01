@@ -398,6 +398,9 @@ bool paroc_buffer_xdr::Send(paroc_combox &s, paroc_connection *conn) {
         return false;
     }
 
+    LOG_DEBUG_T("XDR", "Send methodid=%d", header.GetMethodID());
+    LOG_DEBUG_T("XDR", "Send classId=%d", header.GetClassID());
+
     memcpy(dat, h, 20);
 
     return s.Send(dat, n, conn) >= 0;
@@ -448,6 +451,9 @@ bool paroc_buffer_xdr::Recv(paroc_combox &s, paroc_connection *conn) {
         LOG_ERROR("Unknown type %d", type);
         return false;
     }
+
+    LOG_DEBUG_T("XDR", "Read methodid=%d", header.GetMethodID());
+    LOG_DEBUG_T("XDR", "Read classId=%d", header.GetClassID());
 
     packeddata.resize(n);
     n -= 20;

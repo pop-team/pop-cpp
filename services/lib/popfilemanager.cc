@@ -110,13 +110,12 @@ std::string POPFileManager::readFromStrip(std::string stripName, long start, lon
     strip.seekg(0, std::ios::beg);
     int crt_pos = strip.tellg();
     strip.seekg(start, std::ios::cur);
-    char* buffer;
-    buffer = new char[offset+1];
+    char* buffer = new char[offset+1];
     buffer[offset] = '\0';
     strip.read(buffer, offset);
     strip.close();
     std::string data(buffer);
-    delete [] buffer; // TODO Check it
+    delete [] buffer;
     return data;
 }
 

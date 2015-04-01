@@ -132,7 +132,7 @@ void paroc_buffer::UnPack(std::string *list, int n) {
 
 bool paroc_buffer::Send(paroc_connection *conn) {
     if(conn == nullptr) {
-        LOG_ERROR("conn==NULL");
+        LOG_ERROR("conn==nullptr");
         return false;
     }
     auto combox = conn->GetCombox();
@@ -141,7 +141,7 @@ bool paroc_buffer::Send(paroc_connection *conn) {
 
 bool paroc_buffer::Recv(paroc_connection *conn) {
     if(conn==nullptr) {
-        LOG_ERROR("conn==NULL");
+        LOG_ERROR("conn==nullptr");
         return false;
     }
     auto combox = conn->GetCombox();
@@ -323,8 +323,4 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
     default:
         paroc_exception::paroc_throw("Unknown exception in paroc_buffer::CheckAndThrow");
     }
-}
-
-void paroc_buffer::Destroy() {
-    delete this;
 }

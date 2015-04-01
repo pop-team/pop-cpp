@@ -12,6 +12,7 @@
  */
 
 #include "popc_allocator_factory.h"
+#include "popc_allocator_uds_local.h"
 #include "popc_allocator_uds_interconnector.h"
 #include "popc_allocator_tcpip.h"
 #include "popc_allocator_mpi_pseudo.h"
@@ -61,8 +62,10 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
         // Allocation over UDS socket
     case POPC_Allocator::UDS : {
         switch(alloc_mechanism) {
+        case POPC_Allocator::LOCAL :
+            return new popc_allocator_uds_local();
         case POPC_Allocator::INTERCONNECTOR :
-            return new POPC_Allocator_uds_interconnector();
+            return new uds_allocator_interconnector();
         default:
             LOG_WARNING("No allocator found");
             return nullptr; // TODO lwk security: there should be a safety if this is returned in a constructor: e.g. assert(false)
@@ -72,9 +75,9 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
     case POPC_Allocator::TCPIP : {
         switch(alloc_mechanism) {
         case POPC_Allocator::LOCAL :
-            return new POPC_Allocator_tcpip_local();
+            return new socket_allocator_local();
         case POPC_Allocator::SSH :
-            return new POPC_Allocator_tcpip_service();
+            return new socket_allocator_service();
         default:
             LOG_WARNING("No allocator found");
             return nullptr;
@@ -84,7 +87,7 @@ POPC_Allocator* POPC_AllocatorFactory::get_allocator(POPC_Allocator::POPC_Protoc
     case POPC_Allocator::MPI : {
         switch(alloc_mechanism) {
         case POPC_Allocator::PSEUDODYNAMIC :
-//            return new POPC_Allocator_mpi_pseudo();
+//            return new mpi_allocator_pseudo();
         default:
             LOG_WARNING("No allocator found");
             return nullptr;

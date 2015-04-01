@@ -112,7 +112,7 @@ paroc_broker::paroc_broker() {
 paroc_broker::~paroc_broker() {
     int n=comboxArray.size();
     for(int i=0; i<n; i++) {
-        comboxArray[i]->Destroy();
+        delete comboxArray[i];
     }
     if(obj!=nullptr) {
         delete obj;
@@ -237,12 +237,11 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         paroc_od::defaultLocalJob=true;
     }
 
-    char *address = paroc_utils::checkremove(argc,argv,"-address=");
-    (void)address; // Note: this line avoids a warning
+    auto comboxFactory = paroc_combox_factory::GetInstance();
 
-    paroc_combox_factory  *comboxFactory = paroc_combox_factory::GetInstance();
     int comboxCount = comboxFactory->GetCount();
     comboxArray.resize(comboxCount);
+
     std::string protocolName;
     std::string url;
 
@@ -265,13 +264,19 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         return false;
     }
 
+    auto address = paroc_utils::checkremove(argc,argv,"-address=");
+
     for(int i=0; i<comboxCount; i++) {
-        paroc_combox * pc = comboxArray[i];
-        pc->GetProtocol(protocolName);
+        auto pc = comboxArray[i];
+
+        auto protocolName = pc->GetProtocol();
 
         char argument[1024];
         sprintf(argument, "-%s_port=", protocolName.c_str());
         char *portstr=paroc_utils::checkremove(argc,argv,argument);
+
+        LOG_DEBUG_T("BRKR", "Create combox %s with port: %s", protocolName.c_str(), portstr);
+
         if(portstr!=nullptr) {
             int port;
             if(sscanf(portstr,"%d",&port)!=1) {
@@ -282,24 +287,44 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
                 return false;
             }
         } else {
-#ifdef DEFINE_UDS_SUPPORT
-            if(!pc->Create(address, true)) {
-#else
-            if(!pc->Create(0, true)) {
-#endif
-                paroc_exception::perror("Broker");
-                return false;
+            if(pc->need_address()){
+                if(!address){
+                    //std::string default_address = "uds_0." + std::to_string(paroc_system::pop_current_local_address);
+
+                    //LOG_DEBUG_T("BRKR", "Create combox (address) with default address \"%s\"", default_address.c_str());
+
+                    //TODO: This is highly unsafe with threads
+                    //++paroc_system::pop_current_local_address;
+
+                    if(!pc->Create(nullptr, true)) {
+                        paroc_exception::perror("Broker");
+                        return false;
+                    }
+                } else {
+                    LOG_DEBUG_T("BRKR", "Create combox (address) with address \"%s\"", address);
+
+                    if(!pc->Create(address, true)) {
+                        paroc_exception::perror("Broker");
+                        return false;
+                    }
+                }
+            } else {
+                if(!pc->Create(0, true)) {
+                    paroc_exception::perror("Broker");
+                    return false;
+                }
             }
         }
 
+        auto ap = pc->GetUrl();
 
-        std::string ap;
-        pc->GetUrl(ap);
         url+=ap;
         if(i<comboxCount-1) {
             url+=PROTO_DELIMIT_CHAR;
         }
     }
+
+    LOG_DEBUG_T("[BRKR]", "%d combox have been created", comboxCount);
 
     accesspoint.SetAccessString(url.c_str());
 
@@ -309,7 +334,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         paroc_buffer_raw tmp;
         r.data=&tmp;
         if(!FindMethodInfo(classname.c_str(),r.methodId[0],r.methodId[1]) || r.methodId[1]!=10) {
-            LOG_ERROR("POP-C++ Error: [CORE] Broker cannot not find default constructor");
+            LOG_ERROR_T("[BRKR]", "POP-C++ Error: [CORE] Broker cannot not find default constructor");
             return false;
         }
         r.methodId[2]=INVOKE_CONSTRUCTOR;
@@ -330,20 +355,18 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     popc_signal(popc_SIGPIPE, popc_SIG_IGN);
 #endif
 
-
     return true;
 }
 
 
 
 bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
-
     paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
-    std::string url, prot;
 
     bool ok=false;
-    mycombox->GetProtocol(prot);
-    mycombox->GetUrl(url);
+
+    auto prot = mycombox->GetProtocol();
+    auto url = mycombox->GetUrl();
 
     char *str=strdup(url.c_str());
     if(str==nullptr) {
@@ -361,13 +384,18 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
         if(address.find("uds://") == 0) {
             address = address.substr(6);
         }
-        paroc_buffer_factory* buffer_factory = tmp->GetBufferFactory();
-        paroc_buffer* buffer = buffer_factory->CreateBuffer();
-#ifdef DEFINE_UDS_SUPPORT
-        if(tmp->Create(address.c_str(), false) && tmp->Connect(NULL)) {
-#else
-        if(tmp->Create(0, false) && tmp->Connect(tok.c_str())) {
-#endif
+
+        auto buffer_factory = tmp->GetBufferFactory();
+        auto buffer = buffer_factory->CreateBuffer();
+
+        bool connected = false;
+        if(tmp->need_address()){
+            connected = tmp->Create(address.c_str(), false) && tmp->Connect(nullptr);
+        } else {
+            connected = tmp->Create(0, false) && tmp->Connect(tok.c_str());
+        }
+
+        if(connected) {
             try {
                 paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
                 buffer->Reset();
@@ -390,8 +418,8 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
                 ok = true;
             }
         }
-        buffer->Destroy();
-        tmp->Destroy();
+        delete buffer;
+        delete tmp;
     }
 
     return ok;
