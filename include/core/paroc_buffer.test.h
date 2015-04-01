@@ -98,7 +98,7 @@ class BufferTestSuite : public CxxTest::TestSuite
             TS_ASSERT(m_comboxSocketOut != nullptr);
             m_comboxSocketIn = fact->Create("socket");
             TS_ASSERT(m_comboxSocketIn != nullptr);
-            fact->Destroy();
+            delete fact;
 
             m_connectionSocket = m_comboxSocketOut->get_connection();
         }
@@ -106,8 +106,8 @@ class BufferTestSuite : public CxxTest::TestSuite
         {
             delete m_bufferRaw;
             delete m_bufferXdr;
-            m_comboxSocketOut->Destroy();
-            m_comboxSocketIn->Destroy();
+            delete m_comboxSocketOut;
+            delete m_comboxSocketIn;
         }
 
         // Test packing of data in buffer
@@ -164,9 +164,6 @@ class BufferTestSuite : public CxxTest::TestSuite
             paroc_connection& connIn(*m_comboxSocketIn->get_connection());
             // testBuffer(&bufOut, m_comboxSocketOut, &connOut, &bufIn, m_comboxSocketIn, &connIn);
             testBuffer(&bufIn, m_comboxSocketIn, &connIn, &bufOut, m_comboxSocketOut, &connOut);
-
-            bufIn.Destroy();
-            bufOut.Destroy();
         }
 
         void testBufferXdr(){

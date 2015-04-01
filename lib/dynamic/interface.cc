@@ -628,7 +628,7 @@ bool paroc_interface::Encoding(std::string encoding) {
         __paroc_buf = fact->CreateBuffer();
         __paroc_combox->SetBufferFactory(fact);
     }
-    fact->Destroy();
+    delete fact;
 
     return ret;
 }

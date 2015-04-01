@@ -210,8 +210,6 @@ public:
 
     static void CheckAndThrow(paroc_buffer &except);
 
-    virtual void Destroy();
-
     template<typename T>void Pack(const std::vector<T> *vect, int n)
     {
         assert(n==1);

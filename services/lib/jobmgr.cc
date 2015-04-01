@@ -213,11 +213,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
     std::vector<std::string> acc;
     popc_tokenize(acc,GetAccessPoint().GetAccessString(), ":");
 
-<<<<<<< HEAD
-    unsigned int seed = time(NULL);
-=======
-    srand(time(nullptr));
->>>>>>> 7075317e0ae3e0d03348ad5eca43ba7519e635a2
+    unsigned int seed = time(nullptr);
 
     int ret=paroc_system::GetIP(serviceID,1);
     if(ret!=1) {
