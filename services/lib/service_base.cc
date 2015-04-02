@@ -11,8 +11,8 @@
 
 #include <stdio.h>
 
-#include "paroc_interface.h"
-#include "paroc_broker.h"
+#include "pop_interface.h"
+#include "pop_broker.h"
 
 #include "paroc_service_base.ph"
 #include "objectmonitor.ph"

@@ -26,7 +26,7 @@
 
 
 // POP-C++ library include
-#include "paroc_broker.h"
+#include "pop_broker.h"
 #include "pop_buffer_xdr.h"
 #include "popc_combox_uds.h"
 #include "paroc_utils.h"

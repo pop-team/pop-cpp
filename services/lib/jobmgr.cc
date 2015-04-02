@@ -704,7 +704,7 @@ int JobMgr::CreateObject(pop_accesspoint &localservice, const std::string &objna
     //Can not create all object -> kill the already allocated object
     for(int i=0; i<count; i++) {
         try {
-            paroc_interface obj(objcontacts[i]);
+            pop_interface obj(objcontacts[i]);
             obj.Kill();
         } catch(std::exception& e) {
             LOG_WARNING("Exception while killing objects: %s", e.what());
@@ -1931,7 +1931,7 @@ bool JobMgr::NodeInTrace(int trace[MAX_HOPS], int tracesize, pop_accesspoint &co
 
 bool JobMgr::ObjectAlive(pop_accesspoint &t) {
     try {
-        paroc_interface test(t);
+        pop_interface test(t);
         return true;
     } catch(std::exception& e) {
         LOG_WARNING("Exception in JobMgr::ObjectAlive: %s", e.what());

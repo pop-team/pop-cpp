@@ -20,7 +20,7 @@
 #include <cstdlib>
 #include <vector>
 
-#include "paroc_interface.h"
+#include "pop_interface.h"
 #include "pop_buffer.h"
 #include "paroc_system.h"
 #include "paroc_exception.h"
@@ -219,7 +219,7 @@ bool pop_buffer::SendException(pop_buffer &except, pop_connection *s, paroc_exce
     return except.Send(s);
 }
 
-bool pop_buffer::SendException(pop_buffer &except, pop_connection *s, paroc_interface &code) {
+bool pop_buffer::SendException(pop_buffer &except, pop_connection *s, pop_interface &code) {
     paroc_message_header tmp(EXCEPTION_OBJECT, except.GetHeader().GetMethodName());
     except.Reset();
     except.SetHeader(tmp);
@@ -315,7 +315,7 @@ void  pop_buffer::CheckAndThrow(pop_buffer &except) {
     }
     /* TODO LW: Is this really used ?? */
     case EXCEPTION_OBJECT: {
-        paroc_interface t;
+        pop_interface t;
         t.Serialize(except,false);
         //        except.UnPack(&t,1);
         throw t;

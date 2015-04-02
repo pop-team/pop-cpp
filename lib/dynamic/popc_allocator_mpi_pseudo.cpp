@@ -17,7 +17,7 @@
 #include "paroc_exception.h"
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
-#include "paroc_broker.h"
+#include "pop_broker.h"
 
 /**
  * Allocate single object with a pseudo-dynamic allocation mechanism

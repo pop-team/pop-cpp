@@ -21,8 +21,8 @@
 
 #include "paroc_utils.h"
 #include "paroc_system.h"
-#include "paroc_broker.h"
-#include "paroc_broker_factory.h"
+#include "pop_broker.h"
+#include "pop_broker_factory.h"
 #include "pop_buffer_factory_finder.h"
 
 bool CheckIfPacked(const char *objname);
@@ -81,13 +81,13 @@ int main(int argc, char **argv) {
         }
     }
 
-    paroc_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
-    paroc_broker *broker = paroc_broker_factory::Create(&argc, &argv);
+    pop_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
+    pop_broker *broker = pop_broker_factory::Create(&argc, &argv);
 
     if(!broker) {
         status = 1;
     } else if(!broker->Initialize(&argc, &argv)) {
-        LOG_INFO("Fail to initialize the broker for class %s",paroc_broker::classname.c_str());
+        LOG_INFO("Fail to initialize the broker for class %s",pop_broker::classname.c_str());
         status = 1;
     }
 
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
         buffer->Pop();
 
         buffer->Push("address", "pop_accesspoint", 1);
-        paroc_broker::accesspoint.Serialize(*buffer, true);
+        pop_broker::accesspoint.Serialize(*buffer, true);
         buffer->Pop();
 
         pop_connection* connection = callback_combox->get_connection();
@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
             return 1;
         }
     } else if(status == 0) {
-        LOG_INFO("%s", paroc_broker::accesspoint.GetAccessString().c_str());
+        LOG_INFO("%s", pop_broker::accesspoint.GetAccessString().c_str());
     }
 
     // set the current working directory

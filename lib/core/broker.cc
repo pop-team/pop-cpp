@@ -12,14 +12,14 @@
 
 /*
   Deeply need refactoring:
-    POPC_Broker instead of paroc_broker
+    POPC_Broker instead of pop_broker
  */
 
 #include "popc_intface.h"
 #include "popc_logger.h"
 
-#include "paroc_broker.h"
-#include "paroc_interface.h"
+#include "pop_broker.h"
+#include "pop_interface.h"
 #include "paroc_event.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_buffer_raw.h"
@@ -62,15 +62,15 @@ void broker_interupt(int /*sig*/) {
 
 class paroc_receivethread: public paroc_thread {
 public:
-    paroc_receivethread(paroc_broker *br, pop_combox *com);
+    paroc_receivethread(pop_broker *br, pop_combox *com);
     ~paroc_receivethread();
     virtual void start() override;
 protected:
-    paroc_broker *broker;
+    pop_broker *broker;
     pop_combox *comm;
 };
 
-paroc_receivethread::paroc_receivethread(paroc_broker *br, pop_combox *combox): paroc_thread(true) {
+paroc_receivethread::paroc_receivethread(pop_broker *br, pop_combox *combox): paroc_thread(true) {
     broker=br;
     comm=combox;
 }
@@ -87,21 +87,21 @@ void paroc_receivethread::start() {
 //===paroc_object: base class for all parallel object-server side
 
 
-//===paroc_broker: the base class for server object broker
+//===pop_broker: the base class for server object broker
 
-//char paroc_broker::myContact[256];
+//char pop_broker::myContact[256];
 
-pop_accesspoint paroc_broker::accesspoint;
-std::string paroc_broker::classname;
+pop_accesspoint pop_broker::accesspoint;
+std::string pop_broker::classname;
 
 
 void broker_killed(int sig) {
-    LOG_ERROR("FATAL: SIGNAL %d on %s@%s",sig, paroc_broker::classname.c_str(), paroc_broker::accesspoint.GetAccessString().c_str());
+    LOG_ERROR("FATAL: SIGNAL %d on %s@%s",sig, pop_broker::classname.c_str(), pop_broker::accesspoint.GetAccessString().c_str());
     exit(1);
 }
 
 
-paroc_broker::paroc_broker() {
+pop_broker::pop_broker() {
     obj=nullptr;
     state=POPC_STATE_RUNNING;
     instanceCount=0;
@@ -109,7 +109,7 @@ paroc_broker::paroc_broker() {
     concPendings=0;
 }
 
-paroc_broker::~paroc_broker() {
+pop_broker::~pop_broker() {
     int n=comboxArray.size();
     for(int i=0; i<n; i++) {
         delete comboxArray[i];
@@ -119,7 +119,7 @@ paroc_broker::~paroc_broker() {
     }
 }
 
-void paroc_broker::AddMethodInfo(unsigned cid, paroc_method_info *methods, int sz) {
+void pop_broker::AddMethodInfo(unsigned cid, paroc_method_info *methods, int sz) {
     if(sz<=0 || methods==nullptr) {
         return;
     }
@@ -130,7 +130,7 @@ void paroc_broker::AddMethodInfo(unsigned cid, paroc_method_info *methods, int s
     methodnames.push_back(t);
 }
 
-const char *paroc_broker::FindMethodName(unsigned classID, unsigned methodID) {
+const char *pop_broker::FindMethodName(unsigned classID, unsigned methodID) {
     for(auto& t : methodnames){
         if(t.cid==classID) {
             paroc_method_info *m=t.methods;
@@ -145,7 +145,7 @@ const char *paroc_broker::FindMethodName(unsigned classID, unsigned methodID) {
     return nullptr;
 }
 
-bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned &methodID) {
+bool pop_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned &methodID) {
     if(name==nullptr) {
         return false;
     }
@@ -165,7 +165,7 @@ bool paroc_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned 
     return false;
 }
 
-int paroc_broker::Run() {
+int pop_broker::Run() {
     //Create threads for each protocols for receiving requests....
 
     std::vector<paroc_receivethread *> ptArray;
@@ -204,7 +204,7 @@ int paroc_broker::Run() {
                 }
             }
         } catch(std::exception &e) {
-            LOG_WARNING("Unknown exception in paroc_broker::Run: %s", e.what());
+            LOG_WARNING("Unknown exception in pop_broker::Run: %s", e.what());
             UnhandledException();
         }
     }
@@ -232,7 +232,7 @@ int paroc_broker::Run() {
     return 0;
 }
 
-bool paroc_broker::Initialize(int *argc, char ***argv) {
+bool pop_broker::Initialize(int *argc, char ***argv) {
     if(paroc_utils::checkremove(argc, argv, "-runlocal")) {
         paroc_od::defaultLocalJob=true;
     }
@@ -360,7 +360,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 
 
 
-bool paroc_broker::WakeupReceiveThread(pop_combox  *mycombox) {
+bool pop_broker::WakeupReceiveThread(pop_combox  *mycombox) {
     pop_combox_factory *combox_factory = pop_combox_factory::GetInstance();
 
     bool ok=false;
@@ -414,7 +414,7 @@ bool paroc_broker::WakeupReceiveThread(pop_combox  *mycombox) {
                     ok = !ret;
                 }
             } catch(std::exception &e) {
-                LOG_WARNING("Exception in paroc_broker::WakeUpReceiveThread: %s", e.what());
+                LOG_WARNING("Exception in pop_broker::WakeUpReceiveThread: %s", e.what());
                 ok = true;
             }
         }

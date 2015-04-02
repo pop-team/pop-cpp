@@ -49,7 +49,7 @@ void ObjectMonitor::KillAll() {
         for(auto& t : objects){
             LOG_INFO("Kill object %s", t.GetAccessString().c_str());
             try {
-                paroc_interface tmp(t);
+                pop_interface tmp(t);
                 tmp.Kill();
             } catch(std::exception& e) {
                 LOG_WARNING("Exception while killing objects: %s", e.what());
@@ -69,7 +69,7 @@ int ObjectMonitor::CheckObjects(bool pingObjects) {
                 auto old=pos;
                 auto &t=*pos++;
                 try {
-                    paroc_interface test(t);
+                    pop_interface test(t);
                     if(!active && test.ObjectActive()) {
                         active=true;
                     }

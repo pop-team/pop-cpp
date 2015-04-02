@@ -18,7 +18,7 @@
 
 #include <rpc/types.h>
 #include <rpc/xdr.h>
-// #include "paroc_interface.h"
+// #include "pop_interface.h"
 #include "pop_buffer_xdr.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"

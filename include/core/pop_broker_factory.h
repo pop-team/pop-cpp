@@ -14,35 +14,35 @@
 #define  _POPC_BROKER_FACTORY_H_
 
 #include <vector>
-#include <paroc_broker.h>
+#include <pop_broker.h>
 
-typedef paroc_broker *(*initbrokerfunc)();
+typedef pop_broker *(*initbrokerfunc)();
 typedef bool (*ispackedfunc)(const char *objname);
 
-struct paroc_broker_init {
+struct pop_broker_init {
     initbrokerfunc func;
     std::string objname;
 };
 
 /**
- * @class paroc_broker_factory
+ * @class pop_broker_factory
  * @brief Broker factory declaration for instantiate brokers, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  */
-class paroc_broker_factory {
+class pop_broker_factory {
 public:
     /**
-     * @brief Constructor, adds this paroc_broker_factory to the global list
+     * @brief Constructor, adds this pop_broker_factory to the global list
      * @param func Initialization function pointer
      * @param name Object name
      */
-    paroc_broker_factory(initbrokerfunc func, const char *name);
+    pop_broker_factory(initbrokerfunc func, const char *name);
 
     /**
      * @brief Create a broker for the given object
      * @param objname Object name
      */
-    static paroc_broker *Create(const char *objname);
+    static pop_broker *Create(const char *objname);
 
     /**
      * @brief Returns the list of brokers
@@ -59,7 +59,7 @@ public:
      * @param argv
      * @return broker
      */
-    static paroc_broker *Create(int *argc, char ***argv);
+    static pop_broker *Create(int *argc, char ***argv);
 
     /**
      * @brief Print brokers
@@ -78,7 +78,7 @@ public:
     static ispackedfunc CheckIfPacked; // Since this method is created by the parser, we have to declare a fct pointer for it
 
 private:
-    static std::vector<paroc_broker_init> *brokerlist;
+    static std::vector<pop_broker_init> *brokerlist;
 };
 
 #endif

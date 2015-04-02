@@ -4,9 +4,9 @@
 #include <stdlib.h>
 
 #include <paroc_array.h>
-#include <paroc_interface.h>
+#include <pop_interface.h>
 #include <pop_buffer_factory_finder.h>
-#include <paroc_broker.h>
+#include <pop_broker.h>
 #include <jobmgr.ph>
 #include <codemgr.ph>
 
@@ -113,7 +113,7 @@ bool  POPMPI<T>::startMPI(T *&array, int np) {
     if(np<=0) {
         return false;
     }
-    T test(paroc_interface::_paroc_nobind);
+    T test(pop_interface::_paroc_nobind);
     const char *name=test.ClassName();
 
     array=NULL;
@@ -138,7 +138,7 @@ bool  POPMPI<T>::startMPI(T *&array, int np) {
 
         paroc_array<pop_accesspoint> ap(np);
         paroc_od od; // Note: The od is empty !!
-        if(paroc_interface::LocalExec(NULL,mpicmd, name, paroc_system::jobservice, paroc_system::appservice, ap,np,od)!=0) {
+        if(pop_interface::LocalExec(NULL,mpicmd, name, paroc_system::jobservice, paroc_system::appservice, ap,np,od)!=0) {
             printf("startMPI failed: mpirun returned error\n");
             return false;
         }

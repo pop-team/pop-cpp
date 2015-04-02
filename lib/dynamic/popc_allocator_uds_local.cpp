@@ -14,9 +14,9 @@
 #include "paroc_exception.h"
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
-#include "paroc_broker.h"
+#include "pop_broker.h"
 #include "paroc_utils.h"
-#include "paroc_interface.h"
+#include "pop_interface.h"
 
 #include "codemgr.ph"
 #include "batchmgr.ph"

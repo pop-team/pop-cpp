@@ -17,7 +17,7 @@
 
 #include <stdio.h>
 #include <string.h>
-//#include "paroc_interface.h"
+//#include "pop_interface.h"
 #include "pop_buffer_raw.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"

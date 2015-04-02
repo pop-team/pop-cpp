@@ -21,8 +21,8 @@
 
 using namespace std;
 
-char Class::interface_base[]="paroc_interface";
-char Class::broker_base[]="paroc_broker";
+char Class::interface_base[]="pop_interface";
+char Class::broker_base[]="pop_broker";
 char Class::object_base[]="paroc_object";
 
 /**
@@ -107,7 +107,7 @@ void Class::Marshal(char *varname, char *bufname, char* /*sizehelper*/, std::str
     if(!FindVarName(varname,paramname)) {
         strcpy(paramname,"unkown");
     }
-    sprintf(tmpstr,"%s.Push(\"%s\",\"paroc_interface\",1);\n",bufname,paramname);
+    sprintf(tmpstr,"%s.Push(\"%s\",\"pop_interface\",1);\n",bufname,paramname);
     output += tmpstr;
 
     // If uncommented, the 4 following lines will check at runtime if polymorphism is used (and exit)
@@ -130,7 +130,7 @@ void Class::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, std::s
     if(!FindVarName(varname,paramname)) {
         strcpy(paramname,"unkown");
     }
-    sprintf(tmpstr,"%s.Push(\"%s\",\"paroc_interface\",1);\n",bufname,paramname);
+    sprintf(tmpstr,"%s.Push(\"%s\",\"pop_interface\",1);\n",bufname,paramname);
     output += tmpstr;
 
     sprintf(tmpstr, "((%s &)(%s)).Serialize(%s, false);",GetName(),varname,bufname);
@@ -936,7 +936,7 @@ bool Class::GenerateBrokerHeader(std::string &code/*, bool isPOPCPPCompilation*/
         constructor.GenerateBrokerHeader(code);
     }
 
-    sprintf(tmpcode,"\npublic:\nstatic paroc_broker *_init();\nstatic paroc_broker_factory _popc_factory;\n");
+    sprintf(tmpcode,"\npublic:\nstatic pop_broker *_init();\nstatic pop_broker_factory _popc_factory;\n");
     code += tmpcode;
 
 
@@ -1047,7 +1047,7 @@ bool Class::GenerateBroker(std::string &code/*, bool isPOPCPPCompilation*/) {
         if(is_collective()) {
             strcpy(str,"\n  return POPC_GroupBroker::invoke(method, _popc_buffer, _popc_connection);\n}\n");
         } else {
-            strcpy(str,"\nreturn paroc_broker::Invoke(method,__brokerbuf,peer);\n}\n");
+            strcpy(str,"\nreturn pop_broker::Invoke(method,__brokerbuf,peer);\n}\n");
         }
     }
 
@@ -1087,7 +1087,7 @@ bool Class::GenerateBroker(std::string &code/*, bool isPOPCPPCompilation*/) {
     if(is_collective()) {
         sprintf(tmpcode,"\nPOPC_GroupBroker* %s::_init() { return new %s; }\nPOPC_GroupBrokerFactory %s::_popc_factory(_init, \"%s\");\n",brokername, brokername, brokername, name);
     } else {
-        sprintf(tmpcode,"\nparoc_broker *%s::_init() { return new %s; }\nparoc_broker_factory %s::_popc_factory(_init, \"%s\");\n",brokername, brokername, brokername, name);
+        sprintf(tmpcode,"\npop_broker *%s::_init() { return new %s; }\npop_broker_factory %s::_popc_factory(_init, \"%s\");\n",brokername, brokername, brokername, name);
     }
     code += tmpcode;
 

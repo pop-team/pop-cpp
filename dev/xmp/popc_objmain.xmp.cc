@@ -16,7 +16,7 @@
 #include "paroc_utils.h"
 #include "paroc_system.h"
 #include "popc_buffer_xdr_mpi.h"
-#include "paroc_broker.h"
+#include "pop_broker.h"
 #include "popc_group_broker.h"
 #include "popc_group_broker_factory.h"
 #include "popc_connection_mpi.h"

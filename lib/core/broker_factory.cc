@@ -16,20 +16,20 @@
 
 /*
   Deeply need refactoring:
-    POPC_BrokerFactory instead of paroc_broker_factory
+    POPC_BrokerFactory instead of pop_broker_factory
  */
 
 #include "popc_intface.h"
-#include "paroc_broker_factory.h"
+#include "pop_broker_factory.h"
 #include "paroc_utils.h"
 #include "paroc_system.h"
 
-std::vector<paroc_broker_init> *paroc_broker_factory::brokerlist=nullptr;
-ispackedfunc paroc_broker_factory::CheckIfPacked=nullptr;
+std::vector<pop_broker_init> *pop_broker_factory::brokerlist=nullptr;
+ispackedfunc pop_broker_factory::CheckIfPacked=nullptr;
 
-paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name) {
+pop_broker_factory::pop_broker_factory(initbrokerfunc func, const char *name) {
     if(!brokerlist) {
-        brokerlist = new std::vector<paroc_broker_init>;
+        brokerlist = new std::vector<pop_broker_init>;
     }
 
     if(!name || !func || test(name)) {
@@ -39,7 +39,7 @@ paroc_broker_factory::paroc_broker_factory(initbrokerfunc func, const char *name
     brokerlist->push_back({func, name});
 }
 
-paroc_broker *paroc_broker_factory::Create(const char *objname) {
+pop_broker *pop_broker_factory::Create(const char *objname) {
     LOG_DEBUG("Create broker for %s", objname);
     if(brokerlist == nullptr || objname == nullptr) {
         return nullptr;
@@ -54,7 +54,7 @@ paroc_broker *paroc_broker_factory::Create(const char *objname) {
     return nullptr;
 }
 
-void paroc_broker_factory::List(std::vector<std::string>& objlist) {
+void pop_broker_factory::List(std::vector<std::string>& objlist) {
     if(brokerlist == nullptr) {
         return;
     }
@@ -63,7 +63,7 @@ void paroc_broker_factory::List(std::vector<std::string>& objlist) {
     }
 }
 
-bool paroc_broker_factory::test(const char *objname) {
+bool pop_broker_factory::test(const char *objname) {
     if(brokerlist == nullptr) {
         return false;
     }
@@ -76,7 +76,7 @@ bool paroc_broker_factory::test(const char *objname) {
 }
 
 
-paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
+pop_broker * pop_broker_factory::Create(int *argc, char ***argv) {
     /**
      * Display the information about the parallel object executable
      * note: this bit of code existed in pseudodynamic version and is
@@ -144,14 +144,14 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
     }
 
     // Create the real Broker object
-    paroc_broker *objbroker=Create(object);
+    pop_broker *objbroker=Create(object);
     if(objbroker==nullptr) {
         printf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
         return nullptr;
     }
 
     // Set the classname for this broker
-    paroc_broker::classname=object;
+    pop_broker::classname=object;
 
     if(nostdio) {
         popc_close(0);
@@ -163,7 +163,7 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
         popc_open("/dev/null",O_RDONLY);
 #ifndef NDEBUG
         char fname[256];
-        sprintf(fname,"/tmp/object_%s_%d.log", paroc_broker::classname.c_str(),popc_getpid());
+        sprintf(fname,"/tmp/object_%s_%d.log", pop_broker::classname.c_str(),popc_getpid());
         popc_open(fname,O_WRONLY | O_CREAT,S_IRWXU | S_IRGRP);
         popc_dup2(1,2);
 #else
@@ -176,13 +176,13 @@ paroc_broker * paroc_broker_factory::Create(int *argc, char ***argv) {
 }
 
 
-void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
+void pop_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
     if(!longformat) {
         printf("List of parallel object classes:\n====\n");
     }
     if(brokerlist) {
         for(auto& t : *brokerlist){
-            if(!(paroc_broker_factory::CheckIfPacked!=nullptr && !paroc_broker_factory::CheckIfPacked(t.objname.c_str()))) {
+            if(!(pop_broker_factory::CheckIfPacked!=nullptr && !pop_broker_factory::CheckIfPacked(t.objname.c_str()))) {
                 if(longformat) {
                     printf("%s %s %s\n", t.objname.c_str(), paroc_system::platform.c_str(), abspath);
                 } else {
@@ -197,12 +197,12 @@ void paroc_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
 }
 
 /* note: this coded existed in the pseudodynamic version of the code but is now disabled.
-void paroc_broker_factory::PrintBrokersMPI(const char *abspath) {
+void pop_broker_factory::PrintBrokersMPI(const char *abspath) {
     if(brokerlist!=nullptr) {
         POSITION pos=brokerlist->GetHeadPosition();
         while(pos!=nullptr) {
-            paroc_broker_init &t=brokerlist->GetNext(pos);
-            if(!(paroc_broker_factory::CheckIfPacked!=nullptr && !paroc_broker_factory::CheckIfPacked(t.objname))) {
+            pop_broker_init &t=brokerlist->GetNext(pos);
+            if(!(pop_broker_factory::CheckIfPacked!=nullptr && !pop_broker_factory::CheckIfPacked(t.objname))) {
                 printf("-host localhost -np 1 %s -mpi -object=%s\n", abspath, (const char *)t.objname);
             }
         }

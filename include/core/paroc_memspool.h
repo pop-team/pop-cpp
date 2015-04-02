@@ -16,7 +16,7 @@
 #include <vector>
 #include <stdlib.h>
 
-#include "paroc_interface.h"
+#include "pop_interface.h"
 
 typedef void * VOIDPTR;
 
@@ -47,10 +47,10 @@ private:
     T *data;
 };
 
-template <class T> class paroc_interface_container {
+template <class T> class pop_interface_container {
 public:
-    paroc_interface_container(int count);
-    ~paroc_interface_container();
+    pop_interface_container(int count);
+    ~pop_interface_container();
     inline operator T *();
 private:
     T *data;
@@ -75,16 +75,16 @@ paroc_container<T>::operator T* () {
 }
 
 template<class T>
-paroc_interface_container<T>::paroc_interface_container(int count) {
+pop_interface_container<T>::pop_interface_container(int count) {
     data=(count>0)? reinterpret_cast<T *>(malloc(count*sizeof(T))) : NULL;
     n=count;
     for(T *tmp=data; count>0; count--, tmp++) {
-        new(tmp) T(paroc_interface::_paroc_nobind);
+        new(tmp) T(pop_interface::_paroc_nobind);
     }
 }
 
 template<class T>
-paroc_interface_container<T>::~paroc_interface_container() {
+pop_interface_container<T>::~pop_interface_container() {
     if(n>0) {
         for(T *tmp=data; n>0; n--, tmp++) {
             tmp->~T();
@@ -95,7 +95,7 @@ paroc_interface_container<T>::~paroc_interface_container() {
 typedef paroc_memspool POPMemspool;
 
 template<class T>
-paroc_interface_container<T>::operator T*() {
+pop_interface_container<T>::operator T*() {
     return data;
 }
 

@@ -12,7 +12,7 @@
 
 #include "popc_intface.h"
 
-#include "paroc_interface.h"
+#include "pop_interface.h"
 #include "popc_buffer_xdr_mpi.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"

@@ -16,8 +16,8 @@ The Job service can pass to a parallel object environment by:
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "paroc_broker.h"
-#include "paroc_broker_factory.h"
+#include "pop_broker.h"
+#include "pop_broker_factory.h"
 
 #include "appservice.ph"
 #include "pop_buffer_factory_finder.h"
@@ -56,13 +56,13 @@ int main(int argc, char **argv) {
             return 1;
         }
     }
-    paroc_broker_factory::CheckIfPacked=&CheckIfPacked; // transmit the address of the check function to broker factory
-    paroc_broker *br=paroc_broker_factory::Create(&argc,&argv);
+    pop_broker_factory::CheckIfPacked=&CheckIfPacked; // transmit the address of the check function to broker factory
+    pop_broker *br=pop_broker_factory::Create(&argc,&argv);
     if(br==NULL) {
         status=1;
     } else if(!br->Initialize(&argc, &argv)) {
         //Initialize broker...
-        printf("Fail to initialize the broker for class %s\n",(const char *)paroc_broker::classname);
+        printf("Fail to initialize the broker for class %s\n",(const char *)pop_broker::classname);
         status=1;
     }
 
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
         buf->Pop();
 
         buf->Push("address","pop_accesspoint",1);
-        paroc_broker::accesspoint.Serialize(*buf,true);
+        pop_broker::accesspoint.Serialize(*buf,true);
         buf->Pop();
 
         bool ret=buf->Send(*callback);
@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
             return 1;
         }
     } else if(status==0) {
-        fprintf(stdout, "%s\n", (const char *)paroc_broker::accesspoint.GetAccessString());
+        fprintf(stdout, "%s\n", (const char *)pop_broker::accesspoint.GetAccessString());
     }
     char *cwd=paroc_utils::checkremove(&argc,&argv,"-cwd=");
     if(cwd!=NULL) {

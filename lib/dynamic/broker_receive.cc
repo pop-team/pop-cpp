@@ -12,7 +12,7 @@
 
 /*
   Deeply need refactoring:
-    POPC_Broker instead of paroc_broker
+    POPC_Broker instead of pop_broker
  */
 
 #include "popc_intface.h"
@@ -20,8 +20,8 @@
 #include <iostream>
 #include <fstream>
 
-#include "paroc_broker.h"
-#include "paroc_interface.h"
+#include "pop_broker.h"
+#include "pop_interface.h"
 #include "paroc_event.h"
 #include "pop_buffer_factory.h"
 #include "pop_buffer_factory_finder.h"
@@ -29,13 +29,13 @@
 #include "popc_logger.h"
 
 bool NewConnection(void *dat, pop_connection *conn) {
-    paroc_broker *br = (paroc_broker *)dat;
+    pop_broker *br = (pop_broker *)dat;
     return br->OnNewConnection(conn);
 }
 
 
 bool CloseConnection(void *dat, pop_connection *conn) {
-    paroc_broker *br = (paroc_broker*)dat;
+    pop_broker *br = (pop_broker*)dat;
     return br->OnCloseConnection(conn);
 }
 
@@ -43,7 +43,7 @@ bool CloseConnection(void *dat, pop_connection *conn) {
 /**
  * Receive request and put request in the FIFO
  */
-void paroc_broker::ReceiveThread(pop_combox *server) { // Receive request and put request in the FIFO
+void pop_broker::ReceiveThread(pop_combox *server) { // Receive request and put request in the FIFO
     server->SetCallback(COMBOX_NEW, NewConnection, this);
     server->SetCallback(COMBOX_CLOSE, CloseConnection, this);
 
@@ -80,7 +80,7 @@ void paroc_broker::ReceiveThread(pop_combox *server) { // Receive request and pu
             // Register the request to be served by the broker serving thread
             RegisterRequest(req);
         } catch(std::exception &e) {
-            LOG_WARNING("Exception in paroc_broker::ReceiveThread: %s", e.what());
+            LOG_WARNING("Exception in pop_broker::ReceiveThread: %s", e.what());
             if(req.data != nullptr) {
                 delete req.data;
             }
@@ -88,12 +88,12 @@ void paroc_broker::ReceiveThread(pop_combox *server) { // Receive request and pu
             break;
         }
     }
-    LOG_DEBUG("Exiting receive thread %s", paroc_broker::accesspoint.GetAccessString().c_str());
+    LOG_DEBUG("Exiting receive thread %s", pop_broker::accesspoint.GetAccessString().c_str());
     server->Close();
 }
 
 
-bool paroc_broker::ReceiveRequest(pop_combox *server, paroc_request &req) {
+bool pop_broker::ReceiveRequest(pop_combox *server, paroc_request &req) {
     server->SetTimeout(-1);
     while(1) {
         // Waiting for a new connection or a new request
@@ -137,7 +137,7 @@ bool paroc_broker::ReceiveRequest(pop_combox *server, paroc_request &req) {
 }
 
 
-void paroc_broker::RegisterRequest(paroc_request &req) {
+void pop_broker::RegisterRequest(paroc_request &req) {
     //Check if mutex is waiting/executing...
     int type = req.methodId[2];
 
@@ -193,7 +193,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
     }
 }
 
-bool paroc_broker::OnNewConnection(pop_connection * /*conn*/) {
+bool pop_broker::OnNewConnection(pop_connection * /*conn*/) {
     if(obj != nullptr) {
         obj->AddRef();
     }
@@ -203,7 +203,7 @@ bool paroc_broker::OnNewConnection(pop_connection * /*conn*/) {
 /**
  * This method is called when a connection with an interface is closed.
  */
-bool paroc_broker::OnCloseConnection(pop_connection * /*conn*/) {
+bool pop_broker::OnCloseConnection(pop_connection * /*conn*/) {
     if(obj != nullptr) {
         int ret = obj->DecRef();
         if(ret <= 0) {
@@ -214,11 +214,11 @@ bool paroc_broker::OnCloseConnection(pop_connection * /*conn*/) {
 }
 
 
-paroc_object * paroc_broker::GetObject() {
+paroc_object * pop_broker::GetObject() {
     return obj;
 }
 
-bool paroc_broker::ParocCall(paroc_request &req) {
+bool pop_broker::ParocCall(paroc_request &req) {
     if(req.methodId[1] >= 10) {
         LOG_DEBUG_T("BRK_R", "Methodid >= 10");
         return false;

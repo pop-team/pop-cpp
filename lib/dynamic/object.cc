@@ -17,9 +17,9 @@
 
 #include "paroc_object.h"
 #include "paroc_mutex.h"
-#include "paroc_interface.h"
+#include "pop_interface.h"
 #include "paroc_event.h"
-#include "paroc_broker.h"
+#include "pop_broker.h"
 #include "paroc_system.h"
 
 #ifndef POP_PSEUDO
@@ -38,7 +38,7 @@ paroc_object::paroc_object() {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.ManageObject(myself);
         } catch(std::exception &e) {
-            LOG_WARNING("Can not register %s@%s to ObjectMonitor service: %s",paroc_broker::classname.c_str(), myself.GetAccessString().c_str(), e.what());
+            LOG_WARNING("Can not register %s@%s to ObjectMonitor service: %s",pop_broker::classname.c_str(), myself.GetAccessString().c_str(), e.what());
         }
 #endif
     }
@@ -54,22 +54,22 @@ paroc_object::~paroc_object() {
             tmp.UnManageObject(myself);
         } catch(std::exception &e) {
             // Did not find the object to unregister V1.3.1m: suppress error mess. V3.0 log as debug
-            LOG_DEBUG("Can not unregister %s@%s from ObjectMonitor service: %s",paroc_broker::classname.c_str(), myself.GetAccessString().c_str(), e.what());
+            LOG_DEBUG("Can not unregister %s@%s from ObjectMonitor service: %s",pop_broker::classname.c_str(), myself.GetAccessString().c_str(), e.what());
         }
     }
 #endif
 }
 
 const pop_accesspoint & paroc_object::GetAccessPoint() const {
-    return paroc_broker::accesspoint;
+    return pop_broker::accesspoint;
 }
 
 /**
  * Get the accesspoint of the parallel object and set the _noaddref variavle to TRUE
  */
 const pop_accesspoint & paroc_object::GetAccessPointForThis() {
-    paroc_broker::accesspoint.SetNoAddRef();
-    return paroc_broker::accesspoint;
+    pop_broker::accesspoint.SetNoAddRef();
+    return pop_broker::accesspoint;
 }
 
 int paroc_object::GetRefCount() {

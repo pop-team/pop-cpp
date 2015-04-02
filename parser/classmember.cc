@@ -174,7 +174,7 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
             return false;
         }
         if(base->IsParClass()) {
-            strcat(output,"(paroc_interface::_paroc_nobind)");
+            strcat(output,"(pop_interface::_paroc_nobind)");
         }
         strcat(output,";\n");
         reformat=true;
@@ -183,7 +183,7 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
             return false;
         }
         if(mytype->IsParClass()) {
-            strcat(output,"(paroc_interface::_paroc_nobind)");
+            strcat(output,"(pop_interface::_paroc_nobind)");
         }
         reformat=false;
         strcat(output,";\n");
@@ -197,7 +197,7 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
             base->GetDeclaration(nullptr,basetype);
 
             if(nptr==1 && base->IsParClass()) {
-                snprintf(decl, sizeof(decl), "paroc_interface_container<%s> __paroc_container_%s(%s);\n%s =__paroc_container_%s;\n", basetype,name,paramSize,name,name);
+                snprintf(decl, sizeof(decl), "pop_interface_container<%s> __paroc_container_%s(%s);\n%s =__paroc_container_%s;\n", basetype,name,paramSize,name,name);
             } else {
                 char tmpstr[1024];
                 strcpy(tmpstr,base->GetName());
@@ -314,7 +314,7 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
             base->GetDeclaration(nullptr,basetype);
 
             if(nptr==1 && base->IsParClass()) {
-                sprintf(alloccode, "paroc_interface_container<%s> __paroc_container_%s(__paroc_size2_%s);\n %s=__paroc_container_%s;\n", basetype,name,name,name, name);
+                sprintf(alloccode, "pop_interface_container<%s> __paroc_container_%s(__paroc_size2_%s);\n %s=__paroc_container_%s;\n", basetype,name,name,name, name);
             } else {
                 //        sprintf(alloccode, "paroc_container<typeof(*%s)> __paroc_container_%s(%s,__paroc_size2_%s);\n", name,name,name,name);
                 char tmpstr[1024];
@@ -1189,9 +1189,9 @@ void Method::GenerateBroker(std::string &output) {
 
             if(returnparam.GetType()->IsParClass()) {
                 if(GetClass()->is_collective()) {
-                    sprintf(methodcall,"\n%s(paroc_interface::_paroc_nobind);\n    %s%s * _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    %s=_popc_object->%s(",retdecl, clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, tmpvar, name);
+                    sprintf(methodcall,"\n%s(pop_interface::_paroc_nobind);\n    %s%s * _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    %s=_popc_object->%s(",retdecl, clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, tmpvar, name);
                 } else {
-                    sprintf(methodcall,"\n%s(paroc_interface::_paroc_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(", retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
+                    sprintf(methodcall,"\n%s(pop_interface::_paroc_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(", retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
                 }
             } else {
                 if(GetClass()->is_collective()) {
@@ -1533,7 +1533,7 @@ void Constructor::GenerateClientPrefixBody(std::string &output) {
          */
         strcpy(tmpcode, "");
         od.Generate(tmpcode);   // Generates the object description
-        strcat(tmpcode,"\nAllocate();");    // Generates call to the Allocate method of paroc_interface
+        strcat(tmpcode,"\nAllocate();");    // Generates call to the Allocate method of pop_interface
         output += tmpcode;
 
         // Generates invocation to the constructor of the remote object

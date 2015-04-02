@@ -17,7 +17,7 @@
 
 /*
   Deeply need refactoring:
-    POPC_Interface instead of paroc_interface
+    POPC_Interface instead of pop_interface
  */
 
 #include "popc_intface.h"
@@ -29,9 +29,9 @@
 #include <fstream>
 #include <sstream>
 
-#include "paroc_interface.h"
+#include "pop_interface.h"
 #include "pop_buffer_factory_finder.h"
-#include "paroc_broker.h"
+#include "pop_broker.h"
 #include "pop_combox_factory.h"
 #include "paroc_system_mpi.h"
 #include "paroc_utils.h"
@@ -46,17 +46,17 @@
 #endif
 
 
-pop_accesspoint paroc_interface::_paroc_nobind;
+pop_accesspoint pop_interface::_paroc_nobind;
 
 //binding time out in miliseconds
-int paroc_interface::paroc_bind_timeout=10000;
-int paroc_interface::batchindex=0;
-int paroc_interface::batchsize=0;
-pop_accesspoint * paroc_interface::batchaccesspoint=NULL;
+int pop_interface::paroc_bind_timeout=10000;
+int pop_interface::batchindex=0;
+int pop_interface::batchsize=0;
+pop_accesspoint * pop_interface::batchaccesspoint=NULL;
 
-//paroc_interface base class
+//pop_interface base class
 
-paroc_interface::paroc_interface() : __pop_combox(NULL), __paroc_buf(NULL) {
+pop_interface::pop_interface() : __pop_combox(NULL), __paroc_buf(NULL) {
     LOG_DEBUG("Create interface for class %s (OD secure:%s)", ClassName(), (od.isSecureSet())?"true":"false");
 
     if(od.isSecureSet()) {
@@ -69,7 +69,7 @@ paroc_interface::paroc_interface() : __pop_combox(NULL), __paroc_buf(NULL) {
     //_popc_async_construction_thread=NULL;
 }
 
-paroc_interface::paroc_interface(const pop_accesspoint &p) {
+pop_interface::pop_interface(const pop_accesspoint &p) {
     LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     _ssh_tunneling = false;
     __pop_combox = NULL;
@@ -90,7 +90,7 @@ paroc_interface::paroc_interface(const pop_accesspoint &p) {
     }
 }
 
-paroc_interface::paroc_interface(const paroc_interface &inf) {
+pop_interface::pop_interface(const pop_interface &inf) {
     LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)", inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     pop_accesspoint infAP = inf.GetAccessPoint();
     _ssh_tunneling=false;
@@ -112,12 +112,12 @@ paroc_interface::paroc_interface(const paroc_interface &inf) {
 /**
  * Interface destructor
  */
-paroc_interface::~paroc_interface() {
+pop_interface::~pop_interface() {
     LOG_DEBUG("Destroy interface %s", ClassName());
     Release();
 }
 
-paroc_interface & paroc_interface::operator = (const paroc_interface & obj) {
+pop_interface & pop_interface::operator = (const pop_interface & obj) {
     //  __pop_combox = NULL;
     //  __paroc_buf = NULL;
     LOG_DEBUG("Bind");
@@ -136,33 +136,33 @@ paroc_interface & paroc_interface::operator = (const paroc_interface & obj) {
     return (*this);
 }
 
-void paroc_interface::SetOD(const paroc_od &myod) {
+void pop_interface::SetOD(const paroc_od &myod) {
     od = myod;
 }
 
-const paroc_od & paroc_interface::GetOD() const {
+const paroc_od & pop_interface::GetOD() const {
     return od;
 }
 
 
-// const char * paroc_interface::GetResource() const
+// const char * pop_interface::GetResource() const
 // {
 //   return resource;
 // }
 
-const pop_accesspoint &  paroc_interface::GetAccessPoint() const {
+const pop_accesspoint &  pop_interface::GetAccessPoint() const {
     return accesspoint;
 }
 
 /**
  * Get the accesspoint of the parallel object and set the _noaddref variable to TRUE
  */
-const pop_accesspoint &  paroc_interface::GetAccessPointForThis() {
+const pop_accesspoint &  pop_interface::GetAccessPointForThis() {
     accesspoint.SetNoAddRef();
     return accesspoint;
 }
 
-void paroc_interface::Serialize(pop_buffer &buf, bool pack) {
+void pop_interface::Serialize(pop_buffer &buf, bool pack) {
 
     buf.Push("od", "paroc_od", 1);
     od.Serialize(buf, pack);
@@ -204,17 +204,17 @@ void paroc_interface::Serialize(pop_buffer &buf, bool pack) {
     }
 }
 
-paroc_od paroc_interface::get_object_description() {
+paroc_od pop_interface::get_object_description() {
     return od;
 }
 
 // note by LWK: Added this method in pseudodynamic for simplification reasons: the header files should be identical
-void paroc_interface::allocate_only() {
+void pop_interface::allocate_only() {
     Allocate();
 }
 
 // note LWK: In the future the Allocate method should use allocators and allocators factories. Just as in the dynamic version
-void paroc_interface::Allocate() {
+void pop_interface::Allocate() {
     LOG_DEBUG("INTERFACE: Allocate start");
     Release();
     std::string protocol = od.getProtocol();
@@ -268,7 +268,7 @@ void paroc_interface::Allocate() {
 /**
  *
  */
-void paroc_interface::Bind(const pop_accesspoint &dest) {
+void pop_interface::Bind(const pop_accesspoint &dest) {
     if(dest.IsEmpty()) {
         Release();
         return;
@@ -323,7 +323,7 @@ void paroc_interface::Bind(const pop_accesspoint &dest) {
     paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName(), "Cannot find suitable protocol");
 }
 
-void paroc_interface::Bind(const char *dest) {
+void pop_interface::Bind(const char *dest) {
     LOG_DEBUG("INTERFACE: Bind (%s) - %s", ClassName(), dest);
     Release();
     if(!dest || *dest==0) {
@@ -399,7 +399,7 @@ void paroc_interface::Bind(const char *dest) {
     __pop_combox->SetTimeout(-1);
 }
 
-bool paroc_interface::TryLocal(pop_accesspoint &objaccess) {
+bool pop_interface::TryLocal(pop_accesspoint &objaccess) {
     LOG_DEBUG("INTERFACE: TryLocal start");
     std::string hostname(od.getURL());
     // const std::string& rarch(od.getArch());
@@ -443,7 +443,7 @@ bool paroc_interface::TryLocal(pop_accesspoint &objaccess) {
 }
 
 
-void paroc_interface::Release() {
+void pop_interface::Release() {
 
     if(__pop_combox!=NULL) {
         pop_connection* conn = __pop_combox->get_connection();
@@ -463,7 +463,7 @@ void paroc_interface::Release() {
 }
 
 
-bool paroc_interface::isBinded() {
+bool pop_interface::isBinded() {
     if(__pop_combox == NULL || __paroc_buf == NULL) {
         return false;
     }
@@ -471,7 +471,7 @@ bool paroc_interface::isBinded() {
 }
 
 // ParocCall
-void paroc_interface::BindStatus(int &code, std::string &platform, std::string &info) {
+void pop_interface::BindStatus(int &code, std::string &platform, std::string &info) {
     if(!__pop_combox || !__paroc_buf) {
         return;
     }
@@ -500,7 +500,7 @@ void paroc_interface::BindStatus(int &code, std::string &platform, std::string &
 }
 
 
-int paroc_interface::AddRef() {
+int pop_interface::AddRef() {
     if(!__pop_combox || !__paroc_buf) {
         LOG_WARNING("AddRef cannot be called");
         return -1;
@@ -522,7 +522,7 @@ int paroc_interface::AddRef() {
     return ret;
 }
 
-int paroc_interface::DecRef() {
+int pop_interface::DecRef() {
     if(!__pop_combox || !__paroc_buf) {
         LOG_WARNING("DecRef cannot be called");
         return -1;
@@ -545,7 +545,7 @@ int paroc_interface::DecRef() {
 }
 
 
-bool paroc_interface::Encoding(std::string encoding) {
+bool pop_interface::Encoding(std::string encoding) {
     if(!__pop_combox || !__paroc_buf) {
         LOG_WARNING("Encoding cannot be called");
         return false;
@@ -586,7 +586,7 @@ bool paroc_interface::Encoding(std::string encoding) {
     return ret;
 }
 
-void paroc_interface::Kill() {
+void pop_interface::Kill() {
     if(!__pop_combox) {
         LOG_WARNING("Kill cannot be called");
         return;
@@ -604,7 +604,7 @@ void paroc_interface::Kill() {
     Release();
 }
 
-bool paroc_interface::ObjectActive() {
+bool pop_interface::ObjectActive() {
     if(!__pop_combox || !__paroc_buf) {
         LOG_DEBUG("ObjectActive cannot be called");
         return false;
@@ -626,7 +626,7 @@ bool paroc_interface::ObjectActive() {
     return ret;
 }
 #ifdef OD_DISCONNECT
-bool paroc_interface::RecvCtrl() {
+bool pop_interface::RecvCtrl() {
     int  time_alive;
     int  time_control;
     int oldTimeout = __pop_combox->GetTimeout();
@@ -671,7 +671,7 @@ bool paroc_interface::RecvCtrl() {
 }
 #endif
 
-void paroc_interface::NegotiateEncoding(std::string &enclist, std::string &peerplatform) {
+void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerplatform) {
     LOG_DEBUG("INTERFACE: Negotiate encoding start");
     std::string pref = od.getEncoding();
 
@@ -717,7 +717,7 @@ void paroc_interface::NegotiateEncoding(std::string &enclist, std::string &peerp
 
 
 
-int paroc_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const pop_accesspoint & /*jobserv*/, const pop_accesspoint &appserv, pop_accesspoint *objaccess, int /*howmany*/, const paroc_od& od) {
+int pop_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const pop_accesspoint & /*jobserv*/, const pop_accesspoint &appserv, pop_accesspoint *objaccess, int /*howmany*/, const paroc_od& od) {
     if(codefile==NULL) {
         return ENOENT;
     }
@@ -973,7 +973,7 @@ int paroc_interface::LocalExec(const char *hostname, const char *codefile, const
     return 0;
 }
 
-std::vector<std::string> paroc_interface::Tokenize(const std::string &s) {
+std::vector<std::string> pop_interface::Tokenize(const std::string &s) {
     if(s.empty()) {
         return {};
     }
@@ -982,7 +982,7 @@ std::vector<std::string> paroc_interface::Tokenize(const std::string &s) {
     return tokens;
 }
 
-void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<std::string>& accesslist) {
+void pop_interface::ApplyCommPattern(const std::string& pattern, std::vector<std::string>& accesslist) {
     if(pattern.empty()) {
         return;
     }
@@ -1016,7 +1016,7 @@ void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<s
 /**
  * Send the current request in the buffer to the endpoint designated by the connection
  */
-void paroc_interface::popc_send_request(pop_buffer *buf, pop_connection* conn) {
+void pop_interface::popc_send_request(pop_buffer *buf, pop_connection* conn) {
     if(!buf->Send((*__pop_combox), conn)) {
         paroc_exception::paroc_throw("Buffer send failed");
     }
@@ -1026,7 +1026,7 @@ void paroc_interface::popc_send_request(pop_buffer *buf, pop_connection* conn) {
 /**
  * Get the response from the endpoint designated by the connection
  */
-void paroc_interface::popc_get_response(pop_buffer *buf, pop_connection* conn) {
+void pop_interface::popc_get_response(pop_buffer *buf, pop_connection* conn) {
     if(!buf->Recv((*__pop_combox), conn)) {
         paroc_exception::paroc_throw("Buffer receive failed");
     }
@@ -1054,7 +1054,7 @@ void paroc_interface::popc_get_response(pop_buffer *buf, pop_connection* conn) {
  * @param local_port Local port of the SSH Tunnel
  * @return PID of the SSH Tunnel on success, -1 if the SSH Tunnel can't be created
  */
-int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port) {
+int pop_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port) {
     LOG_CORE("Create tunnel");
     //Save the SSH Tunnel information
     _ssh_user.erase(_ssh_user.begin(), _ssh_user.end());
@@ -1112,7 +1112,7 @@ int paroc_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int 
  * @param local_port Local port of the SSH Tunnel
  * @return PID if the proccess is killed, -1 if the method can't find the SSH Tunnel PID, -2 if the method can't read the PID
  */
-int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port) {
+int pop_interface::KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port) {
     LOG_CORE("Kill SSH");
     _ssh_tunneling = false;
     if(dest_ip == NULL) {
@@ -1150,7 +1150,7 @@ int paroc_interface::KillSSHTunnel(const char *user, const char *dest_ip, int de
  * @param local_port Local port of the SSH Tunnel
  * @return TRUE if the SSH Tunnel is alive, FALSE if the SSH Tunnel is not alive
  */
-bool paroc_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, int dest_port, int local_port) {
+bool pop_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, int dest_port, int local_port) {
     std::ostringstream cmd;
     int BUF_SIZE=6;
     char res[BUF_SIZE];

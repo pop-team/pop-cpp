@@ -17,9 +17,9 @@
 #include "paroc_exception.h"
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
-#include "paroc_broker.h"
+#include "pop_broker.h"
 #include "paroc_utils.h"
-#include "paroc_interface.h"
+#include "pop_interface.h"
 
 #include "codemgr.ph"
 #include "batchmgr.ph"
@@ -65,13 +65,13 @@ std::string socket_allocator_service::allocate(std::string& objectname, paroc_od
     try {
         JobCoreService resources(jobcontact);
         int ret;
-        /*if (paroc_interface::batchindex==0 && paroc_interface::batchsize>1)
+        /*if (pop_interface::batchindex==0 && pop_interface::batchsize>1)
         {
                 if (batchaccesspoint!=NULL) delete [] batchaccesspoint;
-                batchaccesspoint=new pop_accesspoint[paroc_interface::batchsize];
+                batchaccesspoint=new pop_accesspoint[pop_interface::batchsize];
         //TODO put an other array than batchaccesspoint
-                ret=resources.CreateObject(paroc_system::appservice,objectname,od, paroc_interface::batchsize,  batchaccesspoint, paroc_interface::batchsize, batchaccesspoint);
-                if (ret==0) objectaddress=batchaccesspoint[paroc_interface::batchindex++];
+                ret=resources.CreateObject(paroc_system::appservice,objectname,od, pop_interface::batchsize,  batchaccesspoint, pop_interface::batchsize, batchaccesspoint);
+                if (ret==0) objectaddress=batchaccesspoint[pop_interface::batchindex++];
         }
         else{*/
         ret=resources.CreateObject(paroc_system::appservice,objectname,od, 1,  &objectaddress, 1, &remotejobcontact);

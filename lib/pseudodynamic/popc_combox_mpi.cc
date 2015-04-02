@@ -15,7 +15,7 @@
 
 
 #include "popc_combox_mpi.h"
-#include "paroc_broker.h"
+#include "pop_broker.h"
 
 
 
@@ -102,7 +102,7 @@ bool popc_combox_mpi::Connect(const char *url) {
  *
  */
 bool popc_combox_mpi::connect_and_die(std::string &url) {
-    std::string tmp(paroc_broker::accesspoint.GetAccessString());
+    std::string tmp(pop_broker::accesspoint.GetAccessString());
 
     // Substring the url to make the two phases connection
     std::string full_accesspoint(url);

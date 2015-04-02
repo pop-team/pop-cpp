@@ -52,7 +52,7 @@
 #define TYPE_EXCEPTION 2
 
 
-class paroc_interface;
+class pop_interface;
 class paroc_exception;
 class pop_combox;
 class pop_connection;
@@ -206,7 +206,7 @@ public:
     static bool SendException(pop_buffer &except, pop_connection *s,double code);
 
     static bool SendException(pop_buffer &except, pop_connection *s, paroc_exception &code);
-    static bool SendException(pop_buffer &except, pop_connection *s, paroc_interface &code);
+    static bool SendException(pop_buffer &except, pop_connection *s, pop_interface &code);
 
     static void CheckAndThrow(pop_buffer &except);
 

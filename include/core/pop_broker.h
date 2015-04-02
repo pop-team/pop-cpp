@@ -66,15 +66,15 @@ struct paroc_class_info {
 typedef std::vector<paroc_class_info> paroc_method_map_list;
 
 /**
- * @class paroc_broker
+ * @class pop_broker
  * @brief Broker declaration for parclass objects, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  */
 
-class paroc_broker {
+class pop_broker {
 public:
-    paroc_broker();
-    virtual ~paroc_broker();
+    pop_broker();
+    virtual ~pop_broker();
 
     //To acquire info of method names....
     //This method is used by the compiler to register method names

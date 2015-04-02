@@ -179,7 +179,7 @@ void AppCoreService::LoadAddOn() {
         pop_accesspoint jobmgr;
         paroc_od od; // Note : the od is empty !
         snprintf(exec, sizeof(exec), "%s -constructor",objfile);
-        if(paroc_interface::LocalExec(NULL,exec, NULL, jobmgr, GetAccessPoint(), &ap,1,od)!=0) {
+        if(pop_interface::LocalExec(NULL,exec, NULL, jobmgr, GetAccessPoint(), &ap,1,od)!=0) {
             LOG_DEBUG("Fail to start the add-on [%s]", buf);
             continue;
         }

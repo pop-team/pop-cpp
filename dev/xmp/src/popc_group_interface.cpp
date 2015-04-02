@@ -17,7 +17,7 @@
 #include "popc_group_interface.h"
 #include "pop_combox_factory.h"
 #include "paroc_exception.h"
-#include "paroc_broker.h"
+#include "pop_broker.h"
 #include "popc_combox_uds.h"
 #include "paroc_system.h"
 #include "popc_group_exception.h"

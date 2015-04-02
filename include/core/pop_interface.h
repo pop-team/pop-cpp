@@ -36,23 +36,23 @@
 
 
 /**
- * @class paroc_interface
+ * @class pop_interface
  * @brief Interface base declaration for parclass objects, used by POP-C++ runtime.
  *
  *
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_interface: paroc_base {
+class pop_interface: paroc_base {
 public:
-    paroc_interface();
-    paroc_interface(const pop_accesspoint &p);
-    paroc_interface(const paroc_interface &inf);
+    pop_interface();
+    pop_interface(const pop_accesspoint &p);
+    pop_interface(const pop_interface &inf);
 
-    virtual ~paroc_interface();
+    virtual ~pop_interface();
 
     //Assign an interface from the others.....
-    paroc_interface & operator = (const paroc_interface &obj);
+    pop_interface & operator = (const pop_interface &obj);
 
     virtual void SetOD(const paroc_od &myod);
     virtual const paroc_od &GetOD() const;
@@ -103,7 +103,7 @@ public:
 
     /**
     * Create a POPC object locally (JobMgr not involved)
-     * This method creates a commands to run the .obj file and execute it with method paroc_interface::Exec
+     * This method creates a commands to run the .obj file and execute it with method pop_interface::Exec
      * @param *hostname Host address or IP. If set the .obj is run via rsh/ssh on this host.
      * @param codefile Name of the .obj executable file
      * @param classname Name of the POPC++ parclass
@@ -141,7 +141,7 @@ public:
     paroc_od get_object_description();
 protected:
     virtual const char *ClassName() {
-        return "paroc_interface";
+        return "pop_interface";
     }
 
     virtual void popc_send_request(pop_buffer *buf, pop_connection* conn);

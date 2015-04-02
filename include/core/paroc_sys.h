@@ -15,10 +15,10 @@
 #include <paroc_base.h>
 
 #include <paroc_mutex.h>
-#include <paroc_interface.h>
+#include <pop_interface.h>
 
-#include <paroc_broker.h>
-#include <paroc_broker_factory.h>
+#include <pop_broker.h>
+#include <pop_broker_factory.h>
 
 #include <pop_buffer.h>
 #include <pop_buffer_utils.h>

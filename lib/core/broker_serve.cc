@@ -12,12 +12,12 @@
 
 /*
   Deeply need refactoring:
-    POPC_Broker instead of paroc_broker
+    POPC_Broker instead of pop_broker
  */
 #include "popc_intface.h"
 
-#include "paroc_broker.h"
-#include "paroc_interface.h"
+#include "pop_broker.h"
+#include "pop_interface.h"
 #include "paroc_event.h"
 #include "paroc_thread.h"
 #include "paroc_system.h"
@@ -27,19 +27,19 @@
 
 class paroc_invokethread: public paroc_thread {
 public:
-    paroc_invokethread(paroc_broker *br, paroc_request &myrequest, int *instanceCount, paroc_condition *execCond);
+    paroc_invokethread(pop_broker *br, paroc_request &myrequest, int *instanceCount, paroc_condition *execCond);
     ~ paroc_invokethread();
     virtual void start() override;
 
 protected:
     paroc_request request;
 
-    paroc_broker *pbroker;
+    pop_broker *pbroker;
     int *pinstanceCount;
     paroc_condition *pcond;
 };
 
-paroc_invokethread::paroc_invokethread(paroc_broker *br, paroc_request &myrequest,  int *instanceCount, paroc_condition *execCond): paroc_thread(false), request(myrequest) {
+paroc_invokethread::paroc_invokethread(pop_broker *br, paroc_request &myrequest,  int *instanceCount, paroc_condition *execCond): paroc_thread(false), request(myrequest) {
     pbroker=br;
     pinstanceCount=instanceCount;
     pcond=execCond;
@@ -66,7 +66,7 @@ void paroc_invokethread::start() {
 
 
 
-bool paroc_broker::GetRequest(paroc_request &req) {
+bool pop_broker::GetRequest(paroc_request &req) {
     paroc_mutex_locker locker(execCond);
 
     //If the queue is empty then wait for the request....
@@ -107,7 +107,7 @@ bool paroc_broker::GetRequest(paroc_request &req) {
     return true;
 }
 
-void paroc_broker::ServeRequest(paroc_request &req) {
+void pop_broker::ServeRequest(paroc_request &req) {
     int type=req.methodId[2];
     if(type & INVOKE_CONC) {
         auto thr= new paroc_invokethread(this,req, &instanceCount,&execCond);
@@ -154,20 +154,20 @@ void paroc_broker::ServeRequest(paroc_request &req) {
     }
 }
 
-void paroc_broker::UnhandledException() {
+void pop_broker::UnhandledException() {
     if(!paroc_system::appservice.IsEmpty()) {
         //char tmp[1024];
         LOG_WARNING("Unhandled exception on %s@%s", classname.c_str(), accesspoint.GetAccessString().c_str());
 //      sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
         /*AppCoreService app(paroc_system::appservice);
         app.Log(tmp);
-        app.UnManageObject(paroc_broker::accesspoint);
+        app.UnManageObject(pop_broker::accesspoint);
         app.KillAll();*/
         state=POPC_STATE_ABORT;
     }
 }
 
-bool paroc_broker::DoInvoke(paroc_request &request) {
+bool pop_broker::DoInvoke(paroc_request &request) {
     try {
         if(!Invoke(request.methodId, *request.data, request.from)) {
             LOG_ERROR("Mismatched method was invoked: classid=%d, methodid=%d", request.methodId[0], request.methodId[1]);
@@ -192,11 +192,11 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
     PROPAGATE_EXCEPTION(float)
     PROPAGATE_EXCEPTION(double)
 
-    PROPAGATE_EXCEPTION(paroc_interface)
+    PROPAGATE_EXCEPTION(pop_interface)
 
     PROPAGATE_EXCEPTION(char *)
     catch(paroc_exception *e) {
-        LOG_WARNING("POP-C++ exception in paroc_broker::DoInvoke");
+        LOG_WARNING("POP-C++ exception in pop_broker::DoInvoke");
         if(request.from!=nullptr) {
             std::string extra=e->Info();
             if(e->Info().empty()) {
@@ -211,7 +211,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         }
         delete e;
     } catch(paroc_exception e) {
-        LOG_WARNING("POP-C++ exception in paroc_broker::DoInvoke %s", e.what());
+        LOG_WARNING("POP-C++ exception in pop_broker::DoInvoke %s", e.what());
         if(request.from!=nullptr) {
 
             std::string extra=e.Info();
@@ -226,7 +226,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
             UnhandledException();
         }
     } catch(std::exception *e) {
-        LOG_WARNING("Std exception in paroc_broker::DoInvoke");
+        LOG_WARNING("Std exception in pop_broker::DoInvoke");
         if(request.from != nullptr) {
             paroc_exception  e2=paroc_exception(STD_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
@@ -236,7 +236,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
             UnhandledException();
         }
     } catch(std::exception e) {
-        LOG_WARNING("Std exception in paroc_broker::DoInvoke");
+        LOG_WARNING("Std exception in pop_broker::DoInvoke");
         if(request.from != nullptr) {
             paroc_exception  e2=paroc_exception(STD_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
@@ -245,7 +245,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
             UnhandledException();
         }
     } catch(...) {
-        LOG_WARNING("Unknown exception in paroc_broker::DoInvoke");
+        LOG_WARNING("Unknown exception in pop_broker::DoInvoke");
         if(request.from!=nullptr) {
             paroc_exception e2(UNKNOWN_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString());
@@ -263,7 +263,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
 }
 
 
-bool paroc_broker::Invoke(unsigned method[3], pop_buffer &buf, pop_connection *peer) {
+bool pop_broker::Invoke(unsigned method[3], pop_buffer &buf, pop_connection *peer) {
     paroc_request req;
     req.from=peer;
     memcpy(req.methodId, method, 3*sizeof(unsigned));
