@@ -62,15 +62,15 @@ void broker_interupt(int /*sig*/) {
 
 class paroc_receivethread: public paroc_thread {
 public:
-    paroc_receivethread(paroc_broker *br, paroc_combox *com);
+    paroc_receivethread(paroc_broker *br, pop_combox *com);
     ~paroc_receivethread();
     virtual void start() override;
 protected:
     paroc_broker *broker;
-    paroc_combox *comm;
+    pop_combox *comm;
 };
 
-paroc_receivethread::paroc_receivethread(paroc_broker *br, paroc_combox *combox): paroc_thread(true) {
+paroc_receivethread::paroc_receivethread(paroc_broker *br, pop_combox *combox): paroc_thread(true) {
     broker=br;
     comm=combox;
 }
@@ -91,7 +91,7 @@ void paroc_receivethread::start() {
 
 //char paroc_broker::myContact[256];
 
-paroc_accesspoint paroc_broker::accesspoint;
+pop_accesspoint paroc_broker::accesspoint;
 std::string paroc_broker::classname;
 
 
@@ -237,7 +237,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
         paroc_od::defaultLocalJob=true;
     }
 
-    auto comboxFactory = paroc_combox_factory::GetInstance();
+    auto comboxFactory = pop_combox_factory::GetInstance();
 
     int comboxCount = comboxFactory->GetCount();
     comboxArray.resize(comboxCount);
@@ -360,8 +360,8 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
 
 
 
-bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
-    paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
+bool paroc_broker::WakeupReceiveThread(pop_combox  *mycombox) {
+    pop_combox_factory *combox_factory = pop_combox_factory::GetInstance();
 
     bool ok=false;
 
@@ -378,7 +378,7 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
     for(auto tok : tokens){
         if(!ok)
             break;
-        paroc_combox *tmp = combox_factory->Create(prot.c_str());
+        pop_combox *tmp = combox_factory->Create(prot.c_str());
         tmp->SetTimeout(100000);
         std::string address = tok;
         if(address.find("uds://") == 0) {
@@ -400,7 +400,7 @@ bool paroc_broker::WakeupReceiveThread(paroc_combox  *mycombox) {
                 paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
                 buffer->Reset();
                 buffer->SetHeader(h);
-                paroc_connection* connection = tmp->get_connection();
+                pop_connection* connection = tmp->get_connection();
                 if(!buffer->Send((*tmp), connection)) {
                     ok = false;
                 } else {

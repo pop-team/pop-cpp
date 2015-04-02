@@ -34,7 +34,7 @@ public:
     virtual void Serialize(POPBuffer &buf, bool pack);
 
     std::string   nodeId;           // node's unique identifier
-    paroc_accesspoint jobmgr;
+    pop_accesspoint jobmgr;
     std::string   operatingSystem;  // node's operating system
     float               power;            // node's compute power in MFlops
     int            cpuSpeed;         // node's cpu speed

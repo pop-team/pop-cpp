@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "paroc_accesspoint.h"
+#include "pop_accesspoint.h"
 #include "appservice.ph"
 
 void Usage() {
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 
     try {
         if(stop) {
-            paroc_accesspoint pt;
+            pop_accesspoint pt;
             pt.SetAccessString(host);
             LOG_INFO("Connecting to %s..." ,host);
             AppCoreService mgr(pt);

@@ -14,54 +14,54 @@
 
 #include "pop_buffer_factory_finder.h"
 
-class paroc_combox;
+class pop_combox;
 class pop_buffer_factory;
 /**
- * @class paroc_connection
+ * @class pop_connection
  * @brief POP-C++ communication abstraction, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_connection {
+class pop_connection {
 public:
-    paroc_connection(paroc_combox *com);
-    paroc_connection(paroc_combox *com, bool init);
-    paroc_connection(paroc_combox *com, pop_buffer_factory *f);
-    virtual ~paroc_connection();
+    pop_connection(pop_combox *com);
+    pop_connection(pop_combox *com, bool init);
+    pop_connection(pop_combox *com, pop_buffer_factory *f);
+    virtual ~pop_connection();
 
     virtual bool is_initial_connection();
 
     virtual void SetBufferFactory(pop_buffer_factory *fact);
     virtual pop_buffer_factory *GetBufferFactory();
 
-    paroc_combox *GetCombox();
+    pop_combox *GetCombox();
 
-    virtual paroc_connection *Clone()=0;
+    virtual pop_connection *Clone()=0;
     virtual void reset()=0;
 
 
 
 protected:
     pop_buffer_factory * fact;
-    paroc_combox *combox;
+    pop_combox *combox;
     bool _is_initial_connection;
 };
 
 
 enum COMBOX_EVENTS {COMBOX_NEW=0, COMBOX_CLOSE=1};
-typedef bool (*COMBOX_CALLBACK)(void *, paroc_connection *);
+typedef bool (*COMBOX_CALLBACK)(void *, pop_connection *);
 
 
 /**
- * @class paroc_combox
+ * @class pop_combox
  * @brief POP-C++ combox, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_combox {
+class pop_combox {
 public:
-    paroc_combox();
-    virtual ~paroc_combox();
+    pop_combox();
+    virtual ~pop_combox();
 
 public:
     virtual bool Create(int port, bool server)=0;
@@ -77,16 +77,16 @@ public:
     virtual bool is_server(){return false;}
 
     virtual int Send(const char *s,int len)=0;
-    virtual int Send(const char *s,int len, paroc_connection *connection)=0;
-    virtual bool SendAck(paroc_connection *conn);
+    virtual int Send(const char *s,int len, pop_connection *connection)=0;
+    virtual bool SendAck(pop_connection *conn);
 
     virtual int Recv(char *s,int len)=0;
-    virtual int Recv(char *s,int len, paroc_connection *connection)=0;
-    virtual bool RecvAck(paroc_connection *conn=0);
+    virtual int Recv(char *s,int len, pop_connection *connection)=0;
+    virtual bool RecvAck(pop_connection *conn=0);
 
-    virtual paroc_connection *Wait()=0;
+    virtual pop_connection *Wait()=0;
 
-    virtual paroc_connection* get_connection()=0;
+    virtual pop_connection* get_connection()=0;
 
     virtual void Close()=0;
 
@@ -104,8 +104,8 @@ public:
     static const char* PROTOCOL_SEPARATOR;
 
 protected:
-    virtual bool OnNewConnection(paroc_connection *conn);
-    virtual bool OnCloseConnection(paroc_connection *conn);
+    virtual bool OnNewConnection(pop_connection *conn);
+    virtual bool OnCloseConnection(pop_connection *conn);
 
 protected:
     int timeout;

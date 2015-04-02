@@ -13,7 +13,7 @@
 #ifndef _POPC_DATAPACK_MARSHAL_H
 #define _POPC_DATAPACK_MARSHAL_H
 
-#include "paroc_combox.h"
+#include "pop_combox.h"
 #include <string>
 #include <vector>
 #include <cassert>
@@ -54,8 +54,8 @@
 
 class paroc_interface;
 class paroc_exception;
-class paroc_combox;
-class paroc_connection;
+class pop_combox;
+class pop_connection;
 /**
  * @class paroc_message_header
  * @author Tuan Anh Nguyen
@@ -172,41 +172,41 @@ public:
     virtual void Pack(const signed char *data, int n)=0;
     virtual void UnPack(signed char *data, int n)=0;
 
-    virtual bool Send(paroc_combox &s, paroc_connection *conn=0)=0;
-    virtual bool Send(paroc_connection *conn);
+    virtual bool Send(pop_combox &s, pop_connection *conn=0)=0;
+    virtual bool Send(pop_connection *conn);
 
-    virtual bool Recv(paroc_combox &s, paroc_connection *conn=0)=0;
-    virtual bool Recv(paroc_connection *conn);
+    virtual bool Recv(pop_combox &s, pop_connection *conn=0)=0;
+    virtual bool Recv(pop_connection *conn);
 
     virtual int get_size()=0;
     virtual char* get_load()=0;
     virtual void load(char* data, int length)=0;
 
 #ifdef OD_DISCONNECT
-    virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0)=0;
+    virtual bool RecvCtrl(pop_combox &s, pop_connection *conn=0)=0;
 #endif
     //Exception stubs...
-    static bool SendException(pop_buffer &except, paroc_connection *s,int code);
-    static bool SendException(pop_buffer &except, paroc_connection *s,unsigned code);
+    static bool SendException(pop_buffer &except, pop_connection *s,int code);
+    static bool SendException(pop_buffer &except, pop_connection *s,unsigned code);
 
-    static bool SendException(pop_buffer &except, paroc_connection *s,long code);
-    static bool SendException(pop_buffer &except, paroc_connection *s,unsigned long code);
+    static bool SendException(pop_buffer &except, pop_connection *s,long code);
+    static bool SendException(pop_buffer &except, pop_connection *s,unsigned long code);
 
-    static bool SendException(pop_buffer &except, paroc_connection *s,short code);
-    static bool SendException(pop_buffer &except, paroc_connection *s,unsigned short code);
+    static bool SendException(pop_buffer &except, pop_connection *s,short code);
+    static bool SendException(pop_buffer &except, pop_connection *s,unsigned short code);
 
-    static bool SendException(pop_buffer &except, paroc_connection *s,bool code);
+    static bool SendException(pop_buffer &except, pop_connection *s,bool code);
 
-    static bool SendException(pop_buffer &except, paroc_connection *s,char code);
-    static bool SendException(pop_buffer &except, paroc_connection *s,unsigned char code);
+    static bool SendException(pop_buffer &except, pop_connection *s,char code);
+    static bool SendException(pop_buffer &except, pop_connection *s,unsigned char code);
 
-    static bool SendException(pop_buffer &except, paroc_connection *s,char* code);
+    static bool SendException(pop_buffer &except, pop_connection *s,char* code);
 
-    static bool SendException(pop_buffer &except, paroc_connection *s,float code);
-    static bool SendException(pop_buffer &except, paroc_connection *s,double code);
+    static bool SendException(pop_buffer &except, pop_connection *s,float code);
+    static bool SendException(pop_buffer &except, pop_connection *s,double code);
 
-    static bool SendException(pop_buffer &except, paroc_connection *s, paroc_exception &code);
-    static bool SendException(pop_buffer &except, paroc_connection *s, paroc_interface &code);
+    static bool SendException(pop_buffer &except, pop_connection *s, paroc_exception &code);
+    static bool SendException(pop_buffer &except, pop_connection *s, paroc_interface &code);
 
     static void CheckAndThrow(pop_buffer &except);
 

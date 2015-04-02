@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     try {
-        paroc_accesspoint job;
+        pop_accesspoint job;
         job.SetAccessString(argv[1]);
         JobMgr tmp(job);
         tmp.dump();

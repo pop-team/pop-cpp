@@ -60,8 +60,8 @@ public :
 
     // Destructor
     ~POPCSearchNode();
-    seq sync void setJobMgrRef(const paroc_accesspoint &jobmgrRef);
-    conc sync paroc_accesspoint getJobMgrRef();
+    seq sync void setJobMgrRef(const pop_accesspoint &jobmgrRef);
+    conc sync pop_accesspoint getJobMgrRef();
     seq  sync void setPOPCSearchNodeId(std::string nodeId);
     conc sync std::string getPOPCSearchNodeId();
     seq  sync void setOperatingSystem(std::string operatingSys);
@@ -95,7 +95,7 @@ public :
     seq sync void deleteNeighbors();
 
     // Node's entry point to propagate request
-    seq async virtual void askResourcesDiscovery(Request req, paroc_accesspoint jobmgr_ac, paroc_accesspoint sender, paroc_accesspoint psm);
+    seq async virtual void askResourcesDiscovery(Request req, pop_accesspoint jobmgr_ac, pop_accesspoint sender, pop_accesspoint psm);
 
     seq sync std::string getNeighborsAsString();
 

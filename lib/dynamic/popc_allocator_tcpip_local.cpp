@@ -15,8 +15,8 @@
 
 #include "paroc_system.h"
 #include "paroc_exception.h"
-#include "paroc_combox.h"
-#include "paroc_combox_factory.h"
+#include "pop_combox.h"
+#include "pop_combox_factory.h"
 #include "paroc_broker.h"
 #include "paroc_utils.h"
 #include "paroc_interface.h"
@@ -118,12 +118,12 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
      * Create a combox to allocate the new parallel object.
      */
 
-    paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+    pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
     if(combox_factory == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
     }
 
-    paroc_combox* tmpsock = combox_factory->Create("socket");
+    pop_combox* tmpsock = combox_factory->Create("socket");
     if(tmpsock == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }
@@ -132,7 +132,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
         paroc_exception::paroc_throw("Creation of socket failed");
     }
 
-    paroc_connection *connection = tmpsock->get_connection();
+    pop_connection *connection = tmpsock->get_connection();
     auto cburl = tmpsock->GetUrl();
     sprintf(tmpstr,"-callback=%s", cburl.c_str());
     argv.push_back(tmpstr);
@@ -207,7 +207,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
         paroc_exception::paroc_throw(err, objectname.c_str(), "Can not start the object");
     }
 
-    //Now get the return paroc_accesspoint....
+    //Now get the return pop_accesspoint....
     tmpsock->SetTimeout(ALLOC_TIMEOUT*1000);
 
     pop_buffer * tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
@@ -229,7 +229,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
     }
 
     std::string objectaddress;
-    tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
+    tmpbuffer->Push("objectaddress","pop_accesspoint",1);
     tmpbuffer->UnPack(&objectaddress, 1);
     tmpbuffer->Pop();
     delete tmpbuffer;
@@ -246,7 +246,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* socket_allocator_local::allocate_group(std::string& objectname, paroc_od& od, int nb) {
+pop_combox* socket_allocator_local::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
     /* Allocation process here */
 

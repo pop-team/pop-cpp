@@ -15,8 +15,8 @@
 
 #include "paroc_system.h"
 #include "paroc_exception.h"
-#include "paroc_combox.h"
-#include "paroc_combox_factory.h"
+#include "pop_combox.h"
+#include "pop_combox_factory.h"
 #include "paroc_broker.h"
 #include "paroc_utils.h"
 #include "paroc_interface.h"
@@ -33,7 +33,7 @@
  * @return A string representation of the access-point
  */
 std::string socket_allocator_service::allocate(std::string& objectname, paroc_od& od) {
-    paroc_accesspoint jobcontact, objectaddress, remotejobcontact;
+    pop_accesspoint jobcontact, objectaddress, remotejobcontact;
 
     //Exec using JobMgr interface...
     std::string platforms = od.getPlatforms();
@@ -68,7 +68,7 @@ std::string socket_allocator_service::allocate(std::string& objectname, paroc_od
         /*if (paroc_interface::batchindex==0 && paroc_interface::batchsize>1)
         {
                 if (batchaccesspoint!=NULL) delete [] batchaccesspoint;
-                batchaccesspoint=new paroc_accesspoint[paroc_interface::batchsize];
+                batchaccesspoint=new pop_accesspoint[paroc_interface::batchsize];
         //TODO put an other array than batchaccesspoint
                 ret=resources.CreateObject(paroc_system::appservice,objectname,od, paroc_interface::batchsize,  batchaccesspoint, paroc_interface::batchsize, batchaccesspoint);
                 if (ret==0) objectaddress=batchaccesspoint[paroc_interface::batchindex++];
@@ -96,7 +96,7 @@ std::string socket_allocator_service::allocate(std::string& objectname, paroc_od
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* socket_allocator_service::allocate_group(std::string& objectname, paroc_od& od, int nb) {
+pop_combox* socket_allocator_service::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
     /* Allocation process here */
 

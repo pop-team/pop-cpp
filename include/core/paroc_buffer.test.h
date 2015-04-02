@@ -9,11 +9,11 @@
 #include "pop_buffer.h"
 #include "pop_buffer_raw.h"
 #include "pop_buffer_xdr.h"
-#include "paroc_combox_factory.h"
+#include "pop_combox_factory.h"
 #include "paroc_exception.h"
 
-template<typename T>void testByVect(pop_buffer* xp_bufferOut, paroc_combox* xp_comboxOut, paroc_connection* xp_connectionOut, 
-                                    pop_buffer* xp_bufferIn,  paroc_combox* xp_comboxIn,  paroc_connection* xp_connectionIn, const std::vector<T>& x_vect){
+template<typename T>void testByVect(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut, 
+                                    pop_buffer* xp_bufferIn,  pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn, const std::vector<T>& x_vect){
 
     for(const auto& elem : x_vect)
     {
@@ -47,8 +47,8 @@ template<typename T>void testByVect(pop_buffer* xp_bufferOut, paroc_combox* xp_c
     }
 }
 
-template<typename T>void testByType(pop_buffer* xp_bufferOut, paroc_combox* xp_comboxOut, paroc_connection* xp_connectionOut, 
-                                    pop_buffer* xp_bufferIn,  paroc_combox* xp_comboxIn,  paroc_connection* xp_connectionIn, const T& x_min, const T& x_max, const T& x_incr){
+template<typename T>void testByType(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut, 
+                                    pop_buffer* xp_bufferIn,  pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn, const T& x_min, const T& x_max, const T& x_incr){
     std::vector<T> vectTest;
     for(T elem = x_min ; elem < x_max ; elem += x_incr)
     {
@@ -62,9 +62,9 @@ class BufferTestSuite : public CxxTest::TestSuite
     protected:
         pop_buffer_raw*   m_bufferRaw;
         pop_buffer_xdr*   m_bufferXdr;
-        paroc_combox*       m_comboxSocketOut;
-        paroc_combox*       m_comboxSocketIn;
-        paroc_connection*   m_connectionSocket;
+        pop_combox*       m_comboxSocketOut;
+        pop_combox*       m_comboxSocketIn;
+        pop_connection*   m_connectionSocket;
         std::vector<bool>        m_vectBool;
         std::vector<std::string> m_vectString;
         std::vector<const char*> m_vectCharArr;
@@ -90,7 +90,7 @@ class BufferTestSuite : public CxxTest::TestSuite
                 m_vectCharArr.push_back(elem.c_str());
 
             // Create combox factory
-            paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
+            pop_combox_factory *fact = pop_combox_factory::GetInstance();
             TS_ASSERT(fact != nullptr);
 
             // Create combox
@@ -111,8 +111,8 @@ class BufferTestSuite : public CxxTest::TestSuite
         }
 
         // Test packing of data in buffer
-        void testBuffer(pop_buffer* xp_bufferOut,  paroc_combox* xp_comboxOut, paroc_connection* xp_connectionOut,
-                        pop_buffer* xp_bufferIn,   paroc_combox* xp_comboxIn,  paroc_connection* xp_connectionIn){
+        void testBuffer(pop_buffer* xp_bufferOut,  pop_combox* xp_comboxOut, pop_connection* xp_connectionOut,
+                        pop_buffer* xp_bufferIn,   pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn){
             TS_TRACE("test int");
             testByType<int>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn, -INT_MAX, INT_MAX / 2, 23456999);
             TS_TRACE("test uint");
@@ -161,8 +161,8 @@ class BufferTestSuite : public CxxTest::TestSuite
 
             pop_buffer& bufIn(*m_comboxSocketIn->GetBufferFactory()->CreateBuffer());
             pop_buffer& bufOut(*m_comboxSocketOut->GetBufferFactory()->CreateBuffer());
-            paroc_connection& connOut(*m_comboxSocketOut->get_connection());
-            paroc_connection& connIn(*m_comboxSocketIn->get_connection());
+            pop_connection& connOut(*m_comboxSocketOut->get_connection());
+            pop_connection& connIn(*m_comboxSocketIn->get_connection());
             // testBuffer(&bufOut, m_comboxSocketOut, &connOut, &bufIn, m_comboxSocketIn, &connIn);
             testBuffer(&bufIn, m_comboxSocketIn, &connIn, &bufOut, m_comboxSocketOut, &connOut);
             */

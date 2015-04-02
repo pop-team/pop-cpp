@@ -16,7 +16,7 @@
 
 class NodeThread : public paroc_thread {
 public:
-    NodeThread(int timeout, const paroc_accesspoint &node, std::string reqid);
+    NodeThread(int timeout, const pop_accesspoint &node, std::string reqid);
     virtual void start();
     virtual void stop();
 private:
@@ -24,5 +24,5 @@ private:
     int _timeout;
     bool _running;
     bool _unlock;
-    paroc_accesspoint _node;
+    pop_accesspoint _node;
 };

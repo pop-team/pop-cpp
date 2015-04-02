@@ -155,7 +155,7 @@ void pop_buffer_raw::CheckUnPack(int sz) {
  * @param conn
  * @return
  */
-bool pop_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
+bool pop_buffer_raw::Send(pop_combox &s, pop_connection *conn) {
     // Pack the header (20 bytes)
     char *dat = packeddata.data();
 
@@ -198,7 +198,7 @@ bool pop_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
 }
 
 // Propagation of exceptions back to caller...
-bool pop_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
+bool pop_buffer_raw::Recv(pop_combox &s, pop_connection *conn) {
     int h[5];
     int n, i;
 
@@ -310,9 +310,9 @@ void pop_buffer_raw::load(char* data, int length) {
 }
 
 #ifdef OD_DISCONNECT
-bool pop_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
+bool pop_buffer_raw::RecvCtrl(pop_combox &s, pop_connection *conn) {
     while(true) {
-        paroc_connection* t = (paroc_connection*) s.Wait();
+        pop_connection* t = (pop_connection*) s.Wait();
         if(!t) {
             paroc_exception::paroc_throw("Remote Object not alive (1)");
         }
@@ -329,7 +329,7 @@ bool pop_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 int unpackposold = unpackpos;
 
                 auto packeddataold = packeddata;
-                auto t = (paroc_connection *) s.Wait();
+                auto t = (pop_connection *) s.Wait();
 
                 if(!t) {
                     paroc_exception::paroc_throw("Remote Object not alive (2)");

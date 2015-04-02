@@ -67,7 +67,7 @@ public:
      * @param service the instance of the service of the given name is returned
      * @return true if the service of given name exists. Othewise, false is return
     */
-    seq sync bool QueryService(const std::string &name, [out] paroc_accesspoint &service);
+    seq sync bool QueryService(const std::string &name, [out] pop_accesspoint &service);
 
     /*!@brief Register a new service to AppCoreService
      * @param name name of the service (string)

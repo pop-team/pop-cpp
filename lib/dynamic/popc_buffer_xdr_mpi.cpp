@@ -367,7 +367,7 @@ void popc_buffer_xdr_mpi::CheckUnPack(int sz) {
     }
 }
 
-bool popc_buffer_xdr_mpi::Send(paroc_combox &s, paroc_connection *conn) {
+bool popc_buffer_xdr_mpi::Send(pop_combox &s, pop_connection *conn) {
     // Pack the header (20 bytes)
     char *dat=packeddata.data();
 
@@ -411,7 +411,7 @@ bool popc_buffer_xdr_mpi::Send(paroc_combox &s, paroc_connection *conn) {
 /**
  *
  */
-bool popc_buffer_xdr_mpi::Recv(paroc_combox &s, paroc_connection *conn) {
+bool popc_buffer_xdr_mpi::Recv(pop_combox &s, pop_connection *conn) {
     int h[5];
     int n, i;
 
@@ -549,9 +549,9 @@ void popc_buffer_xdr_mpi::load(char* data, int length) {
 
 
 #ifdef OD_DISCONNECT
-bool popc_buffer_xdr_mpi::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
+bool popc_buffer_xdr_mpi::RecvCtrl(pop_combox &s, pop_connection *conn) {
     while(true) {
-        paroc_connection * t = (paroc_connection *) s.Wait();
+        pop_connection * t = (pop_connection *) s.Wait();
         if(t == NULL) {
             paroc_exception::paroc_throw("[pop_buffer_xdr.cc] : Remote Object not alive");
         }
@@ -565,7 +565,7 @@ bool popc_buffer_xdr_mpi::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
                 paroc_message_header h = header;
                 int unpackposold = unpackpos;
                 auto packeddataold = packeddata;
-                paroc_connection * t = (paroc_connection *) s.Wait();
+                pop_connection * t = (pop_connection *) s.Wait();
                 if(t == NULL) {
                     paroc_exception::paroc_throw("[pop_buffer_xdr.cc] : Remote Object not alive");
                 }

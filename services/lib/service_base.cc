@@ -35,7 +35,7 @@ void paroc_service_base::Start() {
     daemonMode=true;
 
     if(!paroc_system::appservice.IsEmpty()) {
-        paroc_accesspoint myself=GetAccessPoint();
+        pop_accesspoint myself=GetAccessPoint();
         try {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.UnManageObject(myself);
@@ -92,7 +92,7 @@ JobCoreService::JobCoreService(const std::string &challenge): paroc_service_base
 }
 
 /*
-int JobCoreService::CreateObject(const paroc_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, paroc_accesspoint *objcontacts)
+int JobCoreService::CreateObject(const pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, pop_accesspoint *objcontacts)
 {
   return POPC_JOBSERVICE_FAIL;
 }

@@ -15,8 +15,8 @@
 
 #include "paroc_system.h"
 #include "paroc_exception.h"
-#include "paroc_combox.h"
-#include "paroc_combox_factory.h"
+#include "pop_combox.h"
+#include "pop_combox_factory.h"
 #include "paroc_broker.h"
 #include "popc_logger.h"
 
@@ -52,12 +52,12 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, paro
      * POP-C++ for the K Computer
      * Create a combox to contact the MPI Communicator process to allocate the new parallel object.
      */
-    paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+    pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
     if(combox_factory == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "No combox factory");
     }
 
-    paroc_combox* allocating_combox = combox_factory->Create("uds");
+    pop_combox* allocating_combox = combox_factory->Create("uds");
 
     if(allocating_combox == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "allocating_combox == NULL");
@@ -91,7 +91,7 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, paro
     allocating_buffer->Pack(&core, 1);
     allocating_buffer->Pop();
 
-    paroc_connection* connection = allocating_combox->get_connection();
+    pop_connection* connection = allocating_combox->get_connection();
     if(!allocating_buffer->Send((*allocating_combox), connection)) {
         paroc_exception::paroc_throw("allocating_buffer->Send failed");
     }
@@ -118,7 +118,7 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, paro
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* uds_allocator_interconnector::allocate_group(std::string& objectname, paroc_od& od, int nb) {
+pop_combox* uds_allocator_interconnector::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
     const std::string codefile = od.getExecutable();
 
@@ -133,12 +133,12 @@ paroc_combox* uds_allocator_interconnector::allocate_group(std::string& objectna
     auto  local_interconnector_address = new char[15];
     snprintf(local_interconnector_address, 15, "uds_%d.0", rank);
 
-    paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+    pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
     if(combox_factory == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "ComboxFactory NULL");
     }
 
-    paroc_combox* _popc_combox = combox_factory->Create("uds");
+    pop_combox* _popc_combox = combox_factory->Create("uds");
     if(_popc_combox == nullptr) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "Combox NULL");
     }
@@ -173,7 +173,7 @@ paroc_combox* uds_allocator_interconnector::allocate_group(std::string& objectna
     _popc_buffer->Pack(&nb, 1);
     _popc_buffer->Pop();
 
-    paroc_connection* _popc_connection = _popc_combox->get_connection();
+    pop_connection* _popc_connection = _popc_combox->get_connection();
 
 
     if(!_popc_buffer->Send((*_popc_combox), _popc_connection)) {

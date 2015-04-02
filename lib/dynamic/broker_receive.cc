@@ -28,13 +28,13 @@
 #include "paroc_system.h"
 #include "popc_logger.h"
 
-bool NewConnection(void *dat, paroc_connection *conn) {
+bool NewConnection(void *dat, pop_connection *conn) {
     paroc_broker *br = (paroc_broker *)dat;
     return br->OnNewConnection(conn);
 }
 
 
-bool CloseConnection(void *dat, paroc_connection *conn) {
+bool CloseConnection(void *dat, pop_connection *conn) {
     paroc_broker *br = (paroc_broker*)dat;
     return br->OnCloseConnection(conn);
 }
@@ -43,7 +43,7 @@ bool CloseConnection(void *dat, paroc_connection *conn) {
 /**
  * Receive request and put request in the FIFO
  */
-void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and put request in the FIFO
+void paroc_broker::ReceiveThread(pop_combox *server) { // Receive request and put request in the FIFO
     server->SetCallback(COMBOX_NEW, NewConnection, this);
     server->SetCallback(COMBOX_CLOSE, CloseConnection, this);
 
@@ -93,11 +93,11 @@ void paroc_broker::ReceiveThread(paroc_combox *server) { // Receive request and 
 }
 
 
-bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
+bool paroc_broker::ReceiveRequest(pop_combox *server, paroc_request &req) {
     server->SetTimeout(-1);
     while(1) {
         // Waiting for a new connection or a new request
-        paroc_connection* conn = server->Wait();
+        pop_connection* conn = server->Wait();
 
         // Trouble with the connection
         if(conn == nullptr) {
@@ -193,7 +193,7 @@ void paroc_broker::RegisterRequest(paroc_request &req) {
     }
 }
 
-bool paroc_broker::OnNewConnection(paroc_connection * /*conn*/) {
+bool paroc_broker::OnNewConnection(pop_connection * /*conn*/) {
     if(obj != nullptr) {
         obj->AddRef();
     }
@@ -203,7 +203,7 @@ bool paroc_broker::OnNewConnection(paroc_connection * /*conn*/) {
 /**
  * This method is called when a connection with an interface is closed.
  */
-bool paroc_broker::OnCloseConnection(paroc_connection * /*conn*/) {
+bool paroc_broker::OnCloseConnection(pop_connection * /*conn*/) {
     if(obj != nullptr) {
         int ret = obj->DecRef();
         if(ret <= 0) {

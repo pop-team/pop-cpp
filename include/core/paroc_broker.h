@@ -34,13 +34,13 @@
 #include "paroc_exception.h"
 #include "pop_buffer.h"
 #include "pop_buffer_xdr.h"
-#include "paroc_accesspoint.h"
-#include "paroc_combox_factory.h"
-#include "paroc_combox_socket.h"
+#include "pop_accesspoint.h"
+#include "pop_combox_factory.h"
+#include "pop_combox_socket.h"
 #include "paroc_object.h"
 
 struct paroc_request {
-    paroc_connection *from;
+    pop_connection *from;
     unsigned methodId[3];
     pop_buffer *data;
     void *userdata;
@@ -84,23 +84,23 @@ public:
     const char *FindMethodName(unsigned classID, unsigned methodID);
     bool FindMethodInfo(const char *name, unsigned &classID, unsigned &methodID);
 
-    virtual bool Invoke(unsigned method[3], pop_buffer &buf, paroc_connection *peer);
+    virtual bool Invoke(unsigned method[3], pop_buffer &buf, pop_connection *peer);
 
     virtual int Run();
 
     bool Initialize(int *argc, char ***argv);
-    bool WakeupReceiveThread(paroc_combox *mycombox);
+    bool WakeupReceiveThread(pop_combox *mycombox);
 
-    static paroc_accesspoint accesspoint;
+    static pop_accesspoint accesspoint;
     static std::string classname;
 
 public:
     //Methods for thread that receive requests and put in the fifo list
-    void ReceiveThread(paroc_combox *server); // Receive request and put request in the FIFO
-    virtual bool ReceiveRequest(paroc_combox *server, paroc_request &req);
+    void ReceiveThread(pop_combox *server); // Receive request and put request in the FIFO
+    virtual bool ReceiveRequest(pop_combox *server, paroc_request &req);
     void RegisterRequest(paroc_request&);
-    bool OnNewConnection(paroc_connection *conn);
-    bool OnCloseConnection(paroc_connection *conn);
+    bool OnNewConnection(pop_connection *conn);
+    bool OnCloseConnection(pop_connection *conn);
 
 
     bool ParocCall(paroc_request &req);           //Remote call of Paroc methods
@@ -125,7 +125,7 @@ protected:
     int mutexCount;             // Number of mutex call pending
     int concPendings;           // Number of concurrent call pending
 
-    std::vector<paroc_combox*> comboxArray;
+    std::vector<pop_combox*> comboxArray;
 
     paroc_object *obj;                    // Real object associated with this broker
     paroc_request_fifo_list request_fifo; // Queue storing the request received by the broker

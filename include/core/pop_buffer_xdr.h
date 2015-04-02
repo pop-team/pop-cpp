@@ -68,15 +68,15 @@ public:
     virtual void Pack(const signed char *data, int n);
     virtual void UnPack(signed char *data, int n);
 
-    virtual bool Send(paroc_combox &s, paroc_connection *conn);
-    virtual bool Recv(paroc_combox &s, paroc_connection *conn);
+    virtual bool Send(pop_combox &s, pop_connection *conn);
+    virtual bool Recv(pop_combox &s, pop_connection *conn);
 
     virtual int get_size();
     virtual char* get_load();
     virtual void load(char* data, int length);
 
 #ifdef OD_DISCONNECT
-    virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0);
+    virtual bool RecvCtrl(pop_combox &s, pop_connection *conn=0);
 #endif
 
 protected:

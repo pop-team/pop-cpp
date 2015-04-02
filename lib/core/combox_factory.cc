@@ -12,9 +12,9 @@
 
 /*
   Deeply need refactoring:
-    POPC_ComboxFactory instead of paroc_combox_factory
+    POPC_ComboxFactory instead of pop_combox_factory
 
-  Note by LWK: The factory should generate the parent class paroc_combox and not have 3 different methods for uds, mpi and socket
+  Note by LWK: The factory should generate the parent class pop_combox and not have 3 different methods for uds, mpi and socket
  */
 
 #include <algorithm>
@@ -29,8 +29,8 @@
 #include <dlfcn.h>
 #endif
 
-#include "paroc_combox_factory.h"
-#include "paroc_combox_socket.h"
+#include "pop_combox_factory.h"
+#include "pop_combox_socket.h"
 #include "popc_combox_uds.h"
 #include "paroc_utils.h"
 #ifdef MPI_SUPPORT
@@ -38,29 +38,29 @@
 #include "popc_combox_mpi.h"
 #endif
 
-paroc_combox_registration::paroc_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator) {
-    paroc_combox_factory *f=paroc_combox_factory::GetInstance();
+pop_combox_registration::pop_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator) {
+    pop_combox_factory *f=pop_combox_factory::GetInstance();
     f->Register(name,metrics, creator);
 }
 
-paroc_combox * combox_socket_creator() {
-    return new paroc_combox_socket;
+pop_combox * combox_socket_creator() {
+    return new pop_combox_socket;
 }
 
-paroc_combox* combox_uds_creator() {
+pop_combox* combox_uds_creator() {
     return new popc_combox_uds;
 }
 
 #ifdef MPI_SUPPORT
-paroc_combox * combox_mpi_creator() {
+pop_combox * combox_mpi_creator() {
     return new popc_combox_mpi;
 }
 #endif
 
-paroc_combox_factory *paroc_combox_factory::fact=nullptr;
+pop_combox_factory *pop_combox_factory::fact=nullptr;
 
 
-paroc_combox_factory::paroc_combox_factory() {
+pop_combox_factory::pop_combox_factory() {
     Register("socket", 0, combox_socket_creator);
     Register("uds", 0, combox_uds_creator);
 
@@ -101,7 +101,7 @@ paroc_combox_factory::paroc_combox_factory() {
 
         if(!plugindir.empty()) {
             std::string pluginmap(plugindir);
-            pluginmap+="/paroc_combox.map";
+            pluginmap+="/pop_combox.map";
             FILE *map=fopen(pluginmap.c_str(),"r");
             if(map!=nullptr) {
                 char line[1024];
@@ -153,20 +153,20 @@ paroc_combox_factory::paroc_combox_factory() {
     }
 }
 
-paroc_combox_factory::~paroc_combox_factory() {
+pop_combox_factory::~pop_combox_factory() {
     for(auto& s : list){
         free(s.name);
     }
 }
 
-paroc_combox_factory *paroc_combox_factory::GetInstance() {
+pop_combox_factory *pop_combox_factory::GetInstance() {
     if(fact==nullptr) {
-        fact=new paroc_combox_factory;
+        fact=new pop_combox_factory;
     }
     return fact;
 }
 
-paroc_combox* paroc_combox_factory::Create(const char * name) {
+pop_combox* pop_combox_factory::Create(const char * name) {
     LOG_DEBUG("Create a combox : %s", name);
     if(name == nullptr) {
         return nullptr;
@@ -179,7 +179,7 @@ paroc_combox* paroc_combox_factory::Create(const char * name) {
     return nullptr;
 }
 
-paroc_combox* paroc_combox_factory::Create(int index) {
+pop_combox* pop_combox_factory::Create(int index) {
     if(index<0 || static_cast<std::size_t>(index) >= list.size()) {
         return nullptr;
     }
@@ -187,17 +187,17 @@ paroc_combox* paroc_combox_factory::Create(int index) {
     return list[index].creator();
 }
 
-void paroc_combox_factory::GetNames(std::string &prots) {
+void pop_combox_factory::GetNames(std::string &prots) {
     prots = std::accumulate(
         list.begin(), list.end(), std::string(),
         [](std::string& res, combox_factory_struct& t){ return res + " " + t.name; });
 }
 
-int paroc_combox_factory::GetCount() {
+int pop_combox_factory::GetCount() {
     return list.size();
 }
 
-bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATOR creator) {
+bool pop_combox_factory::Register(const char *name, int metrics, COMBOX_CREATOR creator) {
     LOG_DEBUG("[Combox] Register %s", name);
 
     if(!name || !creator) {
@@ -226,7 +226,7 @@ bool paroc_combox_factory::Register(const char *name, int metrics, COMBOX_CREATO
     return true;
 }
 
-void * paroc_combox_factory::LoadPlugin(char *fname,  std::string &name, COMBOX_CREATOR &f) {
+void * pop_combox_factory::LoadPlugin(char *fname,  std::string &name, COMBOX_CREATOR &f) {
 #ifdef HAVE_LIBDL
     LOG_INFO("Load plugin %s", fname);
     void *handle = popc_dlopen(fname, RTLD_LAZY| RTLD_LOCAL);

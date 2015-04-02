@@ -1,7 +1,7 @@
 #ifndef INCLUDE_POPC_CONNECTION_MPI_H_
 #define INCLUDE_POPC_CONNECTION_MPI_H_
 
-#include "paroc_combox.h"
+#include "pop_combox.h"
 #include <mpi.h>
 
 
@@ -11,13 +11,13 @@
  * @author Valentin Clément
  *
  */
-class POPC_MPIConnection : public paroc_connection {
+class POPC_MPIConnection : public pop_connection {
 public:
-    explicit POPC_MPIConnection(paroc_combox *cb);
+    explicit POPC_MPIConnection(pop_combox *cb);
     explicit POPC_MPIConnection(POPC_MPIConnection &me);
     ~POPC_MPIConnection();
 
-    virtual paroc_connection *Clone();
+    virtual pop_connection *Clone();
 
     void set_communicator(MPI::Intercomm communicator);
     MPI::Intercomm get_communicator();

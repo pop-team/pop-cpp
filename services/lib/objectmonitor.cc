@@ -90,7 +90,7 @@ int ObjectMonitor::CheckObjects(bool pingObjects) {
     }
 }
 
-void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
+void ObjectMonitor::ManageObject(pop_accesspoint &p) {
     mutex {
         const std::string& newstr=p.GetAccessString();
         LOG_DEBUG("Manage object with ap %s", newstr.c_str());
@@ -104,7 +104,7 @@ void ObjectMonitor::ManageObject(paroc_accesspoint &p) {
     }
 }
 
-void ObjectMonitor::UnManageObject(paroc_accesspoint &p) {
+void ObjectMonitor::UnManageObject(pop_accesspoint &p) {
     mutex {
         const std::string& newstr=p.GetAccessString();
         LOG_DEBUG("Unanage object with ap %s", newstr.c_str());

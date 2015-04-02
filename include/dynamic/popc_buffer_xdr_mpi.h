@@ -68,9 +68,9 @@ public:
     virtual void UnPack(signed char *data, int n);
 
     using pop_buffer::Send;
-    virtual bool Send(paroc_combox &s, paroc_connection *conn);
+    virtual bool Send(pop_combox &s, pop_connection *conn);
     using pop_buffer::Recv;
-    virtual bool Recv(paroc_combox &s, paroc_connection *conn);
+    virtual bool Recv(pop_combox &s, pop_connection *conn);
 
     virtual int get_size();
     virtual char* get_load();
@@ -79,7 +79,7 @@ public:
 
 
 #ifdef OD_DISCONNECT
-    virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0);
+    virtual bool RecvCtrl(pop_combox &s, pop_connection *conn=0);
 #endif
 
 protected:

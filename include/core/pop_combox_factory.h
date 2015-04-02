@@ -14,11 +14,11 @@
 
 #include <vector>
 
-#include "paroc_combox.h"
+#include "pop_combox.h"
 
 /*This abstract class declares an interface creating abstract combox*/
 
-typedef paroc_combox* (*COMBOX_CREATOR)();
+typedef pop_combox* (*COMBOX_CREATOR)();
 typedef int (*LOAD_PROTOCOL)(std::string &, COMBOX_CREATOR &);
 
 struct combox_factory_struct {
@@ -32,22 +32,22 @@ struct combox_factory_struct {
 };
 
 /**
- * @class paroc_combox_factory
+ * @class pop_combox_factory
  * @brief Factory that creates a proper combox from the given name, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_combox_factory {
+class pop_combox_factory {
 protected:
-    paroc_combox_factory();
+    pop_combox_factory();
 
 public:
-    ~paroc_combox_factory();
+    ~pop_combox_factory();
 
-    static paroc_combox_factory *GetInstance();
+    static pop_combox_factory *GetInstance();
 
-    paroc_combox* Create(const char * name);
-    paroc_combox* Create(int index);
+    pop_combox* Create(const char * name);
+    pop_combox* Create(int index);
 
     void GetNames(std::string &prots);
     int GetCount();
@@ -57,18 +57,18 @@ public:
     void *LoadPlugin(char *fname,  std::string &name, COMBOX_CREATOR &f);
 
 private:
-    static paroc_combox_factory *fact;
+    static pop_combox_factory *fact;
 
 private:
     std::vector<combox_factory_struct> list;
     std::vector<void *> plugins;
 };
 
-class paroc_combox_registration {
+class pop_combox_registration {
 public:
-    paroc_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator);
+    pop_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator);
 };
 
-#define COMBOX(x) extern paroc_combox_registration x;
+#define COMBOX(x) extern pop_combox_registration x;
 
 #endif // POPC_PROTOCOL_FACTORY_H

@@ -20,7 +20,7 @@
 #include "popc_group_broker.h"
 #include "popc_group_broker_factory.h"
 #include "popc_connection_mpi.h"
-#include "paroc_combox.h"
+#include "pop_combox.h"
 
 
 /**

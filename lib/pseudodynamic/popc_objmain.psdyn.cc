@@ -84,12 +84,12 @@ int main(int argc, char **argv) {
 
     paroc_system sys;
     int status = 0;
-    paroc_combox *callback = NULL;
+    pop_combox *callback = NULL;
     // Connect to callback
     // No need in MPI version, connection is already active and can exchange data
     /*char *addr = paroc_utils::checkremove(&argc, &argv, "-callback=");
     if (addr != NULL) {
-        paroc_combox_factory *combox_factory = paroc_combox_factory::GetInstance();
+        pop_combox_factory *combox_factory = pop_combox_factory::GetInstance();
 
         char *tmp = strstr(addr, "://");
         if (tmp == NULL) {
@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
         int len;
 
         // Connect to the end point
-        paroc_connection* connection = callback->get_connection();
+        pop_connection* connection = callback->get_connection();
 
         pop_buffer *buf = callback->GetBufferFactory()->CreateBuffer();
 
@@ -139,7 +139,7 @@ int main(int argc, char **argv) {
 
         LOG_DEBUG("BROKER: status sent %d", status);
 
-        buf->Push("address", "paroc_accesspoint", 1);
+        buf->Push("address", "pop_accesspoint", 1);
         paroc_broker::accesspoint.Serialize(*buf,true);
         buf->Pop();
 

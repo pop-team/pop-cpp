@@ -12,7 +12,7 @@
 #ifndef POPFILEREADER_H_INCLUDE
 #define POPFILEREADER_H_INCLUDE
 
-#include "paroc_accesspoint.h"
+#include "pop_accesspoint.h"
 #include "popfilebuffer.h"
 #include <list>
 #include <string.h>
@@ -43,10 +43,10 @@ public:
     sync seq void set_offset(long offset);
 
     // Save the associated PFM accesspoint
-    sync seq void set_pfm_accesspoint(paroc_accesspoint ap);
+    sync seq void set_pfm_accesspoint(pop_accesspoint ap);
 
     // Get the associated PFM accesspoint
-    sync seq paroc_accesspoint get_pfm_accesspoint();
+    sync seq pop_accesspoint get_pfm_accesspoint();
 
     // Save the associated strip path
     sync seq void set_strip_path(std::string path);
@@ -62,7 +62,7 @@ public:
 
 private:
     sem_t *pt_read_locker;                  // Semaphor used to wait for data in the read process.
-    paroc_accesspoint pfm_ap;               // Access point of the POPFileManager
+    pop_accesspoint pfm_ap;               // Access point of the POPFileManager
     long current_pos;                           // Current position in the internal buffer
     long pfr_offset;                            // Strip factor used by the POPFStream
     POPFileBuffer* popfilebuffer_ref;   // Reference to the internal buffer

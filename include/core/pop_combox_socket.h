@@ -15,36 +15,36 @@
 #include <vector>
 
 #include "popc_intface.h"
-#include "paroc_combox.h"
+#include "pop_combox.h"
 /**
- * @class paroc_connection_sock
+ * @class pop_connection_sock
  * @brief Socket connection, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_connection_sock: public  paroc_connection {
+class pop_connection_sock: public  pop_connection {
 public:
-    paroc_connection_sock(paroc_combox *cb);
-    paroc_connection_sock(int fd, paroc_combox *cb);
-    paroc_connection_sock(paroc_connection_sock &me);
+    pop_connection_sock(pop_combox *cb);
+    pop_connection_sock(int fd, pop_combox *cb);
+    pop_connection_sock(pop_connection_sock &me);
 
-    virtual paroc_connection *Clone();
+    virtual pop_connection *Clone();
     virtual void reset() {}
 
     int sockfd;
 };
 
 /**
- * @class paroc_combox_socket
+ * @class pop_combox_socket
  * @brief Socket declaration of combox, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_combox_socket:public paroc_combox {
+class pop_combox_socket:public pop_combox {
 public:
-    paroc_combox_socket();
+    pop_combox_socket();
 
-    virtual ~paroc_combox_socket();
+    virtual ~pop_combox_socket();
 
     virtual bool Create(int port=0, bool server=false);
     virtual bool Create(const char* /*address*/, bool /*server*/) {
@@ -54,8 +54,8 @@ public:
     virtual bool Connect(const char *url);
 
     virtual int Send(const char *s,int len);
-    virtual int Send(const char *s,int len, paroc_connection *connection);
-    virtual paroc_connection* get_connection() {
+    virtual int Send(const char *s,int len, pop_connection *connection);
+    virtual pop_connection* get_connection() {
         if(!peer) {
             return NULL;
         }
@@ -64,9 +64,9 @@ public:
 
 
     virtual int Recv(char *s,int len);
-    virtual int Recv(char *s,int len, paroc_connection *connection);
+    virtual int Recv(char *s,int len, pop_connection *connection);
 
-    virtual paroc_connection *Wait();
+    virtual pop_connection *Wait();
 
     virtual void Close();
 
@@ -79,7 +79,7 @@ public:
     virtual std::string GetProtocol();
 
 protected:
-    virtual paroc_connection_sock *CreateConnection(int fd);
+    virtual pop_connection_sock *CreateConnection(int fd);
     bool CloseSock(int fd);
     bool Connect(const char *host,int port);
 
@@ -99,10 +99,10 @@ protected:
 #else
     std::vector<pollfd> pollarray;
 #endif
-    paroc_connection_sock *peer;
+    pop_connection_sock *peer;
 
     //Only used by combox server...
-    std::vector<paroc_connection_sock *> connarray;
+    std::vector<pop_connection_sock *> connarray;
     int index;
     int nready;
 };

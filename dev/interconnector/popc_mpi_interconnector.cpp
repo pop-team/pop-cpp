@@ -43,8 +43,8 @@ int allocation_id;
 map<int, int> incomingtag;
 map<int, pair<int, int> > incomingconnection;
 map<int, pair<int, int> > outgoingconnection;
-map<pair<int, int>, paroc_combox*> connectionmap;
-map<int, paroc_connection*> allocation_return;
+map<pair<int, int>, pop_combox*> connectionmap;
+map<int, pop_connection*> allocation_return;
 map<int, pair<MPI::Intercomm, int> > object_group;
 map<int, int> object_group_single;
 
@@ -120,7 +120,7 @@ void *mpireceivedthread(void *t) {
     }
 
     pop_buffer* ipcwaker_buffer = ipcwaker.GetBufferFactory()->CreateBuffer();
-    paroc_connection* connection = ipcwaker.get_connection();
+    pop_connection* connection = ipcwaker.get_connection();
     if(connection == NULL) {
         perror("MPI received thread connection is NULL");
         pthread_exit(NULL);
@@ -481,7 +481,7 @@ int main(int argc, char* argv[]) {
         paroc_request request;
         request.data = NULL;
         // Wait for data on the UDS
-        paroc_connection* connection = local.Wait();
+        pop_connection* connection = local.Wait();
 
         if(connection == NULL) {
             // Connection is null. No data will come on this connection. Wait for another one.
@@ -672,7 +672,7 @@ int main(int argc, char* argv[]) {
                     delete objectname;
                     delete codefile;
                     paroc_request callback;
-                    paroc_connection* objectcallback = receiver.Wait();
+                    pop_connection* objectcallback = receiver.Wait();
                     pop_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
                     callback.data = buffer_factory->CreateBuffer();
                     if(callback.data->Recv(receiver, objectcallback)) {
@@ -821,7 +821,7 @@ int main(int argc, char* argv[]) {
                         delete localrank;
                         delete coreoption;
                         paroc_request callback;
-                        paroc_connection* objectcallback = receiver.Wait();
+                        pop_connection* objectcallback = receiver.Wait();
                         pop_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
                         callback.data = buffer_factory->CreateBuffer();
                         if(callback.data->Recv(receiver, objectcallback)) {
@@ -948,14 +948,14 @@ int main(int argc, char* argv[]) {
                         printf("POP-C++ Error: MPI Interconnector - request MPI-IPC redirection, length is %d\n", length);
                     }
 
-                    paroc_combox* client;
-                    paroc_connection* connection;
+                    pop_combox* client;
+                    pop_connection* connection;
 
                     if(multiple_connection_enable || connectionmap[pair<int, int>(source, dest_id)] == NULL) {
                         // Need to establish a connection
 
                         // Connect to the remote object
-                        paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+                        pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
                         client = combox_factory->Create("uds");
                         char* address = new char[15];
                         snprintf(address, 15, "uds_%d.%d", rank, dest_id);
@@ -1292,7 +1292,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Delete connection to object
-    map<pair<int, int>, paroc_combox*>::iterator it;
+    map<pair<int, int>, pop_combox*>::iterator it;
     for(it = connectionmap.begin() ; it != connectionmap.end(); it++) {
         ((*it).second)->Close();
         delete dynamic_cast<popc_combox_uds*>((*it).second);

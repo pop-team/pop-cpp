@@ -17,7 +17,7 @@
 #ifndef _POPC_OBJECTBASE_H
 #define _POPC_OBJECTBASE_H
 
-#include "paroc_accesspoint.h"
+#include "pop_accesspoint.h"
 #include "paroc_event.h"
 
 //Added by clementval
@@ -48,10 +48,10 @@ public:
     virtual int DecRef();
     virtual bool CanKill();
 
-    const paroc_accesspoint & GetAccessPoint() const;
+    const pop_accesspoint & GetAccessPoint() const;
 
     //Get the access point and set the variable _noaddref to TRUE in this access point
-    const paroc_accesspoint & GetAccessPointForThis();
+    const pop_accesspoint & GetAccessPointForThis();
 
     virtual int eventwait(int event=ANY_EVENT, int timeout=-1); //timeout in milliseconds
     virtual void eventraise(int event);

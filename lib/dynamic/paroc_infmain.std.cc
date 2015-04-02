@@ -81,12 +81,12 @@ int main(int argc, char **argv) {
         * Terminate the MPI Communicators network by sending a termination message to the local MPI Communicator with rank 0
         */
 #ifdef DEFINE_UDS_SUPPORT
-        paroc_combox_factory* combox_factory = paroc_combox_factory::GetInstance();
+        pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
         if(combox_factory == NULL) {
             paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain: combox_factory == NULL");
         }
 
-        paroc_combox* allocating_combox = combox_factory->Create("uds");
+        pop_combox* allocating_combox = combox_factory->Create("uds");
         if(allocating_combox == NULL) {
             paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox == NULL");
         }
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
         paroc_message_header header(0, 200001, INVOKE_SYNC, "_terminate");
         allocating_buffer->Reset();
         allocating_buffer->SetHeader(header);
-        paroc_connection* connection = allocating_combox->get_connection();
+        pop_connection* connection = allocating_combox->get_connection();
 
         if(!allocating_buffer->Send((*allocating_combox), connection)) {
             paroc_exception::paroc_throw("allocating_buffer->Send failed");

@@ -16,7 +16,7 @@
 #include <string>
 #include <map>
 
-#include "paroc_combox.h"
+#include "pop_combox.h"
 #include "popc_connection_mpi.h"
 #include "paroc_mutex.h"
 #include "paroc_utils.h"
@@ -27,7 +27,7 @@
  * @author Valentin Clement
  *
  */
-class popc_combox_mpi: public paroc_combox {
+class popc_combox_mpi: public pop_combox {
 public:
     popc_combox_mpi();
     virtual ~popc_combox_mpi();
@@ -42,18 +42,18 @@ public:
     virtual bool Connect(const char *url);
     virtual bool connect_and_die(std::string &url);
 
-    virtual paroc_connection* get_connection();
+    virtual pop_connection* get_connection();
 
     virtual int Send(const char *s, int len);
-    virtual int Send(const char *s, int len, paroc_connection *conn, bool unlock);
+    virtual int Send(const char *s, int len, pop_connection *conn, bool unlock);
 
     virtual int Recv(char *s, int len, bool unlock);
-    virtual int Recv(char *s, int len, paroc_connection *&iopeer, bool unlock);
+    virtual int Recv(char *s, int len, pop_connection *&iopeer, bool unlock);
 
-    virtual paroc_connection *Wait();
+    virtual pop_connection *Wait();
     virtual void Close();
 
-    virtual bool disconnect(paroc_connection *connection);
+    virtual bool disconnect(pop_connection *connection);
     virtual bool is_server();
 
     /**
@@ -69,7 +69,7 @@ public:
     //MPI::Intercomm getCommunicator();
 
 protected:
-    virtual paroc_connection* CreateConnection(int fd);
+    virtual pop_connection* CreateConnection(int fd);
     bool Connect(const char *host, int port);
     int GetPort();
 

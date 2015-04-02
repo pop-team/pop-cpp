@@ -34,7 +34,7 @@ POPC_GroupBroker::~POPC_GroupBroker() {
  * @param collective  Set to TRUE if the response results from a collective call. FALSE if the response results from a
  *                    non-collective call.
  */
-void POPC_GroupBroker::popc_send_response(pop_buffer& buffer, paroc_connection* connection, bool collective) {
+void POPC_GroupBroker::popc_send_response(pop_buffer& buffer, pop_connection* connection, bool collective) {
     MPI::Intercomm comm = dynamic_cast<POPC_MPIConnection*>(connection)->get_communicator();
     int world_size = comm.Get_size();
     int rank = comm.Get_rank();
@@ -73,7 +73,7 @@ void POPC_GroupBroker::add_method_info(unsigned classuid, popc_method_info *meth
  * @param _popc_buffer      Buffer containing parameter and used to send the result of the call
  * @param _popc_connection  Connection used to send the result of the call
  */
-bool POPC_GroupBroker::invoke(unsigned* /* method[3]*/, pop_buffer&/*_popc_buffer*/, paroc_connection* /*_popc_connection*/) {
+bool POPC_GroupBroker::invoke(unsigned* /* method[3]*/, pop_buffer&/*_popc_buffer*/, pop_connection* /*_popc_connection*/) {
     printf("Invoke in base broker\n");
     return true;
 }

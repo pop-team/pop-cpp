@@ -136,7 +136,7 @@ bool  POPMPI<T>::startMPI(T *&array, int np) {
 
         sprintf(mpicmd,"%s -np %d %s", mpirun, np,(const char *)codefile);
 
-        paroc_array<paroc_accesspoint> ap(np);
+        paroc_array<pop_accesspoint> ap(np);
         paroc_od od; // Note: The od is empty !!
         if(paroc_interface::LocalExec(NULL,mpicmd, name, paroc_system::jobservice, paroc_system::appservice, ap,np,od)!=0) {
             printf("startMPI failed: mpirun returned error\n");

@@ -14,7 +14,7 @@
 #ifndef POPC_OBJECT_H_
 #define POPC_OBJECT_H_
 
-#include "paroc_accesspoint.h"
+#include "pop_accesspoint.h"
 
 class POPC_Object {
 public:

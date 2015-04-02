@@ -21,7 +21,7 @@
 #include <pthread.h>    // Added for asynchronous object construction
 
 #include <paroc_base.h>
-#include <paroc_accesspoint.h>
+#include <pop_accesspoint.h>
 #include <paroc_od.h>
 #include <pop_buffer.h>
 #include <paroc_allocobj.h>
@@ -46,7 +46,7 @@
 class paroc_interface: paroc_base {
 public:
     paroc_interface();
-    paroc_interface(const paroc_accesspoint &p);
+    paroc_interface(const pop_accesspoint &p);
     paroc_interface(const paroc_interface &inf);
 
     virtual ~paroc_interface();
@@ -59,19 +59,19 @@ public:
 
     //  virtual const char * GetResource() const;
 
-    const paroc_accesspoint & GetAccessPoint() const;
+    const pop_accesspoint & GetAccessPoint() const;
 
     //Get the access point and set the variable _noaddref to TRUE in this access point
-    const paroc_accesspoint & GetAccessPointForThis();
+    const pop_accesspoint & GetAccessPointForThis();
 
     virtual void Serialize(pop_buffer &buf, bool pack);
 
     //Find the resource that satisfies the OD, output the resource name or the jobcontact..
     // This method only exist in the pseudodynamic version of the code (this may cause a linking error is used)
-    bool TryLocal(paroc_accesspoint &objaccess);
+    bool TryLocal(pop_accesspoint &objaccess);
 
     //Connect the interface to the existed object located at resource dest...
-    void Bind(const paroc_accesspoint &dest);
+    void Bind(const pop_accesspoint &dest);
     void Bind(const char *dest);
 
     //Disconnect the interface from its object
@@ -117,9 +117,9 @@ public:
      * @return Zero
     */
 
-    static int LocalExec(const char *hostname, const char *codefile, const char *classname, const paroc_accesspoint &jobservice, const paroc_accesspoint &appservice, paroc_accesspoint *objaccess, int howmany, const paroc_od &od);
+    static int LocalExec(const char *hostname, const char *codefile, const char *classname, const pop_accesspoint &jobservice, const pop_accesspoint &appservice, pop_accesspoint *objaccess, int howmany, const paroc_od &od);
 
-    static paroc_accesspoint _paroc_nobind;
+    static pop_accesspoint _paroc_nobind;
     static int paroc_bind_timeout;
 
 
@@ -144,12 +144,12 @@ protected:
         return "paroc_interface";
     }
 
-    virtual void popc_send_request(pop_buffer *buf, paroc_connection* conn);
-    virtual void popc_get_response(pop_buffer *buf, paroc_connection* conn);
+    virtual void popc_send_request(pop_buffer *buf, pop_connection* conn);
+    virtual void popc_get_response(pop_buffer *buf, pop_connection* conn);
 
-    paroc_combox *__paroc_combox;
+    pop_combox *__pop_combox;
     pop_buffer *__paroc_buf;
-    paroc_accesspoint accesspoint;
+    pop_accesspoint accesspoint;
 
     paroc_mutex _paroc_imutex;
 
@@ -180,7 +180,7 @@ public:
 
 
 private:
-    static paroc_accesspoint *batchaccesspoint;
+    static pop_accesspoint *batchaccesspoint;
 };
 
 #endif

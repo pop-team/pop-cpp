@@ -171,7 +171,7 @@ bool popc_combox_uds::Connect(const char* param) {
  * Return the connection initialized with "Connect(const char* url)"
  * @return A pointer to the connection or nullptr if this combox has no connection
  */
-paroc_connection* popc_combox_uds::get_connection() {
+pop_connection* popc_combox_uds::get_connection() {
     if(!_connected) {
         return nullptr;
     }
@@ -195,7 +195,7 @@ int popc_combox_uds::Send(const char*,int) {
  * @param connection  Connection representing the endpoint to write bytes.
  * @return Number of bytes sent
  */
-int popc_combox_uds::Send(const char *s, int len, paroc_connection* connection) {
+int popc_combox_uds::Send(const char *s, int len, pop_connection* connection) {
     if(!connection) {
         LOG_ERROR_T("UDS", "Cannot send (connection == nullptr)");
         return -1;
@@ -233,7 +233,7 @@ int popc_combox_uds::Recv(char*, int) {
  * @param connection  Connection representing the endpoint from where to read bytes.
  * @return Number of bytes read
  */
-int popc_combox_uds::Recv(char *s, int len, paroc_connection *connection) {
+int popc_combox_uds::Recv(char *s, int len, pop_connection *connection) {
     if(!connection){
         connection = Wait();
         if(!connection) {
@@ -277,7 +277,7 @@ void popc_combox_uds::add_fd_to_poll(int fd) {
  * Wait for a new connection or data from an existing connection
  * @return A pointer to the ready connection
  */
-paroc_connection* popc_combox_uds::Wait() {
+pop_connection* popc_combox_uds::Wait() {
     if(_is_server) {
         socklen_t address_length;
         address_length = sizeof(_sock_address);

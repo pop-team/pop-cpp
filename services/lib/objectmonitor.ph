@@ -41,13 +41,13 @@ public:
      * This method is called automatically upon creating a parallel object
     */
 
-    async seq virtual void ManageObject([in] paroc_accesspoint &p);
+    async seq virtual void ManageObject([in] pop_accesspoint &p);
 
     /** @brief Unregister the object accesspoint with the ObjectMonitor
      * @param p the object access point
      * This method is called automatically upon destroying the parallel object
     */
-    async seq virtual void UnManageObject([in] paroc_accesspoint &p);
+    async seq virtual void UnManageObject([in] pop_accesspoint &p);
 
 
     /** @brief  check number of running parallel objects
@@ -57,7 +57,7 @@ public:
 
     classuid(4);
 protected:
-    paroc_accesspoint_list objects;
+    pop_accesspoint_list objects;
     bool isActive;
 };
 

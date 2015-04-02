@@ -13,27 +13,27 @@
 /*
   Deeply need refactoring:
     POPC_Connection instead of paroc_connector
-    POPC_Combox instead of paroc_combox
+    POPC_Combox instead of pop_combox
    Need to separate connection and combox implementation in two separate file.
  */
 
 #include <stdio.h>
 
-#include "paroc_combox.h"
+#include "pop_combox.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"
 
 #include <string.h>
 
 
-paroc_connection::paroc_connection(paroc_combox *com) : _is_initial_connection(false) {
+pop_connection::pop_connection(pop_combox *com) : _is_initial_connection(false) {
     if(com != nullptr) {
         fact = com->GetBufferFactory();
         combox = com;
     }
 }
 
-paroc_connection::paroc_connection(paroc_combox* com, bool init) {
+pop_connection::pop_connection(pop_combox* com, bool init) {
     if(com != nullptr) {
         fact = com->GetBufferFactory();
         combox = com;
@@ -41,26 +41,26 @@ paroc_connection::paroc_connection(paroc_combox* com, bool init) {
     _is_initial_connection = init;
 }
 
-paroc_connection::paroc_connection(paroc_combox *com, pop_buffer_factory *f) : _is_initial_connection(false) {
+pop_connection::pop_connection(pop_combox *com, pop_buffer_factory *f) : _is_initial_connection(false) {
     fact=f;
     combox=com;
 }
-paroc_connection::~paroc_connection() {
+pop_connection::~pop_connection() {
 }
 
-bool paroc_connection::is_initial_connection() {
+bool pop_connection::is_initial_connection() {
     return _is_initial_connection;
 }
 
-void paroc_connection::SetBufferFactory(pop_buffer_factory *f) {
+void pop_connection::SetBufferFactory(pop_buffer_factory *f) {
     fact=f;
 }
 
-pop_buffer_factory *paroc_connection::GetBufferFactory() {
+pop_buffer_factory *pop_connection::GetBufferFactory() {
     return fact;
 }
 
-paroc_combox *paroc_connection::GetCombox() {
+pop_combox *pop_connection::GetCombox() {
     return combox;
 }
 
@@ -70,11 +70,11 @@ paroc_combox *paroc_connection::GetCombox() {
  * COMBOX Implementation
  */
 
-const char* paroc_combox::PROTOCOL_SEPARATOR = "://";
+const char* pop_combox::PROTOCOL_SEPARATOR = "://";
 
 
 
-paroc_combox::paroc_combox() {
+pop_combox::pop_combox() {
     defaultFact = pop_buffer_factory_finder::GetInstance()->FindFactory("xdr");
     if(defaultFact == nullptr) {
         LOG_ERROR("POP-C++ Error: can not find the xdr buffer factory!");
@@ -87,17 +87,17 @@ paroc_combox::paroc_combox() {
     }
 }
 
-paroc_combox::~paroc_combox() {
+pop_combox::~pop_combox() {
 }
 
-bool paroc_combox::SendAck(paroc_connection *conn) {
+bool pop_combox::SendAck(pop_connection *conn) {
     char buf[4]="ACK";
     Send(buf,3,conn);
     return true;
 }
 
-bool paroc_combox::RecvAck(paroc_connection * /*conn*/) {
-    paroc_connection * connex= Wait();
+bool pop_combox::RecvAck(pop_connection * /*conn*/) {
+    pop_connection * connex= Wait();
     if(connex==nullptr) {
         paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"Wait() returned nullptr");
     }
@@ -110,15 +110,15 @@ bool paroc_combox::RecvAck(paroc_connection * /*conn*/) {
     return true;
 }
 
-void paroc_combox::SetTimeout(int millisec) {
+void pop_combox::SetTimeout(int millisec) {
     timeout=millisec;
 }
 
-int paroc_combox::GetTimeout() {
+int pop_combox::GetTimeout() {
     return timeout;
 }
 
-bool paroc_combox::SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg) {
+bool pop_combox::SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg) {
     int idx=(int)ev;
     if(idx<0 || idx>=2) {
         return false;
@@ -128,15 +128,15 @@ bool paroc_combox::SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg) 
     return true;
 }
 
-void paroc_combox::SetBufferFactory(pop_buffer_factory *fact) {
+void pop_combox::SetBufferFactory(pop_buffer_factory *fact) {
     defaultFact=fact;
 }
 
-pop_buffer_factory *paroc_combox::GetBufferFactory() {
+pop_buffer_factory *pop_combox::GetBufferFactory() {
     return defaultFact;
 }
 
-bool paroc_combox::OnNewConnection(paroc_connection *conn) {
+bool pop_combox::OnNewConnection(pop_connection *conn) {
     COMBOX_CALLBACK cb=cblist[COMBOX_NEW];
     if(cb!=nullptr) {
         return cb(cbdata[COMBOX_NEW], conn);
@@ -144,7 +144,7 @@ bool paroc_combox::OnNewConnection(paroc_connection *conn) {
     return true;
 }
 
-bool paroc_combox::OnCloseConnection(paroc_connection *conn) {
+bool pop_combox::OnCloseConnection(pop_connection *conn) {
     COMBOX_CALLBACK cb=cblist[COMBOX_CLOSE];
     if(cb!=nullptr) {
         return cb(cbdata[COMBOX_CLOSE], conn);

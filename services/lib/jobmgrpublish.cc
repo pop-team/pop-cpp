@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     }
 
     try {
-        paroc_accesspoint job;
+        pop_accesspoint job;
         job.SetAccessString(master);
         JobMgr info(job);
 
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
             if(strchr(slaver,':')==NULL) {
                 strcat(slaver,":2711");
             }
-            paroc_accesspoint node;
+            pop_accesspoint node;
             node.SetAccessString(slaver);
             info.RegisterNode(node);
         }

@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
         }
 
 
-        paroc_accesspoint job;
+        pop_accesspoint job;
         job.SetAccessString(master);
         JobMgr info(job);
 

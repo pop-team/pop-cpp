@@ -159,7 +159,7 @@ bool POPFStream::open(const char* filename, const int stripnumber=2, long offset
 
     if(!popfile_try_open_parallel()) {
         // Create an array of possible popfilemanager accesspoint
-        paroc_accesspoint candidates[stripnumber];
+        pop_accesspoint candidates[stripnumber];
         std::string stripNames[stripnumber];
         // Contact the local PFM to get resources
         POPFileManager pfm(pfm_ap);
@@ -253,7 +253,7 @@ bool POPFStream::popfile_try_open_parallel() {
             popfile_writebuffers[i].set_capacity((*itr).second.strip_offset);
             popfile_writebuffers[i].set_identifier((*itr).second.strip_identifier);
             popfile_writebuffers[i].set_strip_path((*itr).second.strip_name);
-            paroc_accesspoint ap;
+            pop_accesspoint ap;
             ap.SetAccessString(popfile_metadata.get_accessstring_for_strip((*itr).second.strip_identifier).c_str());
             popfile_writebuffers[i].setAssociatedPOPFileManager(ap);
             popfile_writebuffers[i].setLocalPOPFileManager(pfm_ap);
@@ -556,7 +556,7 @@ POPFileGrip POPFStream::read_in_background(long size) {
             // Add some useful information to the readers
             for(int i = 0; i < popfile_strip_number; i++) {
                 // Set the associated PFM
-                paroc_accesspoint ap;
+                pop_accesspoint ap;
                 ap.SetAccessString(popfile_metadata.get_accessstring_for_strip(i).c_str());
                 popfile_reader_ref[i].set_pfm_accesspoint(ap);
 

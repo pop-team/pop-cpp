@@ -101,7 +101,7 @@ void POPFileReader::set_offset(long offset) {
  * @param ap    The access point of the associated PFM
  * @return void
  */
-void POPFileReader::set_pfm_accesspoint(paroc_accesspoint ap) {
+void POPFileReader::set_pfm_accesspoint(pop_accesspoint ap) {
     pfm_ap = ap;
     pfm_ref = new POPFileManager(pfm_ap);
 }
@@ -110,7 +110,7 @@ void POPFileReader::set_pfm_accesspoint(paroc_accesspoint ap) {
  * Get the local PFM accesspoint
  * @return Access Point of the POPFileManager
  */
-paroc_accesspoint POPFileReader::get_pfm_accesspoint() {
+pop_accesspoint POPFileReader::get_pfm_accesspoint() {
     return pfm_ap;
 }
 

@@ -15,7 +15,7 @@
 #include <string.h>
 
 #include "popc_group_interface.h"
-#include "paroc_combox_factory.h"
+#include "pop_combox_factory.h"
 #include "paroc_exception.h"
 #include "paroc_broker.h"
 #include "popc_combox_uds.h"
@@ -184,7 +184,7 @@ bool POPC_GroupInterface::finalize() {
     _popc_buffer->SetHeader(h);
 
     // Get the connection to the communication layer
-    paroc_connection* connection = _popc_combox->get_connection();
+    pop_connection* connection = _popc_combox->get_connection();
 
     // Send the request for finalization
     popc_send_request(_popc_buffer, connection);
@@ -204,7 +204,7 @@ bool POPC_GroupInterface::finalize() {
  * @param buffer      Buffer filled with the request header and data load
  * @param connection  Connection used to send the request.
  */
-void POPC_GroupInterface::popc_send_request(pop_buffer* buffer, paroc_connection* connection) {
+void POPC_GroupInterface::popc_send_request(pop_buffer* buffer, pop_connection* connection) {
     if(!buffer->Send((*_popc_combox), connection)) {
         printf("ERROR: Problem while sending request\n");
         paroc_exception::paroc_throw("Problem while sending request");
@@ -216,7 +216,7 @@ void POPC_GroupInterface::popc_send_request(pop_buffer* buffer, paroc_connection
  * @param buffer      Empty buffer to receive the request header and its data load
  * @param connection  Connection used to receive the response.
  */
-void POPC_GroupInterface::popc_recv_response(pop_buffer* buffer, paroc_connection* connection) {
+void POPC_GroupInterface::popc_recv_response(pop_buffer* buffer, pop_connection* connection) {
     if(!buffer->Recv((*_popc_combox), connection)) {
         paroc_exception::paroc_throw("buffer Receive");
     }

@@ -22,7 +22,7 @@
  * @param node      The POPCSearchNode associated with this thread
  * @param reqid The request identifier associated with this thread
  */
-NodeThread::NodeThread(int timeout, const paroc_accesspoint &node, std::string reqid) :
+NodeThread::NodeThread(int timeout, const pop_accesspoint &node, std::string reqid) :
     _timeout(timeout), _node(node), _running(true), _unlock(true), _reqid(reqid), paroc_thread(true) {}
 
 /**

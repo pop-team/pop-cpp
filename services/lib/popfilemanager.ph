@@ -13,7 +13,7 @@
 #define POPFILEMANAGER_H_INCLUDE
 
 #include "paroc_service_base.ph"
-#include "paroc_accesspoint.h"
+#include "pop_accesspoint.h"
 #include <list>
 
 parclass POPFileManager :
@@ -31,26 +31,26 @@ public:
     sync seq bool createStrip(std::string abslotuePath);
 
     //Find resource to create strips
-    sync conc int findResourcesForStrip(int nb, [in, out, size=nb] paroc_accesspoint* candidate, [in, out, size=nb] std::string* stripNames, std::string stripPrefix, bool local);
+    sync conc int findResourcesForStrip(int nb, [in, out, size=nb] pop_accesspoint* candidate, [in, out, size=nb] std::string* stripNames, std::string stripPrefix, bool local);
 
     //Write to strip
     async conc void writeToStrip(std::string stripName, std::string data);
 
     //Write to a remote strip
-    async conc void writeToRemoteStrip(std::string stringName, std::string data, paroc_accesspoint ap);
+    async conc void writeToRemoteStrip(std::string stringName, std::string data, pop_accesspoint ap);
 
     // Read a block of data from the strip
     sync conc std::string readFromStrip(std::string stripName, long start, long offset);
 
     //Save the accesspoint of the POPSearchNode
-    sync seq void setPSNAccessPoint(paroc_accesspoint ap);
+    sync seq void setPSNAccessPoint(pop_accesspoint ap);
 
     //Get neighbors to create strips on them
     sync seq void getNeighborsFromPSN();
 
 private:
-    paroc_accesspoint psn_ap;   // Saved access point to the local PSN for resource discovery
-    std::list<paroc_accesspoint> pfm_neighbors; // list of direct neigbors
+    pop_accesspoint psn_ap;   // Saved access point to the local PSN for resource discovery
+    std::list<pop_accesspoint> pfm_neighbors; // list of direct neigbors
 
 };
 

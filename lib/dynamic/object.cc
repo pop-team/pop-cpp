@@ -32,7 +32,7 @@ char **paroc_object::argv=NULL;
 paroc_object::paroc_object() {
     refcount=1;
     if(!paroc_system::appservice.IsEmpty()) {
-        paroc_accesspoint myself=GetAccessPoint();
+        pop_accesspoint myself=GetAccessPoint();
 #ifndef POP_PSEUDO
         try {
             ObjectMonitor tmp(paroc_system::appservice);
@@ -48,7 +48,7 @@ paroc_object::paroc_object() {
 paroc_object::~paroc_object() {
 #ifndef POP_PSEUDO
     if(!paroc_system::appservice.IsEmpty()) {
-        paroc_accesspoint myself=GetAccessPoint();
+        pop_accesspoint myself=GetAccessPoint();
         try {
             ObjectMonitor tmp(paroc_system::appservice);
             tmp.UnManageObject(myself);
@@ -60,14 +60,14 @@ paroc_object::~paroc_object() {
 #endif
 }
 
-const paroc_accesspoint & paroc_object::GetAccessPoint() const {
+const pop_accesspoint & paroc_object::GetAccessPoint() const {
     return paroc_broker::accesspoint;
 }
 
 /**
  * Get the accesspoint of the parallel object and set the _noaddref variavle to TRUE
  */
-const paroc_accesspoint & paroc_object::GetAccessPointForThis() {
+const pop_accesspoint & paroc_object::GetAccessPointForThis() {
     paroc_broker::accesspoint.SetNoAddRef();
     return paroc_broker::accesspoint;
 }

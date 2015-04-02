@@ -153,7 +153,7 @@ void POPCSearchNode::removeNeighbor(POPCSearchNode &node) {
     LOG_DEBUG(  "[PSN] NODE_REMOVE;%s", node.GetAccessPoint().GetAccessString().c_str());
     std::list<POPCSearchNode *>::iterator i;
     for(i=neighborsList.begin(); i != neighborsList.end(); i++) {
-        paroc_accesspoint crt = (*i)->GetAccessPoint();
+        pop_accesspoint crt = (*i)->GetAccessPoint();
         if(crt.GetAccessString() == node.GetAccessPoint().GetAccessString().c_str()) {
             neighborsList.erase(i);
             break;
@@ -239,7 +239,7 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
             LOG_DEBUG( "[PSN] Semaphore map size is: %d, %s", reqsem.size(), sem_name_reqid.c_str());
 
             // begin resources discovery locally
-            paroc_accesspoint dummy;
+            pop_accesspoint dummy;
             askResourcesDiscovery(req, GetAccessPoint(), GetAccessPoint(), dummy);
 
             // Starting a timed thread to be able to unlock the resource discovery after a certain time
@@ -259,7 +259,7 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
             current_sem = NULL;
         } else {
             // begin resources discovery locally
-            paroc_accesspoint dummy;
+            pop_accesspoint dummy;
             askResourcesDiscovery(req, GetAccessPoint(), GetAccessPoint(), dummy);
             popc_sleep(timeout);
         }
@@ -302,7 +302,7 @@ int POPCSearchNode::getNextSemCounter() {
 
 // POPCSearchNode's entry point to propagate request in the grid
 // asker is the node which will receive positiv result
-void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_ap, paroc_accesspoint sender, paroc_accesspoint _psm) {
+void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap, pop_accesspoint sender, pop_accesspoint _psm) {
     try {
         if(req.isEndRequest()) {
             ExplorationList oldEL(req.getExplorationList());
@@ -316,7 +316,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                     if(!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
                         std::string nid;
                         nid = (*i)->getPOPCSearchNodeId();
-                        paroc_accesspoint dummy;
+                        pop_accesspoint dummy;
                         (*i)->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
                     }
                 }
@@ -391,7 +391,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, paroc_accesspoint node_a
                         std::string nid;
                         nid = (*i)->getPOPCSearchNodeId();
                         LOG_DEBUG(  "[PSN] FORWARD;DEST;%s", nid.c_str());
-                        paroc_accesspoint dummy;
+                        pop_accesspoint dummy;
                         (*i)->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
                     }
                 }
@@ -413,7 +413,7 @@ void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb) {
         //It's Last node to contact
         if(wb.isLastNode()) {
             //Create the interface to contact the POPCSearchNode
-            paroc_accesspoint nextNodeAP;
+            pop_accesspoint nextNodeAP;
             std::string nextNodeStr = wb.getNextNode();
             nextNodeAP.SetAccessString(nextNodeStr.c_str());
             POPCSearchNode nextNode(nextNodeAP);
@@ -427,7 +427,7 @@ void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb) {
             wb.deleteNextNode();
 
             //Create the interface to contact the POPCSearchNode
-            paroc_accesspoint nextNodeAP;
+            pop_accesspoint nextNodeAP;
             nextNodeAP.SetAccessString(nextNodeStr.c_str());
             POPCSearchNode nextNode(nextNodeAP);
             //Send the response to the next node
@@ -578,12 +578,12 @@ std::list<std::string> POPCSearchNode::getNeighbors() {
 }
 
 //Set the associated JobMgr access point
-void POPCSearchNode::setJobMgrRef(const paroc_accesspoint &jobmgrRef) {
+void POPCSearchNode::setJobMgrRef(const pop_accesspoint &jobmgrRef) {
     nodeInfo.jobmgr = jobmgrRef;
 }
 
 //return the associated JobMgr access point
-paroc_accesspoint POPCSearchNode::getJobMgrRef() {
+pop_accesspoint POPCSearchNode::getJobMgrRef() {
     return nodeInfo.jobmgr;
 }
 

@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 
     if(argc>1) {
         printf("Try to connect to the remote chat object %s\n", argv[1]);
-        paroc_accesspoint job;
+        pop_accesspoint job;
         job.SetAccessString(argv[1]);
         Chat* firstContact = new Chat(job);
         o1.AddContact(*firstContact);

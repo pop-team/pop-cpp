@@ -88,7 +88,7 @@ bool AppCoreService::QueryService(const std::string &name, paroc_service_base &s
     return false;
 }
 
-bool AppCoreService::QueryService(const std::string &name, paroc_accesspoint &service) {
+bool AppCoreService::QueryService(const std::string &name, pop_accesspoint &service) {
     if(name.empty()) {
         return false;
     }
@@ -175,8 +175,8 @@ void AppCoreService::LoadAddOn() {
             LOG_DEBUG("No addon service name specified: %s", objfile);
             continue;
         }
-        paroc_accesspoint ap;
-        paroc_accesspoint jobmgr;
+        pop_accesspoint ap;
+        pop_accesspoint jobmgr;
         paroc_od od; // Note : the od is empty !
         snprintf(exec, sizeof(exec), "%s -constructor",objfile);
         if(paroc_interface::LocalExec(NULL,exec, NULL, jobmgr, GetAccessPoint(), &ap,1,od)!=0) {

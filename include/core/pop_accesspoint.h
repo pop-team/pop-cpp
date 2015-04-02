@@ -16,19 +16,19 @@
 #define POPC_ACCESSPOINT_H
 #include "paroc_base.h"
 
-class paroc_accesspoint: public paroc_base {
+class pop_accesspoint: public paroc_base {
 public:
-    paroc_accesspoint();
-    //  paroc_accesspoint(const char *hostport);
-    paroc_accesspoint(const paroc_accesspoint &p);
-    ~paroc_accesspoint();
+    pop_accesspoint();
+    //  pop_accesspoint(const char *hostport);
+    pop_accesspoint(const pop_accesspoint &p);
+    ~pop_accesspoint();
 
 
     void SetAccessString(const std::string& hostport);
     const std::string& GetAccessString() const;
     bool IsEmpty() const;
-    bool operator ==(const paroc_accesspoint &p) const;
-    paroc_accesspoint & operator =(const paroc_accesspoint &p);
+    bool operator ==(const pop_accesspoint &p) const;
+    pop_accesspoint & operator =(const pop_accesspoint &p);
     bool IsSecure() const;
     void SetSecure();
     bool IsService() const;

@@ -18,7 +18,7 @@ void POPXMPObject::_popc_constructor()
 {
 //paroc_mutex_locker __paroc_lock(_paroc_imutex);
 printf("_popc_construct\n");
-  paroc_connection* _popc_connection = _popc_combox->get_connection();
+  pop_connection* _popc_connection = _popc_combox->get_connection();
   _popc_buffer->Reset();
   paroc_message_header _popc_message_header(CLASSUID_POPXMPObject, 10, 21, "POPXMPObject");
   _popc_buffer->SetHeader(_popc_message_header); 
@@ -39,7 +39,7 @@ void POPXMPObject::construct_remote_object()
 void POPXMPObject::execute_xmp_1()
 {
   printf("Will call the execute_xmp_1() method\n"); 
-  paroc_connection* _popc_connection = _popc_combox->get_connection(); 
+  pop_connection* _popc_connection = _popc_combox->get_connection(); 
   _popc_buffer->Reset();
   paroc_message_header _popc_message_header(CLASSUID_POPXMPObject, 13, 0, "execute_xmp_1"); 
   _popc_buffer->SetHeader(_popc_message_header); 
@@ -53,7 +53,7 @@ void POPXMPObject::execute_xmp_1()
 // Non-collective method call
 void POPXMPObject::set_value(int val)
 {
-  paroc_connection* _popc_connection = _popc_combox->get_connection(); 
+  pop_connection* _popc_connection = _popc_combox->get_connection(); 
   _popc_buffer->Reset();
   paroc_message_header _popc_message_header(CLASSUID_POPXMPObject, 9, 0, "set_non_collective_rank"); 
   _popc_buffer->SetHeader(_popc_message_header);

@@ -27,7 +27,7 @@
 #include <sys/time.h>
 #include "paroc_service_base.ph"
 #include <timer.h>
-#include <paroc_accesspoint.h>
+#include <pop_accesspoint.h>
 
 /**
  * ViSaG : clementval
@@ -87,8 +87,8 @@ struct Resources {
     std::string reqID;
 
     time_t start;
-    paroc_accesspoint contact;
-    paroc_accesspoint appservice;
+    pop_accesspoint contact;
+    pop_accesspoint appservice;
 };
 
 
@@ -102,7 +102,7 @@ struct NodeInfo {
 
 struct PauseInfo {
     double until_time;
-    paroc_accesspoint app;
+    pop_accesspoint app;
 };
 
 struct HostInfo {
@@ -155,12 +155,12 @@ parclass JobMgr :
 public JobCoreService {
 public:
     /* ViSaG : clementval : Add reference to the PSM */
-    JobMgr(bool daemon, [in] const std::string &conf, [in] const std::string &challenge, const std::string &url, const paroc_accesspoint &nodeAccess, const paroc_accesspoint &localPSM) @{ od.url(url); od.runLocal(true); od.service(true);};
+    JobMgr(bool daemon, [in] const std::string &conf, [in] const std::string &challenge, const std::string &url, const pop_accesspoint &nodeAccess, const pop_accesspoint &localPSM) @{ od.url(url); od.runLocal(true); od.service(true);};
     /* End */
 
     ~JobMgr();  //Method ID 11
 
-    conc async void RegisterNode([in] const paroc_accesspoint &url);  //Method ID 12
+    conc async void RegisterNode([in] const pop_accesspoint &url);  //Method ID 12
 
 
     /**
@@ -171,10 +171,10 @@ public:
     sync seq virtual int Query([in] const std::string &type, [out] std::string &val); //Method ID 13
 
 //Global service...
-    sync conc virtual int CreateObject(paroc_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts,  int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts); //Method ID 14
+    sync conc virtual int CreateObject(pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] pop_accesspoint *jobcontacts,  int howmany2, [in, out, size=howmany2] pop_accesspoint *remotejobcontacts); //Method ID 14
 
 
-    sync conc virtual bool  AllocResource(const paroc_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in,out, size=howmany] float *fitness, [in,out, size=howmany] paroc_accesspoint *jobcontacts, [in,out, size=howmany] int *reserveIDs, [in] int requestInfo[3], [in] int trace[MAX_HOPS], [in] int tracesize); //method ID 15
+    sync conc virtual bool  AllocResource(const pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in,out, size=howmany] float *fitness, [in,out, size=howmany] pop_accesspoint *jobcontacts, [in,out, size=howmany] int *reserveIDs, [in] int requestInfo[3], [in] int trace[MAX_HOPS], [in] int tracesize); //method ID 15
 
     /**
      * ViSaG : clementval
@@ -188,7 +188,7 @@ public:
 
     seq async virtual void CancelReservation([in, size=howmany] int *req, int howmany); //17
 
-    conc sync virtual int ExecObj(const std::string &objname, const paroc_od &od, int howmany, [in, size=howmany] int *reserveIDs, const paroc_accesspoint &localservice,  [out, size=howmany] paroc_accesspoint *objcontacts);
+    conc sync virtual int ExecObj(const std::string &objname, const paroc_od &od, int howmany, [in, size=howmany] int *reserveIDs, const pop_accesspoint &localservice,  [out, size=howmany] pop_accesspoint *objcontacts);
 
     seq async void dump();
 
@@ -201,10 +201,10 @@ public:
     //Added by clementval
 
     //Return the access point for the local POPCSearchNode parclass
-    conc sync paroc_accesspoint GetNodeAccessPoint();
+    conc sync pop_accesspoint GetNodeAccessPoint();
 
     //Allow the unregistration of a specific node
-    conc async void UnregisterNode([in] const paroc_accesspoint &url);
+    conc async void UnregisterNode([in] const pop_accesspoint &url);
 
 
     /**
@@ -218,32 +218,32 @@ public:
     * ViSaG : clementval
     * Method to get and set the POPCSecurityManager reference
     */
-    async seq void setPSMRef(paroc_accesspoint secmgr);
-    sync conc virtual paroc_accesspoint getPSMRef();
+    async seq void setPSMRef(pop_accesspoint secmgr);
+    sync conc virtual pop_accesspoint getPSMRef();
 
     classuid(15);
 protected:
     virtual void Update();
     virtual int Exec(char **arguments, char **env, int &pid, std::string popAppId, std::string reqID);
     virtual int MatchAndReserve(const paroc_od &od, float & fitness);
-    virtual bool MatchAndReserve(const paroc_od &od, float *fitness, paroc_accesspoint *jobcontacts, int *reserveIDs, int howmany);
-    virtual bool Forward(const paroc_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, float *fitness,       paroc_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize);
+    virtual bool MatchAndReserve(const paroc_od &od, float *fitness, pop_accesspoint *jobcontacts, int *reserveIDs, int howmany);
+    virtual bool Forward(const pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, float *fitness,       pop_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize);
 
-    virtual bool MatchUser(const paroc_accesspoint &localservice);
+    virtual bool MatchUser(const pop_accesspoint &localservice);
 
-    virtual void Pause(const paroc_accesspoint &app, int duration);
-    virtual bool CheckPauseList(const paroc_accesspoint &app);
+    virtual void Pause(const pop_accesspoint &app, int duration);
+    virtual bool CheckPauseList(const pop_accesspoint &app);
 
     bool AddRequest(int reqId[3]);
     
     // TODO LW: Why do we have to specify size for NodeInTrace and not AddTrace
     bool AddTrace(int trace[MAX_HOPS], int &tracesize);
-    bool NodeInTrace([in,size=tracesize]int trace[MAX_HOPS], int tracesize, paroc_accesspoint &contact);
+    bool NodeInTrace([in,size=tracesize]int trace[MAX_HOPS], int tracesize, pop_accesspoint &contact);
 
 
-    bool ObjectAlive(paroc_accesspoint &t);
+    bool ObjectAlive(pop_accesspoint &t);
     Resources* VerifyReservation(int reserveId, bool updatetime);
-    bool ValidateReservation(int id, const paroc_accesspoint &objcontact, const paroc_accesspoint &appserv);
+    bool ValidateReservation(int id, const pop_accesspoint &objcontact, const pop_accesspoint &appserv);
     bool ReleaseJob(int id);
 
     HostInfoDB info;
@@ -253,7 +253,7 @@ protected:
     //Added by clementval
 
     //Access Point of the local POPCSearchNode
-    //paroc_accesspoint localNode;
+    //pop_accesspoint localNode;
     //End of add
 
     TraceList tracelist;
@@ -284,7 +284,7 @@ protected:
     int localuid;
 
     Timer service_timer;
-    paroc_accesspoint_list parents;
+    pop_accesspoint_list parents;
 
     PauseList pause_apps;
 
@@ -292,8 +292,8 @@ protected:
 
     /* ViSaG : clementval */
 
-    paroc_accesspoint _localPSN;  //reference to the local POPCSearchNode
-    paroc_accesspoint _localPSM;  //reference to the local POPCSecurityManager
+    pop_accesspoint _localPSN;  //reference to the local POPCSearchNode
+    pop_accesspoint _localPSM;  //reference to the local POPCSecurityManager
 
 };
 

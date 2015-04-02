@@ -12,8 +12,8 @@
 
 #include "paroc_system.h"
 #include "paroc_exception.h"
-#include "paroc_combox.h"
-#include "paroc_combox_factory.h"
+#include "pop_combox.h"
+#include "pop_combox_factory.h"
 #include "paroc_broker.h"
 #include "paroc_utils.h"
 #include "paroc_interface.h"
@@ -92,7 +92,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
      * Create a combox to allocate the new parallel object.
      */
 
-    auto combox_factory = paroc_combox_factory::GetInstance();
+    auto combox_factory = pop_combox_factory::GetInstance();
     if(!combox_factory) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
     }
@@ -165,7 +165,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
         paroc_exception::paroc_throw(err, objectname.c_str(), "Cannot start the object");
     }
 
-    //Now get the return paroc_accesspoint....
+    //Now get the return pop_accesspoint....
     tmp_combox->SetTimeout(ALLOC_TIMEOUT*1000);
 
     auto tmpbuffer = tmp_combox->GetBufferFactory()->CreateBuffer();
@@ -187,7 +187,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
     }
 
     std::string objectaddress;
-    tmpbuffer->Push("objectaddress","paroc_accesspoint",1);
+    tmpbuffer->Push("objectaddress","pop_accesspoint",1);
     tmpbuffer->UnPack(&objectaddress, 1);
     tmpbuffer->Pop();
     delete tmpbuffer;
@@ -204,7 +204,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-paroc_combox* popc_allocator_uds_local::allocate_group(std::string& objectname, paroc_od& od, int nb) {
+pop_combox* popc_allocator_uds_local::allocate_group(std::string& objectname, paroc_od& od, int nb) {
 
     /* Allocation process here */
 

@@ -10,20 +10,20 @@
  *
  */
 
-// Deeply need refactoring: POPC_AccessPoint instead of paroc_accesspoint
+// Deeply need refactoring: POPC_AccessPoint instead of pop_accesspoint
 
 #include "popc_intface.h"
 //#include <stdio.h>
 //#include <string.h>
 //#include <stdlib.h>
 
-#include "paroc_accesspoint.h"
+#include "pop_accesspoint.h"
 #include "paroc_utils.h"
 
 /**
  * Accesspoint constructor
  */
-paroc_accesspoint::paroc_accesspoint() {
+pop_accesspoint::pop_accesspoint() {
     _security=NONSECURE;
     _service=false;
     _noaddref=false;
@@ -32,7 +32,7 @@ paroc_accesspoint::paroc_accesspoint() {
 /**
  * Accesspoint copy constructor
  */
-paroc_accesspoint::paroc_accesspoint(const paroc_accesspoint &p) {
+pop_accesspoint::pop_accesspoint(const pop_accesspoint &p) {
     endpoint="";
     SetAccessString(p.GetAccessString());
     if(p.IsSecure()) {
@@ -49,29 +49,29 @@ paroc_accesspoint::paroc_accesspoint(const paroc_accesspoint &p) {
 /**
  * Accesspoint destructor
  */
-paroc_accesspoint::~paroc_accesspoint() {
+pop_accesspoint::~pop_accesspoint() {
 }
 
 /**
  * Set the different access in a string format. Each access is separated by a whit space.
  * @param hostport  Access string to set as mai access
  */
-void paroc_accesspoint::SetAccessString(const std::string& hostport) {
+void pop_accesspoint::SetAccessString(const std::string& hostport) {
     endpoint=hostport;
 }
-const std::string& paroc_accesspoint::GetAccessString() const {
+const std::string& pop_accesspoint::GetAccessString() const {
     return endpoint;
 }
 
-bool paroc_accesspoint::IsEmpty() const {
+bool pop_accesspoint::IsEmpty() const {
     return (endpoint=="");
 }
 
-bool paroc_accesspoint::operator ==(const paroc_accesspoint &p) const {
+bool pop_accesspoint::operator ==(const pop_accesspoint &p) const {
     return endpoint == p.GetAccessString();
 }
 
-paroc_accesspoint & paroc_accesspoint::operator =(const paroc_accesspoint &p) {
+pop_accesspoint & pop_accesspoint::operator =(const pop_accesspoint &p) {
     SetAccessString(p.GetAccessString());
     if(p.IsSecure()) {
         SetSecure();
@@ -88,7 +88,7 @@ paroc_accesspoint & paroc_accesspoint::operator =(const paroc_accesspoint &p) {
  * Check if the access point is in secure mode
  * @return TRUE if the access point is in secure mode
  */
-bool paroc_accesspoint::IsSecure() const {
+bool pop_accesspoint::IsSecure() const {
     if(_security==SECURE) {
         return true;
     }
@@ -99,7 +99,7 @@ bool paroc_accesspoint::IsSecure() const {
  * ViSaG : clementval
  * Set the access point in a secure mode
  */
-void paroc_accesspoint::SetSecure() {
+void pop_accesspoint::SetSecure() {
     _security = SECURE;
 }
 
@@ -109,7 +109,7 @@ void paroc_accesspoint::SetSecure() {
  * Return true is the accesspoint is reffered to a service
  * @return TRUE if the parallel object pointed by the access point is a service
  */
-bool paroc_accesspoint::IsService() const {
+bool pop_accesspoint::IsService() const {
     return _service;
 }
 
@@ -117,7 +117,7 @@ bool paroc_accesspoint::IsService() const {
 /**
  * Get the boolean value that says if the creation of an interface with this access point must increment the internal counter
  */
-bool paroc_accesspoint::GetNoAddRef() const {
+bool pop_accesspoint::GetNoAddRef() const {
     return _noaddref;
 }
 
@@ -125,11 +125,11 @@ bool paroc_accesspoint::GetNoAddRef() const {
  * ViSaG : clementval
  * Set the variable _service to TRUE
  */
-void paroc_accesspoint::SetAsService() {
+void pop_accesspoint::SetAsService() {
     _service = true;
 }
 
-void paroc_accesspoint::SetNoAddRef() {
+void pop_accesspoint::SetNoAddRef() {
     _noaddref = true;
 }
 
@@ -137,7 +137,7 @@ void paroc_accesspoint::SetNoAddRef() {
 
 
 
-void paroc_accesspoint::Serialize(pop_buffer &buf, bool pack) {
+void pop_accesspoint::Serialize(pop_buffer &buf, bool pack) {
     if(pack) {
         std::string s(endpoint);
         buf.Push("url","std::string",1);

@@ -16,7 +16,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "paroc_accesspoint.h"
+#include "pop_accesspoint.h"
 
 //Forward declaration of POPFileManager interface. It's currently needed as POPCC can't parse .h file.
 class POPFileManager;
@@ -71,9 +71,9 @@ public:
     void set_strip_path(std::string value);
 
     //Setter and Getter for PFM access point
-    paroc_accesspoint get_associated_pfm();
-    void setAssociatedPOPFileManager(paroc_accesspoint ap);
-    void setLocalPOPFileManager(paroc_accesspoint ap);
+    pop_accesspoint get_associated_pfm();
+    void setAssociatedPOPFileManager(pop_accesspoint ap);
+    void setLocalPOPFileManager(pop_accesspoint ap);
 
 private:
     //string stream buffer for output operation
@@ -93,7 +93,7 @@ private:
     std::string stripPath;
 
     //Access point of the PFM associated with this buffer
-    paroc_accesspoint associatedPFM;
+    pop_accesspoint associatedPFM;
 
     //Reference to the remote PFM
     POPFileManager* pfmref;

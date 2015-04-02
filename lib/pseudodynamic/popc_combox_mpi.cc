@@ -66,7 +66,7 @@ bool popc_combox_mpi::Create(char* /*host*/, int /*port*/, bool server) {
  * Get the connection initiated by the Connected call
  * @return
  */
-paroc_connection* popc_combox_mpi::get_connection() {
+pop_connection* popc_combox_mpi::get_connection() {
     if(peer != NULL) {
         return peer;
     }
@@ -139,7 +139,7 @@ int popc_combox_mpi::Send(const char * /*s*/, int /*length*/) {
     return 0;
 }
 
-int popc_combox_mpi::Send(const char *s, int length, paroc_connection *conn, bool unlock) {
+int popc_combox_mpi::Send(const char *s, int length, pop_connection *conn, bool unlock) {
 
     if(conn == NULL) {
         return Send(s, length);
@@ -183,7 +183,7 @@ int popc_combox_mpi::Recv(char *s, int length, bool /*unlock*/) {
     return 0;
 }
 
-int popc_combox_mpi::Recv(char *s, int length, paroc_connection *&iopeer, bool unlock) {
+int popc_combox_mpi::Recv(char *s, int length, pop_connection *&iopeer, bool unlock) {
     MPI::Intercomm communicator;
     int tag = 0;
 
@@ -204,9 +204,9 @@ int popc_combox_mpi::Recv(char *s, int length, paroc_connection *&iopeer, bool u
 
 /**
  * Waiting for a new connection from a client
- * @return A paroc_connection ojbect representing the connection between the client and the server
+ * @return A pop_connection ojbect representing the connection between the client and the server
  */
-paroc_connection* popc_combox_mpi::Wait() {
+pop_connection* popc_combox_mpi::Wait() {
     // Receive interface connection to the MPI Combox
     if(_is_server) {
         POPC_MPIConnection* conn = new POPC_MPIConnection(this);
@@ -252,7 +252,7 @@ bool popc_combox_mpi::Connect(const char * /*host*/, int /*port*/) {
 /**
  *
  */
-bool popc_combox_mpi::disconnect(paroc_connection * /*connection*/) {
+bool popc_combox_mpi::disconnect(pop_connection * /*connection*/) {
   return true;
 }
 
@@ -269,7 +269,7 @@ bool popc_combox_mpi::is_server() {
  * @param fd  Not used in this combox
  * @return  A pointer to the newly created connection
  */
-paroc_connection* popc_combox_mpi::CreateConnection(int /*fd*/) {
+pop_connection* popc_combox_mpi::CreateConnection(int /*fd*/) {
     return new POPC_MPIConnection(this);
 }
 

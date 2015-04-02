@@ -11,7 +11,7 @@
 #include <fcntl.h>
 #endif
 
-#include "paroc_combox_socket.h"
+#include "pop_combox_socket.h"
 #include "paroc_system.h"
 #include "popc_logger.h"
 
@@ -25,7 +25,7 @@
 
 //Following are the Linux implementations
 
-bool paroc_combox_socket::Create(int port, bool server) {
+bool pop_combox_socket::Create(int port, bool server) {
     Close();
     isServer=server;
 
@@ -71,7 +71,7 @@ bool paroc_combox_socket::Create(int port, bool server) {
     return true;
 }
 
-bool paroc_combox_socket::Connect(const char *host,int port) {
+bool pop_combox_socket::Connect(const char *host,int port) {
     sockaddr_in sin;
     memset(reinterpret_cast<char*>(&sin),0,sizeof(sin));
     sin.sin_family=AF_INET;
@@ -128,7 +128,7 @@ bool paroc_combox_socket::Connect(const char *host,int port) {
     }
 }
 
-paroc_connection* paroc_combox_socket::Wait() {
+pop_connection* pop_combox_socket::Wait() {
     if(sockfd<0 || isCanceled) {
         isCanceled=false;
         return nullptr;
@@ -213,7 +213,7 @@ paroc_connection* paroc_combox_socket::Wait() {
     }
 }
 
-void paroc_combox_socket::Close() {
+void pop_combox_socket::Close() {
     int fd=sockfd;
     sockfd=-1;
     nready=0;
@@ -245,7 +245,7 @@ void paroc_combox_socket::Close() {
     }
 }
 
-bool paroc_combox_socket::CloseSock(int fd) {
+bool pop_combox_socket::CloseSock(int fd) {
     if(isServer) {
         for(std::size_t i=0; i<pollarray.size(); i++){
             if(pollarray[i].fd==fd){
@@ -274,7 +274,7 @@ bool paroc_combox_socket::CloseSock(int fd) {
 
 //Following are the Windows implementations
 
-bool paroc_combox_socket::Create(int port, bool server) {
+bool pop_combox_socket::Create(int port, bool server) {
     Close();
     isServer=server;
 
@@ -341,7 +341,7 @@ bool paroc_combox_socket::Create(int port, bool server) {
     return true;
 }
 
-bool paroc_combox_socket::Connect(const char *host,int port) {
+bool pop_combox_socket::Connect(const char *host,int port) {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
@@ -404,7 +404,7 @@ bool paroc_combox_socket::Connect(const char *host,int port) {
     }
 }
 
-paroc_connection* paroc_combox_socket::Wait() {
+pop_connection* pop_combox_socket::Wait() {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
     int tmpfdset;
@@ -511,7 +511,7 @@ paroc_connection* paroc_combox_socket::Wait() {
     }
 }
 
-void paroc_combox_socket::Close() {
+void pop_combox_socket::Close() {
     int fd=sockfd;
     highsockfd = -1;
     sockfd=-1;
@@ -548,7 +548,7 @@ void paroc_combox_socket::Close() {
     }
 }
 
-bool paroc_combox_socket::CloseSock(int fd) {
+bool pop_combox_socket::CloseSock(int fd) {
     if(isServer) {
         int n = activefdset.fd_count;
         for(int i=0; i<n; i++){
@@ -576,26 +576,26 @@ bool paroc_combox_socket::CloseSock(int fd) {
 
 //Normal implementations that are not separated by arch
 
-paroc_connection_sock::paroc_connection_sock(paroc_combox *cb): paroc_connection(cb) {
+pop_connection_sock::pop_connection_sock(pop_combox *cb): pop_connection(cb) {
     sockfd=-1;
 #ifndef __WIN32__
     popc_signal(popc_SIGPIPE, popc_SIG_IGN);
 #endif
 }
 
-paroc_connection_sock::paroc_connection_sock(int fd, paroc_combox *cb): paroc_connection(cb) {
+pop_connection_sock::pop_connection_sock(int fd, pop_combox *cb): pop_connection(cb) {
     sockfd=fd;
 }
 
-paroc_connection_sock::paroc_connection_sock(paroc_connection_sock &me): paroc_connection(me.GetCombox(), me.GetBufferFactory()) {
+pop_connection_sock::pop_connection_sock(pop_connection_sock &me): pop_connection(me.GetCombox(), me.GetBufferFactory()) {
     sockfd=me.sockfd;
 }
 
-paroc_connection *paroc_connection_sock::Clone() {
-    return new paroc_connection_sock(*this);
+pop_connection *pop_connection_sock::Clone() {
+    return new pop_connection_sock(*this);
 }
 
-paroc_combox_socket::paroc_combox_socket() {
+pop_combox_socket::pop_combox_socket() {
     peer=nullptr;
     sockfd=-1;
     index=0;
@@ -604,11 +604,11 @@ paroc_combox_socket::paroc_combox_socket() {
     isServer=false;
 }
 
-paroc_combox_socket::~paroc_combox_socket() {
+pop_combox_socket::~pop_combox_socket() {
     Close();
 }
 
-bool paroc_combox_socket::Connect(const char *url) {
+bool pop_combox_socket::Connect(const char *url) {
     if(url==nullptr) {
 #ifdef __WIN32__
         errno=WSAEDESTADDRREQ;
@@ -649,7 +649,7 @@ bool paroc_combox_socket::Connect(const char *url) {
     return ret;
 }
 
-int paroc_combox_socket::Send(const char *s,int len) {
+int pop_combox_socket::Send(const char *s,int len) {
     int n=0;
     int count=0;
     while(len>0) {
@@ -669,12 +669,12 @@ int paroc_combox_socket::Send(const char *s,int len) {
     return count;
 }
 
-int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn) {
+int pop_combox_socket::Send(const char *s,int len, pop_connection *conn) {
     if(conn==nullptr) {
         return Send(s,len);
     }
 
-    int fd=((paroc_connection_sock *)conn)->sockfd;
+    int fd=((pop_connection_sock *)conn)->sockfd;
 
     if(fd<0) {
         return -1;
@@ -699,11 +699,11 @@ int paroc_combox_socket::Send(const char *s,int len, paroc_connection *conn) {
     return count;
 }
 
-int paroc_combox_socket::Recv(char *s,int len) {
+int pop_combox_socket::Recv(char *s,int len) {
     int fd, n;
     isCanceled=false;
     do {
-        paroc_connection_sock *t=(paroc_connection_sock *)Wait();
+        pop_connection_sock *t=(pop_connection_sock *)Wait();
         if(t==nullptr) {
             return -1;
         }
@@ -730,14 +730,14 @@ int paroc_combox_socket::Recv(char *s,int len) {
     return n;
 }
 
-int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
+int pop_combox_socket::Recv(char *s,int len, pop_connection *iopeer) {
     int fd, n;
-    paroc_connection_sock *t;
+    pop_connection_sock *t;
     isCanceled=false;
 
     do {
         if(!iopeer) {
-            t=(paroc_connection_sock *)Wait();
+            t=(pop_connection_sock *)Wait();
             if(!t) {
                 LOG_ERROR("[CORE] Wait failed with code %d", t);
                 return -1;
@@ -745,7 +745,7 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
 
             fd=t->sockfd;
         } else {
-            fd=((paroc_connection_sock *)iopeer)->sockfd;
+            fd=((pop_connection_sock *)iopeer)->sockfd;
         }
 
         if(fd<0) {
@@ -791,32 +791,32 @@ int paroc_combox_socket::Recv(char *s,int len, paroc_connection *iopeer) {
     return n;
 }
 
-std::string paroc_combox_socket::GetProtocol() {
+std::string pop_combox_socket::GetProtocol() {
     return "socket";
 }
 
-std::string paroc_combox_socket::GetUrl() {
+std::string pop_combox_socket::GetUrl() {
     return "socket://" + paroc_system::GetHost() + ":" + std::to_string(GetPort());
 }
 
-int paroc_combox_socket::GetSockInfo(sockaddr &info,socklen_t &len) {
+int pop_combox_socket::GetSockInfo(sockaddr &info,socklen_t &len) {
     return popc_getsockname(sockfd,&info,&len);
 }
 
-int paroc_combox_socket::GetPort() {
+int pop_combox_socket::GetPort() {
     sockaddr_in sin;
     socklen_t len=sizeof(sin);
     GetSockInfo((sockaddr &)sin, len);
     return popc_ntohs(sin.sin_port);
 }
 
-int paroc_combox_socket::GetOpt(int level, int opt, char *buf, socklen_t &len) {
+int pop_combox_socket::GetOpt(int level, int opt, char *buf, socklen_t &len) {
     return popc_getsockopt(sockfd,level,opt,buf,&len);
 }
-int paroc_combox_socket::SetOpt(int level, int opt, char *buf, socklen_t len) {
+int pop_combox_socket::SetOpt(int level, int opt, char *buf, socklen_t len) {
     return setsockopt(sockfd,level,opt,buf,len);
 }
 
-paroc_connection_sock *paroc_combox_socket::CreateConnection(int fd) {
-    return new paroc_connection_sock(fd, this);
+pop_connection_sock *pop_combox_socket::CreateConnection(int fd) {
+    return new pop_connection_sock(fd, this);
 }

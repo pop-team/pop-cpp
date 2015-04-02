@@ -11,9 +11,9 @@
 #ifndef _POPC_SERVICE_BASE_PH
 #define _POPC_SERVICE_BASE_PH
 
-#include "paroc_accesspoint.h"
+#include "pop_accesspoint.h"
 
-typedef std::vector<paroc_accesspoint> paroc_accesspoint_list;
+typedef std::vector<pop_accesspoint> pop_accesspoint_list;
 
 /**
  * @class paroc_service_base
@@ -57,7 +57,7 @@ public:
 
 protected:
     std::string mychallenge;
-    paroc_accesspoint appservice;
+    pop_accesspoint appservice;
     bool daemonMode;
 };
 
@@ -88,9 +88,9 @@ public:
     * @param remotejobcontacts   Store the job contact of the JobMgr which has created the object
      * @return 0 (successful) or error code otherwise.
     */
-    sync conc virtual int CreateObject(paroc_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] paroc_accesspoint *jobcontacts, int howmany2, [in, out, size=howmany2] paroc_accesspoint *remotejobcontacts)=0;
+    sync conc virtual int CreateObject(pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] pop_accesspoint *jobcontacts, int howmany2, [in, out, size=howmany2] pop_accesspoint *remotejobcontacts)=0;
 
-    sync conc virtual paroc_accesspoint getPSMRef()=0;
+    sync conc virtual pop_accesspoint getPSMRef()=0;
 
     classuid(10);
 

@@ -22,12 +22,12 @@ Chat& Chat::GetRef() {
 }
 
 void Chat::PrintRef(const Chat& ref) {
-    paroc_accesspoint job(ref.GetAccessPoint());
+    pop_accesspoint job(ref.GetAccessPoint());
     printf("%s\n",job.GetAccessString().c_str());
 }
 
 void Chat::AddContact(const Chat& contact) {
-    paroc_accesspoint job;
+    pop_accesspoint job;
     printf("Added contact :");
     PrintRef(contact);
     contacts[nbContacts] = new Chat(contact);

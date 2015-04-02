@@ -22,9 +22,9 @@ int main(int argc, char **argv) {
     }
 
     std::string objname=argv[2];
-    paroc_accesspoint job;
+    pop_accesspoint job;
     job.SetAccessString(argv[1]);
-    paroc_list<paroc_accesspoint> resources;
+    paroc_list<pop_accesspoint> resources;
     paroc_list<int> reserve;
 
     try {
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
         LOG_INFO("Enter an OD (name values)");
         while(fgets(buf,1023,stdin)!=NULL) {
             if(strncmp(buf,"done",4)==0) {
-                paroc_array<paroc_accesspoint> jobcontacts(howmany);
+                paroc_array<pop_accesspoint> jobcontacts(howmany);
                 paroc_array <int> reserveIDs(howmany);
                 paroc_array <float> fitness(howmany);
 
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
         POSITION pos=resources.GetHeadPosition();
         POSITION pos1=reserve.GetHeadPosition();
         while(pos!=NULL) {
-            paroc_accesspoint &t=resources.GetNext(pos);
+            pop_accesspoint &t=resources.GetNext(pos);
             int &r=reserve.GetNext(pos1);
             JobMgr tmp(t);
             tmp.CancelReservation(&r,1);

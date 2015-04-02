@@ -20,7 +20,7 @@
 #include "popfile_metadata.h"
 #include "popfilebuffer.h"
 #include "popfile_grip.h"
-#include "paroc_accesspoint.h"
+#include "pop_accesspoint.h"
 
 class POPFileReader;
 
@@ -186,7 +186,7 @@ private:
     std::fstream popfile_fstream;
 
     //AccessPoint to local POPFileManager
-    paroc_accesspoint pfm_ap;
+    pop_accesspoint pfm_ap;
 
     // References to parallel objects POPFile readers
     POPFileReader* popfile_reader_ref;

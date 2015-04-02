@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
             LOG_INFO("Stopping POP-C++ %s [Standard] Global Services", VERSION);
 #endif
 
-            paroc_accesspoint jobmgr_ap;
+            pop_accesspoint jobmgr_ap;
             jobmgr_ap.SetAccessString(host.c_str());
 
 
@@ -195,7 +195,7 @@ int main(int argc, char **argv) {
 #else
             JobMgr mgr(jobmgr_ap);
             try {
-                paroc_accesspoint pfm_ap;
+                pop_accesspoint pfm_ap;
                 pfm_ap.SetAccessString("socket://127.0.0.1:2712");
                 POPFileManager pfm(pfm_ap);
                 if(!pfm.Stop(challenge)) {
@@ -358,7 +358,7 @@ int main(int argc, char **argv) {
 
         try {
             //Create the VJobMgr
-            paroc_accesspoint empty;
+            pop_accesspoint empty;
             VirtualJobMgr info(daemon, virtconf, conf, challenge, host, psn.GetAccessPoint(), cloner.GetAccessPoint(), empty);
             LOG_INFO("VJM created [%s]", info.GetAccessPoint().GetAccessString());
         } catch(std::exception& e) {
@@ -400,7 +400,7 @@ int main(int argc, char **argv) {
 #else
         try {
             //Create the base JobMgr
-            paroc_accesspoint empty;
+            pop_accesspoint empty;
             psn.GetAccessPoint();
             JobMgr info(daemon, conf, challenge, host, psn.GetAccessPoint(), empty);
             LOG_INFO("[POP-C++ Runtime] JM created [%s]", info.GetAccessPoint().GetAccessString().c_str());

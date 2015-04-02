@@ -35,13 +35,13 @@
 #include "pop_buffer_factory_finder.h"
 #include "paroc_utils.h"
 #include "pop_buffer_factory.h"
-#include "paroc_combox_factory.h"
+#include "pop_combox_factory.h"
 #include "paroc_exception.h"
 #include "paroc_od.h"
 #include "appservice.ph"
 
-paroc_accesspoint paroc_system::appservice;
-paroc_accesspoint paroc_system::jobservice;
+pop_accesspoint paroc_system::appservice;
+pop_accesspoint paroc_system::jobservice;
 int paroc_system::pop_current_local_address;
 
 int paroc_system::popc_local_mpi_communicator_rank;
@@ -57,7 +57,7 @@ AppCoreService *paroc_system::mgr=nullptr;
 std::string paroc_system::challenge;
 
 paroc_system::paroc_system() {
-    paroc_combox_factory::GetInstance();
+    pop_combox_factory::GetInstance();
     pop_buffer_factory_finder::GetInstance();
     char *tmp = getenv("POPC_PLATFORM");
     if(tmp != nullptr) {
@@ -93,7 +93,7 @@ paroc_system::~paroc_system() {
     mgr=nullptr;
 #endif
 
-    paroc_combox_factory *pf=paroc_combox_factory::GetInstance();
+    pop_combox_factory *pf=pop_combox_factory::GetInstance();
     pop_buffer_factory_finder *bf=pop_buffer_factory_finder::GetInstance();
     delete pf;
     delete bf;
@@ -388,7 +388,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 #endif
         } else {
             challenge="";
-            paroc_accesspoint app;
+            pop_accesspoint app;
             app.SetAccessString(appcontact);
             app.SetAsService();
 #ifndef DEFINE_UDS_SUPPORT

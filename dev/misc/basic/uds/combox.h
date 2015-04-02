@@ -19,10 +19,10 @@ public:
     popc_connection_uds(int fd);
     void set_fd(int fd);
     int get_fd();
-//  popc_connection_uds(int fd, paroc_combox *cb);
+//  popc_connection_uds(int fd, pop_combox *cb);
 //  popc_connection_uds(popc_connection_uds &me);
 
-//  virtual paroc_connection *Clone();
+//  virtual pop_connection *Clone();
 
 private:
     int _socket_fd;

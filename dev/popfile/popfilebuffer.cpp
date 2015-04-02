@@ -159,7 +159,7 @@ void POPFileBuffer::set_strip_path(std::string value) {
  * @param ap The accesspoint of the associated PFM
  * @return void
  */
-void POPFileBuffer::setAssociatedPOPFileManager(paroc_accesspoint ap) {
+void POPFileBuffer::setAssociatedPOPFileManager(pop_accesspoint ap) {
     associatedPFM = ap;
     pfmref = new POPFileManager(associatedPFM);
 }
@@ -169,7 +169,7 @@ void POPFileBuffer::setAssociatedPOPFileManager(paroc_accesspoint ap) {
  * @return The accesspoint of the associated PFM
  * @return void
  */
-paroc_accesspoint POPFileBuffer::get_associated_pfm() {
+pop_accesspoint POPFileBuffer::get_associated_pfm() {
     return associatedPFM;
 }
 
@@ -178,6 +178,6 @@ paroc_accesspoint POPFileBuffer::get_associated_pfm() {
  * @param ap The accesspoint of the local PFM
  * @return void
  */
-void POPFileBuffer::setLocalPOPFileManager(paroc_accesspoint ap) {
+void POPFileBuffer::setLocalPOPFileManager(pop_accesspoint ap) {
     localpfmref = new POPFileManager(ap);
 }

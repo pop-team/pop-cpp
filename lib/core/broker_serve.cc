@@ -263,7 +263,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
 }
 
 
-bool paroc_broker::Invoke(unsigned method[3], pop_buffer &buf, paroc_connection *peer) {
+bool paroc_broker::Invoke(unsigned method[3], pop_buffer &buf, pop_connection *peer) {
     paroc_request req;
     req.from=peer;
     memcpy(req.methodId, method, 3*sizeof(unsigned));

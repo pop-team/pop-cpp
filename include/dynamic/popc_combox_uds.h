@@ -18,10 +18,10 @@
 #include <poll.h>
 #include <ctype.h>
 
-#include "paroc_combox.h"
+#include "pop_combox.h"
 #include "popc_connection_uds.h"
 
-class popc_combox_uds: public paroc_combox {
+class popc_combox_uds: public pop_combox {
 public:
     popc_combox_uds();
     virtual ~popc_combox_uds();
@@ -33,14 +33,14 @@ public:
     virtual bool Connect(const char *url);
     virtual void Close();
 
-    virtual paroc_connection *Wait();
-    virtual paroc_connection* get_connection();
+    virtual pop_connection *Wait();
+    virtual pop_connection* get_connection();
 
     virtual int Send(const char *s,int len);
-    virtual int Send(const char *s,int len, paroc_connection *connection);
+    virtual int Send(const char *s,int len, pop_connection *connection);
 
     virtual int Recv(char *s,int len);
-    virtual int Recv(char *s,int len, paroc_connection *connection);
+    virtual int Recv(char *s,int len, pop_connection *connection);
 
     virtual std::string GetUrl();
     virtual std::string GetProtocol();

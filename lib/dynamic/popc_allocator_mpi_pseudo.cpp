@@ -15,8 +15,8 @@
 
 #include "paroc_system.h"
 #include "paroc_exception.h"
-#include "paroc_combox.h"
-#include "paroc_combox_factory.h"
+#include "pop_combox.h"
+#include "pop_combox_factory.h"
 #include "paroc_broker.h"
 
 /**
@@ -40,7 +40,7 @@ std::string mpi_allocator_pseudo::allocate(std::string& /*objectname*/, paroc_od
  * @param nb          Number of objects to allocate
  * @return A pointer to a combox or an array of combox connected with the group
  */
-paroc_combox* mpi_allocator_pseudo::allocate_group(std::string& /*objectname*/, paroc_od& /*od*/, int /*nb*/) {
+pop_combox* mpi_allocator_pseudo::allocate_group(std::string& /*objectname*/, paroc_od& /*od*/, int /*nb*/) {
     /* TODO Allocation process here */
 
     return nullptr;

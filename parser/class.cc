@@ -505,7 +505,7 @@ bool Class::generate_broker_header_pog(std::string &code) {
             }
         }
     }
-    sprintf(str,"\n{\npublic:\n  %s();\n  virtual bool invoke(unsigned method[3],  pop_buffer &_popc_buffer, paroc_connection *_popc_connection);", brokername);
+    sprintf(str,"\n{\npublic:\n  %s();\n  virtual bool invoke(unsigned method[3],  pop_buffer &_popc_buffer, pop_connection *_popc_connection);", brokername);
     strcat(tmpcode,str);
 
     strcat(tmpcode,"\nprotected:");
@@ -806,8 +806,8 @@ bool Class::GenerateHeader(std::string &code, bool interface/*, bool isPOPCPPCom
 
 
 
-        //Generate constructor from paroc_accesspoint...
-        sprintf(str,"\npublic:\n%s(const paroc_accesspoint &p)",name);
+        //Generate constructor from pop_accesspoint...
+        sprintf(str,"\npublic:\n%s(const pop_accesspoint &p)",name);
         code += str;
 
         int n=baseClass.size();
@@ -914,7 +914,7 @@ bool Class::GenerateBrokerHeader(std::string &code/*, bool isPOPCPPCompilation*/
             }
         }
     }
-    sprintf(str,"\n{\npublic:\n%s();\nvirtual bool Invoke(unsigned method[3],  pop_buffer &__brokerbuf, paroc_connection *peer);", brokername);
+    sprintf(str,"\n{\npublic:\n%s();\nvirtual bool Invoke(unsigned method[3],  pop_buffer &__brokerbuf, pop_connection *peer);", brokername);
     strcat(tmpcode,str);
 
     strcat(tmpcode,"\nprotected:");
@@ -983,9 +983,9 @@ bool Class::GenerateBroker(std::string &code/*, bool isPOPCPPCompilation*/) {
 
     // Generate broker::Invoke virtual method
     if(is_collective()) {
-        sprintf(str,"\nbool %s::invoke(unsigned method[3], pop_buffer &_popc_buffer, paroc_connection *_popc_connection) {\n if (*method == CLASSUID_%s) {\n    switch(method[1]) {",brokername,name);
+        sprintf(str,"\nbool %s::invoke(unsigned method[3], pop_buffer &_popc_buffer, pop_connection *_popc_connection) {\n if (*method == CLASSUID_%s) {\n    switch(method[1]) {",brokername,name);
     } else {
-        sprintf(str,"\nbool %s::Invoke(unsigned method[3], pop_buffer &__brokerbuf, paroc_connection *peer)\n{\n if (*method==CLASSUID_%s) {\n    switch(method[1])\n{",brokername,name);
+        sprintf(str,"\nbool %s::Invoke(unsigned method[3], pop_buffer &__brokerbuf, pop_connection *peer)\n{\n if (*method==CLASSUID_%s) {\n    switch(method[1])\n{",brokername,name);
     }
     code += str;
 

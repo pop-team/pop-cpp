@@ -58,10 +58,10 @@ int main(int argc, char **argv) {
 
     // Connect to callback
     char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");
-    paroc_combox *callback_combox = nullptr;
+    pop_combox *callback_combox = nullptr;
     int status=0;
     if(address != NULL) {
-        auto combox_factory = paroc_combox_factory::GetInstance();
+        auto combox_factory = pop_combox_factory::GetInstance();
 
         auto protocol = get_proto_name(address);
         callback_combox = combox_factory->Create(protocol.c_str());
@@ -101,11 +101,11 @@ int main(int argc, char **argv) {
         buffer->Pack(&status, 1);
         buffer->Pop();
 
-        buffer->Push("address", "paroc_accesspoint", 1);
+        buffer->Push("address", "pop_accesspoint", 1);
         paroc_broker::accesspoint.Serialize(*buffer, true);
         buffer->Pop();
 
-        paroc_connection* connection = callback_combox->get_connection();
+        pop_connection* connection = callback_combox->get_connection();
         bool ret = buffer->Send((*callback_combox), connection);
         delete buffer;
         delete callback_combox;

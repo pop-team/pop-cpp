@@ -15,7 +15,7 @@ Modified by L.Winkler (2008-2009) for Version 1.3
 
 #ifndef _POPC_SYSTEM_H
 #define _POPC_SYSTEM_H
-#include <paroc_accesspoint.h>
+#include <pop_accesspoint.h>
 
 #ifndef __WIN32__
 #include <net/if.h>
@@ -94,11 +94,11 @@ public:
     static void processor_set(int cpu);
 
 public:
-    static paroc_accesspoint appservice;
-    static paroc_accesspoint jobservice;
+    static pop_accesspoint appservice;
+    static pop_accesspoint jobservice;
     static int pop_current_local_address;
     static int popc_local_mpi_communicator_rank;
-    // static paroc_accesspoint popcloner;
+    // static pop_accesspoint popcloner;
     static std::string platform;
     static std::ostringstream _popc_cout;
 

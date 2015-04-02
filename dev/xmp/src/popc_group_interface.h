@@ -15,7 +15,7 @@
 #define POPC_GROUP_INTERFACE_H_
 
 #include "paroc_od.h"
-#include "paroc_combox.h"
+#include "pop_combox.h"
 #include "pop_buffer.h"
 #include <vector>
 
@@ -59,12 +59,12 @@ protected:
     paroc_od od;
 
     // Combox and buffer used for every communication of this interface group
-    paroc_combox* _popc_combox;
+    pop_combox* _popc_combox;
     pop_buffer* _popc_buffer;
 
     // Method used to send and receive message from/to internal buffer
-    void popc_send_request(pop_buffer* buffer, paroc_connection* connection);
-    void popc_recv_response(pop_buffer* buffer, paroc_connection* connection);
+    void popc_send_request(pop_buffer* buffer, pop_connection* connection);
+    void popc_recv_response(pop_buffer* buffer, pop_connection* connection);
 
     // Default object for single call
     int _popc_default_rank_for_single_call;
