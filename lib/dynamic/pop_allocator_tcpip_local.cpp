@@ -77,7 +77,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, pop_od& od
     bool isLocal = (isManual || hostname.empty() || pop_utils::SameContact(myhost.c_str(), hostname.c_str()) || (hostname == "localhost") || (hostname == "127.0.0.1"));
     if(batch.empty()) {
         if(!isLocal) {
-            char *tmp=getenv("POPC_RSH");
+            char *tmp=getenv("POP_RSH");
             argv.push_back(tmp ? tmp :"/usr/bin/ssh");
             if(!ruser.empty()) {
                 char tmpstr[100];
@@ -120,12 +120,12 @@ std::string socket_allocator_local::allocate(std::string& objectname, pop_od& od
 
     pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
     if(combox_factory == nullptr) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
     }
 
     pop_combox* tmpsock = combox_factory->Create("socket");
     if(tmpsock == nullptr) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }
 
     if(!tmpsock->Create(0, true)) {

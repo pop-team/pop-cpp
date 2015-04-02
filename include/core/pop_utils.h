@@ -13,8 +13,9 @@
  * PK     2011/02/25  Add definition of POPGetHost
  */
 
-#ifndef POPC_UTILS_H
-#define POPC_UTILS_H
+#ifndef POP_UTILS_H
+#define POP_UTILS_H
+
 #include "popc_logger.h"
 
 #define SSH_TUNNEL_ERROR 65280
@@ -38,7 +39,7 @@ public:
     static void Assert(bool a);
 
 
-#ifdef _POPC_
+#ifdef _POP_
     static bool SameContact(const std::string& contact1, const std::string& contact2);
     static bool IsRemoteDest(const char *dest);
     static int GetPortFromURL(const char *url);
@@ -56,10 +57,10 @@ public:
 };
 typedef pop_utils POPUtils;
 
-#ifdef _POPC_
+#ifdef _POP_
 int rprintf(const char *format,...);
 
-#ifndef _POPC_RUNTIME_
+#ifndef _POP_RUNTIME_
 #define printf rprintf
 #define POPGetHost() (const char*)POPSystem::GetHost()
 #endif

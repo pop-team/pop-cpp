@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _POPC_BROKERBASE_H
-#define _POPC_BROKERBASE_H
+#ifndef _POP_BROKERBASE_H
+#define _POP_BROKERBASE_H
 
 #include <assert.h>
 #include <strings.h>
@@ -26,8 +26,8 @@
 #define PROTO_DELIMIT_CHAR " "
 #define PROTO_NAME_MAX_LENGTH 1024
 
-#define POPC_QUEUE_NORMAL 50
-#define POPC_QUEUE_MAX 200
+#define POP_QUEUE_NORMAL 50
+#define POP_QUEUE_MAX 200
 
 #define IMPLEMENT_TYPE(aparclass) aparclass##_popcobject
 
@@ -135,8 +135,8 @@ protected:
     int state; // 0=Running, 1=Terminate, 2= Abort
 };
 
-#define POPC_STATE_RUNNING 0
-#define POPC_STATE_EXIT 1
-#define POPC_STATE_ABORT 2
+#define POP_STATE_RUNNING 0
+#define POP_STATE_EXIT 1
+#define POP_STATE_ABORT 2
 
 #endif

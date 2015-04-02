@@ -9,8 +9,8 @@
  *
  *
  */
-#ifndef POPC_INTFACE_LIN_H
-#define POPC_INTFACE_LIN_H
+#ifndef POP_INTFACE_LIN_H
+#define POP_INTFACE_LIN_H
 
 // definitions for access ()
 

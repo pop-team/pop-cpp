@@ -693,7 +693,7 @@ int JobMgr::CreateObject(pop_accesspoint &localservice, const std::string &objna
     catch(std::exception& e) {
         LOG_WARNING("Exception in JogMgr::CreateObject: %s", e.what());
         Pause(localservice, SLEEP_TIME_ON_ERROR);
-        ret=POPC_JOBSERVICE_FAIL;
+        ret=POP_JOBSERVICE_FAIL;
     }
 
     LOG_INFO("Object count=%d, require=%d\n", count, howmany);
@@ -711,7 +711,7 @@ int JobMgr::CreateObject(pop_accesspoint &localservice, const std::string &objna
         }
     }
     if(ret==0) {
-        ret=POPC_EXEC_FAIL;
+        ret=POP_EXEC_FAIL;
     }
     return ret;
 

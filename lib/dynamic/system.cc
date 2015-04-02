@@ -64,7 +64,7 @@ pop_system::pop_system() {
         platform = tmp;
     } else {
         char str[128];
-#ifndef POPC_ARCH
+#ifndef POP_ARCH
         char arch[64], sysname[64];
 #ifndef __WIN32__
         popc_sysinfo(SI_SYSNAME,sysname,64);
@@ -73,7 +73,7 @@ pop_system::pop_system() {
         sprintf(str,"%s-%s",sysname,arch);
 #else
 #ifndef __WIN32__
-        strcpy(str,POPC_ARCH);
+        strcpy(str,POP_ARCH);
 #else
         strcpy(str, "win32");
 #endif

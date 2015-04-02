@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef POPC_COMBOX_H_
-#define POPC_COMBOX_H_
+#ifndef POP_COMBOX_H_
+#define POP_COMBOX_H_
 
 #include "pop_buffer_factory_finder.h"
 

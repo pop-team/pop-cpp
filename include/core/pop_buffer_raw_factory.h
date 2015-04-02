@@ -11,8 +11,8 @@
  */
 
 
-#ifndef POPC_BUFFER_RAW_FACTORY_H
-#define POPC_BUFFER_RAW_FACTORY_H
+#ifndef POP_BUFFER_RAW_FACTORY_H
+#define POP_BUFFER_RAW_FACTORY_H
 
 #include "pop_buffer_factory.h"
 

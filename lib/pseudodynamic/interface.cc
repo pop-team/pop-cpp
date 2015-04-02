@@ -41,8 +41,8 @@
 #include "popc_security_manager.ph"
 #endif
 
-#ifndef POPC_CONNECT_TIMEOUT
-#define POPC_CONNECT_TIMEOUT 10000
+#ifndef POP_CONNECT_TIMEOUT
+#define POP_CONNECT_TIMEOUT 10000
 #endif
 
 
@@ -334,7 +334,7 @@ void pop_interface::Bind(const char *dest) {
     pop_combox_factory *fact = pop_combox_factory::GetInstance();
     std::string p;
     if(!fact) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
+        pop_exception::pop_throw(POP_NO_PROTOCOL, "No protocol for binding", ClassName());
     }
     fact->GetNames(p);
 
@@ -342,7 +342,7 @@ void pop_interface::Bind(const char *dest) {
     __pop_combox = fact->Create("mpi");
 
     if(!__pop_combox) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot create combox from factory");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, ClassName(), "Cannot create combox from factory");
     }
 
     // Create associated buffer

@@ -83,12 +83,12 @@ int main(int argc, char **argv) {
 #ifdef DEFINE_UDS_SUPPORT
         pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
         if(combox_factory == NULL) {
-            pop_exception::pop_throw(POPC_NO_PROTOCOL, "POPCMain: combox_factory == NULL");
+            pop_exception::pop_throw(POP_NO_PROTOCOL, "POPCMain: combox_factory == NULL");
         }
 
         pop_combox* allocating_combox = combox_factory->Create("uds");
         if(allocating_combox == NULL) {
-            pop_exception::pop_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox == NULL");
+            pop_exception::pop_throw(POP_NO_PROTOCOL, "POPCMain: allocating_combox == NULL");
         }
 
         pop_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
         snprintf(local_address, 15, "uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
 
         if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
-            pop_exception::pop_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox->Create failed");
+            pop_exception::pop_throw(POP_NO_PROTOCOL, "POPCMain: allocating_combox->Create failed");
         }
 
         pop_message_header header(0, 200001, INVOKE_SYNC, "_terminate");

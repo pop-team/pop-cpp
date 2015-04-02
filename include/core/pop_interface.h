@@ -13,8 +13,8 @@
  * clementval 2012/08/22  Add thread variable for asynchronous parallel object allocation
  */
 
-#ifndef _POPC_INTERFACE_CORE_H
-#define _POPC_INTERFACE_CORE_H
+#ifndef _POP_INTERFACE_CORE_H
+#define _POP_INTERFACE_CORE_H
 
 #include <stdio.h>
 #include <string>
@@ -32,7 +32,7 @@
 #define BIND_FORWARD_SESSION 1
 #define BIND_FORWARD_PERMANENT 2
 
-#define POPC_ALLOC_RETRY 3
+#define POP_ALLOC_RETRY 3
 
 
 /**

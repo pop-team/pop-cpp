@@ -8,8 +8,8 @@
  * Authors      Date            Comment
  */
 
-#ifndef _POPC_SERVICE_BASE_PH
-#define _POPC_SERVICE_BASE_PH
+#ifndef _POP_SERVICE_BASE_PH
+#define _POP_SERVICE_BASE_PH
 
 #include "pop_accesspoint.h"
 

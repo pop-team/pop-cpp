@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef POPC_OBJECT_H_
-#define POPC_OBJECT_H_
+#ifndef POP_OBJECT_H_
+#define POP_OBJECT_H_
 
 #include "pop_accesspoint.h"
 

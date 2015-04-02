@@ -13,8 +13,8 @@ Modified by L.Winkler (2008-2009) for Version 1.3
             for version 1.3m (see comments 1.3m)
  */
 
-#ifndef _POPC_SYSTEM_H
-#define _POPC_SYSTEM_H
+#ifndef _POP_SYSTEM_H
+#define _POP_SYSTEM_H
 #include <pop_accesspoint.h>
 
 #ifndef __WIN32__

@@ -103,7 +103,7 @@ void broker_killed(int sig) {
 
 pop_broker::pop_broker() {
     obj=nullptr;
-    state=POPC_STATE_RUNNING;
+    state=POP_STATE_RUNNING;
     instanceCount=0;
     mutexCount=0;
     concPendings=0;
@@ -174,7 +174,7 @@ int pop_broker::Run() {
         return -1;
     }
 
-    state = POPC_STATE_RUNNING;
+    state = POP_STATE_RUNNING;
     ptArray.resize(comboxCount);
     int i;
 
@@ -190,7 +190,7 @@ int pop_broker::Run() {
         popc_alarm(TIMEOUT);
     }
 
-    while(state == POPC_STATE_RUNNING) {
+    while(state == POP_STATE_RUNNING) {
         try {
             pop_request req;
             if(!GetRequest(req)) {
@@ -210,7 +210,7 @@ int pop_broker::Run() {
     }
 
 
-    if(obj!=nullptr && state==POPC_STATE_RUNNING) {
+    if(obj!=nullptr && state==POP_STATE_RUNNING) {
         pop_mutex_locker test(execCond);
 
         //Wait for all invocations terminated....
@@ -219,7 +219,7 @@ int pop_broker::Run() {
         }
     }
 
-    state = POPC_STATE_EXIT;
+    state = POP_STATE_EXIT;
 
     for(i = 0; i < comboxCount; i++) {
         if(WakeupReceiveThread(comboxArray[i])) {

@@ -3,8 +3,8 @@
  * @Brief Unix Domain Socket combox declaration
  */
 
-#ifndef POPC_COMBOX_UNIX_DOMAIN_SOCKET_H
-#define POPC_COMBOX_UNIX_DOMAIN_SOCKET_H
+#ifndef POP_COMBOX_UNIX_DOMAIN_SOCKET_H
+#define POP_COMBOX_UNIX_DOMAIN_SOCKET_H
 
 #include <sys/types.h>
 #include <sys/socket.h>

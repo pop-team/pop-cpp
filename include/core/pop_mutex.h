@@ -11,8 +11,8 @@
  */
 
 
-#ifndef _POPC_MUTEX_H
-#define _POPC_MUTEX_H
+#ifndef _POP_MUTEX_H
+#define _POP_MUTEX_H
 #include <pthread.h>
 
 /**

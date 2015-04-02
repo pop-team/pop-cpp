@@ -1,6 +1,6 @@
 #include "popc_intface.h"
 
-#ifdef _POPC_
+#ifdef _POP_
 #include "popc_logger.h"
 #else
 // Note: we redefine two methods of the logger here. This allows to use this file outside of popc
@@ -429,7 +429,7 @@ int RunCmd(int argc, char **argv, char *env[], int *status) {
         LOG_ERROR("[CORE] Fork fails to execute. Can't run command. errno=%d ", errno);
         return err;
     } else if(pid==0) {
-        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ? 
+        /* Note LW: Commented since this stops "segfault" messages to be logged in terminal. What is the purpose of these lines ?
         int nf=popc_getdtablesize();
         for(int fd=3; fd<nf; fd++) {
             popc_close(fd);

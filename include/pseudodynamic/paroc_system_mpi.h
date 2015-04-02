@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef _POPC_SYSTEM_MPI_H
-#define _POPC_SYSTEM_MPI_H
+#ifndef _POP_SYSTEM_MPI_H
+#define _POP_SYSTEM_MPI_H
 #include "pop_system.h"
 #include "pop_mutex.h"
 #include <mpi.h>

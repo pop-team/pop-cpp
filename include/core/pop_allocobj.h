@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef POPC_ALLOCOBJ_H
-#define POPC_ALLOCOBJ_H
+#ifndef POP_ALLOCOBJ_H
+#define POP_ALLOCOBJ_H
 #include <pop_mutex.h>
 
 /**

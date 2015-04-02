@@ -163,7 +163,7 @@ std::string pop_utils::FindAbsolutePath(const std::string& fname) {
 
 
 
-#ifdef _POPC_
+#ifdef _POP_
 #include "pop_system.h"
 
 bool pop_utils::SameContact(const std::string& _contact1, const std::string& _contact2) {

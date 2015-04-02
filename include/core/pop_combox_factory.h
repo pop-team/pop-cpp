@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef POPC_COMBOX_FACTORY_H
-#define POPC_COMBOX_FACTORY_H
+#ifndef POP_COMBOX_FACTORY_H
+#define POP_COMBOX_FACTORY_H
 
 #include <vector>
 

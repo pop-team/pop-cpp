@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef POPC_GROUP_INTERFACE_H_
-#define POPC_GROUP_INTERFACE_H_
+#ifndef POP_GROUP_INTERFACE_H_
+#define POP_GROUP_INTERFACE_H_
 
 #include "pop_od.h"
 #include "pop_combox.h"

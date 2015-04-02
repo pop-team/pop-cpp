@@ -363,7 +363,7 @@ void popc_buffer_xdr_mpi::UnPack(signed char *data, int n) {
 
 void popc_buffer_xdr_mpi::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        pop_exception::pop_throw(POPC_BUFFER_FORMAT, "Wrong packed data size");
+        pop_exception::pop_throw(POP_BUFFER_FORMAT, "Wrong packed data size");
     }
 }
 

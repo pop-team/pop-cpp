@@ -45,7 +45,7 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, pop_
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
     if(codefile.empty()) {
         LOG_ERROR("Code file executable path is NULL ! Abort !");
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, objectname, "Code file executable path is NULL ! Abort !");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "Code file executable path is NULL ! Abort !");
     }
 
     /**
@@ -54,13 +54,13 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, pop_
      */
     pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
     if(combox_factory == nullptr) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, objectname, "No combox factory");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "No combox factory");
     }
 
     pop_combox* allocating_combox = combox_factory->Create("uds");
 
     if(allocating_combox == nullptr) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, objectname, "allocating_combox == NULL");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "allocating_combox == NULL");
     }
 
     pop_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
@@ -68,7 +68,7 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, pop_
     auto  local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
     if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, objectname, "Create or Connect failed");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "Create or Connect failed");
     }
 
     pop_message_header header(20, 200000, INVOKE_SYNC,"_allocate");
@@ -135,22 +135,22 @@ pop_combox* uds_allocator_interconnector::allocate_group(std::string& objectname
 
     pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
     if(combox_factory == nullptr) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, "ComboxFactory NULL");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, "ComboxFactory NULL");
     }
 
     pop_combox* _popc_combox = combox_factory->Create("uds");
     if(_popc_combox == nullptr) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, "Combox NULL");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, "Combox NULL");
     }
 
     pop_buffer* _popc_buffer = _popc_combox->GetBufferFactory()->CreateBuffer();
 
     if(!_popc_combox->Create(local_interconnector_address, false)) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, "Can't connect to local interconnector");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, "Can't connect to local interconnector");
     }
 
     if(!_popc_combox->Connect(local_interconnector_address)) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, "Can't connect to local interconnector");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, "Can't connect to local interconnector");
     }
 
     delete local_interconnector_address;

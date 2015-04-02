@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _POPC_BUFFER_RAW_H
-#define _POPC_BUFFER_RAW_H
+#ifndef _POP_BUFFER_RAW_H
+#define _POP_BUFFER_RAW_H
 
 #include <vector>
 

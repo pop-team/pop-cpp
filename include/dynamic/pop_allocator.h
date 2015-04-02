@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef POPC_ALLOCATOR_H_
-#define POPC_ALLOCATOR_H_
+#ifndef POP_ALLOCATOR_H_
+#define POP_ALLOCATOR_H_
 
 #include "pop_od.h"
 #include "pop_accesspoint.h"

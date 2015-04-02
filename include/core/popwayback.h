@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef _POPC_WAYBACK_H
-#define _POPC_WAYBACK_H
+#ifndef _POP_WAYBACK_H
+#define _POP_WAYBACK_H
 
 #include <list>
 #include <string>

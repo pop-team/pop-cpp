@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _POPC_SYSTEM_HEADERS_
-#define _POPC_SYSTEM_HEADERS_
+#ifndef _POP_SYSTEM_HEADERS_
+#define _POP_SYSTEM_HEADERS_
 #include <pop_base.h>
 
 #include <pop_mutex.h>

@@ -8,8 +8,8 @@
  * Authors      Date            Comment
  */
 
-#ifndef POPC_OBJECT_MONITOR_PH
-#define POPC_OBJECT_MONITOR_PH
+#ifndef POP_OBJECT_MONITOR_PH
+#define POP_OBJECT_MONITOR_PH
 
 #include "pop_service_base.ph"
 

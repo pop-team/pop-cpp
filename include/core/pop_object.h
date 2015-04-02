@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef _POPC_OBJECTBASE_H
-#define _POPC_OBJECTBASE_H
+#ifndef _POP_OBJECTBASE_H
+#define _POP_OBJECTBASE_H
 
 #include "pop_accesspoint.h"
 #include "pop_event.h"

@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef POPC_ALLOCATOR_MPI_PSEUDO_H_
-#define POPC_ALLOCATOR_MPI_PSEUDO_H_
+#ifndef POP_ALLOCATOR_MPI_PSEUDO_H_
+#define POP_ALLOCATOR_MPI_PSEUDO_H_
 
 #include "pop_allocator.h"
 

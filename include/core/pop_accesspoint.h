@@ -12,8 +12,8 @@
  * clementval  2011/9/13   Add the method GetNoAddRef() and the variable _noaddref to be able to handle the THIS keyword correctly
  */
 
-#ifndef POPC_ACCESSPOINT_H
-#define POPC_ACCESSPOINT_H
+#ifndef POP_ACCESSPOINT_H
+#define POP_ACCESSPOINT_H
 #include "pop_base.h"
 
 class pop_accesspoint: public pop_base {

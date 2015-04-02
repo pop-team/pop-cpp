@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef POPC_BUFFER_FACTORY_H
-#define POPC_BUFFER_FACTORY_H
+#ifndef POP_BUFFER_FACTORY_H
+#define POP_BUFFER_FACTORY_H
 
 #include "pop_buffer.h"
 #include <string>

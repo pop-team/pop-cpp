@@ -10,8 +10,8 @@
  */
 
 
-#ifndef _POPC_DATAPACK_MARSHAL_H
-#define _POPC_DATAPACK_MARSHAL_H
+#ifndef _POP_DATAPACK_MARSHAL_H
+#define _POP_DATAPACK_MARSHAL_H
 
 #include "pop_combox.h"
 #include <string>

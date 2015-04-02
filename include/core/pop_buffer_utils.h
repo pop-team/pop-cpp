@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _POPC_BUFFER_UTILS_H
-#define _POPC_BUFFER_UTILS_H
+#ifndef _POP_BUFFER_UTILS_H
+#define _POP_BUFFER_UTILS_H
 
 #include <string>
 #include "pop_buffer.h"

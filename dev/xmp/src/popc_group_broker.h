@@ -17,8 +17,8 @@
 #include "popc_object.h"
 
 
-#ifndef POPC_GROUP_BROKER_H_
-#define POPC_GROUP_BROKER_H_
+#ifndef POP_GROUP_BROKER_H_
+#define POP_GROUP_BROKER_H_
 
 
 #define INVOKE_SYNC 1

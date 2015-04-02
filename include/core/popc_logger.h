@@ -12,8 +12,8 @@
  * - Refactor the popc_logger, added a static array for error messages (LW Jan 2015)
  */
 
-#ifndef POPC_LOGGER_H
-#define POPC_LOGGER_H
+#ifndef POP_LOGGER_H
+#define POP_LOGGER_H
 
 #include <stdarg.h>
 #include <sstream>

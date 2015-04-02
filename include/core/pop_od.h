@@ -16,8 +16,8 @@
 
 
 
-#ifndef _POPC_OD_H
-#define _POPC_OD_H
+#ifndef _POP_OD_H
+#define _POP_OD_H
 #include <pop_base.h>
 
 /**

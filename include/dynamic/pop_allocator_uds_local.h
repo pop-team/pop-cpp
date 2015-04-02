@@ -8,8 +8,8 @@
  * @brief
  */
 
-#ifndef POPC_ALLOCATOR_UDS_LOCAL_H_
-#define POPC_ALLOCATOR_UDS_LOCAL_H_
+#ifndef POP_ALLOCATOR_UDS_LOCAL_H_
+#define POP_ALLOCATOR_UDS_LOCAL_H_
 
 #include "pop_allocator.h"
 

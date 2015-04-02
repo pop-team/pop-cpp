@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _POPC_BROKER_FACTORY_H_
-#define  _POPC_BROKER_FACTORY_H_
+#ifndef _POP_BROKER_FACTORY_H_
+#define _POP_BROKER_FACTORY_H_
 
 #include <vector>
 #include <pop_broker.h>

@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _POPC_BUFFER_XDR_H
-#define _POPC_BUFFER_XDR_H
+#ifndef _POP_BUFFER_XDR_H
+#define _POP_BUFFER_XDR_H
 
 #include <vector>
 

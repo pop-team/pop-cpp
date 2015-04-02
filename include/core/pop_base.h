@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _POPC_BASE_SERIALIZABLE
-#define _POPC_BASE_SERIALIZABLE
+#ifndef _POP_BASE_SERIALIZABLE
+#define _POP_BASE_SERIALIZABLE
 
 #include <pop_buffer.h>
 

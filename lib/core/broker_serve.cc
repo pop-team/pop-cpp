@@ -71,7 +71,7 @@ bool pop_broker::GetRequest(pop_request &req) {
 
     //If the queue is empty then wait for the request....
     while(request_fifo.empty()) {
-        if((obj!=nullptr && obj->GetRefCount()<=0) || state!=POPC_STATE_RUNNING) {
+        if((obj!=nullptr && obj->GetRefCount()<=0) || state!=POP_STATE_RUNNING) {
             return false;
         }
         execCond.wait(); //Wait for new request
@@ -163,7 +163,7 @@ void pop_broker::UnhandledException() {
         app.Log(tmp);
         app.UnManageObject(pop_broker::accesspoint);
         app.KillAll();*/
-        state=POPC_STATE_ABORT;
+        state=POP_STATE_ABORT;
     }
 }
 

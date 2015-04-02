@@ -94,12 +94,12 @@ std::string pop_allocator_uds_local::allocate(std::string& objectname, pop_od& o
 
     auto combox_factory = pop_combox_factory::GetInstance();
     if(!combox_factory) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
     }
 
     auto tmp_combox = combox_factory->Create("uds");
     if(!tmp_combox) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }
 
     if(!tmp_combox->Create(nullptr, true)) {

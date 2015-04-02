@@ -15,11 +15,6 @@
  * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
  */
 
-/*
-  Deeply need refactoring:
-    POPC_Interface instead of pop_interface
- */
-
 #include "popc_intface.h"
 
 #include <time.h>
@@ -39,12 +34,12 @@
 #include "../../config.h"
 #include "appservice.ph"
 
-#if defined POPC_SECURE || defined POPC_SECURE_VIRTUAL
+#if defined POP_SECURE || defined POP_SECURE_VIRTUAL
 #include "popc_security_manager.ph"
 #endif
 
-#ifndef POPC_CONNECT_TIMEOUT
-#define POPC_CONNECT_TIMEOUT 10000
+#ifndef POP_CONNECT_TIMEOUT
+#define POP_CONNECT_TIMEOUT 10000
 #endif
 
 
@@ -371,14 +366,14 @@ void pop_interface::Bind(const char *dest) {
     pop_combox_factory *fact = pop_combox_factory::GetInstance();
     std::string p;
     if(!fact) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
+        pop_exception::pop_throw(POP_NO_PROTOCOL, "No protocol for binding", ClassName());
     }
     fact->GetNames(p);
 
     // Create combox
     __pop_combox = fact->Create(prot);
     if(!__pop_combox) {
-        pop_exception::pop_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot create combox from factory");
+        pop_exception::pop_throw(POP_NO_PROTOCOL, ClassName(), "Cannot create combox from factory");
     }
 
     // Create associated buffer
@@ -475,7 +470,7 @@ void pop_interface::Bind(const char *dest) {
         default:
             LOG_WARNING("Unknown binding status");
             Release();
-            pop_exception::pop_throw(POPC_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
+            pop_exception::pop_throw(POP_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
         }
     } else {
         int code = errno;
@@ -754,7 +749,7 @@ void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerpla
         }
     }
 
-    pop_exception::pop_throw(POPC_NO_ENCODING, ClassName(), "NegociateEncoding failed");
+    pop_exception::pop_throw(POP_NO_ENCODING, ClassName(), "NegociateEncoding failed");
 }
 
 int pop_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const pop_accesspoint &jobserv, const pop_accesspoint &appserv, pop_accesspoint *objaccess, int howmany, const pop_od& od) {
@@ -796,7 +791,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
       //bool islocal=(isManual||hostname==nullptr || *hostname==0 || pop_utils::SameContact(myhost,hostname) || pop_utils::isEqual(hostname,"localhost") || pop_utils::isEqual(hostname,"127.0.0.1"));
       if (batch == nullptr) {
           if (!islocal) {
-              char *tmp=getenv("POPC_RSH");
+              char *tmp=getenv("POP_RSH");
               argv[n++]=popc_strdup((tmp==nullptr)? "/usr/bin/ssh" : tmp);
               //      argv[n++]=popc_strdup("-n");
               // Add user name to host for ssh
@@ -830,7 +825,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
       else strcpy(tmpstr,"popcobjrun");
       argv[n++]=popc_strdup(tmpstr);
       //    }
-      //   else  if ((tmp=getenv("POPC_JOB_EXEC"))!=nullptr)
+      //   else  if ((tmp=getenv("POP_JOB_EXEC"))!=nullptr)
       //    {
       //       argv[n++]=popc_strdup(tmp);
       //    }
@@ -913,7 +908,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
           printf("\n");
       } else {
     #ifndef NDEBUG
-          if (getenv("POPC_DEBUG")) {
+          if (getenv("POP_DEBUG")) {
               LOG_DEBUG("Launching a new object with command : ");
               fprintf(stderr,"--->");
               for (int i=0;i<n;i++) fprintf(stderr,"%s ", argv[i]);

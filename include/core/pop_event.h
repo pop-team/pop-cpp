@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef POPC_EVENT_H_
-#define POPC_EVENT_H_
+#ifndef POP_EVENT_H_
+#define POP_EVENT_H_
 
 #define ANY_EVENT -1
 

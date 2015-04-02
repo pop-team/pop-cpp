@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _POPC_BUFFER_FACTORY_FINDER_H
-#define _POPC_BUFFER_FACTORY_FINDER_H
+#ifndef _POP_BUFFER_FACTORY_FINDER_H
+#define _POP_BUFFER_FACTORY_FINDER_H
 
 #include "pop_buffer_factory.h"
 #include <string>

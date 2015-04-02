@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef POPC_INTFACE_H
-#define POPC_INTFACE_H
+#ifndef POP_INTFACE_H
+#define POP_INTFACE_H
 
 #ifdef __WIN32__
 #include "popc_intface_win.h"

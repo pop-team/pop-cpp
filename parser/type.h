@@ -1,5 +1,5 @@
-#ifndef _POPC_TYPE_H
-#define _POPC_TYPE_H
+#ifndef _POP_TYPE_H
+#define _POP_TYPE_H
 
 #define MAXSTDTYPES 24
 #define MAXSTLTYPES 8

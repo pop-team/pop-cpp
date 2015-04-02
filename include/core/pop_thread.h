@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _POPC_THREAD
-#define _POPC_THREAD
+#ifndef _POP_THREAD
+#define _POP_THREAD
 #include <pthread.h>
 
 class pop_thread {

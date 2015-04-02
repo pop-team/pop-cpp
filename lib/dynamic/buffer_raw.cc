@@ -145,7 +145,7 @@ void pop_buffer_raw::UnPack(signed char *data, int n) {
 
 void pop_buffer_raw::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        pop_exception::pop_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_raw::CheckUnPack");
+        pop_exception::pop_throw(POP_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_raw::CheckUnPack");
     }
 }
 

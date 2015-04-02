@@ -47,7 +47,7 @@ void pop_broker::ReceiveThread(pop_combox *server) { // Receive request and put 
     server->SetCallback(COMBOX_NEW, NewConnection, this);
     server->SetCallback(COMBOX_CLOSE, CloseConnection, this);
 
-    while(state == POPC_STATE_RUNNING) {
+    while(state == POP_STATE_RUNNING) {
         pop_request req;
         req.data=nullptr;
         try {
@@ -177,16 +177,16 @@ void pop_broker::RegisterRequest(pop_request &req) {
         mutexCond.unlock();
     }
 
-    if(count >= POPC_QUEUE_NORMAL) {
+    if(count >= POP_QUEUE_NORMAL) {
         //To many requests: Slowdown the receive thread...
-        int step = (count/POPC_QUEUE_NORMAL);
+        int step = (count/POP_QUEUE_NORMAL);
         long t = step*step*step;
-        //if (count>POPC_QUEUE_NORMAL+5)
+        //if (count>POP_QUEUE_NORMAL+5)
         LOG_WARNING(" Warning: too many requests (unserved requests: %d)",count);
-        if(count<=POPC_QUEUE_MAX) {
+        if(count<=POP_QUEUE_MAX) {
             popc_usleep(10*t);
         } else {
-            while(request_fifo.size()>POPC_QUEUE_MAX) {
+            while(request_fifo.size()>POP_QUEUE_MAX) {
                 popc_usleep(t*10);
             }
         }

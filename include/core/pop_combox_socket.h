@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef POPC_COMBOX_SOCKET_H
-#define POPC_COMBOX_SOCKET_H
+#ifndef POP_COMBOX_SOCKET_H
+#define POP_COMBOX_SOCKET_H
 
 #include <vector>
 

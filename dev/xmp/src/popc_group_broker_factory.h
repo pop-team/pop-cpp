@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _POPC_GROUP_BROKER_FACTORY_H_
-#define _POPC_GROUP_BROKER_FACTORY_H_
+#ifndef _POP_GROUP_BROKER_FACTORY_H_
+#define _POP_GROUP_BROKER_FACTORY_H_
 
 #include "popc_group_broker.h"
 #include "paroc_list.h"

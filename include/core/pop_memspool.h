@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef POPC_MEMSPOOL_H
-#define POPC_MEMSPOOL_H
+#ifndef POP_MEMSPOOL_H
+#define POP_MEMSPOOL_H
 
 #include <vector>
 #include <stdlib.h>

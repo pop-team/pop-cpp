@@ -109,9 +109,9 @@ void prepare_source(const char *src, const char *dest, const popc_options& optio
     }
 
     if(options.advanced) {
-        fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"pop_sys.h\"\n#include \"popc_advanced_header.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
+        fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POP_\n#include \"pop_sys.h\"\n#include \"popc_advanced_header.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
     } else {
-        fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"pop_sys.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
+        fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POP_\n#include \"pop_sys.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
     }
 
     char buf[1024];
@@ -388,7 +388,7 @@ int main(int argc, char *argv[]) {
     // POP-C++ preprocessor command
     char popcpp[1024];
 
-#ifndef POPC_CXX
+#ifndef POP_CXX
     char popcxx[1024] = POPC_CXX_COMPILER;
     char popld[1024] = POPC_CXX_COMPILER;
 #else
@@ -400,7 +400,7 @@ int main(int argc, char *argv[]) {
     char mpicxx[1024] = POPC_MPI_CXX_COMPILER;
     char mpicpp[1024] = POPC_MPI_CXX_COMPILER " -E";
 
-#ifndef POPC_CPP
+#ifndef POP_CPP
     char cpp[1024] = POPC_CXX_COMPILER " -E";
 #else
     char cpp[1024] = POPC_CPP;
@@ -617,7 +617,7 @@ int main(int argc, char *argv[]) {
     libpaths[libpaths_count++] = "/usr/lib";
     libpaths[libpaths_count++] = "/lib";
 
-    sprintf(buf, "-DPOPC_ARCH=\"%s\"", arch);
+    sprintf(buf, "-DPOP_ARCH=\"%s\"", arch);
     cpp_opts[cpp_count++] = popc_strdup(buf);
 
     if(usepopmain) {

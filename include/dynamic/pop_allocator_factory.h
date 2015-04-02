@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef POPC_ALLOCATOR_FACTORY_H_
-#define POPC_ALLOCATOR_FACTORY_H_
+#ifndef POP_ALLOCATOR_FACTORY_H_
+#define POP_ALLOCATOR_FACTORY_H_
 
 #include "pop_allocator.h"
 

@@ -83,7 +83,7 @@ std::string socket_allocator_service::allocate(std::string& objectname, pop_od& 
 
     } catch(std::exception & e) {
         LOG_ERROR("Cannot create object via POP-C++ Job Manager: %s", e.what());
-        pop_exception::pop_throw(POPC_JOBSERVICE_FAIL,"Cannot create object via POP-C++ job service",e.what());
+        pop_exception::pop_throw(POP_JOBSERVICE_FAIL,"Cannot create object via POP-C++ job service",e.what());
     }
 
     return objectaddress.GetAccessString();

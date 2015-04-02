@@ -11,8 +11,8 @@
  * - Rename pop_allocator_tcpip_ssh to _service for clarity
  */
 
-#ifndef POPC_ALLOCATOR_TCPIP_H_
-#define POPC_ALLOCATOR_TCPIP_H_
+#ifndef POP_ALLOCATOR_TCPIP_H_
+#define POP_ALLOCATOR_TCPIP_H_
 
 #include "pop_allocator.h"
 

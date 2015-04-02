@@ -1,5 +1,5 @@
-#ifndef POPC_MPI_H
-#define POPC_MPI_H
+#ifndef POP_MPI_H
+#define POP_MPI_H
 
 #include <stdlib.h>
 
