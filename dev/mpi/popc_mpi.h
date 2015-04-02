@@ -145,7 +145,7 @@ bool  POPMPI<T>::startMPI(T *&array, int np) {
         array=(T *)malloc(sizeof(T)*np);
         for(i=0; i<np; i++) {
             new(array+i) T(ap[i]);
-            (array+i)->_paroc_Construct();
+            (array+i)->_pop_construct();
         }
     }
 

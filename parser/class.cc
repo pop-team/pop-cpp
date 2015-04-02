@@ -1060,7 +1060,7 @@ bool Class::GenerateBroker(std::string &code/*, bool isPOPCPPCompilation*/) {
     if(is_collective()) {
         sprintf(str,"\n%s::%s()\n{\n  static popc_method_info _popc_minfo[%d] = { %s };\n  add_method_info(CLASSUID_%s, _popc_minfo, %d);\n}\n", brokername, brokername, methodcount, methodinfo, name, methodcount);
     } else {
-        sprintf(str,"\n%s::%s()\n{\nstatic paroc_method_info _paroc_minfo[%d]={%s};\nAddMethodInfo(CLASSUID_%s, _paroc_minfo, %d);\n}", brokername, brokername, methodcount, methodinfo, name, methodcount);
+        sprintf(str,"\n%s::%s()\n{\nstatic pop_method_info _paroc_minfo[%d]={%s};\nAddMethodInfo(CLASSUID_%s, _paroc_minfo, %d);\n}", brokername, brokername, methodcount, methodinfo, name, methodcount);
     }
     code += str;
 

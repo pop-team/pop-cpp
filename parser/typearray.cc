@@ -98,10 +98,10 @@ void TypeArray::Marshal(char *varname, char *bufname, char *sizehelper, std::str
         output += tmpcode;
 
 
-        sprintf(tmpcode,"for (%s *_paroc_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _paroc_elem%d++)\n{\n", typebase->GetName(), counter, typebase->GetName(), varname, counter,counter, counter);
+        sprintf(tmpcode,"for (%s *_pop_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _pop_elem%d++)\n{\n", typebase->GetName(), counter, typebase->GetName(), varname, counter,counter, counter);
         output += tmpcode;
 
-        sprintf(tmpvar,"(*_paroc_elem%d)",counter);
+        sprintf(tmpvar,"(*_pop_elem%d)",counter);
         typebase->Marshal(tmpvar,bufname, nullptr, output);
         strcpy(tmpcode,"}\n}\n");
         output += tmpcode;
@@ -143,10 +143,10 @@ void TypeArray::DeMarshal(char *varname, char *bufname, char *sizehelper, std::s
         sprintf(tmpcode,"%s.Push(\"%s\",\"%s\",_paroc_count%d);\n",bufname, paramname, typebase->GetName(), counter);
         output += tmpcode;
 
-        sprintf(tmpcode,"for (%s *_paroc_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _paroc_elem%d++)\n{\n", typebase->GetName(), counter, typebase->GetName(), varname, counter,counter, counter);
+        sprintf(tmpcode,"for (%s *_pop_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _pop_elem%d++)\n{\n", typebase->GetName(), counter, typebase->GetName(), varname, counter,counter, counter);
         output += tmpcode;
 
-        sprintf(tmpvar,"(*_paroc_elem%d)",counter);
+        sprintf(tmpvar,"(*_pop_elem%d)",counter);
         typebase->DeMarshal(tmpvar,bufname, nullptr, output);
         strcpy(tmpcode,"}\n}\n");
         output += tmpcode;

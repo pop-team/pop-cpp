@@ -79,9 +79,9 @@ void TypePtr::Marshal(char *varname, char *bufname, char *sizehelper, std::strin
         sprintf(tmpcode,"\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname,typebase->GetName(),tmpsize);
         output += tmpcode;
 
-        sprintf(tmpcode,"\n{for (int _paroc_item=0; _paroc_item < %s; _paroc_item++) { \n", tmpsize);
+        sprintf(tmpcode,"\n{for (int _pop_item=0; _pop_item < %s; _pop_item++) { \n", tmpsize);
         output += tmpcode;
-        sprintf(tmpvar,"(%s[_paroc_item])",varname);
+        sprintf(tmpvar,"(%s[_pop_item])",varname);
         typebase->Marshal(tmpvar,bufname, nullptr, output);
 
         strcpy(tmpcode,"}\n}\n");
@@ -110,9 +110,9 @@ void TypePtr::DeMarshal(char *varname, char *bufname, char *sizehelper, std::str
         sprintf(tmpcode,"\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname,typebase->GetName(),tmpsize);
         output += tmpcode;
 
-        sprintf(tmpcode," {\nfor (int _paroc_item=0; _paroc_item < %s; _paroc_item++) { \n", tmpsize);
+        sprintf(tmpcode," {\nfor (int _pop_item=0; _pop_item < %s; _pop_item++) { \n", tmpsize);
         output += tmpcode;
-        sprintf(tmpvar,"(%s[_paroc_item])",varname);
+        sprintf(tmpvar,"(%s[_pop_item])",varname);
         typebase->DeMarshal(tmpvar,bufname, nullptr, output);
 
         strcpy(tmpcode,"}\n}\n");

@@ -16,7 +16,7 @@ POPXMPObject::~POPXMPObject()
 
 void POPXMPObject::_popc_constructor()
 {
-//pop_mutex_locker __paroc_lock(_pop_imutex);
+//pop_mutex_locker __pop_lock(_pop_imutex);
 printf("_popc_construct\n");
   pop_connection* _popc_connection = _popc_combox->get_connection();
   _popc_buffer->Reset();

@@ -25,10 +25,10 @@
 
 #define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=nullptr) pop_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 
-class paroc_invokethread: public pop_thread {
+class pop_invokethread: public pop_thread {
 public:
-    paroc_invokethread(pop_broker *br, pop_request &myrequest, int *instanceCount, pop_condition *execCond);
-    ~ paroc_invokethread();
+    pop_invokethread(pop_broker *br, pop_request &myrequest, int *instanceCount, pop_condition *execCond);
+    ~ pop_invokethread();
     virtual void start() override;
 
 protected:
@@ -39,7 +39,7 @@ protected:
     pop_condition *pcond;
 };
 
-paroc_invokethread::paroc_invokethread(pop_broker *br, pop_request &myrequest,  int *instanceCount, pop_condition *execCond): pop_thread(false), request(myrequest) {
+pop_invokethread::pop_invokethread(pop_broker *br, pop_request &myrequest,  int *instanceCount, pop_condition *execCond): pop_thread(false), request(myrequest) {
     pbroker=br;
     pinstanceCount=instanceCount;
     pcond=execCond;
@@ -48,7 +48,7 @@ paroc_invokethread::paroc_invokethread(pop_broker *br, pop_request &myrequest,  
     pcond->unlock();
 }
 
-paroc_invokethread::~paroc_invokethread() {
+pop_invokethread::~pop_invokethread() {
     delete request.data;
     if(request.from!=nullptr) {
         delete request.from;
@@ -60,7 +60,7 @@ paroc_invokethread::~paroc_invokethread() {
     pcond->unlock();
 }
 
-void paroc_invokethread::start() {
+void pop_invokethread::start() {
     pbroker->DoInvoke(request);
 }
 
@@ -110,7 +110,7 @@ bool pop_broker::GetRequest(pop_request &req) {
 void pop_broker::ServeRequest(pop_request &req) {
     int type=req.methodId[2];
     if(type & INVOKE_CONC) {
-        auto thr= new paroc_invokethread(this,req, &instanceCount,&execCond);
+        auto thr= new pop_invokethread(this,req, &instanceCount,&execCond);
 
         int ret;
         int t=1;

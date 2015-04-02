@@ -165,47 +165,47 @@ std::size_t cxx_preprocessor(const char *preprocessor, const char** pre_opt, con
 int popc_preprocessor(const char* popcpp, const char* tmpfile1, const char* tmpfile2, const char* tmpfile3, const char** cmd, std::size_t count, const popc_options& options){
     // Run POP-C++ preprocessor (popcpp)
     const char *popc_preprocessor_command[1000];
-    std::size_t countparoc=0;
+    std::size_t countpop=0;
 
-    popc_preprocessor_command[countparoc++] = popcpp;
-    popc_preprocessor_command[countparoc++] = tmpfile2;
-    popc_preprocessor_command[countparoc++] = tmpfile3;
+    popc_preprocessor_command[countpop++] = popcpp;
+    popc_preprocessor_command[countpop++] = tmpfile2;
+    popc_preprocessor_command[countpop++] = tmpfile3;
 
     if(options.nointerface) {
-        popc_preprocessor_command[countparoc++] = "-parclass-nointerface";
+        popc_preprocessor_command[countpop++] = "-parclass-nointerface";
     }
     if(options.nobroker) {
-        popc_preprocessor_command[countparoc++] = "-parclass-nobroker";
+        popc_preprocessor_command[countpop++] = "-parclass-nobroker";
     }
     if(options.nowarning) {
-        popc_preprocessor_command[countparoc++] = "-no-warning";
+        popc_preprocessor_command[countpop++] = "-no-warning";
     }
     if(options.popcppcompilation) {
-        popc_preprocessor_command[countparoc++] = "-popcpp-compilation";
+        popc_preprocessor_command[countpop++] = "-popcpp-compilation";
     }
     if(options.asyncallocation) {
-        popc_preprocessor_command[countparoc++] = "-async-allocation";
+        popc_preprocessor_command[countpop++] = "-async-allocation";
     }
     if(options.noimplicitpack) {
-        popc_preprocessor_command[countparoc++] = "-no-implicit-pack";
+        popc_preprocessor_command[countpop++] = "-no-implicit-pack";
     }
     if(options.xmp) {
-        popc_preprocessor_command[countparoc++] = "-xmp";
+        popc_preprocessor_command[countpop++] = "-xmp";
     }
     if(options.advanced) {
-        popc_preprocessor_command[countparoc++] = "-advanced";
+        popc_preprocessor_command[countpop++] = "-advanced";
     }
 
     int ret = 0;
     if(!options.usepipe) {
         if(options.verbose) {
             printf("POP-C++ parsing: ");
-            for(std::size_t i = 0; i < countparoc; i++) {
+            for(std::size_t i = 0; i < countpop; i++) {
                 printf("%s ", popc_preprocessor_command[i]);
             }
             printf("\n");
         }
-        ret = RunCmd(countparoc, popc_preprocessor_command);
+        ret = RunCmd(countpop, popc_preprocessor_command);
         if(!options.noclean) {
             popc_unlink(tmpfile2);
         }
@@ -217,12 +217,12 @@ int popc_preprocessor(const char* popcpp, const char* tmpfile1, const char* tmpf
             }
             printf("\n");
             printf("POP-C++ parsing (from pipe %s): ", tmpfile1);
-            for(std::size_t i = 0; i < countparoc; i++) {
+            for(std::size_t i = 0; i < countpop; i++) {
                 printf("%s ", popc_preprocessor_command[i]);
             }
             printf("\n");
         }
-        ret = RunPipe(count, cmd, countparoc, popc_preprocessor_command);
+        ret = RunPipe(count, cmd, countpop, popc_preprocessor_command);
     }
 
     return ret;
@@ -389,11 +389,11 @@ int main(int argc, char *argv[]) {
     char popcpp[1024];
 
 #ifndef POPC_CXX
-    char parocxx[1024] = POPC_CXX_COMPILER;
-    char parocld[1024] = POPC_CXX_COMPILER;
+    char popcxx[1024] = POPC_CXX_COMPILER;
+    char popld[1024] = POPC_CXX_COMPILER;
 #else
-    char parocxx[1024] = POPC_CXX;
-    char parocld[1024] = POPC_CXX;
+    char popcxx[1024] = POPC_CXX;
+    char popld[1024] = POPC_CXX;
 #endif
 
     // For MPI and XMP support
@@ -407,7 +407,7 @@ int main(int argc, char *argv[]) {
 #endif
 
     // POP-C++ installation directory
-    char parocdir[1024] = POPC_INSTALL_PREFIX;
+    char popdir[1024] = POPC_INSTALL_PREFIX;
 
 
 
@@ -459,9 +459,9 @@ int main(int argc, char *argv[]) {
     // Check for POP-C++ installation directory
     const char *tmp;
     if((tmp = pop_utils::checkremove(&argc, &argv, "-popcdir="))) {
-        strcpy(parocdir, tmp);
+        strcpy(popdir, tmp);
     } else if((tmp = getenv("POPC_LOCATION"))) {
-        strcpy(parocdir, tmp);
+        strcpy(popdir, tmp);
     }
 
     //Detect the POPC preprocessor
@@ -472,9 +472,9 @@ int main(int argc, char *argv[]) {
         strcpy(popcpp, tmp);
     } else {
 #ifdef __WIN32__
-        sprintf(popcpp, "%s/bin/popcpp.exe", parocdir);
+        sprintf(popcpp, "%s/bin/popcpp.exe", popdir);
 #else
-        sprintf(popcpp, "%s/bin/popcpp", parocdir);
+        sprintf(popcpp, "%s/bin/popcpp", popdir);
 #endif
     }
 
@@ -499,22 +499,22 @@ int main(int argc, char *argv[]) {
 
     // Detect C++ compiler
     if((tmp = pop_utils::checkremove(&argc, &argv, "-cxx="))) {
-        strcpy(parocxx, tmp);
+        strcpy(popcxx, tmp);
     } else if(options.xmp || options.mpi) {
-        strcpy(parocxx, mpicxx);
+        strcpy(popcxx, mpicxx);
     } else if((tmp = getenv("POPC_CXX"))) {
-        strcpy(parocxx, tmp);
+        strcpy(popcxx, tmp);
     }
 
     // Detect C++ linker
     if((tmp = pop_utils::checkremove(&argc, &argv, "-popcld="))) {
-        strcpy(parocld,tmp);
+        strcpy(popld,tmp);
     } else if(options.xmp || options.mpi) {
-        strcpy(parocld, mpicxx);
+        strcpy(popld, mpicxx);
     } else if((tmp = getenv("POPC_LD"))) {
-        strcpy(parocld, tmp);
+        strcpy(popld, tmp);
     } else {
-        strcpy(parocld, parocxx);
+        strcpy(popld, popcxx);
     }
 
     const char *cpp_opts[1000];
@@ -528,7 +528,7 @@ int main(int argc, char *argv[]) {
         cpp_opts[cpp_count++] = tok;
     }
 
-    tok = strtok(parocxx, " \t");
+    tok = strtok(popcxx, " \t");
     while((tok = strtok(nullptr, " \t"))) {
         cxx_opts[cxx_count++] = tok;
     }
@@ -536,21 +536,21 @@ int main(int argc, char *argv[]) {
     const char *link_cmd[1024];
     int link_count = 0;
 
-    link_cmd[link_count++] = parocld;
-    tok = strtok(parocld, " \t");
+    link_cmd[link_count++] = popld;
+    tok = strtok(popld, " \t");
     while((tok = strtok(nullptr," \t"))) {
         link_cmd[link_count++] = tok;
     }
 
-    sprintf(buf, "-L%s/lib/core", parocdir);
+    sprintf(buf, "-L%s/lib/core", popdir);
     link_cmd[link_count] = popc_strdup(buf);
     link_count++;
 
     // Add the library path for compilation
     if(options.psdyn) {
-        sprintf(buf, "-L%s/lib/pseudodynamic", parocdir);
+        sprintf(buf, "-L%s/lib/pseudodynamic", popdir);
     } else {
-        sprintf(buf, "-L%s/lib/dynamic", parocdir);
+        sprintf(buf, "-L%s/lib/dynamic", popdir);
     }
 
     link_cmd[link_count++] = popc_strdup(buf);
@@ -559,9 +559,9 @@ int main(int argc, char *argv[]) {
     int libpaths_count = 0;
 
     // Add POP-C++ library path to the lib path
-    char paroclibdir[1024];
-    sprintf(paroclibdir, "%s/lib", parocdir);
-    libpaths[libpaths_count++] = paroclibdir;
+    char poplibdir[1024];
+    sprintf(poplibdir, "%s/lib", popdir);
+    libpaths[libpaths_count++] = poplibdir;
 
 
 #ifdef POPC_EXTRA_LINK
@@ -624,13 +624,13 @@ int main(int argc, char *argv[]) {
         cpp_opts[cpp_count++] = popc_strdup("-Dmain=popmain");
     }
 
-    sprintf(buf, "-I%s/include/core", parocdir);
+    sprintf(buf, "-I%s/include/core", popdir);
     cpp_opts[cpp_count++] = popc_strdup(buf);
 
     if(options.psdyn) {
-        sprintf(buf, "-I%s/include/pseudodynamic", parocdir);
+        sprintf(buf, "-I%s/include/pseudodynamic", popdir);
     } else {
-        sprintf(buf, "-I%s/include/dynamic", parocdir);
+        sprintf(buf, "-I%s/include/dynamic", popdir);
     }
 
     cpp_opts[cpp_count++] = popc_strdup(buf);
@@ -659,7 +659,7 @@ int main(int argc, char *argv[]) {
                             printf("\n");
                         }
 
-                        auto outf = Compile(cpp, popcpp, parocxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile)) ? nullptr :  outputfile), options);
+                        auto outf = Compile(cpp, popcpp, popcxx, cpp_opts, cxx_opts, argv[i], ((*outputfile==0 || (!compile)) ? nullptr :  outputfile), options);
                         link_cmd[link_count++] = !outf ? argv[i] : popc_strdup(outf);
                         continue;
                     }
@@ -678,33 +678,33 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    bool paroc_static = pop_utils::checkremove(&argc, &argv, "-popc-static");
-    bool paroc_nolib = pop_utils::checkremove(&argc, &argv, "-popc-nolib");
+    bool pop_static = pop_utils::checkremove(&argc, &argv, "-popc-static");
+    bool pop_nolib = pop_utils::checkremove(&argc, &argv, "-popc-nolib");
 
     if(!compile) {
         if(usepopmain) {
             if(options.psdyn && object) {
-                sprintf(buf, "%s/lib/pseudodynamic/popc_objmain.%s.o", parocdir, "psdyn");
+                sprintf(buf, "%s/lib/pseudodynamic/popc_objmain.%s.o", popdir, "psdyn");
             } else if(options.psdyn) {
-                sprintf(buf, "%s/lib/pseudodynamic/pop_infmain.%s.o", parocdir, "psdyn");
+                sprintf(buf, "%s/lib/pseudodynamic/pop_infmain.%s.o", popdir, "psdyn");
             } else if((options.xmp || options.mpi) && object) {
-                sprintf(buf, "%s/lib/dynamic/popc_objmain.%s.o", parocdir, "xmp");
+                sprintf(buf, "%s/lib/dynamic/popc_objmain.%s.o", popdir, "xmp");
             } else if(object) {
-                sprintf(buf, "%s/lib/dynamic/pop_objmain.%s.o", parocdir, objmain);
+                sprintf(buf, "%s/lib/dynamic/pop_objmain.%s.o", popdir, objmain);
             } else {
-                sprintf(buf, "%s/lib/dynamic/pop_infmain.std.o", parocdir);
+                sprintf(buf, "%s/lib/dynamic/pop_infmain.std.o", popdir);
             }
             link_cmd[link_count++] = popc_strdup(buf);
         }
-        if(!paroc_nolib) {
-            if(options.psdyn && (paroc_static || staticlib)) {
-                sprintf(buf, "%s/lib/pseudodynamic/libpopc_common_psdyn.a", parocdir);
+        if(!pop_nolib) {
+            if(options.psdyn && (pop_static || staticlib)) {
+                sprintf(buf, "%s/lib/pseudodynamic/libpopc_common_psdyn.a", popdir);
             } else if(options.psdyn) {
                 strcpy(buf, "-lpopc_core");
                 link_cmd[link_count++] = popc_strdup(buf);
                 strcpy(buf, "-lpopc_common_psdyn");
-            } else if(paroc_static || staticlib) {
-                sprintf(buf, "%s/lib/dynamic/libpopc_common.a", parocdir);
+            } else if(pop_static || staticlib) {
+                sprintf(buf, "%s/lib/dynamic/libpopc_common.a", popdir);
             } else {
                 // note: apparently the link order should be: -lpopc_core -lpopc_common -lpopc_core -lpopc_common due to cross dependancies
                 strcpy(buf, "-lpopc_core");
@@ -746,8 +746,8 @@ int main(int argc, char *argv[]) {
 
             // Link with advanced POP-C++ library
             if((options.xmp || options.advanced || options.mpi) && !options.psdyn) {
-                if(paroc_static || staticlib) {
-                    sprintf(buf, "%s/lib/dynamic/libpopc_advanced.a", parocdir);
+                if(pop_static || staticlib) {
+                    sprintf(buf, "%s/lib/dynamic/libpopc_advanced.a", popdir);
                 } else {
                     strcpy(buf, "-lpopc_advanced");
                 }

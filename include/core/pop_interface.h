@@ -120,7 +120,7 @@ public:
     static int LocalExec(const char *hostname, const char *codefile, const char *classname, const pop_accesspoint &jobservice, const pop_accesspoint &appservice, pop_accesspoint *objaccess, int howmany, const pop_od &od);
 
     static pop_accesspoint _pop_nobind;
-    static int paroc_bind_timeout;
+    static int pop_bind_timeout;
 
 
 

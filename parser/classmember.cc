@@ -262,8 +262,8 @@ bool Param::Marshal(char *bufname, bool reformat,bool inf_side, std::string &out
 
     if(paramSize!=nullptr && !reformat) {
         char decl[1024];
-        sprintf(decl, "int __paroc_size1_%s=%s;\n%s.Push(\"%sSize\",\"int\",1);\n%s.Pack(& __paroc_size1_%s,1);\n%s.Pop();\n",name,paramSize,bufname, name, bufname,name, bufname);
-        sprintf(sizeinfo,"__paroc_size1_%s",name);
+        sprintf(decl, "int __pop_size1_%s=%s;\n%s.Push(\"%sSize\",\"int\",1);\n%s.Pack(& __pop_size1_%s,1);\n%s.Pop();\n",name,paramSize,bufname, name, bufname,name, bufname);
+        sprintf(sizeinfo,"__pop_size1_%s",name);
 
         output += decl;
     }
@@ -298,9 +298,9 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
 
     if(paramSize!=nullptr && !reformat) {
         char decl[1024];
-        sprintf(decl, "int __paroc_size2_%s;\n%s.Push(\"%sSize\",\"int\",1);\n \n%s.UnPack(& __paroc_size2_%s,1);\n%s.Pop();\n",name,bufname, name, bufname,name, bufname);
+        sprintf(decl, "int __pop_size2_%s;\n%s.Push(\"%sSize\",\"int\",1);\n \n%s.UnPack(& __pop_size2_%s,1);\n%s.Pop();\n",name,bufname, name, bufname,name, bufname);
 
-        sprintf(sizeinfo,"__paroc_size2_%s",name);
+        sprintf(sizeinfo,"__pop_size2_%s",name);
 
         output += decl;
 
@@ -314,15 +314,15 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
             base->GetDeclaration(nullptr,basetype);
 
             if(nptr==1 && base->IsParClass()) {
-                sprintf(alloccode, "pop_interface_container<%s> __pop_container_%s(__paroc_size2_%s);\n %s=__pop_container_%s;\n", basetype,name,name,name, name);
+                sprintf(alloccode, "pop_interface_container<%s> __pop_container_%s(__pop_size2_%s);\n %s=__pop_container_%s;\n", basetype,name,name,name, name);
             } else {
-                //        sprintf(alloccode, "pop_container<typeof(*%s)> __pop_container_%s(%s,__paroc_size2_%s);\n", name,name,name,name);
+                //        sprintf(alloccode, "pop_container<typeof(*%s)> __pop_container_%s(%s,__pop_size2_%s);\n", name,name,name,name);
                 char tmpstr[1024];
                 strcpy(tmpstr,base->GetName());
                 for(int i=1; i<nptr; i++) {
                     strcat(tmpstr,"*");
                 }
-                sprintf(alloccode, "pop_container<%s> __pop_container_%s(__paroc_size2_%s);\n%s=__pop_container_%s;\n", tmpstr,name,name,name,name);
+                sprintf(alloccode, "pop_container<%s> __pop_container_%s(__pop_size2_%s);\n%s=__pop_container_%s;\n", tmpstr,name,name,name,name);
             }
             output += alloccode;
         }
@@ -886,7 +886,7 @@ void Method::GenerateClient(std::string &output) {
     } // End of APOA Support
 
     if(!GetClass()->is_collective()) {
-        sprintf(tmpcode, "\n  pop_mutex_locker __paroc_lock(_pop_imutex);");
+        sprintf(tmpcode, "\n  pop_mutex_locker __pop_lock(_pop_imutex);");
         output += tmpcode;
         sprintf(tmpcode, "\n  if(!__pop_combox)pop_exception::pop_throw(\"combox was not initialized\");");
         output += tmpcode;
@@ -1179,7 +1179,7 @@ void Method::GenerateBroker(std::string &output) {
                 sprintf(methodcall,"\n  %s%s* _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    _popc_object->%s(",clname,Class::POG_OBJECT_POSTFIX,clname,Class::POG_OBJECT_POSTFIX, name);
                 // TODO lwk security: handle NULL on all dynamic cast in parser/ ?
             } else {
-                sprintf(methodcall,"\n%s%s * _paroc_obj = dynamic_cast<%s%s *>(obj);\ntry {\n_paroc_obj->%s(", clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, name);
+                sprintf(methodcall,"\n%s%s * _pop_obj = dynamic_cast<%s%s *>(obj);\ntry {\n_pop_obj->%s(", clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, name);
             }
         } else {
             char retdecl[1024];
@@ -1191,13 +1191,13 @@ void Method::GenerateBroker(std::string &output) {
                 if(GetClass()->is_collective()) {
                     sprintf(methodcall,"\n%s(pop_interface::_pop_nobind);\n    %s%s * _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    %s=_popc_object->%s(",retdecl, clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, tmpvar, name);
                 } else {
-                    sprintf(methodcall,"\n%s(pop_interface::_pop_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(", retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
+                    sprintf(methodcall,"\n%s(pop_interface::_pop_nobind);\n%s%s * _pop_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_pop_obj->%s(", retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
                 }
             } else {
                 if(GetClass()->is_collective()) {
                     sprintf(methodcall,"\n%s;\n%s%s * _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    %s=_popc_object->%s(",retdecl, clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, tmpvar, name);
                 } else {
-                    sprintf(methodcall,"\n%s;\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(",retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
+                    sprintf(methodcall,"\n%s;\n%s%s * _pop_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_pop_obj->%s(",retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
                 }
             }
             haveReturn = true;
@@ -1446,7 +1446,7 @@ void Constructor::GenerateHeader(std::string &output, bool interface) {
 
     if(interface) {
         char str[1024];
-        strcpy(str,"\nvoid _paroc_Construct");
+        strcpy(str,"\nvoid _pop_construct");
         output += str;
         GenerateArguments(output, true);
         GeneratePostfix(output,true);
@@ -1537,7 +1537,7 @@ void Constructor::GenerateClientPrefixBody(std::string &output) {
         output += tmpcode;
 
         // Generates invocation to the constructor of the remote object
-        strcpy(tmpcode,"\n_paroc_Construct(");
+        strcpy(tmpcode,"\n_pop_construct(");
         auto nb = params.size();
         for(std::size_t j=0; j<nb; j++) {
             Param &p=*(params[j]);
@@ -1591,7 +1591,7 @@ void Constructor::GenerateClientPrefixBody(std::string &output) {
             output += tmpcode;
         }
 
-        output += "    try{\n      _this_interface->Allocate();\n      _this_interface->_paroc_Construct(";
+        output += "    try{\n      _this_interface->Allocate();\n      _this_interface->_pop_construct(";
 
         auto nb = params.size();
         for(std::size_t j=0; j<nb; j++) {
@@ -1611,7 +1611,7 @@ void Constructor::GenerateClientPrefixBody(std::string &output) {
 
 
     if(!GetClass()->is_collective()) {
-        sprintf(tmpcode, "\nvoid %s::_paroc_Construct", GetClass()->GetName());
+        sprintf(tmpcode, "\nvoid %s::_pop_construct", GetClass()->GetName());
         output += tmpcode;
     } else {
         //sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  _popc_constructor(", GetClass()->GetName());

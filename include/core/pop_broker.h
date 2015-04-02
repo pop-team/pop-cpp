@@ -52,18 +52,18 @@ struct pop_request {
 typedef std::deque<pop_request> pop_request_fifo_list;
 
 //Method names....
-struct paroc_method_info {
+struct pop_method_info {
     unsigned mid;
     char *name;
 };
 
-struct paroc_class_info {
+struct pop_class_info {
     unsigned cid;
-    paroc_method_info *methods;
+    pop_method_info *methods;
     int sz;
 };
 
-typedef std::vector<paroc_class_info> paroc_method_map_list;
+typedef std::vector<pop_class_info> pop_method_map_list;
 
 /**
  * @class pop_broker
@@ -78,7 +78,7 @@ public:
 
     //To acquire info of method names....
     //This method is used by the compiler to register method names
-    void AddMethodInfo(unsigned cid, paroc_method_info *methods, int sz);
+    void AddMethodInfo(unsigned cid, pop_method_info *methods, int sz);
 
     //These 2 methods are ussually used for debuging and visualization of class execution....
     const char *FindMethodName(unsigned classID, unsigned methodID);
@@ -119,7 +119,7 @@ public:
 
 protected:
 
-    paroc_method_map_list methodnames;
+    pop_method_map_list methodnames;
 
     pop_condition mutexCond;  // Lock condition for mutex call
     int mutexCount;             // Number of mutex call pending

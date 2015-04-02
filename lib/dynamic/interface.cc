@@ -51,7 +51,7 @@
 pop_accesspoint pop_interface::_pop_nobind;
 
 //binding time out in miliseconds
-int pop_interface::paroc_bind_timeout=10000;
+int pop_interface::pop_bind_timeout=10000;
 
 //pop_interface base class
 
@@ -383,7 +383,7 @@ void pop_interface::Bind(const char *dest) {
 
     // Create associated buffer
     __pop_buf = __pop_combox->GetBufferFactory()->CreateBuffer();
-    __pop_combox->SetTimeout(paroc_bind_timeout);
+    __pop_combox->SetTimeout(pop_bind_timeout);
 
     // Check if need proxy
     std::string connect_dest(dest);

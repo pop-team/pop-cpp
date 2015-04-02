@@ -60,24 +60,24 @@ void broker_interupt(int /*sig*/) {
 }
 
 
-class paroc_receivethread: public pop_thread {
+class pop_receivethread: public pop_thread {
 public:
-    paroc_receivethread(pop_broker *br, pop_combox *com);
-    ~paroc_receivethread();
+    pop_receivethread(pop_broker *br, pop_combox *com);
+    ~pop_receivethread();
     virtual void start() override;
 protected:
     pop_broker *broker;
     pop_combox *comm;
 };
 
-paroc_receivethread::paroc_receivethread(pop_broker *br, pop_combox *combox): pop_thread(true) {
+pop_receivethread::pop_receivethread(pop_broker *br, pop_combox *combox): pop_thread(true) {
     broker=br;
     comm=combox;
 }
-paroc_receivethread::~paroc_receivethread() {
+pop_receivethread::~pop_receivethread() {
 }
 
-void paroc_receivethread::start() {
+void pop_receivethread::start() {
 #ifndef __WIN32__
     popc_signal(popc_SIGHUP,broker_interupt);
 #endif
@@ -119,11 +119,11 @@ pop_broker::~pop_broker() {
     }
 }
 
-void pop_broker::AddMethodInfo(unsigned cid, paroc_method_info *methods, int sz) {
+void pop_broker::AddMethodInfo(unsigned cid, pop_method_info *methods, int sz) {
     if(sz<=0 || methods==nullptr) {
         return;
     }
-    paroc_class_info t;
+    pop_class_info t;
     t.cid=cid;
     t.methods=methods;
     t.sz=sz;
@@ -133,7 +133,7 @@ void pop_broker::AddMethodInfo(unsigned cid, paroc_method_info *methods, int sz)
 const char *pop_broker::FindMethodName(unsigned classID, unsigned methodID) {
     for(auto& t : methodnames){
         if(t.cid==classID) {
-            paroc_method_info *m=t.methods;
+            pop_method_info *m=t.methods;
             int n=t.sz;
             for(int i=0; i<n; i++, m++){
                 if(m->mid==methodID) {
@@ -151,7 +151,7 @@ bool pop_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned &m
     }
 
     for(auto& t : methodnames){
-        paroc_method_info *m=t.methods;
+        pop_method_info *m=t.methods;
         int n=t.sz;
         for(int i=0; i<n; i++, m++){
             if(pop_utils::isEqual(name,m->name)) {
@@ -168,7 +168,7 @@ bool pop_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned &m
 int pop_broker::Run() {
     //Create threads for each protocols for receiving requests....
 
-    std::vector<paroc_receivethread *> ptArray;
+    std::vector<pop_receivethread *> ptArray;
     int comboxCount = comboxArray.size();
     if(comboxCount <= 0) {
         return -1;
@@ -179,7 +179,7 @@ int pop_broker::Run() {
     int i;
 
     for(i = 0; i < comboxCount; i++) {
-        ptArray[i] = new paroc_receivethread(this, comboxArray[i]);
+        ptArray[i] = new pop_receivethread(this, comboxArray[i]);
         int ret = ptArray[i]->create();
         if(ret != 0) {
             return errno;
