@@ -34,7 +34,7 @@
 #include "pop_buffer_factory_finder.h"
 #include "pop_broker.h"
 #include "pop_combox_factory.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "paroc_utils.h"
 #include "../../config.h"
 #include "appservice.ph"
@@ -256,7 +256,7 @@ void pop_interface::allocate_only() {
             LOG_DEBUG_T("IFACE", "Allocate %s with TCP(ssh)", objectname.c_str());
 
             //Get the POPAppID
-            AppCoreService acs(paroc_system::appservice);
+            AppCoreService acs(pop_system::appservice);
             popAppId = acs.GetPOPCAppID();
         }
     }
@@ -403,7 +403,7 @@ void pop_interface::Bind(const char *dest) {
         destination_node = destination_node.substr(0, destination_node.length()-pos);
         dest_node = atoi(destination_node.c_str());
         dest_id = atoi(destination_id.c_str());
-        if(dest_node != paroc_system::popc_local_mpi_communicator_rank) {
+        if(dest_node != pop_system::popc_local_mpi_communicator_rank) {
             need_redirection = true;
         }
     }
@@ -414,7 +414,7 @@ void pop_interface::Bind(const char *dest) {
         // Spoof address with the local MPI Communicator
         // TODO LW: Why do we have this here ????
         char* local_address = new char[15];
-        snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
+        snprintf(local_address, 15, "uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
 
         LOG_DEBUG("Spoof of address %s to %s", connect_dest.c_str(), local_address);
         create_return = __pop_combox->Create(local_address, false);
@@ -480,7 +480,7 @@ void pop_interface::Bind(const char *dest) {
     } else {
         int code = errno;
 
-        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s", paroc_system::GetHost().c_str(),dest,strerror(code));
+        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s", pop_system::GetHost().c_str(),dest,strerror(code));
         Release();
         paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
@@ -730,7 +730,7 @@ void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerpla
 
     if(enc_pref.empty()) {
         for(auto& enc : enc_avail){
-            if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform.c_str(),paroc_system::platform.c_str())) {
+            if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform.c_str(),pop_system::platform.c_str())) {
                 continue;
             }
 
@@ -742,7 +742,7 @@ void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerpla
         for(auto& test : enc_pref){
             for(auto& enc : enc_avail){
                 if(paroc_utils::MatchWildcard(enc,test)) {
-                    if(paroc_utils::isncaseEqual(enc,"raw") && !paroc_utils::isEqual(peerplatform.c_str(),paroc_system::platform.c_str())) {
+                    if(paroc_utils::isncaseEqual(enc,"raw") && !paroc_utils::isEqual(peerplatform.c_str(),pop_system::platform.c_str())) {
                         continue;
                     }
 
@@ -792,7 +792,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
       od.getDirectory(cwd);
 
       int n=0;
-      //std::string myhost = paroc_system::GetHost();
+      //std::string myhost = pop_system::GetHost();
       //bool islocal=(isManual||hostname==nullptr || *hostname==0 || paroc_utils::SameContact(myhost,hostname) || paroc_utils::isEqual(hostname,"localhost") || paroc_utils::isEqual(hostname,"127.0.0.1"));
       if (batch == nullptr) {
           if (!islocal) {
@@ -817,7 +817,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
           if (!islocal)
           {
 
-              BatchMgr batchman(paroc_system::appservice);
+              BatchMgr batchman(pop_system::appservice);
               sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
               LOG_DEBUG("%s",tmpstr);
               argv[n++]=popc_strdup(tmpstr);
@@ -872,12 +872,12 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
           argv[n++]=popc_strdup(tmpstr);
       }
 
-      sprintf(tmpstr, "-address=uds_0.%d", paroc_system::pop_current_local_address);
+      sprintf(tmpstr, "-address=uds_0.%d", pop_system::pop_current_local_address);
       argv[n++]=popc_strdup(tmpstr);
-      sprintf(tmpstr, "uds://uds_0.%d", paroc_system::pop_current_local_address);
+      sprintf(tmpstr, "uds://uds_0.%d", pop_system::pop_current_local_address);
       objaccess->SetAccessString(tmpstr);
 
-      paroc_system::pop_current_local_address++;
+      pop_system::pop_current_local_address++;
 
 
 

@@ -34,14 +34,14 @@ Modified by L.Winkler (2008-2009) for Version 1.3
 class AppCoreService;
 
 /**
- * @class paroc_system
+ * @class pop_system
  * @brief System information, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  */
-class paroc_system {
+class pop_system {
 public:
-    paroc_system();
-    ~paroc_system();
+    pop_system();
+    ~pop_system();
 
     static bool Initialize(int *argc,char ***argv);//only for the main...
     static void Finalize(bool normalExit); //only for the main...
@@ -110,6 +110,6 @@ private:
     static std::string challenge;
 
 };
-typedef paroc_system POPSystem;
+typedef pop_system POPSystem;
 
 #endif

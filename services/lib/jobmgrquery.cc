@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
         }
 
         if(argc<=1) {
-            master = paroc_system::GetHost();
+            master = pop_system::GetHost();
         } else {
             master = argv[1];
         }

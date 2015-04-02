@@ -33,7 +33,7 @@
 #include "pop_buffer_factory_finder.h"
 #include "pop_broker.h"
 #include "pop_combox_factory.h"
-#include "paroc_system_mpi.h"
+#include "pop_system_mpi.h"
 #include "paroc_utils.h"
 #include "../../config.h"
 
@@ -237,8 +237,8 @@ void pop_interface::Allocate() {
         const std::string& platforms(od.getPlatforms());
 
         if(platforms.empty()) {
-		LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", paroc_system::appservice.GetAccessString().c_str());
-            /*CodeMgr mgr(paroc_system::appservice);
+		LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", pop_system::appservice.GetAccessString().c_str());
+            /*CodeMgr mgr(pop_system::appservice);
             if (mgr.GetPlatform(objname, platforms)<=0) {
                 paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
             }
@@ -252,13 +252,13 @@ void pop_interface::Allocate() {
         if(!joburl.empty()) {
             jobcontact.SetAccessString(joburl);
         } else {
-            jobcontact=paroc_system::jobservice;
+            jobcontact=pop_system::jobservice;
         }
 
         if(jobcontact.IsEmpty()) {
             char str[1024];
-            LOG_DEBUG("INTERFACE - JOBMGR %s", paroc_system::GetHost().c_str());
-            sprintf(str,"%s:%d",paroc_system::GetHost().c_str(),DEFAULTPORT);
+            LOG_DEBUG("INTERFACE - JOBMGR %s", pop_system::GetHost().c_str());
+            sprintf(str,"%s:%d",pop_system::GetHost().c_str(),DEFAULTPORT);
             jobcontact.SetAccessString(str);
         }
     }
@@ -391,7 +391,7 @@ void pop_interface::Bind(const char *dest) {
     } else {
         int code = errno;
 
-        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s", paroc_system::GetHost().c_str(),dest,strerror(code));
+        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s", pop_system::GetHost().c_str(),dest,strerror(code));
         Release();
         paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
@@ -411,16 +411,16 @@ bool pop_interface::TryLocal(pop_accesspoint &objaccess) {
 
     if(localFlag || !hostname.empty() || !batch.empty()) {
 
-          if (hostname.empty()) hostname=paroc_system::GetHost();
+          if (hostname.empty()) hostname=pop_system::GetHost();
 
           const std::string& codefile(od.getExecutable());
 
         //Hostname existed
         if(codefile.empty()) {
             //Lookup local code manager for the binary source....
-            assert(!paroc_system::appservice.IsEmpty());
-            /*CodeMgr mgr(paroc_system::appservice);
-            if (rarch==NULL)rarch=paroc_system::platform;
+            assert(!pop_system::appservice.IsEmpty());
+            /*CodeMgr mgr(pop_system::appservice);
+            if (rarch==NULL)rarch=pop_system::platform;
             if (!mgr.QueryCode(objname,rarch,codefile))
             {
                 paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, ClassName());
@@ -431,7 +431,7 @@ bool pop_interface::TryLocal(pop_accesspoint &objaccess) {
         //Local exec using sh or rsh
         const char *hoststr=hostname.c_str();
 
-        int status = LocalExec(hoststr, codefile.c_str(), ClassName(), paroc_system::jobservice, paroc_system::appservice,&objaccess,1,od);
+        int status = LocalExec(hoststr, codefile.c_str(), ClassName(), pop_system::jobservice, pop_system::appservice,&objaccess,1,od);
 
         if(status != 0) {
             paroc_exception::paroc_throw(status, "Invalid status", ClassName());
@@ -683,7 +683,7 @@ void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerpla
 
     if(enc_pref.empty()) {
         for(auto& enc : enc_avail){
-            if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform.c_str(),paroc_system::platform.c_str())) {
+            if(paroc_utils::MatchWildcard(enc,"raw*") && !paroc_utils::isEqual(peerplatform.c_str(),pop_system::platform.c_str())) {
                 continue;
             }
 
@@ -695,7 +695,7 @@ void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerpla
         for(auto& test : enc_pref){
             for(auto& enc : enc_avail){
                 if(paroc_utils::MatchWildcard(enc,test)) {
-                    if(paroc_utils::isncaseEqual(enc,"raw") && !paroc_utils::isEqual(peerplatform.c_str(),paroc_system::platform.c_str())) {
+                    if(paroc_utils::isncaseEqual(enc,"raw") && !paroc_utils::isEqual(peerplatform.c_str(),pop_system::platform.c_str())) {
                         continue;
                     }
 
@@ -743,7 +743,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     }
 
     int n = 0;
-    /*std::string myhost = paroc_system::GetHost();
+    /*std::string myhost = pop_system::GetHost();
     bool islocal = (isManual || hostname == NULL || *hostname == 0 || paroc_utils::SameContact(myhost, hostname) || paroc_utils::isEqual(hostname, "localhost") || paroc_utils::isEqual(hostname, "127.0.0.1"));
     if (batch == NULL) {
         if (!islocal) {
@@ -768,7 +768,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
         if (!islocal)
         {
 
-            BatchMgr batchman(paroc_system::appservice);
+            BatchMgr batchman(pop_system::appservice);
             sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
             LOG_DEBUG("%s",tmpstr);
             argv[n++]=popc_strdup(tmpstr);
@@ -891,7 +891,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     }
 
     /*LOG_INFO("INTERFACE: allocate idle %d with %s %s", dest, codefile, executable_args.c_str());
-    paroc_system::current_free_process++;
+    pop_system::current_free_process++;
     int length = strlen(codefile);
     MPI::COMM_WORLD.Send(&length, 1, MPI_INT, dest, 0);
     MPI::COMM_WORLD.Send(codefile, length, MPI_CHAR, dest, 1);
@@ -920,7 +920,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     int spawn_errcodes[2];
 
     MPI::Intercomm brokers_intercomm;
-    brokers_intercomm = paroc_system::popc_self.Spawn_multiple(2, spawn_executable, spawn_arg_commands, maxprocs, spawn_infos, 0, spawn_errcodes);
+    brokers_intercomm = pop_system::popc_self.Spawn_multiple(2, spawn_executable, spawn_arg_commands, maxprocs, spawn_infos, 0, spawn_errcodes);
 
 
     // Getting the broker accesspoints

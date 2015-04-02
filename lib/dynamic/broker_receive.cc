@@ -25,7 +25,7 @@
 #include "paroc_event.h"
 #include "pop_buffer_factory.h"
 #include "pop_buffer_factory_finder.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "popc_logger.h"
 
 bool NewConnection(void *dat, pop_connection *conn) {
@@ -252,7 +252,7 @@ bool pop_broker::ParocCall(paroc_request &req) {
             buf->Pop();
 
             buf->Push("platform", "std::string", 1);
-            buf->Pack(&paroc_system::platform, 1);
+            buf->Pack(&pop_system::platform, 1);
             buf->Pop();
 
             buf->Push("info", "std::string", 1);

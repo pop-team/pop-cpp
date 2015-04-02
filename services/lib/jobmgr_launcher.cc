@@ -76,9 +76,9 @@ int main(int argc, char **argv) {
     if((tmp=paroc_utils::checkremove(&argc,&argv,"-servicepoint="))==NULL) {
         tmp=paroc_utils::checkremove(&argc,&argv,"-port=");
         if(tmp==NULL) {
-            str = paroc_system::GetHost() + ":2711";
+            str = pop_system::GetHost() + ":2711";
         } else {
-            str = paroc_system::GetHost() + ":" + tmp;
+            str = pop_system::GetHost() + ":" + tmp;
         }
     } else {
         str = tmp;
@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
             popfile_service = false;
     }*/
     std::string host=str;
-    str = paroc_system::GetHost() + ":2712";
+    str = pop_system::GetHost() + ":2712";
     hostpfm=str;
 
 
@@ -321,7 +321,7 @@ int main(int argc, char **argv) {
         POPCloner cloner(challenge, daemon);
         LOG_INFO("POPCloner Started [%s]", cloner.GetAccessPoint().GetAccessString());
         //Save the POPCloner access point in the system
-        paroc_system::popcloner = cloner.GetAccessPoint();
+        pop_system::popcloner = cloner.GetAccessPoint();
 
         try {
             //Create the VJobMgr
@@ -354,7 +354,7 @@ int main(int argc, char **argv) {
         POPCloner cloner(challenge, daemon);
         LOG_INFO("POPCloner Started [%s]", cloner.GetAccessPoint().GetAccessString());
         //Save the POPCloner access point in the system
-        paroc_system::popcloner = cloner.GetAccessPoint();
+        pop_system::popcloner = cloner.GetAccessPoint();
 
         try {
             //Create the VJobMgr

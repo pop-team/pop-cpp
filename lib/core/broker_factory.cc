@@ -22,7 +22,7 @@
 #include "popc_intface.h"
 #include "pop_broker_factory.h"
 #include "paroc_utils.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 
 std::vector<pop_broker_init> *pop_broker_factory::brokerlist=nullptr;
 ispackedfunc pop_broker_factory::CheckIfPacked=nullptr;
@@ -116,23 +116,23 @@ pop_broker * pop_broker_factory::Create(int *argc, char ***argv) {
 
     tmp=paroc_utils::checkremove(argc,argv,"-appservice=");
     if(tmp!=nullptr) {
-        paroc_system::appservice.SetAccessString(tmp);
-        paroc_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
+        pop_system::appservice.SetAccessString(tmp);
+        pop_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
     }
 
     /*#ifndef DEFINE_UDS_SUPPORT
         if ((tmp=getenv("POPC_JOBSERVICE"))!=nullptr) {
-            paroc_system::jobservice.SetAccessString(tmp);
-          paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
+            pop_system::jobservice.SetAccessString(tmp);
+          pop_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
         } else if ((tmp=paroc_utils::checkremove(argc,argv,"-jobservice=")) != nullptr) {
-            paroc_system::jobservice.SetAccessString(tmp);
-          paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
+            pop_system::jobservice.SetAccessString(tmp);
+          pop_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
         } else {
             char tmpstr[256];
             LOG_DEBUG("Jobservice is not specified. Use the default one!");
-            sprintf(tmpstr,"%s:%d",(const char *)paroc_system::GetHost(),DEFAULTPORT);
-            paroc_system::jobservice.SetAccessString(tmpstr);
-          paroc_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
+            sprintf(tmpstr,"%s:%d",(const char *)pop_system::GetHost(),DEFAULTPORT);
+            pop_system::jobservice.SetAccessString(tmpstr);
+          pop_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
         }
     #endif*/
 
@@ -184,7 +184,7 @@ void pop_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
         for(auto& t : *brokerlist){
             if(!(pop_broker_factory::CheckIfPacked!=nullptr && !pop_broker_factory::CheckIfPacked(t.objname.c_str()))) {
                 if(longformat) {
-                    printf("%s %s %s\n", t.objname.c_str(), paroc_system::platform.c_str(), abspath);
+                    printf("%s %s %s\n", t.objname.c_str(), pop_system::platform.c_str(), abspath);
                 } else {
                     printf("%s\n",t.objname.c_str());
                 }
@@ -192,7 +192,7 @@ void pop_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
         }
     }
     if(!longformat) {
-        printf("====\nArchitecture=%s\n",paroc_system::platform.c_str());
+        printf("====\nArchitecture=%s\n",pop_system::platform.c_str());
     }
 }
 

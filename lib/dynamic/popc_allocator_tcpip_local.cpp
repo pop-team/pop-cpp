@@ -13,7 +13,7 @@
 
 #include "popc_allocator_tcpip.h"
 
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "paroc_exception.h"
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
@@ -51,7 +51,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
 
 
     if(hostname.empty()) {
-        hostname=paroc_system::GetHost().c_str();
+        hostname=pop_system::GetHost().c_str();
     }
 
     if(!hostname.empty() &&(tmp=(char*)strchr(hostname.c_str(), ':')) !=nullptr) {
@@ -63,17 +63,17 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
     codefile = od.getExecutable();
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
     if(codefile.empty()) {
-        assert(!paroc_system::appservice.IsEmpty());
-        CodeMgr mgr(paroc_system::appservice);
+        assert(!pop_system::appservice.IsEmpty());
+        CodeMgr mgr(pop_system::appservice);
         if(rarch.empty()) {
-            rarch=paroc_system::platform;
+            rarch=pop_system::platform;
         }
         if(!mgr.QueryCode(objectname,rarch, codefile)) {
             paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname.c_str(), "QueryCode failed");
         }
     }
 
-    std::string myhost = paroc_system::GetHost();
+    std::string myhost = pop_system::GetHost();
     bool isLocal = (isManual || hostname.empty() || paroc_utils::SameContact(myhost.c_str(), hostname.c_str()) || (hostname == "localhost") || (hostname == "127.0.0.1"));
     if(batch.empty()) {
         if(!isLocal) {
@@ -98,7 +98,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
         argv.push_back(tmpstr);
         /*if (!isLocal)
         {
-             BatchMgr batchman(paroc_system::appservice);
+             BatchMgr batchman(pop_system::appservice);
              sprintf(tmpstr,"-batch-node=%d", batchman.NextNode());
              LOG_DEBUG("%s",tmpstr);
              argv[n++]=popc_strdup(tmpstr);
@@ -140,13 +140,13 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
     sprintf(tmpstr,"-object=%s", objectname.c_str());
     argv.push_back(tmpstr);
 
-    if(!paroc_system::appservice.IsEmpty()) {
-        sprintf(tmpstr,"-appservice=%s",paroc_system::appservice.GetAccessString().c_str());
+    if(!pop_system::appservice.IsEmpty()) {
+        sprintf(tmpstr,"-appservice=%s",pop_system::appservice.GetAccessString().c_str());
         argv.push_back(tmpstr);
     }
 
-    if(!paroc_system::jobservice.IsEmpty()) {
-        sprintf(tmpstr,"-jobservice=%s",paroc_system::jobservice.GetAccessString().c_str());
+    if(!pop_system::jobservice.IsEmpty()) {
+        sprintf(tmpstr,"-jobservice=%s",pop_system::jobservice.GetAccessString().c_str());
         argv.push_back(tmpstr);
     }
 

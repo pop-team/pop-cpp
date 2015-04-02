@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
             LOG_WARNING("Local service point to stop is missing");
             Usage();
         } else {
-            snprintf(host,sizeof(host),"%s:2711",paroc_system::GetHost().c_str());
+            snprintf(host,sizeof(host),"%s:2711",pop_system::GetHost().c_str());
         }
     } else {
         strcpy(host,tmp);

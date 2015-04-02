@@ -164,7 +164,7 @@ std::string paroc_utils::FindAbsolutePath(const std::string& fname) {
 
 
 #ifdef _POPC_
-#include "paroc_system.h"
+#include "pop_system.h"
 
 bool paroc_utils::SameContact(const std::string& _contact1, const std::string& _contact2) {
     const char* contact1 = _contact1.c_str();
@@ -202,7 +202,7 @@ bool paroc_utils::IsRemoteDest(const char *dest) {
     std::string _host(host);
 
     size_t c1=destination.find("127.0.0.1");
-    size_t c2=destination.find(paroc_system::GetIP()); // local ip
+    size_t c2=destination.find(pop_system::GetIP()); // local ip
     size_t c3=destination.find(_host);
     //If one of the 3 strings above is find in the destination, this is a local destination
     if(c1==std::string::npos && c2==std::string::npos && c3==std::string::npos) {
@@ -269,7 +269,7 @@ int rprintf(const char *format,...) {
     va_start(ap, format);
     vsnprintf(str,sizeof(str), format, ap);
     va_end(ap);
-    if(paroc_system::appservice.IsEmpty()) {
+    if(pop_system::appservice.IsEmpty()) {
         //At this point, we arrive from an object that has no appservice, namely a local object (RemoteLog for instance)
         //In which case, a printf can be done directly on the console (logging it would add unecessary content to the log)
         fprintf(stdout, "%s", str);
@@ -279,7 +279,7 @@ int rprintf(const char *format,...) {
     }
     try {
         // TODO LW: Each time we call rprintf a new connection to the remote is created. Can we be more efficient ?
-        RemoteLog log(paroc_system::appservice);
+        RemoteLog log(pop_system::appservice);
         std::string msg(str);
         log.Log(msg);
     } catch(std::exception e) {

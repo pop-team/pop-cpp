@@ -17,7 +17,7 @@
 
 #include "popc_group_broker_factory.h"
 #include "paroc_utils.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 
 
 popc_broker_map* POPC_GroupBrokerFactory::_internal_broker_map = NULL;

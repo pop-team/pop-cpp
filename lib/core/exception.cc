@@ -19,7 +19,7 @@
 #include <errno.h>
 
 #include "paroc_exception.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "popc_logger.h"
 
 const char *paroc_exception::paroc_errstr[17]= { // Error number: 1000 + ...
@@ -138,7 +138,7 @@ void paroc_exception::Serialize(pop_buffer &buf, bool pack) {
 /// perror is the old way to manage errors. It simply prints an error message to stderr
 ///
 void paroc_exception::perror(const std::string& msg) {
-    LOG_ERROR("paroc_system::perror : %d",errno);
+    LOG_ERROR("pop_system::perror : %d",errno);
     if(errno>USER_DEFINE_ERROR && errno<USER_DEFINE_LASTERROR) {
         if(!msg.empty())
             LOG_ERROR("POP-C++ Error: %s (errno %d)",paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);

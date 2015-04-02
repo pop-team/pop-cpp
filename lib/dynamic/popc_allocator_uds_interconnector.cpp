@@ -13,7 +13,7 @@
 
 #include "popc_allocator_uds_interconnector.h"
 
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "paroc_exception.h"
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
@@ -36,7 +36,7 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, paro
      * the parallel object is also allocated on the local node
      */
     if(od.IsLocal() || node == -1) {
-        node = paroc_system::popc_local_mpi_communicator_rank;
+        node = pop_system::popc_local_mpi_communicator_rank;
     }
 
     // Get the executable path name
@@ -66,7 +66,7 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, paro
     pop_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
 
     auto  local_address = new char[15];
-    snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
+    snprintf(local_address, 15, "uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
     if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "Create or Connect failed");
     }
@@ -128,7 +128,7 @@ pop_combox* uds_allocator_interconnector::allocate_group(std::string& objectname
     }
 
     // Contact the local POP-C++ MPI Interconnector to create XMP process
-    int rank = paroc_system::popc_local_mpi_communicator_rank;
+    int rank = pop_system::popc_local_mpi_communicator_rank;
 
     auto  local_interconnector_address = new char[15];
     snprintf(local_interconnector_address, 15, "uds_%d.0", rank);

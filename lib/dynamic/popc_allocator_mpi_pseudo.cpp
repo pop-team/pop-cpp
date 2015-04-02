@@ -13,7 +13,7 @@
 
 #include "popc_allocator_mpi_pseudo.h"
 
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "paroc_exception.h"
 #include "pop_combox.h"
 #include "pop_combox_factory.h"

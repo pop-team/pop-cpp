@@ -42,7 +42,7 @@ public:
      * @param daemon start in daemon mode
      * @param codelocation location of the AppCoreService executable
     */
-    AppCoreService(const std::string &challenge, bool daemon, const std::string & codelocation) @{ od.url(paroc_system::GetHost()); od.executable(codelocation); od.runLocal(true); od.service(true);} ;
+    AppCoreService(const std::string &challenge, bool daemon, const std::string & codelocation) @{ od.url(pop_system::GetHost()); od.executable(codelocation); od.runLocal(true); od.service(true);} ;
     ~AppCoreService();
 
 

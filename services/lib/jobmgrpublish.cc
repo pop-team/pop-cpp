@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     }
 
     if(argc<=1) {
-        strcpy(master,paroc_system::GetHost());
+        strcpy(master,pop_system::GetHost());
     } else {
         strcpy(master,argv[1]);
     }

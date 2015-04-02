@@ -12,7 +12,7 @@
 #endif
 
 #include "pop_combox_socket.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "popc_logger.h"
 
 #define PROTO_TCP 6
@@ -796,7 +796,7 @@ std::string pop_combox_socket::GetProtocol() {
 }
 
 std::string pop_combox_socket::GetUrl() {
-    return "socket://" + paroc_system::GetHost() + ":" + std::to_string(GetPort());
+    return "socket://" + pop_system::GetHost() + ":" + std::to_string(GetPort());
 }
 
 int pop_combox_socket::GetSockInfo(sockaddr &info,socklen_t &len) {

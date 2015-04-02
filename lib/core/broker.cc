@@ -25,7 +25,7 @@
 #include "pop_buffer_raw.h"
 #include "paroc_utils.h"
 #include "paroc_thread.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 
 #define TIMEOUT 1800
 
@@ -289,12 +289,12 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
         } else {
             if(pc->need_address()){
                 if(!address){
-                    //std::string default_address = "uds_0." + std::to_string(paroc_system::pop_current_local_address);
+                    //std::string default_address = "uds_0." + std::to_string(pop_system::pop_current_local_address);
 
                     //LOG_DEBUG_T("BRKR", "Create combox (address) with default address \"%s\"", default_address.c_str());
 
                     //TODO: This is highly unsafe with threads
-                    //++paroc_system::pop_current_local_address;
+                    //++pop_system::pop_current_local_address;
 
                     if(!pc->Create(nullptr, true)) {
                         paroc_exception::perror("Broker");

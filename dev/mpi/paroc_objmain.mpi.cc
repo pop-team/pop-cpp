@@ -26,7 +26,7 @@ bool CheckIfPacked(const char *objname);
 
 int main(int argc, char **argv) {
 
-    paroc_system sys;
+    pop_system sys;
 
     //Init MPI first....
     if(MPI_Init(&argc,&argv)!=  MPI_SUCCESS) {

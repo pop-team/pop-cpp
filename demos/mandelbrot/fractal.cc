@@ -147,7 +147,7 @@ Fractal::Fractal() {
 }
 // added lwk
 Fractal::Fractal(POPString machine) {
-    //rprintf("Object Fractal put on %s by ssh\n",(const char *)paroc_system::GetHost());
+    //rprintf("Object Fractal put on %s by ssh\n",(const char *)pop_system::GetHost());
 }
 
 Fractal::~Fractal() {
@@ -172,6 +172,6 @@ void Fractal::generate(int width, int height,
         screen.newRow(tile, iy, width, v);
     }
     screen.endTile(tile);
-    printf("End of slave on %s\n", (const char *)paroc_system::GetHost());
+    printf("End of slave on %s\n", (const char *)pop_system::GetHost());
 }
 @pack(Fractal);

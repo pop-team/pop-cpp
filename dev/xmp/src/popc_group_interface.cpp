@@ -19,7 +19,7 @@
 #include "paroc_exception.h"
 #include "pop_broker.h"
 #include "popc_combox_uds.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "popc_group_exception.h"
 #include "popc_allocator_factory.h"
 

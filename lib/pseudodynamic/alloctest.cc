@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
                     fitness[i]=0;
                 }
 
-                if(jobmgr.AllocResource(paroc_system::appservice, objname, *od, howmany, fitness, jobcontacts, reserveIDs, requestInfo, iptrace,0)) {
+                if(jobmgr.AllocResource(pop_system::appservice, objname, *od, howmany, fitness, jobcontacts, reserveIDs, requestInfo, iptrace,0)) {
                     for(int i=0; i<howmany; i++) {
                         LOG_INFO("#%d:%s (%d)\n", i+1,jobcontacts[i].GetAccessString(),reserveIDs[i]);
                         resources.AddTailNew()=jobcontacts[i];

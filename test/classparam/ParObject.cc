@@ -6,7 +6,7 @@ ParObject::ParObject() {
 }
 
 ParObject::ParObject(POPString machine) {
-    printf("Classparam: Creating object ParObject on %s\n", paroc_system::GetHost().c_str());
+    printf("Classparam: Creating object ParObject on %s\n", pop_system::GetHost().c_str());
 }
 
 ParObject::ParObject(float f) {

@@ -5,25 +5,25 @@
  *
  * @author Laurent Winkler
  * @date Jan 2015
- * @brief This files contains all global variables used by pseudodynamic version (=MPI). Previously contained in paroc_system.h
+ * @brief This files contains all global variables used by pseudodynamic version (=MPI). Previously contained in pop_system.h
  *
  */
 
 #ifndef _POPC_SYSTEM_MPI_H
 #define _POPC_SYSTEM_MPI_H
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "paroc_mutex.h"
 #include <mpi.h>
 
 /**
- * @class paroc_system_mpi
+ * @class pop_system_mpi
  * @brief System information, used by POP-C++ runtime. Specific to MPI
  * @author Tuan Anh Nguyen
  */
 
 // Note: Since everything is static, we cannot use inheritance
 
-class paroc_system_mpi {
+class pop_system_mpi {
 public:
 
 // if MPI
@@ -38,6 +38,6 @@ public:
     static paroc_condition mpi_go_wait_cond;
 // end if MPI
 };
-typedef paroc_system_mpi POPSystemMPI;
+typedef pop_system_mpi POPSystemMPI;
 
 #endif

@@ -18,7 +18,7 @@
 
 /*
   Deeply need refactoring:
-    POPC_System instead of paroc_system
+    POPC_System instead of pop_system
  */
 #include "popc_intface.h"
 
@@ -31,7 +31,7 @@
 //#include <ctype.h>
 
 
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "pop_buffer_factory_finder.h"
 #include "paroc_utils.h"
 #include "pop_buffer_factory.h"
@@ -40,23 +40,23 @@
 #include "paroc_od.h"
 #include "appservice.ph"
 
-pop_accesspoint paroc_system::appservice;
-pop_accesspoint paroc_system::jobservice;
-int paroc_system::pop_current_local_address;
+pop_accesspoint pop_system::appservice;
+pop_accesspoint pop_system::jobservice;
+int pop_system::pop_current_local_address;
 
-int paroc_system::popc_local_mpi_communicator_rank;
-std::string paroc_system::platform;
-std::ostringstream paroc_system::_popc_cout;
+int pop_system::popc_local_mpi_communicator_rank;
+std::string pop_system::platform;
+std::ostringstream pop_system::_popc_cout;
 
 //V1.3m
-std::string paroc_system::POPC_HostName;
+std::string pop_system::POPC_HostName;
 #define LOCALHOST "localhost"
 //End modif
 
-AppCoreService *paroc_system::mgr=nullptr;
-std::string paroc_system::challenge;
+AppCoreService *pop_system::mgr=nullptr;
+std::string pop_system::challenge;
 
-paroc_system::paroc_system() {
+pop_system::pop_system() {
     pop_combox_factory::GetInstance();
     pop_buffer_factory_finder::GetInstance();
     char *tmp = getenv("POPC_PLATFORM");
@@ -84,7 +84,7 @@ paroc_system::paroc_system() {
 }
 
 
-paroc_system::~paroc_system() {
+pop_system::~pop_system() {
 #ifndef DEFINE_UDS_SUPPORT
     if(mgr!=nullptr) {
         Finalize(false);
@@ -107,7 +107,7 @@ paroc_system::~paroc_system() {
 // ELSE IF try to use gethostname() and possibly env. variable POPC_DOMAIN
 // ELSE call GetIP()
 //----------------------------------------------------------------------------
-std::string paroc_system::GetHost() {
+std::string pop_system::GetHost() {
     if(POPC_HostName.empty()) {
         char str[128];
         char *t=getenv("POPC_HOST");
@@ -139,7 +139,7 @@ std::string paroc_system::GetHost() {
 // Try to determine the IP address of the machine.
 // If fail return the localhost IP = LOCALHOST
 //------------------------------------------------------
-std::string paroc_system::GetIP() {
+std::string pop_system::GetIP() {
 #ifndef __WIN32__
     std::string iface,ip;
     char* tmp;
@@ -212,7 +212,7 @@ std::string paroc_system::GetIP() {
 #endif
 }
 
-int paroc_system::GetIP(const char *hostname, int *iplist, int listsize) {
+int pop_system::GetIP(const char *hostname, int *iplist, int listsize) {
     /* This method should normally not be used to return more than one ip*/
     assert(listsize==1);
 #ifdef __WIN32__
@@ -256,7 +256,7 @@ int paroc_system::GetIP(const char *hostname, int *iplist, int listsize) {
 }
 
 
-int paroc_system::GetIP(int *iplist, int listsize) {
+int pop_system::GetIP(int *iplist, int listsize) {
     assert(listsize==1); /* This method cannot return more than one ip*/
     char* parocip=popc_strdup(GetIP().c_str());
     int n;
@@ -276,7 +276,7 @@ int paroc_system::GetIP(int *iplist, int listsize) {
     return n;
 }
 
-std::string paroc_system::GetDefaultInterface() {
+std::string pop_system::GetDefaultInterface() {
     char buff[1024], iface[16], net_addr[128];
     //char flags[64], mask_addr[128], gate_addr[128];
     //int iflags, metric, refcnt, use, mss, window, irtt;
@@ -307,7 +307,7 @@ std::string paroc_system::GetDefaultInterface() {
 }
 
 // TODO LW: Should probably be in intface
-bool paroc_system::GetIPFromInterface(std::string &iface, std::string &str_ip) {
+bool pop_system::GetIPFromInterface(std::string &iface, std::string &str_ip) {
 #ifndef __WIN32__
     struct ifaddrs *addrs, *iap;
     struct sockaddr_in *sa;
@@ -348,15 +348,15 @@ bool paroc_system::GetIPFromInterface(std::string &iface, std::string &str_ip) {
  * @param   argv    Arguments (passed from the main)
  * @return  TRUE if the system is initialized. FALSE in any others cases.
  */
-bool paroc_system::Initialize(int *argc,char ***argv) {
+bool pop_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
     const char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
     if(info==nullptr) {
         LOG_ERROR("missing -jobservice argument");
         return false;
     }
-    paroc_system::jobservice.SetAccessString(info);
-    paroc_system::jobservice.SetAsService();
+    pop_system::jobservice.SetAccessString(info);
+    pop_system::jobservice.SetAsService();
 
     // Get path of the application service executable
     const char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
@@ -395,10 +395,10 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
             mgr=new AppCoreService(app);
 #endif
         }
-        paroc_system::appservice=mgr->GetAccessPoint();
-        paroc_system::appservice.SetAsService();
+        pop_system::appservice=mgr->GetAccessPoint();
+        pop_system::appservice.SetAsService();
     } catch(std::exception &e) {
-        LOG_WARNING("Exception occurs in paroc_system::Initialize: %s", e.what());
+        LOG_WARNING("Exception occurs in pop_system::Initialize: %s", e.what());
         Finalize(false);
         return false;
     }
@@ -420,7 +420,7 @@ bool paroc_system::Initialize(int *argc,char ***argv) {
 #endif
 }
 
-void paroc_system::Finalize(bool normalExit) {
+void pop_system::Finalize(bool normalExit) {
 #ifndef DEFINE_UDS_SUPPORT
     if(mgr!=nullptr) {
         try {
@@ -463,7 +463,7 @@ void paroc_system::Finalize(bool normalExit) {
 #endif
 }
 
-AppCoreService *paroc_system::CreateAppCoreService(char *codelocation) {
+AppCoreService *pop_system::CreateAppCoreService(char *codelocation) {
     srand(time(nullptr));
     char tmp[256];
 
@@ -477,7 +477,7 @@ AppCoreService *paroc_system::CreateAppCoreService(char *codelocation) {
 }
 
 // TODO LW: Should probably be in intface
-void paroc_system::processor_set(int cpu) {
+void pop_system::processor_set(int cpu) {
 #ifndef __APPLE__
     // Use glibc to set cpu affinity
     /*if (cpu < 0) {

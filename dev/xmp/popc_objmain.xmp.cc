@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 #include "paroc_utils.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "popc_buffer_xdr_mpi.h"
 #include "pop_broker.h"
 #include "popc_group_broker.h"

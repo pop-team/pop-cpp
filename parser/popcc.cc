@@ -109,9 +109,9 @@ void prepare_source(const char *src, const char *dest, const popc_options& optio
     }
 
     if(options.advanced) {
-        fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n#include \"popc_advanced_header.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
+        fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"pop_sys.h\"\n#include \"popc_advanced_header.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
     } else {
-        fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"paroc_sys.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
+        fprintf(df, "\n# 1 \"<paroc system>\"\n#define _POPC_\n#include \"pop_sys.h\"\n@parocfile \"%s\"\n# 1 \"%s\"\n", src, src);
     }
 
     char buf[1024];

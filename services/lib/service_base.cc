@@ -19,11 +19,11 @@
 
 #include <strings.h>
 
-paroc_service_base::paroc_service_base(const std::string &challenge):mychallenge(challenge), appservice(paroc_system::appservice) {
+paroc_service_base::paroc_service_base(const std::string &challenge):mychallenge(challenge), appservice(pop_system::appservice) {
     daemonMode=false;
 }
 
-paroc_service_base::paroc_service_base(): appservice(paroc_system::appservice) {
+paroc_service_base::paroc_service_base(): appservice(pop_system::appservice) {
     daemonMode=false;
 }
 
@@ -34,12 +34,12 @@ void paroc_service_base::Start() {
     }
     daemonMode=true;
 
-    if(!paroc_system::appservice.IsEmpty()) {
+    if(!pop_system::appservice.IsEmpty()) {
         pop_accesspoint myself=GetAccessPoint();
         try {
-            ObjectMonitor tmp(paroc_system::appservice);
+            ObjectMonitor tmp(pop_system::appservice);
             tmp.UnManageObject(myself);
-            paroc_system::appservice.SetAccessString("");
+            pop_system::appservice.SetAccessString("");
         } catch(std::exception& e) {
             LOG_WARNING("Failed to unregister the service from ObjectMonitor: %s", e.what());
         }

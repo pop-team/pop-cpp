@@ -22,7 +22,7 @@
 
 #include "pop_interface.h"
 #include "pop_buffer.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"
 

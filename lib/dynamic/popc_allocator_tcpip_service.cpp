@@ -13,7 +13,7 @@
 
 #include "popc_allocator_tcpip.h"
 
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "paroc_exception.h"
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
@@ -39,7 +39,7 @@ std::string socket_allocator_service::allocate(std::string& objectname, paroc_od
     std::string platforms = od.getPlatforms();
 
     if(!platforms.empty()) {
-        CodeMgr mgr(paroc_system::appservice);
+        CodeMgr mgr(pop_system::appservice);
         if(mgr.GetPlatform(objectname, platforms)<=0) {
             paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, "No platform found", objectname.c_str());
         }
@@ -53,12 +53,12 @@ std::string socket_allocator_service::allocate(std::string& objectname, paroc_od
     if(!joburl.empty()) {
         jobcontact.SetAccessString(joburl.c_str());
     } else {
-        jobcontact=paroc_system::jobservice;
+        jobcontact=pop_system::jobservice;
     }
 
     if(jobcontact.IsEmpty()) {
         char str[1024];
-        sprintf(str,"%s:%d", paroc_system::GetHost().c_str(),DEFAULTPORT);
+        sprintf(str,"%s:%d", pop_system::GetHost().c_str(),DEFAULTPORT);
         jobcontact.SetAccessString(str);
     }
 
@@ -70,11 +70,11 @@ std::string socket_allocator_service::allocate(std::string& objectname, paroc_od
                 if (batchaccesspoint!=NULL) delete [] batchaccesspoint;
                 batchaccesspoint=new pop_accesspoint[pop_interface::batchsize];
         //TODO put an other array than batchaccesspoint
-                ret=resources.CreateObject(paroc_system::appservice,objectname,od, pop_interface::batchsize,  batchaccesspoint, pop_interface::batchsize, batchaccesspoint);
+                ret=resources.CreateObject(pop_system::appservice,objectname,od, pop_interface::batchsize,  batchaccesspoint, pop_interface::batchsize, batchaccesspoint);
                 if (ret==0) objectaddress=batchaccesspoint[pop_interface::batchindex++];
         }
         else{*/
-        ret=resources.CreateObject(paroc_system::appservice,objectname,od, 1,  &objectaddress, 1, &remotejobcontact);
+        ret=resources.CreateObject(pop_system::appservice,objectname,od, 1,  &objectaddress, 1, &remotejobcontact);
         //}
 
         if(ret!=0) {

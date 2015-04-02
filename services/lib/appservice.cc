@@ -28,7 +28,7 @@ AppCoreService::AppCoreService(const std::string &challenge, bool daemon, const 
       */
     std::string tmpChallenge = challenge;
     time_t now = time(NULL);
-    std::string ip = paroc_system::GetIP();
+    std::string ip = pop_system::GetIP();
     char id[100];
     std::string tmp(tmpChallenge.c_str());
     std::locale loc;
@@ -54,7 +54,7 @@ AppCoreService::~AppCoreService() {
 	/* Commented LWK: This raises errors and seems pointless here
     try {
         // Try to end the application on job mgr
-        JobMgr jm(paroc_system::jobservice);
+        JobMgr jm(pop_system::jobservice);
         jm.ApplicationEnd(_popcAppId, true);
     } catch(std::exception &e) {
         LOG_WARNING("Exception while destroying JobMgr: %s", e.what());

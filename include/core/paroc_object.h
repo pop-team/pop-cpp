@@ -25,10 +25,10 @@
 #include <sstream>
 
 // TODO LW: This creates a bug in case the user does a for(...) cout ... without {} 
-#define cout paroc_system::_popc_cout.str(""); \
-             paroc_system::_popc_cout
+#define cout pop_system::_popc_cout.str(""); \
+             pop_system::_popc_cout
 #define popcendl std::endl; \
-             rprintf(paroc_system::_popc_cout.str().c_str())
+             rprintf(pop_system::_popc_cout.str().c_str())
 //End of add
 
 /**

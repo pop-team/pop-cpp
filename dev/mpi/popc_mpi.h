@@ -120,10 +120,10 @@ bool  POPMPI<T>::startMPI(T *&array, int np) {
     std::string codefile;
     int i=0;
     try {
-        CodeMgr mgr(paroc_system::appservice);
+        CodeMgr mgr(pop_system::appservice);
         std::string objname(name);
 
-        if(!mgr.QueryCode(objname,paroc_system::platform,codefile)) {
+        if(!mgr.QueryCode(objname,pop_system::platform,codefile)) {
             printf("startMPI failed: no supported executable\n");
             return false;
         }
@@ -138,7 +138,7 @@ bool  POPMPI<T>::startMPI(T *&array, int np) {
 
         paroc_array<pop_accesspoint> ap(np);
         paroc_od od; // Note: The od is empty !!
-        if(pop_interface::LocalExec(NULL,mpicmd, name, paroc_system::jobservice, paroc_system::appservice, ap,np,od)!=0) {
+        if(pop_interface::LocalExec(NULL,mpicmd, name, pop_system::jobservice, pop_system::appservice, ap,np,od)!=0) {
             printf("startMPI failed: mpirun returned error\n");
             return false;
         }

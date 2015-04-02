@@ -215,7 +215,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
 
     unsigned int seed = time(nullptr);
 
-    int ret=paroc_system::GetIP(serviceID,1);
+    int ret=pop_system::GetIP(serviceID,1);
     if(ret!=1) {
         LOG_ERROR( "[JM] Can't find IP address");
         serviceID[0]=rand_r(&seed);
@@ -354,7 +354,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
                 reserve_timeout=RESERVE_TIMEOUT;
             }
         } else if(paroc_utils::isEqual(name,"platform")) {
-            paroc_system::platform=val;
+            pop_system::platform=val;
         } else {
             info.push_back({name, val});
         }
@@ -431,7 +431,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
     LOG_DEBUG( "[JM] Node ID : %s", psn.getPOPCSearchNodeId().c_str());
 
     //Setting the current operating system (The one of the JobMgr's machine)
-    psn.setOperatingSystem(paroc_system::platform);
+    psn.setOperatingSystem(pop_system::platform);
     LOG_DEBUG( "[JM] Node opertating system : %s", psn.getOperatingSystem().c_str());
 
     //Setting the total computing power of this JobMgr
@@ -533,11 +533,11 @@ void JobMgr::UnregisterNode(const pop_accesspoint &url) {
 int JobMgr::Query(const std::string &type, std::string  &val) {
     char tmp[1024];
     if(type=="platform") {
-        val=paroc_system::platform;
+        val=pop_system::platform;
         return 1;
     }
     if(type=="host") {
-        val=paroc_system::GetHost();
+        val=pop_system::GetHost();
         return 1;
     }
     if(type=="jobs") {
@@ -744,7 +744,7 @@ bool JobMgr::AllocResource(const pop_accesspoint &localservice, const std::strin
                 LOG_DEBUG( "[JM] Local resource matching is temporary paused due to previous errors!");
             } else if(MatchUser(localservice)) {
                 CodeMgr codemgr(localservice);
-                if(codemgr.QueryCode(objname,paroc_system::platform,codefile)) {
+                if(codemgr.QueryCode(objname,pop_system::platform,codefile)) {
                     if(MatchAndReserve(od,fitness,jobcontacts,reserveIDs, howmany)) {
                         ret=true;
                     }
@@ -1655,10 +1655,10 @@ int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany
     std::string mycodefile;
     try {
         CodeMgr code(localservice);
-        if(!code.QueryCode(objname,paroc_system::platform,mycodefile) || mycodefile.empty()) {
+        if(!code.QueryCode(objname,pop_system::platform,mycodefile) || mycodefile.empty()) {
             CancelReservation(reserveIDs,howmany);
             std::string tmpObjname = objname;
-            std::string tmpPlatform = paroc_system::platform;
+            std::string tmpPlatform = pop_system::platform;
             LOG_ERROR( "[JM] Exec failed: CodeMgr was looking for %s on platform %s", tmpObjname.c_str(),
                         tmpPlatform.c_str());
             return ENOENT;
@@ -1885,7 +1885,7 @@ bool JobMgr::AddTrace(int trace[MAX_HOPS], int &tracesize) {
     if(tracesize<0 || tracesize>=MAX_HOPS) {
         return false;
     }
-    if(paroc_system::GetIP(trace+tracesize,1)==1) {
+    if(pop_system::GetIP(trace+tracesize,1)==1) {
         tracesize++;
         return true;
     }
@@ -1918,7 +1918,7 @@ bool JobMgr::NodeInTrace(int trace[MAX_HOPS], int tracesize, pop_accesspoint &co
         *t=0;
     }
     int ip;
-    if(paroc_system::GetIP(hostname,&ip,1)!=1) {
+    if(pop_system::GetIP(hostname,&ip,1)!=1) {
         return false;
     }
 

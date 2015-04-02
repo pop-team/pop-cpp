@@ -20,7 +20,7 @@
 #include "pop_interface.h"
 #include "paroc_event.h"
 #include "pop_broker.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 
 #ifndef POP_PSEUDO
 #include "objectmonitor.ph"
@@ -31,11 +31,11 @@ char **paroc_object::argv=NULL;
 
 paroc_object::paroc_object() {
     refcount=1;
-    if(!paroc_system::appservice.IsEmpty()) {
+    if(!pop_system::appservice.IsEmpty()) {
         pop_accesspoint myself=GetAccessPoint();
 #ifndef POP_PSEUDO
         try {
-            ObjectMonitor tmp(paroc_system::appservice);
+            ObjectMonitor tmp(pop_system::appservice);
             tmp.ManageObject(myself);
         } catch(std::exception &e) {
             LOG_WARNING("Can not register %s@%s to ObjectMonitor service: %s",pop_broker::classname.c_str(), myself.GetAccessString().c_str(), e.what());
@@ -47,10 +47,10 @@ paroc_object::paroc_object() {
 
 paroc_object::~paroc_object() {
 #ifndef POP_PSEUDO
-    if(!paroc_system::appservice.IsEmpty()) {
+    if(!pop_system::appservice.IsEmpty()) {
         pop_accesspoint myself=GetAccessPoint();
         try {
-            ObjectMonitor tmp(paroc_system::appservice);
+            ObjectMonitor tmp(pop_system::appservice);
             tmp.UnManageObject(myself);
         } catch(std::exception &e) {
             // Did not find the object to unregister V1.3.1m: suppress error mess. V3.0 log as debug

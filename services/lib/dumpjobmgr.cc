@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
         tmp.dump();
     } catch(int e) {
         errno=e;
-        paroc_system::perror("Exception...");
+        pop_system::perror("Exception...");
     }
     return 0;
 }

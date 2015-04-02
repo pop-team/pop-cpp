@@ -20,7 +20,7 @@
 #endif
 
 #include "paroc_utils.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "pop_broker.h"
 #include "pop_broker_factory.h"
 #include "pop_buffer_factory_finder.h"
@@ -40,20 +40,20 @@ std::string get_proto_name(const char* address){
 int main(int argc, char **argv) {
     char *rcore=paroc_utils::checkremove(&argc,&argv,"-core=");
     if(rcore) {
-        paroc_system::processor_set(atoi(rcore));
+        pop_system::processor_set(atoi(rcore));
     }
 
 #ifdef UC_LINUX
     else {
-        paroc_system::processor_set(0);
+        pop_system::processor_set(0);
     }
 #endif
 
-    paroc_system sys;
+    pop_system sys;
     char *local_rank = paroc_utils::checkremove(&argc, &argv, "-local_rank=");
 
     if(local_rank) {
-        paroc_system::popc_local_mpi_communicator_rank = atoi(local_rank);
+        pop_system::popc_local_mpi_communicator_rank = atoi(local_rank);
     }
 
     // Connect to callback

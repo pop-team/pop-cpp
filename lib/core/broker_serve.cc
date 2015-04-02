@@ -20,7 +20,7 @@
 #include "pop_interface.h"
 #include "paroc_event.h"
 #include "paroc_thread.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "popc_logger.h"
 
 #define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=nullptr) pop_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
@@ -155,11 +155,11 @@ void pop_broker::ServeRequest(paroc_request &req) {
 }
 
 void pop_broker::UnhandledException() {
-    if(!paroc_system::appservice.IsEmpty()) {
+    if(!pop_system::appservice.IsEmpty()) {
         //char tmp[1024];
         LOG_WARNING("Unhandled exception on %s@%s", classname.c_str(), accesspoint.GetAccessString().c_str());
 //      sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
-        /*AppCoreService app(paroc_system::appservice);
+        /*AppCoreService app(pop_system::appservice);
         app.Log(tmp);
         app.UnManageObject(pop_broker::accesspoint);
         app.KillAll();*/

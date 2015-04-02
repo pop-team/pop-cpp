@@ -15,7 +15,7 @@
 #include "paroc_exception.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_broker.h"
-#include "paroc_system.h"
+#include "pop_system.h"
 #include "paroc_utils.h"
 #include "popc_logger.h"
 
@@ -29,33 +29,33 @@ extern int parocmain(int, char **);
 
 void SignalTerminate(int sig) {
     LOG_ERROR( "SIGNAL %d!!!!",sig);
-    paroc_system::Finalize(false);
+    pop_system::Finalize(false);
     exit(1);
 }
 
 void _paroc_atexit() {
     LOG_WARNING( "_paroc_atexit called !!!!");
-    paroc_system::Finalize(false);
+    pop_system::Finalize(false);
 }
 
 int main(int argc, char **argv) {
 
 #ifdef UC_LINUX
-    paroc_system::processor_set(0);
+    pop_system::processor_set(0);
 #endif
 
-    paroc_system app;
-    paroc_system::pop_current_local_address = 1;
-    paroc_system::popc_local_mpi_communicator_rank = 0;
+    pop_system app;
+    pop_system::pop_current_local_address = 1;
+    pop_system::popc_local_mpi_communicator_rank = 0;
 
     int i;
     for(i=argc-1; i>=0; i--) {
         if(paroc_utils::isEqual(argv[i],"-initparoc")) {
             char **argv1=argv+i+1;
             int argc1=argc-i-1;
-            if(!paroc_system::Initialize(&argc1, &argv1)) {
+            if(!pop_system::Initialize(&argc1, &argv1)) {
                 LOG_WARNING("Initialization of parallel objects fail...");
-                paroc_system::Finalize(false);
+                pop_system::Finalize(false);
                 return -1;
             }
             argv[i]=NULL;
@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
         pop_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
 
         char* local_address = new char[15];
-        snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
+        snprintf(local_address, 15, "uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
 
         if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
             paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox->Create failed");
@@ -125,15 +125,15 @@ int main(int argc, char **argv) {
         return ret;
     } catch(std::exception &e) {
         LOG_ERROR("Exception in main: %s", e.what());
-        paroc_system::Finalize(false);
+        pop_system::Finalize(false);
         return -1;
     } catch(int e) {
         LOG_ERROR("Exception in main with code %d", e);
-        paroc_system::Finalize(false);
+        pop_system::Finalize(false);
         return -1;
     } catch(...) {
         LOG_ERROR("Unknown exception");
-        paroc_system::Finalize(false);
+        pop_system::Finalize(false);
         return -1;
     }
     return 1;

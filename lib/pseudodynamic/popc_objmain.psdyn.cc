@@ -27,7 +27,7 @@
 
 #include "pop_broker.h"
 #include "paroc_utils.h"
-#include "paroc_system_mpi.h"
+#include "pop_system_mpi.h"
 #include "pop_broker_factory.h"
 #include "pop_buffer_factory_finder.h"
 
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
             int provided_support = MPI::Init_thread(required_support);
             LOG_DEBUG("init end");
         }
-        paroc_system_mpi::is_remote_object_process = true;
+        pop_system_mpi::is_remote_object_process = true;
         int node_id = MPI::COMM_WORLD.Get_rank();
 
         LOG_DEBUG("Broker main %d", node_id);
@@ -74,15 +74,15 @@ int main(int argc, char **argv) {
 
     char *rcore = paroc_utils::checkremove(&argc,&argv,"-core=");
     if(rcore != NULL) {
-        paroc_system::processor_set(atoi(rcore));
+        pop_system::processor_set(atoi(rcore));
     }
 #ifdef UC_LINUX
     else {
-        paroc_system::processor_set(0);
+        pop_system::processor_set(0);
     }
 #endif
 
-    paroc_system sys;
+    pop_system sys;
     int status = 0;
     pop_combox *callback = NULL;
     // Connect to callback
