@@ -20,7 +20,7 @@
 
 struct ServiceEntry {
     std::string name;
-    paroc_service_base *service;
+    pop_service_base *service;
 };
 
 /**
@@ -60,7 +60,7 @@ public:
      * @param service the instance of the service of the given name is returned
      * @return true if the service of given name exists. Othewise, false is return
     */
-    seq sync bool QueryService(const std::string &name, [out] paroc_service_base &service);
+    seq sync bool QueryService(const std::string &name, [out] pop_service_base &service);
 
     /*!@brief Query a user supplied service
      * @param name name of the service (string)
@@ -74,7 +74,7 @@ public:
      * @param newservice the new service (parallel object)
      * @return true if successful. Otherwise, false is returned
     */
-    seq sync bool RegisterService(const std::string &name, const paroc_service_base &newservice);
+    seq sync bool RegisterService(const std::string &name, const pop_service_base &newservice);
 
     /*!@brief Unregister a service
      * @param name name of the service (string)

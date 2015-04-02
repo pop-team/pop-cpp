@@ -33,10 +33,10 @@ protected:
 };
 
 
-class paroc_condition: public pop_mutex {
+class pop_condition: public pop_mutex {
 public:
-    paroc_condition();
-    ~paroc_condition();
+    pop_condition();
+    ~pop_condition();
 
     void signal();
     void broadcast();
@@ -58,7 +58,7 @@ private:
     pop_mutex *pmutex;
 };
 
-class POPSynchronizer: public paroc_condition {
+class POPSynchronizer: public pop_condition {
 public:
     void raise() {
         broadcast();

@@ -40,7 +40,7 @@ endif(WIN32)
 
 
 set(POPCC_GENERATED_STUBS
-#    ${POPCC_OUTPUT_DIR}/paroc_service_base.ph.stub_client.o
+#    ${POPCC_OUTPUT_DIR}/pop_service_base.ph.stub_client.o
 )
 
 set(POPCC_GENERATED_FILES

@@ -11,7 +11,7 @@
 #ifndef REMOTELOG_H
 #define REMOTELOG_H
 
-#include "paroc_service_base.ph"
+#include "pop_service_base.ph"
 
 /**
  * @class RemoteLog
@@ -21,7 +21,7 @@
  * RemoteLog is an application-scope service which allows remote objects to send back message to the user's console.
  */
 parclass RemoteLog:
-virtual public paroc_service_base {
+virtual public pop_service_base {
 public:
 
     /** @brief Constructor

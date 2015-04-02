@@ -104,7 +104,7 @@ endfunction(popcc_compile_obj)
 
 # Compile all .ph files
 
-popcc_compile_ph(paroc_service_base.ph)
+popcc_compile_ph(pop_service_base.ph)
 popcc_compile_ph(jobmgr.ph)
 popcc_compile_ph(popc_search_node.ph)
 popcc_compile_ph(codemgr.ph)
@@ -115,7 +115,7 @@ popcc_compile_ph(appservice.ph)
 popcc_compile_ph(popfilemanager.ph)
 
 set(POPCC_GENERATED_STUB
-    ${POPCC_OUTPUT_DIR}/paroc_service_base.ph.stub.o
+    ${POPCC_OUTPUT_DIR}/pop_service_base.ph.stub.o
     ${POPCC_OUTPUT_DIR}/jobmgr.ph.stub.o
     ${POPCC_OUTPUT_DIR}/popc_search_node.ph.stub.o
     ${POPCC_OUTPUT_DIR}/codemgr.ph.stub.o

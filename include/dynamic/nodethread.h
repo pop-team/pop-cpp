@@ -10,11 +10,11 @@
  *
  */
 
-#include "paroc_thread.h"
+#include "pop_thread.h"
 
 #include <string.h>
 
-class NodeThread : public paroc_thread {
+class NodeThread : public pop_thread {
 public:
     NodeThread(int timeout, const pop_accesspoint &node, std::string reqid);
     virtual void start();

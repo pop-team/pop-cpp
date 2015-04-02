@@ -47,8 +47,8 @@ int pop_system::popc_local_mpi_communicator_rank;
 int pop_system_mpi::current_free_process;
 bool pop_system_mpi::is_remote_object_process;
 bool pop_system_mpi::mpi_has_to_take_lock;
-paroc_condition pop_system_mpi::mpi_unlock_wait_cond;
-paroc_condition pop_system_mpi::mpi_go_wait_cond;
+pop_condition pop_system_mpi::mpi_unlock_wait_cond;
+pop_condition pop_system_mpi::mpi_go_wait_cond;
 
 
 std::string pop_system::platform;

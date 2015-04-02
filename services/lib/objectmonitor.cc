@@ -28,7 +28,7 @@ static void LocalServiceTerminate(int sig) {
     popc__exit(1);
 }
 
-ObjectMonitor::ObjectMonitor(const std::string &challenge): paroc_service_base(challenge) {
+ObjectMonitor::ObjectMonitor(const std::string &challenge): pop_service_base(challenge) {
     myObjMonitor=this;
     popc_signal(popc_SIGINT,LocalServiceTerminate);
 #ifndef __WIN32__

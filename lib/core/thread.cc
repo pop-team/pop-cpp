@@ -13,15 +13,15 @@
 /*
   Should check with C++11 std::thread or std::async
   Deeply need refactoring:
-    POPC_Thread instead of paroc_thread
+    POPC_Thread instead of pop_thread
  */
 
-#include "paroc_thread.h"
+#include "pop_thread.h"
 #include <signal.h>
 
-pthread_mutex_t paroc_thread::objlock=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t pop_thread::objlock=PTHREAD_MUTEX_INITIALIZER;
 
-paroc_thread::paroc_thread(bool joinable) {
+pop_thread::pop_thread(bool joinable) {
     isjoinable=joinable;
     iscreated=false;
     pthread_attr_init(&attr);
@@ -30,40 +30,40 @@ paroc_thread::paroc_thread(bool joinable) {
 
 }
 
-paroc_thread::~paroc_thread() {
+pop_thread::~pop_thread() {
     if(iscreated && isjoinable) {
         join();
     }
     pthread_attr_destroy(&attr);
 }
 
-void paroc_thread::join() {
+void pop_thread::join() {
     if(iscreated && isjoinable) {
         pthread_join(th,nullptr);
     }
 }
 
-void paroc_thread::kill(int sig) {
+void pop_thread::kill(int sig) {
     if(iscreated) {
         pthread_kill(th,sig);
     }
 }
 
-void paroc_thread::cancel() {
+void pop_thread::cancel() {
     if(iscreated) {
         pthread_cancel(th);
         //      iscreated=false;
     }
 }
 
-bool paroc_thread::joinable() {
+bool pop_thread::joinable() {
     return isjoinable;
 }
 
-int paroc_thread::create() {
+int pop_thread::create() {
     pthread_mutex_lock(&objlock);
     iscreated=true;
-    int ret=pthread_create(&th, &attr, (void *(*)(void*))paroc_thread::_threadentry,this);
+    int ret=pthread_create(&th, &attr, (void *(*)(void*))pop_thread::_threadentry,this);
     if(ret!=0) {
         iscreated=false;
     }
@@ -72,19 +72,19 @@ int paroc_thread::create() {
     return ret;
 }
 
-void *paroc_thread::_threadentry(void *param) {
+void *pop_thread::_threadentry(void *param) {
     pthread_cleanup_push((void (*)(void*))_cleanupentry,param);
     pthread_mutex_lock(&objlock);
-    paroc_thread *obj = (paroc_thread *)param;
+    pop_thread *obj = (pop_thread *)param;
     pthread_mutex_unlock(&objlock);
     obj->start();
     pthread_cleanup_pop(1);
     return nullptr;
 }
 
-void paroc_thread::_cleanupentry(void *param) {
+void pop_thread::_cleanupentry(void *param) {
     //  pthread_mutex_lock(&objlock);
-    paroc_thread *obj=(paroc_thread *)param;
+    pop_thread *obj=(pop_thread *)param;
     //  pthread_mutex_unlock(&objlock);
     if(!obj->joinable()) {
         delete obj;

@@ -16,7 +16,7 @@
 #include "codemgr.ph"
 #include "popc_logger.h"
 
-CodeMgr::CodeMgr(const std::string &challenge): paroc_service_base(challenge) {
+CodeMgr::CodeMgr(const std::string &challenge): pop_service_base(challenge) {
     //Nothing else to init
 }
 

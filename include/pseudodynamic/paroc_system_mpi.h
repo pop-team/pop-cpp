@@ -34,8 +34,8 @@ public:
     static bool is_remote_object_process;
     static bool mpi_has_to_take_lock;
 
-    static paroc_condition mpi_unlock_wait_cond;
-    static paroc_condition mpi_go_wait_cond;
+    static pop_condition mpi_unlock_wait_cond;
+    static pop_condition mpi_go_wait_cond;
 // end if MPI
 };
 typedef pop_system_mpi POPSystemMPI;

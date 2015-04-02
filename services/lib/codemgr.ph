@@ -13,7 +13,7 @@
 #define CODEMGR_PH
 
 #include <vector>
-#include "paroc_service_base.ph"
+#include "pop_service_base.ph"
 
 #define CODE_MAX_STRING_SIZE 1024
 
@@ -39,10 +39,10 @@ typedef std::vector<codedb> CodeDBArray;
  * @ingroup runtime
  * CodeMgr is an application-scope service which provides information about location of a parallel object executable for a specific platform.
  * This service is used by the resource discovery service to acquire information of supported platform of the parallel object.
- * @sa paroc_service_base
+ * @sa pop_service_base
  */
 parclass CodeMgr:
-virtual public paroc_service_base {
+virtual public pop_service_base {
 public:
     /** @brief Constructor
      * @param challenge challenge string which will be required on stopping the service

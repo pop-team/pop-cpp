@@ -11,7 +11,7 @@
 #ifndef POPC_OBJECT_MONITOR_PH
 #define POPC_OBJECT_MONITOR_PH
 
-#include "paroc_service_base.ph"
+#include "pop_service_base.ph"
 
 
 /**
@@ -22,7 +22,7 @@
  * ObjectMonitor is an application-scope service which manages parallel objects within the application
  */
 parclass ObjectMonitor:
-virtual public paroc_service_base {
+virtual public pop_service_base {
 public:
 
     /** @brief Constructor

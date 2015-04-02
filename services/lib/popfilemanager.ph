@@ -12,12 +12,12 @@
 #ifndef POPFILEMANAGER_H_INCLUDE
 #define POPFILEMANAGER_H_INCLUDE
 
-#include "paroc_service_base.ph"
+#include "pop_service_base.ph"
 #include "pop_accesspoint.h"
 #include <list>
 
 parclass POPFileManager :
-virtual public paroc_service_base {
+virtual public pop_service_base {
 public:
     classuid(50);
 

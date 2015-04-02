@@ -11,7 +11,7 @@
 #ifndef BATCHMANAGER_H
 #define BATCHMANAGER_H
 
-#include "paroc_service_base.ph"
+#include "pop_service_base.ph"
 
 /**
  * @class BatchMgr
@@ -22,7 +22,7 @@
  * (see also popcjob.* and popcobjrun.* scripts)
  */
 parclass BatchMgr:
-virtual public paroc_service_base {
+virtual public pop_service_base {
 public:
     classuid(6);
     /** @brief Constructor

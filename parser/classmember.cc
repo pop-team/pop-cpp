@@ -174,7 +174,7 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
             return false;
         }
         if(base->IsParClass()) {
-            strcat(output,"(pop_interface::_paroc_nobind)");
+            strcat(output,"(pop_interface::_pop_nobind)");
         }
         strcat(output,";\n");
         reformat=true;
@@ -183,7 +183,7 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
             return false;
         }
         if(mytype->IsParClass()) {
-            strcat(output,"(pop_interface::_paroc_nobind)");
+            strcat(output,"(pop_interface::_pop_nobind)");
         }
         reformat=false;
         strcat(output,";\n");
@@ -886,7 +886,7 @@ void Method::GenerateClient(std::string &output) {
     } // End of APOA Support
 
     if(!GetClass()->is_collective()) {
-        sprintf(tmpcode, "\n  pop_mutex_locker __paroc_lock(_paroc_imutex);");
+        sprintf(tmpcode, "\n  pop_mutex_locker __paroc_lock(_pop_imutex);");
         output += tmpcode;
         sprintf(tmpcode, "\n  if(!__pop_combox)pop_exception::pop_throw(\"combox was not initialized\");");
         output += tmpcode;
@@ -1189,9 +1189,9 @@ void Method::GenerateBroker(std::string &output) {
 
             if(returnparam.GetType()->IsParClass()) {
                 if(GetClass()->is_collective()) {
-                    sprintf(methodcall,"\n%s(pop_interface::_paroc_nobind);\n    %s%s * _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    %s=_popc_object->%s(",retdecl, clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, tmpvar, name);
+                    sprintf(methodcall,"\n%s(pop_interface::_pop_nobind);\n    %s%s * _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    %s=_popc_object->%s(",retdecl, clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, tmpvar, name);
                 } else {
-                    sprintf(methodcall,"\n%s(pop_interface::_paroc_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(", retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
+                    sprintf(methodcall,"\n%s(pop_interface::_pop_nobind);\n%s%s * _paroc_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_paroc_obj->%s(", retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
                 }
             } else {
                 if(GetClass()->is_collective()) {
@@ -1480,9 +1480,9 @@ void Constructor::GeneratePostfix(std::string &output, bool header) {
         for(int j=0; j<n; j++) {
             strcat(tmpcode,bases[j]->GetName());
             if(j<n-1) {
-                strcat(tmpcode,"(_paroc_nobind) ,");
+                strcat(tmpcode,"(_pop_nobind) ,");
             } else {
-                strcat(tmpcode,"(_paroc_nobind)");
+                strcat(tmpcode,"(_pop_nobind)");
             }
         }
         output += tmpcode;

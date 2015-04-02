@@ -649,8 +649,8 @@ bool Class::generate_header_pog(std::string &code, bool interface) {
             for (int j=0;j<n;j++)
             {
                 strcat(tmpcode,bases[j]->GetName());
-                if (j<n-1) strcat(tmpcode,"(_paroc_nobind) ,");
-                else  strcat(tmpcode,"(_paroc_nobind)");
+                if (j<n-1) strcat(tmpcode,"(_pop_nobind) ,");
+                else  strcat(tmpcode,"(_pop_nobind)");
             }
             code += tmpcode;
         }
@@ -825,9 +825,9 @@ bool Class::GenerateHeader(std::string &code, bool interface/*, bool isPOPCPPCom
             for(int j=0; j<n; j++) {
                 strcat(tmpcode,bases[j]->GetName());
                 if(j<n-1) {
-                    strcat(tmpcode,"(_paroc_nobind) ,");
+                    strcat(tmpcode,"(_pop_nobind) ,");
                 } else {
-                    strcat(tmpcode,"(_paroc_nobind)");
+                    strcat(tmpcode,"(_pop_nobind)");
                 }
             }
             code += tmpcode;

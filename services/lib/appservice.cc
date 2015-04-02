@@ -21,7 +21,7 @@
 // #include "jobmgr.ph"
 #include "popc_logger.h"
 
-AppCoreService::AppCoreService(const std::string &challenge, bool daemon, const std::string &codelocation): paroc_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge) {
+AppCoreService::AppCoreService(const std::string &challenge, bool daemon, const std::string &codelocation): pop_service_base(challenge), CodeMgr(challenge), RemoteLog(challenge), ObjectMonitor(challenge), BatchMgr(challenge) {
     /**
       * ViSaG : clementval
       * Generate the POP Application Unique ID
@@ -74,7 +74,7 @@ AppCoreService::~AppCoreService() {
     LOG_DEBUG("Destroyed AppCoreService");
 }
 
-bool AppCoreService::QueryService(const std::string &name, paroc_service_base &service) {
+bool AppCoreService::QueryService(const std::string &name, pop_service_base &service) {
     if(name.empty()) {
         return false;
     }
@@ -103,14 +103,14 @@ bool AppCoreService::QueryService(const std::string &name, pop_accesspoint &serv
     return false;
 }
 
-bool AppCoreService::RegisterService(const std::string &name, const paroc_service_base &newservice) {
+bool AppCoreService::RegisterService(const std::string &name, const pop_service_base &newservice) {
     if(name.empty()) {
         return false;
     }
 
     ServiceEntry t;
     try {
-        t.service=new paroc_service_base(newservice);
+        t.service=new pop_service_base(newservice);
         t.name=name;
     } catch(std::exception& e) {
         LOG_WARNING("Exception while creating service: %s", e.what());
@@ -184,7 +184,7 @@ void AppCoreService::LoadAddOn() {
             continue;
         }
         try {
-            paroc_service_base s(ap);
+            pop_service_base s(ap);
             s.Start(mychallenge);
         } catch(std::exception& e) {
             LOG_WARNING("Can not connect to %s: %s",service, e.what());

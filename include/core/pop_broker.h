@@ -121,7 +121,7 @@ protected:
 
     paroc_method_map_list methodnames;
 
-    paroc_condition mutexCond;  // Lock condition for mutex call
+    pop_condition mutexCond;  // Lock condition for mutex call
     int mutexCount;             // Number of mutex call pending
     int concPendings;           // Number of concurrent call pending
 
@@ -129,7 +129,7 @@ protected:
 
     pop_object *obj;                    // Real object associated with this broker
     pop_request_fifo_list request_fifo; // Queue storing the request received by the broker
-    paroc_condition execCond;
+    pop_condition execCond;
     int instanceCount;  //
     int connclosecount;  //Count the number of connection close on an object
     int state; // 0=Running, 1=Terminate, 2= Abort

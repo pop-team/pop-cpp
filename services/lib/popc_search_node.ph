@@ -34,10 +34,10 @@
 #include <semaphore.h>
 #include <fcntl.h>
 
-#include "paroc_service_base.ph"
+#include "pop_service_base.ph"
 #include "jobmgr.ph"
 #include "timer.h"
-#include "paroc_thread.h"
+#include "pop_thread.h"
 #include "popc_logger.h"
 
 
@@ -49,10 +49,10 @@
 #define UNLOCK_TIMEOUT 20   //Timeout to unlock the discovery process is no responses are coming
 
 /*
- *  Class representing POPCSearchNode to discover resource on the grid, inherite from paroc_service_base
+ *  Class representing POPCSearchNode to discover resource on the grid, inherite from pop_service_base
  */
 parclass POPCSearchNode :
-virtual public paroc_service_base {
+virtual public pop_service_base {
 
 public :
     //Node's constructore

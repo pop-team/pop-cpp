@@ -16,20 +16,20 @@
 typedef std::vector<pop_accesspoint> pop_accesspoint_list;
 
 /**
- * @class paroc_service_base
+ * @class pop_service_base
  * @brief Parclass : Base class for all POP-C++ runtime services, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  * @ingroup runtime
- * paroc_service_base implements two main methods to start and to stop the service.
+ * pop_service_base implements two main methods to start and to stop the service.
  */
-parclass paroc_service_base=0 {
+parclass pop_service_base=0 {
 public:
     /** @brief  Constructor
      * @param challenge The challenge string will will be require on stoping the service
     */
-    paroc_service_base([in] const std::string &challenge);
+    pop_service_base([in] const std::string &challenge);
 
-    paroc_service_base();
+    pop_service_base();
 
     /** @brief Start the service.
      * This method will make the object running even if there is no reference to the object.
@@ -70,7 +70,7 @@ protected:
  * JobCoreService provides an abstraction for POP-C++ applications to access the POP-C++ job service for creating parallel objects
  */
 parclass JobCoreService:
-public paroc_service_base {
+public pop_service_base {
 public:
 
     /** @brief  Constructor

@@ -106,7 +106,7 @@ private:
     bool _have_to_get_lock;
 
 
-    paroc_condition mpicond;
+    pop_condition mpicond;
     int data;
 
 };

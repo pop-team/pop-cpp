@@ -14,10 +14,10 @@
 #define _POPC_THREAD
 #include <pthread.h>
 
-class paroc_thread {
+class pop_thread {
 public:
-    paroc_thread(bool joinable);
-    virtual ~paroc_thread();
+    pop_thread(bool joinable);
+    virtual ~pop_thread();
 
     virtual void start()=0;
     void join();

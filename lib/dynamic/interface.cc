@@ -48,7 +48,7 @@
 #endif
 
 
-pop_accesspoint pop_interface::_paroc_nobind;
+pop_accesspoint pop_interface::_pop_nobind;
 
 //binding time out in miliseconds
 int pop_interface::paroc_bind_timeout=10000;
@@ -524,7 +524,7 @@ void pop_interface::BindStatus(int &code, std::string &platform, std::string &in
     }
 
     pop_message_header h(0, 0, INVOKE_SYNC, "BindStatus");
-    pop_mutex_locker lock(_paroc_imutex);
+    pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
 
@@ -554,7 +554,7 @@ int pop_interface::AddRef() {
     }
 
     pop_message_header h(0,1, INVOKE_SYNC,"AddRef");
-    pop_mutex_locker lock(_paroc_imutex);
+    pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
 
@@ -576,7 +576,7 @@ int pop_interface::DecRef() {
     }
 
     pop_message_header h(0, 2, INVOKE_SYNC,"DecRef");
-    pop_mutex_locker lock(_paroc_imutex);
+    pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
 
@@ -606,7 +606,7 @@ bool pop_interface::Encoding(std::string encoding) {
     }
 
     pop_message_header h(0, 3, INVOKE_SYNC, "Encoding");
-    pop_mutex_locker lock(_paroc_imutex);
+    pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
 
@@ -640,7 +640,7 @@ void pop_interface::Kill() {
     }
 
     pop_message_header h(0,4, 0 ,"Kill");
-    pop_mutex_locker lock(_paroc_imutex);
+    pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
 
@@ -658,7 +658,7 @@ bool pop_interface::ObjectActive() {
     }
 
     pop_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
-    pop_mutex_locker lock(_paroc_imutex);
+    pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
 
@@ -686,7 +686,7 @@ bool pop_interface::RecvCtrl() {
 
     char header_name [] = "ObjectAlive\0";
     pop_message_header h(0,6, INVOKE_SYNC ,header_name);
-    pop_mutex_locker lock(_paroc_imutex);
+    pop_mutex_locker lock(_pop_imutex);
     while(true) {
         __pop_combox->SetTimeout(time_control);
         pop_connection *t = (pop_connection *) __pop_combox->Wait();

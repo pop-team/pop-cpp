@@ -34,7 +34,7 @@ public:
     //otherwise, timeout in "timeout" miliseconds
 
 protected:
-    paroc_condition cond;
+    pop_condition cond;
     std::vector<int> queue;
 };
 

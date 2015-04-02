@@ -77,7 +77,7 @@ endfunction(popcc_compile_cxx)
 
 # Build .ph files
 
-popcc_compile_ph(paroc_service_base.ph)
+popcc_compile_ph(pop_service_base.ph)
 popcc_compile_ph(jobmgr.ph)
 popcc_compile_ph(popc_search_node.ph)
 popcc_compile_ph(codemgr.ph)
@@ -87,7 +87,7 @@ popcc_compile_ph(batchmgr.ph)
 popcc_compile_ph(appservice.ph)
 
 set(POPCC_GENERATED_STUBS
-    ${POPCC_OUTPUT_DIR}/paroc_service_base.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/pop_service_base.ph.stub_client.o
     ${POPCC_OUTPUT_DIR}/jobmgr.ph.stub_client.o
     ${POPCC_OUTPUT_DIR}/popc_search_node.ph.stub_client.o
     ${POPCC_OUTPUT_DIR}/codemgr.ph.stub_client.o
@@ -172,7 +172,7 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/batchmgr.ph DESTINATION ${POPCC_INCLUD
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/codemgr.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jobmgr.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/objectmonitor.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_service_base.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/pop_service_base.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_search_node.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/remotelog.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.std.o DESTINATION ${POPCC_LIB_INSTALL})

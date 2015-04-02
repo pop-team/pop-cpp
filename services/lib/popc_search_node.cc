@@ -26,7 +26,7 @@
  * @param
  * @param
  */
-POPCSearchNode::POPCSearchNode(const std::string &challenge, bool deamon) : paroc_service_base(challenge) {
+POPCSearchNode::POPCSearchNode(const std::string &challenge, bool deamon) : pop_service_base(challenge) {
     // Init variables
     logicalClock=0;
     sem_logicalClock=0;

@@ -113,7 +113,7 @@ bool  POPMPI<T>::startMPI(T *&array, int np) {
     if(np<=0) {
         return false;
     }
-    T test(pop_interface::_paroc_nobind);
+    T test(pop_interface::_pop_nobind);
     const char *name=test.ClassName();
 
     array=NULL;

@@ -31,7 +31,7 @@
 #include "codemgr.ph"
 #include "timer.h"
 #include "jobmgr.ph"
-#include "paroc_thread.h"
+#include "pop_thread.h"
 
 /**
  * ViSaG : clementval
@@ -41,7 +41,7 @@
 
 #define min(a,b) ((a)<(b) ? (a) : (b))
 
-class paroc_timerthread: public paroc_thread {
+class paroc_timerthread: public pop_thread {
 public:
     paroc_timerthread(int parent_update, int service_timeout, IMPLEMENT_TYPE(JobMgr) *myjobmgr);
     virtual void start();
@@ -51,7 +51,7 @@ private:
     IMPLEMENT_TYPE(JobMgr) *jobmgr;
 };
 
-paroc_timerthread::paroc_timerthread(int myparent_update, int myservice_timeout, IMPLEMENT_TYPE(JobMgr) *myjobmgr): paroc_thread(true) {
+paroc_timerthread::paroc_timerthread(int myparent_update, int myservice_timeout, IMPLEMENT_TYPE(JobMgr) *myjobmgr): pop_thread(true) {
     parent_update=myparent_update;
     service_timeout=myservice_timeout;
     jobmgr=myjobmgr;

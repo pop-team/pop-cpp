@@ -10,7 +10,7 @@
 
 #include "batchmgr.ph"
 
-BatchMgr::BatchMgr(const std::string &challenge): paroc_service_base(challenge), nodeCount(0) {
+BatchMgr::BatchMgr(const std::string &challenge): pop_service_base(challenge), nodeCount(0) {
     //Nothing else to init
 }
 

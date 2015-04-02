@@ -19,15 +19,15 @@
 #include "pop_broker.h"
 #include "pop_interface.h"
 #include "pop_event.h"
-#include "paroc_thread.h"
+#include "pop_thread.h"
 #include "pop_system.h"
 #include "popc_logger.h"
 
 #define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=nullptr) pop_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 
-class paroc_invokethread: public paroc_thread {
+class paroc_invokethread: public pop_thread {
 public:
-    paroc_invokethread(pop_broker *br, pop_request &myrequest, int *instanceCount, paroc_condition *execCond);
+    paroc_invokethread(pop_broker *br, pop_request &myrequest, int *instanceCount, pop_condition *execCond);
     ~ paroc_invokethread();
     virtual void start() override;
 
@@ -36,10 +36,10 @@ protected:
 
     pop_broker *pbroker;
     int *pinstanceCount;
-    paroc_condition *pcond;
+    pop_condition *pcond;
 };
 
-paroc_invokethread::paroc_invokethread(pop_broker *br, pop_request &myrequest,  int *instanceCount, paroc_condition *execCond): paroc_thread(false), request(myrequest) {
+paroc_invokethread::paroc_invokethread(pop_broker *br, pop_request &myrequest,  int *instanceCount, pop_condition *execCond): pop_thread(false), request(myrequest) {
     pbroker=br;
     pinstanceCount=instanceCount;
     pcond=execCond;

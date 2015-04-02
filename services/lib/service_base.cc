@@ -14,21 +14,21 @@
 #include "pop_interface.h"
 #include "pop_broker.h"
 
-#include "paroc_service_base.ph"
+#include "pop_service_base.ph"
 #include "objectmonitor.ph"
 
 #include <strings.h>
 
-paroc_service_base::paroc_service_base(const std::string &challenge):mychallenge(challenge), appservice(pop_system::appservice) {
+pop_service_base::pop_service_base(const std::string &challenge):mychallenge(challenge), appservice(pop_system::appservice) {
     daemonMode=false;
 }
 
-paroc_service_base::paroc_service_base(): appservice(pop_system::appservice) {
+pop_service_base::pop_service_base(): appservice(pop_system::appservice) {
     daemonMode=false;
 }
 
 //Switch to the daemon mode...
-void paroc_service_base::Start() {
+void pop_service_base::Start() {
     while(GetRefCount()>1) {
         DecRef();
     }
@@ -46,7 +46,7 @@ void paroc_service_base::Start() {
     }
 }
 
-void paroc_service_base::Start(const std::string &challenge) {
+void pop_service_base::Start(const std::string &challenge) {
     if((mychallenge==challenge) || mychallenge.empty()) {
         while(GetRefCount()>1) {
             DecRef();
@@ -57,7 +57,7 @@ void paroc_service_base::Start(const std::string &challenge) {
 
 }
 
-bool paroc_service_base::Stop(const std::string &challenge) {
+bool pop_service_base::Stop(const std::string &challenge) {
     if(mychallenge==challenge || mychallenge.empty()) {
         daemonMode=false;
         //      while (DecRef()>0);
@@ -67,20 +67,20 @@ bool paroc_service_base::Stop(const std::string &challenge) {
 }
 
 //Redefine behaviors of parallel object creation/destruction...
-int paroc_service_base::AddRef() {
+int pop_service_base::AddRef() {
     if(daemonMode) {
         return 1;
     }
     return pop_object::AddRef();
 }
 
-int paroc_service_base::DecRef() {
+int pop_service_base::DecRef() {
     if(daemonMode) {
         return 1;
     }
     return pop_object::DecRef();
 }
-bool paroc_service_base::CanKill() {
+bool pop_service_base::CanKill() {
     if(daemonMode) {
         return false;
     }
@@ -88,7 +88,7 @@ bool paroc_service_base::CanKill() {
 }
 
 
-JobCoreService::JobCoreService(const std::string &challenge): paroc_service_base(challenge) {
+JobCoreService::JobCoreService(const std::string &challenge): pop_service_base(challenge) {
 }
 
 /*

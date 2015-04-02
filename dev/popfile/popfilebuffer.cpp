@@ -10,7 +10,7 @@
  */
 #include "popfilebuffer.h"
 #include "popfilemanager.ph"
-#include "paroc_thread.h"
+#include "pop_thread.h"
 #include <sys/time.h>
 #include <unistd.h>
 //#include <semaphor.h>

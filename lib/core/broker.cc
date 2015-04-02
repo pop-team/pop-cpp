@@ -24,7 +24,7 @@
 #include "pop_buffer_factory_finder.h"
 #include "pop_buffer_raw.h"
 #include "pop_utils.h"
-#include "paroc_thread.h"
+#include "pop_thread.h"
 #include "pop_system.h"
 
 #define TIMEOUT 1800
@@ -60,7 +60,7 @@ void broker_interupt(int /*sig*/) {
 }
 
 
-class paroc_receivethread: public paroc_thread {
+class paroc_receivethread: public pop_thread {
 public:
     paroc_receivethread(pop_broker *br, pop_combox *com);
     ~paroc_receivethread();
@@ -70,7 +70,7 @@ protected:
     pop_combox *comm;
 };
 
-paroc_receivethread::paroc_receivethread(pop_broker *br, pop_combox *combox): paroc_thread(true) {
+paroc_receivethread::paroc_receivethread(pop_broker *br, pop_combox *combox): pop_thread(true) {
     broker=br;
     comm=combox;
 }

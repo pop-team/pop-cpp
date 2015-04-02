@@ -15,7 +15,7 @@
 #include "remotelog.ph"
 #include "appservice.ph"
 
-RemoteLog::RemoteLog(const std::string &challenge): paroc_service_base(challenge) {
+RemoteLog::RemoteLog(const std::string &challenge): pop_service_base(challenge) {
 }
 RemoteLog::~RemoteLog() {
 }

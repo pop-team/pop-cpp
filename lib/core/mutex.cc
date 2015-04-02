@@ -59,27 +59,27 @@ pop_mutex::~pop_mutex() {
 POP-C++ condition implementation....
 */
 
-paroc_condition::paroc_condition() {
+pop_condition::pop_condition() {
     pthread_cond_init(&_cond,nullptr);
 }
 
-paroc_condition::~paroc_condition() {
+pop_condition::~pop_condition() {
     pthread_cond_destroy(&_cond);
 }
 
-void paroc_condition::signal() {
+void pop_condition::signal() {
     pthread_cond_signal(&_cond);
 }
 
-void paroc_condition::broadcast() {
+void pop_condition::broadcast() {
     pthread_cond_broadcast(&_cond);
 }
 
-void paroc_condition::wait() {
+void pop_condition::wait() {
     pthread_cond_wait(&_cond,&_mutex);
 }
 
-bool paroc_condition::wait(int timeout) {
+bool pop_condition::wait(int timeout) {
     if(timeout<0) {
         wait();
         return true;

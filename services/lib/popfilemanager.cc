@@ -23,7 +23,7 @@
  * @param deamon        Boolean flag to set the service as a deamon or not
  * @param host          The url to create the service
  */
-POPFileManager::POPFileManager(const std::string &challenge, bool deamon, std::string host) : paroc_service_base(challenge) {
+POPFileManager::POPFileManager(const std::string &challenge, bool deamon, std::string host) : pop_service_base(challenge) {
     popfile_log("[POPFILEMANAGER] POPFileManager created.");
     if(deamon) {
         Start();
