@@ -125,7 +125,7 @@ void POPintVector1::Serialize(POPBuffer &buf, bool pack) {
         }
     } else {
         // This does NOT work
-        POPException::paroc_throw("Error : This marshalling method does not work (2)!!");
+        POPException::pop_throw("Error : This marshalling method does not work (2)!!");
         /*if (pack)
         {
             assert(dynamic_cast<vector<int>*>(this)!=NULL);

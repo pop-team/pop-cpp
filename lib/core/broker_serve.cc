@@ -27,19 +27,19 @@
 
 class paroc_invokethread: public paroc_thread {
 public:
-    paroc_invokethread(pop_broker *br, paroc_request &myrequest, int *instanceCount, paroc_condition *execCond);
+    paroc_invokethread(pop_broker *br, pop_request &myrequest, int *instanceCount, paroc_condition *execCond);
     ~ paroc_invokethread();
     virtual void start() override;
 
 protected:
-    paroc_request request;
+    pop_request request;
 
     pop_broker *pbroker;
     int *pinstanceCount;
     paroc_condition *pcond;
 };
 
-paroc_invokethread::paroc_invokethread(pop_broker *br, paroc_request &myrequest,  int *instanceCount, paroc_condition *execCond): paroc_thread(false), request(myrequest) {
+paroc_invokethread::paroc_invokethread(pop_broker *br, pop_request &myrequest,  int *instanceCount, paroc_condition *execCond): paroc_thread(false), request(myrequest) {
     pbroker=br;
     pinstanceCount=instanceCount;
     pcond=execCond;
@@ -66,7 +66,7 @@ void paroc_invokethread::start() {
 
 
 
-bool pop_broker::GetRequest(paroc_request &req) {
+bool pop_broker::GetRequest(pop_request &req) {
     pop_mutex_locker locker(execCond);
 
     //If the queue is empty then wait for the request....
@@ -82,7 +82,7 @@ bool pop_broker::GetRequest(paroc_request &req) {
         auto pos1=pos;
         while(pos1!=request_fifo.end()) {
             auto old=pos1;
-            paroc_request &tmp=*pos1++;
+            pop_request &tmp=*pos1++;
             if(tmp.methodId[2] & INVOKE_CONC) {
                 req=tmp;
                 request_fifo.erase(old);
@@ -107,7 +107,7 @@ bool pop_broker::GetRequest(paroc_request &req) {
     return true;
 }
 
-void pop_broker::ServeRequest(paroc_request &req) {
+void pop_broker::ServeRequest(pop_request &req) {
     int type=req.methodId[2];
     if(type & INVOKE_CONC) {
         auto thr= new paroc_invokethread(this,req, &instanceCount,&execCond);
@@ -167,11 +167,11 @@ void pop_broker::UnhandledException() {
     }
 }
 
-bool pop_broker::DoInvoke(paroc_request &request) {
+bool pop_broker::DoInvoke(pop_request &request) {
     try {
         if(!Invoke(request.methodId, *request.data, request.from)) {
             LOG_ERROR("Mismatched method was invoked: classid=%d, methodid=%d", request.methodId[0], request.methodId[1]);
-            pop_exception::paroc_throw(OBJECT_MISMATCH_METHOD, "Mismatched method was invoked");
+            pop_exception::pop_throw(OBJECT_MISMATCH_METHOD, "Mismatched method was invoked");
         }
     }
 
@@ -264,7 +264,7 @@ bool pop_broker::DoInvoke(paroc_request &request) {
 
 
 bool pop_broker::Invoke(unsigned method[3], pop_buffer &buf, pop_connection *peer) {
-    paroc_request req;
+    pop_request req;
     req.from=peer;
     memcpy(req.methodId, method, 3*sizeof(unsigned));
     req.data=&buf;

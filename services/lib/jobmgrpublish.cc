@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
     char master[256];
     char slaver[256];
 
-    if(paroc_utils::checkremove(&argc,&argv,"-help")!=NULL) {
+    if(pop_utils::checkremove(&argc,&argv,"-help")!=NULL) {
         LOG_INFO("Usage: jobmgrpublish [-help] [jobmgr contact | jobmgr host]");
         return 0;
     }

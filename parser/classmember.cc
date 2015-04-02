@@ -17,7 +17,7 @@
 #include "popc_intface.h"
 
 #include "parser.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 
 #define MIN_CLASSID 1000
 
@@ -52,7 +52,7 @@ Param::~Param() {
 }
 
 bool Param::Match(Param *p) {
-    return (paroc_utils::isEqual(name,p->GetName()));
+    return (pop_utils::isEqual(name,p->GetName()));
 }
 
 bool Param::InParam() {
@@ -197,14 +197,14 @@ bool Param::DeclareVariable(char *output, bool &reformat, bool allocmem) {
             base->GetDeclaration(nullptr,basetype);
 
             if(nptr==1 && base->IsParClass()) {
-                snprintf(decl, sizeof(decl), "pop_interface_container<%s> __paroc_container_%s(%s);\n%s =__paroc_container_%s;\n", basetype,name,paramSize,name,name);
+                snprintf(decl, sizeof(decl), "pop_interface_container<%s> __pop_container_%s(%s);\n%s =__pop_container_%s;\n", basetype,name,paramSize,name,name);
             } else {
                 char tmpstr[1024];
                 strcpy(tmpstr,base->GetName());
                 for(int i=1; i<nptr; i++) {
                     strcat(tmpstr,"*");
                 }
-                snprintf(decl, sizeof(decl), "paroc_container<%s> __paroc_container_%s(%s);\n%s=__paroc_container_%s;\n", tmpstr,name ,paramSize,   name, name);
+                snprintf(decl, sizeof(decl), "pop_container<%s> __pop_container_%s(%s);\n%s=__pop_container_%s;\n", tmpstr,name ,paramSize,   name, name);
 
             }
             strcat(output,decl);
@@ -314,15 +314,15 @@ bool Param::UnMarshal(char *bufname, bool reformat, bool alloc_mem, bool inf_sid
             base->GetDeclaration(nullptr,basetype);
 
             if(nptr==1 && base->IsParClass()) {
-                sprintf(alloccode, "pop_interface_container<%s> __paroc_container_%s(__paroc_size2_%s);\n %s=__paroc_container_%s;\n", basetype,name,name,name, name);
+                sprintf(alloccode, "pop_interface_container<%s> __pop_container_%s(__paroc_size2_%s);\n %s=__pop_container_%s;\n", basetype,name,name,name, name);
             } else {
-                //        sprintf(alloccode, "paroc_container<typeof(*%s)> __paroc_container_%s(%s,__paroc_size2_%s);\n", name,name,name,name);
+                //        sprintf(alloccode, "pop_container<typeof(*%s)> __pop_container_%s(%s,__paroc_size2_%s);\n", name,name,name,name);
                 char tmpstr[1024];
                 strcpy(tmpstr,base->GetName());
                 for(int i=1; i<nptr; i++) {
                     strcat(tmpstr,"*");
                 }
-                sprintf(alloccode, "paroc_container<%s> __paroc_container_%s(__paroc_size2_%s);\n%s=__paroc_container_%s;\n", tmpstr,name,name,name,name);
+                sprintf(alloccode, "pop_container<%s> __pop_container_%s(__paroc_size2_%s);\n%s=__pop_container_%s;\n", tmpstr,name,name,name,name);
             }
             output += alloccode;
         }
@@ -888,9 +888,9 @@ void Method::GenerateClient(std::string &output) {
     if(!GetClass()->is_collective()) {
         sprintf(tmpcode, "\n  pop_mutex_locker __paroc_lock(_paroc_imutex);");
         output += tmpcode;
-        sprintf(tmpcode, "\n  if(!__pop_combox)pop_exception::paroc_throw(\"combox was not initialized\");");
+        sprintf(tmpcode, "\n  if(!__pop_combox)pop_exception::pop_throw(\"combox was not initialized\");");
         output += tmpcode;
-        sprintf(tmpcode, "\n  pop_connection* _popc_connection = __pop_combox->get_connection();\n  __paroc_buf->Reset();\n  pop_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __paroc_buf->SetHeader(__paroc_buf_header);\n", clname, id, invoke_code, name);
+        sprintf(tmpcode, "\n  pop_connection* _popc_connection = __pop_combox->get_connection();\n  __pop_buf->Reset();\n  pop_message_header __pop_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __pop_buf->SetHeader(__pop_buf_header);\n", clname, id, invoke_code, name);
         output += tmpcode;
     } else {
         // Additional code if the method is not collective
@@ -921,7 +921,7 @@ void Method::GenerateClient(std::string &output) {
         Param &p=*(params[j]);
         if(p.InParam())  {
             if(!GetClass()->is_collective()) {
-                p.Marshal((char*)"(*__paroc_buf)", false, true, output);
+                p.Marshal((char*)"(*__pop_buf)", false, true, output);
             } else {
                 p.Marshal((char*)"  (*_popc_buffer)", false, true, output);
             }
@@ -931,7 +931,7 @@ void Method::GenerateClient(std::string &output) {
     // Marshalling code generation is done. Transmit buffer
 
     if(!GetClass()->is_collective()) {
-        strcpy(tmpcode,"\n  popc_send_request(__paroc_buf, _popc_connection);");
+        strcpy(tmpcode,"\n  popc_send_request(__pop_buf, _popc_connection);");
     } else {
         strcpy(tmpcode,"\n  popc_send_request(_popc_buffer, _popc_connection);");
     }
@@ -939,14 +939,14 @@ void Method::GenerateClient(std::string &output) {
 
     if(waitreturn) {
 #ifdef OD_DISCONNECT
-        strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())pop_exception::paroc_throw(\"od.getCheckConnection()\");\n\t}");
+        strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())pop_exception::pop_throw(\"od.getCheckConnection()\");\n\t}");
         output += tmpcode;
         strcpy(tmpcode,"\n\telse\n");
         output += tmpcode;
 #endif
 
         if(!GetClass()->is_collective()) {
-            strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv((*__pop_combox), _popc_connection)) pop_exception::paroc_throw(\"Buffer receive\");\n\t}\n\t\n\tpop_buffer::CheckAndThrow(*__paroc_buf);\n");
+            strcpy(tmpcode,"\t{\n\t\tif (!__pop_buf->Recv((*__pop_combox), _popc_connection)) pop_exception::pop_throw(\"Buffer receive\");\n\t}\n\t\n\tpop_buffer::CheckAndThrow(*__pop_buf);\n");
         } else {
             strcpy(tmpcode,"\n  popc_recv_response(_popc_buffer, _popc_connection);");
         }
@@ -955,7 +955,7 @@ void Method::GenerateClient(std::string &output) {
             Param &p=*(params[j]);
             if(p.OutParam()) {
                 if(!GetClass()->is_collective()) {
-                    p.UnMarshal((char*)"(*__paroc_buf)",false,false, true, output);
+                    p.UnMarshal((char*)"(*__pop_buf)",false,false, true, output);
                 } else {
                     p.UnMarshal((char*)"  (*_popc_buffer)",false,false, true, output);
                 }
@@ -970,8 +970,8 @@ void Method::GenerateClient(std::string &output) {
 
 
             if(!GetClass()->is_collective()) {
-                returnparam.UnMarshal((char*)"(*__paroc_buf)", reformat, true, true, output);
-                strcpy(tmpcode,"\n  __paroc_buf->Reset();");
+                returnparam.UnMarshal((char*)"(*__pop_buf)", reformat, true, true, output);
+                strcpy(tmpcode,"\n  __pop_buf->Reset();");
             } else {
                 returnparam.UnMarshal((char*)"(*_popc_buffer)", reformat, true, true, output);
                 strcpy(tmpcode,"\n  _popc_buffer->Reset();");
@@ -991,7 +991,7 @@ void Method::GenerateClient(std::string &output) {
 
         } else {
             if(!GetClass()->is_collective()) {
-                strcpy(tmpcode,"\n  __paroc_buf->Reset();\n");
+                strcpy(tmpcode,"\n  __pop_buf->Reset();\n");
             } else {
                 strcpy(tmpcode,"\n  _popc_buffer->Reset();\n");
             }
@@ -1021,7 +1021,7 @@ void Method::GenerateClient(std::string &output) {
         output += tmpcode;
 #else
         if(!GetClass()->is_collective()) {
-            strcpy(tmpcode,"\n  __paroc_buf->Reset();");
+            strcpy(tmpcode,"\n  __pop_buf->Reset();");
         } else {
             strcpy(tmpcode,"\n  _popc_buffer->Reset();");
         }
@@ -1114,7 +1114,7 @@ void Method::GenerateBrokerHeader(std::string &output) {
     }
 
     char str[1024];
-    sprintf(str,"\nvoid Invoke_%s_%d(pop_buffer &__paroc_buf, pop_connection *__interface_output);",name , id);
+    sprintf(str,"\nvoid Invoke_%s_%d(pop_buffer &__pop_buf, pop_connection *__interface_output);",name , id);
     output += str;
 }
 
@@ -1159,7 +1159,7 @@ void Method::GenerateBroker(std::string &output) {
     if(GetClass()->is_collective()) {
         sprintf(str,"\nvoid %s::Invoke_%s_%d(pop_buffer &_popc_buffer, pop_connection *_popc_connection)\n{",brokername,name, id);
     } else {
-        sprintf(str,"\nvoid %s::Invoke_%s_%d(pop_buffer &__paroc_buf, pop_connection *__interface_output)\n{",brokername,name, id);
+        sprintf(str,"\nvoid %s::Invoke_%s_%d(pop_buffer &__pop_buf, pop_connection *__interface_output)\n{",brokername,name, id);
     }
     output += str;
 
@@ -1222,7 +1222,7 @@ void Method::GenerateBroker(std::string &output) {
             if(GetClass()->is_collective()) {
                 strcpy(str,"_popc_buffer");
             } else {
-                strcpy(str,"__paroc_buf");
+                strcpy(str,"__pop_buf");
             }
             if(p.marshalProc!=nullptr && !have_memspool) {
                 strcpy(str,"\npop_memspool _internal_mem;");
@@ -1232,7 +1232,7 @@ void Method::GenerateBroker(std::string &output) {
             if(GetClass()->is_collective()) {
                 p.UnMarshal((char*)"  _popc_buffer", reformat[j], true, false, output);
             } else {
-                p.UnMarshal((char*)"__paroc_buf",reformat[j],true,false,output);
+                p.UnMarshal((char*)"__pop_buf",reformat[j],true,false,output);
             }
         }
 
@@ -1278,7 +1278,7 @@ void Method::GenerateBroker(std::string &output) {
         if(GetClass()->is_collective()) {
             sprintf(str,"\n  if (_popc_connection != 0) {\n    _popc_buffer.Reset();\n    pop_message_header _popc_message_header(\"%s\");\n    _popc_buffer.SetHeader(_popc_message_header);\n", name);
         } else {
-            sprintf(str,"\nif (__interface_output!=0) \n{\n__paroc_buf.Reset();\npop_message_header __paroc_buf_header(\"%s\");\n__paroc_buf.SetHeader(__paroc_buf_header);\n", name);
+            sprintf(str,"\nif (__interface_output!=0) \n{\n__pop_buf.Reset();\npop_message_header __pop_buf_header(\"%s\");\n__pop_buf.SetHeader(__pop_buf_header);\n", name);
         }
 
         output += str;
@@ -1289,7 +1289,7 @@ void Method::GenerateBroker(std::string &output) {
                 if(GetClass()->is_collective()) {
                     p.Marshal((char*)"    _popc_buffer", reformat[j], false, output);
                 } else {
-                    p.Marshal((char*)"__paroc_buf", reformat[j], false, output);
+                    p.Marshal((char*)"__pop_buf", reformat[j], false, output);
                 }
             }
         }
@@ -1298,7 +1298,7 @@ void Method::GenerateBroker(std::string &output) {
             if(GetClass()->is_collective()) {
                 returnparam.Marshal((char*)"    _popc_buffer",false,false, output);
             } else {
-                returnparam.Marshal((char*)"__paroc_buf",false,false, output);
+                returnparam.Marshal((char*)"__pop_buf",false,false, output);
             }
 
         }
@@ -1317,7 +1317,7 @@ void Method::GenerateBroker(std::string &output) {
             strcpy(str, "\n    _popc_connection->reset();\n  }\n}\n");
             output += str;
         } else {
-            strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) pop_exception::paroc_throw(\"buffer send\");\n}\n");
+            strcpy(str,"\nif (!__pop_buf.Send(__interface_output)) pop_exception::pop_throw(\"buffer send\");\n}\n");
             output += str;
             strcpy(str,"\nif(__interface_output != 0)\n__interface_output->reset();\n}\n");
             output += str;
@@ -1373,7 +1373,7 @@ bool Method::operator ==(Method &other) {
     if(MethodType()!=other.MethodType()) {
         return false;
     }
-    if(!paroc_utils::isEqual(name,other.name)) {
+    if(!pop_utils::isEqual(name,other.name)) {
         return false;
     }
 

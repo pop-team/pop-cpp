@@ -16,7 +16,7 @@
 #include "pop_buffer_factory_finder.h"
 #include "pop_broker.h"
 #include "pop_system_mpi.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "popc_logger.h"
 
 // Set processor
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
     char **argv1 = argv;
     int i;
     for(i = argc - 1; i >= 0; i--) {
-        if(paroc_utils::isEqual(argv[i],"-initparoc")) {
+        if(pop_utils::isEqual(argv[i],"-initparoc")) {
             char **argv1 = argv + i + 1;
             int argc1 = argc - i - 1;
             if(!pop_system::Initialize(&argc1, &argv1)) {

@@ -15,7 +15,7 @@
 
 #ifndef _RESPONSE_H
 #define _RESPONSE_H
-#include "paroc_base.h"
+#include "pop_base.h"
 #include "explorationList.h"
 #include "popc_search_node_info.h"
 

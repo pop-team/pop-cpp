@@ -14,9 +14,9 @@
 
 #ifndef POPC_ACCESSPOINT_H
 #define POPC_ACCESSPOINT_H
-#include "paroc_base.h"
+#include "pop_base.h"
 
-class pop_accesspoint: public paroc_base {
+class pop_accesspoint: public pop_base {
 public:
     pop_accesspoint();
     //  pop_accesspoint(const char *hostport);

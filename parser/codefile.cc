@@ -12,7 +12,7 @@
 #include "popc_intface.h"
 
 #include "parser.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 
 CodeFile::CodeFile(const std::string& fname) {
     isCoreCompilation = false;              // Core compilation is disable by default.
@@ -89,7 +89,7 @@ Class *CodeFile::FindClass(char *clname) {
     }
 
     int n=classlist.size();
-    for(int i=0; i<n; i++) if(paroc_utils::isEqual(classlist[i]->GetName(),tmp)) {
+    for(int i=0; i<n; i++) if(pop_utils::isEqual(classlist[i]->GetName(),tmp)) {
             return classlist[i];
         }
     return nullptr;
@@ -175,7 +175,7 @@ void CodeFile::AddDataType(DataType *type) {
 }
 
 bool CodeFile::SameFile(const char *file1, const char *file2) {
-    if(paroc_utils::isEqual(file1,file2)) {
+    if(pop_utils::isEqual(file1,file2)) {
         return true;
     }
     const char *fn1=strrchr(file1,'/');
@@ -219,7 +219,7 @@ bool CodeFile::SameFile(const char *file1, const char *file2) {
         }
     }
 
-    return (paroc_utils::isEqual(fn1,fn2) && paroc_utils::isEqual(dir1,dir2));
+    return (pop_utils::isEqual(fn1,fn2) && pop_utils::isEqual(dir1,dir2));
 
 }
 

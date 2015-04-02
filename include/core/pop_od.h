@@ -18,20 +18,20 @@
 
 #ifndef _POPC_OD_H
 #define _POPC_OD_H
-#include <paroc_base.h>
+#include <pop_base.h>
 
 /**
- * @class paroc_od
+ * @class pop_od
  * @brief Object description class, used by POP-C++ runtime.
  *
  * The od specifies how and where the parallel object is to be created at runtime
  *
  * @author Tuan Anh Nguyen
  */
-class paroc_od: public paroc_base {
+class pop_od: public pop_base {
 public:
-    paroc_od();
-    ~paroc_od();
+    pop_od();
+    ~pop_od();
 
     /**
      * @brief Specifies the minimal power requirement for the target machine (JobMgr)
@@ -146,7 +146,7 @@ public:
 #endif
     inline const std::string&  getBatch() const {return batchSystem;}
 
-    paroc_od &operator =(const paroc_od &od);
+    pop_od &operator =(const pop_od &od);
 
     bool IsEmpty() const;
     bool IsLocal() const;

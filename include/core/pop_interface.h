@@ -20,9 +20,9 @@
 #include <string>
 #include <pthread.h>    // Added for asynchronous object construction
 
-#include <paroc_base.h>
+#include <pop_base.h>
 #include <pop_accesspoint.h>
-#include <paroc_od.h>
+#include <pop_od.h>
 #include <pop_buffer.h>
 #include <pop_allocobj.h>
 #include "popwayback.h"
@@ -43,7 +43,7 @@
  * @author Tuan Anh Nguyen
  *
  */
-class pop_interface: paroc_base {
+class pop_interface: pop_base {
 public:
     pop_interface();
     pop_interface(const pop_accesspoint &p);
@@ -54,8 +54,8 @@ public:
     //Assign an interface from the others.....
     pop_interface & operator = (const pop_interface &obj);
 
-    virtual void SetOD(const paroc_od &myod);
-    virtual const paroc_od &GetOD() const;
+    virtual void SetOD(const pop_od &myod);
+    virtual const pop_od &GetOD() const;
 
     //  virtual const char * GetResource() const;
 
@@ -117,7 +117,7 @@ public:
      * @return Zero
     */
 
-    static int LocalExec(const char *hostname, const char *codefile, const char *classname, const pop_accesspoint &jobservice, const pop_accesspoint &appservice, pop_accesspoint *objaccess, int howmany, const paroc_od &od);
+    static int LocalExec(const char *hostname, const char *codefile, const char *classname, const pop_accesspoint &jobservice, const pop_accesspoint &appservice, pop_accesspoint *objaccess, int howmany, const pop_od &od);
 
     static pop_accesspoint _paroc_nobind;
     static int paroc_bind_timeout;
@@ -136,9 +136,9 @@ public:
     void Allocate();
     void allocate_only();
 
-    paroc_od od;
+    pop_od od;
 
-    paroc_od get_object_description();
+    pop_od get_object_description();
 protected:
     virtual const char *ClassName() {
         return "pop_interface";
@@ -148,7 +148,7 @@ protected:
     virtual void popc_get_response(pop_buffer *buf, pop_connection* conn);
 
     pop_combox *__pop_combox;
-    pop_buffer *__paroc_buf;
+    pop_buffer *__pop_buf;
     pop_accesspoint accesspoint;
 
     pop_mutex _paroc_imutex;

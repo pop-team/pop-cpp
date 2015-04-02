@@ -15,7 +15,7 @@
 #define _NODEINFO_H
 #include <list>
 #include <map>
-#include "paroc_base.h"
+#include "pop_base.h"
 
 
 /*

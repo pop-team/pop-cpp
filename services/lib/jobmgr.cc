@@ -128,7 +128,7 @@ bool NodeInfoMap::HasContact(const std::string &contact) {
     std::unique_lock<pop_mutex> lock(maplock);
 
     for(auto& v : hashmap){
-        if(paroc_utils::SameContact(std::string(v.first), contact)){
+        if(pop_utils::SameContact(std::string(v.first), contact)){
             return true;
         }
     }
@@ -254,7 +254,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
     char val[256];
     if(f==nullptr) {
         LOG_WARNING("Open config file [%s] fail",conf.c_str());
-        pop_exception::paroc_throw(errno,conf.c_str());
+        pop_exception::pop_throw(errno,conf.c_str());
     }
 
     maxjobs=100;
@@ -302,12 +302,12 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
             tmp--;
         }
         tmp[1]=0;
-        if(paroc_utils::isEqual(name,"node")) {
+        if(pop_utils::isEqual(name,"node")) {
             if(strchr(val,':')==nullptr) {
                 strcat(val,":");
                 strcat(val,DEFAULT_PORT);
             }
-            if(paroc_utils::SameContact(mycontact,val)) {
+            if(pop_utils::SameContact(mycontact,val)) {
                 continue;
             }
             NodeInfo tmp;
@@ -317,43 +317,43 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
             tmp.heuristic=0;
 
             neighbors.Add(contact, tmp);
-        } else if(paroc_utils::isEqual(name,"parent")) {
+        } else if(pop_utils::isEqual(name,"parent")) {
             if(strchr(val,':')==nullptr) {
                 strcat(val,":");
                 strcat(val,DEFAULT_PORT);
             }
-            if(paroc_utils::SameContact(mycontact,val)) {
+            if(pop_utils::SameContact(mycontact,val)) {
                 continue;
             }
             pop_accesspoint t;
             t.SetAccessString(val);
             parents.push_back(t);
-        } else if(paroc_utils::isEqual(name,"maxjobs")) {
+        } else if(pop_utils::isEqual(name,"maxjobs")) {
             if(sscanf(val,"%d",&maxjobs)!=1 || maxjobs<0) {
                 maxjobs=100;
             }
-        } else if(paroc_utils::isEqual(name,"timeout")) {
+        } else if(pop_utils::isEqual(name,"timeout")) {
             if(sscanf(val,"%d",&service_timeout)==1 && service_timeout>0) {
                 LOG_DEBUG( "[JM] JobMgr Timeout: %ds",service_timeout);
 
             } else {
                 service_timeout=0;
             }
-        } else if(paroc_utils::isEqual(name,"checkpoint")) {
+        } else if(pop_utils::isEqual(name,"checkpoint")) {
             if(sscanf(val,"%d",&parent_timeout)==1 && parent_timeout>0) {
                 LOG_DEBUG( "[JM] Checkpoint every: %d seconds",parent_timeout);
             } else {
                 parent_timeout=0;
             }
-        } else if(paroc_utils::isEqual(name,"exec_timeout")) {
+        } else if(pop_utils::isEqual(name,"exec_timeout")) {
             if(sscanf(val,"%d",&alloc_timeout)!=1 || alloc_timeout<0) {
                 alloc_timeout=ALLOC_TIMEOUT;
             }
-        } else if(paroc_utils::isEqual(name,"reserve_timeout")) {
+        } else if(pop_utils::isEqual(name,"reserve_timeout")) {
             if(sscanf(val,"%d",&reserve_timeout)!=1 || reserve_timeout<0) {
                 reserve_timeout=RESERVE_TIMEOUT;
             }
-        } else if(paroc_utils::isEqual(name,"platform")) {
+        } else if(pop_utils::isEqual(name,"platform")) {
             pop_system::platform=val;
         } else {
             info.push_back({name, val});
@@ -368,7 +368,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
         total.flops=atof(tmpstr.c_str());
     } else {
         //We do benchmark now to find the computing power of the machine...
-        total.flops=paroc_utils::benchmark_power();
+        total.flops=pop_utils::benchmark_power();
         snprintf(val,sizeof(val),"%g",total.flops);
         info.push_back({"power", val});
     }
@@ -590,7 +590,7 @@ int JobMgr::Query(const std::string &type, std::string  &val) {
     return 0;
 }
 
-int JobMgr::CreateObject(pop_accesspoint &localservice, const std::string &objname,const paroc_od &od, int howmany, pop_accesspoint* objcontacts, int howmany2, pop_accesspoint* remotejobcontacts) {
+int JobMgr::CreateObject(pop_accesspoint &localservice, const std::string &objname,const pop_od &od, int howmany, pop_accesspoint* objcontacts, int howmany2, pop_accesspoint* remotejobcontacts) {
     if(howmany<=0) {
         return 0;
     }
@@ -717,7 +717,7 @@ int JobMgr::CreateObject(pop_accesspoint &localservice, const std::string &objna
 
 }
 
-bool JobMgr::AllocResource(const pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany,
+bool JobMgr::AllocResource(const pop_accesspoint &localservice, const std::string &objname, const pop_od &od, int howmany,
                            float *fitness, pop_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize) {
     bool ret=false;
     // Added by clementval
@@ -876,7 +876,7 @@ bool JobMgr::AllocResource(const pop_accesspoint &localservice, const std::strin
 
     //Check if there is any responses
     if(responses.getNodeInfos().size() == 0) {
-        pop_exception::paroc_throw("No ressource found for execution");
+        pop_exception::pop_throw("No ressource found for execution");
     }
 
 
@@ -961,7 +961,7 @@ void JobMgr::CancelReservation(int *req, int howmany) {
  * @param popAppID The POP Application ID
  * @return The reservation ID
  */
-int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, std::string popAppId, std::string reqID) {
+int JobMgr::Reserve(const pop_od &od, float &inoutfitness, std::string popAppId, std::string reqID) {
     //Update();   //Called to see if there are jobs to be released
 
     float flops=0;
@@ -1088,7 +1088,7 @@ int JobMgr::Reserve(const paroc_od &od, float &inoutfitness, std::string popAppI
 
 //This method return the reservation ID on success
 
-int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness) {
+int JobMgr::MatchAndReserve(const pop_od &od, float &inoutfitness) {
     float flops=0;
     float walltime=0;
     float mem=0;
@@ -1198,7 +1198,7 @@ int JobMgr::MatchAndReserve(const paroc_od &od, float &inoutfitness) {
 }
 
 
-bool JobMgr::MatchAndReserve(const paroc_od &od, float *fitness, pop_accesspoint *jobcontacts, int *reserveIDs, int howmany) {
+bool JobMgr::MatchAndReserve(const pop_od &od, float *fitness, pop_accesspoint *jobcontacts, int *reserveIDs, int howmany) {
     if(howmany<=0) {
         return false;
     }
@@ -1282,7 +1282,7 @@ void JobMgr::Update() {
 }
 
 
-bool JobMgr::Forward(const pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, float *fitness, pop_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize) {
+bool JobMgr::Forward(const pop_accesspoint &localservice, const std::string &objname, const pop_od &od, int howmany, float *fitness, pop_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize) {
 
     //The local host is not fully qualified! Find on other hosts....
     //Since this method can be invoked concurently,
@@ -1607,7 +1607,7 @@ int JobMgr::Exec(char **arguments, char *env[], int &pid, std::string popAppId, 
     return 0;
 }
 
-int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany, int *reserveIDs, const pop_accesspoint &localservice, pop_accesspoint *objcontacts) {
+int JobMgr::ExecObj(const std::string  &objname, const pop_od &od, int howmany, int *reserveIDs, const pop_accesspoint &localservice, pop_accesspoint *objcontacts) {
     if(howmany<=0) {
         LOG_ERROR( "[JM] Exec failed because howmany is less or equal to 0");
         return EINVAL;

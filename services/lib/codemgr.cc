@@ -88,7 +88,7 @@ int CodeMgr::QueryCode(const std::string &objname, const std::string &platform, 
     element=&(info[i]);
     n=element->platform.size();
     for(i=0; i<n; i++){
-        if(paroc_utils::MatchWildcard(platform,element->platform[i].platform)) {
+        if(pop_utils::MatchWildcard(platform,element->platform[i].platform)) {
             break;
         }
     }

@@ -14,7 +14,7 @@
 #include "popcc.h"          //Contains macros defined by CMake
 #include "popc_intface.h"
 #include "config.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -423,27 +423,27 @@ int main(int argc, char *argv[]) {
     char objmain[256] = "std";
 
     // Display version if option "-version" is found on the command
-    if(paroc_utils::check_remove(&argc, &argv, "-version")) {
+    if(pop_utils::check_remove(&argc, &argv, "-version")) {
         DisplayVersion();
         return 0;
     }
 
     // Check for POP-C++ options
-    options.noclean = paroc_utils::check_remove(&argc, &argv, "-noclean");
-    options.nowarning = paroc_utils::check_remove(&argc, &argv, "-no-warning");
-    options.popcppcompilation = paroc_utils::check_remove(&argc, &argv, "-popcpp-compilation");
-    options.noimplicitpack = paroc_utils::check_remove(&argc, &argv, "-no-implicit-pack");
-    options.asyncallocation = paroc_utils::check_remove(&argc, &argv, "-async-allocation");
-    options.nobroker = paroc_utils::check_remove(&argc, &argv, "-parclass-nobroker");
-    options.nointerface = paroc_utils::check_remove(&argc, &argv, "-parclass-nointerface");
-    options.xmp = paroc_utils::check_remove(&argc, &argv, "-xmp");
-    options.mpi = paroc_utils::check_remove(&argc, &argv, "-mpi");
-    options.advanced = paroc_utils::check_remove(&argc, &argv, "-advanced");
-    options.psdyn = paroc_utils::check_remove(&argc, &argv, "-pseudo-dynamic");
-    options.cpp11 = paroc_utils::check_remove(&argc, &argv, "-cpp11");
+    options.noclean = pop_utils::check_remove(&argc, &argv, "-noclean");
+    options.nowarning = pop_utils::check_remove(&argc, &argv, "-no-warning");
+    options.popcppcompilation = pop_utils::check_remove(&argc, &argv, "-popcpp-compilation");
+    options.noimplicitpack = pop_utils::check_remove(&argc, &argv, "-no-implicit-pack");
+    options.asyncallocation = pop_utils::check_remove(&argc, &argv, "-async-allocation");
+    options.nobroker = pop_utils::check_remove(&argc, &argv, "-parclass-nobroker");
+    options.nointerface = pop_utils::check_remove(&argc, &argv, "-parclass-nointerface");
+    options.xmp = pop_utils::check_remove(&argc, &argv, "-xmp");
+    options.mpi = pop_utils::check_remove(&argc, &argv, "-mpi");
+    options.advanced = pop_utils::check_remove(&argc, &argv, "-advanced");
+    options.psdyn = pop_utils::check_remove(&argc, &argv, "-pseudo-dynamic");
+    options.cpp11 = pop_utils::check_remove(&argc, &argv, "-cpp11");
 
 #ifndef __WIN32__
-    options.usepipe = !paroc_utils::check_remove(&argc, &argv, "-nopipe");
+    options.usepipe = !pop_utils::check_remove(&argc, &argv, "-nopipe");
 #endif
 
     //Compute options depending on other options
@@ -458,7 +458,7 @@ int main(int argc, char *argv[]) {
 
     // Check for POP-C++ installation directory
     const char *tmp;
-    if((tmp = paroc_utils::checkremove(&argc, &argv, "-popcdir="))) {
+    if((tmp = pop_utils::checkremove(&argc, &argv, "-popcdir="))) {
         strcpy(parocdir, tmp);
     } else if((tmp = getenv("POPC_LOCATION"))) {
         strcpy(parocdir, tmp);
@@ -466,7 +466,7 @@ int main(int argc, char *argv[]) {
 
     //Detect the POPC preprocessor
 
-    if((tmp = paroc_utils::checkremove(&argc, &argv, "-popcpp="))) {
+    if((tmp = pop_utils::checkremove(&argc, &argv, "-popcpp="))) {
         strcpy(popcpp, tmp);
     } else if((tmp = getenv("POPC_PP"))) {
         strcpy(popcpp, tmp);
@@ -489,7 +489,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Detect C++ preprocessor
-    if((tmp = paroc_utils::checkremove(&argc, &argv, "-cpp="))) {
+    if((tmp = pop_utils::checkremove(&argc, &argv, "-cpp="))) {
         strcpy(cpp, tmp);
     } else if(options.xmp || options.mpi) {
         strcpy(cpp, mpicpp);
@@ -498,7 +498,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Detect C++ compiler
-    if((tmp = paroc_utils::checkremove(&argc, &argv, "-cxx="))) {
+    if((tmp = pop_utils::checkremove(&argc, &argv, "-cxx="))) {
         strcpy(parocxx, tmp);
     } else if(options.xmp || options.mpi) {
         strcpy(parocxx, mpicxx);
@@ -507,7 +507,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Detect C++ linker
-    if((tmp = paroc_utils::checkremove(&argc, &argv, "-popcld="))) {
+    if((tmp = pop_utils::checkremove(&argc, &argv, "-popcld="))) {
         strcpy(parocld,tmp);
     } else if(options.xmp || options.mpi) {
         strcpy(parocld, mpicxx);
@@ -678,8 +678,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    bool paroc_static = paroc_utils::checkremove(&argc, &argv, "-popc-static");
-    bool paroc_nolib = paroc_utils::checkremove(&argc, &argv, "-popc-nolib");
+    bool paroc_static = pop_utils::checkremove(&argc, &argv, "-popc-static");
+    bool paroc_nolib = pop_utils::checkremove(&argc, &argv, "-popc-nolib");
 
     if(!compile) {
         if(useparocmain) {

@@ -32,7 +32,7 @@
 #include "pop_combox_factory.h"
 #include "pop_combox_socket.h"
 #include "popc_combox_uds.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #ifdef MPI_SUPPORT
 // Note by LWK: Added MPI_SUPPORT here to use 1 version of the file for both pseudodyn and dynamic
 #include "popc_combox_mpi.h"
@@ -133,7 +133,7 @@ pop_combox_factory::pop_combox_factory() {
                 if(dir!=nullptr) {
                     dirent *t;
                     while((t=readdir(dir))!=nullptr) {
-                        if(!paroc_utils::MatchWildcard(t->d_name,"*.so")) {
+                        if(!pop_utils::MatchWildcard(t->d_name,"*.so")) {
                             continue;
                         }
                         char fname[1024];

@@ -25,7 +25,7 @@ int TypeSeqClass::CanMarshal() {
     if(str==nullptr) {
         return 0;
     }
-    if(strcmp(str,"paroc_base")==0) {
+    if(strcmp(str,"pop_base")==0) {
         return 1;
     }
 

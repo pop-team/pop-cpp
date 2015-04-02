@@ -16,7 +16,7 @@
 #include "pop_buffer_factory_finder.h"
 #include "pop_broker.h"
 #include "pop_system.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "popc_logger.h"
 
 // Set processor
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 
     int i;
     for(i=argc-1; i>=0; i--) {
-        if(paroc_utils::isEqual(argv[i],"-initparoc")) {
+        if(pop_utils::isEqual(argv[i],"-initparoc")) {
             char **argv1=argv+i+1;
             int argc1=argc-i-1;
             if(!pop_system::Initialize(&argc1, &argv1)) {
@@ -83,12 +83,12 @@ int main(int argc, char **argv) {
 #ifdef DEFINE_UDS_SUPPORT
         pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
         if(combox_factory == NULL) {
-            pop_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain: combox_factory == NULL");
+            pop_exception::pop_throw(POPC_NO_PROTOCOL, "POPCMain: combox_factory == NULL");
         }
 
         pop_combox* allocating_combox = combox_factory->Create("uds");
         if(allocating_combox == NULL) {
-            pop_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox == NULL");
+            pop_exception::pop_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox == NULL");
         }
 
         pop_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
         snprintf(local_address, 15, "uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
 
         if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
-            pop_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox->Create failed");
+            pop_exception::pop_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox->Create failed");
         }
 
         pop_message_header header(0, 200001, INVOKE_SYNC, "_terminate");
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
         pop_connection* connection = allocating_combox->get_connection();
 
         if(!allocating_buffer->Send((*allocating_combox), connection)) {
-            pop_exception::paroc_throw("allocating_buffer->Send failed");
+            pop_exception::pop_throw("allocating_buffer->Send failed");
         }
 #endif
         return ret;

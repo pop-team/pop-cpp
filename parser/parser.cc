@@ -1,7 +1,7 @@
 #include <ctype.h>
 
 #include "parser.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 
 #define MIN_CLASSID 1000
 

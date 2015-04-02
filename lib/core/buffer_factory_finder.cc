@@ -20,7 +20,7 @@
 #include "pop_buffer_factory_finder.h"
 #include "pop_buffer_xdr_factory.h"
 #include "pop_buffer_raw_factory.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "config.h"
 
 #ifdef HAVE_LIBDL
@@ -126,7 +126,7 @@ pop_buffer_factory_finder::pop_buffer_factory_finder() {
             if(dir != nullptr) {
                 dirent *t;
                 while((t = readdir(dir))!=nullptr && size<MAX_FACTORY) {
-                    if(!paroc_utils::MatchWildcard(t->d_name,"*.so")) {
+                    if(!pop_utils::MatchWildcard(t->d_name,"*.so")) {
                         continue;
                     }
                     char fname[1024];
@@ -249,7 +249,7 @@ pop_buffer_factory* pop_buffer_factory_finder::FindFactory(const std::string& bu
 
     for(i=0; i < size; i++) {
         bfArray[i]->GetBufferName(s);
-        if(paroc_utils::isEqual(s.c_str(), bufferName.c_str())) {
+        if(pop_utils::isEqual(s.c_str(), bufferName.c_str())) {
             return bfArray[i];
         }
     }

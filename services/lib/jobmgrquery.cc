@@ -8,7 +8,7 @@ int main(int argc, char **argv) {
         std::string master;
         std::String str1;
 
-        if(paroc_utils::checkremove(&argc,&argv,"-help")!=NULL) {
+        if(pop_utils::checkremove(&argc,&argv,"-help")!=NULL) {
             printf("Usage: jobmgrquery [-help] [jobmgr contact | jobmgr host]\n");
             return 0;
         }

@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
     try {
         JobMgr jobmgr(job);
         char buf[1024];
-        paroc_od *od=new paroc_od;
+        pop_od *od=new pop_od;
         LOG_INFO("Enter an OD (name values)");
         while(fgets(buf,1023,stdin)!=NULL) {
             if(strncmp(buf,"done",4)==0) {
@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
                     LOG_ERROR("Alloc fail");
                 }
                 delete od;
-                od=new paroc_od;
+                od=new pop_od;
                 LOG_DEBUG("Enter next OD");
                 continue;
             }

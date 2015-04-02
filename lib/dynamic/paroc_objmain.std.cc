@@ -19,7 +19,7 @@
 #include <sched.h>
 #endif
 
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "pop_system.h"
 #include "pop_broker.h"
 #include "pop_broker_factory.h"
@@ -38,7 +38,7 @@ std::string get_proto_name(const char* address){
 }
 
 int main(int argc, char **argv) {
-    char *rcore=paroc_utils::checkremove(&argc,&argv,"-core=");
+    char *rcore=pop_utils::checkremove(&argc,&argv,"-core=");
     if(rcore) {
         pop_system::processor_set(atoi(rcore));
     }
@@ -50,14 +50,14 @@ int main(int argc, char **argv) {
 #endif
 
     pop_system sys;
-    char *local_rank = paroc_utils::checkremove(&argc, &argv, "-local_rank=");
+    char *local_rank = pop_utils::checkremove(&argc, &argv, "-local_rank=");
 
     if(local_rank) {
         pop_system::popc_local_mpi_communicator_rank = atoi(local_rank);
     }
 
     // Connect to callback
-    char *address = paroc_utils::checkremove(&argc, &argv, "-callback=");
+    char *address = pop_utils::checkremove(&argc, &argv, "-callback=");
     pop_combox *callback_combox = nullptr;
     int status=0;
     if(address != NULL) {
@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
     }
 
     // set the current working directory
-    char *cwd = paroc_utils::checkremove(&argc,&argv,"-cwd=");
+    char *cwd = pop_utils::checkremove(&argc,&argv,"-cwd=");
     if(cwd!=NULL) {
         if(popc_chdir(cwd) != 0) {
             LOG_ERROR("POP-C++ Error: [CORE] - current working dir cannot be set set to %s",cwd);

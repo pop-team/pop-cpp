@@ -18,7 +18,7 @@
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
 #include "pop_broker.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "pop_interface.h"
 
 #include "codemgr.ph"
@@ -32,7 +32,7 @@
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-std::string socket_allocator_service::allocate(std::string& objectname, paroc_od& od) {
+std::string socket_allocator_service::allocate(std::string& objectname, pop_od& od) {
     pop_accesspoint jobcontact, objectaddress, remotejobcontact;
 
     //Exec using JobMgr interface...
@@ -41,7 +41,7 @@ std::string socket_allocator_service::allocate(std::string& objectname, paroc_od
     if(!platforms.empty()) {
         CodeMgr mgr(pop_system::appservice);
         if(mgr.GetPlatform(objectname, platforms)<=0) {
-            pop_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, "No platform found", objectname.c_str());
+            pop_exception::pop_throw(OBJECT_EXECUTABLE_NOTFOUND, "No platform found", objectname.c_str());
         }
         od.setPlatforms(platforms);
     }
@@ -78,12 +78,12 @@ std::string socket_allocator_service::allocate(std::string& objectname, paroc_od
         //}
 
         if(ret!=0) {
-            pop_exception::paroc_throw(ret,objectname,"CreateObject returned error code");
+            pop_exception::pop_throw(ret,objectname,"CreateObject returned error code");
         }
 
     } catch(std::exception & e) {
         LOG_ERROR("Cannot create object via POP-C++ Job Manager: %s", e.what());
-        pop_exception::paroc_throw(POPC_JOBSERVICE_FAIL,"Cannot create object via POP-C++ job service",e.what());
+        pop_exception::pop_throw(POPC_JOBSERVICE_FAIL,"Cannot create object via POP-C++ job service",e.what());
     }
 
     return objectaddress.GetAccessString();
@@ -96,7 +96,7 @@ std::string socket_allocator_service::allocate(std::string& objectname, paroc_od
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-pop_combox* socket_allocator_service::allocate_group(std::string& objectname, paroc_od& od, int nb) {
+pop_combox* socket_allocator_service::allocate_group(std::string& objectname, pop_od& od, int nb) {
 
     /* Allocation process here */
 

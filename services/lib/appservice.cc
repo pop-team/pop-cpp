@@ -80,7 +80,7 @@ bool AppCoreService::QueryService(const std::string &name, paroc_service_base &s
     }
 
     for(auto& t : servicelist){
-        if(paroc_utils::isncaseEqual(name,t.name)) {
+        if(pop_utils::isncaseEqual(name,t.name)) {
             service=(*t.service);
             return true;
         }
@@ -94,7 +94,7 @@ bool AppCoreService::QueryService(const std::string &name, pop_accesspoint &serv
     }
 
     for(auto& t : servicelist){
-        if(paroc_utils::isncaseEqual(name.c_str(),t.name.c_str())) {
+        if(pop_utils::isncaseEqual(name.c_str(),t.name.c_str())) {
             service=t.service->GetAccessPoint();
             return true;
         }
@@ -129,7 +129,7 @@ bool AppCoreService::UnregisterService(const std::string &name) {
     while(pos != servicelist.end()) {
         auto old = pos;
         auto& t = *pos++;
-        if(paroc_utils::isncaseEqual(name.c_str(),t.name.c_str())) {
+        if(pop_utils::isncaseEqual(name.c_str(),t.name.c_str())) {
             delete t.service;
             t.name="";
             servicelist.erase(pos);
@@ -177,7 +177,7 @@ void AppCoreService::LoadAddOn() {
         }
         pop_accesspoint ap;
         pop_accesspoint jobmgr;
-        paroc_od od; // Note : the od is empty !
+        pop_od od; // Note : the od is empty !
         snprintf(exec, sizeof(exec), "%s -constructor",objfile);
         if(pop_interface::LocalExec(NULL,exec, NULL, jobmgr, GetAccessPoint(), &ap,1,od)!=0) {
             LOG_DEBUG("Fail to start the add-on [%s]", buf);

@@ -16,18 +16,18 @@ int main(int argc, char **argv) {
     std::string challenge;
 
     char *tmp;
-    bool stop=(paroc_utils::checkremove(&argc,&argv,"stop")!=NULL);
+    bool stop=(pop_utils::checkremove(&argc,&argv,"stop")!=NULL);
 
-    if(!stop && paroc_utils::checkremove(&argc,&argv,"start")==NULL) {
+    if(!stop && pop_utils::checkremove(&argc,&argv,"start")==NULL) {
         Usage();
     }
 
-    tmp=paroc_utils::checkremove(&argc,&argv,"-challenge=");
+    tmp=pop_utils::checkremove(&argc,&argv,"-challenge=");
     if(tmp!=NULL) {
         challenge=tmp;
     }
 
-    if((tmp=paroc_utils::checkremove(&argc,&argv,"-servicepoint="))==NULL) {
+    if((tmp=pop_utils::checkremove(&argc,&argv,"-servicepoint="))==NULL) {
         if(stop) {
             LOG_WARNING("Local service point to stop is missing");
             Usage();
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
             return 0;
         }
 
-        if((tmp=paroc_utils::checkremove(&argc,&argv,"-code="))==NULL) {
+        if((tmp=pop_utils::checkremove(&argc,&argv,"-code="))==NULL) {
             if((tmp=getenv("POPC_LOCATION"))==NULL) {
                 LOG_ERROR("local service code file is not specified");
                 Usage();
@@ -62,12 +62,12 @@ int main(int argc, char **argv) {
             strcpy(objcode,tmp);
         }
 
-        if((tmp=paroc_utils::checkremove(&argc,&argv,"-proxy="))!=NULL) {
+        if((tmp=pop_utils::checkremove(&argc,&argv,"-proxy="))!=NULL) {
             strcat(objcode," -proxy=");
             strcat(objcode,tmp);
         }
 
-        char *outfile=paroc_utils::checkremove(&argc,&argv,"-out=");
+        char *outfile=pop_utils::checkremove(&argc,&argv,"-out=");
         FILE *f=(outfile!=NULL)? fopen(outfile,"w+t") : NULL;
         if(f==NULL && outfile!=NULL) {
             perror("Open file to store the service access point failed");
@@ -76,9 +76,9 @@ int main(int argc, char **argv) {
 
         AppCoreService info(challenge, true, objcode);
 
-        char *conf=paroc_utils::checkremove(&argc,&argv,"-conf=");
+        char *conf=pop_utils::checkremove(&argc,&argv,"-conf=");
         if(conf!=NULL) {
-            paroc_utils::InitCodeService(conf,&info);
+            pop_utils::InitCodeService(conf,&info);
         }
 
         //print out the contact string....

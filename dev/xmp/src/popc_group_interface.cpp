@@ -207,7 +207,7 @@ bool POPC_GroupInterface::finalize() {
 void POPC_GroupInterface::popc_send_request(pop_buffer* buffer, pop_connection* connection) {
     if(!buffer->Send((*_popc_combox), connection)) {
         printf("ERROR: Problem while sending request\n");
-        pop_exception::paroc_throw("Problem while sending request");
+        pop_exception::pop_throw("Problem while sending request");
     }
 }
 
@@ -218,7 +218,7 @@ void POPC_GroupInterface::popc_send_request(pop_buffer* buffer, pop_connection* 
  */
 void POPC_GroupInterface::popc_recv_response(pop_buffer* buffer, pop_connection* connection) {
     if(!buffer->Recv((*_popc_combox), connection)) {
-        pop_exception::paroc_throw("buffer Receive");
+        pop_exception::pop_throw("buffer Receive");
     }
     pop_buffer::CheckAndThrow(*buffer);
 }

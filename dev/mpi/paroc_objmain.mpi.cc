@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     }
 
     //Connect to callback ....
-    char *addr=paroc_utils::checkremove(&argc,&argv,"-callback=");
+    char *addr=pop_utils::checkremove(&argc,&argv,"-callback=");
     pop_combox *callback=NULL;
     int status=0;
     if(addr!=NULL) {
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
     } else if(status==0) {
         fprintf(stdout, "%s\n", (const char *)pop_broker::accesspoint.GetAccessString());
     }
-    char *cwd=paroc_utils::checkremove(&argc,&argv,"-cwd=");
+    char *cwd=pop_utils::checkremove(&argc,&argv,"-cwd=");
     if(cwd!=NULL) {
         if(chdir(cwd)!=0) {
             LOG_WARNING("current working dir cannot be set set to %s",cwd);
@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
 
 
 #ifdef OD_DISCONNECT
-    bool checkConnect=(paroc_utils::checkremove(&argc,&argv,"-checkConnection"))!=NULL;
+    bool checkConnect=(pop_utils::checkremove(&argc,&argv,"-checkConnection"))!=NULL;
     if(br!=NULL) {
         br->checkConnection = checkConnect;
     }

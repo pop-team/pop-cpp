@@ -19,7 +19,7 @@
 #include "pop_combox.h"
 #include "popc_connection_mpi.h"
 #include "pop_mutex.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 
 /**
  * @class popc_combox_mpi

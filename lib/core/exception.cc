@@ -99,11 +99,11 @@ int pop_exception::Code()const {
     return errcode;
 }
 
-void pop_exception::paroc_throw(int code, const std::string& reason1, const std::string& reason2) {
+void pop_exception::pop_throw(int code, const std::string& reason1, const std::string& reason2) {
     throw pop_exception(code, reason1, reason2);
 }
 
-void pop_exception::paroc_throw(const std::string& reason1, const std::string& reason2) {
+void pop_exception::pop_throw(const std::string& reason1, const std::string& reason2) {
     throw pop_exception(reason1, reason2);
 }
 

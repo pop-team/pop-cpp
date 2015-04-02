@@ -12,16 +12,16 @@
 
 /*
   Deeply need refactoring:
-    POPC_ObjectDescription instead of paroc_od
+    POPC_ObjectDescription instead of pop_od
  */
 
 #include "popc_intface.h"
-#include "paroc_od.h"
-#include "paroc_utils.h"
+#include "pop_od.h"
+#include "pop_utils.h"
 
-bool paroc_od::defaultLocalJob=false;
+bool pop_od::defaultLocalJob=false;
 
-paroc_od::paroc_od() {
+pop_od::pop_od() {
     mflops=min_mflops=ram=min_ram=net=min_net=time=-1;
 #ifdef OD_DISCONNECT
     time_alive=time_control=-1;
@@ -44,7 +44,7 @@ paroc_od::paroc_od() {
     core_value = -1;
 }
 
-paroc_od::~paroc_od() {
+pop_od::~pop_od() {
 }
 
 
@@ -53,7 +53,7 @@ paroc_od::~paroc_od() {
  * Set the value of the od service
  * @param serv Boolean value to set to the od service
  */
-void paroc_od::service(bool serv) {
+void pop_od::service(bool serv) {
     serviceSet=serv;
 }
 
@@ -62,7 +62,7 @@ void paroc_od::service(bool serv) {
  * Check is the od service is set
  * @return TRUE is the od service is set
  */
-bool paroc_od::isServiceSet() const {
+bool pop_od::isServiceSet() const {
     return serviceSet;
 }
 
@@ -70,7 +70,7 @@ bool paroc_od::isServiceSet() const {
  * Get the node identifier
  * @return Node value defined by the developer or -1 is no node value was defined
  */
-int paroc_od::get_node() const {
+int pop_od::get_node() const {
     return node_value;
 }
 
@@ -79,7 +79,7 @@ int paroc_od::get_node() const {
  * Get the core identifier
  * @return Core value defined by the developer or -1 is no core value was defined
  */
-int paroc_od::get_core() const {
+int pop_od::get_core() const {
     return core_value;
 }
 
@@ -87,7 +87,7 @@ int paroc_od::get_core() const {
  * Define the node on which the parallel object should be allocated
  * @param An integer value between 0 and N-1. N is the number of available nodes.
  */
-void paroc_od::node(int value) {
+void pop_od::node(int value) {
     node_value = value;
 }
 
@@ -95,11 +95,11 @@ void paroc_od::node(int value) {
  * Define the core on which the parallel object should be allocated
  * @param value An integer value between 0 and N-1. N is the number of available core.
  */
-void paroc_od::core(int value) {
+void pop_od::core(int value) {
     core_value = value;
 }
 
-void paroc_od::power(float require, float min) {
+void pop_od::power(float require, float min) {
     if(min>require) {
         float t=min;
         min=require;
@@ -109,7 +109,7 @@ void paroc_od::power(float require, float min) {
     min_mflops=min;
 }
 
-void paroc_od::memory(float require, float min) {
+void pop_od::memory(float require, float min) {
     if(min>require) {
         float t=min;
         min=require;
@@ -119,7 +119,7 @@ void paroc_od::memory(float require, float min) {
     min_ram=min;
 }
 
-void paroc_od::bandwidth(float require, float min) {
+void pop_od::bandwidth(float require, float min) {
     if(min>require) {
         float t=min;
         min=require;
@@ -129,11 +129,11 @@ void paroc_od::bandwidth(float require, float min) {
     min_net=min;
 }
 
-void paroc_od::walltime(float t) {
+void pop_od::walltime(float t) {
     time=t;
 }
 
-void paroc_od::url(const std::string& str) {
+void pop_od::url(const std::string& str) {
     char h[256];
     char *tmpstr;
     strcpy(h,str.c_str());
@@ -164,23 +164,23 @@ void paroc_od::url(const std::string& str) {
     }
 }
 
-void paroc_od::url(const std::string& h, const std::string& arch) {
+void pop_od::url(const std::string& h, const std::string& arch) {
     hostarch = arch;
     url(h);
 }
 
 
-void paroc_od::manual(bool a) {
+void pop_od::manual(bool a) {
     url("localhost");
     isManual=a;
 }
 
-void paroc_od::runLocal(bool isLocal) {
+void pop_od::runLocal(bool isLocal) {
     isLocalJob=isLocal;
 }
 
 //Set working dir to the current dir on interface side
-void paroc_od::sameDirectory(bool a) {
+void pop_od::sameDirectory(bool a) {
     if(a) {
         char tmp[256];
         if(popc_getcwd(tmp, sizeof(tmp)) != nullptr) {
@@ -191,7 +191,7 @@ void paroc_od::sameDirectory(bool a) {
 
 //Added by clementval
 //set resource discovery parameter
-void paroc_od::search(int maxdepth, int maxsize, int waittime) {
+void pop_od::search(int maxdepth, int maxsize, int waittime) {
     searchSet = true;
     max_depth=maxdepth;
     max_size=maxsize;
@@ -199,33 +199,33 @@ void paroc_od::search(int maxdepth, int maxsize, int waittime) {
 }
 
 //Return max depth
-int paroc_od::getSearchMaxDepth() const {
+int pop_od::getSearchMaxDepth() const {
     return max_depth;
 }
 
 //Return max requst size
-int paroc_od::getSearchMaxReqSize() const {
+int pop_od::getSearchMaxReqSize() const {
     return max_size;
 }
 
 //Return discovery request waiting time
-int paroc_od::getSearchWaitTime() const {
+int pop_od::getSearchWaitTime() const {
     return wait_time;
 }
 
 //Return true if the od.search is set
-bool paroc_od::isSearchSet() const {
+bool pop_od::isSearchSet() const {
     return searchSet;
 }
 //End of add
 
 
 //Used to specify if the used protocol is secure
-void paroc_od::secure(int /*foo*/) {
+void pop_od::secure(int /*foo*/) {
     secureSet=true;
 }
 
-bool paroc_od::isSecureSet() const {
+bool pop_od::isSecureSet() const {
     return secureSet;
 }
 
@@ -233,37 +233,37 @@ bool paroc_od::isSecureSet() const {
 
 
 //Methods used by Runtime system
-void paroc_od::getPower(float &require, float &min) const {
+void pop_od::getPower(float &require, float &min) const {
     require=mflops;
     min=min_mflops;
 }
 
-void paroc_od::getMemory(float &require, float &min) const {
+void pop_od::getMemory(float &require, float &min) const {
     require=ram;
     min=min_ram;
 }
 
-void paroc_od::getBandwidth(float &require, float &min) const {
+void pop_od::getBandwidth(float &require, float &min) const {
     require=net;
     min=min_net;
 }
 
-float paroc_od::getWallTime() const {
+float pop_od::getWallTime() const {
     return time;
 }
 
 
-bool paroc_od::getIsManual() const {
+bool pop_od::getIsManual() const {
     return isManual;
 }
 
 
 #ifdef OD_DISCONNECT
-void paroc_od::getCheckConnection(int &my_time_alive, int &my_time_control) const {
+void pop_od::getCheckConnection(int &my_time_alive, int &my_time_control) const {
     my_time_alive=time_alive;
     my_time_control=time_control;
 }
-bool paroc_od::getCheckConnection() const {
+bool pop_od::getCheckConnection() const {
     int  time_alive;
     int  time_control;
     getCheckConnection(time_alive, time_control);
@@ -272,7 +272,7 @@ bool paroc_od::getCheckConnection() const {
     }
     return false;
 }
-void paroc_od::checkConnection(int t_a, int t_c) {
+void pop_od::checkConnection(int t_a, int t_c) {
     if(t_a==-1&&t_c==-1) {
         time_alive=-1;
         time_control=-1;
@@ -290,14 +290,14 @@ void paroc_od::checkConnection(int t_a, int t_c) {
     }
 }
 
-void paroc_od::checkConnection(bool doCheck) {
+void pop_od::checkConnection(bool doCheck) {
     if(doCheck) {
         checkConnection(TIME_ALIVE, TIME_CONTROL);
     }
 }
 #endif
 
-paroc_od &paroc_od::operator =(const paroc_od &od) {
+pop_od &pop_od::operator =(const pop_od &od) {
     if(&od!=this) {
         od.getPower(mflops,min_mflops);
         od.getMemory(ram,min_ram);
@@ -316,21 +316,21 @@ paroc_od &paroc_od::operator =(const paroc_od &od) {
     return *this;
 }
 
-bool paroc_od::IsEmpty() const {
+bool pop_od::IsEmpty() const {
     return (mflops<0 && min_mflops<0 && ram<0 && min_ram<0 && net<0 && min_net<0 && time<0 && hostname.empty() /*&& time_alive < 0 && time_control < 0*/);
 }
 
-bool paroc_od::IsLocal() const {
+bool pop_od::IsLocal() const {
     return isLocalJob;
 }
 
 
-void paroc_od::setValue(const std::string &key, const std::string &val) {
+void pop_od::setValue(const std::string &key, const std::string &val) {
     keys.emplace_back(key);
     values.emplace_back(val);
 }
 
-void paroc_od::getValue(const std::string &key, std::string &val) {
+void pop_od::getValue(const std::string &key, std::string &val) {
     for(std::size_t i = 0; i < keys.size(); ++i){
         auto& t1 = keys[i];
         auto& t2 = values[i];
@@ -343,7 +343,7 @@ void paroc_od::getValue(const std::string &key, std::string &val) {
     val=nullptr;
 }
 
-void paroc_od::Serialize(pop_buffer &buf, bool pack) {
+void pop_od::Serialize(pop_buffer &buf, bool pack) {
     float val[2];
     int valInt[2];
     int valSearch[3];

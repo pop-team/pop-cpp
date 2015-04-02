@@ -12,10 +12,10 @@
 
 /*
   Deeply need refactoring:
-    POPC_ObjectCore instead of paroc_object
+    POPC_ObjectCore instead of pop_object
  */
 
-#include "paroc_object.h"
+#include "pop_object.h"
 #include "pop_mutex.h"
 #include "pop_interface.h"
 #include "pop_event.h"
@@ -26,10 +26,10 @@
 #include "objectmonitor.ph"
 #endif
 
-int paroc_object::argc=0;
-char **paroc_object::argv=NULL;
+int pop_object::argc=0;
+char **pop_object::argv=NULL;
 
-paroc_object::paroc_object() {
+pop_object::pop_object() {
     refcount=1;
     if(!pop_system::appservice.IsEmpty()) {
         pop_accesspoint myself=GetAccessPoint();
@@ -45,7 +45,7 @@ paroc_object::paroc_object() {
 
 }
 
-paroc_object::~paroc_object() {
+pop_object::~pop_object() {
 #ifndef POP_PSEUDO
     if(!pop_system::appservice.IsEmpty()) {
         pop_accesspoint myself=GetAccessPoint();
@@ -60,42 +60,42 @@ paroc_object::~paroc_object() {
 #endif
 }
 
-const pop_accesspoint & paroc_object::GetAccessPoint() const {
+const pop_accesspoint & pop_object::GetAccessPoint() const {
     return pop_broker::accesspoint;
 }
 
 /**
  * Get the accesspoint of the parallel object and set the _noaddref variavle to TRUE
  */
-const pop_accesspoint & paroc_object::GetAccessPointForThis() {
+const pop_accesspoint & pop_object::GetAccessPointForThis() {
     pop_broker::accesspoint.SetNoAddRef();
     return pop_broker::accesspoint;
 }
 
-int paroc_object::GetRefCount() {
+int pop_object::GetRefCount() {
     pop_mutex_locker t(lock);
     return refcount;
 }
 
-int paroc_object::AddRef() {
+int pop_object::AddRef() {
     pop_mutex_locker t(lock);
     refcount++;
     return refcount;
 }
 
-int paroc_object::DecRef() {
+int pop_object::DecRef() {
     pop_mutex_locker t(lock);
     refcount--;
     return refcount;
 }
 
-bool  paroc_object::CanKill() {
+bool  pop_object::CanKill() {
     return  true;
 }
 
-int paroc_object::eventwait(int event, int timeout) {
+int pop_object::eventwait(int event, int timeout) {
     return _pop_events.WaitEvent(event, timeout);
 }
-void paroc_object::eventraise(int event) {
+void pop_object::eventraise(int event) {
     _pop_events.PostEvent(event);
 }

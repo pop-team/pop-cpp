@@ -13,7 +13,7 @@
 #include <mpi.h>
 #include <stdlib.h>
 
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "pop_system.h"
 #include "popc_buffer_xdr_mpi.h"
 #include "pop_broker.h"
@@ -32,7 +32,7 @@
 int main(int argc, char* argv[]) {
     MPI::Intercomm communicator;
     int rank;
-    if(paroc_utils::checkremove(&argc, &argv, "-listlong") != NULL) {
+    if(pop_utils::checkremove(&argc, &argv, "-listlong") != NULL) {
         printf("This kind of parallel object doesn't support this option.\n");
         return 1;
     }
@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    char *objectname = paroc_utils::checkremove(&argc, &argv, "-object=");
+    char *objectname = pop_utils::checkremove(&argc, &argv, "-object=");
     if(objectname == NULL) {
         printf("POP-C++ Error: Object name has not been specified in the arguments!\n");
         if(!MPI::Is_finalized()) {
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Load data into a popc_buffer to be able to process them
-        paroc_request request;
+        pop_request request;
         request.data = new popc_buffer_xdr_mpi();
         request.data->load(load, data[1]);
 

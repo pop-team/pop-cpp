@@ -32,15 +32,15 @@
 //End of add
 
 /**
- * @class paroc_object
+ * @class pop_object
  * @brief Base class for parallel object implementation, used by POP-C++ runtime.
  *
  * @author Tuan Anh Nguyen
  */
-class paroc_object {
+class pop_object {
 public:
-    paroc_object();
-    virtual ~paroc_object();
+    pop_object();
+    virtual ~pop_object();
 
     int GetRefCount();
 

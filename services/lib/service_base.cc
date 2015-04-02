@@ -71,20 +71,20 @@ int paroc_service_base::AddRef() {
     if(daemonMode) {
         return 1;
     }
-    return paroc_object::AddRef();
+    return pop_object::AddRef();
 }
 
 int paroc_service_base::DecRef() {
     if(daemonMode) {
         return 1;
     }
-    return paroc_object::DecRef();
+    return pop_object::DecRef();
 }
 bool paroc_service_base::CanKill() {
     if(daemonMode) {
         return false;
     }
-    return paroc_object::CanKill();
+    return pop_object::CanKill();
 }
 
 
@@ -92,7 +92,7 @@ JobCoreService::JobCoreService(const std::string &challenge): paroc_service_base
 }
 
 /*
-int JobCoreService::CreateObject(const pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, pop_accesspoint *objcontacts)
+int JobCoreService::CreateObject(const pop_accesspoint &localservice, const std::string &objname, const pop_od &od, int howmany, pop_accesspoint *objcontacts)
 {
   return POPC_JOBSERVICE_FAIL;
 }

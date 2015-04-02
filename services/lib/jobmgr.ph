@@ -171,10 +171,10 @@ public:
     sync seq virtual int Query([in] const std::string &type, [out] std::string &val); //Method ID 13
 
 //Global service...
-    sync conc virtual int CreateObject(pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] pop_accesspoint *jobcontacts,  int howmany2, [in, out, size=howmany2] pop_accesspoint *remotejobcontacts); //Method ID 14
+    sync conc virtual int CreateObject(pop_accesspoint &localservice, const std::string &objname, const pop_od &od, int howmany, [in, out,size=howmany] pop_accesspoint *jobcontacts,  int howmany2, [in, out, size=howmany2] pop_accesspoint *remotejobcontacts); //Method ID 14
 
 
-    sync conc virtual bool  AllocResource(const pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in,out, size=howmany] float *fitness, [in,out, size=howmany] pop_accesspoint *jobcontacts, [in,out, size=howmany] int *reserveIDs, [in] int requestInfo[3], [in] int trace[MAX_HOPS], [in] int tracesize); //method ID 15
+    sync conc virtual bool  AllocResource(const pop_accesspoint &localservice, const std::string &objname, const pop_od &od, int howmany, [in,out, size=howmany] float *fitness, [in,out, size=howmany] pop_accesspoint *jobcontacts, [in,out, size=howmany] int *reserveIDs, [in] int requestInfo[3], [in] int trace[MAX_HOPS], [in] int tracesize); //method ID 15
 
     /**
      * ViSaG : clementval
@@ -184,11 +184,11 @@ public:
      * @param popAppID The POP Application ID
      * @return The reservation ID
      */
-    sync conc virtual int Reserve(const paroc_od &od, float &inoutfitness, std::string popAppId, std::string reqID); //16
+    sync conc virtual int Reserve(const pop_od &od, float &inoutfitness, std::string popAppId, std::string reqID); //16
 
     seq async virtual void CancelReservation([in, size=howmany] int *req, int howmany); //17
 
-    conc sync virtual int ExecObj(const std::string &objname, const paroc_od &od, int howmany, [in, size=howmany] int *reserveIDs, const pop_accesspoint &localservice,  [out, size=howmany] pop_accesspoint *objcontacts);
+    conc sync virtual int ExecObj(const std::string &objname, const pop_od &od, int howmany, [in, size=howmany] int *reserveIDs, const pop_accesspoint &localservice,  [out, size=howmany] pop_accesspoint *objcontacts);
 
     seq async void dump();
 
@@ -225,9 +225,9 @@ public:
 protected:
     virtual void Update();
     virtual int Exec(char **arguments, char **env, int &pid, std::string popAppId, std::string reqID);
-    virtual int MatchAndReserve(const paroc_od &od, float & fitness);
-    virtual bool MatchAndReserve(const paroc_od &od, float *fitness, pop_accesspoint *jobcontacts, int *reserveIDs, int howmany);
-    virtual bool Forward(const pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, float *fitness,       pop_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize);
+    virtual int MatchAndReserve(const pop_od &od, float & fitness);
+    virtual bool MatchAndReserve(const pop_od &od, float *fitness, pop_accesspoint *jobcontacts, int *reserveIDs, int howmany);
+    virtual bool Forward(const pop_accesspoint &localservice, const std::string &objname, const pop_od &od, int howmany, float *fitness,       pop_accesspoint *jobcontacts, int *reserveIDs, int requestInfo[3], int iptrace[MAX_HOPS], int tracesize);
 
     virtual bool MatchUser(const pop_accesspoint &localservice);
 

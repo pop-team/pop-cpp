@@ -15,7 +15,7 @@
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
 #include "pop_broker.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "pop_interface.h"
 
 #include "codemgr.ph"
@@ -30,7 +30,7 @@
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od& od) {
+std::string popc_allocator_uds_local::allocate(std::string& objectname, pop_od& od) {
     LOG_DEBUG_T("UDS", "Allocate %s (local)", objectname.c_str());
 
     std::string codefile;
@@ -57,7 +57,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
             rarch=pop_system::platform;
         }
         if(!mgr.QueryCode(objectname,rarch, codefile)) {
-            pop_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname.c_str(), "QueryCode failed");
+            pop_exception::pop_throw(OBJECT_NO_RESOURCE, objectname.c_str(), "QueryCode failed");
         }
     }
 
@@ -94,16 +94,16 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
 
     auto combox_factory = pop_combox_factory::GetInstance();
     if(!combox_factory) {
-        pop_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
+        pop_exception::pop_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
     }
 
     auto tmp_combox = combox_factory->Create("uds");
     if(!tmp_combox) {
-        pop_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
+        pop_exception::pop_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }
 
     if(!tmp_combox->Create(nullptr, true)) {
-        pop_exception::paroc_throw("Creation of socket failed");
+        pop_exception::pop_throw("Creation of socket failed");
     }
 
     auto connection = tmp_combox->get_connection();
@@ -162,7 +162,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
 
     if(ret==-1) {
         LOG_WARNING("Cannot start the object: code %d", ret);
-        pop_exception::paroc_throw(err, objectname.c_str(), "Cannot start the object");
+        pop_exception::pop_throw(err, objectname.c_str(), "Cannot start the object");
     }
 
     //Now get the return pop_accesspoint....
@@ -172,7 +172,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
 
     if(!tmpbuffer->Recv((*tmp_combox), connection)) {
         LOG_WARNING("cannot receive anything");
-        pop_exception::paroc_throw("cannot receive anything");
+        pop_exception::pop_throw("cannot receive anything");
     }
 
     pop_buffer::CheckAndThrow(*tmpbuffer);
@@ -183,7 +183,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
     tmpbuffer->Pop();
 
     if(n!=0) {
-        pop_exception::paroc_throw(n, objectname.c_str(), "n is null");
+        pop_exception::pop_throw(n, objectname.c_str(), "n is null");
     }
 
     std::string objectaddress;
@@ -204,7 +204,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-pop_combox* popc_allocator_uds_local::allocate_group(std::string& objectname, paroc_od& od, int nb) {
+pop_combox* popc_allocator_uds_local::allocate_group(std::string& objectname, pop_od& od, int nb) {
 
     /* Allocation process here */
 

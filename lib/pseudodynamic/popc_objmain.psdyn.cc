@@ -26,7 +26,7 @@
 #include <fcntl.h>
 
 #include "pop_broker.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "pop_system_mpi.h"
 #include "pop_broker_factory.h"
 #include "pop_buffer_factory_finder.h"
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 
 
     // If the application is using MPI Communication support
-    if(paroc_utils::checkremove(&argc, &argv, "-mpi") != NULL) {
+    if(pop_utils::checkremove(&argc, &argv, "-mpi") != NULL) {
         LOG_DEBUG("-mpi found");
         // Init MPI for multithread support
         if(!MPI::Is_initialized()) {
@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 
 
 
-    char *rcore = paroc_utils::checkremove(&argc,&argv,"-core=");
+    char *rcore = pop_utils::checkremove(&argc,&argv,"-core=");
     if(rcore != NULL) {
         pop_system::processor_set(atoi(rcore));
     }
@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
     pop_combox *callback = NULL;
     // Connect to callback
     // No need in MPI version, connection is already active and can exchange data
-    /*char *addr = paroc_utils::checkremove(&argc, &argv, "-callback=");
+    /*char *addr = pop_utils::checkremove(&argc, &argv, "-callback=");
     if (addr != NULL) {
         pop_combox_factory *combox_factory = pop_combox_factory::GetInstance();
 
@@ -162,7 +162,7 @@ int main(int argc, char **argv) {
     }*/
 
     // Set the current working directory
-    char *cwd = paroc_utils::checkremove(&argc,&argv,"-cwd=");
+    char *cwd = pop_utils::checkremove(&argc,&argv,"-cwd=");
     if(cwd != NULL) {
         if(chdir(cwd) != 0) {
             LOG_DEBUG("current working dir cannot be set set to %s",cwd);

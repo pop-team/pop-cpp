@@ -28,7 +28,7 @@ void* pop_memspool::Alloc(int sz) {
 
     void* data;
     if((data=malloc(sz))==nullptr) {
-        pop_exception::paroc_throw(errno);
+        pop_exception::pop_throw(errno);
     }
     memtemp.push_back(data);
     return data;

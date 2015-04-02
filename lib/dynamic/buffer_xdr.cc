@@ -353,7 +353,7 @@ void pop_buffer_xdr::UnPack(signed char *data, int n) {
 void pop_buffer_xdr::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
         LOG_ERROR("Wrong buffer format: %d + %d > %d", sz, unpackpos, packeddata.size()); // TODO LW: Why is it allowed to have <
-        pop_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_xdr::CheckUnPack");
+        pop_exception::pop_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_xdr::CheckUnPack");
     }
 }
 
@@ -556,11 +556,11 @@ bool pop_buffer_xdr::RecvCtrl(pop_combox &s, pop_connection *conn) {
     while(true) {
         pop_connection * t = (pop_connection *) s.Wait();
         if(!t) {
-            pop_exception::paroc_throw("Remote Object not alive (1)");
+            pop_exception::pop_throw("Remote Object not alive (1)");
         }
 
         if(!Recv(s, t)) {
-            pop_exception::paroc_throw(errno);
+            pop_exception::pop_throw(errno);
         }
 
         if(header.GetType() == TYPE_RESPONSE) {
@@ -573,11 +573,11 @@ bool pop_buffer_xdr::RecvCtrl(pop_combox &s, pop_connection *conn) {
                 auto t = (pop_connection *) s.Wait();
 
                 if(!t) {
-                    pop_exception::paroc_throw("Remote Object not alive (2)");
+                    pop_exception::pop_throw("Remote Object not alive (2)");
                 }
 
                 if(!Recv(s, t)) {
-                    pop_exception::paroc_throw(errno);
+                    pop_exception::pop_throw(errno);
                 }
 
                 Reset();

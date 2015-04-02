@@ -14,7 +14,7 @@
 #ifndef POPC_GROUP_INTERFACE_H_
 #define POPC_GROUP_INTERFACE_H_
 
-#include "paroc_od.h"
+#include "pop_od.h"
 #include "pop_combox.h"
 #include "pop_buffer.h"
 #include <vector>
@@ -56,7 +56,7 @@ protected:
     virtual char* get_class_name();
 
     // Object description as standard interface
-    paroc_od od;
+    pop_od od;
 
     // Combox and buffer used for every communication of this interface group
     pop_combox* _popc_combox;

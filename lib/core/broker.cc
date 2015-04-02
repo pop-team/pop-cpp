@@ -23,20 +23,20 @@
 #include "pop_event.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_buffer_raw.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "paroc_thread.h"
 #include "pop_system.h"
 
 #define TIMEOUT 1800
 
 #define MINMETHODID 2
-paroc_request::paroc_request() {
+pop_request::pop_request() {
     from=nullptr;
     data=nullptr;
     userdata=nullptr;
 }
 
-paroc_request::paroc_request(const paroc_request &r) {
+pop_request::pop_request(const pop_request &r) {
     from=r.from;
     memcpy(methodId,r.methodId,3*sizeof(unsigned));
     data=r.data;
@@ -44,7 +44,7 @@ paroc_request::paroc_request(const paroc_request &r) {
 }
 
 
-void paroc_request::operator =(const paroc_request &r) {
+void pop_request::operator =(const pop_request &r) {
     from=r.from;
     memcpy(methodId,r.methodId,3*sizeof(unsigned));
     data=r.data;
@@ -84,7 +84,7 @@ void paroc_receivethread::start() {
     broker->ReceiveThread(comm);
 }
 
-//===paroc_object: base class for all parallel object-server side
+//===pop_object: base class for all parallel object-server side
 
 
 //===pop_broker: the base class for server object broker
@@ -154,7 +154,7 @@ bool pop_broker::FindMethodInfo(const char *name, unsigned &classID, unsigned &m
         paroc_method_info *m=t.methods;
         int n=t.sz;
         for(int i=0; i<n; i++, m++){
-            if(paroc_utils::isEqual(name,m->name)) {
+            if(pop_utils::isEqual(name,m->name)) {
                 methodID=m->mid;
                 classID=t.cid;
                 return true;
@@ -192,7 +192,7 @@ int pop_broker::Run() {
 
     while(state == POPC_STATE_RUNNING) {
         try {
-            paroc_request req;
+            pop_request req;
             if(!GetRequest(req)) {
                 break;
             }
@@ -233,8 +233,8 @@ int pop_broker::Run() {
 }
 
 bool pop_broker::Initialize(int *argc, char ***argv) {
-    if(paroc_utils::checkremove(argc, argv, "-runlocal")) {
-        paroc_od::defaultLocalJob=true;
+    if(pop_utils::checkremove(argc, argv, "-runlocal")) {
+        pop_od::defaultLocalJob=true;
     }
 
     auto comboxFactory = pop_combox_factory::GetInstance();
@@ -264,7 +264,7 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
         return false;
     }
 
-    auto address = paroc_utils::checkremove(argc,argv,"-address=");
+    auto address = pop_utils::checkremove(argc,argv,"-address=");
 
     for(int i=0; i<comboxCount; i++) {
         auto pc = comboxArray[i];
@@ -273,7 +273,7 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
 
         char argument[1024];
         sprintf(argument, "-%s_port=", protocolName.c_str());
-        char *portstr=paroc_utils::checkremove(argc,argv,argument);
+        char *portstr=pop_utils::checkremove(argc,argv,argument);
 
         LOG_DEBUG_T("BRKR", "Create combox %s with port: %s", protocolName.c_str(), portstr);
 
@@ -328,9 +328,9 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
 
     accesspoint.SetAccessString(url.c_str());
 
-    char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
+    char *tmp=pop_utils::checkremove(argc,argv,"-constructor");
     if(tmp!=nullptr && !classname.empty()) {
-        paroc_request r;
+        pop_request r;
         pop_buffer_raw tmp;
         r.data=&tmp;
         if(!FindMethodInfo(classname.c_str(),r.methodId[0],r.methodId[1]) || r.methodId[1]!=10) {
@@ -343,8 +343,8 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
         }
     }
 
-    paroc_object::argc=*argc;
-    paroc_object::argv=*argv;
+    pop_object::argc=*argc;
+    pop_object::argv=*argv;
 
     popc_signal(popc_SIGTERM, broker_killed);
     popc_signal(popc_SIGINT, broker_killed);

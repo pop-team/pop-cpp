@@ -12,7 +12,7 @@
 
 /*
   Deeply need refactoring:
-    POPC_CommonTools instead of paroc_utils
+    POPC_CommonTools instead of pop_utils
  */
 
 #include "popc_intface.h"
@@ -20,9 +20,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "paroc_utils.h"
+#include "pop_utils.h"
 
-char *paroc_utils::checkremove(int *argc, char ***argv, const char *opt) {
+char *pop_utils::checkremove(int *argc, char ***argv, const char *opt) {
     int i=0;
     int n=strlen(opt);
     char* ret=nullptr;
@@ -40,11 +40,11 @@ char *paroc_utils::checkremove(int *argc, char ***argv, const char *opt) {
     return ret;
 }
 
-bool paroc_utils::check_remove(int *argc, char ***argv, const char *opt) {
+bool pop_utils::check_remove(int *argc, char ***argv, const char *opt) {
     return checkremove(argc, argv, opt);
 }
 
-bool paroc_utils::isEqual(const char *s1, const char *s2) {
+bool pop_utils::isEqual(const char *s1, const char *s2) {
     if(s1==s2) {
         return true;
     }
@@ -61,7 +61,7 @@ bool paroc_utils::isEqual(const char *s1, const char *s2) {
     return (*s1==*s2);
 }
 
-bool paroc_utils::isncaseEqual(const std::string& x_s1, const std::string& x_s2) {
+bool pop_utils::isncaseEqual(const std::string& x_s1, const std::string& x_s2) {
     if(&x_s1==&x_s2) {
         return true;
     }
@@ -88,7 +88,7 @@ bool paroc_utils::isncaseEqual(const std::string& x_s1, const std::string& x_s2)
     return (*s1==*s2);
 }
 
-bool paroc_utils::MatchWildcard(const std::string& str, const std::string& wildcard) {
+bool pop_utils::MatchWildcard(const std::string& str, const std::string& wildcard) {
     if(str==wildcard) {
         return true;
     }
@@ -133,7 +133,7 @@ bool paroc_utils::MatchWildcard(const std::string& str, const std::string& wildc
 
 }
 
-std::string paroc_utils::FindAbsolutePath(const std::string& fname) {
+std::string pop_utils::FindAbsolutePath(const std::string& fname) {
     if(fname.empty())
         return "";
     if(fname.at(0)=='/')
@@ -166,7 +166,7 @@ std::string paroc_utils::FindAbsolutePath(const std::string& fname) {
 #ifdef _POPC_
 #include "pop_system.h"
 
-bool paroc_utils::SameContact(const std::string& _contact1, const std::string& _contact2) {
+bool pop_utils::SameContact(const std::string& _contact1, const std::string& _contact2) {
     const char* contact1 = _contact1.c_str();
     const char* contact2 = _contact2.c_str();
     if(contact1==contact2) {
@@ -192,7 +192,7 @@ bool paroc_utils::SameContact(const std::string& _contact1, const std::string& _
 }
 
 //Return true if the destination is remote
-bool paroc_utils::IsRemoteDest(const char *dest) {
+bool pop_utils::IsRemoteDest(const char *dest) {
     std::string destination(dest);
 
     char host[256];
@@ -214,7 +214,7 @@ bool paroc_utils::IsRemoteDest(const char *dest) {
 
 
 //Get the port defined in a URL
-int paroc_utils::GetPortFromURL(const char *url) {
+int pop_utils::GetPortFromURL(const char *url) {
     std::string surl(url);
     size_t pos;
     pos=surl.rfind(":");
@@ -224,7 +224,7 @@ int paroc_utils::GetPortFromURL(const char *url) {
 }
 
 //Get the IP address defined in a URL
-const char* paroc_utils::GetIPFromURL(const char *url) {
+const char* pop_utils::GetIPFromURL(const char *url) {
     std::string surl(url);
     size_t pos1, pos2;
     pos1=surl.find("://");
@@ -239,7 +239,7 @@ const char* paroc_utils::GetIPFromURL(const char *url) {
 }
 
 //Get the current user
-const char* paroc_utils::GetCurrentUser() {
+const char* pop_utils::GetCurrentUser() {
 #ifndef __WIN32__
     return getlogin();
 #else
@@ -251,7 +251,7 @@ const char* paroc_utils::GetCurrentUser() {
 #endif
 }
 
-std::string paroc_utils::MakeContact(const char *host, int port) {
+std::string pop_utils::MakeContact(const char *host, int port) {
     if(port<=0) {
         return host;
     }
@@ -291,7 +291,7 @@ int rprintf(const char *format,...) {
     return 1;
 }
 
-int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
+int pop_utils::InitCodeService(char *fileconf, AppCoreService *s) {
     if(s==nullptr || fileconf==nullptr) {
         return 0;
     }
@@ -351,7 +351,7 @@ int paroc_utils::InitCodeService(char *fileconf, AppCoreService *s) {
  * @param
  *
  */
-bool paroc_utils::isIPv4Address(std::string ip) {
+bool pop_utils::isIPv4Address(std::string ip) {
 
     //check max size
     if(ip.size() > 15) {
@@ -387,7 +387,7 @@ bool paroc_utils::isIPv4Address(std::string ip) {
  * @retrun
  */
 
-bool paroc_utils::isValidName(std::string checked) {
+bool pop_utils::isValidName(std::string checked) {
     for(size_t i=0; i<checked.length(); i++) {
         char c = checked.at(i);
         if((c != '_') && !isdigit(c) && !isalpha(c)) {

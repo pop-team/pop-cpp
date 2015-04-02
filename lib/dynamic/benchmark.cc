@@ -10,7 +10,7 @@
 
 
 #include <time.h>
-#include <paroc_utils.h>
+#include <pop_utils.h>
 #include "timer.h"
 
 #ifndef MATRIXSIZE
@@ -31,7 +31,7 @@ void matrix_mult(float a[MATRIXSIZE][MATRIXSIZE], float b[MATRIXSIZE][MATRIXSIZE
     }
 }
 
-float paroc_utils::benchmark_power() {
+float pop_utils::benchmark_power() {
     float a[MATRIXSIZE][MATRIXSIZE], b[MATRIXSIZE][MATRIXSIZE], c[MATRIXSIZE][MATRIXSIZE];
     for(int i=0; i<MATRIXSIZE; i++)
         for(int j=0; j<MATRIXSIZE; j++) {

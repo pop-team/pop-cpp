@@ -33,10 +33,10 @@
 
 #include "pop_system_mpi.h"
 #include "pop_buffer_factory_finder.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "pop_combox_factory.h"
 #include "pop_exception.h"
-#include "paroc_od.h"
+#include "pop_od.h"
 
 pop_accesspoint pop_system::appservice;
 pop_accesspoint pop_system::jobservice;
@@ -296,7 +296,7 @@ std::string pop_system::GetDefaultInterface() {
             //       iface, net_addr, gate_addr, &iflags, &refcnt, &use, &metric, mask_addr, &mss, &window, &irtt);
             int num = sscanf(buff, "%16s %128s",iface, net_addr);
             if(num < 2) {
-                pop_exception::paroc_throw("GetDefaultInterface failed: num < 2");
+                pop_exception::pop_throw("GetDefaultInterface failed: num < 2");
             }
             // LOG_DEBUG("iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
 
@@ -359,7 +359,7 @@ bool pop_system::GetIPFromInterface(std::string &iface, std::string &str_ip) {
  */
 bool pop_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
-    const char *info=paroc_utils::checkremove(argc,argv,"-jobservice=");
+    const char *info=pop_utils::checkremove(argc,argv,"-jobservice=");
     if(info==NULL) {
         LOG_ERROR("missing -jobservice argument");
         return false;
@@ -368,16 +368,16 @@ bool pop_system::Initialize(int *argc,char ***argv) {
     pop_system::jobservice.SetAsService();
 
     // Get path of the application service executable
-    const char *codeser=paroc_utils::checkremove(argc,argv,"-appservicecode=");
-    // const char *proxy=paroc_utils::checkremove(argc,argv,"-proxy=");
+    const char *codeser=pop_utils::checkremove(argc,argv,"-appservicecode=");
+    // const char *proxy=pop_utils::checkremove(argc,argv,"-proxy=");
 
     // Check if need to run on local node only
-    if(paroc_utils::checkremove(argc,argv,"-runlocal")) {
-        paroc_od::defaultLocalJob=true;
+    if(pop_utils::checkremove(argc,argv,"-runlocal")) {
+        pop_od::defaultLocalJob=true;
     }
 
     // Get application service contact address
-    const char *appcontact = paroc_utils::checkremove(argc,argv,"-appservicecontact=");
+    const char *appcontact = pop_utils::checkremove(argc,argv,"-appservicecontact=");
 
     if(codeser==NULL && appcontact==NULL) {
         LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");
@@ -410,19 +410,19 @@ bool pop_system::Initialize(int *argc,char ***argv) {
         return false;
     }
 
-    char *codeconf = paroc_utils::checkremove(argc,argv,"-codeconf=");
+    char *codeconf = pop_utils::checkremove(argc,argv,"-codeconf=");
     (void) codeconf; // Added this to avoid warning
 
     LOG_DEBUG_IF(codeconf==NULL,"No code config file");
 
-    /*if (codeconf!=NULL && !paroc_utils::InitCodeService(codeconf,mgr))
+    /*if (codeconf!=NULL && !pop_utils::InitCodeService(codeconf,mgr))
     {
     return false;
     }
     else return true; */
 
     LOG_DEBUG("SYSTEM: Init code service");
-    //bool ret = !(codeconf != NULL && !paroc_utils::InitCodeService(codeconf,mgr));
+    //bool ret = !(codeconf != NULL && !pop_utils::InitCodeService(codeconf,mgr));
     LOG_DEBUG("SYSTEM: Init code service done");
     return false;
 }

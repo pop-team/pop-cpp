@@ -68,13 +68,13 @@ int main(int argc, char **argv) {
     bool popfile_service = true; */
 
     char *tmp;
-    bool stop=(paroc_utils::checkremove(&argc,&argv,"stop")!=NULL);
-    if(!stop && paroc_utils::checkremove(&argc,&argv,"start")==NULL) {
+    bool stop=(pop_utils::checkremove(&argc,&argv,"stop")!=NULL);
+    if(!stop && pop_utils::checkremove(&argc,&argv,"start")==NULL) {
         Usage();
     }
 
-    if((tmp=paroc_utils::checkremove(&argc,&argv,"-servicepoint="))==NULL) {
-        tmp=paroc_utils::checkremove(&argc,&argv,"-port=");
+    if((tmp=pop_utils::checkremove(&argc,&argv,"-servicepoint="))==NULL) {
+        tmp=pop_utils::checkremove(&argc,&argv,"-port=");
         if(tmp==NULL) {
             str = pop_system::GetHost() + ":2711";
         } else {
@@ -88,8 +88,8 @@ int main(int argc, char **argv) {
     }
 
     /** TO BE REMOVED FOR 2.5 BUT KEEP FOR 3.0
-        if(paroc_utils::checkremove(&argc, &argv, "--no-service")){
-        if(paroc_utils::checkremove(&argc, &argv, "popfile"))
+        if(pop_utils::checkremove(&argc, &argv, "--no-service")){
+        if(pop_utils::checkremove(&argc, &argv, "popfile"))
             popfile_service = false;
     }*/
     std::string host=str;
@@ -97,10 +97,10 @@ int main(int argc, char **argv) {
     hostpfm=str;
 
 
-    tmp=paroc_utils::checkremove(&argc,&argv,"-challenge=");
+    tmp=pop_utils::checkremove(&argc,&argv,"-challenge=");
     if(tmp!=NULL) {
         challenge=tmp;
-    } else if((tmp=paroc_utils::checkremove(&argc,&argv,"-genchallenge="))!=NULL && !stop) {
+    } else if((tmp=pop_utils::checkremove(&argc,&argv,"-genchallenge="))!=NULL && !stop) {
 
         unsigned int seed = time(NULL);
         char tmpstr[256];
@@ -227,7 +227,7 @@ int main(int argc, char **argv) {
         }
 
 
-        if((tmp=paroc_utils::checkremove(&argc,&argv,"-conf="))==NULL && (tmp=getenv("JOBMGR_CONF"))==NULL) {
+        if((tmp=pop_utils::checkremove(&argc,&argv,"-conf="))==NULL && (tmp=getenv("JOBMGR_CONF"))==NULL) {
             const char *tmp2=getenv("POPC_LOCATION");
             if(tmp2==NULL) {
                 LOG_ERROR("POPC_LOCATION environment variable is not set.");
@@ -245,7 +245,7 @@ int main(int argc, char **argv) {
             conf=tmp;
         }
 
-        bool daemon=(paroc_utils::checkremove(&argc,&argv,"-test")==NULL);
+        bool daemon=(pop_utils::checkremove(&argc,&argv,"-test")==NULL);
 
 
 

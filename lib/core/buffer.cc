@@ -321,6 +321,6 @@ void  pop_buffer::CheckAndThrow(pop_buffer &except) {
         throw t;
     }
     default:
-        pop_exception::paroc_throw("Unknown exception in pop_buffer::CheckAndThrow");
+        pop_exception::pop_throw("Unknown exception in pop_buffer::CheckAndThrow");
     }
 }

@@ -145,7 +145,7 @@ void pop_buffer_raw::UnPack(signed char *data, int n) {
 
 void pop_buffer_raw::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        pop_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_raw::CheckUnPack");
+        pop_exception::pop_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_raw::CheckUnPack");
     }
 }
 
@@ -337,11 +337,11 @@ bool pop_buffer_raw::RecvCtrl(pop_combox &s, pop_connection *conn) {
     while(true) {
         pop_connection* t = (pop_connection*) s.Wait();
         if(!t) {
-            pop_exception::paroc_throw("Remote Object not alive (1)");
+            pop_exception::pop_throw("Remote Object not alive (1)");
         }
 
         if(!Recv(s, t)) {
-            pop_exception::paroc_throw(errno);
+            pop_exception::pop_throw(errno);
         }
 
         if(header.GetType() == TYPE_RESPONSE) {
@@ -355,11 +355,11 @@ bool pop_buffer_raw::RecvCtrl(pop_combox &s, pop_connection *conn) {
                 auto t = (pop_connection *) s.Wait();
 
                 if(!t) {
-                    pop_exception::paroc_throw("Remote Object not alive (2)");
+                    pop_exception::pop_throw("Remote Object not alive (2)");
                 }
 
                 if(!Recv(s, t)) {
-                    pop_exception::paroc_throw(errno);
+                    pop_exception::pop_throw(errno);
                 }
 
                 Reset();

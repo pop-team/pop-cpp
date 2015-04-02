@@ -363,7 +363,7 @@ void popc_buffer_xdr_mpi::UnPack(signed char *data, int n) {
 
 void popc_buffer_xdr_mpi::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        pop_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong packed data size");
+        pop_exception::pop_throw(POPC_BUFFER_FORMAT, "Wrong packed data size");
     }
 }
 
@@ -553,10 +553,10 @@ bool popc_buffer_xdr_mpi::RecvCtrl(pop_combox &s, pop_connection *conn) {
     while(true) {
         pop_connection * t = (pop_connection *) s.Wait();
         if(t == NULL) {
-            pop_exception::paroc_throw("[pop_buffer_xdr.cc] : Remote Object not alive");
+            pop_exception::pop_throw("[pop_buffer_xdr.cc] : Remote Object not alive");
         }
         if(!Recv(s, t)) {
-            pop_exception::paroc_throw("Recv failed");
+            pop_exception::pop_throw("Recv failed");
         }
         if(header.GetType() == TYPE_RESPONSE) {
             if(header.GetClassID() == 0 && header.GetMethodID() == 6) {
@@ -567,10 +567,10 @@ bool popc_buffer_xdr_mpi::RecvCtrl(pop_combox &s, pop_connection *conn) {
                 auto packeddataold = packeddata;
                 pop_connection * t = (pop_connection *) s.Wait();
                 if(t == NULL) {
-                    pop_exception::paroc_throw("[pop_buffer_xdr.cc] : Remote Object not alive");
+                    pop_exception::pop_throw("[pop_buffer_xdr.cc] : Remote Object not alive");
                 }
                 if(!Recv(s, t)) {
-                    pop_exception::paroc_throw("Recv failed 2");
+                    pop_exception::pop_throw("Recv failed 2");
                 }
                 Reset();
                 header = h;

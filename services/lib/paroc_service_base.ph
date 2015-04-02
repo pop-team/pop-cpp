@@ -88,7 +88,7 @@ public:
     * @param remotejobcontacts   Store the job contact of the JobMgr which has created the object
      * @return 0 (successful) or error code otherwise.
     */
-    sync conc virtual int CreateObject(pop_accesspoint &localservice, const std::string &objname, const paroc_od &od, int howmany, [in, out,size=howmany] pop_accesspoint *jobcontacts, int howmany2, [in, out, size=howmany2] pop_accesspoint *remotejobcontacts)=0;
+    sync conc virtual int CreateObject(pop_accesspoint &localservice, const std::string &objname, const pop_od &od, int howmany, [in, out,size=howmany] pop_accesspoint *jobcontacts, int howmany2, [in, out, size=howmany2] pop_accesspoint *remotejobcontacts)=0;
 
     sync conc virtual pop_accesspoint getPSMRef()=0;
 

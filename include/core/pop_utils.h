@@ -26,7 +26,7 @@ typedef std::string POPString;
 
 class AppCoreService;
 
-class paroc_utils {
+class pop_utils {
 public:
 
     static char *checkremove(int *argc, char ***argv, const char *opt);
@@ -54,7 +54,7 @@ public:
 #endif
 
 };
-typedef paroc_utils POPUtils;
+typedef pop_utils POPUtils;
 
 #ifdef _POPC_
 int rprintf(const char *format,...);

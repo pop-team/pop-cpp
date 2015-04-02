@@ -29,7 +29,7 @@
 #include "pop_broker.h"
 #include "pop_buffer_xdr.h"
 #include "popc_combox_uds.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 
 using namespace std;
 
@@ -409,7 +409,7 @@ int main(int argc, char* argv[]) {
 
     bool multiple_connection_enable = false;
     // Check if the multiple connection option is set
-    if(paroc_utils::checkremove(&argc, &argv, "--multiple-connection") != NULL) {
+    if(pop_utils::checkremove(&argc, &argv, "--multiple-connection") != NULL) {
         printf("Multiple connection: enable\n");
         multiple_connection_enable = true;
     }
@@ -419,7 +419,7 @@ int main(int argc, char* argv[]) {
     // Start main of the POP-C++ application on the MPI process with rank 0
     if(rank == 0) {
         std::string application_arg;
-        char* capp = paroc_utils::checkremove(&argc, &argv, "-app=");
+        char* capp = pop_utils::checkremove(&argc, &argv, "-app=");
         // End application if app is not provided
         if(capp == NULL) {
             if(rank == 0) {
@@ -478,7 +478,7 @@ int main(int argc, char* argv[]) {
     // Start receiving request from the IPC server
     while(active) {
         // Create empty request object to receive request from IPC
-        paroc_request request;
+        pop_request request;
         request.data = NULL;
         // Wait for data on the UDS
         pop_connection* connection = local.Wait();
@@ -671,7 +671,7 @@ int main(int argc, char* argv[]) {
                     delete localrank;
                     delete objectname;
                     delete codefile;
-                    paroc_request callback;
+                    pop_request callback;
                     pop_connection* objectcallback = receiver.Wait();
                     pop_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
                     callback.data = buffer_factory->CreateBuffer();
@@ -820,7 +820,7 @@ int main(int argc, char* argv[]) {
                         }
                         delete localrank;
                         delete coreoption;
-                        paroc_request callback;
+                        pop_request callback;
                         pop_connection* objectcallback = receiver.Wait();
                         pop_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
                         callback.data = buffer_factory->CreateBuffer();

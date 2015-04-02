@@ -21,7 +21,7 @@
 
 #include "popc_intface.h"
 #include "pop_broker_factory.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include "pop_system.h"
 
 std::vector<pop_broker_init> *pop_broker_factory::brokerlist=nullptr;
@@ -46,7 +46,7 @@ pop_broker *pop_broker_factory::Create(const char *objname) {
     }
 
     for(auto& t : *brokerlist){
-        if(paroc_utils::isEqual(objname, t.objname.c_str())) {
+        if(pop_utils::isEqual(objname, t.objname.c_str())) {
             return t.func();
         }
     }
@@ -68,7 +68,7 @@ bool pop_broker_factory::test(const char *objname) {
         return false;
     }
     for(auto& test : *brokerlist){
-        if(paroc_utils::isEqual(objname, test.objname.c_str())) {
+        if(pop_utils::isEqual(objname, test.objname.c_str())) {
             return true;
         }
     }
@@ -83,38 +83,38 @@ pop_broker * pop_broker_factory::Create(int *argc, char ***argv) {
      * kept just in case.
      */
 /*
-    char *tmp1 = paroc_utils::checkremove(argc,argv,"-printmpi");
+    char *tmp1 = pop_utils::checkremove(argc,argv,"-printmpi");
     if(tmp1 != nullptr) {
         char abspath[1024];
         char *thisfile = getenv("POPC_EXE");
         if(thisfile == nullptr) {
             thisfile = (*argv)[0];
         }
-        paroc_utils::FindAbsolutePath(thisfile,abspath);
+        pop_utils::FindAbsolutePath(thisfile,abspath);
         PrintBrokersMPI(abspath);
         exit(0);
     }
 */
-    char *tmp=paroc_utils::checkremove(argc,argv,"-list");
+    char *tmp=pop_utils::checkremove(argc,argv,"-list");
     if(tmp!=nullptr) {
         // char abspath[1024];
         char *thisfile=getenv("POPC_EXE");
         if(thisfile==nullptr) {
             thisfile=(*argv)[0];
         }
-        PrintBrokers(paroc_utils::FindAbsolutePath(thisfile).c_str(), strcmp(tmp,"long")==0);
+        PrintBrokers(pop_utils::FindAbsolutePath(thisfile).c_str(), strcmp(tmp,"long")==0);
         exit(0);
     }
 
-    char *usage=paroc_utils::checkremove(argc,argv,"-help");
-    char *object=paroc_utils::checkremove(argc,argv,"-object=");
+    char *usage=pop_utils::checkremove(argc,argv,"-help");
+    char *object=pop_utils::checkremove(argc,argv,"-object=");
     if(usage!=nullptr || object==nullptr) {
         printf("\n Usage:\n\t%s [-help] [-list | -listlong] [-port=<local port>] [-callback=<host:port>] [-appservice=<host:port>] [-nostdio] -object=<objectname>\n",(*argv)[0]);
         return nullptr;
     }
 
 
-    tmp=paroc_utils::checkremove(argc,argv,"-appservice=");
+    tmp=pop_utils::checkremove(argc,argv,"-appservice=");
     if(tmp!=nullptr) {
         pop_system::appservice.SetAccessString(tmp);
         pop_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
@@ -124,7 +124,7 @@ pop_broker * pop_broker_factory::Create(int *argc, char ***argv) {
         if ((tmp=getenv("POPC_JOBSERVICE"))!=nullptr) {
             pop_system::jobservice.SetAccessString(tmp);
           pop_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
-        } else if ((tmp=paroc_utils::checkremove(argc,argv,"-jobservice=")) != nullptr) {
+        } else if ((tmp=pop_utils::checkremove(argc,argv,"-jobservice=")) != nullptr) {
             pop_system::jobservice.SetAccessString(tmp);
           pop_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
         } else {
@@ -136,7 +136,7 @@ pop_broker * pop_broker_factory::Create(int *argc, char ***argv) {
         }
     #endif*/
 
-    bool nostdio=(paroc_utils::checkremove(argc,argv,"-nostdio")!=nullptr);
+    bool nostdio=(pop_utils::checkremove(argc,argv,"-nostdio")!=nullptr);
 
     //Now create the broker
     if(object==nullptr || *object==0) {

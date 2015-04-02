@@ -48,7 +48,7 @@ void pop_broker::ReceiveThread(pop_combox *server) { // Receive request and put 
     server->SetCallback(COMBOX_CLOSE, CloseConnection, this);
 
     while(state == POPC_STATE_RUNNING) {
-        paroc_request req;
+        pop_request req;
         req.data=nullptr;
         try {
             if(!ReceiveRequest(server, req)) {
@@ -93,7 +93,7 @@ void pop_broker::ReceiveThread(pop_combox *server) { // Receive request and put 
 }
 
 
-bool pop_broker::ReceiveRequest(pop_combox *server, paroc_request &req) {
+bool pop_broker::ReceiveRequest(pop_combox *server, pop_request &req) {
     server->SetTimeout(-1);
     while(1) {
         // Waiting for a new connection or a new request
@@ -137,7 +137,7 @@ bool pop_broker::ReceiveRequest(pop_combox *server, paroc_request &req) {
 }
 
 
-void pop_broker::RegisterRequest(paroc_request &req) {
+void pop_broker::RegisterRequest(pop_request &req) {
     //Check if mutex is waiting/executing...
     int type = req.methodId[2];
 
@@ -214,11 +214,11 @@ bool pop_broker::OnCloseConnection(pop_connection * /*conn*/) {
 }
 
 
-paroc_object * pop_broker::GetObject() {
+pop_object * pop_broker::GetObject() {
     return obj;
 }
 
-bool pop_broker::ParocCall(paroc_request &req) {
+bool pop_broker::ParocCall(pop_request &req) {
     if(req.methodId[1] >= 10) {
         LOG_DEBUG_T("BRK_R", "Methodid >= 10");
         return false;

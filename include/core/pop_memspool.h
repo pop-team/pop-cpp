@@ -38,10 +38,10 @@ protected:
     std::vector<void*> memtemp;
 };
 
-template <class T> class paroc_container {
+template <class T> class pop_container {
 public:
-    paroc_container(int count);
-    ~paroc_container();
+    pop_container(int count);
+    ~pop_container();
     inline operator T *();
 private:
     T *data;
@@ -58,19 +58,19 @@ private:
 };
 
 template<class T>
-paroc_container<T>::paroc_container(int count) {
+pop_container<T>::pop_container(int count) {
     data=(count>0)? new T[count] : NULL;
 }
 
 template<class T>
-paroc_container<T>::~paroc_container() {
+pop_container<T>::~pop_container() {
     if(data!=NULL) {
         delete [] data;
     }
 }
 
 template<class T>
-paroc_container<T>::operator T* () {
+pop_container<T>::operator T* () {
     return data;
 }
 

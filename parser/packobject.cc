@@ -1,6 +1,6 @@
 #include "popc_intface.h"
 #include "parser.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 #include <assert.h>
 
 using namespace std;
@@ -36,7 +36,7 @@ void PackObject::GenerateCode(std::string &output) {
     output += str;
     int sz=objects.size();
     for(int j=0; j<sz; j++) {
-        sprintf(str,"\n\tif (paroc_utils::isEqual(objname, \"%s\")) return true;",objects[j].c_str());
+        sprintf(str,"\n\tif (pop_utils::isEqual(objname, \"%s\")) return true;",objects[j].c_str());
         output += str;
     }
     strcpy(str,"\n\treturn false;\n}\n");

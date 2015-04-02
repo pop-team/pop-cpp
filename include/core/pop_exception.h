@@ -12,7 +12,7 @@
 #ifndef POPC_EXCEPTION_H
 #define POPC_EXCEPTION_H
 
-#include <paroc_base.h>
+#include <pop_base.h>
 #include <exception>
 
 //PAROC EXCEPTION CODE
@@ -57,7 +57,7 @@
  * Modifications
  * - Added AddInfo method and suppress create(...) method that was barely used + suppress SetExtra method (LW Jan 2015)
  */
-class pop_exception: public paroc_base, public std::exception {
+class pop_exception: public pop_base, public std::exception {
 public:
     pop_exception();
     pop_exception(int code);
@@ -66,8 +66,8 @@ public:
     ~pop_exception()throw() {}
 
     pop_exception & operator = (pop_exception &e);
-    static void paroc_throw(int code, const std::string& reason1="", const std::string& reason2="");
-    static void paroc_throw(const std::string& reason1, const std::string& reason2="");
+    static void pop_throw(int code, const std::string& reason1="", const std::string& reason2="");
+    static void pop_throw(const std::string& reason1, const std::string& reason2="");
 
     virtual void Serialize(pop_buffer &buf, bool pack);
 

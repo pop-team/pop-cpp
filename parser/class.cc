@@ -15,7 +15,7 @@
 #include "popc_intface.h"
 
 #include "parser.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 
 #define MIN_CLASSID 1000
 
@@ -23,7 +23,7 @@ using namespace std;
 
 char Class::interface_base[]="pop_interface";
 char Class::broker_base[]="pop_broker";
-char Class::object_base[]="paroc_object";
+char Class::object_base[]="pop_object";
 
 /**
  * Constant declaration for code generation of POG
@@ -111,7 +111,7 @@ void Class::Marshal(char *varname, char *bufname, char* /*sizehelper*/, std::str
     output += tmpstr;
 
     // If uncommented, the 4 following lines will check at runtime if polymorphism is used (and exit)
-    //sprintf(tmpstr, "if(!paroc_utils::MatchWildcard(typeid(%s).name(),\"*%s\"))\n",varname,GetName());
+    //sprintf(tmpstr, "if(!pop_utils::MatchWildcard(typeid(%s).name(),\"*%s\"))\n",varname,GetName());
     //output += tmpstr;
     //sprintf(tmpstr, "{printf(\"POPC Error at method call: dynamic type of %s must correspond with static type %s\\n\");exit(-1);}\n",varname,GetName());
     //output += tmpstr;
@@ -670,7 +670,7 @@ bool Class::generate_header_pog(std::string &code, bool interface) {
         code += str;
 
         //Generate constructor from the object side binding
-        sprintf(str,"\n%s(const paroc_object *obj)",name);
+        sprintf(str,"\n%s(const pop_object *obj)",name);
         code += str;
         code += tmpcode;
         strcpy(str," { Bind(obj->GetAccessPoint());};\n");
@@ -849,7 +849,7 @@ bool Class::GenerateHeader(std::string &code, bool interface/*, bool isPOPCPPCom
         code += str;
 
         //Generate constructor from the object side binding
-        sprintf(str,"\n%s(const paroc_object *obj)",name);
+        sprintf(str,"\n%s(const pop_object *obj)",name);
         code += str;
         code += tmpcode;
         strcpy(str," { Bind(obj->GetAccessPoint());};\n");
