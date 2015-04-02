@@ -59,14 +59,14 @@ std::string pop_system::POPC_HostName;
 #define LOCALHOST "localhost"
 //End modif
 
-AppCoreService *pop_system::mgr=NULL;
+AppCoreService *pop_system::mgr=nullptr;
 std::string pop_system::challenge;
 
 pop_system::pop_system() {
     pop_combox_factory::GetInstance();
     pop_buffer_factory_finder::GetInstance();
     char *tmp = getenv("POPC_PLATFORM");
-    if(tmp != NULL) {
+    if(tmp != nullptr) {
         platform = tmp;
     } else {
         char str[128];
@@ -92,12 +92,12 @@ pop_system::pop_system() {
 
 pop_system::~pop_system() {
 #ifndef DEFINE_UDS_SUPPORT
-    /*if (mgr!=NULL)
+    /*if (mgr!=nullptr)
     {
       Finalize(false);
       delete mgr;
     }
-    mgr=NULL;*/
+    mgr=nullptr;*/
 #endif
 
     pop_combox_factory *pf=pop_combox_factory::GetInstance();
@@ -118,22 +118,22 @@ std::string pop_system::GetHost() {
     if(POPC_HostName.empty()) {
         char str[128];
         char *t=getenv("POPC_HOST");
-        if(t==NULL || *t==0) {
+        if(t==nullptr || *t==0) {
             popc_gethostname(str,127);
-            if(strchr(str,'.')==NULL || strstr(str,".local\0")!=NULL) {
+            if(strchr(str,'.')==nullptr || strstr(str,".local\0")!=nullptr) {
                 int len=strlen(str);
                 char *domain=getenv("POPC_DOMAIN");
-                if(domain!=NULL && domain!=0) {
+                if(domain!=nullptr && domain!=0) {
                     str[len]='.';
                     strcpy(str+len+1,domain);
                     POPC_HostName = str;
-                } else { //(domain!=NULL && domain!=0)
+                } else { //(domain!=nullptr && domain!=0)
                     POPC_HostName = GetIP();
                 }
-            } else { //(strchr(str,'.')==NULL || strstr(str,".local\0")!=NULL)
+            } else { //(strchr(str,'.')==nullptr || strstr(str,".local\0")!=nullptr)
                 POPC_HostName = str;
             }
-        } else { //(t==NULL || *t==0)
+        } else { //(t==nullptr || *t==0)
             POPC_HostName=t;
         }
     }
@@ -153,11 +153,11 @@ std::string pop_system::GetIP() {
     ip = std::string(LOCALHOST);
 
     tmp=getenv("POPC_IP");
-    if(tmp!=NULL) {     // Env. variable POPC_IP is defined
+    if(tmp!=nullptr) {     // Env. variable POPC_IP is defined
         ip=tmp;
     } else {           //Env. variable POPC_IP is not defined
         tmp=getenv("POPC_IFACE");
-        if(tmp!=NULL) { // Env. Variable POP_IFACE is defined
+        if(tmp!=nullptr) { // Env. Variable POP_IFACE is defined
             iface=tmp;    // Try to determine IP from network interface name
             if(!(GetIPFromInterface(iface,ip))) {
                 // Not found
@@ -189,12 +189,12 @@ std::string pop_system::GetIP() {
     struct hostent *hp=gethostbyname(hostname);
     unsigned ip=(unsigned(127)<<24)+1;
 
-    if(hp==NULL || *(hp->h_addr_list)==NULL) {
+    if(hp==nullptr || *(hp->h_addr_list)==nullptr) {
         return std::string("127.0.0.1");
     }
 
     char **p=hp->h_addr_list;
-    while(*p!=NULL) {
+    while(*p!=nullptr) {
         memcpy(&ip,*p, sizeof(unsigned));
         ip=ntohl(ip);
         if(ip!=(unsigned(127)<<24)+1) {
@@ -239,7 +239,7 @@ int pop_system::GetIP(const char *hostname, int *iplist, int listsize) {
         }
         return 0;
     }
-    if(hp==NULL) {
+    if(hp==nullptr) {
         return 0;
     }
     n=0;
@@ -290,7 +290,7 @@ std::string pop_system::GetDefaultInterface() {
     bool found=false;
     FILE *fp = fopen("/proc/net/route", "r");
 
-    if(fp != NULL) { //else
+    if(fp != nullptr) { //else
         while(fgets(buff, 1023, fp) && !found) {
             //num = sscanf(buff, "%16s %128s %128s %X %d %d %d %128s %d %d %d",
             //       iface, net_addr, gate_addr, &iflags, &refcnt, &use, &metric, mask_addr, &mss, &window, &irtt);
@@ -360,7 +360,7 @@ bool pop_system::GetIPFromInterface(std::string &iface, std::string &str_ip) {
 bool pop_system::Initialize(int *argc,char ***argv) {
     // Get access point address of the Job Manager
     const char *info=pop_utils::checkremove(argc,argv,"-jobservice=");
-    if(info==NULL) {
+    if(info==nullptr) {
         LOG_ERROR("missing -jobservice argument");
         return false;
     }
@@ -379,12 +379,12 @@ bool pop_system::Initialize(int *argc,char ***argv) {
     // Get application service contact address
     const char *appcontact = pop_utils::checkremove(argc,argv,"-appservicecontact=");
 
-    if(codeser==NULL && appcontact==NULL) {
+    if(codeser==nullptr && appcontact==nullptr) {
         LOG_ERROR("missing -appservicecontact=... or -appservicecode=... argument");
         return false;
     }
     try {
-        if(appcontact == NULL) {
+        if(appcontact == nullptr) {
             char url[1024];
             strcpy(url, codeser);
 

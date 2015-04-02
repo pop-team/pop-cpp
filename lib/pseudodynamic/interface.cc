@@ -64,16 +64,16 @@ pop_interface::pop_interface() : __pop_combox(NULL), __pop_buf(NULL) {
     }
 
     _ssh_tunneling=false;
-    //__pop_combox = NULL;
-    //__pop_buf = NULL;
-    //_popc_async_construction_thread=NULL;
+    //__pop_combox = nullptr;
+    //__pop_buf = nullptr;
+    //_popc_async_construction_thread=nullptr;
 }
 
 pop_interface::pop_interface(const pop_accesspoint &p) {
     LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     _ssh_tunneling = false;
-    __pop_combox = NULL;
-    __pop_buf = NULL;
+    __pop_combox = nullptr;
+    __pop_buf = nullptr;
 
     // For SSH tunneling
     if(p.IsService()) {
@@ -94,9 +94,9 @@ pop_interface::pop_interface(const pop_interface &inf) {
     LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)", inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
     pop_accesspoint infAP = inf.GetAccessPoint();
     _ssh_tunneling=false;
-    __pop_combox=NULL;
-    __pop_buf=NULL;
-    //_popc_async_construction_thread=NULL;
+    __pop_combox=nullptr;
+    __pop_buf=nullptr;
+    //_popc_async_construction_thread=nullptr;
 
     if(infAP.IsSecure()) {
         accesspoint.SetSecure();
@@ -118,8 +118,8 @@ pop_interface::~pop_interface() {
 }
 
 pop_interface & pop_interface::operator = (const pop_interface & obj) {
-    //  __pop_combox = NULL;
-    //  __pop_buf = NULL;
+    //  __pop_combox = nullptr;
+    //  __pop_buf = nullptr;
     LOG_DEBUG("Bind");
     //Bind(accesspoint);
     //DecRef();
@@ -172,7 +172,7 @@ void pop_interface::Serialize(pop_buffer &buf, bool pack) {
     accesspoint.Serialize(buf, pack);
     buf.Pop();
 
-    pop_buffer *old = NULL;
+    pop_buffer *old = nullptr;
 
     if(&buf == __pop_buf) {
         LOG_WARNING("Buffers share the same address");// TODO LW: Where does this come from ?
@@ -198,7 +198,7 @@ void pop_interface::Serialize(pop_buffer &buf, bool pack) {
         }
     }
 
-    if(old != NULL) {
+    if(old != nullptr) {
         delete __pop_buf;
         __pop_buf = old;
     }
@@ -453,18 +453,18 @@ void pop_interface::Release() {
 
         // Destroy the combox
         delete __pop_combox;
-        __pop_combox = NULL;
+        __pop_combox = nullptr;
     }
 
-    if(__pop_buf != NULL) {
+    if(__pop_buf != nullptr) {
         delete __pop_buf;
-        __pop_buf = NULL;
+        __pop_buf = nullptr;
     }
 }
 
 
 bool pop_interface::isBinded() {
-    if(__pop_combox == NULL || __pop_buf == NULL) {
+    if(__pop_combox == nullptr || __pop_buf == nullptr) {
         return false;
     }
     return true;
@@ -643,7 +643,7 @@ bool pop_interface::RecvCtrl() {
     while(true) {
         __pop_combox->SetTimeout(time_control);
         pop_connection *t = (pop_connection *) __pop_combox->Wait();
-        if(t != NULL) {
+        if(t != nullptr) {
             if(!__pop_buf->Recv(*__pop_combox,t)) {
                 __pop_combox->SetTimeout(oldTimeout);
                 pop_exception::pop_throw("Error in od disconnect 1");
@@ -1018,9 +1018,9 @@ void pop_interface::ApplyCommPattern(const std::string& pattern, std::vector<std
  */
 void pop_interface::popc_send_request(pop_buffer *buf, pop_connection* conn) {
     if(!buf->Send((*__pop_combox), conn)) {
-        pop_exception::pop_throw("Buffer send failed");
+        pop_exception::pop_throw("Buffer sent failed");
     }
-    LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == NULL) ? "is null" : "is not null");
+    LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == nullptr) ? "is null" : "is not null");
 }
 
 /**
@@ -1084,10 +1084,10 @@ int pop_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int de
 
 
         fp = popen(cmd.str().c_str(), "r");
-        if(fp==NULL) {
+        if(fp==nullptr) {
             error_code=-1;
         }
-        if(fgets(buf, BUF_SIZE, fp) == NULL) {
+        if(fgets(buf, BUF_SIZE, fp) == nullptr) {
             error_code=-1;
         }
     } while(error_code!=0 && attempt++ < SSH_MAX_ATTEMPT);
@@ -1115,7 +1115,7 @@ int pop_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int de
 int pop_interface::KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port) {
     LOG_CORE("Kill SSH");
     _ssh_tunneling = false;
-    if(dest_ip == NULL) {
+    if(dest_ip == nullptr) {
         return -1;
     }
 
@@ -1128,10 +1128,10 @@ int pop_interface::KillSSHTunnel(const char *user, const char *dest_ip, int dest
     cmd << "ps aux | grep \"/usr/bin/ssh -f -N -q -o ExitOnForwardFailure=yes -L" << local_port << ":127.0.0.1:" << dest_port << " " << dest_ip << "\" | grep -v grep | head -n 1 | awk -F\" \" '{print $2}'";
     FILE *fp;
     fp = popen(cmd.str().c_str(), "r");
-    if(fp==NULL) {
+    if(fp==nullptr) {
         return -1;
     }
-    if(fgets(buf, BUF_SIZE, fp) == NULL) {
+    if(fgets(buf, BUF_SIZE, fp) == nullptr) {
         return -2;
     }
     int pid = atoi(buf);
@@ -1158,7 +1158,7 @@ bool pop_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, in
     cmd << "ps aux | grep \"/usr/bin/ssh -f -N -o ExitOnForwardFailure=yes -L" << local_port << ":127.0.0.1:" << dest_port << " " << dest_ip << "\" | grep -v grep | awk -F\" \" '{print $2}'";
 
     fp = popen(cmd.str().c_str(), "r");
-    if(fp == NULL) {
+    if(fp == nullptr) {
         LOG_WARNING("cannot launch %s", cmd.str().c_str());
         return false;
     }
