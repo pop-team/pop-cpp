@@ -16,7 +16,7 @@
 
 #include "popc_group_interface.h"
 #include "pop_combox_factory.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "pop_broker.h"
 #include "popc_combox_uds.h"
 #include "pop_system.h"
@@ -179,7 +179,7 @@ bool POPC_GroupInterface::finalize() {
     }
 
     // Terminate the processes
-    paroc_message_header h(0, 2, INVOKE_SYNC, "DecRef");
+    pop_message_header h(0, 2, INVOKE_SYNC, "DecRef");
     _popc_buffer->Reset();
     _popc_buffer->SetHeader(h);
 
@@ -207,7 +207,7 @@ bool POPC_GroupInterface::finalize() {
 void POPC_GroupInterface::popc_send_request(pop_buffer* buffer, pop_connection* connection) {
     if(!buffer->Send((*_popc_combox), connection)) {
         printf("ERROR: Problem while sending request\n");
-        paroc_exception::paroc_throw("Problem while sending request");
+        pop_exception::paroc_throw("Problem while sending request");
     }
 }
 
@@ -218,7 +218,7 @@ void POPC_GroupInterface::popc_send_request(pop_buffer* buffer, pop_connection* 
  */
 void POPC_GroupInterface::popc_recv_response(pop_buffer* buffer, pop_connection* connection) {
     if(!buffer->Recv((*_popc_combox), connection)) {
-        paroc_exception::paroc_throw("buffer Receive");
+        pop_exception::paroc_throw("buffer Receive");
     }
     pop_buffer::CheckAndThrow(*buffer);
 }

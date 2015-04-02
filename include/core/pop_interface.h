@@ -24,7 +24,7 @@
 #include <pop_accesspoint.h>
 #include <paroc_od.h>
 #include <pop_buffer.h>
-#include <paroc_allocobj.h>
+#include <pop_allocobj.h>
 #include "popwayback.h"
 
 
@@ -151,7 +151,7 @@ protected:
     pop_buffer *__paroc_buf;
     pop_accesspoint accesspoint;
 
-    paroc_mutex _paroc_imutex;
+    pop_mutex _paroc_imutex;
 
 private:
 

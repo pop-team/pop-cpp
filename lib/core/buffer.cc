@@ -13,7 +13,7 @@
 /*
   Deeply need refactoring:
     POPC_Buffer instead of pop_buffer
-    POPC_MessageHeader instead of paroc_message_header (put implementation in a separate file)
+    POPC_MessageHeader instead of pop_message_header (put implementation in a separate file)
  */
 
 #include <cstring>
@@ -23,14 +23,14 @@
 #include "pop_interface.h"
 #include "pop_buffer.h"
 #include "pop_system.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "popc_logger.h"
 
 
 
 //Message header
 
-paroc_message_header::paroc_message_header(int classid, int methodid, int semantics, const char *metname) {
+pop_message_header::pop_message_header(int classid, int methodid, int semantics, const char *metname) {
     type=TYPE_REQUEST;
     id[0]=classid;
     id[1]=methodid;
@@ -38,23 +38,23 @@ paroc_message_header::paroc_message_header(int classid, int methodid, int semant
     methodname=metname;
 }
 
-paroc_message_header::paroc_message_header(const char *metname) {
+pop_message_header::pop_message_header(const char *metname) {
     type=TYPE_RESPONSE;
     methodname=metname;
 }
 
-paroc_message_header::paroc_message_header(int exceptioncode, const char *metname) {
+pop_message_header::pop_message_header(int exceptioncode, const char *metname) {
     type=TYPE_EXCEPTION;
     methodname=metname;
     SetExceptionCode(exceptioncode);
 }
 
-paroc_message_header::paroc_message_header() {
+pop_message_header::pop_message_header() {
     type=-1;
     methodname=nullptr;
 }
 
-void paroc_message_header::operator =(const  paroc_message_header &dat) {
+void pop_message_header::operator =(const  pop_message_header &dat) {
     if(&dat==this) {
         return;
     }
@@ -80,11 +80,11 @@ pop_buffer::pop_buffer() {
 pop_buffer::~pop_buffer() {
 }
 
-void pop_buffer::SetHeader(const paroc_message_header &data) {
+void pop_buffer::SetHeader(const pop_message_header &data) {
     header=data;
 }
 
-const paroc_message_header & pop_buffer::GetHeader() const {
+const pop_message_header & pop_buffer::GetHeader() const {
     return header;
 }
 
@@ -149,7 +149,7 @@ bool pop_buffer::Recv(pop_connection *conn) {
 }
 
 
-#define SEND_EXCEPTION(x)  paroc_message_header tmp(x, except.GetHeader().GetMethodName()); \
+#define SEND_EXCEPTION(x)  pop_message_header tmp(x, except.GetHeader().GetMethodName()); \
  except.Reset();\
 except.SetHeader(tmp);\
   except.Pack(&code,1);\
@@ -193,7 +193,7 @@ bool pop_buffer::SendException(pop_buffer &except, pop_connection *s,unsigned ch
 
 bool pop_buffer::SendException(pop_buffer &except, pop_connection *s, char *code) {
     except.Reset();
-    paroc_message_header tmp(EXCEPTION_STRING,except.GetHeader().GetMethodName());
+    pop_message_header tmp(EXCEPTION_STRING,except.GetHeader().GetMethodName());
     except.SetHeader(tmp);
     int len=(code==nullptr)? 0 : strlen(code)+1;
     except.Pack(&len,1);
@@ -210,9 +210,9 @@ bool pop_buffer::SendException(pop_buffer &except, pop_connection *s,double code
     SEND_EXCEPTION(EXCEPTION_DOUBLE);
 }
 
-bool pop_buffer::SendException(pop_buffer &except, pop_connection *s, paroc_exception &code) {
+bool pop_buffer::SendException(pop_buffer &except, pop_connection *s, pop_exception &code) {
     //  SEND_EXCEPTION(EXCEPTION_POPC_STD);
-    paroc_message_header tmp(EXCEPTION_POPC_STD, except.GetHeader().GetMethodName());
+    pop_message_header tmp(EXCEPTION_POPC_STD, except.GetHeader().GetMethodName());
     except.Reset();
     except.SetHeader(tmp);
     code.Serialize(except,true);
@@ -220,7 +220,7 @@ bool pop_buffer::SendException(pop_buffer &except, pop_connection *s, paroc_exce
 }
 
 bool pop_buffer::SendException(pop_buffer &except, pop_connection *s, pop_interface &code) {
-    paroc_message_header tmp(EXCEPTION_OBJECT, except.GetHeader().GetMethodName());
+    pop_message_header tmp(EXCEPTION_OBJECT, except.GetHeader().GetMethodName());
     except.Reset();
     except.SetHeader(tmp);
     code.Serialize(except,true);
@@ -229,7 +229,7 @@ bool pop_buffer::SendException(pop_buffer &except, pop_connection *s, pop_interf
 
 /// Check if an exception was thrown by the remote method and propagate (if thrown)
 void  pop_buffer::CheckAndThrow(pop_buffer &except) {
-    const paroc_message_header &h=except.GetHeader();
+    const pop_message_header &h=except.GetHeader();
 
     if(h.GetType()!=TYPE_EXCEPTION) {
         return;
@@ -309,7 +309,7 @@ void  pop_buffer::CheckAndThrow(pop_buffer &except) {
         throw t;
     }
     case EXCEPTION_POPC_STD: {
-        paroc_exception t(0);
+        pop_exception t(0);
         t.Serialize(except,false);
         throw t;
     }
@@ -321,6 +321,6 @@ void  pop_buffer::CheckAndThrow(pop_buffer &except) {
         throw t;
     }
     default:
-        paroc_exception::paroc_throw("Unknown exception in pop_buffer::CheckAndThrow");
+        pop_exception::paroc_throw("Unknown exception in pop_buffer::CheckAndThrow");
     }
 }

@@ -18,7 +18,7 @@
 #define _POPC_OBJECTBASE_H
 
 #include "pop_accesspoint.h"
-#include "paroc_event.h"
+#include "pop_event.h"
 
 //Added by clementval
 #include <iostream>
@@ -61,11 +61,11 @@ public:
 
 private:
     int refcount;
-    paroc_mutex lock;
-    EventQueue _paroc_events;
+    pop_mutex lock;
+    EventQueue _pop_events;
 
 protected:
-    paroc_mutex _paroc_omutex;
+    pop_mutex _paroc_omutex;
     //Added by clementval
     //std::ostringstream _popc_cout;
     //End of add

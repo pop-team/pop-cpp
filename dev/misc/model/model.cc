@@ -43,7 +43,7 @@ real DTreeNode::GetTimeConstraint() {
 bool DTreeNode::Try() {
     try {
         sequential=InitProblem(totalflop/timeconstraint);
-    } catch(paroc_exception  &e) {
+    } catch(pop_exception  &e) {
         sequential=NULL;
     }
     return (sequential!=NULL);

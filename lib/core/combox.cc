@@ -20,7 +20,7 @@
 #include <stdio.h>
 
 #include "pop_combox.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "popc_logger.h"
 
 #include <string.h>
@@ -99,12 +99,12 @@ bool pop_combox::SendAck(pop_connection *conn) {
 bool pop_combox::RecvAck(pop_connection * /*conn*/) {
     pop_connection * connex= Wait();
     if(connex==nullptr) {
-        paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"Wait() returned nullptr");
+        pop_exception::paroc_throw(ACK_NOT_RECEIVED,"Wait() returned nullptr");
     }
     char buf[4];
     int n = Recv(buf,3, connex);
     if(n!=3||strcmp(buf,"ACK")) {
-        paroc_exception::paroc_throw(ACK_NOT_RECEIVED,"Did not receive \"ACK\"");
+        pop_exception::paroc_throw(ACK_NOT_RECEIVED,"Did not receive \"ACK\"");
     }
 
     return true;

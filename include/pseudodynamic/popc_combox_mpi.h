@@ -18,7 +18,7 @@
 
 #include "pop_combox.h"
 #include "popc_connection_mpi.h"
-#include "paroc_mutex.h"
+#include "pop_mutex.h"
 #include "paroc_utils.h"
 
 /**

@@ -20,7 +20,7 @@
 
 #include "pop_broker.h"
 #include "pop_interface.h"
-#include "paroc_event.h"
+#include "pop_event.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_buffer_raw.h"
 #include "paroc_utils.h"
@@ -211,7 +211,7 @@ int pop_broker::Run() {
 
 
     if(obj!=nullptr && state==POPC_STATE_RUNNING) {
-        paroc_mutex_locker test(execCond);
+        pop_mutex_locker test(execCond);
 
         //Wait for all invocations terminated....
         while(instanceCount > 0 || !request_fifo.empty()) {
@@ -283,7 +283,7 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
                 return false;
             }
             if(!pc->Create(port, true)) {
-                paroc_exception::perror("Broker");
+                pop_exception::perror("Broker");
                 return false;
             }
         } else {
@@ -297,20 +297,20 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
                     //++pop_system::pop_current_local_address;
 
                     if(!pc->Create(nullptr, true)) {
-                        paroc_exception::perror("Broker");
+                        pop_exception::perror("Broker");
                         return false;
                     }
                 } else {
                     LOG_DEBUG_T("BRKR", "Create combox (address) with address \"%s\"", address);
 
                     if(!pc->Create(address, true)) {
-                        paroc_exception::perror("Broker");
+                        pop_exception::perror("Broker");
                         return false;
                     }
                 }
             } else {
                 if(!pc->Create(0, true)) {
-                    paroc_exception::perror("Broker");
+                    pop_exception::perror("Broker");
                     return false;
                 }
             }
@@ -397,7 +397,7 @@ bool pop_broker::WakeupReceiveThread(pop_combox  *mycombox) {
 
         if(connected) {
             try {
-                paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
+                pop_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
                 buffer->Reset();
                 buffer->SetHeader(h);
                 pop_connection* connection = tmp->get_connection();

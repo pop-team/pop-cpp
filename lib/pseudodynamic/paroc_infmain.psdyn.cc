@@ -12,7 +12,7 @@
 
 #include "popc_intface.h"
 
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_broker.h"
 #include "pop_system_mpi.h"
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
     } catch(int e) {
         LOG_WARNING("End of main exception caught 2");
         errno=e;
-        paroc_exception::perror("Exception occured");
+        pop_exception::perror("Exception occured");
         pop_system::Finalize(false);
         LOG_DEBUG("Will call MPI::Finalize and exit main");
         // Only for MPI

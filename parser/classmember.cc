@@ -886,11 +886,11 @@ void Method::GenerateClient(std::string &output) {
     } // End of APOA Support
 
     if(!GetClass()->is_collective()) {
-        sprintf(tmpcode, "\n  paroc_mutex_locker __paroc_lock(_paroc_imutex);");
+        sprintf(tmpcode, "\n  pop_mutex_locker __paroc_lock(_paroc_imutex);");
         output += tmpcode;
-        sprintf(tmpcode, "\n  if(!__pop_combox)paroc_exception::paroc_throw(\"combox was not initialized\");");
+        sprintf(tmpcode, "\n  if(!__pop_combox)pop_exception::paroc_throw(\"combox was not initialized\");");
         output += tmpcode;
-        sprintf(tmpcode, "\n  pop_connection* _popc_connection = __pop_combox->get_connection();\n  __paroc_buf->Reset();\n  paroc_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __paroc_buf->SetHeader(__paroc_buf_header);\n", clname, id, invoke_code, name);
+        sprintf(tmpcode, "\n  pop_connection* _popc_connection = __pop_combox->get_connection();\n  __paroc_buf->Reset();\n  pop_message_header __paroc_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  __paroc_buf->SetHeader(__paroc_buf_header);\n", clname, id, invoke_code, name);
         output += tmpcode;
     } else {
         // Additional code if the method is not collective
@@ -898,20 +898,20 @@ void Method::GenerateClient(std::string &output) {
             sprintf(tmpcode, "\n  // Generate additional information for a non collective call");
             output += tmpcode;
 
-            sprintf(tmpcode, "\n  pop_connection* _popc_connection = _popc_combox->get_connection();\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n  _popc_buffer->SetHeader(_popc_message_header);\n",
+            sprintf(tmpcode, "\n  pop_connection* _popc_connection = _popc_combox->get_connection();\n  _popc_buffer->Reset();\n  pop_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n  _popc_buffer->SetHeader(_popc_message_header);\n",
                     clname, POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID, POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE, POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME);
             output += tmpcode;
 
             sprintf(tmpcode, "\n   _popc_buffer->Push(\"rank\", \"int\", 1);\n  _popc_buffer->Pack(&_popc_default_rank_for_single_call, 1);\n  _popc_buffer->Pop();\n");
             output += tmpcode;
 
-            sprintf(tmpcode, "\n  popc_send_request(_popc_buffer, _popc_connection);\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header_call(CLASSUID_%s, %d, %d, \"%s\");", clname, id, invoke_code, name);
+            sprintf(tmpcode, "\n  popc_send_request(_popc_buffer, _popc_connection);\n  _popc_buffer->Reset();\n  pop_message_header _popc_message_header_call(CLASSUID_%s, %d, %d, \"%s\");", clname, id, invoke_code, name);
             output += tmpcode;
 
             sprintf(tmpcode, "\n  _popc_buffer->SetHeader(_popc_message_header_call);");
             output += tmpcode;
         } else {
-            sprintf(tmpcode, "\n  pop_connection* _popc_connection = _popc_combox->get_connection();\n  _popc_buffer->Reset();\n  paroc_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n  _popc_buffer->SetHeader(_popc_message_header);\n", clname, id, invoke_code, name);
+            sprintf(tmpcode, "\n  pop_connection* _popc_connection = _popc_combox->get_connection();\n  _popc_buffer->Reset();\n  pop_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n  _popc_buffer->SetHeader(_popc_message_header);\n", clname, id, invoke_code, name);
             output += tmpcode;
         }
     }
@@ -939,14 +939,14 @@ void Method::GenerateClient(std::string &output) {
 
     if(waitreturn) {
 #ifdef OD_DISCONNECT
-        strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())paroc_exception::paroc_throw(\"od.getCheckConnection()\");\n\t}");
+        strcpy(tmpcode,"\n\tif(od.getCheckConnection()){\n\t\tif(!RecvCtrl())pop_exception::paroc_throw(\"od.getCheckConnection()\");\n\t}");
         output += tmpcode;
         strcpy(tmpcode,"\n\telse\n");
         output += tmpcode;
 #endif
 
         if(!GetClass()->is_collective()) {
-            strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv((*__pop_combox), _popc_connection)) paroc_exception::paroc_throw(\"Buffer receive\");\n\t}\n\t\n\tpop_buffer::CheckAndThrow(*__paroc_buf);\n");
+            strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv((*__pop_combox), _popc_connection)) pop_exception::paroc_throw(\"Buffer receive\");\n\t}\n\t\n\tpop_buffer::CheckAndThrow(*__paroc_buf);\n");
         } else {
             strcpy(tmpcode,"\n  popc_recv_response(_popc_buffer, _popc_connection);");
         }
@@ -1225,7 +1225,7 @@ void Method::GenerateBroker(std::string &output) {
                 strcpy(str,"__paroc_buf");
             }
             if(p.marshalProc!=nullptr && !have_memspool) {
-                strcpy(str,"\nparoc_memspool _internal_mem;");
+                strcpy(str,"\npop_memspool _internal_mem;");
                 output += str;
                 have_memspool=true;
             }
@@ -1276,9 +1276,9 @@ void Method::GenerateBroker(std::string &output) {
           } */
 
         if(GetClass()->is_collective()) {
-            sprintf(str,"\n  if (_popc_connection != 0) {\n    _popc_buffer.Reset();\n    paroc_message_header _popc_message_header(\"%s\");\n    _popc_buffer.SetHeader(_popc_message_header);\n", name);
+            sprintf(str,"\n  if (_popc_connection != 0) {\n    _popc_buffer.Reset();\n    pop_message_header _popc_message_header(\"%s\");\n    _popc_buffer.SetHeader(_popc_message_header);\n", name);
         } else {
-            sprintf(str,"\nif (__interface_output!=0) \n{\n__paroc_buf.Reset();\nparoc_message_header __paroc_buf_header(\"%s\");\n__paroc_buf.SetHeader(__paroc_buf_header);\n", name);
+            sprintf(str,"\nif (__interface_output!=0) \n{\n__paroc_buf.Reset();\npop_message_header __paroc_buf_header(\"%s\");\n__paroc_buf.SetHeader(__paroc_buf_header);\n", name);
         }
 
         output += str;
@@ -1317,7 +1317,7 @@ void Method::GenerateBroker(std::string &output) {
             strcpy(str, "\n    _popc_connection->reset();\n  }\n}\n");
             output += str;
         } else {
-            strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) paroc_exception::paroc_throw(\"buffer send\");\n}\n");
+            strcpy(str,"\nif (!__paroc_buf.Send(__interface_output)) pop_exception::paroc_throw(\"buffer send\");\n}\n");
             output += str;
             strcpy(str,"\nif(__interface_output != 0)\n__interface_output->reset();\n}\n");
             output += str;
@@ -1604,7 +1604,7 @@ void Constructor::GenerateClientPrefixBody(std::string &output) {
 
         output += ");\n";
 
-        sprintf(tmpcode, "    } catch(paroc_exception* ex) {\n      printf(\"Async allocation: %%s\", ex->what()); \n    }\n   free(arg);\n  return 0;\n  }\n}\n");
+        sprintf(tmpcode, "    } catch(pop_exception* ex) {\n      printf(\"Async allocation: %%s\", ex->what()); \n    }\n   free(arg);\n  return 0;\n  }\n}\n");
         output += tmpcode;
     }
 

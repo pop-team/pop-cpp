@@ -53,21 +53,21 @@
 
 
 class pop_interface;
-class paroc_exception;
+class pop_exception;
 class pop_combox;
 class pop_connection;
 /**
- * @class paroc_message_header
+ * @class pop_message_header
  * @author Tuan Anh Nguyen
  */
-class paroc_message_header {
+class pop_message_header {
 public:
-    paroc_message_header(int classid, int methodid, int semantics, const char *methodname);
-    paroc_message_header(const char *methodname);
-    paroc_message_header(int exceptioncode, const char *methodname);
-    paroc_message_header();
+    pop_message_header(int classid, int methodid, int semantics, const char *methodname);
+    pop_message_header(const char *methodname);
+    pop_message_header(int exceptioncode, const char *methodname);
+    pop_message_header();
 
-    void operator =(const  paroc_message_header &dat);
+    void operator =(const  pop_message_header &dat);
 
     inline int GetType() const {
         return type;
@@ -127,8 +127,8 @@ public:
 public:
     virtual void Reset()=0;
 
-    virtual void SetHeader(const paroc_message_header &data);
-    virtual const paroc_message_header & GetHeader() const;
+    virtual void SetHeader(const pop_message_header &data);
+    virtual const pop_message_header & GetHeader() const;
 
     virtual void Push(const char *paramname, const char *paramtype, int nelem);
     virtual void Pop();
@@ -205,7 +205,7 @@ public:
     static bool SendException(pop_buffer &except, pop_connection *s,float code);
     static bool SendException(pop_buffer &except, pop_connection *s,double code);
 
-    static bool SendException(pop_buffer &except, pop_connection *s, paroc_exception &code);
+    static bool SendException(pop_buffer &except, pop_connection *s, pop_exception &code);
     static bool SendException(pop_buffer &except, pop_connection *s, pop_interface &code);
 
     static void CheckAndThrow(pop_buffer &except);
@@ -230,7 +230,7 @@ public:
     }
 
 protected:
-    paroc_message_header header;
+    pop_message_header header;
 };
 
 

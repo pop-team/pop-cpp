@@ -21,15 +21,15 @@
 typedef void * VOIDPTR;
 
 /**
- * @class paroc_memspool
+ * @class pop_memspool
  * @brief POP-C++ memory management, used by POP-C++ runtime.
  *
  * @author Tuan Anh Nguyen
  */
-class paroc_memspool {
+class pop_memspool {
 public:
-    paroc_memspool();
-    ~paroc_memspool();
+    pop_memspool();
+    ~pop_memspool();
 
     void* Alloc(int sz);
     void Managed(void* data);
@@ -92,7 +92,7 @@ pop_interface_container<T>::~pop_interface_container() {
         free(data);
     }
 }
-typedef paroc_memspool POPMemspool;
+typedef pop_memspool POPMemspool;
 
 template<class T>
 pop_interface_container<T>::operator T*() {

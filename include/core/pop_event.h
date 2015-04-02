@@ -15,7 +15,7 @@
 #define ANY_EVENT -1
 
 #include <vector>
-#include "paroc_mutex.h"
+#include "pop_mutex.h"
 
 /**
  * @class EventQueue

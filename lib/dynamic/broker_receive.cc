@@ -22,7 +22,7 @@
 
 #include "pop_broker.h"
 #include "pop_interface.h"
-#include "paroc_event.h"
+#include "pop_event.h"
 #include "pop_buffer_factory.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_system.h"
@@ -117,7 +117,7 @@ bool pop_broker::ReceiveRequest(pop_combox *server, paroc_request &req) {
 
         if(req.data->Recv(conn)) {
             req.from = conn;
-            const paroc_message_header &h = req.data->GetHeader();
+            const pop_message_header &h = req.data->GetHeader();
             req.methodId[0] = h.GetClassID();
             req.methodId[1] = h.GetMethodID();
 
@@ -230,7 +230,7 @@ bool pop_broker::ParocCall(paroc_request &req) {
     case 0:
         // BindStatus call
         if(methodid[2] & INVOKE_SYNC) {
-            paroc_message_header h(0, 0, INVOKE_SYNC ,"BindStatus");
+            pop_message_header h(0, 0, INVOKE_SYNC ,"BindStatus");
             buf->Reset();
             buf->SetHeader(h);
             int status = 0;
@@ -271,7 +271,7 @@ bool pop_broker::ParocCall(paroc_request &req) {
         int ret = obj->AddRef();
         if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
-            paroc_message_header h("AddRef");
+            pop_message_header h("AddRef");
             buf->SetHeader(h);
 
             buf->Push("refcount","int",1);
@@ -292,7 +292,7 @@ bool pop_broker::ParocCall(paroc_request &req) {
         int ret = obj->DecRef();
         if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
-            paroc_message_header h("DecRef");
+            pop_message_header h("DecRef");
             buf->SetHeader(h);
 
             buf->Push("refcount","int",1);
@@ -318,7 +318,7 @@ bool pop_broker::ParocCall(paroc_request &req) {
             ret = false;
         }
         if(methodid[2] & INVOKE_SYNC) {
-            paroc_message_header h("Encoding");
+            pop_message_header h("Encoding");
             buf->SetHeader(h);
             buf->Reset();
             buf->Push("result", "bool", 1);
@@ -344,7 +344,7 @@ bool pop_broker::ParocCall(paroc_request &req) {
         }
         if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
-            paroc_message_header h("ObjectActive");
+            pop_message_header h("ObjectActive");
             buf->SetHeader(h);
             bool ret=(instanceCount || request_fifo.size());
             buf->Push("result", "bool", 1);
@@ -364,7 +364,7 @@ bool pop_broker::ParocCall(paroc_request &req) {
         }
         if(methodid[2] & INVOKE_SYNC) {
             buf->Reset();
-            paroc_message_header h("ObjectAlive");
+            pop_message_header h("ObjectAlive");
             h.SetClassID(0);
             h.SetMethodID(6);
             buf->SetHeader(h);

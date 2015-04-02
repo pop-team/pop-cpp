@@ -5,7 +5,7 @@
  *
  * @author Tuan Anh Nguyen
  * @date 2005/01/01
- * @brief POP-C++ exception. All runtime exceptions are thrown as paroc_exception.
+ * @brief POP-C++ exception. All runtime exceptions are thrown as pop_exception.
  *
  */
 
@@ -46,10 +46,10 @@
 
 
 /**
- * @class paroc_exception
+ * @class pop_exception
  * @brief POP-C++ exception, used by POP-C++ runtime.
  *
- *  All runtime exceptions are thrown as paroc_exception
+ *  All runtime exceptions are thrown as pop_exception
  *
  * @author Tuan Anh Nguyen
  *
@@ -57,15 +57,15 @@
  * Modifications
  * - Added AddInfo method and suppress create(...) method that was barely used + suppress SetExtra method (LW Jan 2015)
  */
-class paroc_exception: public paroc_base, public std::exception {
+class pop_exception: public paroc_base, public std::exception {
 public:
-    paroc_exception();
-    paroc_exception(int code);
-    paroc_exception(int code, const std::string& reason1, const std::string& reason2="");
-    paroc_exception(const std::string& reason1, const std::string& reason2="");
-    ~paroc_exception()throw() {}
+    pop_exception();
+    pop_exception(int code);
+    pop_exception(int code, const std::string& reason1, const std::string& reason2="");
+    pop_exception(const std::string& reason1, const std::string& reason2="");
+    ~pop_exception()throw() {}
 
-    paroc_exception & operator = (paroc_exception &e);
+    pop_exception & operator = (pop_exception &e);
     static void paroc_throw(int code, const std::string& reason1="", const std::string& reason2="");
     static void paroc_throw(const std::string& reason1, const std::string& reason2="");
 
@@ -88,5 +88,5 @@ protected:
     int errcode;
 };
 
-typedef paroc_exception POPException;
+typedef pop_exception POPException;
 #endif

@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
         char url[1024];
         int len;
         pop_buffer *buf=callback->GetBufferFactory()->CreateBuffer();
-        paroc_message_header h("Callback");
+        pop_message_header h("Callback");
         buf->SetHeader(h);
 
         buf->Push("status","int",1);

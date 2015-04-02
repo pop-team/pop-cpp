@@ -16,9 +16,9 @@
  */
 
 #include "paroc_object.h"
-#include "paroc_mutex.h"
+#include "pop_mutex.h"
 #include "pop_interface.h"
-#include "paroc_event.h"
+#include "pop_event.h"
 #include "pop_broker.h"
 #include "pop_system.h"
 
@@ -73,18 +73,18 @@ const pop_accesspoint & paroc_object::GetAccessPointForThis() {
 }
 
 int paroc_object::GetRefCount() {
-    paroc_mutex_locker t(lock);
+    pop_mutex_locker t(lock);
     return refcount;
 }
 
 int paroc_object::AddRef() {
-    paroc_mutex_locker t(lock);
+    pop_mutex_locker t(lock);
     refcount++;
     return refcount;
 }
 
 int paroc_object::DecRef() {
-    paroc_mutex_locker t(lock);
+    pop_mutex_locker t(lock);
     refcount--;
     return refcount;
 }
@@ -94,8 +94,8 @@ bool  paroc_object::CanKill() {
 }
 
 int paroc_object::eventwait(int event, int timeout) {
-    return _paroc_events.WaitEvent(event, timeout);
+    return _pop_events.WaitEvent(event, timeout);
 }
 void paroc_object::eventraise(int event) {
-    _paroc_events.PostEvent(event);
+    _pop_events.PostEvent(event);
 }

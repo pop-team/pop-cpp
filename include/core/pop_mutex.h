@@ -16,16 +16,16 @@
 #include <pthread.h>
 
 /**
- * @class paroc_mutex
+ * @class pop_mutex
  * @brief Mutex control and synchronizer, used by POP-C++ runtime.
  *
  * @author Tuan Anh Nguyen
  */
 
-class paroc_mutex {
+class pop_mutex {
 public:
-    paroc_mutex();
-    ~paroc_mutex();
+    pop_mutex();
+    ~pop_mutex();
     void lock();
     void unlock();
 protected:
@@ -33,7 +33,7 @@ protected:
 };
 
 
-class paroc_condition: public paroc_mutex {
+class paroc_condition: public pop_mutex {
 public:
     paroc_condition();
     ~paroc_condition();
@@ -47,12 +47,12 @@ protected:
     pthread_cond_t _cond;
 };
 
-class paroc_mutex_locker {
+class pop_mutex_locker {
 public:
-    paroc_mutex_locker(paroc_mutex &_mutex);
-    ~paroc_mutex_locker();
+    pop_mutex_locker(pop_mutex &_mutex);
+    ~pop_mutex_locker();
 private:
-    paroc_mutex *pmutex;
+    pop_mutex *pmutex;
 };
 
 class POPSynchronizer: public paroc_condition {

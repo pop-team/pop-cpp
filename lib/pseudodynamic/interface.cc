@@ -240,7 +240,7 @@ void pop_interface::Allocate() {
 		LOG_DEBUG("INTERFACE(Allocate): Will contact the appservice: %s", pop_system::appservice.GetAccessString().c_str());
             /*CodeMgr mgr(pop_system::appservice);
             if (mgr.GetPlatform(objname, platforms)<=0) {
-                paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
+                pop_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
             }
             od.setPlatforms(platforms);*/
         }
@@ -320,7 +320,7 @@ void pop_interface::Bind(const pop_accesspoint &dest) {
     }
 
     LOG_WARNING("Cannot find suitable protocol");
-    paroc_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName(), "Cannot find suitable protocol");
+    pop_exception::paroc_throw(OBJECT_BIND_FAIL, ClassName(), "Cannot find suitable protocol");
 }
 
 void pop_interface::Bind(const char *dest) {
@@ -334,7 +334,7 @@ void pop_interface::Bind(const char *dest) {
     pop_combox_factory *fact = pop_combox_factory::GetInstance();
     std::string p;
     if(!fact) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
+        pop_exception::paroc_throw(POPC_NO_PROTOCOL, "No protocol for binding", ClassName());
     }
     fact->GetNames(p);
 
@@ -342,7 +342,7 @@ void pop_interface::Bind(const char *dest) {
     __pop_combox = fact->Create("mpi");
 
     if(!__pop_combox) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot create combox from factory");
+        pop_exception::paroc_throw(POPC_NO_PROTOCOL, ClassName(), "Cannot create combox from factory");
     }
 
     // Create associated buffer
@@ -386,14 +386,14 @@ void pop_interface::Bind(const char *dest) {
         default:
             LOG_WARNING("Unknown binding status");
             Release();
-            paroc_exception::paroc_throw(POPC_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
+            pop_exception::paroc_throw(POPC_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
         }
     } else {
         int code = errno;
 
         LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s", pop_system::GetHost().c_str(),dest,strerror(code));
         Release();
-        paroc_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
+        pop_exception::paroc_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
 
     __pop_combox->SetTimeout(-1);
@@ -423,7 +423,7 @@ bool pop_interface::TryLocal(pop_accesspoint &objaccess) {
             if (rarch==NULL)rarch=pop_system::platform;
             if (!mgr.QueryCode(objname,rarch,codefile))
             {
-                paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, ClassName());
+                pop_exception::paroc_throw(OBJECT_NO_RESOURCE, ClassName());
                 //else return false;
             }*/
         }
@@ -434,7 +434,7 @@ bool pop_interface::TryLocal(pop_accesspoint &objaccess) {
         int status = LocalExec(hoststr, codefile.c_str(), ClassName(), pop_system::jobservice, pop_system::appservice,&objaccess,1,od);
 
         if(status != 0) {
-            paroc_exception::paroc_throw(status, "Invalid status", ClassName());
+            pop_exception::paroc_throw(status, "Invalid status", ClassName());
         }
         return (status==0);
     }
@@ -476,8 +476,8 @@ void pop_interface::BindStatus(int &code, std::string &platform, std::string &in
         return;
     }
 
-    paroc_message_header h(0, 0, INVOKE_SYNC, "BindStatus");
-    paroc_mutex_locker lock(_paroc_imutex);
+    pop_message_header h(0, 0, INVOKE_SYNC, "BindStatus");
+    pop_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
 
@@ -506,8 +506,8 @@ int pop_interface::AddRef() {
         return -1;
     }
 
-    paroc_message_header h(0,1, INVOKE_SYNC,"AddRef");
-    paroc_mutex_locker lock(_paroc_imutex);
+    pop_message_header h(0,1, INVOKE_SYNC,"AddRef");
+    pop_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
 
@@ -528,8 +528,8 @@ int pop_interface::DecRef() {
         return -1;
     }
 
-    paroc_message_header h(0, 2, INVOKE_SYNC,"DecRef");
-    paroc_mutex_locker lock(_paroc_imutex);
+    pop_message_header h(0, 2, INVOKE_SYNC,"DecRef");
+    pop_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
 
@@ -558,8 +558,8 @@ bool pop_interface::Encoding(std::string encoding) {
         return false;
     }
 
-    paroc_message_header h(0, 3, INVOKE_SYNC, "Encoding");
-    paroc_mutex_locker lock(_paroc_imutex);
+    pop_message_header h(0, 3, INVOKE_SYNC, "Encoding");
+    pop_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
 
@@ -592,8 +592,8 @@ void pop_interface::Kill() {
         return;
     }
 
-    paroc_message_header h(0,4, 0 ,"Kill");
-    paroc_mutex_locker lock(_paroc_imutex);
+    pop_message_header h(0,4, 0 ,"Kill");
+    pop_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
 
@@ -610,8 +610,8 @@ bool pop_interface::ObjectActive() {
         return false;
     }
 
-    paroc_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
-    paroc_mutex_locker lock(_paroc_imutex);
+    pop_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
+    pop_mutex_locker lock(_paroc_imutex);
     __paroc_buf->Reset();
     __paroc_buf->SetHeader(h);
 
@@ -638,15 +638,15 @@ bool pop_interface::RecvCtrl() {
     };
 
     char header_name [] = "ObjectAlive\0";
-    paroc_message_header h(0,6, INVOKE_SYNC ,header_name);
-    paroc_mutex_locker lock(_paroc_imutex);
+    pop_message_header h(0,6, INVOKE_SYNC ,header_name);
+    pop_mutex_locker lock(_paroc_imutex);
     while(true) {
         __pop_combox->SetTimeout(time_control);
         pop_connection *t = (pop_connection *) __pop_combox->Wait();
         if(t != NULL) {
             if(!__paroc_buf->Recv(*__pop_combox,t)) {
                 __pop_combox->SetTimeout(oldTimeout);
-                paroc_exception::paroc_throw("Error in od disconnect 1");
+                pop_exception::paroc_throw("Error in od disconnect 1");
             } else {
                 __pop_combox->SetTimeout(oldTimeout);
                 return true;
@@ -658,7 +658,7 @@ bool pop_interface::RecvCtrl() {
 
         if(!__paroc_buf->Send(*__pop_combox)) {
             __pop_combox->SetTimeout(oldTimeout);
-            paroc_exception::paroc_throw("Error in od disconnect 2");
+            pop_exception::paroc_throw("Error in od disconnect 2");
         }
         __pop_combox->SetTimeout(time_alive);
         if(!__paroc_buf->RecvCtrl(*__pop_combox)) {
@@ -707,7 +707,7 @@ void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerpla
         }
     }
 
-    paroc_exception::paroc_throw(POPC_NO_ENCODING, ClassName(), "NegociateEncoding failed");
+    pop_exception::paroc_throw(POPC_NO_ENCODING, ClassName(), "NegociateEncoding failed");
 }
 
         /**
@@ -793,7 +793,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
 
       //pop_combox_socket tmpsock;
     // bool isServer = true;
-      // if (!tmpsock.Create(0,isServer)) paroc_exception::paroc_throw_errno();
+      // if (!tmpsock.Create(0,isServer)) pop_exception::paroc_throw_errno();
       // std::string cburl;
       // tmpsock.GetUrl(cburl);
 
@@ -805,7 +805,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
 //  pop_combox callback_combox = comboxFactory->Create((const char*)"mpi");
 //  pop_combox* callback_combox =  comboxFactory->Create((const char*)"mpi");
 //  if(!callback_combox->Create(NULL, 0, true))
-//    paroc_exception::paroc_throw_errno();
+//    pop_exception::paroc_throw_errno();
 //  std::string callback_url;
 //  callback_combox->GetUrl(callback_url);
 
@@ -887,7 +887,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     MPI::COMM_WORLD.Recv(&dest, 1, MPI_INT, 1, 13);
 
     if(dest < 0) {
-        paroc_exception::paroc_throw(ALLOCATION_EXCEPTION,"Cannot create object via POP-C++ (MPI pool of object is not big enough)");
+        pop_exception::paroc_throw(ALLOCATION_EXCEPTION,"Cannot create object via POP-C++ (MPI pool of object is not big enough)");
     }
 
     /*LOG_INFO("INTERFACE: allocate idle %d with %s %s", dest, codefile, executable_args.c_str());
@@ -946,7 +946,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     /*if(spawn_errcodes[0] != MPI_SUCCESS){
       // LOG
         LOG_DEBUG("INTERFACE: ERROR - Something went wrong with Spawn");
-        paroc_exception::paroc_throw(err, classname);
+        pop_exception::paroc_throw(err, classname);
     }*/
 
 
@@ -1018,7 +1018,7 @@ void pop_interface::ApplyCommPattern(const std::string& pattern, std::vector<std
  */
 void pop_interface::popc_send_request(pop_buffer *buf, pop_connection* conn) {
     if(!buf->Send((*__pop_combox), conn)) {
-        paroc_exception::paroc_throw("Buffer send failed");
+        pop_exception::paroc_throw("Buffer send failed");
     }
     LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == NULL) ? "is null" : "is not null");
 }
@@ -1028,7 +1028,7 @@ void pop_interface::popc_send_request(pop_buffer *buf, pop_connection* conn) {
  */
 void pop_interface::popc_get_response(pop_buffer *buf, pop_connection* conn) {
     if(!buf->Recv((*__pop_combox), conn)) {
-        paroc_exception::paroc_throw("Buffer receive failed");
+        pop_exception::paroc_throw("Buffer receive failed");
     }
     LOG_DEBUG("INTERFACE: paroc_response will disconnect the connection");
     pop_buffer::CheckAndThrow(*buf);
@@ -1096,7 +1096,7 @@ int pop_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int de
         _ssh_local_port = local_port;
         return local_port;
     } else {
-        //paroc_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
+        //pop_exception::paroc_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
         LOG_WARNING("Executable not found");
     }
     LOG_WARNING("CreateSSHTunnel returned with error code %d", error_code);

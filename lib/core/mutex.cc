@@ -13,21 +13,21 @@
 /*
   Should look inside the std for similar implementation. Must be more efficient.
   Deeply need refactoring:
-    POPC_Mutex instead of paroc_mutex
-    POPC_MutexLocker instead of paroc_mutex_locker
+    POPC_Mutex instead of pop_mutex
+    POPC_MutexLocker instead of pop_mutex_locker
  */
 #include "popc_intface.h"
 
 //#include <stdio.h>
 
-#include "paroc_mutex.h"
+#include "pop_mutex.h"
 #include "popc_logger.h"
 //#include <sys/time.h>
 
 /*
 */
 
-paroc_mutex::paroc_mutex() {
+pop_mutex::pop_mutex() {
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
 #ifdef _LINUX
@@ -43,15 +43,15 @@ paroc_mutex::paroc_mutex() {
     pthread_mutexattr_destroy(&attr);
 }
 
-void paroc_mutex::lock() {
+void pop_mutex::lock() {
     pthread_mutex_lock(&_mutex);
 }
 
-void paroc_mutex::unlock() {
+void pop_mutex::unlock() {
     pthread_mutex_unlock(&_mutex);
 }
 
-paroc_mutex::~paroc_mutex() {
+pop_mutex::~pop_mutex() {
     pthread_mutex_destroy(&_mutex);
 }
 
@@ -101,12 +101,12 @@ POP-C++ locker implementation....
 
 
 
-paroc_mutex_locker::paroc_mutex_locker(paroc_mutex &_mutex) {
+pop_mutex_locker::pop_mutex_locker(pop_mutex &_mutex) {
     pmutex=&_mutex;
     pmutex->lock();
 }
 
-paroc_mutex_locker::~paroc_mutex_locker() {
+pop_mutex_locker::~pop_mutex_locker() {
     pmutex->unlock();
 }
 

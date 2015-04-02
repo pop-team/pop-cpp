@@ -14,7 +14,7 @@
 #define _POPC_SYSTEM_HEADERS_
 #include <paroc_base.h>
 
-#include <paroc_mutex.h>
+#include <pop_mutex.h>
 #include <pop_interface.h>
 
 #include <pop_broker.h>

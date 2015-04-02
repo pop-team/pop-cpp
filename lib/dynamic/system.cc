@@ -36,7 +36,7 @@
 #include "paroc_utils.h"
 #include "pop_buffer_factory.h"
 #include "pop_combox_factory.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "paroc_od.h"
 #include "appservice.ph"
 
@@ -289,7 +289,7 @@ std::string pop_system::GetDefaultInterface() {
             //       iface, net_addr, gate_addr, &iflags, &refcnt, &use, &metric, mask_addr, &mss, &window, &irtt);
             int num = sscanf(buff, "%16s %128s",iface, net_addr);
             if(num < 2) {
-                paroc_exception::paroc_throw("GetDefaultInterface failed: num < 2");
+                pop_exception::paroc_throw("GetDefaultInterface failed: num < 2");
             }
             // LOG_DEBUG("iface %s, net_addr %s, gate_addr %s, iflags %X, &refcnt %d, &use %d, &metric %d, mask_addr %s, &mss %d, &window %d, &irtt %d\n\n",iface, net_addr, gate_addr,iflags, refcnt, use, metric, mask_addr, mss, window, irtt);
 
@@ -455,7 +455,7 @@ void pop_system::Finalize(bool normalExit) {
           LOG_DEBUG("Finalize stop");
             mgr->Stop(challenge);
             delete mgr;
-        } catch(paroc_exception &e) {
+        } catch(pop_exception &e) {
             LOG_ERROR("while finalizing the application: %s", e.what());
         }
         mgr=nullptr;

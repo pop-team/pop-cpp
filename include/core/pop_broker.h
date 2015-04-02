@@ -31,7 +31,7 @@
 
 #define IMPLEMENT_TYPE(aparclass) aparclass##_popcobject
 
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "pop_buffer.h"
 #include "pop_buffer_xdr.h"
 #include "pop_accesspoint.h"

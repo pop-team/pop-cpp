@@ -11,10 +11,10 @@
  */
 
 #include "pop_buffer_utils.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 
 template <class T>
-void packarray(pop_buffer &buf, T *param, int size, int flag, paroc_memspool* /*temp*/) {
+void packarray(pop_buffer &buf, T *param, int size, int flag, pop_memspool* /*temp*/) {
     if(flag & FLAG_MARSHAL) {
         int n=(param!=nullptr) ?  size : 0;
         buf.Pack(&n,1);

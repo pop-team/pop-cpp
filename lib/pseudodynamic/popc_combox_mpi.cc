@@ -115,7 +115,7 @@ bool popc_combox_mpi::connect_and_die(std::string &url) {
     int dest = atoi(full_accesspoint.c_str());
 
     // Create a dummy message to unlock the receive thread
-    paroc_message_header h(0, 7, INVOKE_SYNC, "DummyMethod");
+    pop_message_header h(0, 7, INVOKE_SYNC, "DummyMethod");
 
     POPC_MPIConnection* connection = new POPC_MPIConnection(this);
     connection->set_communicator(MPI::COMM_WORLD);

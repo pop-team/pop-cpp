@@ -11,7 +11,7 @@
 #include "popc_allocator_uds_local.h"
 
 #include "pop_system.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
 #include "pop_broker.h"
@@ -57,7 +57,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
             rarch=pop_system::platform;
         }
         if(!mgr.QueryCode(objectname,rarch, codefile)) {
-            paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname.c_str(), "QueryCode failed");
+            pop_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname.c_str(), "QueryCode failed");
         }
     }
 
@@ -94,16 +94,16 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
 
     auto combox_factory = pop_combox_factory::GetInstance();
     if(!combox_factory) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
+        pop_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
     }
 
     auto tmp_combox = combox_factory->Create("uds");
     if(!tmp_combox) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
+        pop_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }
 
     if(!tmp_combox->Create(nullptr, true)) {
-        paroc_exception::paroc_throw("Creation of socket failed");
+        pop_exception::paroc_throw("Creation of socket failed");
     }
 
     auto connection = tmp_combox->get_connection();
@@ -162,7 +162,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
 
     if(ret==-1) {
         LOG_WARNING("Cannot start the object: code %d", ret);
-        paroc_exception::paroc_throw(err, objectname.c_str(), "Cannot start the object");
+        pop_exception::paroc_throw(err, objectname.c_str(), "Cannot start the object");
     }
 
     //Now get the return pop_accesspoint....
@@ -172,7 +172,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
 
     if(!tmpbuffer->Recv((*tmp_combox), connection)) {
         LOG_WARNING("cannot receive anything");
-        paroc_exception::paroc_throw("cannot receive anything");
+        pop_exception::paroc_throw("cannot receive anything");
     }
 
     pop_buffer::CheckAndThrow(*tmpbuffer);
@@ -183,7 +183,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
     tmpbuffer->Pop();
 
     if(n!=0) {
-        paroc_exception::paroc_throw(n, objectname.c_str(), "n is null");
+        pop_exception::paroc_throw(n, objectname.c_str(), "n is null");
     }
 
     std::string objectaddress;

@@ -142,7 +142,7 @@ public:
     bool Add(const std::string &contact, NodeInfo &info);
 private:
     std::unordered_map<std::string, NodeInfo> hashmap;
-    paroc_mutex maplock;
+    pop_mutex maplock;
 };
 
 /**

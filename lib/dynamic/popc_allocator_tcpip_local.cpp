@@ -14,7 +14,7 @@
 #include "popc_allocator_tcpip.h"
 
 #include "pop_system.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
 #include "pop_broker.h"
@@ -69,7 +69,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
             rarch=pop_system::platform;
         }
         if(!mgr.QueryCode(objectname,rarch, codefile)) {
-            paroc_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname.c_str(), "QueryCode failed");
+            pop_exception::paroc_throw(OBJECT_NO_RESOURCE, objectname.c_str(), "QueryCode failed");
         }
     }
 
@@ -120,16 +120,16 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
 
     pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
     if(combox_factory == nullptr) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
+        pop_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
     }
 
     pop_combox* tmpsock = combox_factory->Create("socket");
     if(tmpsock == nullptr) {
-        paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
+        pop_exception::paroc_throw(POPC_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }
 
     if(!tmpsock->Create(0, true)) {
-        paroc_exception::paroc_throw("Creation of socket failed");
+        pop_exception::paroc_throw("Creation of socket failed");
     }
 
     pop_connection *connection = tmpsock->get_connection();
@@ -204,7 +204,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
 
     if(ret==-1) {
         LOG_WARNING("Can not start the object: code %d", ret);
-        paroc_exception::paroc_throw(err, objectname.c_str(), "Can not start the object");
+        pop_exception::paroc_throw(err, objectname.c_str(), "Can not start the object");
     }
 
     //Now get the return pop_accesspoint....
@@ -214,7 +214,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
 
     if(!tmpbuffer->Recv((*tmpsock), connection)) {
         LOG_WARNING("cannot receive anything");
-        paroc_exception::paroc_throw("cannot receive anything");
+        pop_exception::paroc_throw("cannot receive anything");
     }
 
     pop_buffer::CheckAndThrow(*tmpbuffer);
@@ -225,7 +225,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
     tmpbuffer->Pop();
 
     if(n!=0) {
-        paroc_exception::paroc_throw(n, objectname.c_str(), "n is null");
+        pop_exception::paroc_throw(n, objectname.c_str(), "n is null");
     }
 
     std::string objectaddress;

@@ -12,7 +12,7 @@
 #ifndef _POPC_SYSTEM_MPI_H
 #define _POPC_SYSTEM_MPI_H
 #include "pop_system.h"
-#include "paroc_mutex.h"
+#include "pop_mutex.h"
 #include <mpi.h>
 
 /**

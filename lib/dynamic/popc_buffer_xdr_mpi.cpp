@@ -14,7 +14,7 @@
 
 #include "pop_interface.h"
 #include "popc_buffer_xdr_mpi.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "popc_logger.h"
 
 /**
@@ -363,7 +363,7 @@ void popc_buffer_xdr_mpi::UnPack(signed char *data, int n) {
 
 void popc_buffer_xdr_mpi::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong packed data size");
+        pop_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong packed data size");
     }
 }
 
@@ -553,24 +553,24 @@ bool popc_buffer_xdr_mpi::RecvCtrl(pop_combox &s, pop_connection *conn) {
     while(true) {
         pop_connection * t = (pop_connection *) s.Wait();
         if(t == NULL) {
-            paroc_exception::paroc_throw("[pop_buffer_xdr.cc] : Remote Object not alive");
+            pop_exception::paroc_throw("[pop_buffer_xdr.cc] : Remote Object not alive");
         }
         if(!Recv(s, t)) {
-            paroc_exception::paroc_throw("Recv failed");
+            pop_exception::paroc_throw("Recv failed");
         }
         if(header.GetType() == TYPE_RESPONSE) {
             if(header.GetClassID() == 0 && header.GetMethodID() == 6) {
                 return true;
             } else {
-                paroc_message_header h = header;
+                pop_message_header h = header;
                 int unpackposold = unpackpos;
                 auto packeddataold = packeddata;
                 pop_connection * t = (pop_connection *) s.Wait();
                 if(t == NULL) {
-                    paroc_exception::paroc_throw("[pop_buffer_xdr.cc] : Remote Object not alive");
+                    pop_exception::paroc_throw("[pop_buffer_xdr.cc] : Remote Object not alive");
                 }
                 if(!Recv(s, t)) {
-                    paroc_exception::paroc_throw("Recv failed 2");
+                    pop_exception::paroc_throw("Recv failed 2");
                 }
                 Reset();
                 header = h;

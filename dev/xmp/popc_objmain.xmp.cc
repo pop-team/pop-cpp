@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
         request.data->load(load, data[1]);
 
         // Get information about the header
-        const paroc_message_header &header = request.data->GetHeader();
+        const pop_message_header &header = request.data->GetHeader();
         request.methodId[0] = header.GetClassID();
         request.methodId[1] = header.GetMethodID();
         request.from = mpi_connection;

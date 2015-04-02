@@ -9,20 +9,20 @@
  */
 
 
-#include "paroc_allocobj.h"
+#include "pop_allocobj.h"
 #include "pop_interface.h"
 
 
-paroc_mutex paroc_allocobj::lock;
+pop_mutex pop_allocobj::lock;
 
-paroc_allocobj::paroc_allocobj(int count) {
+pop_allocobj::pop_allocobj(int count) {
     lock.lock();
     holding=true;
     pop_interface::batchsize=count;
     pop_interface::batchindex=0;
 }
 
-void paroc_allocobj::release() {
+void pop_allocobj::release() {
     if(holding) {
         pop_interface::batchsize=pop_interface::batchindex=0;
         holding=false;
@@ -30,6 +30,6 @@ void paroc_allocobj::release() {
     }
 }
 
-paroc_allocobj::~paroc_allocobj() {
+pop_allocobj::~pop_allocobj() {
     release();
 }

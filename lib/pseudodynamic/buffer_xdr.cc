@@ -20,7 +20,7 @@
 #include <rpc/xdr.h>
 // #include "pop_interface.h"
 #include "pop_buffer_xdr.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "popc_logger.h"
 
 pop_buffer_xdr::pop_buffer_xdr() {
@@ -353,7 +353,7 @@ void pop_buffer_xdr::UnPack(signed char *data, int n) {
 void pop_buffer_xdr::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
         LOG_ERROR("Wrong buffer format: %d + %d > %d", sz, unpackpos, packeddata.size()); // TODO LW: Why is it allowed to have <
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_xdr::CheckUnPack");
+        pop_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_xdr::CheckUnPack");
     }
 }
 
@@ -561,28 +561,28 @@ bool pop_buffer_xdr::RecvCtrl(pop_combox &s, pop_connection *conn) {
     while(true) {
         pop_connection * t = (pop_connection *) s.Wait();
         if(!t) {
-            paroc_exception::paroc_throw("Remote Object not alive (1)");
+            pop_exception::paroc_throw("Remote Object not alive (1)");
         }
 
         if(!Recv(s, t)) {
-            paroc_exception::paroc_throw(errno);
+            pop_exception::paroc_throw(errno);
         }
 
         if(header.GetType() == TYPE_RESPONSE) {
             if(header.GetClassID() == 0 && header.GetMethodID() == 6) {
                 return true;
             } else {
-                paroc_message_header h = header;
+                pop_message_header h = header;
                 int unpackposold = unpackpos;
                 auto packeddataold = packeddata;
                 auto t = (pop_connection *) s.Wait();
 
                 if(!t) {
-                    paroc_exception::paroc_throw("Remote Object not alive (2)");
+                    pop_exception::paroc_throw("Remote Object not alive (2)");
                 }
 
                 if(!Recv(s, t)) {
-                    paroc_exception::paroc_throw(errno);
+                    pop_exception::paroc_throw(errno);
                 }
 
                 Reset();

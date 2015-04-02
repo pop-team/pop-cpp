@@ -10,7 +10,7 @@
 #include "pop_buffer_raw.h"
 #include "pop_buffer_xdr.h"
 #include "pop_combox_factory.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 
 template<typename T>void testByVect(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut, 
                                     pop_buffer* xp_bufferIn,  pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn, const std::vector<T>& x_vect){

@@ -95,7 +95,7 @@ std::vector<std::string> NodeInfoMap::GetContacts() {
 
     std::vector<double> h;
 
-    std::unique_lock<paroc_mutex> lock(maplock);
+    std::unique_lock<pop_mutex> lock(maplock);
 
     for(auto& t : hashmap){
         double heuristic=t.second.heuristic;
@@ -125,7 +125,7 @@ std::vector<std::string> NodeInfoMap::GetContacts() {
 }
 
 bool NodeInfoMap::HasContact(const std::string &contact) {
-    std::unique_lock<paroc_mutex> lock(maplock);
+    std::unique_lock<pop_mutex> lock(maplock);
 
     for(auto& v : hashmap){
         if(paroc_utils::SameContact(std::string(v.first), contact)){
@@ -137,7 +137,7 @@ bool NodeInfoMap::HasContact(const std::string &contact) {
 }
 
 bool NodeInfoMap::GetInfo(const std::string &contact, NodeInfo &info) {
-    std::unique_lock<paroc_mutex> lock(maplock);
+    std::unique_lock<pop_mutex> lock(maplock);
 
     if(hashmap.count(contact)){
         info = hashmap[contact.c_str()];
@@ -148,12 +148,12 @@ bool NodeInfoMap::GetInfo(const std::string &contact, NodeInfo &info) {
 }
 
 int NodeInfoMap::GetCount() {
-    std::unique_lock<paroc_mutex> lock(maplock);
+    std::unique_lock<pop_mutex> lock(maplock);
     return hashmap.size();
 }
 
 bool NodeInfoMap::Update(const std::string &contact, NodeInfo &info) {
-    std::unique_lock<paroc_mutex> lock(maplock);
+    std::unique_lock<pop_mutex> lock(maplock);
 
     if(hashmap.count(contact)){
         hashmap[contact.c_str()] = info;
@@ -164,13 +164,13 @@ bool NodeInfoMap::Update(const std::string &contact, NodeInfo &info) {
 }
 
 bool NodeInfoMap::Remove(const std::string &contact) {
-    std::unique_lock<paroc_mutex> lock(maplock);
+    std::unique_lock<pop_mutex> lock(maplock);
     auto erased = hashmap.erase(contact);
     return erased > 0;
 }
 
 bool NodeInfoMap::Add(const std::string &contact, NodeInfo &info) {
-    std::unique_lock<paroc_mutex> lock(maplock);
+    std::unique_lock<pop_mutex> lock(maplock);
 
     if(!hashmap.count(contact)){
         hashmap[contact.c_str()] = info;
@@ -254,7 +254,7 @@ JobMgr::JobMgr(bool daemon, const std::string &conf, const std::string &challeng
     char val[256];
     if(f==nullptr) {
         LOG_WARNING("Open config file [%s] fail",conf.c_str());
-        paroc_exception::paroc_throw(errno,conf.c_str());
+        pop_exception::paroc_throw(errno,conf.c_str());
     }
 
     maxjobs=100;
@@ -876,7 +876,7 @@ bool JobMgr::AllocResource(const pop_accesspoint &localservice, const std::strin
 
     //Check if there is any responses
     if(responses.getNodeInfos().size() == 0) {
-        paroc_exception::paroc_throw("No ressource found for execution");
+        pop_exception::paroc_throw("No ressource found for execution");
     }
 
 

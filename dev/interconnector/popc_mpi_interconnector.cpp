@@ -156,7 +156,7 @@ void *mpireceivedthread(void *t) {
 
             if(rank != 0) {
                 // signal the IPC process to stop
-                paroc_message_header endheader(20, 200001, INVOKE_SYNC, "_terminate");
+                pop_message_header endheader(20, 200001, INVOKE_SYNC, "_terminate");
                 ipcwaker_buffer->Reset();
                 ipcwaker_buffer->SetHeader(endheader);
                 ipcwaker_buffer->Send(ipcwaker, connection);
@@ -166,7 +166,7 @@ void *mpireceivedthread(void *t) {
         // Allocation of new parallel object
         case 11: {
             // signal the IPC thread to be ready to receive data for allocation
-            paroc_message_header endheader(20, 200004, INVOKE_SYNC, "_allocation");
+            pop_message_header endheader(20, 200004, INVOKE_SYNC, "_allocation");
             ipcwaker_buffer->Reset();
             ipcwaker_buffer->SetHeader(endheader);
             ipcwaker_buffer->Send(ipcwaker, connection);
@@ -180,7 +180,7 @@ void *mpireceivedthread(void *t) {
         // Will receive a request from a redirection
         case 13: {
             //printf("MPI request %d %d\n", rank, status.Get_source());
-            paroc_message_header reqheader(status.Get_source(), 200005, INVOKE_SYNC, "_request");
+            pop_message_header reqheader(status.Get_source(), 200005, INVOKE_SYNC, "_request");
             ipcwaker_buffer->Reset();
             ipcwaker_buffer->SetHeader(reqheader);
             ipcwaker_buffer->Push("tag", "int", 1);
@@ -280,7 +280,7 @@ void *mpireceivedthread(void *t) {
             delete [] objaccess;
 
             ipcwaker_buffer->Reset();
-            paroc_message_header h("_allocate");
+            pop_message_header h("_allocate");
             ipcwaker_buffer->SetHeader(h);
             ipcwaker_buffer->Push("objectaddress", "std::string", 1);
             ipcwaker_buffer->Pack(&objectaddress, 1);
@@ -493,7 +493,7 @@ int main(int argc, char* argv[]) {
 
             if(request.data->Recv(connection)) {
                 request.from = connection;
-                const paroc_message_header &header = request.data->GetHeader();
+                const pop_message_header &header = request.data->GetHeader();
                 request.methodId[0] = header.GetClassID();
                 if(header.GetType() == TYPE_EXCEPTION) {
                     request.methodId[1] = header.GetMethodID() - 100000;
@@ -677,7 +677,7 @@ int main(int argc, char* argv[]) {
                     callback.data = buffer_factory->CreateBuffer();
                     if(callback.data->Recv(receiver, objectcallback)) {
                         callback.from = connection;
-                        const paroc_message_header &callback_header = callback.data->GetHeader();
+                        const pop_message_header &callback_header = callback.data->GetHeader();
                         callback.methodId[0] = callback_header.GetClassID();
                         callback.methodId[1] = callback_header.GetMethodID();
                         if(callback.methodId[1] == 200002) {
@@ -826,12 +826,12 @@ int main(int argc, char* argv[]) {
                         callback.data = buffer_factory->CreateBuffer();
                         if(callback.data->Recv(receiver, objectcallback)) {
                             callback.from = connection;
-                            const paroc_message_header &callback_header = callback.data->GetHeader();
+                            const pop_message_header &callback_header = callback.data->GetHeader();
                             callback.methodId[0] = callback_header.GetClassID();
                             callback.methodId[1] = callback_header.GetMethodID();
                             if(callback.methodId[1] == 200002) {
                                 request.data->Reset();
-                                paroc_message_header h("_allocate");
+                                pop_message_header h("_allocate");
                                 request.data->SetHeader(h);
                                 request.data->Push("objectaddress", "std::string", 1);
                                 request.data->Pack(&objectaddress, 1);
@@ -839,7 +839,7 @@ int main(int argc, char* argv[]) {
                                 request.data->Send(request.from);
                             } else {
                                 request.data->Reset();
-                                paroc_message_header h("_allocate");
+                                pop_message_header h("_allocate");
                                 request.data->SetHeader(h);
                                 request.data->Push("objectaddress", "std::string", 1);
                                 std::string empty;
@@ -891,7 +891,7 @@ int main(int argc, char* argv[]) {
                     delete [] objaccess;
 
                     request.data->Reset();
-                    paroc_message_header h("_allocate");
+                    pop_message_header h("_allocate");
                     request.data->SetHeader(h);
                     request.data->Push("objectaddress", "std::string", 1);
                     request.data->Pack(&objectaddress, 1);
@@ -1063,7 +1063,7 @@ int main(int argc, char* argv[]) {
 
                     std::string objectaddress("uds://uds_10.0 uds://uds_11.0");
                     request.data->Reset();
-                    paroc_message_header h("_allocate");
+                    pop_message_header h("_allocate");
                     request.data->SetHeader(h);
                     request.data->Push("objectaddress", "std::string", 1);
                     request.data->Pack(&objectaddress, 1);
@@ -1166,7 +1166,7 @@ int main(int argc, char* argv[]) {
                                     // TODO make signal by a process itself
                                     if(request.methodId[1] == 2) {
                                         request.data->Reset();
-                                        paroc_message_header h("_finalize");
+                                        pop_message_header h("_finalize");
                                         request.data->SetHeader(h);
                                         request.data->Send(request.from);
                                     }

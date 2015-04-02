@@ -11,36 +11,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "paroc_memspool.h"
-#include "paroc_exception.h"
+#include "pop_memspool.h"
+#include "pop_exception.h"
 
-paroc_memspool::paroc_memspool() {
+pop_memspool::pop_memspool() {
 }
 
-paroc_memspool::~paroc_memspool() {
+pop_memspool::~pop_memspool() {
     Free();
 }
 
-void* paroc_memspool::Alloc(int sz) {
+void* pop_memspool::Alloc(int sz) {
     if(sz<=0) {
         return nullptr;
     }
 
     void* data;
     if((data=malloc(sz))==nullptr) {
-        paroc_exception::paroc_throw(errno);
+        pop_exception::paroc_throw(errno);
     }
     memtemp.push_back(data);
     return data;
 }
 
-void paroc_memspool::Managed(void* data) {
+void pop_memspool::Managed(void* data) {
     if(data) {
         memtemp.push_back(data);
     }
 }
 
-void paroc_memspool::Free() {
+void pop_memspool::Free() {
     for(auto& tmp : memtemp){
         free(tmp);
     }

@@ -2,7 +2,7 @@
 
 #include "pop_combox.h"
 #include "pop_buffer.h"
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "pop_xmp_object.h"
 
 #include <stdio.h>
@@ -47,7 +47,7 @@ void POPXMPObject_popcobject_Broker::Invoke_POPXMPObject_10(pop_buffer &_popc_bu
   
   if (_popc_connection != NULL) {
     _popc_buffer.Reset();
-    paroc_message_header _popc_message_header("POPXMPObject");
+    pop_message_header _popc_message_header("POPXMPObject");
     _popc_buffer.SetHeader(_popc_message_header);
 
     popc_send_response(_popc_buffer, _popc_connection, true); 
@@ -69,7 +69,7 @@ void POPXMPObject_popcobject_Broker::Invoke_execute_xmp_1_13(pop_buffer &_popc_b
   
   if (_popc_connection != NULL)  {
     _popc_buffer.Reset();
-    paroc_message_header _popc_message_header("execute_xmp_1");
+    pop_message_header _popc_message_header("execute_xmp_1");
     _popc_buffer.SetHeader(_popc_message_header);
     popc_send_response(_popc_buffer, _popc_connection, true); 
     _popc_connection->reset();   
@@ -94,7 +94,7 @@ void POPXMPObject_popcobject_Broker::Invoke_set_value_14(pop_buffer &_popc_buffe
   
   if (_popc_connection != NULL) {
     _popc_buffer.Reset();
-    paroc_message_header _popc_message_header("set_value");
+    pop_message_header _popc_message_header("set_value");
     _popc_buffer.SetHeader(_popc_message_header);
 
     popc_send_response(_popc_buffer, _popc_connection, false);     

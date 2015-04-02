@@ -12,17 +12,17 @@
 
 /*
   Deeply need refactoring:
-    POPC_Exception instead of paroc_exception
+    POPC_Exception instead of pop_exception
  */
 
 #include <string.h>
 #include <errno.h>
 
-#include "paroc_exception.h"
+#include "pop_exception.h"
 #include "pop_system.h"
 #include "popc_logger.h"
 
-const char *paroc_exception::paroc_errstr[17]= { // Error number: 1000 + ...
+const char *pop_exception::paroc_errstr[17]= { // Error number: 1000 + ...
     "Out of resource",                           // 1
     "Fail to bind to the remote object broker",  // 2
     "Mismatch remote method id",                 // 3
@@ -44,7 +44,7 @@ const char *paroc_exception::paroc_errstr[17]= { // Error number: 1000 + ...
 
 
 
-paroc_exception::paroc_exception(int code) {
+pop_exception::pop_exception(int code) {
     errcode=code;
     if(code == UNKNOWN_EXCEPTION) {
     	    ; // Do nothing
@@ -59,8 +59,8 @@ paroc_exception::paroc_exception(int code) {
     }
 }
 
-paroc_exception::paroc_exception(int code, const std::string& reason1, const std::string& reason2)
-    : paroc_exception(code) {
+pop_exception::pop_exception(int code, const std::string& reason1, const std::string& reason2)
+    : pop_exception(code) {
     if(!reason1.empty()) {
         AddInfo(reason1);
     }
@@ -69,8 +69,8 @@ paroc_exception::paroc_exception(int code, const std::string& reason1, const std
     }
 }
 
-paroc_exception::paroc_exception(const std::string& reason1, const std::string& reason2)
-    : paroc_exception(UNKNOWN_EXCEPTION) {
+pop_exception::pop_exception(const std::string& reason1, const std::string& reason2)
+    : pop_exception(UNKNOWN_EXCEPTION) {
     if(!reason1.empty()) {
         AddInfo(reason1);
     }
@@ -79,41 +79,41 @@ paroc_exception::paroc_exception(const std::string& reason1, const std::string& 
     }
 }
 
-paroc_exception & paroc_exception::operator =(paroc_exception &e) {
+pop_exception & pop_exception::operator =(pop_exception &e) {
     errcode=e.Code();
     info=e.Info();
     return *this;
 }
 
-const std::string& paroc_exception::Info()const {
+const std::string& pop_exception::Info()const {
     return info;
 }
 
-void paroc_exception::AddInfo(const std::string& str) {
+void pop_exception::AddInfo(const std::string& str) {
     if(!info.empty())
 	    info += ": ";
     info += str;
 }
 
-int paroc_exception::Code()const {
+int pop_exception::Code()const {
     return errcode;
 }
 
-void paroc_exception::paroc_throw(int code, const std::string& reason1, const std::string& reason2) {
-    throw paroc_exception(code, reason1, reason2);
+void pop_exception::paroc_throw(int code, const std::string& reason1, const std::string& reason2) {
+    throw pop_exception(code, reason1, reason2);
 }
 
-void paroc_exception::paroc_throw(const std::string& reason1, const std::string& reason2) {
-    throw paroc_exception(reason1, reason2);
+void pop_exception::paroc_throw(const std::string& reason1, const std::string& reason2) {
+    throw pop_exception(reason1, reason2);
 }
 
-const char* paroc_exception::what() const throw() {
+const char* pop_exception::what() const throw() {
     errno=Code();
     return info.c_str();
 }
 
 
-void paroc_exception::Serialize(pop_buffer &buf, bool pack) {
+void pop_exception::Serialize(pop_buffer &buf, bool pack) {
     if(pack) {
         buf.Push("code","int",1);
         buf.Pack(&errcode,1);
@@ -137,7 +137,7 @@ void paroc_exception::Serialize(pop_buffer &buf, bool pack) {
 ///
 /// perror is the old way to manage errors. It simply prints an error message to stderr
 ///
-void paroc_exception::perror(const std::string& msg) {
+void pop_exception::perror(const std::string& msg) {
     LOG_ERROR("pop_system::perror : %d",errno);
     if(errno>USER_DEFINE_ERROR && errno<USER_DEFINE_LASTERROR) {
         if(!msg.empty())

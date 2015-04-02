@@ -18,7 +18,7 @@
 
 #include "pop_broker.h"
 #include "pop_interface.h"
-#include "paroc_event.h"
+#include "pop_event.h"
 #include "paroc_thread.h"
 #include "pop_system.h"
 #include "popc_logger.h"
@@ -67,7 +67,7 @@ void paroc_invokethread::start() {
 
 
 bool pop_broker::GetRequest(paroc_request &req) {
-    paroc_mutex_locker locker(execCond);
+    pop_mutex_locker locker(execCond);
 
     //If the queue is empty then wait for the request....
     while(request_fifo.empty()) {
@@ -122,12 +122,12 @@ void pop_broker::ServeRequest(paroc_request &req) {
 
         if(ret!=0) {
             //Error: Can not create a new thread and timeout
-            paroc_mutex_locker locker(execCond);
+            pop_mutex_locker locker(execCond);
             execCond.broadcast();
 
             if(req.from!=nullptr) {
 
-                paroc_exception e(ret);
+                pop_exception e(ret);
                 e.AddInfo(classname);
                 e.AddInfo(accesspoint.GetAccessString());
                 pop_buffer::SendException(*req.data, req.from, e);
@@ -171,7 +171,7 @@ bool pop_broker::DoInvoke(paroc_request &request) {
     try {
         if(!Invoke(request.methodId, *request.data, request.from)) {
             LOG_ERROR("Mismatched method was invoked: classid=%d, methodid=%d", request.methodId[0], request.methodId[1]);
-            paroc_exception::paroc_throw(OBJECT_MISMATCH_METHOD, "Mismatched method was invoked");
+            pop_exception::paroc_throw(OBJECT_MISMATCH_METHOD, "Mismatched method was invoked");
         }
     }
 
@@ -195,7 +195,7 @@ bool pop_broker::DoInvoke(paroc_request &request) {
     PROPAGATE_EXCEPTION(pop_interface)
 
     PROPAGATE_EXCEPTION(char *)
-    catch(paroc_exception *e) {
+    catch(pop_exception *e) {
         LOG_WARNING("POP-C++ exception in pop_broker::DoInvoke");
         if(request.from!=nullptr) {
             std::string extra=e->Info();
@@ -210,7 +210,7 @@ bool pop_broker::DoInvoke(paroc_request &request) {
             UnhandledException();
         }
         delete e;
-    } catch(paroc_exception e) {
+    } catch(pop_exception e) {
         LOG_WARNING("POP-C++ exception in pop_broker::DoInvoke %s", e.what());
         if(request.from!=nullptr) {
 
@@ -228,7 +228,7 @@ bool pop_broker::DoInvoke(paroc_request &request) {
     } catch(std::exception *e) {
         LOG_WARNING("Std exception in pop_broker::DoInvoke");
         if(request.from != nullptr) {
-            paroc_exception  e2=paroc_exception(STD_EXCEPTION);
+            pop_exception  e2=pop_exception(STD_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
             pop_buffer::SendException(*request.data, request.from, e2);
             delete e;
@@ -238,7 +238,7 @@ bool pop_broker::DoInvoke(paroc_request &request) {
     } catch(std::exception e) {
         LOG_WARNING("Std exception in pop_broker::DoInvoke");
         if(request.from != nullptr) {
-            paroc_exception  e2=paroc_exception(STD_EXCEPTION);
+            pop_exception  e2=pop_exception(STD_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
             pop_buffer::SendException(*request.data, request.from, e2);
         } else {
@@ -247,7 +247,7 @@ bool pop_broker::DoInvoke(paroc_request &request) {
     } catch(...) {
         LOG_WARNING("Unknown exception in pop_broker::DoInvoke");
         if(request.from!=nullptr) {
-            paroc_exception e2(UNKNOWN_EXCEPTION);
+            pop_exception e2(UNKNOWN_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString());
             pop_buffer::SendException(*request.data, request.from, e2);
         } else {
