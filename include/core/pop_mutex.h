@@ -13,8 +13,6 @@
 
 #ifndef _POPC_MUTEX_H
 #define _POPC_MUTEX_H
-
-#include <mutex>
 #include <pthread.h>
 
 /**
@@ -49,7 +47,13 @@ protected:
     pthread_cond_t _cond;
 };
 
-using pop_mutex_locker = std::unique_lock<pop_mutex>;
+class pop_mutex_locker {
+public:
+    pop_mutex_locker(pop_mutex &_mutex);
+    ~pop_mutex_locker();
+private:
+    pop_mutex *pmutex;
+};
 
 class POPSynchronizer: public paroc_condition {
 public:
