@@ -103,7 +103,7 @@ public:
     bool OnCloseConnection(pop_connection *conn);
 
 
-    bool ParocCall(pop_request &req);           //Remote call of Paroc methods
+    bool PopCall(pop_request &req);           //Remote call of Paroc methods
     pop_object * GetObject();                   // Get the associated object
 
 #ifdef OD_DISCONNECT

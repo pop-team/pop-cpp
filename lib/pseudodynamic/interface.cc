@@ -470,7 +470,7 @@ bool pop_interface::isBinded() {
     return true;
 }
 
-// ParocCall
+// PopCall
 void pop_interface::BindStatus(int &code, std::string &platform, std::string &info) {
     if(!__pop_combox || !__pop_buf) {
         return;

@@ -268,5 +268,5 @@ bool pop_broker::Invoke(unsigned method[3], pop_buffer &buf, pop_connection *pee
     req.from=peer;
     memcpy(req.methodId, method, 3*sizeof(unsigned));
     req.data=&buf;
-    return ParocCall(req);
+    return PopCall(req);
 }

@@ -65,7 +65,7 @@ private:
     EventQueue _pop_events;
 
 protected:
-    pop_mutex _paroc_omutex;
+    pop_mutex _pop_omutex;
     //Added by clementval
     //std::ostringstream _popc_cout;
     //End of add

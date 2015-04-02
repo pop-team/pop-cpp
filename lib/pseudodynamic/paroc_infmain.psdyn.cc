@@ -33,8 +33,8 @@ void SignalTerminate(int sig) {
     exit(1);
 }
 
-void _paroc_atexit() {
-    LOG_WARNING( "_paroc_atexit called %d!!!!");
+void _pop_atexit() {
+    LOG_WARNING( "_pop_atexit called %d!!!!");
     pop_system::Finalize(false);
 }
 
@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
         return ret;
     }
 
-    atexit(_paroc_atexit);
+    atexit(_pop_atexit);
     popc_signal(SIGKILL, SignalTerminate);
     popc_signal(SIGTERM, SignalTerminate);
     popc_signal(SIGINT, SignalTerminate);

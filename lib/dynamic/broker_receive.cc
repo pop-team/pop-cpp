@@ -70,7 +70,7 @@ void pop_broker::ReceiveThread(pop_combox *server) { // Receive request and put 
 #endif
 
             // Is it a POP-C++ core call ? If so serve it right away
-            if(ParocCall(req)) {
+            if(PopCall(req)) {
                 if(req.data!=nullptr) {
                     delete req.data;
                 }
@@ -218,7 +218,7 @@ pop_object * pop_broker::GetObject() {
     return obj;
 }
 
-bool pop_broker::ParocCall(pop_request &req) {
+bool pop_broker::PopCall(pop_request &req) {
     if(req.methodId[1] >= 10) {
         LOG_DEBUG_T("BRK_R", "Methodid >= 10");
         return false;
