@@ -38,7 +38,7 @@
 #include "request.h"
 #include "response.h"
 #include "explorationList.h"
-#include "popc_search_node_info.h"
+#include "pop_search_node_info.h"
 #include "popc_search_node.ph"
 
 #define TIMEOUT 0;                  // Waiting time of the resources discovery algorithm
@@ -235,7 +235,7 @@ protected:
     virtual bool CheckPauseList(const pop_accesspoint &app);
 
     bool AddRequest(int reqId[3]);
-    
+
     // TODO LW: Why do we have to specify size for NodeInTrace and not AddTrace
     bool AddTrace(int trace[MAX_HOPS], int &tracesize);
     bool NodeInTrace([in,size=tracesize]int trace[MAX_HOPS], int tracesize, pop_accesspoint &contact);

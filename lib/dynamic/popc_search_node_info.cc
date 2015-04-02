@@ -13,7 +13,7 @@
  */
 
 
-#include "popc_search_node_info.h"
+#include "pop_search_node_info.h"
 #include <iostream>
 #include <unistd.h>
 

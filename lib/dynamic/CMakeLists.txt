@@ -112,9 +112,9 @@ popcc_compile_cxx(system.cc)
 popcc_compile_cxx(interface.cc)
 popcc_compile_cxx(utils.cc)
 popcc_compile_cxx(benchmark.cc)
-popcc_compile_cxx(popc_allocator_tcpip_local.cpp)
-popcc_compile_cxx(popc_allocator_tcpip_service.cpp)
-popcc_compile_cxx(popc_allocator_uds_local.cpp)
+popcc_compile_cxx(pop_allocator_tcpip_local.cpp)
+popcc_compile_cxx(pop_allocator_tcpip_service.cpp)
+popcc_compile_cxx(pop_allocator_uds_local.cpp)
 
 set(POPCC_GENERATED_FILES
     ${POPCC_OUTPUT_DIR}/broker_receive.cc.o
@@ -128,9 +128,9 @@ set(POPCC_GENERATED_FILES
     ${POPCC_OUTPUT_DIR}/interface.cc.o
     ${POPCC_OUTPUT_DIR}/utils.cc.o
     ${POPCC_OUTPUT_DIR}/benchmark.cc.o
-    ${POPCC_OUTPUT_DIR}/popc_allocator_tcpip_local.cpp.o
-    ${POPCC_OUTPUT_DIR}/popc_allocator_tcpip_service.cpp.o
-    ${POPCC_OUTPUT_DIR}/popc_allocator_uds_local.cpp.o
+    ${POPCC_OUTPUT_DIR}/pop_allocator_tcpip_local.cpp.o
+    ${POPCC_OUTPUT_DIR}/pop_allocator_tcpip_service.cpp.o
+    ${POPCC_OUTPUT_DIR}/pop_allocator_uds_local.cpp.o
     ${POPCC_GENERATED_STUBS}
 )
 
@@ -150,9 +150,9 @@ add_library(popc_common
     explorationList.cc
     popc_combox_uds.cpp
     popc_connection_uds.cpp
-    popc_allocator_factory.cpp
-    popc_allocator_uds_interconnector.cpp
-    popc_allocator_mpi_pseudo.cpp
+    pop_allocator_factory.cpp
+    pop_allocator_uds_interconnector.cpp
+    pop_allocator_mpi_pseudo.cpp
     ${POPCC_GENERATED_FILES}
 )
 

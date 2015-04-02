@@ -30,7 +30,7 @@
 #include <string.h>
 #include "request.h"
 #include "response.h"
-#include "popc_search_node_info.h"
+#include "pop_search_node_info.h"
 #include <semaphore.h>
 #include <fcntl.h>
 

@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 
     // Create a broker with the specified Object
     POPC_GroupBroker* broker = POPC_GroupBrokerFactory::create(objectname);
-    POPC_MPIConnection* mpi_connection = new POPC_MPIConnection();
+    pop_mpi_connection* mpi_connection = new pop_mpi_connection();
     mpi_connection->set_communicator(communicator);
 
     bool active = true;

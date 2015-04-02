@@ -19,7 +19,7 @@
 #include <ctype.h>
 
 #include "pop_combox.h"
-#include "popc_connection_uds.h"
+#include "pop_connection_uds.h"
 
 class popc_combox_uds: public pop_combox {
 public:

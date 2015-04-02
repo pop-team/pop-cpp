@@ -30,7 +30,7 @@
 #include <sstream>
 
 #include "pop_interface.h"
-#include "popc_allocator_factory.h"
+#include "pop_allocator_factory.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_broker.h"
 #include "pop_combox_factory.h"
@@ -233,25 +233,25 @@ void pop_interface::allocate_only() {
     std::string objectaddress;
 
     // Get the right allocator
-    POPC_AllocatorFactory* alloc_factory = POPC_AllocatorFactory::get_instance();
-    POPC_Allocator* allocator = nullptr;
+    pop_allocatorFactory* alloc_factory = pop_allocatorFactory::get_instance();
+    pop_allocator* allocator = nullptr;
 
-    if(od.getProtocol() == POPC_AllocatorFactory::PREFIX_UDS) {
-        allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::LOCAL);
+    if(od.getProtocol() == pop_allocatorFactory::PREFIX_UDS) {
+        allocator = alloc_factory->get_allocator(pop_allocator::UDS, pop_allocator::LOCAL);
 
         LOG_DEBUG_T("IFACE", "Allocate %s with UDS(local)", objectname.c_str());
 
         //TODO(BW) In MPI mode, this should be used (add some condition)
-        //allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+        //allocator = alloc_factory->get_allocator(pop_allocator::UDS, pop_allocator::INTERCONNECTOR);
     } else {
         bool localFlag = od.IsLocal();
 
         if(localFlag || !od.getURL().empty() || !od.getBatch().empty()) {
-            allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::LOCAL);
+            allocator = alloc_factory->get_allocator(pop_allocator::TCPIP, pop_allocator::LOCAL);
 
             LOG_DEBUG_T("IFACE", "Allocate %s with TCP(local)", objectname.c_str());
         } else {
-            allocator = alloc_factory->get_allocator(POPC_Allocator::TCPIP, POPC_Allocator::SSH);
+            allocator = alloc_factory->get_allocator(pop_allocator::TCPIP, pop_allocator::SSH);
 
             LOG_DEBUG_T("IFACE", "Allocate %s with TCP(ssh)", objectname.c_str());
 

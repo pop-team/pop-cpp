@@ -76,7 +76,7 @@ protected:
     bool _is_server;
     bool isCanceled;
 
-    POPC_MPIConnection *peer;
+    pop_mpi_connection *peer;
 
     // Only used by combox server
     int index;

@@ -2,11 +2,11 @@
 
 #include <signal.h>
 
-POPC_MPIConnection::POPC_MPIConnection(pop_combox *cb): pop_connection(cb), _is_connected(false), _has_communicator(false), _connection_index(0), _is_asynchronous(false), _tag_set(false) {
+pop_mpi_connection::pop_mpi_connection(pop_combox *cb): pop_connection(cb), _is_connected(false), _has_communicator(false), _connection_index(0), _is_asynchronous(false), _tag_set(false) {
     signal(SIGPIPE, SIG_IGN);
 }
 
-POPC_MPIConnection::POPC_MPIConnection(POPC_MPIConnection &me): pop_connection(me.GetCombox(), me.GetBufferFactory()), _is_connected(false), _has_communicator(false), _connection_index(0), _is_asynchronous(false), _tag_set(false) {
+pop_mpi_connection::pop_mpi_connection(pop_mpi_connection &me): pop_connection(me.GetCombox(), me.GetBufferFactory()), _is_connected(false), _has_communicator(false), _connection_index(0), _is_asynchronous(false), _tag_set(false) {
     set_communicator(me.get_communicator());
     set_connection_index(me.get_connection_index());
 }
@@ -14,22 +14,22 @@ POPC_MPIConnection::POPC_MPIConnection(POPC_MPIConnection &me): pop_connection(m
 /**
  * MPI Connection destructor. Free the communicator if it has been set.
  */
-POPC_MPIConnection::~POPC_MPIConnection() {
+pop_mpi_connection::~pop_mpi_connection() {
 }
 
 /**
  * Return a new connection based on this connection
  * @return A pointer to the new connection
  */
-pop_connection* POPC_MPIConnection::Clone() {
-    return new POPC_MPIConnection(*this);
+pop_connection* pop_mpi_connection::Clone() {
+    return new pop_mpi_connection(*this);
 }
 
 /**
  * Get the inter-communicator for the connection
  * @return A MPI inter-communicator
  */
-void POPC_MPIConnection::set_communicator(MPI::Intercomm communicator) {
+void pop_mpi_connection::set_communicator(MPI::Intercomm communicator) {
     _has_communicator = true;
     _is_connected = true;
     _communicator = communicator;
@@ -39,7 +39,7 @@ void POPC_MPIConnection::set_communicator(MPI::Intercomm communicator) {
  * Get the inter-communicator for the connection
  * @return A MPI inter-communicator
  */
-MPI::Intercomm POPC_MPIConnection::get_communicator() {
+MPI::Intercomm pop_mpi_connection::get_communicator() {
     return _communicator;
 }
 
@@ -47,49 +47,49 @@ MPI::Intercomm POPC_MPIConnection::get_communicator() {
  * Check if the communicator has been set
  * @return TRUE if the communicator is set. FALSE in any other cases.
  */
-bool POPC_MPIConnection::has_communicator() {
+bool pop_mpi_connection::has_communicator() {
     return _has_communicator;
 }
 
 /**
  *
  */
-void POPC_MPIConnection::set_connection_index(int value) {
+void pop_mpi_connection::set_connection_index(int value) {
     _connection_index = value;
 }
 
 /**
  *
  */
-int POPC_MPIConnection::get_connection_index() {
+int pop_mpi_connection::get_connection_index() {
     return _connection_index;
 }
 
 /**
  *
  */
-void POPC_MPIConnection::set_as_asynchronous() {
+void pop_mpi_connection::set_as_asynchronous() {
     _is_asynchronous = true;
 }
 
-bool POPC_MPIConnection::is_asynchronous() {
+bool pop_mpi_connection::is_asynchronous() {
     return _is_asynchronous;
 }
 
-void POPC_MPIConnection::set_current_tag(int value) {
+void pop_mpi_connection::set_current_tag(int value) {
     _tag_set = true;
     _current_tag = value;
 }
 
-int POPC_MPIConnection::get_current_tag() {
+int pop_mpi_connection::get_current_tag() {
     return _current_tag;
 }
 
-bool POPC_MPIConnection::is_tag_set() {
+bool pop_mpi_connection::is_tag_set() {
     return _tag_set;
 }
 
-void POPC_MPIConnection::unset_current_tag() {
+void pop_mpi_connection::unset_current_tag() {
     _tag_set = false;
 }
 
@@ -97,7 +97,7 @@ void POPC_MPIConnection::unset_current_tag() {
 /**
  * Reset the connection. Disconnect the communicator and free it.
  */
-void POPC_MPIConnection::reset() {
+void pop_mpi_connection::reset() {
     /*if(_has_communicator){
       LOG_INFO("MPI-COMBOX(%s): before MPI.Disconnect()", (is_server())?"Server":"Client");
       _communicator.Disconnect();
@@ -112,6 +112,6 @@ void POPC_MPIConnection::reset() {
  * Check if the associated combox is a server or client combox
  * @return TRUE if the associated combox is a server. FALSE if the associated combox is a client
  */
-bool POPC_MPIConnection::is_server() {
+bool pop_mpi_connection::is_server() {
     return combox->is_server();
 }

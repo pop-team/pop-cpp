@@ -12,7 +12,7 @@
 
 /*
   Deeply need refactoring:
-    POPC_Broker instead of pop_broker
+    pop_broker instead of pop_broker
  */
 #include "popc_intface.h"
 

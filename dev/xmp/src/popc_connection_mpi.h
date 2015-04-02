@@ -18,12 +18,12 @@
 #include "pop_combox.h"
 #include <mpi.h>
 
-class POPC_MPIConnection : public pop_connection {
+class pop_mpi_connection : public pop_connection {
 public:
-    POPC_MPIConnection();
-    explicit POPC_MPIConnection(pop_combox *cb);
-    explicit POPC_MPIConnection(POPC_MPIConnection &me);
-    ~POPC_MPIConnection();
+    pop_mpi_connection();
+    explicit pop_mpi_connection(pop_combox *cb);
+    explicit pop_mpi_connection(pop_mpi_connection &me);
+    ~pop_mpi_connection();
 
     virtual pop_connection *Clone();
 

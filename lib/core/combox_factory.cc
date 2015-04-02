@@ -31,11 +31,12 @@
 
 #include "pop_combox_factory.h"
 #include "pop_combox_socket.h"
-#include "popc_combox_uds.h"
+#include "pop_combox_uds.h"
 #include "pop_utils.h"
-#ifdef MPI_SUPPORT
+
 // Note by LWK: Added MPI_SUPPORT here to use 1 version of the file for both pseudodyn and dynamic
-#include "popc_combox_mpi.h"
+#ifdef MPI_SUPPORT
+#include "pop_combox_mpi.h"
 #endif
 
 pop_combox_registration::pop_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator) {

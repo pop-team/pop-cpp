@@ -16,7 +16,7 @@
 
 /*
   Deeply need refactoring:
-    POPC_BrokerFactory instead of pop_broker_factory
+    pop_brokerFactory instead of pop_broker_factory
  */
 
 #include "popc_intface.h"

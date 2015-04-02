@@ -6,16 +6,16 @@
 
 
 /**
- * @class POPC_MPIConnection
+ * @class pop_mpi_connection
  * @breif Declaration of MPI Connection (POP-C++ abstraction of connection). Just hold the destination rank of the communication.
  * @author Valentin Clément
  *
  */
-class POPC_MPIConnection : public pop_connection {
+class pop_mpi_connection : public pop_connection {
 public:
-    explicit POPC_MPIConnection(pop_combox *cb);
-    explicit POPC_MPIConnection(POPC_MPIConnection &me);
-    ~POPC_MPIConnection();
+    explicit pop_mpi_connection(pop_combox *cb);
+    explicit pop_mpi_connection(pop_mpi_connection &me);
+    ~pop_mpi_connection();
 
     virtual pop_connection *Clone();
 

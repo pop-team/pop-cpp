@@ -35,7 +35,7 @@ POPC_GroupBroker::~POPC_GroupBroker() {
  *                    non-collective call.
  */
 void POPC_GroupBroker::popc_send_response(pop_buffer& buffer, pop_connection* connection, bool collective) {
-    MPI::Intercomm comm = dynamic_cast<POPC_MPIConnection*>(connection)->get_communicator();
+    MPI::Intercomm comm = dynamic_cast<pop_mpi_connection*>(connection)->get_communicator();
     int world_size = comm.Get_size();
     int rank = comm.Get_rank();
 

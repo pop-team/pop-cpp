@@ -21,7 +21,7 @@
 #include "popc_combox_uds.h"
 #include "pop_system.h"
 #include "popc_group_exception.h"
-#include "popc_allocator_factory.h"
+#include "pop_allocator_factory.h"
 
 /**
  * Base constructor
@@ -57,8 +57,8 @@ bool POPC_GroupInterface::initialize(int nb) {
 
     std::string objectname = get_class_name();
 
-    auto alloc_factory = POPC_AllocatorFactory::get_instance();
-    auto allocator = alloc_factory->get_allocator(POPC_Allocator::UDS, POPC_Allocator::INTERCONNECTOR);
+    auto alloc_factory = pop_allocatorFactory::get_instance();
+    auto allocator = alloc_factory->get_allocator(pop_allocator::UDS, pop_allocator::INTERCONNECTOR);
     if(!allocator) {
         std::cerr << "POP-C++ Error [Core]: " << "Allocator is NULL" << std::endl;
         return false;

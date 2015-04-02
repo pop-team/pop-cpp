@@ -15,9 +15,10 @@
 
 #ifndef _RESPONSE_H
 #define _RESPONSE_H
+
 #include "pop_base.h"
 #include "explorationList.h"
-#include "popc_search_node_info.h"
+#include "pop_search_node_info.h"
 
 /*
  *  Class representing a response of resource discovery. This class must
@@ -31,7 +32,6 @@ public :
     // constructor used to set all information about the response
     Response(std::string reqUniqueId, POPCSearchNodeInfo foundNodeInfo, ExplorationList finalExplorationList, std::string appid);
 
-    // destructor
     ~Response();
 
     // Inherited method to serialize the object
@@ -50,7 +50,6 @@ private :
     std::string _appid;                   //Application services access point
     POPCSearchNodeInfo _foundNodeInfo;     //found node's 'NodeInfo'
     ExplorationList _finalExplorationList; //exploration list to found node
-
 };
 
 #endif

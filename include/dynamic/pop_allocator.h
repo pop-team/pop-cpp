@@ -5,7 +5,7 @@
  *
  * @author Valentin Clement
  * @date 2012/12/04
- * @brief Declaration of the base class POPC_AllocatorFactory. The allocator factory allows to provide the right allocator for
+ * @brief Declaration of the base class pop_allocatorFactory. The allocator factory allows to provide the right allocator for
  *        parallel object allocation depending the lower layer (SSH, MPI, POP-C++ MPI Interconnector ...).
  *
  *
@@ -18,17 +18,17 @@
 #include "pop_accesspoint.h"
 #include "pop_combox.h"
 
-class POPC_Allocator {
+class pop_allocator {
 public:
-    enum POPC_Protocol { UDS, TCPIP, MPI, SHM };
-    enum POPC_AllocationMechanism { LOCAL, SSH, INTERCONNECTOR, PSEUDODYNAMIC };
+    enum pop_protocol { UDS, TCPIP, MPI, SHM };
+    enum pop_allocationMechanism { LOCAL, SSH, INTERCONNECTOR, PSEUDODYNAMIC };
 
-    POPC_Allocator() {}
-    virtual ~POPC_Allocator() {}
+    pop_allocator() {}
+    virtual ~pop_allocator() {}
     virtual std::string allocate(std::string& objectname, pop_od& od) = 0;
     virtual pop_combox* allocate_group(std::string& objectname, pop_od& od, int nb) = 0;
-    virtual POPC_Protocol get_protocol() = 0;
-    virtual POPC_AllocationMechanism get_mechanism() = 0;
+    virtual pop_protocol get_protocol() = 0;
+    virtual pop_allocationMechanism get_mechanism() = 0;
 };
 
 #endif /* POPC_ALLOCATOR_H_ */

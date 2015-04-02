@@ -12,8 +12,7 @@
 
 #include <signal.h>
 
-#include "popc_connection_uds.h"
-
+#include "pop_connection_uds.h"
 
 /**
  * Constructor
@@ -24,7 +23,6 @@ popc_connection_uds::popc_connection_uds(pop_combox *cb): pop_connection(cb) {
     _socket_fd = -1;
     signal(SIGPIPE, SIG_IGN);
 }
-
 
 /**
  * Constructor

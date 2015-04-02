@@ -13,19 +13,19 @@
 #ifndef POPC_ALLOCATOR_MPI_PSEUDO_H_
 #define POPC_ALLOCATOR_MPI_PSEUDO_H_
 
-#include "popc_allocator.h"
+#include "pop_allocator.h"
 
 #include "pop_od.h"
 
-class mpi_allocator_pseudo : public POPC_Allocator {
+class mpi_allocator_pseudo : public pop_allocator {
 public:
     virtual std::string allocate(std::string& objectname, pop_od& od);
     virtual pop_combox* allocate_group(std::string& objectname, pop_od& od, int nb);
-    virtual POPC_Protocol get_protocol() {
-        return POPC_Allocator::MPI;
+    virtual pop_protocol get_protocol() {
+        return pop_allocator::MPI;
     }
-    virtual POPC_AllocationMechanism get_mechanism() {
-        return POPC_Allocator::PSEUDODYNAMIC;
+    virtual pop_allocationMechanism get_mechanism() {
+        return pop_allocator::PSEUDODYNAMIC;
     }
 
 };

@@ -13,7 +13,7 @@
 #include "popc_intface.h"
 
 #include "pop_interface.h"
-#include "popc_buffer_xdr_mpi.h"
+#include "pop_buffer_xdr_mpi.h"
 #include "pop_exception.h"
 #include "popc_logger.h"
 

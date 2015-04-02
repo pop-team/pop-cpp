@@ -5,7 +5,7 @@
  *
  * @author Valentin Clement
  * @date 2012/12/04
- * @brief Declaration of the base class POPC_AllocatorFactory. The allocator factory allows to provide the right allocator for
+ * @brief Declaration of the base class pop_allocatorFactory. The allocator factory allows to provide the right allocator for
  *        parallel object allocation depending the lower layer (SSH, MPI, POP-C++ MPI Interconnector ...).
  *
  *
@@ -14,19 +14,19 @@
 #ifndef POPC_ALLOCATOR_UDS_INTERCONNECTOR_H_
 #define POPC_ALLOCATOR_UDS_INTERCONNECTOR_H_
 
-#include "popc_allocator.h"
+#include "pop_allocator.h"
 
 #include "pop_od.h"
 
-class uds_allocator_interconnector : public POPC_Allocator {
+class uds_allocator_interconnector : public pop_allocator {
 public:
     virtual std::string allocate(std::string& objectname, pop_od& od);
     virtual pop_combox* allocate_group(std::string& objectname, pop_od& od, int nb);
-    virtual POPC_Protocol get_protocol() {
-        return POPC_Allocator::UDS;
+    virtual pop_protocol get_protocol() {
+        return pop_allocator::UDS;
     }
-    virtual POPC_AllocationMechanism get_mechanism() {
-        return POPC_Allocator::INTERCONNECTOR;
+    virtual pop_allocationMechanism get_mechanism() {
+        return pop_allocator::INTERCONNECTOR;
     }
 
 };

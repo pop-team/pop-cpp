@@ -91,7 +91,7 @@ bool popc_combox_mpi::Connect(const char *url) {
         return false;
     }
 
-    peer = new POPC_MPIConnection(this);
+    peer = new pop_mpi_connection(this);
     peer->set_communicator(MPI::COMM_WORLD);
     peer->set_connection_index(atoi(full_accesspoint.c_str()));
 
@@ -117,7 +117,7 @@ bool popc_combox_mpi::connect_and_die(std::string &url) {
     // Create a dummy message to unlock the receive thread
     pop_message_header h(0, 7, INVOKE_SYNC, "DummyMethod");
 
-    POPC_MPIConnection* connection = new POPC_MPIConnection(this);
+    pop_mpi_connection* connection = new pop_mpi_connection(this);
     connection->set_communicator(MPI::COMM_WORLD);
     connection->set_connection_index(dest);
     connection->set_as_asynchronous();
@@ -150,21 +150,21 @@ int popc_combox_mpi::Send(const char *s, int length, pop_connection *conn, bool 
     if(!is_server()) {
         if(unlock) {
             // Set the send tag if the combox is a client combox and it header message
-            dynamic_cast<POPC_MPIConnection*>(conn)->set_current_tag(((_node_id+1)*1000)+1);
+            dynamic_cast<pop_mpi_connection*>(conn)->set_current_tag(((_node_id+1)*1000)+1);
             tag = 0;
         } else {
             // Set the send tag if the combox is a client combox and it data message
-            tag = dynamic_cast<POPC_MPIConnection*>(conn)->get_current_tag();
+            tag = dynamic_cast<pop_mpi_connection*>(conn)->get_current_tag();
         }
     } else {
         // Set the send tag if the combox is a server combox
-        tag = ((dynamic_cast<POPC_MPIConnection*>(conn)->get_connection_index()+1)*1000)+2;
+        tag = ((dynamic_cast<pop_mpi_connection*>(conn)->get_connection_index()+1)*1000)+2;
     }
 
     // Get the destination of the message from the connection
-    int destination = dynamic_cast<POPC_MPIConnection*>(conn)->get_connection_index();
+    int destination = dynamic_cast<pop_mpi_connection*>(conn)->get_connection_index();
 
-    if(((POPC_MPIConnection*)conn)->is_asynchronous()) {
+    if(((pop_mpi_connection*)conn)->is_asynchronous()) {
         MPI::COMM_WORLD.Isend(s, length, MPI_CHAR, destination, tag);
     } else {
         MPI::COMM_WORLD.Send(s, length, MPI_CHAR, destination, tag);
@@ -193,12 +193,12 @@ int popc_combox_mpi::Recv(char *s, int length, pop_connection *&iopeer, bool unl
     if(is_server() && unlock) {
         tag = 0;
     } else if(is_server()) {
-        tag = ((dynamic_cast<POPC_MPIConnection*>(iopeer)->get_connection_index()+1)*1000)+1;
+        tag = ((dynamic_cast<pop_mpi_connection*>(iopeer)->get_connection_index()+1)*1000)+1;
     } else {
         tag = ((_node_id+1)*1000)+2;
     }
     MPI::COMM_WORLD.Recv(s, length, MPI_CHAR, MPI_ANY_SOURCE, tag, status);
-    dynamic_cast<POPC_MPIConnection*>(iopeer)->set_connection_index(status.Get_source());
+    dynamic_cast<pop_mpi_connection*>(iopeer)->set_connection_index(status.Get_source());
     return 0;
 }
 
@@ -209,7 +209,7 @@ int popc_combox_mpi::Recv(char *s, int length, pop_connection *&iopeer, bool unl
 pop_connection* popc_combox_mpi::Wait() {
     // Receive interface connection to the MPI Combox
     if(_is_server) {
-        POPC_MPIConnection* conn = new POPC_MPIConnection(this);
+        pop_mpi_connection* conn = new pop_mpi_connection(this);
         conn->set_communicator(MPI::COMM_WORLD);
         return conn;
     } else {
@@ -270,6 +270,6 @@ bool popc_combox_mpi::is_server() {
  * @return  A pointer to the newly created connection
  */
 pop_connection* popc_combox_mpi::CreateConnection(int /*fd*/) {
-    return new POPC_MPIConnection(this);
+    return new pop_mpi_connection(this);
 }
 

@@ -83,7 +83,7 @@ private:
 
 
     // Internal method controlling the live of XMP parallel object
-    bool _popc_allocate_parallel_object(int nb);
+    bool _pop_allocate_parallel_object(int nb);
     bool _popc_terminate_parallel_object(int nb);
 
 

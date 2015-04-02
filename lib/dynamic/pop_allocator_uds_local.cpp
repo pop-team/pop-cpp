@@ -8,7 +8,7 @@
  *
  */
 
-#include "popc_allocator_uds_local.h"
+#include "pop_allocator_uds_local.h"
 
 #include "pop_system.h"
 #include "pop_exception.h"
@@ -30,7 +30,7 @@
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-std::string popc_allocator_uds_local::allocate(std::string& objectname, pop_od& od) {
+std::string pop_allocator_uds_local::allocate(std::string& objectname, pop_od& od) {
     LOG_DEBUG_T("UDS", "Allocate %s (local)", objectname.c_str());
 
     std::string codefile;
@@ -204,7 +204,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, pop_od& 
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-pop_combox* popc_allocator_uds_local::allocate_group(std::string& objectname, pop_od& od, int nb) {
+pop_combox* pop_allocator_uds_local::allocate_group(std::string& objectname, pop_od& od, int nb) {
 
     /* Allocation process here */
 

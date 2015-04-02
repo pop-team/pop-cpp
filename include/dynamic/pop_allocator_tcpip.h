@@ -8,40 +8,40 @@
  * @brief
  *
  * Modifications:
- * - Rename POPC_Allocator_tcpip_ssh to _service for clarity
+ * - Rename pop_allocator_tcpip_ssh to _service for clarity
  */
 
 #ifndef POPC_ALLOCATOR_TCPIP_H_
 #define POPC_ALLOCATOR_TCPIP_H_
 
-#include "popc_allocator.h"
+#include "pop_allocator.h"
 
 #include "pop_od.h"
 
 /* POPC_ALLOCATOR_TCPIP_LOCAL_H_ */
-class socket_allocator_local : public POPC_Allocator {
+class socket_allocator_local : public pop_allocator {
 public:
     virtual std::string allocate(std::string& objectname, pop_od& od);   // TODO LW: Params must be const
     virtual pop_combox* allocate_group(std::string& objectname, pop_od& od, int nb);
-    virtual POPC_Protocol get_protocol() {
-        return POPC_Allocator::TCPIP;
+    virtual pop_protocol get_protocol() {
+        return pop_allocator::TCPIP;
     }
-    virtual POPC_AllocationMechanism get_mechanism() {
-        return POPC_Allocator::LOCAL;
+    virtual pop_allocationMechanism get_mechanism() {
+        return pop_allocator::LOCAL;
     }
 
 };
 
 /* POPC_ALLOCATOR_TCPIP_SERVICE_H_ */
-class socket_allocator_service : public POPC_Allocator {
+class socket_allocator_service : public pop_allocator {
 public:
     virtual std::string allocate(std::string& objectname, pop_od& od);
     virtual pop_combox* allocate_group(std::string& objectname, pop_od& od, int nb);
-    virtual POPC_Protocol get_protocol() {
-        return POPC_Allocator::TCPIP;
+    virtual pop_protocol get_protocol() {
+        return pop_allocator::TCPIP;
     }
-    virtual POPC_AllocationMechanism get_mechanism() {
-        return POPC_Allocator::SSH;
+    virtual pop_allocationMechanism get_mechanism() {
+        return pop_allocator::SSH;
     }
 };
 
