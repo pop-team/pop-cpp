@@ -510,7 +510,7 @@ mutex[ \a\b\v\f\t\r\n]*"{" {
     {
       char str[256];
       int len=strlen(yytext)-6;
-      sprintf(str," { paroc_mutex_locker _paroc_mutex%d(_paroc_omutex); ",mutexCount++);
+      sprintf(str," { pop_mutex_locker _paroc_mutex%d(_paroc_omutex); ",mutexCount++);
       othercodes += str;
       othercodes += std::string(yytext+5,len);
     }

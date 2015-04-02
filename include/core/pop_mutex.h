@@ -47,6 +47,9 @@ protected:
     pthread_cond_t _cond;
 };
 
+//Note(BW): Ideally, this should be replaced by std unique_lock. Unfortunately, this is used in the parser, so this would
+//mean that C++11 compilation is necessary for the POP programs. This has to be discussed
+
 class pop_mutex_locker {
 public:
     pop_mutex_locker(pop_mutex &_mutex);
