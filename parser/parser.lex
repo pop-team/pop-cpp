@@ -6,7 +6,7 @@
 #include <ctype.h>
 #include "parser.tab.h"
 #include "parser.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 
   int c;
   int linenumber=0;
@@ -197,7 +197,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
 
   if (thisCodeFile->FindClass(clname) != NULL) {
     while (isspace(*tmp) || *tmp==':') tmp++;
-    //bool constructor=paroc_utils::isEqual(clname,tmp);
+    //bool constructor=pop_utils::isEqual(clname,tmp);
 
       char postfix[32]="_popcobject";
       int len=strlen(clname);
@@ -233,7 +233,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     while (isspace(*tmp) || *tmp == ':') {
       tmp++;
     }
-    bool constructor = paroc_utils::isEqual(clname,tmp);
+    bool constructor = pop_utils::isEqual(clname,tmp);
     sprintf(newyytext,"%s_popcobject%s", clname, yytext+len);
     othercodes += newyytext;
     Class *cl = thisCodeFile->FindClass(clname);

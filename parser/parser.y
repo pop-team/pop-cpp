@@ -15,7 +15,7 @@
 #include <set>
 
 #include "parser.h"
-#include "paroc_utils.h"
+#include "pop_utils.h"
 
 //Declaration in parser.lex:
 
@@ -1024,7 +1024,7 @@ pure_class_decl: /*empty*/
 }
 | '=' INTEGER
 {
-  $$= (paroc_utils::isEqual(GetToken($2), "0")) ? 1 : 0;
+  $$= (pop_utils::isEqual(GetToken($2), "0")) ? 1 : 0;
 }
 ;
 /*
@@ -1384,13 +1384,13 @@ function_definition: constructor_definition
 pure_virtual_decl: /*empty*/
 | '=' INTEGER
 {
-  method->isPureVirtual=paroc_utils::isEqual(GetToken($2),"0");
+  method->isPureVirtual=pop_utils::isEqual(GetToken($2),"0");
 }
 ;
 
 constructor_definition: constructor_name '(' argument_declaration ')' od_specifier
 {
-  if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
+  if (!pop_utils::isEqual(method->name,currentClass->GetName()))
     {
       errormsg("Bad declaration of constructor\n");
       exit(1);
@@ -1415,7 +1415,7 @@ constructor_name: ID
 
 destructor_definition: '~' destructor_name '('  ')'
 {
-  if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
+  if (!pop_utils::isEqual(method->name,currentClass->GetName()))
     {
       errormsg("Bad declaration of destructor\n");
       exit(1);
@@ -1424,7 +1424,7 @@ destructor_definition: '~' destructor_name '('  ')'
 }
 | VIRTUAL_KEYWORD '~' destructor_name '('  ')'
 {
-  if (!paroc_utils::isEqual(method->name,currentClass->GetName()))
+  if (!pop_utils::isEqual(method->name,currentClass->GetName()))
     {
       errormsg("Bad declaration of destructor\n");
       exit(1);
@@ -1772,7 +1772,7 @@ od_exprlist: /*empty*/
 
   char *odtmp=GetToken($1);
   assert(method!=NULL);
-  if (!paroc_utils::isEqual(odtmp,"od"))
+  if (!pop_utils::isEqual(odtmp,"od"))
     {
       sprintf(tmp,"Invalid OD expression: %s.%s",odtmp,GetToken($3));
       errormsg(tmp);
@@ -1789,7 +1789,7 @@ od_exprlist: /*empty*/
 
   char *odtmp=GetToken($1);
   assert(method!=NULL);
-  if (!paroc_utils::isEqual(odtmp,"od"))
+  if (!pop_utils::isEqual(odtmp,"od"))
     {
       sprintf(tmp,"Invalid OD expression: %s.%s",odtmp,GetToken($3));
       errormsg(tmp);
@@ -1804,7 +1804,7 @@ od_exprlist: /*empty*/
 {
   char *odtmp=GetToken($1);
   assert(method!=NULL);
-  if (!paroc_utils::isEqual(odtmp,"od"))
+  if (!pop_utils::isEqual(odtmp,"od"))
     {
       sprintf(tmp,"Invalid OD expression: %s.%s",odtmp,GetToken($3));
       errormsg(tmp);
@@ -1818,14 +1818,14 @@ od_exprlist: /*empty*/
 | ID '=' expr_decl od_expr_nonstrict ';' od_exprlist
 {
   char *odtmp=GetToken($1);
-  if (paroc_utils::isEqual(odtmp,"host")) {
+  if (pop_utils::isEqual(odtmp,"host")) {
     sprintf(tmp,"od.url(%s);",GetToken($3));
     if ($6!=-1) strcat(tmp,GetToken($6));
       if ($4!=-1) {
       errormsg("OD: host should be a string expression. Non-strict description is not allowed");
         exit(1);
       }
-  } else if (paroc_utils::isEqual(odtmp,"jobcontact")) {
+  } else if (pop_utils::isEqual(odtmp,"jobcontact")) {
     sprintf(tmp,"od.joburl(%s);",GetToken($3));
       if ($6 != -1) strcat(tmp,GetToken($6));
     if ($4 != -1) {
@@ -1833,7 +1833,7 @@ od_exprlist: /*empty*/
         exit(1);
       }
       }
-    else if (paroc_utils::isEqual(odtmp,"memory"))
+    else if (pop_utils::isEqual(odtmp,"memory"))
       {
     sprintf(tmp,"od.memory(%s",GetToken($3));
     if ($4!=-1)
@@ -1844,7 +1844,7 @@ od_exprlist: /*empty*/
     strcat(tmp,");");
     if ($6!=-1) strcat(tmp,GetToken($6));
       }
-    else if (paroc_utils::isEqual(odtmp,"power"))
+    else if (pop_utils::isEqual(odtmp,"power"))
       {
     sprintf(tmp,"od.power(%s",GetToken($3));
     if ($4!=-1)
@@ -1856,7 +1856,7 @@ od_exprlist: /*empty*/
 //Added by clementval
     if ($6!=-1) strcat(tmp,GetToken($6));
       }
-    else if (paroc_utils::isEqual(odtmp,"search"))
+    else if (pop_utils::isEqual(odtmp,"search"))
       {
     sprintf(tmp,"od.search(%s",GetToken($3));
     if ($4!=-1)
@@ -1873,7 +1873,7 @@ od_exprlist: /*empty*/
 //End of add
     if ($6!=-1) strcat(tmp,GetToken($6));
       }
-    else if (paroc_utils::isEqual(odtmp,"network"))
+    else if (pop_utils::isEqual(odtmp,"network"))
     {
     sprintf(tmp,"od.bandwidth(%s",GetToken($3));
     if ($4!=-1)
@@ -1884,7 +1884,7 @@ od_exprlist: /*empty*/
     strcat(tmp,");");
     if ($6!=-1) strcat(tmp,GetToken($6));
     }
-    else if (paroc_utils::isEqual(odtmp,"walltime"))
+    else if (pop_utils::isEqual(odtmp,"walltime"))
       {
     sprintf(tmp,"od.walltime(%s);",GetToken($3));
     if ($4!=-1)
@@ -2312,37 +2312,37 @@ int main(int argc, char **argv)
     isPOPCPPCompilation=false;
     isAsyncAllocationEnabled=false;
 
-    if (paroc_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL){
+    if (pop_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL){
 
         broker=false;
 
     }
 
 
-    if (paroc_utils::checkremove(&argc,&argv,"-parclass-nointerface")!=NULL) {
+    if (pop_utils::checkremove(&argc,&argv,"-parclass-nointerface")!=NULL) {
 
         client=false;
 
     }
 
-    if (paroc_utils::checkremove(&argc,&argv,"-no-warning")!=NULL) {
+    if (pop_utils::checkremove(&argc,&argv,"-no-warning")!=NULL) {
 
         isWarningEnable=false;
 
     }
 
-    if (paroc_utils::checkremove(&argc,&argv,"-popcpp-compilation")!=NULL) {
+    if (pop_utils::checkremove(&argc,&argv,"-popcpp-compilation")!=NULL) {
 
         isPOPCPPCompilation=true;
 
     }
 
-    if (paroc_utils::checkremove(&argc,&argv,"-no-implicit-pack")!=NULL) {
+    if (pop_utils::checkremove(&argc,&argv,"-no-implicit-pack")!=NULL) {
 
         isImplicitPackEnable=false;
 
     }
-    if (paroc_utils::checkremove(&argc,&argv,"-async-allocation")!=NULL) {
+    if (pop_utils::checkremove(&argc,&argv,"-async-allocation")!=NULL) {
         isAsyncAllocationEnabled=true;
 
     }
