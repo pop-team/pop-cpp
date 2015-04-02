@@ -12,25 +12,25 @@
 
 /*
   Deeply need refactoring:
-    POPC_BufferXDRFactory instead of paroc_buffer_xdr_factory
+    POPC_BufferXDRFactory instead of pop_buffer_xdr_factory
  */
 
 #include <unistd.h>
 #include <stdio.h>
 
-#include "paroc_buffer_xdr_factory.h"
-#include "paroc_buffer_xdr.h"
+#include "pop_buffer_xdr_factory.h"
+#include "pop_buffer_xdr.h"
 
-paroc_buffer_xdr_factory::paroc_buffer_xdr_factory() {
+pop_buffer_xdr_factory::pop_buffer_xdr_factory() {
 
 }
 
-paroc_buffer * paroc_buffer_xdr_factory::CreateBuffer() {
-    paroc_buffer * bufXDR=new paroc_buffer_xdr();
+pop_buffer * pop_buffer_xdr_factory::CreateBuffer() {
+    pop_buffer * bufXDR=new pop_buffer_xdr();
     return bufXDR;
 }
 
-bool paroc_buffer_xdr_factory::GetBufferName(std::string & bufferName) {
+bool pop_buffer_xdr_factory::GetBufferName(std::string & bufferName) {
     bufferName="xdr";
     return true;
 }

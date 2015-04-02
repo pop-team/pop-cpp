@@ -15,17 +15,17 @@
 
 #include <vector>
 
-#include "paroc_buffer.h"
+#include "pop_buffer.h"
 
 /**
- * @class paroc_buffer_raw
+ * @class pop_buffer_raw
  * @brief Raw buffer declaration, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  */
-class paroc_buffer_raw : public paroc_buffer {
+class pop_buffer_raw : public pop_buffer {
 public:
-    paroc_buffer_raw();
-    ~paroc_buffer_raw();
+    pop_buffer_raw();
+    ~pop_buffer_raw();
     virtual void Reset();
 
     virtual void Pack(const int *data, int n);
@@ -65,9 +65,9 @@ public:
     virtual void Pack(const signed char *data, int n);
     virtual void UnPack(signed char *data, int n);
 
-    using paroc_buffer::Send;
+    using pop_buffer::Send;
     virtual bool Send(paroc_combox &s, paroc_connection *conn);
-    using paroc_buffer::Recv;
+    using pop_buffer::Recv;
     virtual bool Recv(paroc_combox &s, paroc_connection *conn);
 
     virtual int get_size();

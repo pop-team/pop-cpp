@@ -12,14 +12,14 @@
 
 /*
   Deeply need refactoring:
-    POPC_BufferFactoryFinder instead of paroc_buffer_factory_finder
+    POPC_BufferFactoryFinder instead of pop_buffer_factory_finder
  */
 
 #include "popc_intface.h"
 
-#include "paroc_buffer_factory_finder.h"
-#include "paroc_buffer_xdr_factory.h"
-#include "paroc_buffer_raw_factory.h"
+#include "pop_buffer_factory_finder.h"
+#include "pop_buffer_xdr_factory.h"
+#include "pop_buffer_raw_factory.h"
 #include "paroc_utils.h"
 #include "config.h"
 
@@ -27,22 +27,22 @@
 #include <dlfcn.h>
 #endif
 
-paroc_buffer_factory_finder *paroc_buffer_factory_finder::bff=nullptr;
+pop_buffer_factory_finder *pop_buffer_factory_finder::bff=nullptr;
 
-paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
+pop_buffer_factory_finder::pop_buffer_factory_finder() {
 
     //Initialize the static array
     int metrics[MAX_FACTORY];
 
-    /*bfArray[0] = new paroc_buffer_raw_factory();
-    bfArray[1] = new paroc_buffer_xdr_factory();
+    /*bfArray[0] = new pop_buffer_raw_factory();
+    bfArray[1] = new pop_buffer_xdr_factory();
     metrics[0] = metrics[1]=0;
     plugins[0] = plugins[1] = nullptr;
     size = 2;*/
 
 
-    bfArray[0] = new paroc_buffer_xdr_factory();
-//  bfArray[0] = new paroc_buffer_raw_factory();
+    bfArray[0] = new pop_buffer_xdr_factory();
+//  bfArray[0] = new pop_buffer_raw_factory();
     metrics[0] = 0;
     plugins[0] = nullptr;
     size = 1;
@@ -85,7 +85,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
 
     if(!plugindir.empty()) {
         std::string pluginmap(plugindir);
-        pluginmap += "/paroc_buffer.map";
+        pluginmap += "/pop_buffer.map";
         FILE *map = fopen(pluginmap.c_str(), "r");
         if(map != nullptr) {
             char line[1024];
@@ -160,7 +160,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
                 int t=metrics[j];
                 metrics[j]=metrics[j-1];
                 metrics[j-1]=t;
-                paroc_buffer_factory *f=bfArray[j];
+                pop_buffer_factory *f=bfArray[j];
                 bfArray[j]=bfArray[j-1];
                 bfArray[j-1]=f;
             }
@@ -168,7 +168,7 @@ paroc_buffer_factory_finder::paroc_buffer_factory_finder() {
     }
 }
 
-paroc_buffer_factory_finder::~paroc_buffer_factory_finder() {
+pop_buffer_factory_finder::~pop_buffer_factory_finder() {
     bff=nullptr;
     for(int i=0; i<size; i++) {
         delete(bfArray[i]);
@@ -184,15 +184,15 @@ paroc_buffer_factory_finder::~paroc_buffer_factory_finder() {
 }
 
 
-void * paroc_buffer_factory_finder::LoadPlugin(char *fname, paroc_buffer_factory * &f) {
+void * pop_buffer_factory_finder::LoadPlugin(char *fname, pop_buffer_factory * &f) {
 #ifdef HAVE_LIBDL
     void *handle=popc_dlopen(fname,RTLD_LAZY| RTLD_LOCAL);
     if(!handle) {
         return nullptr;
     }
 
-    paroc_buffer_factory * (*creator)();
-    creator = (paroc_buffer_factory * (*)())popc_dlsym(handle,"ParocBufferFactory");
+    pop_buffer_factory * (*creator)();
+    creator = (pop_buffer_factory * (*)())popc_dlsym(handle,"ParocBufferFactory");
     if(creator != nullptr) {
         f = creator();
         if(!f) {
@@ -215,24 +215,24 @@ void * paroc_buffer_factory_finder::LoadPlugin(char *fname, paroc_buffer_factory
 
 
 
-paroc_buffer_factory_finder* paroc_buffer_factory_finder::GetInstance() {
+pop_buffer_factory_finder* pop_buffer_factory_finder::GetInstance() {
     if(bff==nullptr) {
-        bff=new paroc_buffer_factory_finder();
-        return paroc_buffer_factory_finder::bff;
+        bff=new pop_buffer_factory_finder();
+        return pop_buffer_factory_finder::bff;
     } else {
-        return paroc_buffer_factory_finder::bff;
+        return pop_buffer_factory_finder::bff;
     }
 }
 
-int paroc_buffer_factory_finder::GetFactoryCount() {
+int pop_buffer_factory_finder::GetFactoryCount() {
     return size;
 }
 
-paroc_buffer_factory* paroc_buffer_factory_finder::GetFactory(int index) {
+pop_buffer_factory* pop_buffer_factory_finder::GetFactory(int index) {
     return bfArray[index];
 }
 
-bool paroc_buffer_factory_finder::GetBufferName(int index, std::string & bufferName) {
+bool pop_buffer_factory_finder::GetBufferName(int index, std::string & bufferName) {
 
     if(index < 0 || index >= size) {
         return false;
@@ -243,7 +243,7 @@ bool paroc_buffer_factory_finder::GetBufferName(int index, std::string & bufferN
 }
 
 
-paroc_buffer_factory* paroc_buffer_factory_finder::FindFactory(const std::string& bufferName) {
+pop_buffer_factory* pop_buffer_factory_finder::FindFactory(const std::string& bufferName) {
     int i;
     std::string s;
 

@@ -11,8 +11,8 @@
 
 #include <dlfcn.h>
 #include <stdio.h>
-#include "paroc_buffer_factory.h"
-#include "paroc_buffer_factory_finder.h"
+#include "pop_buffer_factory.h"
+#include "pop_buffer_factory_finder.h"
 
 
 int main(int argc, char **argv) {
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
         printf("Usage:  parocplugin module0 module2 ...\n");
         return 1;
     }
-    paroc_buffer_factory * (*CreateFactory)();
+    pop_buffer_factory * (*CreateFactory)();
 
     for(int i=1; i<argc; i++) {
         void *handler=dlopen(argv[i],RTLD_NOW| RTLD_LOCAL);
@@ -28,12 +28,12 @@ int main(int argc, char **argv) {
             LOG_ERROR("POP-C++ Error on dlopen(%s): %s",argv[i],dlerror());
             continue;
         }
-        CreateFactory=(paroc_buffer_factory * (*)())dlsym(handler,"ParocBufferFactory");
+        CreateFactory=(pop_buffer_factory * (*)())dlsym(handler,"ParocBufferFactory");
 
         if(CreateFactory==NULL) {
             LOG_ERROR("POP-C++ Error %s: Can not locate ParocBufferFactory",argv[i]);
         } else {
-            paroc_buffer_factory *test=CreateFactory();
+            pop_buffer_factory *test=CreateFactory();
             if(test==NULL) {
                 LOG_ERROR("POP-C++ Error: Fail to create a buffer factory");
             } else {

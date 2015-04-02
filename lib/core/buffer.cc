@@ -12,7 +12,7 @@
 
 /*
   Deeply need refactoring:
-    POPC_Buffer instead of paroc_buffer
+    POPC_Buffer instead of pop_buffer
     POPC_MessageHeader instead of paroc_message_header (put implementation in a separate file)
  */
 
@@ -21,7 +21,7 @@
 #include <vector>
 
 #include "paroc_interface.h"
-#include "paroc_buffer.h"
+#include "pop_buffer.h"
 #include "paroc_system.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"
@@ -74,31 +74,31 @@ void paroc_message_header::operator =(const  paroc_message_header &dat) {
 
 //Message envelop
 
-paroc_buffer::paroc_buffer() {
+pop_buffer::pop_buffer() {
 }
 
-paroc_buffer::~paroc_buffer() {
+pop_buffer::~pop_buffer() {
 }
 
-void paroc_buffer::SetHeader(const paroc_message_header &data) {
+void pop_buffer::SetHeader(const paroc_message_header &data) {
     header=data;
 }
 
-const paroc_message_header & paroc_buffer::GetHeader() const {
+const paroc_message_header & pop_buffer::GetHeader() const {
     return header;
 }
 
-void paroc_buffer::Push(const char* paramname, const char* paramtype, int nelem) {
+void pop_buffer::Push(const char* paramname, const char* paramtype, int nelem) {
     (void)paramname;
     (void)paramtype;
     (void)nelem;
     // LOG_DEBUG("push %s of type %s", paramname, paramtype);
 }
 
-void paroc_buffer::Pop() {
+void pop_buffer::Pop() {
 }
 
-void paroc_buffer::Pack(const std::string *list, int n) {
+void pop_buffer::Pack(const std::string *list, int n) {
     if(n<=0 || list==nullptr) {
         return;
     }
@@ -111,7 +111,7 @@ void paroc_buffer::Pack(const std::string *list, int n) {
     }
 }
 
-void paroc_buffer::UnPack(std::string *list, int n) {
+void pop_buffer::UnPack(std::string *list, int n) {
     if(n<=0 || list==nullptr) {
         return;
     }
@@ -130,7 +130,7 @@ void paroc_buffer::UnPack(std::string *list, int n) {
     }
 }
 
-bool paroc_buffer::Send(paroc_connection *conn) {
+bool pop_buffer::Send(paroc_connection *conn) {
     if(conn == nullptr) {
         LOG_ERROR("conn==nullptr");
         return false;
@@ -139,7 +139,7 @@ bool paroc_buffer::Send(paroc_connection *conn) {
     return Send(*combox, conn);
 }
 
-bool paroc_buffer::Recv(paroc_connection *conn) {
+bool pop_buffer::Recv(paroc_connection *conn) {
     if(conn==nullptr) {
         LOG_ERROR("conn==nullptr");
         return false;
@@ -155,43 +155,43 @@ except.SetHeader(tmp);\
   except.Pack(&code,1);\
   return except.Send(s);
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,int code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,int code) {
     SEND_EXCEPTION(EXCEPTION_INT);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,unsigned code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,unsigned code) {
     SEND_EXCEPTION(EXCEPTION_UINT);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,long code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,long code) {
     SEND_EXCEPTION(EXCEPTION_LONG);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,unsigned long code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,unsigned long code) {
     SEND_EXCEPTION(EXCEPTION_ULONG);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,short code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,short code) {
     SEND_EXCEPTION(EXCEPTION_SHORT);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,unsigned short code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,unsigned short code) {
     SEND_EXCEPTION(EXCEPTION_USHORT);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,bool code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,bool code) {
     SEND_EXCEPTION(EXCEPTION_BOOL);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,char code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,char code) {
     SEND_EXCEPTION(EXCEPTION_CHAR);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,unsigned char code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,unsigned char code) {
     SEND_EXCEPTION(EXCEPTION_UCHAR);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, char *code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s, char *code) {
     except.Reset();
     paroc_message_header tmp(EXCEPTION_STRING,except.GetHeader().GetMethodName());
     except.SetHeader(tmp);
@@ -202,15 +202,15 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, char
     return except.Send(s);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,float code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,float code) {
     SEND_EXCEPTION(EXCEPTION_FLOAT);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s,double code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s,double code) {
     SEND_EXCEPTION(EXCEPTION_DOUBLE);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paroc_exception &code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s, paroc_exception &code) {
     //  SEND_EXCEPTION(EXCEPTION_POPC_STD);
     paroc_message_header tmp(EXCEPTION_POPC_STD, except.GetHeader().GetMethodName());
     except.Reset();
@@ -219,7 +219,7 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paro
     return except.Send(s);
 }
 
-bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paroc_interface &code) {
+bool pop_buffer::SendException(pop_buffer &except, paroc_connection *s, paroc_interface &code) {
     paroc_message_header tmp(EXCEPTION_OBJECT, except.GetHeader().GetMethodName());
     except.Reset();
     except.SetHeader(tmp);
@@ -228,7 +228,7 @@ bool paroc_buffer::SendException(paroc_buffer &except, paroc_connection *s, paro
 }
 
 /// Check if an exception was thrown by the remote method and propagate (if thrown)
-void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
+void  pop_buffer::CheckAndThrow(pop_buffer &except) {
     const paroc_message_header &h=except.GetHeader();
 
     if(h.GetType()!=TYPE_EXCEPTION) {
@@ -321,6 +321,6 @@ void  paroc_buffer::CheckAndThrow(paroc_buffer &except) {
         throw t;
     }
     default:
-        paroc_exception::paroc_throw("Unknown exception in paroc_buffer::CheckAndThrow");
+        paroc_exception::paroc_throw("Unknown exception in pop_buffer::CheckAndThrow");
     }
 }

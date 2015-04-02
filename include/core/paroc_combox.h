@@ -12,10 +12,10 @@
 #ifndef POPC_COMBOX_H_
 #define POPC_COMBOX_H_
 
-#include "paroc_buffer_factory_finder.h"
+#include "pop_buffer_factory_finder.h"
 
 class paroc_combox;
-class paroc_buffer_factory;
+class pop_buffer_factory;
 /**
  * @class paroc_connection
  * @brief POP-C++ communication abstraction, used by POP-C++ runtime.
@@ -26,13 +26,13 @@ class paroc_connection {
 public:
     paroc_connection(paroc_combox *com);
     paroc_connection(paroc_combox *com, bool init);
-    paroc_connection(paroc_combox *com, paroc_buffer_factory *f);
+    paroc_connection(paroc_combox *com, pop_buffer_factory *f);
     virtual ~paroc_connection();
 
     virtual bool is_initial_connection();
 
-    virtual void SetBufferFactory(paroc_buffer_factory *fact);
-    virtual paroc_buffer_factory *GetBufferFactory();
+    virtual void SetBufferFactory(pop_buffer_factory *fact);
+    virtual pop_buffer_factory *GetBufferFactory();
 
     paroc_combox *GetCombox();
 
@@ -42,7 +42,7 @@ public:
 
 
 protected:
-    paroc_buffer_factory * fact;
+    pop_buffer_factory * fact;
     paroc_combox *combox;
     bool _is_initial_connection;
 };
@@ -98,8 +98,8 @@ public:
 
     bool SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg);
 
-    void SetBufferFactory(paroc_buffer_factory *fact);
-    paroc_buffer_factory *GetBufferFactory();
+    void SetBufferFactory(pop_buffer_factory *fact);
+    pop_buffer_factory *GetBufferFactory();
 
     static const char* PROTOCOL_SEPARATOR;
 
@@ -112,7 +112,7 @@ protected:
     COMBOX_CALLBACK cblist[2];
     void *cbdata[2];
 
-    paroc_buffer_factory *defaultFact;
+    pop_buffer_factory *defaultFact;
 
 };
 

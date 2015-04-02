@@ -20,7 +20,7 @@ The Job service can pass to a parallel object environment by:
 #include "paroc_broker_factory.h"
 
 #include "appservice.ph"
-#include "paroc_buffer_factory_finder.h"
+#include "pop_buffer_factory_finder.h"
 
 bool CheckIfPacked(const char *objname);
 
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
     if(callback!=NULL) {
         char url[1024];
         int len;
-        paroc_buffer *buf=callback->GetBufferFactory()->CreateBuffer();
+        pop_buffer *buf=callback->GetBufferFactory()->CreateBuffer();
         paroc_message_header h("Callback");
         buf->SetHeader(h);
 

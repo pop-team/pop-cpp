@@ -41,7 +41,7 @@ paroc_connection::paroc_connection(paroc_combox* com, bool init) {
     _is_initial_connection = init;
 }
 
-paroc_connection::paroc_connection(paroc_combox *com, paroc_buffer_factory *f) : _is_initial_connection(false) {
+paroc_connection::paroc_connection(paroc_combox *com, pop_buffer_factory *f) : _is_initial_connection(false) {
     fact=f;
     combox=com;
 }
@@ -52,11 +52,11 @@ bool paroc_connection::is_initial_connection() {
     return _is_initial_connection;
 }
 
-void paroc_connection::SetBufferFactory(paroc_buffer_factory *f) {
+void paroc_connection::SetBufferFactory(pop_buffer_factory *f) {
     fact=f;
 }
 
-paroc_buffer_factory *paroc_connection::GetBufferFactory() {
+pop_buffer_factory *paroc_connection::GetBufferFactory() {
     return fact;
 }
 
@@ -75,7 +75,7 @@ const char* paroc_combox::PROTOCOL_SEPARATOR = "://";
 
 
 paroc_combox::paroc_combox() {
-    defaultFact = paroc_buffer_factory_finder::GetInstance()->FindFactory("xdr");
+    defaultFact = pop_buffer_factory_finder::GetInstance()->FindFactory("xdr");
     if(defaultFact == nullptr) {
         LOG_ERROR("POP-C++ Error: can not find the xdr buffer factory!");
     }
@@ -128,11 +128,11 @@ bool paroc_combox::SetCallback(COMBOX_EVENTS ev, COMBOX_CALLBACK cb, void *arg) 
     return true;
 }
 
-void paroc_combox::SetBufferFactory(paroc_buffer_factory *fact) {
+void paroc_combox::SetBufferFactory(pop_buffer_factory *fact) {
     defaultFact=fact;
 }
 
-paroc_buffer_factory *paroc_combox::GetBufferFactory() {
+pop_buffer_factory *paroc_combox::GetBufferFactory() {
     return defaultFact;
 }
 

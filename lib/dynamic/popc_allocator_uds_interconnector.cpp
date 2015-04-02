@@ -63,7 +63,7 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, paro
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, objectname, "allocating_combox == NULL");
     }
 
-    paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
+    pop_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
 
     auto  local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);
@@ -99,7 +99,7 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, paro
     if(!allocating_buffer->Recv((*allocating_combox), connection)) {
         paroc_exception::paroc_throw("allocating_buffer->Recv failed");
     }
-    paroc_buffer::CheckAndThrow(*allocating_buffer);
+    pop_buffer::CheckAndThrow(*allocating_buffer);
 
     std::string objectaddress;
     allocating_buffer->Push("objectaddress", "std::string", 1);
@@ -143,7 +143,7 @@ paroc_combox* uds_allocator_interconnector::allocate_group(std::string& objectna
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "Combox NULL");
     }
 
-    paroc_buffer* _popc_buffer = _popc_combox->GetBufferFactory()->CreateBuffer();
+    pop_buffer* _popc_buffer = _popc_combox->GetBufferFactory()->CreateBuffer();
 
     if(!_popc_combox->Create(local_interconnector_address, false)) {
         paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "Can't connect to local interconnector");
@@ -184,7 +184,7 @@ paroc_combox* uds_allocator_interconnector::allocate_group(std::string& objectna
     if(!_popc_buffer->Recv((*_popc_combox), _popc_connection)) {
         paroc_exception::paroc_throw("_popc_buffer->Recv failed");
     }
-    paroc_buffer::CheckAndThrow(*_popc_buffer);
+    pop_buffer::CheckAndThrow(*_popc_buffer);
 
 
     std::string objectaddress;

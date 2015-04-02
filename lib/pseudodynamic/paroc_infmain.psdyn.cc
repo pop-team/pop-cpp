@@ -13,7 +13,7 @@
 #include "popc_intface.h"
 
 #include "paroc_exception.h"
-#include "paroc_buffer_factory_finder.h"
+#include "pop_buffer_factory_finder.h"
 #include "paroc_broker.h"
 #include "paroc_system_mpi.h"
 #include "paroc_utils.h"

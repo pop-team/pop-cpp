@@ -27,7 +27,7 @@
 
 // POP-C++ library include
 #include "paroc_broker.h"
-#include "paroc_buffer_xdr.h"
+#include "pop_buffer_xdr.h"
 #include "popc_combox_uds.h"
 #include "paroc_utils.h"
 
@@ -119,7 +119,7 @@ void *mpireceivedthread(void *t) {
         return NULL;
     }
 
-    paroc_buffer* ipcwaker_buffer = ipcwaker.GetBufferFactory()->CreateBuffer();
+    pop_buffer* ipcwaker_buffer = ipcwaker.GetBufferFactory()->CreateBuffer();
     paroc_connection* connection = ipcwaker.get_connection();
     if(connection == NULL) {
         perror("MPI received thread connection is NULL");
@@ -488,7 +488,7 @@ int main(int argc, char* argv[]) {
             printf("Connection null\n");
         } else if(!connection->is_initial_connection()) {
             // Process incoming request
-            paroc_buffer_factory *buffer_factory = connection->GetBufferFactory();
+            pop_buffer_factory *buffer_factory = connection->GetBufferFactory();
             request.data = buffer_factory->CreateBuffer();
 
             if(request.data->Recv(connection)) {
@@ -673,7 +673,7 @@ int main(int argc, char* argv[]) {
                     delete codefile;
                     paroc_request callback;
                     paroc_connection* objectcallback = receiver.Wait();
-                    paroc_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
+                    pop_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
                     callback.data = buffer_factory->CreateBuffer();
                     if(callback.data->Recv(receiver, objectcallback)) {
                         callback.from = connection;
@@ -822,7 +822,7 @@ int main(int argc, char* argv[]) {
                         delete coreoption;
                         paroc_request callback;
                         paroc_connection* objectcallback = receiver.Wait();
-                        paroc_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
+                        pop_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
                         callback.data = buffer_factory->CreateBuffer();
                         if(callback.data->Recv(receiver, objectcallback)) {
                             callback.from = connection;

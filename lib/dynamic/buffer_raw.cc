@@ -12,29 +12,29 @@
 
 /*
   Deeply need refactoring:
-    POPC_BufferRAW instead of paroc_buffer_raw
+    POPC_BufferRAW instead of pop_buffer_raw
  */
 
 #include <stdio.h>
 #include <string.h>
 //#include "paroc_interface.h"
-#include "paroc_buffer_raw.h"
+#include "pop_buffer_raw.h"
 #include "paroc_exception.h"
 #include "popc_logger.h"
 
-paroc_buffer_raw::paroc_buffer_raw() {
+pop_buffer_raw::pop_buffer_raw() {
     Reset();
 }
 
-paroc_buffer_raw::~paroc_buffer_raw() {}
+pop_buffer_raw::~pop_buffer_raw() {}
 
-void paroc_buffer_raw::Reset() {
+void pop_buffer_raw::Reset() {
     unpackpos=20;
     //packeddata.RemoveAll();
     packeddata.resize(20);
 }
 
-void paroc_buffer_raw::Pack(const char *data, int n) {
+void pop_buffer_raw::Pack(const char *data, int n) {
     if(n<=0) {
         return;
     }
@@ -43,7 +43,7 @@ void paroc_buffer_raw::Pack(const char *data, int n) {
     memcpy(packeddata.data()+t,data,n);
 }
 
-void paroc_buffer_raw::UnPack(char *data, int n) {
+void pop_buffer_raw::UnPack(char *data, int n) {
     if(n<=0) {
         return;
     }
@@ -53,99 +53,99 @@ void paroc_buffer_raw::UnPack(char *data, int n) {
     unpackpos+=((n-1)/4+1)*4;
 }
 
-void paroc_buffer_raw::Pack(const int *data, int n) {
+void pop_buffer_raw::Pack(const int *data, int n) {
     Pack((const char *)data,n*sizeof(int));
 }
 
-void paroc_buffer_raw::UnPack(int *data, int n) {
+void pop_buffer_raw::UnPack(int *data, int n) {
     UnPack((char *)data,n*sizeof(int));
 }
 
-void paroc_buffer_raw::Pack(const unsigned *data, int n) {
+void pop_buffer_raw::Pack(const unsigned *data, int n) {
     Pack((const char *)data,n*sizeof(unsigned));
 
 }
-void paroc_buffer_raw::UnPack(unsigned *data, int n) {
+void pop_buffer_raw::UnPack(unsigned *data, int n) {
     UnPack((char *)data,n*sizeof(unsigned));
 }
 
-void paroc_buffer_raw::Pack(const long *data, int n) {
+void pop_buffer_raw::Pack(const long *data, int n) {
     Pack((const char *)data,n*sizeof(long));
 }
 
-void paroc_buffer_raw::UnPack(long *data, int n) {
+void pop_buffer_raw::UnPack(long *data, int n) {
     UnPack((char *)data,n*sizeof(long));
 }
 
-void paroc_buffer_raw::Pack(const unsigned long *data, int n) {
+void pop_buffer_raw::Pack(const unsigned long *data, int n) {
     Pack((const char *)data,n*sizeof(unsigned long));
 }
 
-void paroc_buffer_raw::UnPack(unsigned long *data, int n) {
+void pop_buffer_raw::UnPack(unsigned long *data, int n) {
     UnPack((char *)data,n*sizeof(unsigned long));
 }
 
-void paroc_buffer_raw::Pack(const short *data, int n) {
+void pop_buffer_raw::Pack(const short *data, int n) {
     Pack((const char *)data,n*sizeof(short));
 }
 
-void paroc_buffer_raw::UnPack(short *data, int n) {
+void pop_buffer_raw::UnPack(short *data, int n) {
     UnPack((char *)data,n*sizeof(short));
 }
 
-void paroc_buffer_raw::Pack(const unsigned short *data, int n) {
+void pop_buffer_raw::Pack(const unsigned short *data, int n) {
     Pack((const char *)data,n*sizeof(unsigned short));
 }
 
-void paroc_buffer_raw::UnPack(unsigned short *data, int n) {
+void pop_buffer_raw::UnPack(unsigned short *data, int n) {
     UnPack((char *)data,n*sizeof(unsigned short));
 }
 
-void paroc_buffer_raw::Pack(const bool *data, int n) {
+void pop_buffer_raw::Pack(const bool *data, int n) {
     Pack((const char *)data,n*sizeof(bool));
 }
 
-void paroc_buffer_raw::UnPack(bool *data, int n) {
+void pop_buffer_raw::UnPack(bool *data, int n) {
     UnPack((char *)data,n*sizeof(bool));
 }
 
 
-void paroc_buffer_raw::Pack(const unsigned char *data, int n) {
+void pop_buffer_raw::Pack(const unsigned char *data, int n) {
     Pack((char *)data,n);
 }
 
-void paroc_buffer_raw::UnPack(unsigned char *data, int n) {
+void pop_buffer_raw::UnPack(unsigned char *data, int n) {
     UnPack((char *)data,n);
 }
 
-void paroc_buffer_raw::Pack(const float *data, int n) {
+void pop_buffer_raw::Pack(const float *data, int n) {
     Pack((char *)data,n*sizeof(float));
 }
 
-void paroc_buffer_raw::UnPack(float *data, int n) {
+void pop_buffer_raw::UnPack(float *data, int n) {
     UnPack((char *)data,n*sizeof(float));
 }
 
-void paroc_buffer_raw::Pack(const double *data, int n) {
+void pop_buffer_raw::Pack(const double *data, int n) {
     Pack((char *)data,n*sizeof(double));
 }
 
-void paroc_buffer_raw::UnPack(double *data, int n) {
+void pop_buffer_raw::UnPack(double *data, int n) {
     UnPack((char *)data,n*sizeof(double));
 }
 
 // added by lwk
-void paroc_buffer_raw::Pack(const signed char *data, int n) {
+void pop_buffer_raw::Pack(const signed char *data, int n) {
     Pack((char *)data,n); // TODO lwk: Check that this cast is not problematic
 }
 
-void paroc_buffer_raw::UnPack(signed char *data, int n) {
+void pop_buffer_raw::UnPack(signed char *data, int n) {
     UnPack((char *)data,n);
 }
 
-void paroc_buffer_raw::CheckUnPack(int sz) {
+void pop_buffer_raw::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in paroc_buffer_raw::CheckUnPack");
+        paroc_exception::paroc_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_raw::CheckUnPack");
     }
 }
 
@@ -155,7 +155,7 @@ void paroc_buffer_raw::CheckUnPack(int sz) {
  * @param conn
  * @return
  */
-bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
+bool pop_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
     // Pack the header (20 bytes)
     char *dat = packeddata.data();
 
@@ -198,7 +198,7 @@ bool paroc_buffer_raw::Send(paroc_combox &s, paroc_connection *conn) {
 }
 
 // Propagation of exceptions back to caller...
-bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
+bool pop_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     int h[5];
     int n, i;
 
@@ -261,11 +261,11 @@ bool paroc_buffer_raw::Recv(paroc_combox &s, paroc_connection *conn) {
     return true;
 }
 
-int paroc_buffer_raw::get_size() {
+int pop_buffer_raw::get_size() {
     return packeddata.size();
 }
 
-char* paroc_buffer_raw::get_load() {
+char* pop_buffer_raw::get_load() {
     // Pack the header (20 bytes)
     char *dat = packeddata.data();
 
@@ -305,12 +305,12 @@ char* paroc_buffer_raw::get_load() {
     return packeddata.data();
 }
 
-void paroc_buffer_raw::load(char* data, int length) {
+void pop_buffer_raw::load(char* data, int length) {
     memcpy(packeddata.data(), data, length);
 }
 
 #ifdef OD_DISCONNECT
-bool paroc_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
+bool pop_buffer_raw::RecvCtrl(paroc_combox &s, paroc_connection *conn) {
     while(true) {
         paroc_connection* t = (paroc_connection*) s.Wait();
         if(!t) {

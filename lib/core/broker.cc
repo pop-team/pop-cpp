@@ -21,8 +21,8 @@
 #include "paroc_broker.h"
 #include "paroc_interface.h"
 #include "paroc_event.h"
-#include "paroc_buffer_factory_finder.h"
-#include "paroc_buffer_raw.h"
+#include "pop_buffer_factory_finder.h"
+#include "pop_buffer_raw.h"
 #include "paroc_utils.h"
 #include "paroc_thread.h"
 #include "paroc_system.h"
@@ -331,7 +331,7 @@ bool paroc_broker::Initialize(int *argc, char ***argv) {
     char *tmp=paroc_utils::checkremove(argc,argv,"-constructor");
     if(tmp!=nullptr && !classname.empty()) {
         paroc_request r;
-        paroc_buffer_raw tmp;
+        pop_buffer_raw tmp;
         r.data=&tmp;
         if(!FindMethodInfo(classname.c_str(),r.methodId[0],r.methodId[1]) || r.methodId[1]!=10) {
             LOG_ERROR_T("[BRKR]", "POP-C++ Error: [CORE] Broker cannot not find default constructor");

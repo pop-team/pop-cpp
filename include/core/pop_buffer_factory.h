@@ -13,24 +13,24 @@
 #ifndef POPC_BUFFER_FACTORY_H
 #define POPC_BUFFER_FACTORY_H
 
-#include "paroc_buffer.h"
+#include "pop_buffer.h"
 #include <string>
 
 /*This abstract class declares an interface creating abstract buffer*/
-class paroc_buffer;
+class pop_buffer;
 
 /**
- * @class paroc_buffer_factory
+ * @class pop_buffer_factory
  * @brief Buffer factory abstraction, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  */
-class paroc_buffer_factory {
+class pop_buffer_factory {
 public:
-    paroc_buffer_factory();
-    virtual ~paroc_buffer_factory();
+    pop_buffer_factory();
+    virtual ~pop_buffer_factory();
 
 public:
-    virtual paroc_buffer* CreateBuffer()=0;
+    virtual pop_buffer* CreateBuffer()=0;
 
     virtual bool GetBufferName(std::string & bufferName)=0;
 };

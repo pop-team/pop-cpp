@@ -13,37 +13,37 @@
 #ifndef _POPC_BUFFER_FACTORY_FINDER_H
 #define _POPC_BUFFER_FACTORY_FINDER_H
 
-#include "paroc_buffer_factory.h"
+#include "pop_buffer_factory.h"
 #include <string>
 
 #define MAX_FACTORY 10
 
-class paroc_buffer_factory;
+class pop_buffer_factory;
 
 /**
- * @class paroc_buffer_factory_finder
+ * @class pop_buffer_factory_finder
  * @brief Finds a buffer factory corresponding to the given buffer name, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  */
-class paroc_buffer_factory_finder {
+class pop_buffer_factory_finder {
 public:
-    ~paroc_buffer_factory_finder();
+    ~pop_buffer_factory_finder();
 
     int GetFactoryCount();
-    paroc_buffer_factory * GetFactory(int index);
-    paroc_buffer_factory * FindFactory(const std::string& name);
-    static paroc_buffer_factory_finder * GetInstance();
+    pop_buffer_factory * GetFactory(int index);
+    pop_buffer_factory * FindFactory(const std::string& name);
+    static pop_buffer_factory_finder * GetInstance();
     bool GetBufferName(int index, std::string & bufferName);
 
 private:
-    paroc_buffer_factory_finder();
-    void *LoadPlugin(char *fname, paroc_buffer_factory * &f);
+    pop_buffer_factory_finder();
+    void *LoadPlugin(char *fname, pop_buffer_factory * &f);
 
-    paroc_buffer_factory * bfArray[MAX_FACTORY];
+    pop_buffer_factory * bfArray[MAX_FACTORY];
     int size;
     void *plugins[MAX_FACTORY];
 
-    static paroc_buffer_factory_finder* bff;
+    static pop_buffer_factory_finder* bff;
 
 };
 #endif

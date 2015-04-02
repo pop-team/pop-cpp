@@ -12,7 +12,7 @@
 
 #include "paroc_accesspoint.h"
 #include "paroc_combox.h"
-#include "paroc_buffer.h"
+#include "pop_buffer.h"
 #include "paroc_list.h"
 #include "popc_object.h"
 
@@ -32,7 +32,7 @@
 struct popc_request {
     paroc_connection *from;
     unsigned methodId[3];
-    paroc_buffer *data;
+    pop_buffer *data;
     void *userdata;
     void operator = (const popc_request& r);
     popc_request();
@@ -59,12 +59,12 @@ public:
 
 
     void add_method_info(unsigned classuid, popc_method_info *methods, int size);
-    virtual bool invoke(unsigned method[3], paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);
+    virtual bool invoke(unsigned method[3], pop_buffer &_popc_buffer, paroc_connection *_popc_connection);
 
     static paroc_accesspoint accesspoint;
 
 protected:
-    void popc_send_response(paroc_buffer& buffer, paroc_connection* connection, bool collective);
+    void popc_send_response(pop_buffer& buffer, paroc_connection* connection, bool collective);
     POPC_Object* _popc_internal_object;
     popc_method_map_list methodnames;
 };

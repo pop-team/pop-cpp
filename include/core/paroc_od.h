@@ -158,7 +158,7 @@ public:
     void getValue(const std::string &key, std::string &val);
 
 
-    virtual void Serialize(paroc_buffer &buf, bool pack);
+    virtual void Serialize(pop_buffer &buf, bool pack);
     void runLocal(bool isLocal);
 
 

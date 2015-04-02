@@ -23,7 +23,7 @@
 #include "paroc_system.h"
 #include "paroc_broker.h"
 #include "paroc_broker_factory.h"
-#include "paroc_buffer_factory_finder.h"
+#include "pop_buffer_factory_finder.h"
 
 bool CheckIfPacked(const char *objname);
 
@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
 
     // Send ack via callback
     if(callback_combox != NULL) {
-        paroc_buffer *buffer = callback_combox->GetBufferFactory()->CreateBuffer();
+        pop_buffer *buffer = callback_combox->GetBufferFactory()->CreateBuffer();
         paroc_message_header h(0, 200002, INVOKE_SYNC, "_callback");
         buffer->SetHeader(h);
 

@@ -12,13 +12,13 @@
 
 /*
   Deeply need refactoring:
-    POPC_BufferFactory instead of paroc_buffer_factory
+    POPC_BufferFactory instead of pop_buffer_factory
  */
 
-#include "paroc_buffer_factory.h"
+#include "pop_buffer_factory.h"
 
-paroc_buffer_factory::paroc_buffer_factory() {
+pop_buffer_factory::pop_buffer_factory() {
 }
 
-paroc_buffer_factory::~paroc_buffer_factory() {
+pop_buffer_factory::~pop_buffer_factory() {
 }

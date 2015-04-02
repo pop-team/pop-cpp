@@ -122,8 +122,8 @@ bool popc_combox_mpi::connect_and_die(std::string &url) {
     connection->set_connection_index(dest);
     connection->set_as_asynchronous();
 
-    paroc_buffer_factory* bufferFactory = connection->GetBufferFactory();
-    paroc_buffer* tmp_buffer = bufferFactory->CreateBuffer();
+    pop_buffer_factory* bufferFactory = connection->GetBufferFactory();
+    pop_buffer* tmp_buffer = bufferFactory->CreateBuffer();
     tmp_buffer->Reset();
     tmp_buffer->SetHeader(h);
     tmp_buffer->Send(connection);

@@ -175,7 +175,7 @@ std::string popc_allocator_uds_local::allocate(std::string& objectname, paroc_od
         paroc_exception::paroc_throw("cannot receive anything");
     }
 
-    paroc_buffer::CheckAndThrow(*tmpbuffer);
+    pop_buffer::CheckAndThrow(*tmpbuffer);
 
     int n = 0;
     tmpbuffer->Push("status","int",1);

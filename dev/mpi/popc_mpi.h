@@ -5,7 +5,7 @@
 
 #include <paroc_array.h>
 #include <paroc_interface.h>
-#include <paroc_buffer_factory_finder.h>
+#include <pop_buffer_factory_finder.h>
 #include <paroc_broker.h>
 #include <jobmgr.ph>
 #include <codemgr.ph>

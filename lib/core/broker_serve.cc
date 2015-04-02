@@ -23,7 +23,7 @@
 #include "paroc_system.h"
 #include "popc_logger.h"
 
-#define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=nullptr) paroc_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
+#define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=nullptr) pop_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 
 class paroc_invokethread: public paroc_thread {
 public:
@@ -130,7 +130,7 @@ void paroc_broker::ServeRequest(paroc_request &req) {
                 paroc_exception e(ret);
                 e.AddInfo(classname);
                 e.AddInfo(accesspoint.GetAccessString());
-                paroc_buffer::SendException(*req.data, req.from, e);
+                pop_buffer::SendException(*req.data, req.from, e);
             } else {
                 LOG_ERROR("fail to create a new thread for %s@%s (method:%d:%d)\n",classname.c_str(), accesspoint.GetAccessString().c_str(), req.methodId[0], req.methodId[1]);
             }
@@ -205,7 +205,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
                 extra=classname + "@" + accesspoint.GetAccessString() + ": " + extra;
             }
             e->AddInfo(extra);
-            paroc_buffer::SendException(*request.data,request.from,*e);
+            pop_buffer::SendException(*request.data,request.from,*e);
         } else {
             UnhandledException();
         }
@@ -221,7 +221,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
                 extra=classname+"@"+accesspoint.GetAccessString()+": "+extra;
             }
             e.AddInfo(extra);
-            paroc_buffer::SendException(*request.data, request.from, e);
+            pop_buffer::SendException(*request.data, request.from, e);
         } else {
             UnhandledException();
         }
@@ -230,7 +230,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         if(request.from != nullptr) {
             paroc_exception  e2=paroc_exception(STD_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
-            paroc_buffer::SendException(*request.data, request.from, e2);
+            pop_buffer::SendException(*request.data, request.from, e2);
             delete e;
         } else {
             UnhandledException();
@@ -240,7 +240,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         if(request.from != nullptr) {
             paroc_exception  e2=paroc_exception(STD_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
-            paroc_buffer::SendException(*request.data, request.from, e2);
+            pop_buffer::SendException(*request.data, request.from, e2);
         } else {
             UnhandledException();
         }
@@ -249,7 +249,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
         if(request.from!=nullptr) {
             paroc_exception e2(UNKNOWN_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString());
-            paroc_buffer::SendException(*request.data, request.from, e2);
+            pop_buffer::SendException(*request.data, request.from, e2);
         } else {
             UnhandledException();
         }
@@ -263,7 +263,7 @@ bool paroc_broker::DoInvoke(paroc_request &request) {
 }
 
 
-bool paroc_broker::Invoke(unsigned method[3], paroc_buffer &buf, paroc_connection *peer) {
+bool paroc_broker::Invoke(unsigned method[3], pop_buffer &buf, paroc_connection *peer) {
     paroc_request req;
     req.from=peer;
     memcpy(req.methodId, method, 3*sizeof(unsigned));

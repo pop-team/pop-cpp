@@ -23,8 +23,8 @@
 #include "paroc_broker.h"
 #include "paroc_interface.h"
 #include "paroc_event.h"
-#include "paroc_buffer_factory.h"
-#include "paroc_buffer_factory_finder.h"
+#include "pop_buffer_factory.h"
+#include "pop_buffer_factory_finder.h"
 #include "paroc_system.h"
 #include "popc_logger.h"
 
@@ -112,7 +112,7 @@ bool paroc_broker::ReceiveRequest(paroc_combox *server, paroc_request &req) {
 #endif
 
         // Receiving the real data
-        paroc_buffer_factory *fact = conn->GetBufferFactory();
+        pop_buffer_factory *fact = conn->GetBufferFactory();
         req.data = fact->CreateBuffer();
 
         if(req.data->Recv(conn)) {
@@ -225,7 +225,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
     }
 
     unsigned* methodid = req.methodId;
-    paroc_buffer *buf = req.data;
+    pop_buffer *buf = req.data;
     switch(methodid[1]) {
     case 0:
         // BindStatus call
@@ -235,7 +235,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
             buf->SetHeader(h);
             int status = 0;
             std::string enclist;
-            paroc_buffer_factory_finder *finder = paroc_buffer_factory_finder::GetInstance();
+            pop_buffer_factory_finder *finder = pop_buffer_factory_finder::GetInstance();
             int count = finder->GetFactoryCount();
             for(int i = 0; i < count; i++) {
                 std::string t;
@@ -309,7 +309,7 @@ bool paroc_broker::ParocCall(paroc_request &req) {
         buf->Push("encoding", "std::string", 1);
         buf->UnPack(&enc,1);
         buf->Pop();
-        paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(enc);
+        pop_buffer_factory *fact = pop_buffer_factory_finder::GetInstance()->FindFactory(enc);
         bool ret;
         if(fact) {
             req.from->SetBufferFactory(fact);

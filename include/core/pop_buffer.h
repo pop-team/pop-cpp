@@ -115,14 +115,14 @@ private:
 
 
 /**
- * @class paroc_buffer
+ * @class pop_buffer
  * @brief Buffer abstract class used to pack/unpack data, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  */
-class paroc_buffer {
+class pop_buffer {
 public:
-    paroc_buffer();
-    virtual ~paroc_buffer();
+    pop_buffer();
+    virtual ~pop_buffer();
 
 public:
     virtual void Reset()=0;
@@ -186,29 +186,29 @@ public:
     virtual bool RecvCtrl(paroc_combox &s, paroc_connection *conn=0)=0;
 #endif
     //Exception stubs...
-    static bool SendException(paroc_buffer &except, paroc_connection *s,int code);
-    static bool SendException(paroc_buffer &except, paroc_connection *s,unsigned code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,int code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,unsigned code);
 
-    static bool SendException(paroc_buffer &except, paroc_connection *s,long code);
-    static bool SendException(paroc_buffer &except, paroc_connection *s,unsigned long code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,long code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,unsigned long code);
 
-    static bool SendException(paroc_buffer &except, paroc_connection *s,short code);
-    static bool SendException(paroc_buffer &except, paroc_connection *s,unsigned short code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,short code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,unsigned short code);
 
-    static bool SendException(paroc_buffer &except, paroc_connection *s,bool code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,bool code);
 
-    static bool SendException(paroc_buffer &except, paroc_connection *s,char code);
-    static bool SendException(paroc_buffer &except, paroc_connection *s,unsigned char code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,char code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,unsigned char code);
 
-    static bool SendException(paroc_buffer &except, paroc_connection *s,char* code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,char* code);
 
-    static bool SendException(paroc_buffer &except, paroc_connection *s,float code);
-    static bool SendException(paroc_buffer &except, paroc_connection *s,double code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,float code);
+    static bool SendException(pop_buffer &except, paroc_connection *s,double code);
 
-    static bool SendException(paroc_buffer &except, paroc_connection *s, paroc_exception &code);
-    static bool SendException(paroc_buffer &except, paroc_connection *s, paroc_interface &code);
+    static bool SendException(pop_buffer &except, paroc_connection *s, paroc_exception &code);
+    static bool SendException(pop_buffer &except, paroc_connection *s, paroc_interface &code);
 
-    static void CheckAndThrow(paroc_buffer &except);
+    static void CheckAndThrow(pop_buffer &except);
 
     template<typename T>void Pack(const std::vector<T> *vect, int n)
     {
@@ -234,5 +234,5 @@ protected:
 };
 
 
-typedef paroc_buffer POPBuffer;
+typedef pop_buffer POPBuffer;
 #endif

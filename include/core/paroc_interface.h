@@ -23,7 +23,7 @@
 #include <paroc_base.h>
 #include <paroc_accesspoint.h>
 #include <paroc_od.h>
-#include <paroc_buffer.h>
+#include <pop_buffer.h>
 #include <paroc_allocobj.h>
 #include "popwayback.h"
 
@@ -64,7 +64,7 @@ public:
     //Get the access point and set the variable _noaddref to TRUE in this access point
     const paroc_accesspoint & GetAccessPointForThis();
 
-    virtual void Serialize(paroc_buffer &buf, bool pack);
+    virtual void Serialize(pop_buffer &buf, bool pack);
 
     //Find the resource that satisfies the OD, output the resource name or the jobcontact..
     // This method only exist in the pseudodynamic version of the code (this may cause a linking error is used)
@@ -144,11 +144,11 @@ protected:
         return "paroc_interface";
     }
 
-    virtual void popc_send_request(paroc_buffer *buf, paroc_connection* conn);
-    virtual void popc_get_response(paroc_buffer *buf, paroc_connection* conn);
+    virtual void popc_send_request(pop_buffer *buf, paroc_connection* conn);
+    virtual void popc_get_response(pop_buffer *buf, paroc_connection* conn);
 
     paroc_combox *__paroc_combox;
-    paroc_buffer *__paroc_buf;
+    pop_buffer *__paroc_buf;
     paroc_accesspoint accesspoint;
 
     paroc_mutex _paroc_imutex;

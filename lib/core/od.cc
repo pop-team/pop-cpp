@@ -343,7 +343,7 @@ void paroc_od::getValue(const std::string &key, std::string &val) {
     val=nullptr;
 }
 
-void paroc_od::Serialize(paroc_buffer &buf, bool pack) {
+void paroc_od::Serialize(pop_buffer &buf, bool pack) {
     float val[2];
     int valInt[2];
     int valSearch[3];

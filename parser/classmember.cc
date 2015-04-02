@@ -353,7 +353,7 @@ bool Param::UserProc(char *output) {
     char decl[1024];
 
     mytype->GetDeclaration("param",decl);
-    sprintf(output,"void %s(paroc_buffer &buf, %s, int hint,  bool marshal);" , marshalProc, decl);
+    sprintf(output,"void %s(pop_buffer &buf, %s, int hint,  bool marshal);" , marshalProc, decl);
     return true;
 }
 //END Param implementation
@@ -946,7 +946,7 @@ void Method::GenerateClient(std::string &output) {
 #endif
 
         if(!GetClass()->is_collective()) {
-            strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv((*__paroc_combox), _popc_connection)) paroc_exception::paroc_throw(\"Buffer receive\");\n\t}\n\t\n\tparoc_buffer::CheckAndThrow(*__paroc_buf);\n");
+            strcpy(tmpcode,"\t{\n\t\tif (!__paroc_buf->Recv((*__paroc_combox), _popc_connection)) paroc_exception::paroc_throw(\"Buffer receive\");\n\t}\n\t\n\tpop_buffer::CheckAndThrow(*__paroc_buf);\n");
         } else {
             strcpy(tmpcode,"\n  popc_recv_response(_popc_buffer, _popc_connection);");
         }
@@ -1114,7 +1114,7 @@ void Method::GenerateBrokerHeader(std::string &output) {
     }
 
     char str[1024];
-    sprintf(str,"\nvoid Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output);",name , id);
+    sprintf(str,"\nvoid Invoke_%s_%d(pop_buffer &__paroc_buf, paroc_connection *__interface_output);",name , id);
     output += str;
 }
 
@@ -1128,7 +1128,7 @@ void Method::generate_broker_header_pog(std::string &output) {
     }
 
     char str[1024];
-    sprintf(str,"\n  void Invoke_%s_%d(paroc_buffer &_popc_buffer, paroc_connection *_popc_connection);",name , id);
+    sprintf(str,"\n  void Invoke_%s_%d(pop_buffer &_popc_buffer, paroc_connection *_popc_connection);",name , id);
     output += str;
 }
 
@@ -1157,9 +1157,9 @@ void Method::GenerateBroker(std::string &output) {
     char str[1024];
 
     if(GetClass()->is_collective()) {
-        sprintf(str,"\nvoid %s::Invoke_%s_%d(paroc_buffer &_popc_buffer, paroc_connection *_popc_connection)\n{",brokername,name, id);
+        sprintf(str,"\nvoid %s::Invoke_%s_%d(pop_buffer &_popc_buffer, paroc_connection *_popc_connection)\n{",brokername,name, id);
     } else {
-        sprintf(str,"\nvoid %s::Invoke_%s_%d(paroc_buffer &__paroc_buf, paroc_connection *__interface_output)\n{",brokername,name, id);
+        sprintf(str,"\nvoid %s::Invoke_%s_%d(pop_buffer &__paroc_buf, paroc_connection *__interface_output)\n{",brokername,name, id);
     }
     output += str;
 

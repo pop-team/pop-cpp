@@ -4,18 +4,13 @@ CMakeFiles
 Makefile
 cmake_install.cmake
 install_manifest.txt
+*.log
+*.o
+*.a
 
 # Ignore files configured by cmake
 config.h
 services/popcobjrun
-
-# There is no reason at all to save object files
-*.o
-
-# Ignore common generated files in lib/dynamic
-# TODO: These files should not be generated here
-lib/core/*.a
-lib/dynamic/*.a
 
 # Ignore configured scripts
 scripts/popc-runtime-env.in
@@ -42,4 +37,7 @@ test/*/_popc*
 dev/test/*/_popc*
 dev/test/*/*/_popc*
 test/unitTests/Makefile
+test/unitTests/unitTests
+test/unitTests/unitTests.cpp
+test/unitTests/*.xml
 __cmd_to_execute__

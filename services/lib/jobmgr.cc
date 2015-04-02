@@ -1737,8 +1737,8 @@ int JobMgr::ExecObj(const std::string  &objname, const paroc_od &od, int howmany
     tmpsock.SetTimeout(alloc_timeout*1000);
 
     for(int i=0; i<howmany; i++) {
-        paroc_buffer_xdr buf1;
-        paroc_buffer &buf=buf1;
+        pop_buffer_xdr buf1;
+        pop_buffer &buf=buf1;
 
         if(!buf.Recv(tmpsock)) {
             int err=errno;

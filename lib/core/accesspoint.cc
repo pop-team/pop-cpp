@@ -137,7 +137,7 @@ void paroc_accesspoint::SetNoAddRef() {
 
 
 
-void paroc_accesspoint::Serialize(paroc_buffer &buf, bool pack) {
+void paroc_accesspoint::Serialize(pop_buffer &buf, bool pack) {
     if(pack) {
         std::string s(endpoint);
         buf.Push("url","std::string",1);

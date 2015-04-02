@@ -32,7 +32,7 @@
 
 
 #include "paroc_system_mpi.h"
-#include "paroc_buffer_factory_finder.h"
+#include "pop_buffer_factory_finder.h"
 #include "paroc_utils.h"
 #include "paroc_combox_factory.h"
 #include "paroc_exception.h"
@@ -64,7 +64,7 @@ std::string paroc_system::challenge;
 
 paroc_system::paroc_system() {
     paroc_combox_factory::GetInstance();
-    paroc_buffer_factory_finder::GetInstance();
+    pop_buffer_factory_finder::GetInstance();
     char *tmp = getenv("POPC_PLATFORM");
     if(tmp != NULL) {
         platform = tmp;
@@ -101,7 +101,7 @@ paroc_system::~paroc_system() {
 #endif
 
     paroc_combox_factory *pf=paroc_combox_factory::GetInstance();
-    paroc_buffer_factory_finder *bf=paroc_buffer_factory_finder::GetInstance();
+    pop_buffer_factory_finder *bf=pop_buffer_factory_finder::GetInstance();
     delete pf;
     delete bf;
 }

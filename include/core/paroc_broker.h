@@ -32,8 +32,8 @@
 #define IMPLEMENT_TYPE(aparclass) aparclass##_popcobject
 
 #include "paroc_exception.h"
-#include "paroc_buffer.h"
-#include "paroc_buffer_xdr.h"
+#include "pop_buffer.h"
+#include "pop_buffer_xdr.h"
 #include "paroc_accesspoint.h"
 #include "paroc_combox_factory.h"
 #include "paroc_combox_socket.h"
@@ -42,7 +42,7 @@
 struct paroc_request {
     paroc_connection *from;
     unsigned methodId[3];
-    paroc_buffer *data;
+    pop_buffer *data;
     void *userdata;
     void operator = (const paroc_request &r);
     paroc_request();
@@ -84,7 +84,7 @@ public:
     const char *FindMethodName(unsigned classID, unsigned methodID);
     bool FindMethodInfo(const char *name, unsigned &classID, unsigned &methodID);
 
-    virtual bool Invoke(unsigned method[3], paroc_buffer &buf, paroc_connection *peer);
+    virtual bool Invoke(unsigned method[3], pop_buffer &buf, paroc_connection *peer);
 
     virtual int Run();
 

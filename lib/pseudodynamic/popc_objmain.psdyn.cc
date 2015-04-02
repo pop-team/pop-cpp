@@ -29,7 +29,7 @@
 #include "paroc_utils.h"
 #include "paroc_system_mpi.h"
 #include "paroc_broker_factory.h"
-#include "paroc_buffer_factory_finder.h"
+#include "pop_buffer_factory_finder.h"
 
 
 
@@ -128,7 +128,7 @@ int main(int argc, char **argv) {
         // Connect to the end point
         paroc_connection* connection = callback->get_connection();
 
-        paroc_buffer *buf = callback->GetBufferFactory()->CreateBuffer();
+        pop_buffer *buf = callback->GetBufferFactory()->CreateBuffer();
 
         paroc_message_header h("Callback");
         buf->SetHeader(h);

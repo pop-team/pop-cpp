@@ -13,7 +13,7 @@
 #include "popc_intface.h"
 
 #include "paroc_exception.h"
-#include "paroc_buffer_factory_finder.h"
+#include "pop_buffer_factory_finder.h"
 #include "paroc_broker.h"
 #include "paroc_system.h"
 #include "paroc_utils.h"
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
             paroc_exception::paroc_throw(POPC_NO_PROTOCOL, "POPCMain: allocating_combox == NULL");
         }
 
-        paroc_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
+        pop_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
 
         char* local_address = new char[15];
         snprintf(local_address, 15, "uds_%d.0", paroc_system::popc_local_mpi_communicator_rank);

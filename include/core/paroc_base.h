@@ -13,7 +13,7 @@
 #ifndef _POPC_BASE_SERIALIZABLE
 #define _POPC_BASE_SERIALIZABLE
 
-#include <paroc_buffer.h>
+#include <pop_buffer.h>
 
 /**
  * @class paroc_base
@@ -24,7 +24,7 @@
 class paroc_base {
 public:
     virtual ~paroc_base() {}
-    virtual void Serialize(paroc_buffer &buf, bool pack)=0;
+    virtual void Serialize(pop_buffer &buf, bool pack)=0;
 };
 
 typedef paroc_base POPBase;

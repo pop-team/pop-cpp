@@ -113,7 +113,7 @@ const char* paroc_exception::what() const throw() {
 }
 
 
-void paroc_exception::Serialize(paroc_buffer &buf, bool pack) {
+void paroc_exception::Serialize(pop_buffer &buf, bool pack) {
     if(pack) {
         buf.Push("code","int",1);
         buf.Pack(&errcode,1);

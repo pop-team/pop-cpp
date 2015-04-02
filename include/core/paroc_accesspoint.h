@@ -36,7 +36,7 @@ public:
     void SetNoAddRef() ;
     bool GetNoAddRef() const;
 
-    virtual void Serialize(paroc_buffer &buf, bool pack);
+    virtual void Serialize(pop_buffer &buf, bool pack);
 private:
     std::string endpoint;
     bool _service;

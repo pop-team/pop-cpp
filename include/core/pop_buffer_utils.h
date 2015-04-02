@@ -14,9 +14,9 @@
 #define _POPC_BUFFER_UTILS_H
 
 #include <string>
-#include "paroc_buffer.h"
+#include "pop_buffer.h"
 #include "paroc_memspool.h"
 
-template <class T> void packarray(paroc_buffer &buf, T *param, int size, int flag, paroc_memspool *temp);
+template <class T> void packarray(pop_buffer &buf, T *param, int size, int flag, paroc_memspool *temp);
 
 #endif

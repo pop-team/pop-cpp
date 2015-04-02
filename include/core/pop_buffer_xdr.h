@@ -15,22 +15,22 @@
 
 #include <vector>
 
-#include "paroc_buffer.h"
+#include "pop_buffer.h"
 
 /**
- * @class paroc_buffer_xdr
+ * @class pop_buffer_xdr
  * @brief Buffer in XDR format used for heterogeneous platform communication, used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
  *
  */
-class paroc_buffer_xdr: public paroc_buffer {
+class pop_buffer_xdr: public pop_buffer {
 public:
-    paroc_buffer_xdr();
-    ~paroc_buffer_xdr();
+    pop_buffer_xdr();
+    ~pop_buffer_xdr();
     virtual void Reset();
 
-    // using paroc_buffer::Pack;
-    // using paroc_buffer::UnPack;
+    // using pop_buffer::Pack;
+    // using pop_buffer::UnPack;
     virtual void Pack(const int *data, int n);
     virtual void UnPack(int *data, int n);
 

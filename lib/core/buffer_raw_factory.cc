@@ -12,25 +12,25 @@
 
 /*
   Deeply need refactoring:
-    POPC_BufferRAWFactory instead of paroc_buffer_raw_factory
+    POPC_BufferRAWFactory instead of pop_buffer_raw_factory
  */
 
 #include <unistd.h>
 #include <stdio.h>
 
-#include "paroc_buffer_raw_factory.h"
-#include "paroc_buffer_raw.h"
+#include "pop_buffer_raw_factory.h"
+#include "pop_buffer_raw.h"
 
-paroc_buffer_raw_factory::paroc_buffer_raw_factory() {
+pop_buffer_raw_factory::pop_buffer_raw_factory() {
 
 }
 
-paroc_buffer * paroc_buffer_raw_factory::CreateBuffer() {
-    paroc_buffer * bufRAW=new paroc_buffer_raw();
+pop_buffer * pop_buffer_raw_factory::CreateBuffer() {
+    pop_buffer * bufRAW=new pop_buffer_raw();
     return bufRAW;
 }
 
-bool paroc_buffer_raw_factory::GetBufferName(std::string & bufferName) {
+bool pop_buffer_raw_factory::GetBufferName(std::string & bufferName) {
     bufferName="raw";
     return true;
 }

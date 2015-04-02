@@ -69,7 +69,7 @@ public:
     static void paroc_throw(int code, const std::string& reason1="", const std::string& reason2="");
     static void paroc_throw(const std::string& reason1, const std::string& reason2="");
 
-    virtual void Serialize(paroc_buffer &buf, bool pack);
+    virtual void Serialize(pop_buffer &buf, bool pack);
 
     const std::string& Info()const;
     void AddInfo(const std::string& str);

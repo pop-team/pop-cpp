@@ -210,14 +210,14 @@ std::string socket_allocator_local::allocate(std::string& objectname, paroc_od& 
     //Now get the return paroc_accesspoint....
     tmpsock->SetTimeout(ALLOC_TIMEOUT*1000);
 
-    paroc_buffer * tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
+    pop_buffer * tmpbuffer = tmpsock->GetBufferFactory()->CreateBuffer();
 
     if(!tmpbuffer->Recv((*tmpsock), connection)) {
         LOG_WARNING("cannot receive anything");
         paroc_exception::paroc_throw("cannot receive anything");
     }
 
-    paroc_buffer::CheckAndThrow(*tmpbuffer);
+    pop_buffer::CheckAndThrow(*tmpbuffer);
 
     int n = 0;
     tmpbuffer->Push("status","int",1);

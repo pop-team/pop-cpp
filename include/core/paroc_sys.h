@@ -20,8 +20,8 @@
 #include <paroc_broker.h>
 #include <paroc_broker_factory.h>
 
-#include <paroc_buffer.h>
-#include <paroc_buffer_utils.h>
+#include <pop_buffer.h>
+#include <pop_buffer_utils.h>
 #include <paroc_system.h>
 #include <paroc_utils.h>
 #include <popc_logger.h>

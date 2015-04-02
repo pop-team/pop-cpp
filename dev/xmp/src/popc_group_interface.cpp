@@ -204,7 +204,7 @@ bool POPC_GroupInterface::finalize() {
  * @param buffer      Buffer filled with the request header and data load
  * @param connection  Connection used to send the request.
  */
-void POPC_GroupInterface::popc_send_request(paroc_buffer* buffer, paroc_connection* connection) {
+void POPC_GroupInterface::popc_send_request(pop_buffer* buffer, paroc_connection* connection) {
     if(!buffer->Send((*_popc_combox), connection)) {
         printf("ERROR: Problem while sending request\n");
         paroc_exception::paroc_throw("Problem while sending request");
@@ -216,11 +216,11 @@ void POPC_GroupInterface::popc_send_request(paroc_buffer* buffer, paroc_connecti
  * @param buffer      Empty buffer to receive the request header and its data load
  * @param connection  Connection used to receive the response.
  */
-void POPC_GroupInterface::popc_recv_response(paroc_buffer* buffer, paroc_connection* connection) {
+void POPC_GroupInterface::popc_recv_response(pop_buffer* buffer, paroc_connection* connection) {
     if(!buffer->Recv((*_popc_combox), connection)) {
         paroc_exception::paroc_throw("buffer Receive");
     }
-    paroc_buffer::CheckAndThrow(*buffer);
+    pop_buffer::CheckAndThrow(*buffer);
 }
 
 /**

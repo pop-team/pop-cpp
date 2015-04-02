@@ -30,7 +30,7 @@
 #include <sstream>
 
 #include "paroc_interface.h"
-#include "paroc_buffer_factory_finder.h"
+#include "pop_buffer_factory_finder.h"
 #include "paroc_broker.h"
 #include "paroc_combox_factory.h"
 #include "paroc_system_mpi.h"
@@ -162,7 +162,7 @@ const paroc_accesspoint &  paroc_interface::GetAccessPointForThis() {
     return accesspoint;
 }
 
-void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
+void paroc_interface::Serialize(pop_buffer &buf, bool pack) {
 
     buf.Push("od", "paroc_od", 1);
     od.Serialize(buf, pack);
@@ -172,7 +172,7 @@ void paroc_interface::Serialize(paroc_buffer &buf, bool pack) {
     accesspoint.Serialize(buf, pack);
     buf.Pop();
 
-    paroc_buffer *old = NULL;
+    pop_buffer *old = NULL;
 
     if(&buf == __paroc_buf) {
         LOG_WARNING("Buffers share the same address");// TODO LW: Where does this come from ?
@@ -551,7 +551,7 @@ bool paroc_interface::Encoding(std::string encoding) {
         return false;
     }
 
-    paroc_buffer_factory *fact = paroc_buffer_factory_finder::GetInstance()->FindFactory(encoding);
+    pop_buffer_factory *fact = pop_buffer_factory_finder::GetInstance()->FindFactory(encoding);
 
     if(!fact) {
         LOG_ERROR("[CORE] No encoding factory for %s", encoding.c_str());
@@ -1016,7 +1016,7 @@ void paroc_interface::ApplyCommPattern(const std::string& pattern, std::vector<s
 /**
  * Send the current request in the buffer to the endpoint designated by the connection
  */
-void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* conn) {
+void paroc_interface::popc_send_request(pop_buffer *buf, paroc_connection* conn) {
     if(!buf->Send((*__paroc_combox), conn)) {
         paroc_exception::paroc_throw("Buffer send failed");
     }
@@ -1026,12 +1026,12 @@ void paroc_interface::popc_send_request(paroc_buffer *buf, paroc_connection* con
 /**
  * Get the response from the endpoint designated by the connection
  */
-void paroc_interface::popc_get_response(paroc_buffer *buf, paroc_connection* conn) {
+void paroc_interface::popc_get_response(pop_buffer *buf, paroc_connection* conn) {
     if(!buf->Recv((*__paroc_combox), conn)) {
         paroc_exception::paroc_throw("Buffer receive failed");
     }
     LOG_DEBUG("INTERFACE: paroc_response will disconnect the connection");
-    paroc_buffer::CheckAndThrow(*buf);
+    pop_buffer::CheckAndThrow(*buf);
 }
 
 /* ################################################################################################
