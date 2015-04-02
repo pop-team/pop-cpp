@@ -25,7 +25,7 @@
 #define panic printf
 // #define debug(a,b,c) printf((b),(c),(a))
 
-extern int parocmain(int, char **);
+extern int popmain(int, char **);
 
 void SignalTerminate(int sig) {
     LOG_ERROR( "SIGNAL %d!!!!",sig);
@@ -72,9 +72,9 @@ int main(int argc, char **argv) {
     popc_signal(popc_SIGINT, SignalTerminate);
 
     if(i < 0) {
-        LOG_DEBUG( "Call parocmain");
-        int ret = parocmain(argc, argv);
-        LOG_DEBUG( "End of parocmain");
+        LOG_DEBUG( "Call popmain");
+        int ret = popmain(argc, argv);
+        LOG_DEBUG( "End of popmain");
 
         /**
         * POP-C++ on the K Computer
@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
     // atexit(_pop_atexit); // TODO LWK: Commented this: see if works
 
     try {
-        int ret=parocmain(argc,argv);
+        int ret=popmain(argc,argv);
         if(ret!=0)
             LOG_WARNING("main returned error code %d. Finalize method will kill all remaining objects", ret);
         // note LW: waiting here allows destroyed objects to unregister themselves and avoid unnecessary error messages due to simultaneous destruction

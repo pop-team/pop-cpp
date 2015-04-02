@@ -25,7 +25,7 @@
 //#define panic printf
 //#define debug(a,b,c) printf((b),(c),(a))
 
-extern int parocmain(int, char **);
+extern int popmain(int, char **);
 
 void SignalTerminate(int sig) {
     LOG_ERROR( "SIGNAL %d!!!!",sig);
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
     /* END OF ADD */
 
     if(i<0) {
-        int ret = parocmain(argc,argv);
+        int ret = popmain(argc,argv);
 
         int cmd = 2;
         MPI::COMM_WORLD.Send(&cmd, 1, MPI_INT, 1, 10);
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
     popc_signal(SIGPIPE, SIG_IGN);
 
     try {
-        int ret = parocmain(argc, argv);
+        int ret = popmain(argc, argv);
         //app.Finalize(ret == 0);
         LOG_DEBUG("Will call MPI::Finalize and exit main 1");
         // Only for MPI

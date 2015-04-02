@@ -415,7 +415,7 @@ int main(int argc, char *argv[]) {
 
     char outputfile[1024] = "";
 
-    bool useparocmain = true;
+    bool usepopmain = true;
     bool compile = false;
     bool object = false;
     bool staticlib = false;
@@ -596,7 +596,7 @@ int main(int argc, char *argv[]) {
             object = true;
         } else if(strcmp(argv[i], "-cxxmain") == 0) {
             argv[i][0]=0;
-            useparocmain=false;
+            usepopmain=false;
         } else if(strcmp(argv[i], "-verbose") == 0) {
             argv[i][0] = 0;
             options.verbose = true;
@@ -620,8 +620,8 @@ int main(int argc, char *argv[]) {
     sprintf(buf, "-DPOPC_ARCH=\"%s\"", arch);
     cpp_opts[cpp_count++] = popc_strdup(buf);
 
-    if(useparocmain) {
-        cpp_opts[cpp_count++] = popc_strdup("-Dmain=parocmain");
+    if(usepopmain) {
+        cpp_opts[cpp_count++] = popc_strdup("-Dmain=popmain");
     }
 
     sprintf(buf, "-I%s/include/core", parocdir);
@@ -682,17 +682,17 @@ int main(int argc, char *argv[]) {
     bool paroc_nolib = pop_utils::checkremove(&argc, &argv, "-popc-nolib");
 
     if(!compile) {
-        if(useparocmain) {
+        if(usepopmain) {
             if(options.psdyn && object) {
                 sprintf(buf, "%s/lib/pseudodynamic/popc_objmain.%s.o", parocdir, "psdyn");
             } else if(options.psdyn) {
-                sprintf(buf, "%s/lib/pseudodynamic/paroc_infmain.%s.o", parocdir, "psdyn");
+                sprintf(buf, "%s/lib/pseudodynamic/pop_infmain.%s.o", parocdir, "psdyn");
             } else if((options.xmp || options.mpi) && object) {
                 sprintf(buf, "%s/lib/dynamic/popc_objmain.%s.o", parocdir, "xmp");
             } else if(object) {
-                sprintf(buf, "%s/lib/dynamic/paroc_objmain.%s.o", parocdir, objmain);
+                sprintf(buf, "%s/lib/dynamic/pop_objmain.%s.o", parocdir, objmain);
             } else {
-                sprintf(buf, "%s/lib/dynamic/paroc_infmain.std.o", parocdir);
+                sprintf(buf, "%s/lib/dynamic/pop_infmain.std.o", parocdir);
             }
             link_cmd[link_count++] = popc_strdup(buf);
         }

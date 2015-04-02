@@ -39,10 +39,10 @@ add_library(popc_common_psdyn
 # TARGET_LINK_LIBRARIES(popc_common_psdyn ${POPCCOMMON})
 
 add_custom_command(
-    OUTPUT paroc_infmain.psdyn.o
-    COMMAND ${MPI_CXX_COMPILER} ${POPC_MAIN_FLAGS} paroc_infmain.psdyn.cc
+    OUTPUT pop_infmain.psdyn.o
+    COMMAND ${MPI_CXX_COMPILER} ${POPC_MAIN_FLAGS} pop_infmain.psdyn.cc
     ${POPCPP_PSEUDODYNAMIC_INCLUDE_PATH}
-    DEPENDS paroc_infmain.psdyn.cc
+    DEPENDS pop_infmain.psdyn.cc
     COMMENT "Compile POP-C++ Master main")
 
 add_custom_command(
@@ -53,7 +53,7 @@ add_custom_command(
     COMMENT "Compile POP-C++ Object main")
 
 add_custom_target(popcpp_object_psdyn_main ALL DEPENDS popc_objmain.psdyn.o)
-add_custom_target(popcpp_master_psdyn_main ALL DEPENDS paroc_infmain.psdyn.o)
+add_custom_target(popcpp_master_psdyn_main ALL DEPENDS pop_infmain.psdyn.o)
 
 # Final link steps
 
@@ -66,6 +66,6 @@ add_custom_command(
 
 # Install all the files
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.psdyn.o DESTINATION lib/pseudodynamic)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/pop_infmain.psdyn.o DESTINATION lib/pseudodynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_objmain.psdyn.o DESTINATION lib/pseudodynamic)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common_psdyn.a DESTINATION lib/pseudodynamic)

@@ -34,24 +34,24 @@ set(POPCC_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 
 # TARGET_LINK_LIBRARIES(popc_common ${POPCCOMMON})
 
-add_custom_command(OUTPUT paroc_infmain.std.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_infmain.std.o ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.std.cc
+add_custom_command(OUTPUT pop_infmain.std.o
+    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} pop_infmain.std.o ${CMAKE_CURRENT_SOURCE_DIR}/pop_infmain.std.cc
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
-    DEPENDS paroc_infmain.std.cc
+    DEPENDS pop_infmain.std.cc
     DEPENDS popcc
     DEPENDS popcpp
     COMMENT "Compile POP-C++ Master main")
 
-add_custom_command(OUTPUT paroc_objmain.std.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} paroc_objmain.std.o ${CMAKE_CURRENT_SOURCE_DIR}/paroc_objmain.std.cc
+add_custom_command(OUTPUT pop_objmain.std.o
+    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} pop_objmain.std.o ${CMAKE_CURRENT_SOURCE_DIR}/pop_objmain.std.cc
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
-    DEPENDS paroc_objmain.std.cc
+    DEPENDS pop_objmain.std.cc
     DEPENDS popcc
     DEPENDS popcpp
     COMMENT "Compile POP-C++ Object main")
 
-add_custom_target(popcpp_object_main ALL DEPENDS paroc_objmain.std.o)
-add_custom_target(popcpp_master_main ALL DEPENDS paroc_infmain.std.o)
+add_custom_target(popcpp_object_main ALL DEPENDS pop_objmain.std.o)
+add_custom_target(popcpp_master_main ALL DEPENDS pop_infmain.std.o)
 
 # Compile a .ph file into a .ph.stub_client.o
 function(popcc_compile_ph ph_file)
@@ -175,8 +175,8 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/objectmonitor.ph DESTINATION ${POPCC_I
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/pop_service_base.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_search_node.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/remotelog.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/paroc_infmain.std.o DESTINATION ${POPCC_LIB_INSTALL})
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/paroc_objmain.std.o DESTINATION ${POPCC_LIB_INSTALL})
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/pop_infmain.std.o DESTINATION ${POPCC_LIB_INSTALL})
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/pop_objmain.std.o DESTINATION ${POPCC_LIB_INSTALL})
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common.a DESTINATION ${POPCC_LIB_INSTALL})
 
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "paroc_infmain.std.o;paroc_objmain.std.o")
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "pop_infmain.std.o;pop_objmain.std.o")
