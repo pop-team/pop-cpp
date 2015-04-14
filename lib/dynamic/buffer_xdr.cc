@@ -40,12 +40,13 @@ void pop_buffer_xdr::Pack(const int *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
+    assert(sizeof(int) <= 4);
     packeddata.resize(n*4+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int);
+    assert(xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int));
     xdr_destroy(&xdr);
 
 }
@@ -61,7 +62,7 @@ void pop_buffer_xdr::UnPack(int *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int);
+    assert(xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int));
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -72,12 +73,13 @@ void pop_buffer_xdr::Pack(const unsigned *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
+    assert(sizeof(unsigned) <= 4);
     packeddata.resize(n*4+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_u_int);
+    assert(xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_u_int));
     xdr_destroy(&xdr);
 
 }
@@ -92,7 +94,7 @@ void pop_buffer_xdr::UnPack(unsigned *data, int n) {
     char *dest=packeddata.data()+unpackpos;
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(unsigned),(xdrproc_t)xdr_u_int);
+    assert(xdr_vector(&xdr,(char *)data,n,sizeof(unsigned),(xdrproc_t)xdr_u_int));
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -103,12 +105,14 @@ void pop_buffer_xdr::Pack(const long *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
-    packeddata.resize(n*4+oldsize);
+    // note: on 64 bits machines, long have a size of 8
+    assert(sizeof(long) <= 8);
+    packeddata.resize(n*8+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
-    xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_long);
+    xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
+    assert(xdr_vector(&xdr,(char *)data,n,8,(xdrproc_t)xdr_long));
     xdr_destroy(&xdr);
 }
 
@@ -118,12 +122,12 @@ void pop_buffer_xdr::UnPack(long *data, int n) {
     }
     char *dest=packeddata.data()+unpackpos;
 
-    int sz=4*n;
+    int sz=8*n;
     CheckUnPack(sz);
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr, (char*)data,n,sizeof(long),(xdrproc_t)xdr_long);
+    assert(xdr_vector(&xdr, (char*)data,n,8,(xdrproc_t)xdr_long));
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -134,12 +138,13 @@ void pop_buffer_xdr::Pack(const unsigned long *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
-    packeddata.resize(n*4+oldsize);
+    assert(sizeof(unsigned long) <= 8);
+    packeddata.resize(n*8+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
-    xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_u_long);
+    xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
+    assert(xdr_vector(&xdr,(char *)data,n,8,(xdrproc_t)xdr_u_long));
     xdr_destroy(&xdr);
 }
 
@@ -149,12 +154,12 @@ void pop_buffer_xdr::UnPack(unsigned long *data, int n) {
     }
     char *dest=packeddata.data()+unpackpos;
 
-    int sz=n*4;
+    int sz=n*8;
     CheckUnPack(sz);
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_u_long);
+    assert(xdr_vector(&xdr,(char *)data,n,8,(xdrproc_t)xdr_u_long));
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -165,12 +170,18 @@ void pop_buffer_xdr::Pack(const short *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
-    packeddata.resize(((n-1)/2+1)*4+oldsize);
+    assert(sizeof(short) == 2);
+    // note: on 64 bits short are aligned on 4 bits
+    int sz = n*4;
+    // 32 bits only
+    // int sz = ((n-1)/2+1)*4;
+    packeddata.resize(oldsize+sz);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
-    xdrmem_create(&xdr,dest,n*2,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_short);
+
+    xdrmem_create(&xdr,dest,sz,XDR_ENCODE);
+    assert(xdr_vector(&xdr,(char *)data,n,2,(xdrproc_t)xdr_short));
     xdr_destroy(&xdr);
 
 }
@@ -181,14 +192,14 @@ void pop_buffer_xdr::UnPack(short *data, int n) {
     }
     char *dest=packeddata.data()+unpackpos;
 
-    int sz=2*n;
+    int sz= n*4;
     CheckUnPack(sz);
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_short);
+    assert(xdr_vector(&xdr,(char *)data,n,2,(xdrproc_t)xdr_short));
     xdr_destroy(&xdr);
 
-    unpackpos+=((n-1)/2+1)*4;
+    unpackpos+=sz;
 
 }
 
@@ -197,12 +208,14 @@ void pop_buffer_xdr::Pack(const unsigned short *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
-    packeddata.resize(((n-1)/2+1)*4+oldsize);
+    assert(sizeof(unsigned short) == 2);
+    int sz= n*4;
+    packeddata.resize(oldsize+sz);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
-    xdrmem_create(&xdr,dest,n*2,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_u_short);
+    xdrmem_create(&xdr,dest,sz,XDR_ENCODE);
+    assert(xdr_vector(&xdr,(char *)data,n,2,(xdrproc_t)xdr_u_short));
     xdr_destroy(&xdr);
 }
 
@@ -212,15 +225,15 @@ void pop_buffer_xdr::UnPack(unsigned short *data, int n) {
     }
     char *dest=packeddata.data()+unpackpos;
 
-    int sz=2*n;
+    int sz= n*4;
     CheckUnPack(sz);
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_u_short);
+    assert(xdr_vector(&xdr,(char *)data,n,2,(xdrproc_t)xdr_u_short));
     xdr_destroy(&xdr);
 
-    unpackpos+=((n-1)/2+1)*4;
+    unpackpos+=sz;
 }
 
 void pop_buffer_xdr::Pack(const bool *data, int n) {
@@ -257,6 +270,7 @@ void pop_buffer_xdr::Pack(const char *data, int n) {
         return;
     }
     int t=packeddata.size();
+    assert(sizeof(char) == 1);
     packeddata.resize(t+((n-1)/4+1)*4);
     memcpy(packeddata.data()+t,data,n);
 }
@@ -284,12 +298,13 @@ void pop_buffer_xdr::Pack(const float *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
+    assert(sizeof(float) <= 4);
     packeddata.resize(n*4+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float);
+    assert(xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float));
     xdr_destroy(&xdr);
 }
 
@@ -304,7 +319,7 @@ void pop_buffer_xdr::UnPack(float *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float);
+    assert(xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float));
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -316,12 +331,13 @@ void pop_buffer_xdr::Pack(const double *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
+    assert(sizeof(double) <= 8);
     packeddata.resize(n*8+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double);
+    assert(xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double));
     xdr_destroy(&xdr);
 }
 
@@ -336,7 +352,7 @@ void pop_buffer_xdr::UnPack(double *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double);
+    assert(xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double));
     xdr_destroy(&xdr);
 
     unpackpos+=sz;

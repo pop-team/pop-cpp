@@ -2263,7 +2263,7 @@ void Usage()
 
 void CleanStack(){
   if (typestack.size()) {
-    fprintf(stderr,"STRUCT list: %lu elements\n",typestack.size());
+    fprintf(stderr,"STRUCT list: %zu elements\n",typestack.size());
   }
   currentstruct=nullptr;
   structContainer=nullptr;

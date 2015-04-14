@@ -61,9 +61,8 @@ const char* get_prefix(LOGLEVEL level){
 } //end of anonymous namespace
 
 int popc_logger_t(LOGLEVEL level, const char* file, int line, const char* function, const char* tag, const char *format,...) {
-    // Check if message level in higher than our threshold (hard-coded for now)
-    // TODO: Implement different logging levels
-    if(level < __DEBUG__)
+    // Check if message level in higher than our threshold
+    if(level < MIN_LOG_LEVEL)
         return 0;
 
     // Use file name without path to avoid having the full user path in logs
@@ -93,13 +92,13 @@ int popc_logger_t(LOGLEVEL level, const char* file, int line, const char* functi
     }
 
     // Print the message to stderr or stdout
-    if(level >= __CORE__)
+    if(level >= MIN_STDERR_LEVEL)
         if(tag){
             fprintf(stderr, "%s %5d %s [%5s] %s (%s:%d %s)\n", dd, getpid(), get_prefix(level), tag, msg, basename, line, function);
         } else {
             fprintf(stderr, "%s %5d %s %s (%s:%d %s)\n", dd, getpid(), get_prefix(level), msg, basename, line, function);
         }
-    else if(level >= __INFO__)
+    else if(level >= MIN_STDOUT_LEVEL)
         fprintf(stdout, "%s\n", msg);
 
     // Print the message to file

@@ -23,7 +23,7 @@
 #include "pop_system.h"
 #include "popc_logger.h"
 
-#define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_WARNING("Exception in broker_serve"); if (request.from!=nullptr) pop_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
+#define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_DEBUG("Exception in broker_serve"); if (request.from!=nullptr) pop_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
 
 class pop_invokethread: public pop_thread {
 public:
@@ -196,7 +196,7 @@ bool pop_broker::DoInvoke(pop_request &request) {
 
     PROPAGATE_EXCEPTION(char *)
     catch(pop_exception *e) {
-        LOG_WARNING("POP-C++ exception in pop_broker::DoInvoke");
+        LOG_DEBUG("POP-C++ exception in pop_broker::DoInvoke");
         if(request.from!=nullptr) {
             std::string extra=e->Info();
             if(e->Info().empty()) {
@@ -211,7 +211,7 @@ bool pop_broker::DoInvoke(pop_request &request) {
         }
         delete e;
     } catch(pop_exception e) {
-        LOG_WARNING("POP-C++ exception in pop_broker::DoInvoke %s", e.what());
+        LOG_DEBUG("POP-C++ exception in pop_broker::DoInvoke %s", e.what());
         if(request.from!=nullptr) {
 
             std::string extra=e.Info();
@@ -226,7 +226,7 @@ bool pop_broker::DoInvoke(pop_request &request) {
             UnhandledException();
         }
     } catch(std::exception *e) {
-        LOG_WARNING("Std exception in pop_broker::DoInvoke");
+        LOG_DEBUG("Std exception in pop_broker::DoInvoke");
         if(request.from != nullptr) {
             pop_exception  e2=pop_exception(STD_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
@@ -236,7 +236,7 @@ bool pop_broker::DoInvoke(pop_request &request) {
             UnhandledException();
         }
     } catch(std::exception e) {
-        LOG_WARNING("Std exception in pop_broker::DoInvoke");
+        LOG_DEBUG("Std exception in pop_broker::DoInvoke");
         if(request.from != nullptr) {
             pop_exception  e2=pop_exception(STD_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
@@ -245,7 +245,7 @@ bool pop_broker::DoInvoke(pop_request &request) {
             UnhandledException();
         }
     } catch(...) {
-        LOG_WARNING("Unknown exception in pop_broker::DoInvoke");
+        LOG_DEBUG("Unknown exception in pop_broker::DoInvoke");
         if(request.from!=nullptr) {
             pop_exception e2(UNKNOWN_EXCEPTION);
             e2.AddInfo(classname+"@"+accesspoint.GetAccessString());

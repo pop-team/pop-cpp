@@ -18,6 +18,19 @@
 #include <stdarg.h>
 #include <sstream>
 
+
+// Define here the min level of logging for Debug and Release modes
+#ifndef NDEBUG
+#    define MIN_LOG_LEVEL    __DEBUG__      // Min level at which a message is logged in log file /tmp/popc.user.log. A lower level means more access to the disk.
+#    define MIN_STDOUT_LEVEL __INFO__       // Min level at which the message is printed on stdout
+#    define MIN_STDERR_LEVEL __WARNING__    // Min level at which the message is printed on stderr
+#else
+#    define MIN_LOG_LEVEL    __INFO__
+#    define MIN_STDOUT_LEVEL __INFO__
+#    define MIN_STDERR_LEVEL __WARNING__
+#endif
+
+
 enum LOGLEVEL {
     __DEBUG__,
     __INFO__,
