@@ -6,11 +6,11 @@
 #include <vector>
 #include <climits>
 #include <cfloat>
-#include "paroc_buffer.h"
-#include "paroc_buffer_raw.h"
-#include "paroc_buffer_xdr.h"
-#include "paroc_combox_factory.h"
-#include "paroc_exception.h"
+#include "pop_buffer.h"
+#include "pop_buffer_raw.h"
+#include "pop_buffer_xdr.h"
+#include "pop_combox_factory.h"
+#include "pop_exception.h"
 
 #define ITER 100
 
@@ -22,8 +22,8 @@
 // TODO: See if we keep the combox test here (and fix)
 
 /// Test the serialization of all values in vector
-template<typename T>void testByVect(paroc_buffer* xp_bufferOut, paroc_combox* xp_comboxOut, paroc_connection* xp_connectionOut, 
-                                    paroc_buffer* xp_bufferIn,  paroc_combox* xp_comboxIn,  paroc_connection* xp_connectionIn, const std::vector<T>& x_vect, bool x_testArray){
+template<typename T>void testByVect(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut, 
+                                    pop_buffer* xp_bufferIn,  pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn, const std::vector<T>& x_vect, bool x_testArray){
 
     for(const auto& elem : x_vect)
     {
@@ -76,8 +76,8 @@ template<typename T>void testByVect(paroc_buffer* xp_bufferOut, paroc_combox* xp
 }
 
 /// Fill a vector and test
-template<typename T>void testByType(paroc_buffer* xp_bufferOut, paroc_combox* xp_comboxOut, paroc_connection* xp_connectionOut, 
-                                    paroc_buffer* xp_bufferIn,  paroc_combox* xp_comboxIn,  paroc_connection* xp_connectionIn, const T& x_min, const T& x_max, const T& x_incr){
+template<typename T>void testByType(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut, 
+                                    pop_buffer* xp_bufferIn,  pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn, const T& x_min, const T& x_max, const T& x_incr){
     std::vector<T> vectTest;
     for(T elem = x_min ; elem < x_max - 2 * x_incr ; elem += x_incr) // this break condition avoids inf loops due to overflows
     {
@@ -89,11 +89,11 @@ template<typename T>void testByType(paroc_buffer* xp_bufferOut, paroc_combox* xp
 class BufferTestSuite : public CxxTest::TestSuite
 {
     protected:
-        paroc_buffer_raw*   m_bufferRaw;
-        paroc_buffer_xdr*   m_bufferXdr;
-        paroc_combox*       m_comboxSocketOut;
-        paroc_combox*       m_comboxSocketIn;
-        paroc_connection*   m_connectionSocket;
+        pop_buffer_raw*   m_bufferRaw;
+        pop_buffer_xdr*   m_bufferXdr;
+        pop_combox*       m_comboxSocketOut;
+        pop_combox*       m_comboxSocketIn;
+        pop_connection*   m_connectionSocket;
         std::vector<bool>        m_vectBool;
         std::vector<std::string> m_vectString;
         std::vector<const char*> m_vectCharArr;
@@ -101,8 +101,8 @@ class BufferTestSuite : public CxxTest::TestSuite
     public:
         void setUp()
         {
-            m_bufferRaw = new paroc_buffer_raw();
-            m_bufferXdr = new paroc_buffer_xdr();
+            m_bufferRaw = new pop_buffer_raw();
+            m_bufferXdr = new pop_buffer_xdr();
 
             m_vectBool   = {0,1,1,0,1,1,1,1,0,0,1};
             m_vectString = {"Etenim si attendere diligenter, existimare vere de omni hac causa ",
@@ -119,7 +119,7 @@ class BufferTestSuite : public CxxTest::TestSuite
                 m_vectCharArr.push_back(elem.c_str());
 
             // Create combox factory
-            paroc_combox_factory *fact = paroc_combox_factory::GetInstance();
+            pop_combox_factory *fact = pop_combox_factory::GetInstance();
             TS_ASSERT(fact != nullptr);
 
             // Create combox
@@ -140,8 +140,8 @@ class BufferTestSuite : public CxxTest::TestSuite
         }
 
         // Test packing of data in buffer
-        void testBuffer(paroc_buffer* xp_bufferOut,  paroc_combox* xp_comboxOut, paroc_connection* xp_connectionOut,
-                        paroc_buffer* xp_bufferIn,   paroc_combox* xp_comboxIn,  paroc_connection* xp_connectionIn){
+        void testBuffer(pop_buffer* xp_bufferOut,  pop_combox* xp_comboxOut, pop_connection* xp_connectionOut,
+                        pop_buffer* xp_bufferIn,   pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn){
 
 
             TS_TRACE("test int");
@@ -188,10 +188,10 @@ class BufferTestSuite : public CxxTest::TestSuite
             TS_ASSERT(m_comboxSocketIn->Create(12349, false)); // port, server
             TS_ASSERT(m_comboxSocketIn->Connect("socket://localhost:12345"));
 
-            paroc_buffer& bufIn(*m_comboxSocketIn->GetBufferFactory()->CreateBuffer());
-            paroc_buffer& bufOut(*m_comboxSocketOut->GetBufferFactory()->CreateBuffer());
-            paroc_connection& connOut(*m_comboxSocketOut->get_connection());
-            paroc_connection& connIn(*m_comboxSocketIn->get_connection());
+            pop_buffer& bufIn(*m_comboxSocketIn->GetBufferFactory()->CreateBuffer());
+            pop_buffer& bufOut(*m_comboxSocketOut->GetBufferFactory()->CreateBuffer());
+            pop_connection& connOut(*m_comboxSocketOut->get_connection());
+            pop_connection& connIn(*m_comboxSocketIn->get_connection());
             // testBuffer(&bufOut, m_comboxSocketOut, &connOut, &bufIn, m_comboxSocketIn, &connIn);
             testBuffer(&bufIn, m_comboxSocketIn, &connIn, &bufOut, m_comboxSocketOut, &connOut);
             */
