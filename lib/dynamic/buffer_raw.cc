@@ -47,7 +47,7 @@ void pop_buffer_raw::UnPack(char *data, int n) {
     if(n<=0) {
         return;
     }
-    //CheckUnPack(n); // Error with this check in 64 bits // TODO LW
+    CheckUnPack(n); // Error with this check in 64 bits
     packeddata.size();
     memcpy(data, packeddata.data()+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
