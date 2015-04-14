@@ -1177,7 +1177,7 @@ void Method::GenerateBroker(std::string &output) {
         } else if(type != METHOD_NORMAL || returnparam.GetType()->Same((char*)"void")) {
             if(GetClass()->is_collective()) {
                 sprintf(methodcall,"\n  %s%s* _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    _popc_object->%s(",clname,Class::POG_OBJECT_POSTFIX,clname,Class::POG_OBJECT_POSTFIX, name);
-                // TODO lwk security: handle NULL on all dynamic cast in parser/ ?
+                // TODO security: a good improvement would be to dynamic cast to references to handle exceptions: dynamic_cast<Type&>(*obj).method()
             } else {
                 sprintf(methodcall,"\n%s%s * _pop_obj = dynamic_cast<%s%s *>(obj);\ntry {\n_pop_obj->%s(", clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, name);
             }
