@@ -168,10 +168,25 @@ class BufferTestSuite : public CxxTest::TestSuite
 
 
 
-            // TS_TRACE("test bool");
-            // testByVect<bool>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn, m_vectBool, true);
             TS_TRACE("test string");
             testByVect<std::string>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn, m_vectString, false);
+
+            TS_TRACE("test bool");
+            // testByVect<bool>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn, m_vectBool, true);
+            for(const auto& elem : m_vectBool)
+            {
+                // Pack/unpack each element of the vector
+                // http://stackoverflow.com/questions/17794569/why-is-vectorbool-not-a-stl-container
+                bool orig = elem;
+                bool test;
+                xp_bufferOut->Pack(&orig,1);
+                if(xp_bufferOut != xp_bufferIn){
+                    xp_bufferOut->Send(*xp_comboxOut, xp_connectionOut);
+                    xp_bufferIn->Recv(*xp_comboxIn, xp_connectionIn);
+                }
+                xp_bufferIn->UnPack(&test,1);
+                TS_ASSERT(elem == test);
+            }
         }
 
         void testBufferRaw(){
