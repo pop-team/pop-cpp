@@ -212,6 +212,7 @@ public:
 
     template<typename T>void Pack(const std::vector<T> *vect, int n)
     {
+        (void)n;
         assert(n==1);
         int s=vect->size();
         Pack(&s,1);
@@ -221,6 +222,7 @@ public:
 
     template<typename T>void UnPack( std::vector<T> *vect, int n)
     {
+        (void)n;
         assert(n==1);
         int s=0;
         UnPack(&s,1);

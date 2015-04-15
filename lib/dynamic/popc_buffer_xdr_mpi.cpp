@@ -413,10 +413,11 @@ bool popc_buffer_xdr_mpi::Send(pop_combox &s, pop_connection *conn) {
  */
 bool popc_buffer_xdr_mpi::Recv(pop_combox &s, pop_connection *conn) {
     int h[5];
+    memset(h, 0, sizeof(h));
     int n, i;
 
     // Recv the header
-    char *dat = (char *)h;
+    char *dat = reinterpret_cast<char *>(h);
 
     Reset();
     n = popc_ntohl(h[0]);

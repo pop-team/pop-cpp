@@ -460,6 +460,7 @@ unsigned Class::IDFromString(char *str) {
 
     unsigned sz=2*starta+11;
     n--;
+    if(n<0) return 999 + MIN_CLASSID; // note LW: added this to quiet the compilation errors of g++
     unsigned id=tmp[n];
     for(int i=0; i<n; i++) {
         id=id*sz+tmp[i];

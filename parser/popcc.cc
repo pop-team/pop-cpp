@@ -317,7 +317,6 @@ char *Compile(const char *preprocessor, char *popcpp, char *cpp, const char** pr
         sprintf(tmpfile1, "%s_popc1_%s", sdir, fname);
 
         if(options.usepipe) {
-// TODO LW: These files can be generated many time during compilation with similar names. See what to do
             sprintf(tmpfile2, "-");
         } else {
             sprintf(tmpfile2, "%s_popc2_%s", sdir, fname);

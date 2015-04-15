@@ -54,93 +54,93 @@ void pop_buffer_raw::UnPack(char *data, int n) {
 }
 
 void pop_buffer_raw::Pack(const int *data, int n) {
-    Pack((const char *)data,n*sizeof(int));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(int));
 }
 
 void pop_buffer_raw::UnPack(int *data, int n) {
-    UnPack((char *)data,n*sizeof(int));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(int));
 }
 
 void pop_buffer_raw::Pack(const unsigned *data, int n) {
-    Pack((const char *)data,n*sizeof(unsigned));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(unsigned));
 
 }
 void pop_buffer_raw::UnPack(unsigned *data, int n) {
-    UnPack((char *)data,n*sizeof(unsigned));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(unsigned));
 }
 
 void pop_buffer_raw::Pack(const long *data, int n) {
-    Pack((const char *)data,n*sizeof(long));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(long));
 }
 
 void pop_buffer_raw::UnPack(long *data, int n) {
-    UnPack((char *)data,n*sizeof(long));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(long));
 }
 
 void pop_buffer_raw::Pack(const unsigned long *data, int n) {
-    Pack((const char *)data,n*sizeof(unsigned long));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(unsigned long));
 }
 
 void pop_buffer_raw::UnPack(unsigned long *data, int n) {
-    UnPack((char *)data,n*sizeof(unsigned long));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(unsigned long));
 }
 
 void pop_buffer_raw::Pack(const short *data, int n) {
-    Pack((const char *)data,n*sizeof(short));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(short));
 }
 
 void pop_buffer_raw::UnPack(short *data, int n) {
-    UnPack((char *)data,n*sizeof(short));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(short));
 }
 
 void pop_buffer_raw::Pack(const unsigned short *data, int n) {
-    Pack((const char *)data,n*sizeof(unsigned short));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(unsigned short));
 }
 
 void pop_buffer_raw::UnPack(unsigned short *data, int n) {
-    UnPack((char *)data,n*sizeof(unsigned short));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(unsigned short));
 }
 
 void pop_buffer_raw::Pack(const bool *data, int n) {
-    Pack((const char *)data,n*sizeof(bool));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(bool));
 }
 
 void pop_buffer_raw::UnPack(bool *data, int n) {
-    UnPack((char *)data,n*sizeof(bool));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(bool));
 }
 
 
 void pop_buffer_raw::Pack(const unsigned char *data, int n) {
-    Pack((char *)data,n);
+    Pack(reinterpret_cast<const char*>(data),n);
 }
 
 void pop_buffer_raw::UnPack(unsigned char *data, int n) {
-    UnPack((char *)data,n);
+    UnPack(reinterpret_cast<char*>(data),n);
 }
 
 void pop_buffer_raw::Pack(const float *data, int n) {
-    Pack((char *)data,n*sizeof(float));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(float));
 }
 
 void pop_buffer_raw::UnPack(float *data, int n) {
-    UnPack((char *)data,n*sizeof(float));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(float));
 }
 
 void pop_buffer_raw::Pack(const double *data, int n) {
-    Pack((char *)data,n*sizeof(double));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(double));
 }
 
 void pop_buffer_raw::UnPack(double *data, int n) {
-    UnPack((char *)data,n*sizeof(double));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(double));
 }
 
 // added by lwk
 void pop_buffer_raw::Pack(const signed char *data, int n) {
-    Pack((char *)data,n); // TODO lwk: Check that this cast is not problematic
+    Pack(reinterpret_cast<const char*>(data),n);
 }
 
 void pop_buffer_raw::UnPack(signed char *data, int n) {
-    UnPack((char *)data,n);
+    UnPack(reinterpret_cast<char*>(data),n);
 }
 
 void pop_buffer_raw::CheckUnPack(int sz) {
@@ -203,7 +203,7 @@ bool pop_buffer_raw::Recv(pop_combox &s, pop_connection *conn) {
     int n, i;
 
     // Recv the header
-    char *dat = (char*)h;
+    char *dat = reinterpret_cast<char*>(h);
     n = 20;
     do {
         if((i = s.Recv(dat,n, conn)) <= 0) {

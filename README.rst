@@ -19,7 +19,7 @@ On Ubuntu or debian the installation of dependencies can be easily done with:
 
 .. code::
 
-  sudo apt-get install g++ cmake flex bison cxxtest
+  sudo apt-get install g++ cmake flex bison cxxtest zlib1g-dev
 
 COMPILE POP-C++ SOURCE CODE
 ---------------------------
