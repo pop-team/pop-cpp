@@ -14,9 +14,9 @@
 
 #define ITER 100
 
-// Note: XDR only supports these limits (8 bytes long)
+// Note: XDR only supports (8 bytes long) and sor compatibility with 32 bits we use (4 bytes long)
 #define _LONG_MAX     2147483647L
-#define _LONG_MIN      (-_LONG_MAX - 1L)
+#define _LONG_MIN     -2147483648L
 #define _ULONG_MAX    4294967295UL
 
 // TODO: See if we keep the combox test here (and fix)

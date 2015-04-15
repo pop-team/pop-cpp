@@ -543,7 +543,7 @@ int JobMgr::Query(const std::string &type, std::string  &val) {
     if(type=="jobs") {
         //  Update();
         mutex {
-            snprintf(tmp,sizeof(tmp),"%ld/%d", jobs.size() ,maxjobs);
+            snprintf(tmp,sizeof(tmp),"%zu/%d", jobs.size() ,maxjobs);
             val=tmp;
         }
         return 1;
@@ -568,7 +568,7 @@ int JobMgr::Query(const std::string &type, std::string  &val) {
     if(type=="pausejobs") {
         //  Update();
         mutex {
-            snprintf(tmp,sizeof(tmp),"%lu", pause_apps.size());
+            snprintf(tmp,sizeof(tmp),"%zu", pause_apps.size());
             val=tmp;
         }
         return 1;
@@ -1803,13 +1803,13 @@ void JobMgr::dump() {
     }
 
     auto keys = neighbors.GetContacts();
-    fprintf(f,"Neighbour nodes (%ld)\n", keys.size());
+    fprintf(f,"Neighbour nodes (%zu)\n", keys.size());
 
     for(std::size_t i = 0; i < keys.size(); ++i){
         auto& t=keys[i];
         NodeInfo info;
         if(neighbors.GetInfo(t,info)) {
-            fprintf(f,"%ld: %s\t%g\t%d\n",i,t.c_str(), info.heuristic,static_cast<int>(info.nodetype));
+            fprintf(f,"%zu: %s\t%g\t%d\n",i,t.c_str(), info.heuristic,static_cast<int>(info.nodetype));
         }
     }
     fclose(f);
