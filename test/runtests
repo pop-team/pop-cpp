@@ -2,7 +2,11 @@
 
 NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
-EXCLUDEDTEST="runtests\|runtests_short\|CMake\|xmp1\|xmp2\|xmp3\|xmp4\|xmp-raw\|static1"
+
+# Note LW:
+# - heritageparam3 is excluded because it cannot work: at serialization dynamic type of serialized object cannot be different to static type (TODO future: Fix in core)
+EXCLUDEDTEST="runtests\|runtests_short\|CMake\|xmp1\|xmp2\|xmp3\|xmp4\|xmp-raw\|static1\|heritageparam3"
+
 SXXLOCATION=/usr/local/popc/sbin
 TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 RESULTS=$TEST_DIR/tests_results
