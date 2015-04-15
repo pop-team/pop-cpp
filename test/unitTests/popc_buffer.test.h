@@ -48,6 +48,7 @@ template<typename T>void testByVect(pop_buffer* xp_bufferOut, pop_combox* xp_com
     xp_bufferOut->Pack(&x_vect,1);
     xp_bufferIn->UnPack(&vectTest,1);
 
+    TS_ASSERT(!x_vect.empty()); // check if a problem occured while serializing size
     TS_ASSERT(x_vect.size() == vectTest.size());
     auto it = vectTest.begin();
     for(const auto& elem : x_vect)
@@ -79,7 +80,7 @@ template<typename T>void testByVect(pop_buffer* xp_bufferOut, pop_combox* xp_com
 template<typename T>void testByType(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut, 
                                     pop_buffer* xp_bufferIn,  pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn, const T& x_min, const T& x_max, const T& x_incr){
     std::vector<T> vectTest;
-    for(T elem = x_min ; elem < x_max - 2 * x_incr ; elem += x_incr) // this break condition avoids inf loops due to overflows
+    for(T elem = x_min ; elem < x_max - x_incr ; elem += x_incr) // this break condition avoids inf loops due to overflows
     {
         vectTest.push_back(elem);
     }
@@ -143,7 +144,6 @@ class BufferTestSuite : public CxxTest::TestSuite
         void testBuffer(pop_buffer* xp_bufferOut,  pop_combox* xp_comboxOut, pop_connection* xp_connectionOut,
                         pop_buffer* xp_bufferIn,   pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn){
 
-
             TS_TRACE("test int");
             testByType<int>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn, INT_MIN, INT_MAX, INT_MAX / ITER);
             TS_TRACE("test uint");
@@ -157,7 +157,7 @@ class BufferTestSuite : public CxxTest::TestSuite
             TS_TRACE("test ushort");
             testByType<unsigned short>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn, 0, USHRT_MAX, USHRT_MAX / ITER);
             TS_TRACE("test char");
-            testByType<char>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn, -127, 128, 1);
+            testByType<signed char>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn, -128, 127, 1);
             TS_TRACE("test uchar");
             testByType<unsigned char>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn, 0, 255, 1);
 

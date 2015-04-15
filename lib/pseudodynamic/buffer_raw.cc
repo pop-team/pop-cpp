@@ -47,105 +47,105 @@ void pop_buffer_raw::UnPack(char *data, int n) {
     if(n<=0) {
         return;
     }
-    //CheckUnPack(n); // Error with this check in 64 bits
+    CheckUnPack(n); // Error with this check in 64 bits
     packeddata.size();
     memcpy(data, packeddata.data()+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
 }
 
 void pop_buffer_raw::Pack(const int *data, int n) {
-    Pack((const char *)data,n*sizeof(int));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(int));
 }
 
 void pop_buffer_raw::UnPack(int *data, int n) {
-    UnPack((char *)data,n*sizeof(int));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(int));
 }
 
 void pop_buffer_raw::Pack(const unsigned *data, int n) {
-    Pack((const char *)data,n*sizeof(unsigned));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(unsigned));
 
 }
 void pop_buffer_raw::UnPack(unsigned *data, int n) {
-    UnPack((char *)data,n*sizeof(unsigned));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(unsigned));
 }
 
 void pop_buffer_raw::Pack(const long *data, int n) {
-    Pack((const char *)data,n*sizeof(long));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(long));
 }
 
 void pop_buffer_raw::UnPack(long *data, int n) {
-    UnPack((char *)data,n*sizeof(long));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(long));
 }
 
 void pop_buffer_raw::Pack(const unsigned long *data, int n) {
-    Pack((const char *)data,n*sizeof(unsigned long));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(unsigned long));
 }
 
 void pop_buffer_raw::UnPack(unsigned long *data, int n) {
-    UnPack((char *)data,n*sizeof(unsigned long));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(unsigned long));
 }
 
 void pop_buffer_raw::Pack(const short *data, int n) {
-    Pack((const char *)data,n*sizeof(short));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(short));
 }
 
 void pop_buffer_raw::UnPack(short *data, int n) {
-    UnPack((char *)data,n*sizeof(short));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(short));
 }
 
 void pop_buffer_raw::Pack(const unsigned short *data, int n) {
-    Pack((const char *)data,n*sizeof(unsigned short));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(unsigned short));
 }
 
 void pop_buffer_raw::UnPack(unsigned short *data, int n) {
-    UnPack((char *)data,n*sizeof(unsigned short));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(unsigned short));
 }
 
 void pop_buffer_raw::Pack(const bool *data, int n) {
-    Pack((const char *)data,n*sizeof(bool));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(bool));
 }
 
 void pop_buffer_raw::UnPack(bool *data, int n) {
-    UnPack((char *)data,n*sizeof(bool));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(bool));
 }
 
 
 void pop_buffer_raw::Pack(const unsigned char *data, int n) {
-    Pack((char *)data,n);
+    Pack(reinterpret_cast<const char*>(data),n);
 }
 
 void pop_buffer_raw::UnPack(unsigned char *data, int n) {
-    UnPack((char *)data,n);
+    UnPack(reinterpret_cast<char*>(data),n);
 }
 
 void pop_buffer_raw::Pack(const float *data, int n) {
-    Pack((char *)data,n*sizeof(float));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(float));
 }
 
 void pop_buffer_raw::UnPack(float *data, int n) {
-    UnPack((char *)data,n*sizeof(float));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(float));
 }
 
 void pop_buffer_raw::Pack(const double *data, int n) {
-    Pack((char *)data,n*sizeof(double));
+    Pack(reinterpret_cast<const char*>(data),n*sizeof(double));
 }
 
 void pop_buffer_raw::UnPack(double *data, int n) {
-    UnPack((char *)data,n*sizeof(double));
+    UnPack(reinterpret_cast<char*>(data),n*sizeof(double));
 }
 
 // added by lwk
 void pop_buffer_raw::Pack(const signed char *data, int n) {
-    Pack((char *)data,n); // TODO lwk: Check that this cast is not problematic
+    Pack(reinterpret_cast<const char*>(data),n);
 }
 
 void pop_buffer_raw::UnPack(signed char *data, int n) {
-    UnPack((char *)data,n);
+    UnPack(reinterpret_cast<char*>(data),n);
 }
 
 void pop_buffer_raw::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
-        pop_exception::pop_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_raw::CheckUnPack");
+        pop_exception::pop_throw(POP_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_raw::CheckUnPack");
     }
 }
 

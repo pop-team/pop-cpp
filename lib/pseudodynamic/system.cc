@@ -272,7 +272,7 @@ int pop_system::GetIP(int *iplist, int listsize) {
     popc_tokenize_r(tokens, parocip," \n\r\t");
     n=0;
     for(auto tok : tokens) {
-        if(!n<listsize)
+        if(n>=listsize)
             break;
         if((int)(addr = popc_inet_addr(tok.c_str())) != -1) {
             *iplist=popc_ntohl(addr);
@@ -325,7 +325,7 @@ bool pop_system::GetIPFromInterface(std::string &iface, std::string &str_ip) {
     getifaddrs(&addrs);
 
     LOG_DEBUG("Looking for interface: %s --->",iface.c_str());
-    for (iap = addrs; iap != NULL; iap = iap->ifa_next){
+    for(iap = addrs; iap != nullptr; iap = iap->ifa_next) {
         LOG_DEBUG("name=%s, addr=%p, flag=%d (%d), familly=%d (%d)",iap->ifa_name, iap->ifa_addr, iap->ifa_flags, IFF_UP, iap->ifa_addr->sa_family, AF_INET);
       if ( iap->ifa_addr &&
            (iap->ifa_flags & IFF_UP) &&
@@ -464,7 +464,7 @@ void pop_system::Finalize(bool /*normalExit*/) {
         } catch(pop_exception &e) {
             LOG_ERROR("while finalizing the application: %s", e.what());
         }
-        mgr = NULL;
+        mgr = nullptr;
       }*/
 #endif
 }
@@ -474,7 +474,7 @@ void pop_system::Finalize(bool /*normalExit*/) {
 /*AppCoreService *pop_system::CreateAppCoreService(char *codelocation)
 {
     // Create challenge string
-    srand(time(NULL));
+    srand(time(nullptr));
     char tmp[256];
 
     for(int i=0; i<255; i++) {
@@ -487,7 +487,8 @@ void pop_system::Finalize(bool /*normalExit*/) {
 }*/
 
 
-void pop_system::processor_set(int /*cpu*/) {
+void pop_system::processor_set(int cpu) {
+    (void) cpu;
 #ifndef __APPLE__
     // Use glibc to set cpu affinity
     /*if (cpu < 0) {

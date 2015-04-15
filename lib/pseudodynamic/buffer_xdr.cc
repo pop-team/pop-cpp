@@ -36,16 +36,19 @@ void pop_buffer_xdr::Reset() {
 }
 
 void pop_buffer_xdr::Pack(const int *data, int n) {
+    (void)data;
     if(n<=0) {
         return;
     }
     int oldsize=packeddata.size();
+    assert(sizeof(int) <= 4);
     packeddata.resize(n*4+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int);
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int))
+        pop_exception::pop_throw("Exception in serialization 1");
     xdr_destroy(&xdr);
 
 }
@@ -61,7 +64,9 @@ void pop_buffer_xdr::UnPack(int *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int);
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int))
+        pop_exception::pop_throw("Exception in serialization 2");
+
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -72,12 +77,14 @@ void pop_buffer_xdr::Pack(const unsigned *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
+    assert(sizeof(unsigned) <= 4);
     packeddata.resize(n*4+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_u_int);
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_u_int))
+        pop_exception::pop_throw("Exception in serialization 3");
     xdr_destroy(&xdr);
 
 }
@@ -92,7 +99,8 @@ void pop_buffer_xdr::UnPack(unsigned *data, int n) {
     char *dest=packeddata.data()+unpackpos;
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(unsigned),(xdrproc_t)xdr_u_int);
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(unsigned),(xdrproc_t)xdr_u_int))
+        pop_exception::pop_throw("Exception in serialization 4");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -103,12 +111,15 @@ void pop_buffer_xdr::Pack(const long *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
-    packeddata.resize(n*4+oldsize);
+    // note: on 64 bits machines, long have a size of 8
+    assert(sizeof(long) <= 8);
+    packeddata.resize(n*8+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
-    xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_long);
+    xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
+    if(!xdr_vector(&xdr,(char *)data,n,8,(xdrproc_t)xdr_long))
+        pop_exception::pop_throw("Exception in serialization 5");
     xdr_destroy(&xdr);
 }
 
@@ -118,12 +129,13 @@ void pop_buffer_xdr::UnPack(long *data, int n) {
     }
     char *dest=packeddata.data()+unpackpos;
 
-    int sz=4*n;
+    int sz=8*n;
     CheckUnPack(sz);
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr, (char*)data,n,sizeof(long),(xdrproc_t)xdr_long);
+    if(!xdr_vector(&xdr, (char*)data,n,8,(xdrproc_t)xdr_long))
+        pop_exception::pop_throw("Exception in serialization 6");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -134,12 +146,14 @@ void pop_buffer_xdr::Pack(const unsigned long *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
-    packeddata.resize(n*4+oldsize);
+    assert(sizeof(unsigned long) <= 8);
+    packeddata.resize(n*8+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
-    xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_u_long);
+    xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
+    if(!xdr_vector(&xdr,(char *)data,n,8,(xdrproc_t)xdr_u_long))
+        pop_exception::pop_throw("Exception in serialization 7");
     xdr_destroy(&xdr);
 }
 
@@ -149,12 +163,13 @@ void pop_buffer_xdr::UnPack(unsigned long *data, int n) {
     }
     char *dest=packeddata.data()+unpackpos;
 
-    int sz=n*4;
+    int sz=n*8;
     CheckUnPack(sz);
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_u_long);
+    if(!xdr_vector(&xdr,(char *)data,n,8,(xdrproc_t)xdr_u_long))
+        pop_exception::pop_throw("Exception in serialization 8");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -165,12 +180,19 @@ void pop_buffer_xdr::Pack(const short *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
-    packeddata.resize(((n-1)/2+1)*4+oldsize);
+    assert(sizeof(short) == 2);
+    // note: on 64 bits short are aligned on 4 bits
+    int sz = n*4;
+    // 32 bits only
+    // int sz = ((n-1)/2+1)*4;
+    packeddata.resize(oldsize+sz);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
-    xdrmem_create(&xdr,dest,n*2,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_short);
+
+    xdrmem_create(&xdr,dest,sz,XDR_ENCODE);
+    if(!xdr_vector(&xdr,(char *)data,n,2,(xdrproc_t)xdr_short))
+        pop_exception::pop_throw("Exception in serialization 9");
     xdr_destroy(&xdr);
 
 }
@@ -181,14 +203,15 @@ void pop_buffer_xdr::UnPack(short *data, int n) {
     }
     char *dest=packeddata.data()+unpackpos;
 
-    int sz=2*n;
+    int sz= n*4;
     CheckUnPack(sz);
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_short);
+    if(!xdr_vector(&xdr,(char *)data,n,2,(xdrproc_t)xdr_short))
+        pop_exception::pop_throw("Exception in serialization 10");
     xdr_destroy(&xdr);
 
-    unpackpos+=((n-1)/2+1)*4;
+    unpackpos+=sz;
 
 }
 
@@ -197,12 +220,15 @@ void pop_buffer_xdr::Pack(const unsigned short *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
-    packeddata.resize(((n-1)/2+1)*4+oldsize);
+    assert(sizeof(unsigned short) == 2);
+    int sz= n*4;
+    packeddata.resize(oldsize+sz);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
-    xdrmem_create(&xdr,dest,n*2,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_u_short);
+    xdrmem_create(&xdr,dest,sz,XDR_ENCODE);
+    if(!xdr_vector(&xdr,(char *)data,n,2,(xdrproc_t)xdr_u_short))
+        pop_exception::pop_throw("Exception in serialization 11");
     xdr_destroy(&xdr);
 }
 
@@ -212,15 +238,16 @@ void pop_buffer_xdr::UnPack(unsigned short *data, int n) {
     }
     char *dest=packeddata.data()+unpackpos;
 
-    int sz=2*n;
+    int sz= n*4;
     CheckUnPack(sz);
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_u_short);
+    if(!xdr_vector(&xdr,(char *)data,n,2,(xdrproc_t)xdr_u_short))
+        pop_exception::pop_throw("Exception in serialization 12");
     xdr_destroy(&xdr);
 
-    unpackpos+=((n-1)/2+1)*4;
+    unpackpos+=sz;
 }
 
 void pop_buffer_xdr::Pack(const bool *data, int n) {
@@ -257,6 +284,7 @@ void pop_buffer_xdr::Pack(const char *data, int n) {
         return;
     }
     int t=packeddata.size();
+    assert(sizeof(char) == 1);
     packeddata.resize(t+((n-1)/4+1)*4);
     memcpy(packeddata.data()+t,data,n);
 }
@@ -284,12 +312,14 @@ void pop_buffer_xdr::Pack(const float *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
+    assert(sizeof(float) <= 4);
     packeddata.resize(n*4+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float);
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float))
+        pop_exception::pop_throw("Exception in serialization 13");
     xdr_destroy(&xdr);
 }
 
@@ -304,7 +334,8 @@ void pop_buffer_xdr::UnPack(float *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float);
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float))
+        pop_exception::pop_throw("Exception in serialization 13");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -316,12 +347,14 @@ void pop_buffer_xdr::Pack(const double *data, int n) {
         return;
     }
     int oldsize=packeddata.size();
+    assert(sizeof(double) <= 8);
     packeddata.resize(n*8+oldsize);
     char *dest=packeddata.data()+oldsize;
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double);
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double))
+        pop_exception::pop_throw("Exception in serialization 14");
     xdr_destroy(&xdr);
 }
 
@@ -336,7 +369,8 @@ void pop_buffer_xdr::UnPack(double *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double);
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double))
+        pop_exception::pop_throw("Exception in serialization 15");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -353,7 +387,7 @@ void pop_buffer_xdr::UnPack(signed char *data, int n) {
 void pop_buffer_xdr::CheckUnPack(int sz) {
     if(static_cast<std::size_t>(sz+unpackpos) > packeddata.size()) {
         LOG_ERROR("Wrong buffer format: %d + %d > %d", sz, unpackpos, packeddata.size()); // TODO LW: Why is it allowed to have <
-        pop_exception::pop_throw(POPC_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_xdr::CheckUnPack");
+        pop_exception::pop_throw(POP_BUFFER_FORMAT, "Wrong buffer format in pop_buffer_xdr::CheckUnPack");
     }
 }
 
@@ -397,6 +431,9 @@ bool pop_buffer_xdr::Send(pop_combox &s, pop_connection *conn) {
     default:
         return false;
     }
+
+    LOG_DEBUG_T("XDR", "Send methodid=%d", header.GetMethodID());
+    LOG_DEBUG_T("XDR", "Send classId=%d", header.GetClassID());
 
     memcpy(dat, h, 20);
 
@@ -479,8 +516,6 @@ int pop_buffer_xdr::get_size() {
     return packeddata.size();
 }
 
-// Note LWK: This method was copied from the dynamic to the pseudodynamic version of the code
-// TODO LWK: Check with Valentin if ok
 char* pop_buffer_xdr::get_load() {
     char *dat = packeddata.data();
 
@@ -519,8 +554,7 @@ char* pop_buffer_xdr::get_load() {
 
     return packeddata.data();
 }
-// Note LWK: This method was copied from the dynamic to the pseudodynamic version of the code
-// TODO LWK: Check with Valentin if ok
+
 void pop_buffer_xdr::load(char* data, int length) {
     int h[5];
 

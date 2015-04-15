@@ -61,7 +61,7 @@ public:
      * @param accesspoint Returned URL (protocol://host:port)
      * @return true if success
      */
-    virtual std:.string GetUrl();
+    virtual std::string GetUrl();
     virtual std::string GetProtocol();
 
     //bool hasCommunicator();

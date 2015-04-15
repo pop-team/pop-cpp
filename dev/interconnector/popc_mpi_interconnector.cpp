@@ -28,7 +28,7 @@
 // POP-C++ library include
 #include "pop_broker.h"
 #include "pop_buffer_xdr.h"
-#include "popc_combox_uds.h"
+#include "pop_combox_uds.h"
 #include "pop_utils.h"
 
 using namespace std;

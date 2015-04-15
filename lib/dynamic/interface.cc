@@ -103,25 +103,6 @@ pop_interface::pop_interface(const pop_interface &inf) {
     Bind(inf.GetAccessPoint());
 }
 
-/* TODO LW: Used by pseudodyn version ?
-pop_interface::pop_interface(pop_combox *combox, pop_buffer *buffer) {
-    _ssh_tunneling=false;
-    __pop_combox = combox;
-    __pop_buf = buffer;
-
-    //_popc_async_construction_thread=nullptr;
-    if(combox != nullptr) {
-        std::string url;
-        combox->GetUrl(url);
-        accesspoint.SetAccessString(url);
-        if(__pop_buf == nullptr) {
-            __pop_buf=combox->GetBufferFactory()->CreateBuffer();
-        }
-    }
-}
-*/
-
-
 /**
  * Interface destructor
  */
@@ -623,8 +604,7 @@ bool pop_interface::Encoding(std::string encoding) {
         __pop_buf = fact->CreateBuffer();
         __pop_combox->SetBufferFactory(fact);
     }
-    delete fact;
-
+    
     return ret;
 }
 
@@ -781,10 +761,10 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
           *tmp=0;
           rport=tmp+1;
       }
-      od.getUser(ruser);
-      od.getCore(rcore);
-      od.getBatch(batch);
-      od.getDirectory(cwd);
+      ruser = od.getUser();
+      rcore = od.getCore();
+      batch = od.getBatch();
+      cwd   = od.getCwd();
 
       int n=0;
       //std::string myhost = pop_system::GetHost();
@@ -862,8 +842,8 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
           argv[n++]=popc_strdup(tmpstr);
       }
       // Select core
-      if (rcore!=nullptr&&rcore!=0) {
-          sprintf(tmpstr,"-core=%s",(const char*)rcore);
+    if(!rcore.empty()) {
+        sprintf(tmpstr,"-core=%s",rcore.c_str());
           argv[n++]=popc_strdup(tmpstr);
       }
 
@@ -876,7 +856,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
 
 
 
-      if (rport!=nullptr && *rport!=0)
+      if (!rport.empty())
       {
           sprintf(tmpstr,"-socket_port=%s",rport);
           argv[n++]=popc_strdup(tmpstr);
@@ -894,9 +874,9 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
       }
 
       // Add the working directory as argument
-      if (cwd!=nullptr && *cwd!=0) {
-          sprintf(tmpstr,"-cwd=%s",(const char*)cwd);
-          argv[n++]=popc_strdup(tmpstr);
+    if(!cwd.empty()) {
+        sprintf(tmpstr,"-cwd=%s",cwd.c_str());
+        argv[n++]=strdup(tmpstr);
       }
 
       argv[n]=nullptr;

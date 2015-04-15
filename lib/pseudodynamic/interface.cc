@@ -15,11 +15,6 @@
  * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
  */
 
-/*
-  Deeply need refactoring:
-    POPC_Interface instead of pop_interface
- */
-
 #include "popc_intface.h"
 
 #include <time.h>
@@ -52,11 +47,11 @@ pop_accesspoint pop_interface::_pop_nobind;
 int pop_interface::pop_bind_timeout=10000;
 int pop_interface::batchindex=0;
 int pop_interface::batchsize=0;
-pop_accesspoint * pop_interface::batchaccesspoint=NULL;
+pop_accesspoint * pop_interface::batchaccesspoint=nullptr;
 
 //pop_interface base class
 
-pop_interface::pop_interface() : __pop_combox(NULL), __pop_buf(NULL) {
+pop_interface::pop_interface() : __pop_combox(nullptr), __pop_buf(nullptr) {
     LOG_DEBUG("Create interface for class %s (OD secure:%s)", ClassName(), (od.isSecureSet())?"true":"false");
 
     if(od.isSecureSet()) {
@@ -227,7 +222,7 @@ void pop_interface::Allocate() {
             delete [] batchaccesspoint;
             batchindex = 0;
             batchsize = 0;
-            batchaccesspoint = NULL;
+            batchaccesspoint = nullptr;
         }
     } else if(!TryLocal(objaccess)) {
 
@@ -386,7 +381,7 @@ void pop_interface::Bind(const char *dest) {
         default:
             LOG_WARNING("Unknown binding status");
             Release();
-            pop_exception::pop_throw(POPC_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
+            pop_exception::pop_throw(POP_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
         }
     } else {
         int code = errno;
@@ -420,7 +415,7 @@ bool pop_interface::TryLocal(pop_accesspoint &objaccess) {
             //Lookup local code manager for the binary source....
             assert(!pop_system::appservice.IsEmpty());
             /*CodeMgr mgr(pop_system::appservice);
-            if (rarch==NULL)rarch=pop_system::platform;
+            if (rarch==nullptr)rarch=pop_system::platform;
             if (!mgr.QueryCode(objname,rarch,codefile))
             {
                 pop_exception::pop_throw(OBJECT_NO_RESOURCE, ClassName());
@@ -445,9 +440,9 @@ bool pop_interface::TryLocal(pop_accesspoint &objaccess) {
 
 void pop_interface::Release() {
 
-    if(__pop_combox!=NULL) {
+    if(__pop_combox!=nullptr) {
         pop_connection* conn = __pop_combox->get_connection();
-        if(conn != NULL && !accesspoint.IsService()) {
+        if(conn != nullptr && !accesspoint.IsService()) {
             DecRef();
         }
 
@@ -707,7 +702,7 @@ void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerpla
         }
     }
 
-    pop_exception::pop_throw(POPC_NO_ENCODING, ClassName(), "NegociateEncoding failed");
+    pop_exception::pop_throw(POP_NO_ENCODING, ClassName(), "NegociateEncoding failed");
 }
 
         /**
@@ -718,7 +713,7 @@ void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerpla
 
 
 int pop_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const pop_accesspoint & /*jobserv*/, const pop_accesspoint &appserv, pop_accesspoint *objaccess, int /*howmany*/, const pop_od& od) {
-    if(codefile==NULL) {
+    if(codefile==nullptr) {
         return ENOENT;
     }
     popc_signal(SIGCHLD, SIG_IGN);
@@ -738,20 +733,20 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     // const std::string& batch(od.getBatch());
     const std::string& cwd(od.getCwd());
 
-    if(hostname == NULL && (tmp = (char*)strchr(hostname, ':')) != NULL) { // TODO LW: This cast is dangerous
+    if(hostname == nullptr && (tmp = (char*)strchr(hostname, ':')) != nullptr) { // TODO LW: This cast is dangerous
         *tmp = 0;
     }
 
     int n = 0;
     /*std::string myhost = pop_system::GetHost();
-    bool islocal = (isManual || hostname == NULL || *hostname == 0 || pop_utils::SameContact(myhost, hostname) || pop_utils::isEqual(hostname, "localhost") || pop_utils::isEqual(hostname, "127.0.0.1"));
-    if (batch == NULL) {
+    bool islocal = (isManual || hostname == nullptr || *hostname == 0 || pop_utils::SameContact(myhost, hostname) || pop_utils::isEqual(hostname, "localhost") || pop_utils::isEqual(hostname, "127.0.0.1"));
+    if (batch == nullptr) {
         if (!islocal) {
-            char *tmp = getenv("POPC_RSH");
-              argv[n++]=popc_strdup((tmp==NULL)? "/usr/bin/ssh" : tmp);
+              char *tmp=getenv("POP_RSH");
+              argv[n++]=popc_strdup((tmp==nullptr)? "/usr/bin/ssh" : tmp);
               //      argv[n++]=popc_strdup("-n");
             // Add user name to host for ssh
-            if (ruser != NULL && *ruser != 0) {
+            if (ruser != nullptr && *ruser != 0) {
                 char tmpstr[100];
                 sprintf(tmpstr, "%s@%s", (const char*)ruser, (const char*)hostname);
                   argv[n++]=popc_strdup(tmpstr);
@@ -762,7 +757,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
       } else {
         char tmpstr[100];
         tmp=getenv("POPC_LOCATION");
-        if (tmp!=NULL) sprintf(tmpstr,"%s/services/popcobjrun.%s",tmp,(const char*)batch);
+        if (tmp!=nullptr) sprintf(tmpstr,"%s/services/popcobjrun.%s",tmp,(const char*)batch);
         else sprintf(tmpstr,"popcobjrun.%s",(const char*)batch);
         argv[n++]=popc_strdup(tmpstr);
         if (!islocal)
@@ -776,7 +771,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     }*/
 
     /*  tmp=getenv("POPC_LOCATION");
-        if (tmp!=NULL)
+        if (tmp!=nullptr)
             sprintf(tmpstr,"%s/services/popcobjrun",tmp);
         else
             strcpy(tmpstr,"popcobjrun");
@@ -785,10 +780,10 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
 
     /*strcpy(tmpstr,codefile);
     char *tok=popc_strtok_r(tmpstr," \t\n",&tmp);
-    while (tok!=NULL)
+    while (tok!=nullptr)
     {
           argv[n++]=popc_strdup(tok);
-          tok=popc_strtok_r(NULL," \t\n",&tmp);
+          tok=popc_strtok_r(nullptr," \t\n",&tmp);
       }*/
 
       //pop_combox_socket tmpsock;
@@ -804,7 +799,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     //pop_combox_factory *comboxFactory = pop_combox_factory::GetInstance();
 //  pop_combox callback_combox = comboxFactory->Create((const char*)"mpi");
 //  pop_combox* callback_combox =  comboxFactory->Create((const char*)"mpi");
-//  if(!callback_combox->Create(NULL, 0, true))
+//  if(!callback_combox->Create(nullptr, 0, true))
 //    pop_exception::pop_throw_errno();
 //  std::string callback_url;
 //  callback_combox->GetUrl(callback_url);
@@ -814,13 +809,13 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
 
     argv[n++]=popc_strdup("-mpi");
 
-    if(classname!=NULL) {
+    if(classname!=nullptr) {
         sprintf(tmpstr,"-object=%s", classname);
           argv[n++]=popc_strdup(tmpstr);
     }
 
     if(!appserv.IsEmpty()) {
-        sprintf(tmpstr,"-appservice=%s",appserv.GetAccessString().c_str());
+          sprintf(tmpstr,"-appservice=%s",appserv.GetAccessString().c_str());
           argv[n++]=popc_strdup(tmpstr);
     }
 
@@ -835,7 +830,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
           argv[n++]=popc_strdup(tmpstr);
     }
 
-    /*if (rport!=NULL && *rport!=0)
+    /*if (!rport.empty())
     {
         sprintf(tmpstr,"-socket_port=%s",rport);
         argv[n++]=popc_strdup(tmpstr);
@@ -848,8 +843,9 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     }
 #endif
 
-    if(pop_od::defaultLocalJob) {
-        argv[n++]=strdup("-runlocal");
+      if (pop_od::defaultLocalJob)
+      {
+          argv[n++]=popc_strdup("-runlocal");
     }
 
     // Add the working directory as argument
@@ -858,7 +854,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
         argv[n++]=strdup(tmpstr);
     }
 
-    argv[n]=NULL;
+    argv[n]=nullptr;
 
 
 
@@ -916,7 +912,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     spawn_arg_commands[0] = argv;
     spawn_arg_commands[1] = spawn_dummy_args;
     int maxprocs[2] = {1, 1};
-    MPI::Info spawn_infos[2] = { MPI_INFO_NULL, MPI_INFO_NULL };
+    MPI::Info spawn_infos[2] = { MPI_INFO_nullptr, MPI_INFO_nullptr };
     int spawn_errcodes[2];
 
     MPI::Intercomm brokers_intercomm;
@@ -967,7 +963,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     LOG_DEBUG("INTERFACE: objaccess %s", objaccess->GetAccessString().c_str());
 
     /*for (int i=0;i<n;i++)
-        if (argv[i]!=NULL)
+        if (argv[i]!=nullptr)
             free(argv[i]); */
 
     return 0;
@@ -1064,7 +1060,7 @@ int pop_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int de
     _ssh_dest_port = dest_port;
 
     _ssh_tunneling = true;
-    srand(time(NULL));   //Init the random generator with the current time
+    srand(time(nullptr));   //Init the random generator with the current time
     int BUF_SIZE=15;
     char buf[BUF_SIZE];
     FILE *fp;
@@ -1163,7 +1159,8 @@ bool pop_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, in
         return false;
     }
 
-    fgets(res, BUF_SIZE, fp);
+    if(fgets(res, BUF_SIZE, fp) == nullptr)
+        pop_exception::pop_throw("Error in fgets");
 
     int pid = atoi(res);
     if(pid != 0) {

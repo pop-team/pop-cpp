@@ -442,6 +442,7 @@ bool pop_buffer_xdr::Recv(pop_combox &s, pop_connection *conn) {
     } while(n);
 
     Reset();
+
     n = popc_ntohl(h[0]);
     if(n < 20) {
         LOG_ERROR("[CORE] XDR Buffer - Bad message header (size error:%d)", n);
