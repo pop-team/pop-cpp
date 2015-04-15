@@ -46,7 +46,8 @@ void pop_buffer_xdr::Pack(const int *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int))
+        pop_exception::pop_throw("Exception in serialization 1");
     xdr_destroy(&xdr);
 
 }
@@ -62,7 +63,9 @@ void pop_buffer_xdr::UnPack(int *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_int))
+        pop_exception::pop_throw("Exception in serialization 2");
+
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -79,7 +82,8 @@ void pop_buffer_xdr::Pack(const unsigned *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_u_int));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(int),(xdrproc_t)xdr_u_int))
+        pop_exception::pop_throw("Exception in serialization 3");
     xdr_destroy(&xdr);
 
 }
@@ -94,7 +98,8 @@ void pop_buffer_xdr::UnPack(unsigned *data, int n) {
     char *dest=packeddata.data()+unpackpos;
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(unsigned),(xdrproc_t)xdr_u_int));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(unsigned),(xdrproc_t)xdr_u_int))
+        pop_exception::pop_throw("Exception in serialization 4");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -112,7 +117,8 @@ void pop_buffer_xdr::Pack(const long *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_long));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_long))
+        pop_exception::pop_throw("Exception in serialization 5");
     xdr_destroy(&xdr);
 }
 
@@ -127,7 +133,8 @@ void pop_buffer_xdr::UnPack(long *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    assert(xdr_vector(&xdr, (char*)data,n,sizeof(long),(xdrproc_t)xdr_long));
+    if(!xdr_vector(&xdr, (char*)data,n,sizeof(long),(xdrproc_t)xdr_long))
+        pop_exception::pop_throw("Exception in serialization 6");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -144,7 +151,8 @@ void pop_buffer_xdr::Pack(const unsigned long *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(unsigned long),(xdrproc_t)xdr_u_long));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(unsigned long),(xdrproc_t)xdr_u_long))
+        pop_exception::pop_throw("Exception in serialization 7");
     xdr_destroy(&xdr);
 }
 
@@ -159,7 +167,8 @@ void pop_buffer_xdr::UnPack(unsigned long *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(unsigned long),(xdrproc_t)xdr_u_long));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(unsigned long),(xdrproc_t)xdr_u_long))
+        pop_exception::pop_throw("Exception in serialization 8");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -181,7 +190,8 @@ void pop_buffer_xdr::Pack(const short *data, int n) {
     XDR xdr;
 
     xdrmem_create(&xdr,dest,sz,XDR_ENCODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_short));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_short))
+        pop_exception::pop_throw("Exception in serialization 9");
     xdr_destroy(&xdr);
 
 }
@@ -196,7 +206,8 @@ void pop_buffer_xdr::UnPack(short *data, int n) {
     CheckUnPack(sz);
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_short));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(short),(xdrproc_t)xdr_short))
+        pop_exception::pop_throw("Exception in serialization 10");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -215,7 +226,8 @@ void pop_buffer_xdr::Pack(const unsigned short *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_ENCODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(unsigned short),(xdrproc_t)xdr_u_short));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(unsigned short),(xdrproc_t)xdr_u_short))
+        pop_exception::pop_throw("Exception in serialization 11");
     xdr_destroy(&xdr);
 }
 
@@ -230,7 +242,8 @@ void pop_buffer_xdr::UnPack(unsigned short *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(unsigned short),(xdrproc_t)xdr_u_short));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(unsigned short),(xdrproc_t)xdr_u_short))
+        pop_exception::pop_throw("Exception in serialization 12");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -304,7 +317,8 @@ void pop_buffer_xdr::Pack(const float *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*4,XDR_ENCODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float))
+        pop_exception::pop_throw("Exception in serialization 13");
     xdr_destroy(&xdr);
 }
 
@@ -319,7 +333,8 @@ void pop_buffer_xdr::UnPack(float *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float))
+        pop_exception::pop_throw("Exception in serialization 13");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
@@ -337,7 +352,8 @@ void pop_buffer_xdr::Pack(const double *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,n*8,XDR_ENCODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double))
+        pop_exception::pop_throw("Exception in serialization 14");
     xdr_destroy(&xdr);
 }
 
@@ -352,7 +368,8 @@ void pop_buffer_xdr::UnPack(double *data, int n) {
 
     XDR xdr;
     xdrmem_create(&xdr,dest,sz,XDR_DECODE);
-    assert(xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double));
+    if(!xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double))
+        pop_exception::pop_throw("Exception in serialization 15");
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
