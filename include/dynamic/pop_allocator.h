@@ -25,8 +25,8 @@ public:
 
     pop_allocator() {}
     virtual ~pop_allocator() {}
-    virtual std::string allocate(std::string& objectname, pop_od& od) = 0;
-    virtual pop_combox* allocate_group(std::string& objectname, pop_od& od, int nb) = 0;
+    virtual std::string allocate(const std::string& objectname, const pop_od& od) = 0;
+    virtual pop_combox* allocate_group(const std::string& objectname, const pop_od& od, int nb) = 0;
     virtual pop_protocol get_protocol() = 0;
     virtual pop_allocationMechanism get_mechanism() = 0;
 };

@@ -25,7 +25,7 @@
  * @param od          Object description for the allocation process
  * @return A std::string object representing the access-point of the allocated parallel object.
  */
-std::string mpi_allocator_pseudo::allocate(std::string& /*objectname*/, pop_od& /*od*/) {
+std::string mpi_allocator_pseudo::allocate(const std::string& /*objectname*/, const pop_od& /*od*/) {
     std::string objectaddress;
 
     /* TODO Allocation process here */
@@ -40,7 +40,7 @@ std::string mpi_allocator_pseudo::allocate(std::string& /*objectname*/, pop_od& 
  * @param nb          Number of objects to allocate
  * @return A pointer to a combox or an array of combox connected with the group
  */
-pop_combox* mpi_allocator_pseudo::allocate_group(std::string& /*objectname*/, pop_od& /*od*/, int /*nb*/) {
+pop_combox* mpi_allocator_pseudo::allocate_group(const std::string& /*objectname*/, const pop_od& /*od*/, int /*nb*/) {
     /* TODO Allocation process here */
 
     return nullptr;

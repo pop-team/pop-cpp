@@ -16,8 +16,8 @@
 #include "pop_od.h"
 
 struct pop_allocator_uds_local : public pop_allocator {
-    virtual std::string allocate(std::string& objectname, pop_od& od);   // TODO LW: Params must be const
-    virtual pop_combox* allocate_group(std::string& objectname, pop_od& od, int nb);
+    virtual std::string allocate(const std::string& objectname, const pop_od& od);
+    virtual pop_combox* allocate_group(const std::string& objectname, const pop_od& od, int nb);
 
     virtual pop_protocol get_protocol() {
         return pop_allocator::UDS;

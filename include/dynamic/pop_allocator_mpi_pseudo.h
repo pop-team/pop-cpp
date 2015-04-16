@@ -19,8 +19,8 @@
 
 class mpi_allocator_pseudo : public pop_allocator {
 public:
-    virtual std::string allocate(std::string& objectname, pop_od& od);
-    virtual pop_combox* allocate_group(std::string& objectname, pop_od& od, int nb);
+    virtual std::string allocate(const std::string& objectname, const pop_od& od);
+    virtual pop_combox* allocate_group(const std::string& objectname, const pop_od& od, int nb);
     virtual pop_protocol get_protocol() {
         return pop_allocator::MPI;
     }

@@ -26,7 +26,7 @@
  * @param od          Object description used for allocation
  * @return A string representation of the access-point
  */
-std::string uds_allocator_interconnector::allocate(std::string& objectname, pop_od& od) {
+std::string uds_allocator_interconnector::allocate(const std::string& objectname, const pop_od& od) {
     // Get object description important for this kind
     int node = od.get_node(); // Defined the node on which the parallel object is allocated
     int core = od.get_core(); // Defined the core on which the parallel object is allocated
@@ -118,7 +118,7 @@ std::string uds_allocator_interconnector::allocate(std::string& objectname, pop_
  * @param nb          The number of object to allocate in the group
  * @return A pointer to a single combox connected with the group
  */
-pop_combox* uds_allocator_interconnector::allocate_group(std::string& objectname, pop_od& od, int nb) {
+pop_combox* uds_allocator_interconnector::allocate_group(const std::string& objectname, const pop_od& od, int nb) {
 
     const std::string codefile = od.getExecutable();
 

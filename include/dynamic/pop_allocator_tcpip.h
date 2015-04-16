@@ -21,8 +21,8 @@
 /* POPC_ALLOCATOR_TCPIP_LOCAL_H_ */
 class socket_allocator_local : public pop_allocator {
 public:
-    virtual std::string allocate(std::string& objectname, pop_od& od);   // TODO LW: Params must be const
-    virtual pop_combox* allocate_group(std::string& objectname, pop_od& od, int nb);
+    virtual std::string allocate(const std::string& objectname, const pop_od& od);
+    virtual pop_combox* allocate_group(const std::string& objectname, const pop_od& od, int nb);
     virtual pop_protocol get_protocol() {
         return pop_allocator::TCPIP;
     }
@@ -35,8 +35,8 @@ public:
 /* POPC_ALLOCATOR_TCPIP_SERVICE_H_ */
 class socket_allocator_service : public pop_allocator {
 public:
-    virtual std::string allocate(std::string& objectname, pop_od& od);
-    virtual pop_combox* allocate_group(std::string& objectname, pop_od& od, int nb);
+    virtual std::string allocate(const std::string& objectname, const pop_od& od);
+    virtual pop_combox* allocate_group(const std::string& objectname, const pop_od& od, int nb);
     virtual pop_protocol get_protocol() {
         return pop_allocator::TCPIP;
     }
