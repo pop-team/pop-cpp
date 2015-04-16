@@ -77,7 +77,7 @@ std::string socket_allocator_local::allocate(std::string& objectname, pop_od& od
     bool isLocal = (isManual || hostname.empty() || pop_utils::SameContact(myhost.c_str(), hostname.c_str()) || (hostname == "localhost") || (hostname == "127.0.0.1"));
     if(batch.empty()) {
         if(!isLocal) {
-            char *tmp=getenv("POP_RSH");
+            char *tmp=getenv("POPC_RSH");
             argv.push_back(tmp ? tmp :"/usr/bin/ssh");
             if(!ruser.empty()) {
                 char tmpstr[100];

@@ -771,7 +771,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
       //bool islocal=(isManual||hostname==nullptr || *hostname==0 || pop_utils::SameContact(myhost,hostname) || pop_utils::isEqual(hostname,"localhost") || pop_utils::isEqual(hostname,"127.0.0.1"));
       if (batch == nullptr) {
           if (!islocal) {
-              char *tmp=getenv("POP_RSH");
+              char *tmp=getenv("POPC_RSH");
               argv[n++]=popc_strdup((tmp==nullptr)? "/usr/bin/ssh" : tmp);
               //      argv[n++]=popc_strdup("-n");
               // Add user name to host for ssh
@@ -805,7 +805,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
       else strcpy(tmpstr,"popcobjrun");
       argv[n++]=popc_strdup(tmpstr);
       //    }
-      //   else  if ((tmp=getenv("POP_JOB_EXEC"))!=nullptr)
+      //   else  if ((tmp=getenv("POPC_JOB_EXEC"))!=nullptr)
       //    {
       //       argv[n++]=popc_strdup(tmp);
       //    }
@@ -888,7 +888,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
           printf("\n");
       } else {
     #ifndef NDEBUG
-          if (getenv("POP_DEBUG")) {
+          if (getenv("POPC_DEBUG")) {
               LOG_DEBUG("Launching a new object with command : ");
               fprintf(stderr,"--->");
               for (int i=0;i<n;i++) fprintf(stderr,"%s ", argv[i]);

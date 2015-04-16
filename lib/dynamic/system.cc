@@ -150,14 +150,14 @@ std::string pop_system::GetIP() {
         ip=tmp;
     } else {           //Env. variable POPC_IP is not defined
         tmp=getenv("POPC_IFACE");
-        if(tmp!=nullptr) { // Env. Variable POP_IFACE is defined
+        if(tmp!=nullptr) { // Env. Variable POPC_IFACE is defined
             iface=tmp;    // Try to determine IP from network interface name
             if(!(GetIPFromInterface(iface,ip))) {
                 // Not found
                 setenv("POPC_IP",LOCALHOST, 0); // V1.3.1m define LOCALHOST as IP
                 LOG_WARNING("Cannot find an IP for interface %s, using '%s' as IP address.",iface.c_str(), LOCALHOST);
             }
-        } else { // Env. Variable POP_IFACE is not defined
+        } else { // Env. Variable POPC_IFACE is not defined
             iface=GetDefaultInterface();
             if(!iface.empty()) {
                 if(!(GetIPFromInterface(iface,ip))) {
