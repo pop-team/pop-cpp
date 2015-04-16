@@ -68,7 +68,7 @@ pop_allocator* pop_allocatorFactory::get_allocator(pop_allocator::pop_protocol p
             return new uds_allocator_interconnector();
         default:
             LOG_WARNING("No allocator found");
-            return nullptr; // TODO lwk security: there should be a safety if this is returned in a constructor: e.g. assert(false)
+            return nullptr;
         }
     }
     // Allocation over TCP/IP socket

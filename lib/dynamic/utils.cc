@@ -277,7 +277,7 @@ int rprintf(const char *format,...) {
         return 0;
     }
     try {
-        // TODO LW: Each time we call rprintf a new connection to the remote is created. Can we be more efficient ?
+        // note: Each time we call rprintf a new connection to the remote is created. Can we be more efficient ?
         RemoteLog log(pop_system::appservice);
         std::string msg(str);
         log.Log(msg);
@@ -398,7 +398,6 @@ bool pop_utils::isValidName(std::string checked) {
 
 #else
 // Note LWK: This function is added as a hack to allow compilation in pseudodynamic
-// TODO LWK: To fix this cleanly we need to add popc objects to pseudodynamic lib
 int rprintf(const char *format,...) {
     return printf("%s", format);
 }

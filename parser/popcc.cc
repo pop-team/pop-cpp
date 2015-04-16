@@ -313,7 +313,8 @@ char *Compile(const char *preprocessor, char *popcpp, char *cpp, const char** pr
     }
 
     if(paroc_extension || strcmp(str, ".cc") == 0 ||  strcmp(str, ".C") == 0 || strcmp(str, ".cpp") == 0) {
-        //TODO Generation of the various file names should be reviewed
+        //Note: Generation of the various file names should be reviewed
+        //      in case files are generated multiple times they may override each other (e.g. with make -j4)
         sprintf(tmpfile1, "%s_popc1_%s", sdir, fname);
 
         if(options.usepipe) {

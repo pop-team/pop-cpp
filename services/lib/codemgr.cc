@@ -30,7 +30,8 @@ void CodeMgr::RegisterCode(const std::string &objname, const std::string &platfo
                     CODE_MAX_STRING_SIZE, objname.size(), platform.size(), codefile.size());
         LOG_ERROR( "RegisterCode %s %s %s", objname.c_str(), platform.c_str(), codefile.c_str());
 
-        //TODO: Throw exception
+        pop_exception::pop_throw("Could not register code");
+
         return;
     }
 

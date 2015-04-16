@@ -24,7 +24,8 @@
 #include <iostream>
 #include <sstream>
 
-// TODO LW: This creates a bug in case the user does a for(...) cout ... without {} 
+// note LW: This creates a bug in case the user does a for(...) cout ... without {} 
+//          output streams should be handled by the calling process. This would be cleaner
 #define cout pop_system::_popc_cout.str(""); \
              pop_system::_popc_cout
 #define popcendl std::endl; \
