@@ -733,7 +733,7 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     // const std::string& batch(od.getBatch());
     const std::string& cwd(od.getCwd());
 
-    if(hostname == nullptr && (tmp = (char*)strchr(hostname, ':')) != nullptr) { // TODO LW: This cast is dangerous
+    if(hostname == nullptr && (tmp = (char*)strchr(hostname, ':')) != nullptr) {
         *tmp = 0;
     }
 

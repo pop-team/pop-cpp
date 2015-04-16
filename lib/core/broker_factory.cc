@@ -159,7 +159,6 @@ pop_broker * pop_broker_factory::Create(int *argc, char ***argv) {
         popc_close(2);
 
         // If the nostdio option is used, either redirect stdout to a .log file or ignore it
-        // TODO LW logging, see if we keep
         popc_open("/dev/null",O_RDONLY);
 #ifndef NDEBUG
         char fname[256];

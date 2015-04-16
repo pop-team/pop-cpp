@@ -11,7 +11,6 @@ add_definitions(-Wall -Wextra -Werror)
 
 add_subdirectory(src)
 
-# TODO LWK Should probably be set to include/xmp 
 set(POPCPP_XMP_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include/dynamic)
 
 add_custom_target(popc_objmain.xmp.o ALL

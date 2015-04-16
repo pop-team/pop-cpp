@@ -765,7 +765,7 @@ int pop_combox_socket::Recv(char *s,int len, pop_connection *iopeer) {
                 continue;
             }
 
-            LOG_DEBUG("[CORE] CloseSock failed iopeer=%d", iopeer); // TODO LWK: Is this a bug or not ??
+            LOG_DEBUG("[CORE] CloseSock failed iopeer=%d", iopeer);
             return -1;
         }
 #else

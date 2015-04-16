@@ -807,7 +807,7 @@ int main(int argc, char* argv[]) {
                         pid_t allocatepid = fork();
                         if(allocatepid == 0) {
                             char* argv1[7];
-                            // TODO LW: These casts are dangerous, use an array of std::string instead
+                            // note LW: These casts are dangerous, use an array of std::string instead
                             argv1[0] = const_cast<char*>(codefile.c_str());         // Object executable
                             argv1[1] = const_cast<char*>(_objectname.c_str());      // Object name
                             argv1[2] = const_cast<char*>(_objectaddress.c_str());   // Object address
