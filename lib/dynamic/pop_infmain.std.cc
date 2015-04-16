@@ -33,8 +33,9 @@ void SignalTerminate(int sig) {
     exit(1);
 }
 
+// This is called at each exit of the program. Normal or error.
 void _pop_atexit() {
-    LOG_WARNING( "_pop_atexit called !!!!");
+    LOG_DEBUG( "_pop_atexit called !!!!");
     pop_system::Finalize(false);
 }
 
