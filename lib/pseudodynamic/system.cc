@@ -55,7 +55,7 @@ std::string pop_system::platform;
 std::ostringstream pop_system::_popc_cout;
 
 //V1.3m
-std::string pop_system::POPC_HostName;
+std::string pop_system::pop_hostname;
 #define LOCALHOST "localhost"
 //End modif
 
@@ -86,7 +86,7 @@ pop_system::pop_system() {
 #endif
         platform = str;
     }
-    POPC_HostName = std::string("");
+    pop_hostname = std::string("");
 }
 
 
@@ -115,7 +115,7 @@ pop_system::~pop_system() {
 // ELSE call GetIP()
 //----------------------------------------------------------------------------
 std::string pop_system::GetHost() {
-    if(POPC_HostName.empty()) {
+    if(pop_hostname.empty()) {
         char str[128];
         char *t=getenv("POPC_HOST");
         if(t==nullptr || *t==0) {
@@ -126,19 +126,19 @@ std::string pop_system::GetHost() {
                 if(domain!=nullptr && domain!=0) {
                     str[len]='.';
                     strcpy(str+len+1,domain);
-                    POPC_HostName = str;
+                    pop_hostname = str;
                 } else { //(domain!=nullptr && domain!=0)
-                    POPC_HostName = GetIP();
+                    pop_hostname = GetIP();
                 }
             } else { //(strchr(str,'.')==nullptr || strstr(str,".local\0")!=nullptr)
-                POPC_HostName = str;
+                pop_hostname = str;
             }
         } else { //(t==nullptr || *t==0)
-            POPC_HostName=t;
+            pop_hostname=t;
         }
     }
-    LOG_DEBUG("GetHost returns %s", POPC_HostName.c_str());
-    return POPC_HostName;
+    LOG_DEBUG("GetHost returns %s", pop_hostname.c_str());
+    return pop_hostname;
 }
 
 
