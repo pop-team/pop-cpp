@@ -1,9 +1,7 @@
 #include "myobj.ph"
 #include <sys/time.h>
 
-int main(int argc, char** argv)
-
-{
+int main(int argc, char** argv){
     if(argc<3) {
         printf("Usage: popcrun obj.map %s size_vect nb_repeat\n", argv[0]);
         printf(" e.g.: popcrun obj.map %s 10000 100\n", argv[0]);
@@ -56,6 +54,7 @@ int main(int argc, char** argv)
         printf("\n\n\t Timing the marshalling of vectors : vector length %d, repeat %d times\n\n",size_vect,nb_repeat);
 
         /*---------------------------------------------------------------------------------------*/
+
         printf("Serialize a integer vector : \n");
         gettimeofday(&start,NULL);
 
@@ -67,6 +66,7 @@ int main(int argc, char** argv)
         printf("->  Completed in %lf seconds\n\n",result.tv_sec + result.tv_usec/1000000.0);
 
         /*---------------------------------------------------------------------------------------*/
+
         printf("Serialize a vector class heriting from POPBase and vector<int> : \n");
         char legend1[3][256]= {"  * using a for loop with iterator","  * pack by address as int*","  * pack as vector<int>"};
         for(int i=0; i<2; i++) {
@@ -82,6 +82,7 @@ int main(int argc, char** argv)
         }
 
         /*---------------------------------------------------------------------------------------*/
+
         printf("Serialize a vector class heriting from POPBase containing vector<int> : \n");
         char legend2[3][256]= {"  * using a for loop with iterator","  * pack by address as int*","  * pack as vector<int>"};
         for(int i=0; i<3; i++) {
@@ -98,6 +99,7 @@ int main(int argc, char** argv)
 
 
         /*---------------------------------------------------------------------------------------*/
+
         printf("Serialize a double vector : \n");
         gettimeofday(&start,NULL);
 
@@ -109,6 +111,7 @@ int main(int argc, char** argv)
         printf("->  Completed in %lf seconds\n\n",result.tv_sec + result.tv_usec/1000000.0);
 
         /*---------------------------------------------------------------------------------------*/
+
         printf("Serialize a string vector : \n");
         gettimeofday(&start,NULL);
         for(int i=0; i<nb_repeat; i++) {
@@ -119,6 +122,7 @@ int main(int argc, char** argv)
         printf("->  Completed in %lf seconds\n\n",result.tv_sec + result.tv_usec/1000000.0);
 
         /*---------------------------------------------------------------------------------------*/
+
         if(vect2d_int1.size()>0) {
             printf("Serialize a 2D vector of int : (%dx%d) \n",vect2d_int1.size(),vect2d_int1[0].size());
         }
@@ -130,12 +134,11 @@ int main(int argc, char** argv)
         timersub(&stop,&start,&result);
         printf("->  Completed in %lf seconds\n\n",result.tv_sec + result.tv_usec/1000000.0);
 
-
         for(int i=0; i<vect_int1.size(); i++) {
             assert(vect_int_copy[i]==vect_int1[i]/2);
         }
-        /*---------------------------------------------------------------------------------------*/
 
+        /*---------------------------------------------------------------------------------------*/
 
         printf("\nSerialize_vect: test succeeded, destroying objects..\n");
         delete myobj;
