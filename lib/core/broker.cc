@@ -237,9 +237,9 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
         pop_od::defaultLocalJob=true;
     }
 
-    auto comboxFactory = pop_combox_factory::GetInstance();
+    auto& comboxFactory = pop_combox_factory::get_instance();
 
-    int comboxCount = comboxFactory->GetCount();
+    int comboxCount = comboxFactory.GetCount();
     comboxArray.resize(comboxCount);
 
     std::string protocolName;
@@ -247,7 +247,7 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
 
     int count=0;
     for(int i = 0; i < comboxCount; i++) {
-        comboxArray[count] = comboxFactory->Create(i);
+        comboxArray[count] = comboxFactory.Create(i);
         if(comboxArray[count] == nullptr) {
             LOG_ERROR("Fail to create combox #%d",i);
         } else {
@@ -361,7 +361,7 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
 
 
 bool pop_broker::WakeupReceiveThread(pop_combox  *mycombox) {
-    pop_combox_factory *combox_factory = pop_combox_factory::GetInstance();
+    auto& combox_factory = pop_combox_factory::get_instance();
 
     bool ok=false;
 
@@ -378,7 +378,7 @@ bool pop_broker::WakeupReceiveThread(pop_combox  *mycombox) {
     for(auto tok : tokens){
         if(!ok)
             break;
-        pop_combox *tmp = combox_factory->Create(prot.c_str());
+        pop_combox *tmp = combox_factory.Create(prot.c_str());
         tmp->SetTimeout(100000);
         std::string address = tok;
         if(address.find("uds://") == 0) {

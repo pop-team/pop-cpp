@@ -63,8 +63,10 @@ AppCoreService *pop_system::mgr=nullptr;
 std::string pop_system::challenge;
 
 pop_system::pop_system() {
-    pop_combox_factory::GetInstance();
+    //Call the singleton to precreate the objects
+    pop_combox_factory::get_instance();
     pop_buffer_factory_finder::get_instance();
+
     char *tmp = getenv("POPC_PLATFORM");
     if(tmp != nullptr) {
         platform = tmp;
@@ -100,13 +102,10 @@ pop_system::~pop_system() {
     mgr=nullptr;*/
 #endif
 
-    pop_combox_factory *pf=pop_combox_factory::GetInstance();
-    delete pf;
-
+    //Release the singletons
+    pop_combox_factory::release_instance();
     pop_buffer_factory_finder::release_instance();
 }
-
-
 
 // V1.3m
 // Try to determine the Host Name of the machine and put it in POPC_Host_Name

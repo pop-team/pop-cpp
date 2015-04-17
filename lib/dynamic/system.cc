@@ -57,7 +57,7 @@ AppCoreService *pop_system::mgr=nullptr;
 std::string pop_system::challenge;
 
 pop_system::pop_system() {
-    pop_combox_factory::GetInstance();
+    pop_combox_factory::get_instance();
     pop_buffer_factory_finder::get_instance();
     char *tmp = getenv("POPC_PLATFORM");
     if(tmp != nullptr) {
@@ -93,9 +93,7 @@ pop_system::~pop_system() {
     mgr=nullptr;
 #endif
 
-    pop_combox_factory *pf=pop_combox_factory::GetInstance();
-    delete pf;
-
+    pop_combox_factory::release_instance();
     pop_buffer_factory_finder::release_instance();
 }
 

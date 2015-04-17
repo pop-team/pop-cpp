@@ -52,12 +52,9 @@ std::string uds_allocator_interconnector::allocate(const std::string& objectname
      * POP-C++ for the K Computer
      * Create a combox to contact the MPI Communicator process to allocate the new parallel object.
      */
-    pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
-    if(combox_factory == nullptr) {
-        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "No combox factory");
-    }
+    auto& combox_factory = pop_combox_factory::get_instance();
 
-    pop_combox* allocating_combox = combox_factory->Create("uds");
+    pop_combox* allocating_combox = combox_factory.Create("uds");
 
     if(allocating_combox == nullptr) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "allocating_combox == NULL");
@@ -133,12 +130,9 @@ pop_combox* uds_allocator_interconnector::allocate_group(const std::string& obje
     auto  local_interconnector_address = new char[15];
     snprintf(local_interconnector_address, 15, "uds_%d.0", rank);
 
-    pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
-    if(combox_factory == nullptr) {
-        pop_exception::pop_throw(POP_NO_PROTOCOL, "ComboxFactory NULL");
-    }
+    auto& combox_factory = pop_combox_factory::get_instance();
 
-    pop_combox* _popc_combox = combox_factory->Create("uds");
+    pop_combox* _popc_combox = combox_factory.Create("uds");
     if(_popc_combox == nullptr) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, "Combox NULL");
     }

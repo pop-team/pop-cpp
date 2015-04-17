@@ -40,8 +40,7 @@
 #endif
 
 pop_combox_registration::pop_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator) {
-    pop_combox_factory *f=pop_combox_factory::GetInstance();
-    f->Register(name,metrics, creator);
+    pop_combox_factory::get_instance().Register(name,metrics, creator);
 }
 
 pop_combox * combox_socket_creator() {
@@ -58,8 +57,7 @@ pop_combox * combox_mpi_creator() {
 }
 #endif
 
-pop_combox_factory *pop_combox_factory::fact=nullptr;
-
+pop_combox_factory *pop_combox_factory::fact = nullptr;
 
 pop_combox_factory::pop_combox_factory() {
     Register("socket", 0, combox_socket_creator);
@@ -160,11 +158,19 @@ pop_combox_factory::~pop_combox_factory() {
     }
 }
 
-pop_combox_factory *pop_combox_factory::GetInstance() {
-    if(fact==nullptr) {
-        fact=new pop_combox_factory;
+pop_combox_factory& pop_combox_factory::get_instance() {
+    if(!fact) {
+        fact = new pop_combox_factory;
     }
-    return fact;
+
+    return *fact;
+}
+
+void pop_combox_factory::release_instance() {
+    if(fact) {
+        delete fact;
+        fact = nullptr;
+    }
 }
 
 pop_combox* pop_combox_factory::Create(const char * name) {

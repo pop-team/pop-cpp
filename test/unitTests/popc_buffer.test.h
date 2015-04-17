@@ -22,7 +22,7 @@
 // TODO: See if we keep the combox test here (and fix)
 
 /// Test the serialization of all values in vector
-template<typename T>void testByVect(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut, 
+template<typename T>void testByVect(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut,
                                     pop_buffer* xp_bufferIn,  pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn, const std::vector<T>& x_vect, bool x_testArray){
 
     for(const auto& elem : x_vect)
@@ -77,7 +77,7 @@ template<typename T>void testByVect(pop_buffer* xp_bufferOut, pop_combox* xp_com
 }
 
 /// Fill a vector and test
-template<typename T>void testByType(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut, 
+template<typename T>void testByType(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut,
                                     pop_buffer* xp_bufferIn,  pop_combox* xp_comboxIn,  pop_connection* xp_connectionIn, const T& x_min, const T& x_max, const T& x_incr){
     std::vector<T> vectTest;
     for(T elem = x_min ; elem < x_max - x_incr ; elem += x_incr) // this break condition avoids inf loops due to overflows
@@ -120,13 +120,12 @@ class BufferTestSuite : public CxxTest::TestSuite
                 m_vectCharArr.push_back(elem.c_str());
 
             // Create combox factory
-            pop_combox_factory *fact = pop_combox_factory::GetInstance();
-            TS_ASSERT(fact != nullptr);
+            auto& fact = pop_combox_factory::get_instance();
 
             // Create combox
-            m_comboxSocketOut = fact->Create("socket");
+            m_comboxSocketOut = fact.Create("socket");
             TS_ASSERT(m_comboxSocketOut != nullptr);
-            m_comboxSocketIn = fact->Create("socket");
+            m_comboxSocketIn = fact.Create("socket");
             TS_ASSERT(m_comboxSocketIn != nullptr);
             //delete fact; // TODO LW: GetInstance must return a reference not a pointer
 
