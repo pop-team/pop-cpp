@@ -169,7 +169,6 @@ pop_buffer_factory_finder::pop_buffer_factory_finder() {
 }
 
 pop_buffer_factory_finder::~pop_buffer_factory_finder() {
-    bff=nullptr;
     for(int i=0; i<size; i++) {
         delete(bfArray[i]);
     }
@@ -213,14 +212,18 @@ void * pop_buffer_factory_finder::LoadPlugin(char *fname, pop_buffer_factory * &
 #endif
 }
 
+pop_buffer_factory_finder& pop_buffer_factory_finder::get_instance() {
+    if(!bff) {
+        bff = new pop_buffer_factory_finder();
+    }
 
+    return *bff;
+}
 
-pop_buffer_factory_finder* pop_buffer_factory_finder::GetInstance() {
-    if(bff==nullptr) {
-        bff=new pop_buffer_factory_finder();
-        return pop_buffer_factory_finder::bff;
-    } else {
-        return pop_buffer_factory_finder::bff;
+void pop_buffer_factory_finder::release_instance() {
+    if(bff){
+        delete bff;
+        bff = nullptr;
     }
 }
 

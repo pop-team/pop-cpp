@@ -58,7 +58,7 @@ std::string pop_system::challenge;
 
 pop_system::pop_system() {
     pop_combox_factory::GetInstance();
-    pop_buffer_factory_finder::GetInstance();
+    pop_buffer_factory_finder::get_instance();
     char *tmp = getenv("POPC_PLATFORM");
     if(tmp != nullptr) {
         platform = tmp;
@@ -94,12 +94,10 @@ pop_system::~pop_system() {
 #endif
 
     pop_combox_factory *pf=pop_combox_factory::GetInstance();
-    pop_buffer_factory_finder *bf=pop_buffer_factory_finder::GetInstance();
     delete pf;
-    delete bf;
+
+    pop_buffer_factory_finder::release_instance();
 }
-
-
 
 // V1.3m
 // Try to determine the Host Name of the machine and put it in POPC_Host_Name

@@ -32,8 +32,11 @@ public:
     int GetFactoryCount();
     pop_buffer_factory * GetFactory(int index);
     pop_buffer_factory * FindFactory(const std::string& name);
-    static pop_buffer_factory_finder * GetInstance();
     bool GetBufferName(int index, std::string & bufferName);
+
+    //Singleton functions
+    static pop_buffer_factory_finder& get_instance();
+    static void release_instance();
 
 private:
     pop_buffer_factory_finder();
@@ -46,4 +49,5 @@ private:
     static pop_buffer_factory_finder* bff;
 
 };
+
 #endif

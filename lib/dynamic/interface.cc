@@ -574,7 +574,7 @@ bool pop_interface::Encoding(std::string encoding) {
         return false;
     }
 
-    pop_buffer_factory *fact = pop_buffer_factory_finder::GetInstance()->FindFactory(encoding);
+    auto* fact = pop_buffer_factory_finder::get_instance().FindFactory(encoding);
 
     if(!fact) {
         LOG_ERROR("[CORE] No encoding factory for %s", encoding.c_str());
@@ -604,7 +604,7 @@ bool pop_interface::Encoding(std::string encoding) {
         __pop_buf = fact->CreateBuffer();
         __pop_combox->SetBufferFactory(fact);
     }
-    
+
     return ret;
 }
 

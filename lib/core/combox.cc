@@ -75,7 +75,7 @@ const char* pop_combox::PROTOCOL_SEPARATOR = "://";
 
 
 pop_combox::pop_combox() {
-    defaultFact = pop_buffer_factory_finder::GetInstance()->FindFactory("xdr");
+    defaultFact = pop_buffer_factory_finder::get_instance().FindFactory("xdr");
     if(defaultFact == nullptr) {
         LOG_ERROR("POP-C++ Error: can not find the xdr buffer factory!");
     }
