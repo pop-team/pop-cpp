@@ -61,10 +61,10 @@ int main(int argc, char **argv) {
     pop_combox *callback_combox = nullptr;
     int status=0;
     if(address != NULL) {
-        auto combox_factory = pop_combox_factory::GetInstance();
+        auto& combox_factory = pop_combox_factory::get_instance();
 
         auto protocol = get_proto_name(address);
-        callback_combox = combox_factory->Create(protocol.c_str());
+        callback_combox = combox_factory.Create(protocol.c_str());
 
         bool connected;
         if(callback_combox->need_address()){

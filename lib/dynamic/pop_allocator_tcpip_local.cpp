@@ -118,12 +118,9 @@ std::string socket_allocator_local::allocate(const std::string& objectname, cons
      * Create a combox to allocate the new parallel object.
      */
 
-    pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
-    if(combox_factory == nullptr) {
-        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
-    }
+    auto& combox_factory = pop_combox_factory::get_instance();
 
-    pop_combox* tmpsock = combox_factory->Create("socket");
+    pop_combox* tmpsock = combox_factory.Create("socket");
     if(tmpsock == nullptr) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }

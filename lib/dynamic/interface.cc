@@ -344,15 +344,13 @@ void pop_interface::Bind(const char *dest) {
     }
 
     // Create combox factory
-    pop_combox_factory *fact = pop_combox_factory::GetInstance();
+    auto& fact = pop_combox_factory::get_instance();
+
     std::string p;
-    if(!fact) {
-        pop_exception::pop_throw(POP_NO_PROTOCOL, "No protocol for binding", ClassName());
-    }
-    fact->GetNames(p);
+    fact.GetNames(p);
 
     // Create combox
-    __pop_combox = fact->Create(prot);
+    __pop_combox = fact.Create(prot);
     if(!__pop_combox) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, ClassName(), "Cannot create combox from factory");
     }
@@ -574,7 +572,7 @@ bool pop_interface::Encoding(std::string encoding) {
         return false;
     }
 
-    pop_buffer_factory *fact = pop_buffer_factory_finder::GetInstance()->FindFactory(encoding);
+    auto* fact = pop_buffer_factory_finder::get_instance().FindFactory(encoding);
 
     if(!fact) {
         LOG_ERROR("[CORE] No encoding factory for %s", encoding.c_str());
@@ -604,7 +602,7 @@ bool pop_interface::Encoding(std::string encoding) {
         __pop_buf = fact->CreateBuffer();
         __pop_combox->SetBufferFactory(fact);
     }
-    
+
     return ret;
 }
 

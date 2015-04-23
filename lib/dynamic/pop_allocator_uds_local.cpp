@@ -92,12 +92,9 @@ std::string pop_allocator_uds_local::allocate(const std::string& objectname, con
      * Create a combox to allocate the new parallel object.
      */
 
-    auto combox_factory = pop_combox_factory::GetInstance();
-    if(!combox_factory) {
-        pop_exception::pop_throw(POP_NO_PROTOCOL, objectname.c_str(), "Combox factory is null");
-    }
+    auto& combox_factory = pop_combox_factory::get_instance();
 
-    auto tmp_combox = combox_factory->Create("uds");
+    auto tmp_combox = combox_factory.Create("uds");
     if(!tmp_combox) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, objectname.c_str(), "Creation of combox failed");
     }

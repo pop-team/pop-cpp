@@ -235,11 +235,11 @@ bool pop_broker::PopCall(pop_request &req) {
             buf->SetHeader(h);
             int status = 0;
             std::string enclist;
-            pop_buffer_factory_finder *finder = pop_buffer_factory_finder::GetInstance();
-            int count = finder->GetFactoryCount();
+            auto& finder = pop_buffer_factory_finder::get_instance();
+            int count = finder.GetFactoryCount();
             for(int i = 0; i < count; i++) {
                 std::string t;
-                if(finder->GetBufferName(i, t)) {
+                if(finder.GetBufferName(i, t)) {
                     enclist += t;
                     if(i < count-1) {
                         enclist += " ";
@@ -309,7 +309,7 @@ bool pop_broker::PopCall(pop_request &req) {
         buf->Push("encoding", "std::string", 1);
         buf->UnPack(&enc,1);
         buf->Pop();
-        pop_buffer_factory *fact = pop_buffer_factory_finder::GetInstance()->FindFactory(enc);
+        auto* fact = pop_buffer_factory_finder::get_instance().FindFactory(enc);
         bool ret;
         if(fact) {
             req.from->SetBufferFactory(fact);

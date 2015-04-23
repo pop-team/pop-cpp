@@ -103,7 +103,7 @@ public:
     static std::ostringstream _popc_cout;
 
 private:
-    static std::string POPC_HostName;  //V1.3m
+    static std::string pop_hostname;  //V1.3m
 
     static AppCoreService *CreateAppCoreService(char *codelocation);
     static AppCoreService *mgr;

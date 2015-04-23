@@ -35,11 +35,25 @@ void pop_buffer_xdr::Reset() {
     packeddata.resize(unpackpos);
 }
 
+#ifdef XDR_DEBUG_FULL
+#define ENTER_LOG_PACK(type) LOG_DEBUG("XDR: ENTER Pack(" type ", %d), size:%lu, unpackpos:%d", n, packeddata.size(),unpackpos);
+#define EXIT_LOG_PACK(type) LOG_DEBUG("XDR: EXIT Pack(" type ", %d), size:%lu, unpackpos:%d", n, packeddata.size(),unpackpos);
+#define ENTER_LOG_UNPACK(type) LOG_DEBUG("XDR: ENTER UnPack(" type ", %d), size:%lu, unpackpos:%d", n, packeddata.size(),unpackpos);
+#define EXIT_LOG_UNPACK(type) LOG_DEBUG("XDR: EXIT UnPack(" type ", %d), size:%lu, unpackpos:%d", n, packeddata.size(),unpackpos);
+#else
+#define ENTER_LOG_PACK(type)
+#define EXIT_LOG_PACK(type)
+#define ENTER_LOG_UNPACK(type)
+#define EXIT_LOG_UNPACK(type)
+#endif
+
 void pop_buffer_xdr::Pack(const int *data, int n) {
+    ENTER_LOG_PACK("int")
+
     if(n<=0) {
         return;
     }
-    int oldsize=packeddata.size();
+    auto oldsize=packeddata.size();
     assert(sizeof(int) <= 4);
     packeddata.resize(n*4+oldsize);
     char *dest=packeddata.data()+oldsize;
@@ -50,8 +64,11 @@ void pop_buffer_xdr::Pack(const int *data, int n) {
         pop_exception::pop_throw("Exception in serialization 1");
     xdr_destroy(&xdr);
 
+    EXIT_LOG_PACK("int")
 }
 void pop_buffer_xdr::UnPack(int *data, int n) {
+    ENTER_LOG_UNPACK("int")
+
     if(n<=0) {
         return;
     }
@@ -69,9 +86,13 @@ void pop_buffer_xdr::UnPack(int *data, int n) {
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
+
+    EXIT_LOG_UNPACK("int")
 }
 
 void pop_buffer_xdr::Pack(const unsigned *data, int n) {
+    ENTER_LOG_PACK("unsigned")
+
     if(n<=0) {
         return;
     }
@@ -86,8 +107,12 @@ void pop_buffer_xdr::Pack(const unsigned *data, int n) {
         pop_exception::pop_throw("Exception in serialization 3");
     xdr_destroy(&xdr);
 
+    EXIT_LOG_PACK("unsigned")
+
 }
 void pop_buffer_xdr::UnPack(unsigned *data, int n) {
+    ENTER_LOG_UNPACK("unsigned")
+
     if(n<=0) {
         return;
     }
@@ -103,9 +128,13 @@ void pop_buffer_xdr::UnPack(unsigned *data, int n) {
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
+
+    EXIT_LOG_UNPACK("unsigned")
 }
 
 void pop_buffer_xdr::Pack(const long *data, int n) {
+    ENTER_LOG_PACK("long")
+
     if(n<=0) {
         return;
     }
@@ -120,9 +149,13 @@ void pop_buffer_xdr::Pack(const long *data, int n) {
     if(!xdr_vector(&xdr,(char *)data,n,sizeof(long),(xdrproc_t)xdr_long))
         pop_exception::pop_throw("Exception in serialization 5");
     xdr_destroy(&xdr);
+
+    EXIT_LOG_PACK("long")
 }
 
 void pop_buffer_xdr::UnPack(long *data, int n) {
+    ENTER_LOG_UNPACK("long")
+
     if(n<=0) {
         return;
     }
@@ -138,9 +171,13 @@ void pop_buffer_xdr::UnPack(long *data, int n) {
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
+
+    EXIT_LOG_UNPACK("long")
 }
 
 void pop_buffer_xdr::Pack(const unsigned long *data, int n) {
+    ENTER_LOG_PACK("unsigned long")
+
     if(n<=0) {
         return;
     }
@@ -154,9 +191,13 @@ void pop_buffer_xdr::Pack(const unsigned long *data, int n) {
     if(!xdr_vector(&xdr,(char *)data,n,sizeof(unsigned long),(xdrproc_t)xdr_u_long))
         pop_exception::pop_throw("Exception in serialization 7");
     xdr_destroy(&xdr);
+
+    EXIT_LOG_PACK("unsigned long")
 }
 
 void pop_buffer_xdr::UnPack(unsigned long *data, int n) {
+    ENTER_LOG_UNPACK("unsigned long")
+
     if(n<=0) {
         return;
     }
@@ -172,9 +213,13 @@ void pop_buffer_xdr::UnPack(unsigned long *data, int n) {
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
+
+    EXIT_LOG_UNPACK("unsigned long")
 }
 
 void pop_buffer_xdr::Pack(const short *data, int n) {
+    ENTER_LOG_PACK("short")
+
     if(n<=0) {
         return;
     }
@@ -194,9 +239,12 @@ void pop_buffer_xdr::Pack(const short *data, int n) {
         pop_exception::pop_throw("Exception in serialization 9");
     xdr_destroy(&xdr);
 
+    EXIT_LOG_PACK("short")
 }
 
 void pop_buffer_xdr::UnPack(short *data, int n) {
+    ENTER_LOG_UNPACK("short")
+
     if(n<=0) {
         return;
     }
@@ -212,9 +260,12 @@ void pop_buffer_xdr::UnPack(short *data, int n) {
 
     unpackpos+=sz;
 
+    EXIT_LOG_UNPACK("short")
 }
 
 void pop_buffer_xdr::Pack(const unsigned short *data, int n) {
+    ENTER_LOG_PACK("unsigned short")
+
     if(n<=0) {
         return;
     }
@@ -229,9 +280,13 @@ void pop_buffer_xdr::Pack(const unsigned short *data, int n) {
     if(!xdr_vector(&xdr,(char *)data,n,sizeof(unsigned short),(xdrproc_t)xdr_u_short))
         pop_exception::pop_throw("Exception in serialization 11");
     xdr_destroy(&xdr);
+
+    EXIT_LOG_PACK("unsigned short")
 }
 
 void pop_buffer_xdr::UnPack(unsigned short *data, int n) {
+    ENTER_LOG_UNPACK("unsigned short")
+
     if(n<=0) {
         return;
     }
@@ -247,9 +302,13 @@ void pop_buffer_xdr::UnPack(unsigned short *data, int n) {
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
+
+    EXIT_LOG_UNPACK("unsigned short")
 }
 
 void pop_buffer_xdr::Pack(const bool *data, int n) {
+    ENTER_LOG_PACK("bool")
+
     if(n<=0) {
         return;
     }
@@ -261,8 +320,12 @@ void pop_buffer_xdr::Pack(const bool *data, int n) {
         dat++;
         data++;
     }
+
+    EXIT_LOG_PACK("bool")
 }
 void pop_buffer_xdr::UnPack(bool *data, int n) {
+    ENTER_LOG_UNPACK("bool")
+
     if(n <= 0) {
         return;
     }
@@ -276,9 +339,13 @@ void pop_buffer_xdr::UnPack(bool *data, int n) {
         data++;
     }
     unpackpos += ((n-1)/4+1) * 4;
+
+    EXIT_LOG_UNPACK("bool")
 }
 
 void pop_buffer_xdr::Pack(const char *data, int n) {
+    ENTER_LOG_PACK("char")
+
     if(n<=0) {
         return;
     }
@@ -286,9 +353,13 @@ void pop_buffer_xdr::Pack(const char *data, int n) {
     assert(sizeof(char) == 1);
     packeddata.resize(t+((n-1)/4+1)*4);
     memcpy(packeddata.data()+t,data,n);
+
+    EXIT_LOG_PACK("char")
 }
 
 void pop_buffer_xdr::UnPack(char *data, int n) {
+    ENTER_LOG_UNPACK("char")
+
     if(n<=0) {
         return;
     }
@@ -296,6 +367,8 @@ void pop_buffer_xdr::UnPack(char *data, int n) {
     packeddata.size();
     memcpy(data, (packeddata.data())+unpackpos,n);
     unpackpos+=((n-1)/4+1)*4;
+
+    EXIT_LOG_UNPACK("char")
 }
 
 void pop_buffer_xdr::Pack(const unsigned char *data, int n) {
@@ -307,6 +380,8 @@ void pop_buffer_xdr::UnPack(unsigned char *data, int n) {
 }
 
 void pop_buffer_xdr::Pack(const float *data, int n) {
+    ENTER_LOG_PACK("float")
+
     if(n<=0) {
         return;
     }
@@ -320,9 +395,13 @@ void pop_buffer_xdr::Pack(const float *data, int n) {
     if(!xdr_vector(&xdr,(char *)data,n,sizeof(float),(xdrproc_t)xdr_float))
         pop_exception::pop_throw("Exception in serialization 13");
     xdr_destroy(&xdr);
+
+    EXIT_LOG_PACK("float")
 }
 
 void pop_buffer_xdr::UnPack(float *data, int n) {
+    ENTER_LOG_UNPACK("float")
+
     if(n<=0) {
         return;
     }
@@ -339,9 +418,13 @@ void pop_buffer_xdr::UnPack(float *data, int n) {
 
     unpackpos+=sz;
 
+    EXIT_LOG_UNPACK("float")
+
 }
 
 void pop_buffer_xdr::Pack(const double *data, int n) {
+    ENTER_LOG_PACK("double")
+
     if(n<=0) {
         return;
     }
@@ -355,9 +438,13 @@ void pop_buffer_xdr::Pack(const double *data, int n) {
     if(!xdr_vector(&xdr,(char *)data,n,sizeof(double),(xdrproc_t)xdr_double))
         pop_exception::pop_throw("Exception in serialization 14");
     xdr_destroy(&xdr);
+
+    EXIT_LOG_PACK("double")
 }
 
 void pop_buffer_xdr::UnPack(double *data, int n) {
+    ENTER_LOG_UNPACK("double")
+
     if(n<=0) {
         return;
     }
@@ -373,6 +460,8 @@ void pop_buffer_xdr::UnPack(double *data, int n) {
     xdr_destroy(&xdr);
 
     unpackpos+=sz;
+
+    EXIT_LOG_UNPACK("double")
 }
 
 void pop_buffer_xdr::Pack(const signed char *data, int n) {

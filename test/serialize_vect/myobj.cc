@@ -91,6 +91,13 @@ POPintVector1::~POPintVector1() {};
 
 
 void POPintVector1::Serialize(POPBuffer &buf, bool pack) {
+    //0. pack or unpack the serialization technique
+    if(pack){
+        buf.Pack(&ser, 1);
+    } else {
+        buf.UnPack(&ser, 1);
+    }
+
     if(ser==0) {
         int a;
         long vsize;
@@ -116,12 +123,12 @@ void POPintVector1::Serialize(POPBuffer &buf, bool pack) {
         if(pack) {
             int n=size();
             buf.Pack(&n,1);
-            buf.Pack(&(*this)[0],n);
+            buf.Pack(data(),n);
         } else {
             int n=0;
             buf.UnPack(&n,1);
             resize(n);
-            buf.UnPack(&(*this)[0],n);
+            buf.UnPack(data(),n);
         }
     } else {
         // This does NOT work
@@ -146,6 +153,13 @@ POPintVector2::~POPintVector2() {};
 
 
 void POPintVector2::Serialize(POPBuffer &buf, bool pack) {
+    //0. pack or unpack the serialization technique
+    if(pack){
+        buf.Pack(&ser, 1);
+    } else {
+        buf.UnPack(&ser, 1);
+    }
+
     if(ser==0) {
         int a;
         long vsize;

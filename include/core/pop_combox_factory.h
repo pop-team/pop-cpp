@@ -44,7 +44,9 @@ protected:
 public:
     ~pop_combox_factory();
 
-    static pop_combox_factory *GetInstance();
+    //Singleton functions
+    static pop_combox_factory& get_instance();
+    static void release_instance();
 
     pop_combox* Create(const char * name);
     pop_combox* Create(int index);
@@ -57,7 +59,7 @@ public:
     void *LoadPlugin(char *fname,  std::string &name, COMBOX_CREATOR &f);
 
 private:
-    static pop_combox_factory *fact;
+    static pop_combox_factory* fact;
 
 private:
     std::vector<combox_factory_struct> list;
