@@ -120,22 +120,6 @@ pop_broker * pop_broker_factory::Create(int *argc, char ***argv) {
         pop_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
     }
 
-    /*#ifndef DEFINE_UDS_SUPPORT
-        if ((tmp=getenv("POPC_JOBSERVICE"))!=nullptr) {
-            pop_system::jobservice.SetAccessString(tmp);
-          pop_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
-        } else if ((tmp=pop_utils::checkremove(argc,argv,"-jobservice=")) != nullptr) {
-            pop_system::jobservice.SetAccessString(tmp);
-          pop_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
-        } else {
-            char tmpstr[256];
-            LOG_DEBUG("Jobservice is not specified. Use the default one!");
-            sprintf(tmpstr,"%s:%d",(const char *)pop_system::GetHost(),DEFAULTPORT);
-            pop_system::jobservice.SetAccessString(tmpstr);
-          pop_system::jobservice.SetAsService();  //Set the accesspoint as a service accesspoint
-        }
-    #endif*/
-
     bool nostdio=(pop_utils::checkremove(argc,argv,"-nostdio")!=nullptr);
 
     //Now create the broker

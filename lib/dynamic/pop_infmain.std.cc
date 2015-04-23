@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
         * POP-C++ on the K Computer
         * Terminate the MPI Communicators network by sending a termination message to the local MPI Communicator with rank 0
         */
-#ifdef DEFINE_UDS_SUPPORT
+#ifdef K_COMPUTER
         pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
         if(combox_factory == NULL) {
             pop_exception::pop_throw(POP_NO_PROTOCOL, "POPCMain: combox_factory == NULL");
