@@ -51,7 +51,7 @@
 #ifdef DEFAULT_PROTOCOL
 #define POP_DEFAULT_PROTOCOL TOSTRING(DEFAULT_PROTOCOL)
 #else
-#define POP_DEFAULT_PROTOCOL "uds"
+#define POP_DEFAULT_PROTOCOL "socket"
 #endif
 
 pop_accesspoint pop_interface::_pop_nobind;
