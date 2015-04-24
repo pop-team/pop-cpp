@@ -260,9 +260,3 @@ pop_buffer_factory* pop_buffer_factory_finder::FindFactory(const std::string& bu
 
 
 }
-
-/*
-std::string * paroc_factory_finder::GetFactoryList(){
-  return new std::string("socket");
-}
-*/
