@@ -955,8 +955,8 @@ int main(int argc, char* argv[]) {
                         // Need to establish a connection
 
                         // Connect to the remote object
-                        pop_combox_factory* combox_factory = pop_combox_factory::GetInstance();
-                        client = combox_factory->Create("uds");
+                        pop_combox_factory combox_factory = pop_combox_factory::get_instance();
+                        client = combox_factory.Create("uds");
                         char* address = new char[15];
                         snprintf(address, 15, "uds_%d.%d", rank, dest_id);
 

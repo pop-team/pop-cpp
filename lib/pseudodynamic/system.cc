@@ -93,14 +93,6 @@ pop_system::pop_system() {
 
 
 pop_system::~pop_system() {
-#ifndef DEFINE_UDS_SUPPORT
-    /*if (mgr!=nullptr)
-    {
-      Finalize(false);
-      delete mgr;
-    }
-    mgr=nullptr;*/
-#endif
 
     //Release the singletons
     pop_combox_factory::release_instance();
@@ -387,19 +379,11 @@ bool pop_system::Initialize(int *argc,char ***argv) {
             char url[1024];
             strcpy(url, codeser);
 
-#ifndef DEFINE_UDS_SUPPORT
-            // Creating application services
-            //mgr = CreateAppCoreService(url);
-            // LOG_DEBUG("POP-C++ Application Service created %s", mgr->GetAccessPoint().GetAccessString());
-#endif
         } else {
             challenge="";
             pop_accesspoint app;
             app.SetAccessString(appcontact);
             app.SetAsService();
-#ifndef DEFINE_UDS_SUPPORT
-           //mgr = new AppCoreService(app);
-#endif
         }
         //pop_system::appservice=mgr->GetAccessPoint();
         pop_system::appservice.SetAsService();
@@ -427,45 +411,6 @@ bool pop_system::Initialize(int *argc,char ***argv) {
 }
 
 void pop_system::Finalize(bool /*normalExit*/) {
-#ifndef DEFINE_UDS_SUPPORT
-    //LOG_DEBUG("Finalize the application %s", normalExit ? "true" : "false");
-    /*  if (mgr != NULL) {
-        //printf("mgr not null\n");
-        try {
-            if(normalExit) {
-            // Wait all object to be terminated before exiting
-            int timeout = 1;
-            int oldcount = 0, count;
-            int loop = 0;
-            while ((count = mgr->CheckObjects()) > 0){
-              if (timeout < 1800 && oldcount == count){
-                        // sleep an increasing amount of time
-                timeout = timeout * 4/3;
-                loop++;
-                if (loop % 10 == 0) {
-                  timeout += 1;
-                }
-              } else {
-                loop = 0;
-                timeout = 1;
-              }
-                    LOG_INFO("%d parallel objects remain. Awaiting %d s. Type Ctrl+C to kill all remaining objects", count, timeout);
-                    popc_sleep(timeout);
-              oldcount = count;
-            }
-          } else {
-	            LOG_INFO("Main routine did not exit normally or did not return 0. This is treated as an error by POP-C++.");
-            mgr->KillAll();
-          }
-          LOG_DEBUG("Finalize stop");
-          mgr->Stop(challenge);
-          delete mgr;
-        } catch(pop_exception &e) {
-            LOG_ERROR("while finalizing the application: %s", e.what());
-        }
-        mgr = nullptr;
-      }*/
-#endif
 }
 
 

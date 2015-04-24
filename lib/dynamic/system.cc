@@ -85,13 +85,11 @@ pop_system::pop_system() {
 
 
 pop_system::~pop_system() {
-#ifndef DEFINE_UDS_SUPPORT
     if(mgr!=nullptr) {
         Finalize(false);
         delete mgr;
     }
     mgr=nullptr;
-#endif
 
     pop_combox_factory::release_instance();
     pop_buffer_factory_finder::release_instance();
@@ -379,17 +377,13 @@ bool pop_system::Initialize(int *argc,char ***argv) {
                 sprintf(url,"%s -proxy=%s",codeser, proxy);
             }
             LOG_DEBUG("mgr=CreateAppCoreService(url=%s);", url);
-#ifndef DEFINE_UDS_SUPPORT
             mgr = CreateAppCoreService(url);
-#endif
         } else {
             challenge="";
             pop_accesspoint app;
             app.SetAccessString(appcontact);
             app.SetAsService();
-#ifndef DEFINE_UDS_SUPPORT
             mgr=new AppCoreService(app);
-#endif
         }
         pop_system::appservice=mgr->GetAccessPoint();
         pop_system::appservice.SetAsService();
@@ -409,15 +403,10 @@ bool pop_system::Initialize(int *argc,char ***argv) {
     }
     else return true;*/
 
-#ifdef DEFINE_UDS_SUPPORT
-    return false;
-#else
     return !(codeconf!=nullptr && !pop_utils::InitCodeService(codeconf,mgr));
-#endif
 }
 
 void pop_system::Finalize(bool normalExit) {
-#ifndef DEFINE_UDS_SUPPORT
     if(mgr!=nullptr) {
         try {
             if(normalExit) {
@@ -456,7 +445,6 @@ void pop_system::Finalize(bool normalExit) {
         }
         mgr=nullptr;
     }
-#endif
 }
 
 AppCoreService *pop_system::CreateAppCoreService(char *codelocation) {
