@@ -42,8 +42,16 @@
 #define POP_CONNECT_TIMEOUT 10000
 #endif
 
-#ifndef DEFAULT_PROTOCOL
-#define DEFAULT_PROTOCOL "socket"
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
+//By defining DEFAULT_PROTOCOL when compiling POP, the default protocol can be
+//changed, otherwise the default is socket
+
+#ifdef DEFAULT_PROTOCOL
+#define POP_DEFAULT_PROTOCOL TOSTRING(DEFAULT_PROTOCOL)
+#else
+#define POP_DEFAULT_PROTOCOL "uds"
 #endif
 
 pop_accesspoint pop_interface::_pop_nobind;
@@ -218,7 +226,7 @@ void pop_interface::allocate_only() {
     auto protocol = od.getProtocol();
 
     if(protocol.empty()){
-        protocol = DEFAULT_PROTOCOL;
+        protocol = POP_DEFAULT_PROTOCOL;
     }
 
     if(protocol == pop_allocatorFactory::PREFIX_UDS) {
