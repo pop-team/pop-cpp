@@ -42,6 +42,9 @@
 #define POP_CONNECT_TIMEOUT 10000
 #endif
 
+#ifndef DEFAULT_PROTOCOL
+#define DEFAULT_PROTOCOL "socket"
+#endif
 
 pop_accesspoint pop_interface::_pop_nobind;
 
@@ -212,14 +215,20 @@ void pop_interface::allocate_only() {
     pop_allocatorFactory* alloc_factory = pop_allocatorFactory::get_instance();
     pop_allocator* allocator = nullptr;
 
-    if(od.getProtocol() == pop_allocatorFactory::PREFIX_UDS) {
+    auto protocol = od.getProtocol();
+
+    if(protocol.empty()){
+        protocol = DEFAULT_PROTOCOL;
+    }
+
+    if(protocol == pop_allocatorFactory::PREFIX_UDS) {
         allocator = alloc_factory->get_allocator(pop_allocator::UDS, pop_allocator::LOCAL);
 
         LOG_DEBUG_T("IFACE", "Allocate %s with UDS(local)", objectname.c_str());
 
         //TODO(BW) In MPI mode, this should be used (add some condition)
         //allocator = alloc_factory->get_allocator(pop_allocator::UDS, pop_allocator::INTERCONNECTOR);
-    } else {
+    } else if(protocol == pop_allocatorFactory::PREFIX_TCP){
         bool localFlag = od.IsLocal();
 
         if(localFlag || !od.getURL().empty() || !od.getBatch().empty()) {
@@ -235,6 +244,8 @@ void pop_interface::allocate_only() {
             AppCoreService acs(pop_system::appservice);
             popAppId = acs.GetPOPCAppID();
         }
+    } else {
+        LOG_ERROR("[Core] Unknown protocol \"%s\"", protocol.c_str());
     }
 
     if(!allocator) {
