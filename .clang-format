@@ -4,10 +4,25 @@ IndentWidth: 4
 ColumnLimit: 120
 ---
 Language: Cpp
+Standard: Cpp11
 
 AccessModifierOffset: -4
-AllowShortFunctionsOnASingleLine: None
+
+# Only control statements should have spaces
 SpaceBeforeParens: ControlStatements
+
+# No block and its body should EVER be on a single line
+AllowShortFunctionsOnASingleLine: None
+AllowShortBlocksOnASingleLine: false
+#AllowShortCaseLabelsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+# Templates should always be on a separate line
+AlwaysBreakTemplateDeclarations: true
+
+# Tabs are bad news
+UseTab: Never
 
 # Force pointers to the type for C++.
 DerivePointerAlignment: false
