@@ -242,7 +242,6 @@ bool pop_broker::Initialize(int *argc, char ***argv) {
     int comboxCount = comboxFactory.GetCount();
     comboxArray.resize(comboxCount);
 
-    std::string protocolName;
     std::string url;
 
     int count=0;
