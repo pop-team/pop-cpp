@@ -216,19 +216,21 @@ public:
         assert(n==1);
         int s=vect->size();
         Pack(&s,1);
-        if(s>0)
+        if(s>0) {
             Pack((T*)&(*vect)[0],s);
+        }
     }
 
     template<typename T>
-    void UnPack( std::vector<T> *vect, int n) {
+    void UnPack(std::vector<T> *vect, int n) {
         (void)n;
         assert(n==1);
         int s=0;
         UnPack(&s,1);
         vect->resize(s);
-        if(s>0)
+        if(s>0) {
             UnPack((T*)&(*vect)[0],s);
+        }
     }
 
 protected:
