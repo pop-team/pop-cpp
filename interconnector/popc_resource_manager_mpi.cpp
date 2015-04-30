@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     if(!MPI::Is_initialized()) {
         // Init MPI for multithread support
         int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
-        int provided_support = MPI::Init_thread(required_support);
+        MPI::Init_thread(required_support);
     }
 
     max_rank = MPI::COMM_WORLD.Get_size();

@@ -84,9 +84,9 @@ void catch_child_exit(int signal_num) {
 
 
     int w_exit = WEXITSTATUS(retval);
-    int w_ifexited = WIFEXITED(retval);
-    int w_ifsignal = WIFSIGNALED(retval);
-    int w_signal = WTERMSIG(retval);
+    //int w_ifexited = WIFEXITED(retval);
+    //int w_ifsignal = WIFSIGNALED(retval);
+    //int w_signal = WTERMSIG(retval);
 
     // Keep the return value of the main
     if(pid == popc_main_pid) {
@@ -349,11 +349,8 @@ int main(int argc, char* argv[]) {
     if(!MPI::Is_initialized()) {
         // Init MPI for multithread support
         int required_support = MPI_THREAD_SERIALIZED; // Maximum supported by the K Computer
-        int provided_support = MPI::Init_thread(required_support);
-
+        MPI::Init_thread(required_support);
     }
-
-
 
     core = 0;
     nbcore = 0;
@@ -387,7 +384,7 @@ int main(int argc, char* argv[]) {
         printf("POP-C++ Warning: Cannot set processor to %d (cpu_set %p)", core, (void *)&cpu_set);
     }
     core++;
-    int cpu = sched_getcpu();
+    sched_getcpu();
 #endif
 
     pid_t mainpid;        // Save main pid to wait for it at the end
@@ -668,9 +665,9 @@ int main(int argc, char* argv[]) {
                         argv1[6] = (char*)0;
                         execv(argv1[0], argv1);
                     }
-                    delete localrank;
-                    delete objectname;
-                    delete codefile;
+                    delete[] localrank;
+                    delete[] objectname;
+                    delete[] codefile;
                     pop_request callback;
                     pop_connection* objectcallback = receiver.Wait();
                     pop_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
@@ -818,8 +815,8 @@ int main(int argc, char* argv[]) {
 //            printf("Exec object %s %s %s %s %s %s\n", codefile.c_str(), _objectname.c_str(), _objectaddress.c_str(), _receiveraddress.c_str(), localrank, coreoption);
                             execv(argv1[0], argv1);
                         }
-                        delete localrank;
-                        delete coreoption;
+                        delete[] localrank;
+                        delete[] coreoption;
                         pop_request callback;
                         pop_connection* objectcallback = receiver.Wait();
                         pop_buffer_factory *buffer_factory = objectcallback->GetBufferFactory();
@@ -978,7 +975,7 @@ int main(int argc, char* argv[]) {
                             printf("Can't connect\n");
                         }
 
-                        delete address;
+                        delete[] address;
                     } else {
                         // Get old combox
                         client = connectionmap[pair<int, int>(source, dest_id)];
@@ -1035,7 +1032,6 @@ int main(int argc, char* argv[]) {
                     const char* commands[nb_node];
                     const char **aargv[nb_node];
                     int maxprocs[nb_node];
-                    int errcodes[nb_node];
                     MPI::Info infos[nb_node];
 
                     for(int i = 0; i < nb_node; i++) {
@@ -1293,7 +1289,7 @@ int main(int argc, char* argv[]) {
 
     // Delete connection to object
     map<pair<int, int>, pop_combox*>::iterator it;
-    for(it = connectionmap.begin() ; it != connectionmap.end(); it++) {
+    for(it = connectionmap.begin() ; it != connectionmap.end(); ++it) {
         ((*it).second)->Close();
         delete dynamic_cast<popc_combox_uds*>((*it).second);
     }
