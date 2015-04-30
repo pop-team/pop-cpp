@@ -166,7 +166,7 @@ void POPCSearchNode::removeNeighbor(POPCSearchNode &node) {
 void POPCSearchNode::deleteNeighbors() {
     std::list<POPCSearchNode *>::iterator i;
     for(i=neighborsList.begin(); i != neighborsList.end(); i++) {
-        delete(*i);
+        delete *i;
     }
     neighborsList.clear();
 }

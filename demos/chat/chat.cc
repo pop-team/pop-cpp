@@ -9,7 +9,7 @@ Chat::Chat(POPString machine) {
 Chat::~Chat() {
     printf("Chat on machine:%s is being destroyed\n", POPSystem::GetHost().c_str());
     for(int i=0; i<nbContacts; i++) {
-        delete(contacts[i]);
+        delete contacts[i];
     }
 }
 
@@ -41,7 +41,7 @@ void Chat::IntroduceMyself() {
     firstContact->ForwardContact(*myRef);
     firstContact->AddContact(*myRef);
 
-    delete(myRef);
+    delete myRef;
 }
 
 void Chat::ForwardContact(Chat& from) {

@@ -170,7 +170,7 @@ pop_buffer_factory_finder::pop_buffer_factory_finder() {
 
 pop_buffer_factory_finder::~pop_buffer_factory_finder() {
     for(int i=0; i<size; i++) {
-        delete(bfArray[i]);
+        delete bfArray[i];
     }
 
 #ifdef HAVE_LIBDL

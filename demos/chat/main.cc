@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
         o1.AddContact(*firstContact);
         o1.IntroduceMyself();
 
-        delete(firstContact);
+        delete firstContact;
     }
     printf("===============================================\n");
     printf("type 'q' to quit\n");
