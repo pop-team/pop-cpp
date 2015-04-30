@@ -407,7 +407,6 @@ bool pop_combox_socket::Connect(const char *host,int port) {
 pop_connection* pop_combox_socket::Wait() {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
-    int tmpfdset;
 
     if(sockfd<0 || isCanceled) {
         isCanceled=false;
@@ -415,6 +414,7 @@ pop_connection* pop_combox_socket::Wait() {
     }
 
     if(isServer) {
+        int tmpfdset;
         while(1) {
             if(nready>0) {
                 FD_ZERO(&readfds);
@@ -650,13 +650,13 @@ bool pop_combox_socket::Connect(const char *url) {
 }
 
 int pop_combox_socket::Send(const char *s,int len) {
-    int n=0;
     int count=0;
+
     while(len>0) {
 #ifndef __WIN32__
-        n=write(sockfd,s,len);
+        int n=write(sockfd,s,len);
 #else
-        n=send(sockfd,s,len,0);
+        int n=send(sockfd,s,len,0);
 #endif
         if(n>0) {
             count+=n;
@@ -666,6 +666,7 @@ int pop_combox_socket::Send(const char *s,int len) {
             break;
         }
     }
+
     return count;
 }
 
@@ -680,13 +681,12 @@ int pop_combox_socket::Send(const char *s,int len, pop_connection *conn) {
         return -1;
     }
 
-    int n=0;
     int count=0;
     while(len>0) {
 #ifndef __WIN32__
-        n=write(fd,s,len);//vanhieu.nguyen
+        int n=write(fd,s,len);//vanhieu.nguyen
 #else
-        n=send(fd,s,len,0);
+        int n=send(fd,s,len,0);
 #endif
         if(n>0) {
             count+=n;
@@ -700,7 +700,7 @@ int pop_combox_socket::Send(const char *s,int len, pop_connection *conn) {
 }
 
 int pop_combox_socket::Recv(char *s,int len) {
-    int fd, n;
+    int n;
     isCanceled=false;
     do {
         pop_connection_sock *t=(pop_connection_sock *)Wait();
@@ -708,7 +708,7 @@ int pop_combox_socket::Recv(char *s,int len) {
             return -1;
         }
 
-        fd=t->sockfd;
+        auto fd=t->sockfd;
 #ifndef __WIN32__
         while((n=read(fd,s,len))==-1 && errno==EINTR);
 #else
