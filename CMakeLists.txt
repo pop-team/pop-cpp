@@ -227,9 +227,9 @@ add_subdirectory(test/unitTests)
     COMMAND cppcheck . --force --enable=all -q
   )
 
-  add_custom_target(indent
+  add_custom_target(indent_ph
     COMMENT "Indent the code automatically with astyle"
-    COMMAND find . -name \"*.h\" -o -name \"*.cpp\" -o -name \"*.cc\" -o -name \"*.cc.in\" -o -name \"*.ph\" | xargs astyle -jnUc -A2
+    COMMAND find -name \"*.ph\" | xargs astyle -jnUc -A2
   )
 
   add_custom_target(clang-format
