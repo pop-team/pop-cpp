@@ -68,12 +68,10 @@ POPCSearchNodeInfos::~POPCSearchNodeInfos() {}
 void POPCSearchNodeInfos::Serialize(POPBuffer &buf, bool pack) {
     if(pack) {
         // marshalling all the 'DNodeInfo' contained in the list '_DNodeInfos'
-        std::list<POPCSearchNodeInfo>::iterator i;
-
         int nElts = _nodeInfos.size();
         buf.Pack(&nElts, 1);
-        for(i = _nodeInfos.begin(); i != _nodeInfos.end(); i++) {
-            i->Serialize(buf, true);
+        for(auto& info : _nodeInfos){
+            info.Serialize(buf, true);
         }
     } else {
         // unmarshalling all the 'DNodeInfo' in the list '_DNodeInfos)

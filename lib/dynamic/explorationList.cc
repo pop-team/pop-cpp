@@ -39,13 +39,13 @@ void ExplorationList::Serialize(POPBuffer &buf, bool pack) {
             explorationList::iterator i;
 
             // marshalling the neighbors
-            for(i = visitedNodes.begin(); i != visitedNodes.end(); i++) {
+            for(i = visitedNodes.begin(); i != visitedNodes.end(); ++i) {
                 buf.Pack(&(i->first), 1);
                 neighborsList neighbors = i->second;
                 int nNeighbors = neighbors.size();
                 buf.Pack(&nNeighbors,1);
                 neighborsList::iterator j;
-                for(j = neighbors.begin(); j != neighbors.end(); j++) {
+                for(j = neighbors.begin(); j != neighbors.end(); ++j) {
                     buf.Pack(&(*j), 1);
                 }
             }
@@ -86,7 +86,7 @@ void ExplorationList::addListNode(std::string nodeId,
                         (nodeId, neighbors));
 
 
-    for(j=visitedNodes.rbegin(); j != visitedNodes.rend(); j++) {
+    for(j=visitedNodes.rbegin(); j != visitedNodes.rend(); ++j) {
         if(((*j).second).size() > 0) {
             crtNeighborsPath++;
             k = j;
@@ -101,14 +101,14 @@ void ExplorationList::addListNode(std::string nodeId,
 // method saying if a node is contained in the exploration list
 bool ExplorationList::isIn(std::string nodeId) {
     explorationList::iterator i;
-    for(i = visitedNodes.begin(); i != visitedNodes.end(); i++) {
+    for(i = visitedNodes.begin(); i != visitedNodes.end(); ++i) {
         std::string crtNodeId = (*i).first;
         if(nodeId == crtNodeId) {
             return true;
         }
         neighborsList neighbors = (*i).second;
         neighborsList::iterator j;
-        for(j = neighbors.begin(); j!= neighbors.end(); j++) {
+        for(j = neighbors.begin(); j!= neighbors.end(); ++j) {
             std::string nId = (*j);
             //Modified by clementval
             // old comparaison was strcmp(crtNodeId.GetString(), nId.GetString() but that was incorrect

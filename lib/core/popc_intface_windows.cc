@@ -69,7 +69,6 @@ char * popc_getcwd(char * a , popc_size_t b) {
 
 int popc_getdtablesize(void) {
     if(dtablesize==0) {
-        int max_stdio = _getmaxstdio();
         unsigned int bound;
         for(bound = 0x10000; _setmaxstdio(bound) < 0; bound = bound / 2);
         dtablesize = bound;
@@ -493,13 +492,9 @@ typedef void(* popc_sighandler_t)(int);
 
 // RunCmd function
 int RunCmd(int argc, char **argv, char *env[], int *status) {
-    (void)argc;
-    char *file=nullptr;
-
     if(argv==nullptr || argv[0]==nullptr) {
         return ENOENT;
     }
-    file=argv[0];
 
     argv[argc] = 0;
     char command_line[1024]="";

@@ -166,10 +166,10 @@ public:
     CArrayCodeData *GetCodes();
     bool HasClass();
 
-    inline const std::string& GetFileName() const  {return filename;}
-    inline void SetFileName(const std::string name) {filename = name;}
+    const std::string& GetFileName() const  {return filename;}
+    void SetFileName(const std::string& name) {filename = name;}
 
-    inline const std::string& GetOutputName() const {return outfile;}
+    const std::string& GetOutputName() const {return outfile;}
     void SetOutputName(const std::string& name) {outfile = name;}
 
     Class *FindClass(char *clname);

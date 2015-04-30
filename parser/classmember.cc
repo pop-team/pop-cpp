@@ -238,15 +238,15 @@ bool Param::Marshal(char *bufname, bool reformat,bool inf_side, std::string &out
     }
 
     char tmpvar[1024];
-    if(isConst) {
+    //if(isConst) {
         *tmpvar=0;
 //             *tmpvar='(';
 //       mytype->GetCastType(tmpvar+1);
 //       if (isRef) strcat(tmpvar,"&");
 //       strcat(tmpvar,")");
-    } else {
+    //} else {
         *tmpvar=0;
-    }
+    //}
 
     if(reformat) {
         strcat(tmpvar,"&");
