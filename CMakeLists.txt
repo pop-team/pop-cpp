@@ -234,5 +234,6 @@ add_subdirectory(test/unitTests)
 
   add_custom_target(clang-format
     COMMENT "Completely format the code automatically with clang-format"
-    COMMAND find . -name \"*.h\" -o -name \"*.hpp\" -o -name \"*.cpp\" -o -name \"*.cc\" -o -name \"*.cc.in\" -o -name \"*.ph\" | xargs clang-format -i -style=scripts/pop_style.yml
+    COMMAND find . -name \"*.h\" -o -name \"*.hpp\" -o -name \"*.cpp\" -o
+    -name \"*.cc\" -o -name \"*.cc.in\" | xargs clang-format -i -style=file
   )
