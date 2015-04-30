@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     // Create the local chat object
     Chat o1("localhost");
 
-    if(argc>1) {
+    if (argc > 1) {
         printf("Try to connect to the remote chat object %s\n", argv[1]);
         pop_accesspoint job;
         job.SetAccessString(argv[1]);
@@ -22,13 +22,13 @@ int main(int argc, char** argv) {
     }
     printf("===============================================\n");
     printf("type 'q' to quit\n");
-    char msg[100]="";
+    char msg[100] = "";
 
-    bool running=true;
-    while(running) {
+    bool running = true;
+    while (running) {
         cin.getline(msg, 100);
-        if(!strcmp(msg,"q")) {
-            running=false;
+        if (!strcmp(msg, "q")) {
+            running = false;
         } else {
             o1.SendAll(msg);
         }

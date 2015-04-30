@@ -5,8 +5,8 @@
 
 #define MIN_CLASSID 1000
 
-CodeData::CodeData(CodeFile *file) {
-    codeFile=file;
+CodeData::CodeData(CodeFile* file) {
+    codeFile = file;
 }
 
 CodeData::~CodeData() {

@@ -9,12 +9,10 @@
 #ifndef INCLUDE_POPC_OBJECTCREATOR_H_
 #define INCLUDE_POPC_OBJECTCREATOR_H_
 
-
 class POPC_ObjectCreator {
 public:
 protected:
 private:
-
 };
 
 #endif  // INCLUDE_POPC_OBJECTCREATOR_H_

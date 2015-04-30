@@ -10,19 +10,20 @@ class Widget : public QWidget {
     Q_OBJECT
 
 public:
-    Widget() {}
-    Widget(int w, int h, QApplication *a);
+    Widget() {
+    }
+    Widget(int w, int h, QApplication* a);
     void show() {
         QWidget::show();
     }
-    void newRow(int row, unsigned int *v);
+    void newRow(int row, unsigned int* v);
 
 protected:
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent* event);
 
 private:
     QImage image;
-    QApplication *app;
+    QApplication* app;
 };
 
 #endif

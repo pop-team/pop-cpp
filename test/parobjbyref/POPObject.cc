@@ -13,17 +13,18 @@ POPObject::POPObject(int x_id) {
 }
 
 POPObject::~POPObject() {
-    cout << "POPCobject: on machine:" << POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPCobject: on machine:" << POPSystem::GetHost() << " is being destroyed" << popcendl;
 }
 
-int POPObject::GetId()
-{
+int POPObject::GetId() {
     return id;
 }
 
 void POPObject::voidMethod(POPObject& o) {
-    cout << "Method with void param is called on object "<< GetAccessPoint().GetAccessString() << " (with id=" << GetId() << ")" << popcendl;
-    cout << " object " << o.GetAccessPoint().GetAccessString() << " (with id=" << o.GetId() << ") was passed as reference" << popcendl;
+    cout << "Method with void param is called on object " << GetAccessPoint().GetAccessString()
+         << " (with id=" << GetId() << ")" << popcendl;
+    cout << " object " << o.GetAccessPoint().GetAccessString() << " (with id=" << o.GetId()
+         << ") was passed as reference" << popcendl;
 }
 
 @pack(POPObject);

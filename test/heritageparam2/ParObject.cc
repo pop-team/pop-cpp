@@ -6,11 +6,11 @@ ParObject::ParObject() {
 }
 
 ParObject::ParObject(POPString machine) {
-    printf("Heritparam2: Creating object ParObject on %s\n",POPSystem::GetHost().c_str());
+    printf("Heritparam2: Creating object ParObject on %s\n", POPSystem::GetHost().c_str());
 }
 
 ParObject::ParObject(float f) {
-    printf("Heritparam2: Creating object ParObject with power %f\n",f);
+    printf("Heritparam2: Creating object ParObject with power %f\n", f);
 }
 
 ParObject::~ParObject() {
@@ -18,7 +18,7 @@ ParObject::~ParObject() {
 }
 
 void ParObject::SetData(HeritData data) {
-    theData=data;
+    theData = data;
 }
 
 HeritData ParObject::GetData() {

@@ -7,12 +7,12 @@ ParObject::ParObject() {
 }
 
 ParObject::ParObject(POPString machine) {
-    printf("Param: Creating object ParObject on %s\n",POPSystem::GetHost().c_str());
+    printf("Param: Creating object ParObject on %s\n", POPSystem::GetHost().c_str());
     theData.SetInternalData(1);
 }
 
 ParObject::ParObject(float f) {
-    printf("Param: Creating object ParObject with power %f\n",f);
+    printf("Param: Creating object ParObject with power %f\n", f);
     theData.SetInternalData(2);
 }
 
@@ -21,7 +21,7 @@ ParObject::~ParObject() {
 }
 
 void ParObject::SetData(Data data) {
-    theData=data;
+    theData = data;
 }
 
 Data ParObject::GetData() {

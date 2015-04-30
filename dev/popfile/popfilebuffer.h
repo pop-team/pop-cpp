@@ -9,7 +9,6 @@
  * clementval   04.23.2012  Creation of this file
  */
 
-
 #ifndef POPFILEBUFFER_H_INCLUDE
 #define POPFILEBUFFER_H_INCLUDE
 
@@ -18,9 +17,8 @@
 
 #include "pop_accesspoint.h"
 
-//Forward declaration of POPFileManager interface. It's currently needed as POPCC can't parse .h file.
+// Forward declaration of POPFileManager interface. It's currently needed as POPCC can't parse .h file.
 class POPFileManager;
-
 
 namespace popfile {
 
@@ -60,7 +58,6 @@ public:
     // Get size of data in the buffer
     long get_size_input_data();
 
-
     /**
      * Used by both input/output operations
      */
@@ -70,41 +67,38 @@ public:
     void set_identifier(int value);
     void set_strip_path(std::string value);
 
-    //Setter and Getter for PFM access point
+    // Setter and Getter for PFM access point
     pop_accesspoint get_associated_pfm();
     void setAssociatedPOPFileManager(pop_accesspoint ap);
     void setLocalPOPFileManager(pop_accesspoint ap);
 
 private:
-    //string stream buffer for output operation
+    // string stream buffer for output operation
     std::stringstream popfile_buffer_out;
 
-    //string stream buffer for input operation
+    // string stream buffer for input operation
     std::stringstream popfile_buffer_in;
 
-    //Attribute to manage capacity for output operation
+    // Attribute to manage capacity for output operation
     long capacity;
     long remainingCapacity;
 
-    //Unique identifier of the strip
+    // Unique identifier of the strip
     int identifier;
 
-    //Absolute path of the strip associated with this buffer
+    // Absolute path of the strip associated with this buffer
     std::string stripPath;
 
-    //Access point of the PFM associated with this buffer
+    // Access point of the PFM associated with this buffer
     pop_accesspoint associatedPFM;
 
-    //Reference to the remote PFM
+    // Reference to the remote PFM
     POPFileManager* pfmref;
 
-    //Reference to the local PFM
+    // Reference to the local PFM
     POPFileManager* localpfmref;
-
 };
 
-
-} // namespace popfile
-
+}  // namespace popfile
 
 #endif /* POPFILEBUFFER_H_INCLUDE */

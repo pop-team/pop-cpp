@@ -3,7 +3,6 @@
 #include "data.h"
 
 int main(int argc, char** argv) {
-
     printf("\nStarting program..\n");
 
     int b = 10;
@@ -16,7 +15,7 @@ int main(int argc, char** argv) {
     b = o.GetData().GetInternalData();
     printf("Current internal data value = %d\n", b);
 
-    if(b==10) {
+    if (b == 10) {
         printf("Pogram terminated, destroying objects...\n");
     } else {
         printf("Program failed, bad value transmission\n");
@@ -24,4 +23,3 @@ int main(int argc, char** argv) {
 
     return 0;
 }
-

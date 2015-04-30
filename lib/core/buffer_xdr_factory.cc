@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -22,17 +23,14 @@
 #include "pop_buffer_xdr.h"
 
 pop_buffer_xdr_factory::pop_buffer_xdr_factory() {
-
 }
 
-pop_buffer * pop_buffer_xdr_factory::CreateBuffer() {
-    pop_buffer * bufXDR=new pop_buffer_xdr();
+pop_buffer* pop_buffer_xdr_factory::CreateBuffer() {
+    pop_buffer* bufXDR = new pop_buffer_xdr();
     return bufXDR;
 }
 
-bool pop_buffer_xdr_factory::GetBufferName(std::string & bufferName) {
-    bufferName="xdr";
+bool pop_buffer_xdr_factory::GetBufferName(std::string& bufferName) {
+    bufferName = "xdr";
     return true;
 }
-
-

@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 
         printf("Method with void parameter: test succeeded, destroying objects ...\n");
 
-    } catch(std::exception& e) {
+    } catch (std::exception& e) {
         printf("Exception: %s\n", e.what());
         return 1;
     }

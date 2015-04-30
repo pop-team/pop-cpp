@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -16,8 +17,8 @@
 #include <vector>
 #include <pop_broker.h>
 
-typedef pop_broker *(*initbrokerfunc)();
-typedef bool (*ispackedfunc)(const char *objname);
+typedef pop_broker* (*initbrokerfunc)();
+typedef bool (*ispackedfunc)(const char* objname);
 
 struct pop_broker_init {
     initbrokerfunc func;
@@ -36,13 +37,13 @@ public:
      * @param func Initialization function pointer
      * @param name Object name
      */
-    pop_broker_factory(initbrokerfunc func, const char *name);
+    pop_broker_factory(initbrokerfunc func, const char* name);
 
     /**
      * @brief Create a broker for the given object
      * @param objname Object name
      */
-    static pop_broker *Create(const char *objname);
+    static pop_broker* Create(const char* objname);
 
     /**
      * @brief Returns the list of brokers
@@ -59,26 +60,27 @@ public:
      * @param argv
      * @return broker
      */
-    static pop_broker *Create(int *argc, char ***argv);
+    static pop_broker* Create(int* argc, char*** argv);
 
     /**
      * @brief Print brokers
      * @param abspath
      * @param longformat Print full format or name only
      */
-    static void PrintBrokers(const char *abspath, bool longformat);
+    static void PrintBrokers(const char* abspath, bool longformat);
     // static void PrintBrokersMPI(const char *abspath);
 
     /**
      * @brief Returns true if an object is not on brokerlist
      * @param objname Name
      */
-    bool test(const char *objname);
+    bool test(const char* objname);
 
-    static ispackedfunc CheckIfPacked; // Since this method is created by the parser, we have to declare a fct pointer for it
+    static ispackedfunc
+        CheckIfPacked;  // Since this method is created by the parser, we have to declare a fct pointer for it
 
 private:
-    static std::vector<pop_broker_init> *brokerlist;
+    static std::vector<pop_broker_init>* brokerlist;
 };
 
 #endif

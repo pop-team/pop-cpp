@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -14,21 +15,21 @@
 #include "pop_exception.h"
 
 template <class T>
-void packarray(pop_buffer &buf, T *param, int size, int flag, pop_memspool* /*temp*/) {
-    if(flag & FLAG_MARSHAL) {
-        int n=(param!=nullptr) ?  size : 0;
-        buf.Pack(&n,1);
-        if(n>0) {
-            buf.Pack(param,n);
+void packarray(pop_buffer& buf, T* param, int size, int flag, pop_memspool* /*temp*/) {
+    if (flag & FLAG_MARSHAL) {
+        int n = (param != nullptr) ? size : 0;
+        buf.Pack(&n, 1);
+        if (n > 0) {
+            buf.Pack(param, n);
         }
     } else {
         int n;
-        buf.UnPack(&n,1);
-        if(n>0) {
-            buf.UnPack(param,n);
+        buf.UnPack(&n, 1);
+        if (n > 0) {
+            buf.UnPack(param, n);
         }
-        //TODO (BW) This code does not do anything, find out why it
-        //was meant to do...
+        // TODO (BW) This code does not do anything, find out why it
+        // was meant to do...
         /*else {
             param=nullptr;
         }*/

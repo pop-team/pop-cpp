@@ -1,7 +1,6 @@
 #ifndef POPOBJECT_PH_
 #define POPOBJECT_PH_
 
-
 class POPObject {
 public:
     enum Days;

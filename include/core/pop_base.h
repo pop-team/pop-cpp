@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -19,12 +20,14 @@
  * @class pop_base
  * @brief Base class for serializable sequential objects used by POP-C++ runtime.
  * @author Tuan Anh Nguyen
- * Note : pop_base is equivalent to POPBase. To make a C++ class serializable, it should derive from POPBase and have a defined Serialize() method.
+ * Note : pop_base is equivalent to POPBase. To make a C++ class serializable, it should derive from POPBase and have a
+ * defined Serialize() method.
  */
 class pop_base {
 public:
-    virtual ~pop_base() {}
-    virtual void Serialize(pop_buffer &buf, bool pack)=0;
+    virtual ~pop_base() {
+    }
+    virtual void Serialize(pop_buffer& buf, bool pack) = 0;
 };
 
 typedef pop_base POPBase;

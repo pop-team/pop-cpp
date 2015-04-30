@@ -22,8 +22,9 @@
  * @param node      The POPCSearchNode associated with this thread
  * @param reqid The request identifier associated with this thread
  */
-NodeThread::NodeThread(int timeout, const pop_accesspoint &node, std::string reqid) :
-    _timeout(timeout), _node(node), _running(true), _unlock(true), _reqid(reqid), pop_thread(true) {}
+NodeThread::NodeThread(int timeout, const pop_accesspoint& node, std::string reqid)
+    : _timeout(timeout), _node(node), _running(true), _unlock(true), _reqid(reqid), pop_thread(true) {
+}
 
 /**
  * Start a timer and contact de POPCSearchNode when it's finished
@@ -32,14 +33,14 @@ void NodeThread::start() {
     POPCSearchNode n(_node);
     Timer t;
     t.Start();
-    while(_running) {
+    while (_running) {
         popc_usleep(100000);
-        if(t.Elapsed() > _timeout) {
+        if (t.Elapsed() > _timeout) {
             t.Stop();
             _running = false;
         }
     }
-    if(_unlock) {
+    if (_unlock) {
         std::string r(_reqid.c_str());
         n.unlockDiscovery(r);
     }

@@ -17,11 +17,10 @@ int Data::GetInternalData() {
     return theData;
 }
 
-void Data::Serialize(POPBuffer &buf, bool pack) {
-    if(pack) {
+void Data::Serialize(POPBuffer& buf, bool pack) {
+    if (pack) {
         buf.Pack(&theData, 1);
     } else {
         buf.UnPack(&theData, 1);
     }
 }
-

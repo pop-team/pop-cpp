@@ -10,8 +10,8 @@
 
 #include "batchmgr.ph"
 
-BatchMgr::BatchMgr(const std::string &challenge): pop_service_base(challenge), nodeCount(0) {
-    //Nothing else to init
+BatchMgr::BatchMgr(const std::string& challenge) : pop_service_base(challenge), nodeCount(0) {
+    // Nothing else to init
 }
 
 int BatchMgr::NextNode() {

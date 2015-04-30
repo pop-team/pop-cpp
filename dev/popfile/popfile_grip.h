@@ -9,7 +9,6 @@
  * clementval   05.21.2012  Creation of this file
  */
 
-
 #ifndef POPGRIP_H_INCLUDE
 #define POPGRIP_H_INCLUDE
 
@@ -52,12 +51,8 @@ private:
     int popfilegrip_first_reader;
     // The order of this grip
     int popfilegrip_order;
-
-
-
 };
 
-} // namespace popfile
-
+}  // namespace popfile
 
 #endif /* POPGRIP_H_INCLUDE */

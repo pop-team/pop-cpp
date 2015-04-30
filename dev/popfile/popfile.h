@@ -9,7 +9,6 @@
  * clementval   03.25.2012  Creation of this file
  */
 
-
 #ifndef POPFILE_H_INCLUDE
 #define POPFILE_H_INCLUDE
 
@@ -33,9 +32,6 @@ struct infos_t {
 
 class POPFStream {
 public:
-
-
-
     // Standard functionalities of stream
     POPFStream();
     POPFStream(const char* filename);
@@ -111,7 +107,8 @@ public:
     // Returns true if the reading/writing operations fails
     bool bad();
 
-    /* Returns true in the same case as bad(), but also in the case that the format error happens, like when an alphabetical
+    /* Returns true in the same case as bad(), but also in the case that the format error happens, like when an
+       alphabetical
         character is extracted when we are trying to read an integer number. */
     bool fail();
 
@@ -121,18 +118,16 @@ public:
     // Returns false in the same cases in which calling any of the previous operations would return true.
     bool good();
 
-
-
     /**
      * popfile operators
      * Redifine output operators to be use as cout or others C++ file stream.
      */
-    POPFStream& operator<< (std::string a);
-    POPFStream& operator<< (char a);
-    POPFStream& operator<< (int a);
-    POPFStream& operator<< (long a);
-    POPFStream& operator<< (float a);
-    POPFStream& operator<< (double a);
+    POPFStream& operator<<(std::string a);
+    POPFStream& operator<<(char a);
+    POPFStream& operator<<(int a);
+    POPFStream& operator<<(long a);
+    POPFStream& operator<<(float a);
+    POPFStream& operator<<(double a);
 
     // Print meta data information to stdout
     void printInfos();
@@ -145,7 +140,6 @@ private:
 
     static const int POPFILE_SCATTER_STRIP_NUMBER;
     static const long POPFILE_SCATTER_STRIP_FACTOR;
-
 
     /** Private attributes of popfile **/
 
@@ -179,13 +173,13 @@ private:
     // Object storing the meta data of the popfile
     POPFileMetaData popfile_metadata;
 
-    //Array of buffers
+    // Array of buffers
     POPFileBuffer* popfile_writebuffers;
 
-    //Internal C++ standard stream
+    // Internal C++ standard stream
     std::fstream popfile_fstream;
 
-    //AccessPoint to local POPFileManager
+    // AccessPoint to local POPFileManager
     pop_accesspoint pfm_ap;
 
     // References to parallel objects POPFile readers
@@ -212,7 +206,6 @@ private:
     // Grip to be served in the next call
     int popfile_served_grip;
 
-
     /** Private methods of popfile **/
 
     //  Initialize internal attribute of a popfile
@@ -237,12 +230,8 @@ private:
 
     // Check if a file exist
     bool is_file_exist(std::string filename);
-
-
-
 };
 
-} // namespace popfile
-
+}  // namespace popfile
 
 #endif /* POPFILE_H_INCLUDE */

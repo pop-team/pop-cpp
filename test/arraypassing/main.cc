@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     o.displayArray(5, array);
 
     cout << "Return of parallel object" << popcendl;
-    for(int i=0; i<5; i++) {
+    for (int i = 0; i < 5; i++) {
         cout << "item[" << i << "]=" << array[i] << popcendl;
     }
 

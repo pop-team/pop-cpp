@@ -4,20 +4,20 @@
 #include "pop_combox.h"
 #include <mpi.h>
 
-
 /**
  * @class pop_mpi_connection
- * @breif Declaration of MPI Connection (POP-C++ abstraction of connection). Just hold the destination rank of the communication.
+ * @breif Declaration of MPI Connection (POP-C++ abstraction of connection). Just hold the destination rank of the
+ *communication.
  * @author Valentin Clément
  *
  */
 class pop_mpi_connection : public pop_connection {
 public:
-    explicit pop_mpi_connection(pop_combox *cb);
-    explicit pop_mpi_connection(pop_mpi_connection &me);
+    explicit pop_mpi_connection(pop_combox* cb);
+    explicit pop_mpi_connection(pop_mpi_connection& me);
     ~pop_mpi_connection();
 
-    virtual pop_connection *Clone();
+    virtual pop_connection* Clone();
 
     void set_communicator(MPI::Intercomm communicator);
     MPI::Intercomm get_communicator();
@@ -45,7 +45,6 @@ private:
     bool _is_asynchronous;
     int _current_tag;
     bool _tag_set;
-
 };
 
-#endif // INCLUDE_POPC_CONNECTION_MPI_H_
+#endif  // INCLUDE_POPC_CONNECTION_MPI_H_

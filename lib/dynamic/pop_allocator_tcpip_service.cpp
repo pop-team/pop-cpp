@@ -1,11 +1,13 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
  * @date 2012/12/04
- * @brief Declaration of the base class pop_allocatorFactory. The allocator factory allows to provide the right allocator for
+ * @brief Declaration of the base class pop_allocatorFactory. The allocator factory allows to provide the right
+ *allocator for
  *        parallel object allocation depending the lower layer (SSH, MPI, POP-C++ MPI Interconnector ...).
  *
  *
@@ -35,30 +37,29 @@
 std::string socket_allocator_service::allocate(const std::string& objectname, const pop_od& od) {
     pop_accesspoint jobcontact, objectaddress, remotejobcontact;
 
-    //Exec using JobMgr interface...
+    // Exec using JobMgr interface...
     std::string platforms = od.getPlatforms();
 
-    if(!platforms.empty()) {
+    if (!platforms.empty()) {
         CodeMgr mgr(pop_system::appservice);
-        if(mgr.GetPlatform(objectname, platforms)<=0) {
+        if (mgr.GetPlatform(objectname, platforms) <= 0) {
             pop_exception::pop_throw(OBJECT_EXECUTABLE_NOTFOUND, "No platform found", objectname.c_str());
         }
         // od.setPlatforms(platforms);
     }
-    //Global Resource management system --> Find a resource.
+    // Global Resource management system --> Find a resource.
 
     std::string joburl = od.getJobURL();
 
-
-    if(!joburl.empty()) {
+    if (!joburl.empty()) {
         jobcontact.SetAccessString(joburl.c_str());
     } else {
-        jobcontact=pop_system::jobservice;
+        jobcontact = pop_system::jobservice;
     }
 
-    if(jobcontact.IsEmpty()) {
+    if (jobcontact.IsEmpty()) {
         char str[1024];
-        sprintf(str,"%s:%d", pop_system::GetHost().c_str(),DEFAULTPORT);
+        sprintf(str, "%s:%d", pop_system::GetHost().c_str(), DEFAULTPORT);
         jobcontact.SetAccessString(str);
     }
 
@@ -70,20 +71,21 @@ std::string socket_allocator_service::allocate(const std::string& objectname, co
                 if (batchaccesspoint!=NULL) delete [] batchaccesspoint;
                 batchaccesspoint=new pop_accesspoint[pop_interface::batchsize];
         //TODO put an other array than batchaccesspoint
-                ret=resources.CreateObject(pop_system::appservice,objectname,od, pop_interface::batchsize,  batchaccesspoint, pop_interface::batchsize, batchaccesspoint);
+                ret=resources.CreateObject(pop_system::appservice,objectname,od, pop_interface::batchsize,
+        batchaccesspoint, pop_interface::batchsize, batchaccesspoint);
                 if (ret==0) objectaddress=batchaccesspoint[pop_interface::batchindex++];
         }
         else{*/
-        ret=resources.CreateObject(pop_system::appservice,objectname,od, 1,  &objectaddress, 1, &remotejobcontact);
+        ret = resources.CreateObject(pop_system::appservice, objectname, od, 1, &objectaddress, 1, &remotejobcontact);
         //}
 
-        if(ret!=0) {
-            pop_exception::pop_throw(ret,objectname,"CreateObject returned error code");
+        if (ret != 0) {
+            pop_exception::pop_throw(ret, objectname, "CreateObject returned error code");
         }
 
-    } catch(std::exception & e) {
+    } catch (std::exception& e) {
         LOG_ERROR("Cannot create object via POP-C++ Job Manager: %s", e.what());
-        pop_exception::pop_throw(POP_JOBSERVICE_FAIL,"Cannot create object via POP-C++ job service",e.what());
+        pop_exception::pop_throw(POP_JOBSERVICE_FAIL, "Cannot create object via POP-C++ job service", e.what());
     }
 
     return objectaddress.GetAccessString();
@@ -97,7 +99,6 @@ std::string socket_allocator_service::allocate(const std::string& objectname, co
  * @return A pointer to a single combox connected with the group
  */
 pop_combox* socket_allocator_service::allocate_group(const std::string& objectname, const pop_od& od, int nb) {
-
     /* Allocation process here */
 
     return NULL;

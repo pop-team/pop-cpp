@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -23,26 +24,34 @@
 #include "pop_system.h"
 #include "popc_logger.h"
 
-#define PROPAGATE_EXCEPTION(a)  catch (a err) { LOG_DEBUG("Exception in broker_serve"); if (request.from!=nullptr) pop_buffer::SendException(*request.data, request.from, err);  else UnhandledException(); }
+#define PROPAGATE_EXCEPTION(a)                                           \
+    catch (a err) {                                                      \
+        LOG_DEBUG("Exception in broker_serve");                          \
+        if (request.from != nullptr)                                     \
+            pop_buffer::SendException(*request.data, request.from, err); \
+        else                                                             \
+            UnhandledException();                                        \
+    }
 
-class pop_invokethread: public pop_thread {
+class pop_invokethread : public pop_thread {
 public:
-    pop_invokethread(pop_broker *br, pop_request &myrequest, int *instanceCount, pop_condition *execCond);
-    ~ pop_invokethread();
+    pop_invokethread(pop_broker* br, pop_request& myrequest, int* instanceCount, pop_condition* execCond);
+    ~pop_invokethread();
     virtual void start() override;
 
 protected:
     pop_request request;
 
-    pop_broker *pbroker;
-    int *pinstanceCount;
-    pop_condition *pcond;
+    pop_broker* pbroker;
+    int* pinstanceCount;
+    pop_condition* pcond;
 };
 
-pop_invokethread::pop_invokethread(pop_broker *br, pop_request &myrequest,  int *instanceCount, pop_condition *execCond): pop_thread(false), request(myrequest) {
-    pbroker=br;
-    pinstanceCount=instanceCount;
-    pcond=execCond;
+pop_invokethread::pop_invokethread(pop_broker* br, pop_request& myrequest, int* instanceCount, pop_condition* execCond)
+    : pop_thread(false), request(myrequest) {
+    pbroker = br;
+    pinstanceCount = instanceCount;
+    pcond = execCond;
     pcond->lock();
     (*pinstanceCount)++;
     pcond->unlock();
@@ -50,7 +59,7 @@ pop_invokethread::pop_invokethread(pop_broker *br, pop_request &myrequest,  int 
 
 pop_invokethread::~pop_invokethread() {
     delete request.data;
-    if(request.from!=nullptr) {
+    if (request.from != nullptr) {
         delete request.from;
     }
 
@@ -64,42 +73,40 @@ void pop_invokethread::start() {
     pbroker->DoInvoke(request);
 }
 
-
-
-bool pop_broker::GetRequest(pop_request &req) {
+bool pop_broker::GetRequest(pop_request& req) {
     pop_mutex_locker locker(execCond);
 
-    //If the queue is empty then wait for the request....
-    while(request_fifo.empty()) {
-        if((obj!=nullptr && obj->GetRefCount()<=0) || state!=POP_STATE_RUNNING) {
+    // If the queue is empty then wait for the request....
+    while (request_fifo.empty()) {
+        if ((obj != nullptr && obj->GetRefCount() <= 0) || state != POP_STATE_RUNNING) {
             return false;
         }
-        execCond.wait(); //Wait for new request
+        execCond.wait();  // Wait for new request
     }
 
-    auto pos=request_fifo.begin();
-    if(concPendings) {
-        auto pos1=pos;
-        while(pos1!=request_fifo.end()) {
-            auto old=pos1;
-            pop_request &tmp=*pos1++;
-            if(tmp.methodId[2] & INVOKE_CONC) {
-                req=tmp;
+    auto pos = request_fifo.begin();
+    if (concPendings) {
+        auto pos1 = pos;
+        while (pos1 != request_fifo.end()) {
+            auto old = pos1;
+            pop_request& tmp = *pos1++;
+            if (tmp.methodId[2] & INVOKE_CONC) {
+                req = tmp;
                 request_fifo.erase(old);
                 concPendings--;
                 return true;
-            } else if(tmp.methodId[2] & INVOKE_MUTEX) {
+            } else if (tmp.methodId[2] & INVOKE_MUTEX) {
                 break;
             }
         }
     }
 
-    req=*pos;
+    req = *pos;
     request_fifo.pop_front();
 
-    //Top request is of type mutex
-    if(req.methodId[2] & INVOKE_MUTEX) {
-        while(instanceCount>0) {
+    // Top request is of type mutex
+    if (req.methodId[2] & INVOKE_MUTEX) {
+        while (instanceCount > 0) {
             execCond.wait();
         }
     }
@@ -107,70 +114,70 @@ bool pop_broker::GetRequest(pop_request &req) {
     return true;
 }
 
-void pop_broker::ServeRequest(pop_request &req) {
-    int type=req.methodId[2];
-    if(type & INVOKE_CONC) {
-        auto thr= new pop_invokethread(this,req, &instanceCount,&execCond);
+void pop_broker::ServeRequest(pop_request& req) {
+    int type = req.methodId[2];
+    if (type & INVOKE_CONC) {
+        auto thr = new pop_invokethread(this, req, &instanceCount, &execCond);
 
         int ret;
-        int t=1;
-        while((ret=thr->create())!=0 && t<3600) {
-            LOG_WARNING("can not create a new thread. Sleep for %d seconds",t);
+        int t = 1;
+        while ((ret = thr->create()) != 0 && t < 3600) {
+            LOG_WARNING("can not create a new thread. Sleep for %d seconds", t);
             popc_sleep(t);
-            t=t*2;
+            t = t * 2;
         }
 
-        if(ret!=0) {
-            //Error: Can not create a new thread and timeout
+        if (ret != 0) {
+            // Error: Can not create a new thread and timeout
             pop_mutex_locker locker(execCond);
             execCond.broadcast();
 
-            if(req.from!=nullptr) {
-
+            if (req.from != nullptr) {
                 pop_exception e(ret);
                 e.AddInfo(classname);
                 e.AddInfo(accesspoint.GetAccessString());
                 pop_buffer::SendException(*req.data, req.from, e);
             } else {
-                LOG_ERROR("fail to create a new thread for %s@%s (method:%d:%d)\n",classname.c_str(), accesspoint.GetAccessString().c_str(), req.methodId[0], req.methodId[1]);
+                LOG_ERROR("fail to create a new thread for %s@%s (method:%d:%d)\n", classname.c_str(),
+                          accesspoint.GetAccessString().c_str(), req.methodId[0], req.methodId[1]);
             }
             delete thr;
-
         }
     } else {
         DoInvoke(req);
-        if(type & INVOKE_MUTEX) {
+        if (type & INVOKE_MUTEX) {
             mutexCond.lock();
             mutexCount--;
-            if(mutexCount==0) {
+            if (mutexCount == 0) {
                 mutexCond.broadcast();
             }
             mutexCond.unlock();
         }
         delete req.data;
-        if(req.from!=nullptr) {
+        if (req.from != nullptr) {
             delete req.from;
         }
     }
 }
 
 void pop_broker::UnhandledException() {
-    if(!pop_system::appservice.IsEmpty()) {
-        //char tmp[1024];
+    if (!pop_system::appservice.IsEmpty()) {
+        // char tmp[1024];
         LOG_WARNING("Unhandled exception on %s@%s", classname.c_str(), accesspoint.GetAccessString().c_str());
-//      sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
+        //      sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
         /*AppCoreService app(pop_system::appservice);
         app.Log(tmp);
         app.UnManageObject(pop_broker::accesspoint);
         app.KillAll();*/
-        state=POP_STATE_ABORT;
+        state = POP_STATE_ABORT;
     }
 }
 
-bool pop_broker::DoInvoke(pop_request &request) {
+bool pop_broker::DoInvoke(pop_request& request) {
     try {
-        if(!Invoke(request.methodId, *request.data, request.from)) {
-            LOG_ERROR("Mismatched method was invoked: classid=%d, methodid=%d", request.methodId[0], request.methodId[1]);
+        if (!Invoke(request.methodId, *request.data, request.from)) {
+            LOG_ERROR("Mismatched method was invoked: classid=%d, methodid=%d", request.methodId[0],
+                      request.methodId[1]);
             pop_exception::pop_throw(OBJECT_MISMATCH_METHOD, "Mismatched method was invoked");
         }
     }
@@ -194,79 +201,81 @@ bool pop_broker::DoInvoke(pop_request &request) {
 
     PROPAGATE_EXCEPTION(pop_interface)
 
-    PROPAGATE_EXCEPTION(char *)
-    catch(pop_exception *e) {
+    PROPAGATE_EXCEPTION(char*)
+    catch (pop_exception* e) {
         LOG_DEBUG("POP-C++ exception in pop_broker::DoInvoke");
-        if(request.from!=nullptr) {
-            std::string extra=e->Info();
-            if(e->Info().empty()) {
-                extra= classname + "@" + accesspoint.GetAccessString();
+        if (request.from != nullptr) {
+            std::string extra = e->Info();
+            if (e->Info().empty()) {
+                extra = classname + "@" + accesspoint.GetAccessString();
             } else {
-                extra=classname + "@" + accesspoint.GetAccessString() + ": " + extra;
+                extra = classname + "@" + accesspoint.GetAccessString() + ": " + extra;
             }
             e->AddInfo(extra);
-            pop_buffer::SendException(*request.data,request.from,*e);
+            pop_buffer::SendException(*request.data, request.from, *e);
         } else {
             UnhandledException();
         }
         delete e;
-    } catch(pop_exception e) {
+    }
+    catch (pop_exception e) {
         LOG_DEBUG("POP-C++ exception in pop_broker::DoInvoke %s", e.what());
-        if(request.from!=nullptr) {
-
-            std::string extra=e.Info();
-            if(e.Info().empty()) {
-                extra=classname+"@"+accesspoint.GetAccessString();
+        if (request.from != nullptr) {
+            std::string extra = e.Info();
+            if (e.Info().empty()) {
+                extra = classname + "@" + accesspoint.GetAccessString();
             } else {
-                extra=classname+"@"+accesspoint.GetAccessString()+": "+extra;
+                extra = classname + "@" + accesspoint.GetAccessString() + ": " + extra;
             }
             e.AddInfo(extra);
             pop_buffer::SendException(*request.data, request.from, e);
         } else {
             UnhandledException();
         }
-    } catch(std::exception *e) {
+    }
+    catch (std::exception* e) {
         LOG_DEBUG("Std exception in pop_broker::DoInvoke");
-        if(request.from != nullptr) {
-            pop_exception  e2=pop_exception(STD_EXCEPTION);
-            e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e->what());
+        if (request.from != nullptr) {
+            pop_exception e2 = pop_exception(STD_EXCEPTION);
+            e2.AddInfo(classname + "@" + accesspoint.GetAccessString() + ": " + e->what());
             pop_buffer::SendException(*request.data, request.from, e2);
             delete e;
         } else {
             UnhandledException();
         }
-    } catch(std::exception e) {
+    }
+    catch (std::exception e) {
         LOG_DEBUG("Std exception in pop_broker::DoInvoke");
-        if(request.from != nullptr) {
-            pop_exception  e2=pop_exception(STD_EXCEPTION);
-            e2.AddInfo(classname+"@"+accesspoint.GetAccessString() + ": " + e.what());
+        if (request.from != nullptr) {
+            pop_exception e2 = pop_exception(STD_EXCEPTION);
+            e2.AddInfo(classname + "@" + accesspoint.GetAccessString() + ": " + e.what());
             pop_buffer::SendException(*request.data, request.from, e2);
         } else {
             UnhandledException();
         }
-    } catch(...) {
+    }
+    catch (...) {
         LOG_DEBUG("Unknown exception in pop_broker::DoInvoke");
-        if(request.from!=nullptr) {
+        if (request.from != nullptr) {
             pop_exception e2(UNKNOWN_EXCEPTION);
-            e2.AddInfo(classname+"@"+accesspoint.GetAccessString());
+            e2.AddInfo(classname + "@" + accesspoint.GetAccessString());
             pop_buffer::SendException(*request.data, request.from, e2);
         } else {
             UnhandledException();
         }
     }
 
-    if(obj==nullptr || obj->GetRefCount()<=0) {
+    if (obj == nullptr || obj->GetRefCount() <= 0) {
         return false;
     }
 
     return true;
 }
 
-
-bool pop_broker::Invoke(unsigned method[3], pop_buffer &buf, pop_connection *peer) {
+bool pop_broker::Invoke(unsigned method[3], pop_buffer& buf, pop_connection* peer) {
     pop_request req;
-    req.from=peer;
-    memcpy(req.methodId, method, 3*sizeof(unsigned));
-    req.data=&buf;
+    req.from = peer;
+    memcpy(req.methodId, method, 3 * sizeof(unsigned));
+    req.data = &buf;
     return PopCall(req);
 }

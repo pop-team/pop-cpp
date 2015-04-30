@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -26,48 +27,49 @@
 #include "objectmonitor.ph"
 #endif
 
-int pop_object::argc=0;
-char **pop_object::argv=NULL;
+int pop_object::argc = 0;
+char** pop_object::argv = NULL;
 
 pop_object::pop_object() {
-    refcount=1;
-    if(!pop_system::appservice.IsEmpty()) {
-        pop_accesspoint myself=GetAccessPoint();
+    refcount = 1;
+    if (!pop_system::appservice.IsEmpty()) {
+        pop_accesspoint myself = GetAccessPoint();
 #ifndef POP_PSEUDO
         try {
             ObjectMonitor tmp(pop_system::appservice);
             tmp.ManageObject(myself);
-        } catch(std::exception &e) {
-            LOG_WARNING("Can not register %s@%s to ObjectMonitor service: %s",pop_broker::classname.c_str(), myself.GetAccessString().c_str(), e.what());
+        } catch (std::exception& e) {
+            LOG_WARNING("Can not register %s@%s to ObjectMonitor service: %s", pop_broker::classname.c_str(),
+                        myself.GetAccessString().c_str(), e.what());
         }
 #endif
     }
-
 }
 
 pop_object::~pop_object() {
 #ifndef POP_PSEUDO
-    if(!pop_system::appservice.IsEmpty()) {
-        pop_accesspoint myself=GetAccessPoint();
+    if (!pop_system::appservice.IsEmpty()) {
+        pop_accesspoint myself = GetAccessPoint();
         try {
             ObjectMonitor tmp(pop_system::appservice);
             tmp.UnManageObject(myself);
-        } catch(std::exception &e) {
+        } catch (std::exception& e) {
             // Did not find the object to unregister V1.3.1m: suppress error mess. V3.0 log as debug
-            LOG_DEBUG("Can not unregister %s@%s from ObjectMonitor service: %s",pop_broker::classname.c_str(), myself.GetAccessString().c_str(), e.what());
+            LOG_DEBUG("Can not unregister %s@%s from ObjectMonitor service: %s", pop_broker::classname.c_str(),
+                      myself.GetAccessString().c_str(), e.what());
         }
     }
 #endif
 }
 
-const pop_accesspoint & pop_object::GetAccessPoint() const {
+const pop_accesspoint& pop_object::GetAccessPoint() const {
     return pop_broker::accesspoint;
 }
 
 /**
  * Get the accesspoint of the parallel object and set the _noaddref variavle to TRUE
  */
-const pop_accesspoint & pop_object::GetAccessPointForThis() {
+const pop_accesspoint& pop_object::GetAccessPointForThis() {
     pop_broker::accesspoint.SetNoAddRef();
     return pop_broker::accesspoint;
 }
@@ -89,8 +91,8 @@ int pop_object::DecRef() {
     return refcount;
 }
 
-bool  pop_object::CanKill() {
-    return  true;
+bool pop_object::CanKill() {
+    return true;
 }
 
 int pop_object::eventwait(int event, int timeout) {

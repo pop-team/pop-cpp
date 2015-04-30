@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -19,16 +20,17 @@ public:
     pop_thread(bool joinable);
     virtual ~pop_thread();
 
-    virtual void start()=0;
+    virtual void start() = 0;
     void join();
     void cancel();
     void kill(int sig);
     bool joinable();
 
     int create();
+
 public:
-    static void *_threadentry(void *param);
-    static void _cleanupentry(void *param);
+    static void* _threadentry(void* param);
+    static void _cleanupentry(void* param);
 
 private:
     bool isjoinable;

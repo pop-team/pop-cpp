@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include "heritdata.h"
 
-HeritData::HeritData() {}
+HeritData::HeritData() {
+}
 
-HeritData::~HeritData() {}
+HeritData::~HeritData() {
+}
 
 void HeritData::SetInternalData(int d) {
     Data::SetInternalData(d);
@@ -21,12 +23,11 @@ int HeritData::GetMyData() {
     return myData;
 }
 
-void HeritData::Serialize(POPBuffer &buf, bool pack) {
+void HeritData::Serialize(POPBuffer& buf, bool pack) {
     Data::Serialize(buf, pack);
-    if(pack) {
-        buf.Pack(&myData,1);
+    if (pack) {
+        buf.Pack(&myData, 1);
     } else {
-        buf.UnPack(&myData,1);
+        buf.UnPack(&myData, 1);
     }
 }
-

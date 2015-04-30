@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -28,10 +29,10 @@ public:
     EventQueue();
     ~EventQueue();
     void PostEvent(int e);
-    int  WaitEvent(int e=ANY_EVENT, int timeout=-1);
-    //timeout=0: return imediately if the event did not occur,
+    int WaitEvent(int e = ANY_EVENT, int timeout = -1);
+    // timeout=0: return imediately if the event did not occur,
     // -1: disable timeout control,
-    //otherwise, timeout in "timeout" miliseconds
+    // otherwise, timeout in "timeout" miliseconds
 
 protected:
     pop_condition cond;

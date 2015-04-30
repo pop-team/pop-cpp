@@ -13,7 +13,7 @@ POP_Barrier::POP_Barrier(int n) {
 void POP_Barrier::activate() {
     event.lock();
     counter--;
-    if(counter==0) {
+    if (counter == 0) {
         printf("\nBarrier: Open the barrier;\n");
         event.raise();
     } else {
@@ -23,4 +23,3 @@ void POP_Barrier::activate() {
 }
 
 @pack(POP_Barrier);
-

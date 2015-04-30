@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
@@ -16,9 +17,10 @@
 
 class NodeThread : public pop_thread {
 public:
-    NodeThread(int timeout, const pop_accesspoint &node, std::string reqid);
+    NodeThread(int timeout, const pop_accesspoint& node, std::string reqid);
     virtual void start();
     virtual void stop();
+
 private:
     std::string _reqid;
     int _timeout;

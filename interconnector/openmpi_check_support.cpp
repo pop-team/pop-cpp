@@ -12,9 +12,9 @@
 int main(int argc, char** argv) {
     int required_support, provided_support;
     // Initialize the local variable of the communicator
-    if(!MPI::Is_initialized()) {
+    if (!MPI::Is_initialized()) {
         // Init MPI for multithread support
-        required_support = MPI_THREAD_SERIALIZED; // Maximum supported by the K Computer
+        required_support = MPI_THREAD_SERIALIZED;  // Maximum supported by the K Computer
         provided_support = MPI::Init_thread(required_support);
     }
 
@@ -26,12 +26,11 @@ int main(int argc, char** argv) {
     printf("\tMPI_THREAD_SERIALIZED=%d\n", MPI_THREAD_SERIALIZED);
     printf("\tMPI_THREAD_MULTIPLE=%d\n", MPI_THREAD_MULTIPLE);
 
-
     printf("MPI thread support required = %d\n", required_support);
     printf("MPI thread support supported = %d\n", provided_support);
 
     printf("RESULTS =========>\n");
-    if(provided_support < required_support) {
+    if (provided_support < required_support) {
         printf("MPI thread support is too low\n");
     } else {
         printf("MPI thread support is sufficient\n");

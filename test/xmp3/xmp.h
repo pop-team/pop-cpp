@@ -1,3 +1,3 @@
 
 
-void xmp_fnct(int* data, int size); 
+void xmp_fnct(int* data, int size);

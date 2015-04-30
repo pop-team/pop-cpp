@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author -
@@ -14,16 +15,14 @@
 
 // definitions for access ()
 
-#define R_OK    4       /* Test for read permission.  */
-#define W_OK    2       /* Test for write permission.  */
-#define X_OK    1       /* Test for execute permission.  */
-#define F_OK    0       /* Test for existence.  */
-
+#define R_OK 4 /* Test for read permission.  */
+#define W_OK 2 /* Test for write permission.  */
+#define X_OK 1 /* Test for execute permission.  */
+#define F_OK 0 /* Test for existence.  */
 
 // definitions for process
 
-#define popc_pid_t  int
-
+#define popc_pid_t int
 
 //
 
@@ -52,18 +51,13 @@ struct popc_in_addr {
     popc_in_addr_t s_addr;
 };
 
-
 #include <string.h>
-
 
 #include <sys/time.h>
 
-#define popc_timeval    timeval
+#define popc_timeval timeval
 
-#define popc_timezone  __timezone_ptr_t
-
-
-
+#define popc_timezone __timezone_ptr_t
 
 // pthread
 
@@ -71,34 +65,30 @@ struct popc_in_addr {
 
 // #define popc_pthread_t  pthread_t
 
+// signal
 
+typedef void (*popc_sighandler_t)(int);
 
-//signal
-
-typedef void(* popc_sighandler_t)(int);
-
-#define popc_SIGHUP   1
-#define popc_SIGINT   2
-#define popc_SIGTERM   15
-#define popc_SIGINT   2
-#define popc_SIGQUIT   3
-#define popc_SIGILL   4
-#define popc_SIGABRT       6
-#define popc_SIGKILL   9
-#define popc_SIGPIPE   13
-#define popc_SIGCHLD   17
-#define popc_SIG_DFL   ((popc_sighandler_t) 0)
-#define popc_SIG_IGN   ((popc_sighandler_t) 1)
+#define popc_SIGHUP 1
+#define popc_SIGINT 2
+#define popc_SIGTERM 15
+#define popc_SIGINT 2
+#define popc_SIGQUIT 3
+#define popc_SIGILL 4
+#define popc_SIGABRT 6
+#define popc_SIGKILL 9
+#define popc_SIGPIPE 13
+#define popc_SIGCHLD 17
+#define popc_SIG_DFL ((popc_sighandler_t)0)
+#define popc_SIG_IGN ((popc_sighandler_t)1)
 
 // stdarg !!!
 
 #include <stdarg.h>
 
 #define popc_va_list va_list
-#define popc_va_start  va_start
+#define popc_va_start va_start
 #define popc_va_end va_end
-
-
 
 // dirent
 /*
@@ -110,19 +100,17 @@ port exists with mingw where the normal inclusion. "h"
 
 #include <dirent.h>
 
-
 // dlfcn
 
 #include <dlfcn.h>
 // bits
-#define RTLD_LOCAL  0
-#define RTLD_LAZY   0x00001
-#define RTLD_NOW    0x00002
+#define RTLD_LOCAL 0
+#define RTLD_LAZY 0x00001
+#define RTLD_NOW 0x00002
 
-#define F_GETFL     3
-#define F_SETFL     4
-#define O_NONBLOCK    04000
-
+#define F_GETFL 3
+#define F_SETFL 4
+#define O_NONBLOCK 04000
 
 // xdr
 
@@ -134,18 +122,15 @@ port exists with mingw where the normal inclusion. "h"
 #define popc_xdr_vector xdr_vector
 #define popc_xdr_destroy xdr_destroy
 
-
-
 // fcntl
 
 #include <fcntl.h>
 
-#define O_RDONLY         00
-#define O_WRONLY         01
-#define O_CREAT        0100 /* not fcntl */
+#define O_RDONLY 00
+#define O_WRONLY 01
+#define O_CREAT 0100 /* not fcntl */
 //#define S_IRWXU 00700
 //#define S_IRGRP 00040
-
 
 // times
 
@@ -153,8 +138,7 @@ port exists with mingw where the normal inclusion. "h"
 
 #include <sys/sysinfo.h>
 
-#define popc_clock_t     unsigned int
-
+#define popc_clock_t unsigned int
 
 #define popc_tms tms
 
@@ -170,7 +154,6 @@ port exists with mingw where the normal inclusion. "h"
 #include <sys/types.h>
 
 #include <sys/socket.h>
-
 
 // stdlib
 #include <stdio.h>

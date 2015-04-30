@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
         POPObject o;
         o.createSecondObject();
         printf("NoPack 2: test succeeded, destroying objects...\n");
-    } catch(POPException& ex) {
+    } catch (POPException& ex) {
         printf("NoPack 2: test failed. %s\n", ex->what());
     }
     return 0;

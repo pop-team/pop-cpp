@@ -4,7 +4,7 @@
 
 void MethodCall();
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     printf("cpp11: Starting test..\n");
 
     MethodCall();

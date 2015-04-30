@@ -1,11 +1,13 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
  * @date 2012/12/04
- * @brief Implementation of the class pop_allocatorFactory. The allocator factory allows to provide the right allocator for
+ * @brief Implementation of the class pop_allocatorFactory. The allocator factory allows to provide the right allocator
+ *for
  *        parallel object allocation depending the lower layer (SSH, MPI, POP-C++ MPI Interconnector ...).
  *
  *
@@ -26,7 +28,6 @@ const char* pop_allocatorFactory::PREFIX_SHM = "shm";
 // Unique instance of the allocator factory
 pop_allocatorFactory* pop_allocatorFactory::instance = nullptr;
 
-
 /**
  * Allocator Factory constructor
  */
@@ -44,7 +45,7 @@ pop_allocatorFactory::~pop_allocatorFactory() {
  * @return A pointer to the unique instance of the Allocator Factory
  */
 pop_allocatorFactory* pop_allocatorFactory::get_instance() {
-    if(instance == nullptr) {
+    if (instance == nullptr) {
         instance = new pop_allocatorFactory();
     }
     return instance;
@@ -57,45 +58,44 @@ pop_allocatorFactory* pop_allocatorFactory::get_instance() {
  * @return A pointer to an Allocator
  */
 pop_allocator* pop_allocatorFactory::get_allocator(pop_allocator::pop_protocol protocol,
-        pop_allocator::pop_allocationMechanism alloc_mechanism) {
-    switch(protocol) {
+                                                   pop_allocator::pop_allocationMechanism alloc_mechanism) {
+    switch (protocol) {
         // Allocation over UDS socket
-    case pop_allocator::UDS : {
-        switch(alloc_mechanism) {
-        case pop_allocator::LOCAL :
-            return new pop_allocator_uds_local();
-        case pop_allocator::INTERCONNECTOR :
-            return new uds_allocator_interconnector();
+        case pop_allocator::UDS: {
+            switch (alloc_mechanism) {
+                case pop_allocator::LOCAL:
+                    return new pop_allocator_uds_local();
+                case pop_allocator::INTERCONNECTOR:
+                    return new uds_allocator_interconnector();
+                default:
+                    LOG_WARNING("No allocator found");
+                    return nullptr;
+            }
+        }
+        // Allocation over TCP/IP socket
+        case pop_allocator::TCPIP: {
+            switch (alloc_mechanism) {
+                case pop_allocator::LOCAL:
+                    return new socket_allocator_local();
+                case pop_allocator::SSH:
+                    return new socket_allocator_service();
+                default:
+                    LOG_WARNING("No allocator found");
+                    return nullptr;
+            }
+        }
+        // Allocation over MPI
+        case pop_allocator::MPI: {
+            switch (alloc_mechanism) {
+                case pop_allocator::PSEUDODYNAMIC:
+                //            return new mpi_allocator_pseudo();
+                default:
+                    LOG_WARNING("No allocator found");
+                    return nullptr;
+            }
+        }
         default:
             LOG_WARNING("No allocator found");
             return nullptr;
-        }
-    }
-    // Allocation over TCP/IP socket
-    case pop_allocator::TCPIP : {
-        switch(alloc_mechanism) {
-        case pop_allocator::LOCAL :
-            return new socket_allocator_local();
-        case pop_allocator::SSH :
-            return new socket_allocator_service();
-        default:
-            LOG_WARNING("No allocator found");
-            return nullptr;
-        }
-    }
-    // Allocation over MPI
-    case pop_allocator::MPI : {
-        switch(alloc_mechanism) {
-        case pop_allocator::PSEUDODYNAMIC :
-//            return new mpi_allocator_pseudo();
-        default:
-            LOG_WARNING("No allocator found");
-            return nullptr;
-        }
-    }
-    default:
-        LOG_WARNING("No allocator found");
-        return nullptr;
     }
 }
-

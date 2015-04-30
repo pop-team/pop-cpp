@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -19,16 +20,19 @@
 /*This abstract class declares an interface creating abstract combox*/
 
 typedef pop_combox* (*COMBOX_CREATOR)();
-typedef int (*LOAD_PROTOCOL)(std::string &, COMBOX_CREATOR &);
+typedef int (*LOAD_PROTOCOL)(std::string&, COMBOX_CREATOR&);
 
 struct combox_factory_struct {
-    char *name;
+    char* name;
     int metrics;
 
     COMBOX_CREATOR creator;
 
-    combox_factory_struct(){}
-    combox_factory_struct(char* name, int metrics, COMBOX_CREATOR creator) : name(name), metrics(metrics), creator(creator) {}
+    combox_factory_struct() {
+    }
+    combox_factory_struct(char* name, int metrics, COMBOX_CREATOR creator)
+        : name(name), metrics(metrics), creator(creator) {
+    }
 };
 
 /**
@@ -44,33 +48,33 @@ protected:
 public:
     ~pop_combox_factory();
 
-    //Singleton functions
+    // Singleton functions
     static pop_combox_factory& get_instance();
     static void release_instance();
 
-    pop_combox* Create(const char * name);
+    pop_combox* Create(const char* name);
     pop_combox* Create(int index);
 
-    void GetNames(std::string &prots);
+    void GetNames(std::string& prots);
     int GetCount();
 
-    bool Register(const char *name, int metrics, COMBOX_CREATOR creator);
+    bool Register(const char* name, int metrics, COMBOX_CREATOR creator);
 
-    void *LoadPlugin(char *fname,  std::string &name, COMBOX_CREATOR &f);
+    void* LoadPlugin(char* fname, std::string& name, COMBOX_CREATOR& f);
 
 private:
     static pop_combox_factory* fact;
 
 private:
     std::vector<combox_factory_struct> list;
-    std::vector<void *> plugins;
+    std::vector<void*> plugins;
 };
 
 class pop_combox_registration {
 public:
-    pop_combox_registration(const char *name, int metrics, COMBOX_CREATOR creator);
+    pop_combox_registration(const char* name, int metrics, COMBOX_CREATOR creator);
 };
 
 #define COMBOX(x) extern pop_combox_registration x;
 
-#endif // POPC_PROTOCOL_FACTORY_H
+#endif  // POPC_PROTOCOL_FACTORY_H

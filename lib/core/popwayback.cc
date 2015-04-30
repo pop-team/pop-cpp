@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement (clementval)
@@ -19,18 +20,19 @@
 
 #include <string.h>
 
-
 /**
  * ViSaG : clementval
  * Constructor of the POPWayback class
  */
-POPWayback::POPWayback() {}
+POPWayback::POPWayback() {
+}
 
 /**
  * ViSaG : clementval
  * Destructor of the POPWayback class
  */
-POPWayback::~POPWayback() {}
+POPWayback::~POPWayback() {
+}
 
 /**
  * ViSaG : clementval
@@ -38,8 +40,8 @@ POPWayback::~POPWayback() {}
  * @param rhs Right hand-side parameter
  * @return The new POPWayback copied from the rhs
  */
-const POPWayback & POPWayback::operator =(const POPWayback &rhs) {
-    if(!rhs._lst_wb.empty()) {
+const POPWayback& POPWayback::operator=(const POPWayback& rhs) {
+    if (!rhs._lst_wb.empty()) {
         _lst_wb.clear();
         _lst_wb = rhs._lst_wb;
     }
@@ -54,7 +56,7 @@ const POPWayback & POPWayback::operator =(const POPWayback &rhs) {
 std::string POPWayback::getAsString() const {
     std::list<std::string> tmp = _lst_wb;
     std::string wb;
-    while(!tmp.empty()) {
+    while (!tmp.empty()) {
         std::string e = tmp.front();
         tmp.pop_front();
         wb.append(e);
@@ -66,16 +68,17 @@ std::string POPWayback::getAsString() const {
 
 /**
  * ViSaG : clementval
- * Insert a node at the end of the way back. Do not insert it if the last node in the list is the same as the node given in
+ * Insert a node at the end of the way back. Do not insert it if the last node in the list is the same as the node given
+ * in
  * parameter.
  * @param nodeId  The node ID to insert in the POPWayback
  */
 void POPWayback::insertNode(std::string nodeId) {
-    if(_lst_wb.empty()) {
+    if (_lst_wb.empty()) {
         _lst_wb.push_back(nodeId);
     } else {
         std::string tmp = getNextNode();
-        if(tmp== nodeId) {
+        if (tmp == nodeId) {
             _lst_wb.push_back(nodeId);
         }
     }
@@ -105,7 +108,7 @@ void POPWayback::deleteNextNode() {
  * @return Return true if there is 1 or 0 node in the way back
  */
 bool POPWayback::isLastNode() const {
-    if(_lst_wb.size() == 1 || _lst_wb.empty()) {
+    if (_lst_wb.size() == 1 || _lst_wb.empty()) {
         return true;
     }
     return false;
@@ -127,29 +130,28 @@ bool POPWayback::isEmpty() const {
  * @param buf The POPBuffer to be used for the (un)marshalling
  * @param If true=masrhalling, if false=unmarshalling
  */
-void POPWayback::Serialize(POPBuffer &buf, bool pack) {
-    if(pack) {
-        //Pack the size
+void POPWayback::Serialize(POPBuffer& buf, bool pack) {
+    if (pack) {
+        // Pack the size
         int size = _lst_wb.size();
         buf.Pack(&size, 1);
-        //Pack elements
-        while(!_lst_wb.empty()) {
+        // Pack elements
+        while (!_lst_wb.empty()) {
             std::string elt = _lst_wb.front();
             _lst_wb.pop_front();
             buf.Pack(&elt, 1);
         }
     } else {
-        //Clear the current list
+        // Clear the current list
         _lst_wb.clear();
-        //Unpack the size
+        // Unpack the size
         int size;
         buf.UnPack(&size, 1);
-        //Unpack elements
-        for(int i=0; i< size; i++) {
+        // Unpack elements
+        for (int i = 0; i < size; i++) {
             std::string elt;
             buf.UnPack(&elt, 1);
             _lst_wb.push_back(elt);
         }
     }
 }
-

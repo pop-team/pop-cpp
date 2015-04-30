@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -45,8 +46,8 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
-//By defining DEFAULT_PROTOCOL when compiling POP, the default protocol can be
-//changed, otherwise the default is socket
+// By defining DEFAULT_PROTOCOL when compiling POP, the default protocol can be
+// changed, otherwise the default is socket
 
 #ifdef DEFAULT_PROTOCOL
 #define POP_DEFAULT_PROTOCOL TOSTRING(DEFAULT_PROTOCOL)
@@ -56,58 +57,60 @@
 
 pop_accesspoint pop_interface::_pop_nobind;
 
-//binding time out in miliseconds
-int pop_interface::pop_bind_timeout=10000;
+// binding time out in miliseconds
+int pop_interface::pop_bind_timeout = 10000;
 
-//pop_interface base class
+// pop_interface base class
 
 pop_interface::pop_interface() : __pop_combox(nullptr), __pop_buf(nullptr) {
-    LOG_DEBUG("Create interface for class %s (OD secure:%s)", ClassName(), (od.isSecureSet())?"true":"false");
+    LOG_DEBUG("Create interface for class %s (OD secure:%s)", ClassName(), (od.isSecureSet()) ? "true" : "false");
 
-    if(od.isSecureSet()) {
+    if (od.isSecureSet()) {
         accesspoint.SetSecure();
     }
 
-    _ssh_tunneling=false;
+    _ssh_tunneling = false;
     //__pop_combox = nullptr;
     //__pop_buf = nullptr;
     //_popc_async_construction_thread=nullptr;
 }
 
-pop_interface::pop_interface(const pop_accesspoint &p) {
-    LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
+pop_interface::pop_interface(const pop_accesspoint& p) {
+    LOG_DEBUG("Create interface (from ap %s) for class %s (OD secure:%s)", p.GetAccessString().c_str(), ClassName(),
+              (od.isSecureSet()) ? "true" : "false");
     _ssh_tunneling = false;
     __pop_combox = nullptr;
     __pop_buf = nullptr;
 
     // For SSH tunneling
-    if(p.IsService()) {
+    if (p.IsService()) {
         accesspoint.SetAsService();
     }
 
-    if(!p.IsEmpty()) {
+    if (!p.IsEmpty()) {
         Bind(p);
     }
 
-    if(p.GetNoAddRef()) {
-        //AddRef();
+    if (p.GetNoAddRef()) {
+        // AddRef();
         DecRef();
     }
 }
 
-pop_interface::pop_interface(const pop_interface &inf) {
-    LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)", inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet())?"true":"false");
+pop_interface::pop_interface(const pop_interface& inf) {
+    LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)",
+              inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet()) ? "true" : "false");
     pop_accesspoint infAP = inf.GetAccessPoint();
-    _ssh_tunneling=false;
-    __pop_combox=nullptr;
-    __pop_buf=nullptr;
+    _ssh_tunneling = false;
+    __pop_combox = nullptr;
+    __pop_buf = nullptr;
     //_popc_async_construction_thread=nullptr;
 
-    if(infAP.IsSecure()) {
+    if (infAP.IsSecure()) {
         accesspoint.SetSecure();
     }
 
-    if(infAP.IsService()) {
+    if (infAP.IsService()) {
         accesspoint.SetAsService();
     }
 
@@ -122,53 +125,51 @@ pop_interface::~pop_interface() {
     Release();
 }
 
-pop_interface & pop_interface::operator = (const pop_interface & obj) {
+pop_interface& pop_interface::operator=(const pop_interface& obj) {
     //  __pop_combox = nullptr;
     //  __pop_buf = nullptr;
     LOG_DEBUG("Bind");
-    //Bind(accesspoint);
-    //DecRef();
-    //Bind(accesspoint);
+    // Bind(accesspoint);
+    // DecRef();
+    // Bind(accesspoint);
     //  const pop_accesspoint &res = obj.GetAccessPoint();
 
     Release();
     accesspoint = obj.GetAccessPoint();
-    if(GetAccessPoint().GetAccessString().c_str()) {
+    if (GetAccessPoint().GetAccessString().c_str()) {
         Bind(accesspoint);
-        //AddRef();
+        // AddRef();
     }
 
     return (*this);
 }
 
-void pop_interface::SetOD(const pop_od &myod) {
+void pop_interface::SetOD(const pop_od& myod) {
     od = myod;
 }
 
-const pop_od & pop_interface::GetOD() const {
+const pop_od& pop_interface::GetOD() const {
     return od;
 }
-
 
 // const char * pop_interface::GetResource() const
 // {
 //   return resource;
 // }
 
-const pop_accesspoint &  pop_interface::GetAccessPoint() const {
+const pop_accesspoint& pop_interface::GetAccessPoint() const {
     return accesspoint;
 }
 
 /**
  * Get the accesspoint of the parallel object and set the _noaddref variable to TRUE
  */
-const pop_accesspoint &  pop_interface::GetAccessPointForThis() {
+const pop_accesspoint& pop_interface::GetAccessPointForThis() {
     accesspoint.SetNoAddRef();
     return accesspoint;
 }
 
-void pop_interface::Serialize(pop_buffer &buf, bool pack) {
-
+void pop_interface::Serialize(pop_buffer& buf, bool pack) {
     buf.Push("od", "pop_od", 1);
     od.Serialize(buf, pack);
     buf.Pop();
@@ -177,33 +178,33 @@ void pop_interface::Serialize(pop_buffer &buf, bool pack) {
     accesspoint.Serialize(buf, pack);
     buf.Pop();
 
-    pop_buffer *old = nullptr;
+    pop_buffer* old = nullptr;
 
-    if(&buf == __pop_buf) {
-        LOG_WARNING("Buffers share the same address");// TODO LW: Where does this come from ?
+    if (&buf == __pop_buf) {
+        LOG_WARNING("Buffers share the same address");  // TODO LW: Where does this come from ?
         old = &buf;
         __pop_buf = __pop_combox->GetBufferFactory()->CreateBuffer();
     }
 
-    if(pack) {
+    if (pack) {
         int ref = AddRef();
-        buf.Push("refcount","int",1);
-        buf.Pack(&ref,1);
+        buf.Push("refcount", "int", 1);
+        buf.Pack(&ref, 1);
         buf.Pop();
     } else {
         int ref;
         buf.Push("refcount", "int", 1);
         buf.UnPack(&ref, 1);
         buf.Pop();
-        if(ref > 0) {
+        if (ref > 0) {
             Bind(accesspoint);
             LOG_DEBUG("Bound %s", accesspoint.GetAccessString().c_str());
-            //AddRef();
+            // AddRef();
             DecRef();
         }
     }
 
-    if(old != nullptr) {
+    if (old != nullptr) {
         delete __pop_buf;
         __pop_buf = old;
     }
@@ -225,21 +226,21 @@ void pop_interface::allocate_only() {
 
     auto protocol = od.getProtocol();
 
-    if(protocol.empty()){
+    if (protocol.empty()) {
         protocol = POP_DEFAULT_PROTOCOL;
     }
 
-    if(protocol == pop_allocatorFactory::PREFIX_UDS) {
+    if (protocol == pop_allocatorFactory::PREFIX_UDS) {
         allocator = alloc_factory->get_allocator(pop_allocator::UDS, pop_allocator::LOCAL);
 
         LOG_DEBUG_T("IFACE", "Allocate %s with UDS(local)", objectname.c_str());
 
-        //TODO(BW) In MPI mode, this should be used (add some condition)
-        //allocator = alloc_factory->get_allocator(pop_allocator::UDS, pop_allocator::INTERCONNECTOR);
-    } else if(protocol == pop_allocatorFactory::PREFIX_TCP){
+        // TODO(BW) In MPI mode, this should be used (add some condition)
+        // allocator = alloc_factory->get_allocator(pop_allocator::UDS, pop_allocator::INTERCONNECTOR);
+    } else if (protocol == pop_allocatorFactory::PREFIX_TCP) {
         bool localFlag = od.IsLocal();
 
-        if(localFlag || !od.getURL().empty() || !od.getBatch().empty()) {
+        if (localFlag || !od.getURL().empty() || !od.getBatch().empty()) {
             allocator = alloc_factory->get_allocator(pop_allocator::TCPIP, pop_allocator::LOCAL);
 
             LOG_DEBUG_T("IFACE", "Allocate %s with TCP(local)", objectname.c_str());
@@ -248,7 +249,7 @@ void pop_interface::allocate_only() {
 
             LOG_DEBUG_T("IFACE", "Allocate %s with TCP(ssh)", objectname.c_str());
 
-            //Get the POPAppID
+            // Get the POPAppID
             AppCoreService acs(pop_system::appservice);
             popAppId = acs.GetPOPCAppID();
         }
@@ -256,7 +257,7 @@ void pop_interface::allocate_only() {
         LOG_ERROR("[Core] Unknown protocol \"%s\"", protocol.c_str());
     }
 
-    if(!allocator) {
+    if (!allocator) {
         LOG_ERROR("[Core] Allocator is nullptr");
     }
 
@@ -271,12 +272,12 @@ void pop_interface::allocate_only() {
 void pop_interface::Allocate() {
     allocate_only();
 
-    //Add for SSH tunneling
-    if(od.isSecureSet()) {
+    // Add for SSH tunneling
+    if (od.isSecureSet()) {
         accesspoint.SetSecure();
     }
 
-    if(od.isServiceSet()) {
+    if (od.isServiceSet()) {
         accesspoint.SetAsService();
     }
 
@@ -286,50 +287,50 @@ void pop_interface::Allocate() {
 /**
  *
  */
-void pop_interface::Bind(const pop_accesspoint &dest) {
-    if(dest.IsEmpty()) {
+void pop_interface::Bind(const pop_accesspoint& dest) {
+    if (dest.IsEmpty()) {
         Release();
         return;
     }
 
     accesspoint = dest;
 
-    //Choose the protocol and then bind
+    // Choose the protocol and then bind
     std::string prots = dest.GetAccessString();
     std::string od_prots = od.getProtocol();
 
     auto accesslist = Tokenize(prots);
     const char* tmp = getenv("POPC_COMM_PATTERN");
-    ApplyCommPattern(tmp?tmp:"",accesslist);
+    ApplyCommPattern(tmp ? tmp : "", accesslist);
 
     auto pref = Tokenize(od_prots);
 
-    if(pref.empty()) {
+    if (pref.empty()) {
         LOG_DEBUG("INTERFACE: Bind without preference");
-        //No preferred protocol in OD specified, try the first protocol in dest
-        for(auto& addr : accesslist){
+        // No preferred protocol in OD specified, try the first protocol in dest
+        for (auto& addr : accesslist) {
             try {
                 Bind(addr.c_str());
                 return;
-            } catch(std::exception &e) {
-                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr.c_str(),e.what());
+            } catch (std::exception& e) {
+                LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s", addr.c_str(), e.what());
                 continue;
             }
             LOG_DEBUG("Successful bind to %s", addr.c_str());
         }
     } else {
-        //The user specify the protocol in OD, select the preference and match with the access point...
-        for(auto& myprot : pref){
+        // The user specify the protocol in OD, select the preference and match with the access point...
+        for (auto& myprot : pref) {
             // Find access string that match myprot
-            for(auto& addr : accesslist){
+            for (auto& addr : accesslist) {
                 char pattern[1024];
-                sprintf(pattern,"%s://*",myprot.c_str());
-                if(pop_utils::MatchWildcard(addr,pattern)) {
+                sprintf(pattern, "%s://*", myprot.c_str());
+                if (pop_utils::MatchWildcard(addr, pattern)) {
                     try {
                         Bind(addr.c_str());
                         return;
-                    } catch(std::exception &e) {
-                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s",addr.c_str(),e.what());
+                    } catch (std::exception& e) {
+                        LOG_WARNING("Can not bind to %s. Try next protocol... reason: %s", addr.c_str(), e.what());
                         continue;
                     }
                 }
@@ -341,23 +342,23 @@ void pop_interface::Bind(const pop_accesspoint &dest) {
     pop_exception::pop_throw(OBJECT_BIND_FAIL, ClassName(), "Cannot find suitable protocol");
 }
 
-void pop_interface::Bind(const char *dest) {
+void pop_interface::Bind(const char* dest) {
     LOG_DEBUG("INTERFACE: Bind (%s) - %s", ClassName(), dest);
     Release();
-    if(!dest || *dest==0) {
+    if (!dest || *dest == 0) {
         return;
     }
 
     char protsep[] = "://";
     char prot[256];
-    char *tmp = (char*)strstr(dest,protsep);
+    char* tmp = (char*)strstr(dest, protsep);
     char defaultprot[] = "socket";
 
-    if(tmp == nullptr) {
+    if (tmp == nullptr) {
         // Default protocol: use TCP socket
         strcpy(prot, defaultprot);
     } else {
-        int sz = tmp-dest;
+        int sz = tmp - dest;
         strncpy(prot, dest, sz);
         prot[sz] = 0;
     }
@@ -370,7 +371,7 @@ void pop_interface::Bind(const char *dest) {
 
     // Create combox
     __pop_combox = fact.Create(prot);
-    if(!__pop_combox) {
+    if (!__pop_combox) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, ClassName(), "Cannot create combox from factory");
     }
 
@@ -388,22 +389,21 @@ void pop_interface::Bind(const char *dest) {
     bool need_redirection = false;
     bool need_uds = false;
     int dest_node, dest_id;
-    if(pos != std::string::npos) {
+    if (pos != std::string::npos) {
         need_uds = true;
-        destination_node = connect_dest.substr(pos+4);
+        destination_node = connect_dest.substr(pos + 4);
         pos = destination_node.find(".");
-        std::string destination_id = destination_node.substr(pos+1);
-        destination_node = destination_node.substr(0, destination_node.length()-pos);
+        std::string destination_id = destination_node.substr(pos + 1);
+        destination_node = destination_node.substr(0, destination_node.length() - pos);
         dest_node = atoi(destination_node.c_str());
         dest_id = atoi(destination_id.c_str());
-        if(dest_node != pop_system::popc_local_mpi_communicator_rank) {
+        if (dest_node != pop_system::popc_local_mpi_communicator_rank) {
             need_redirection = true;
         }
     }
 
     bool create_return, connect_return;
-    if(need_redirection) {
-
+    if (need_redirection) {
         // Spoof address with the local MPI Communicator
         // TODO LW: Why do we have this here ????
         char* local_address = new char[15];
@@ -413,7 +413,7 @@ void pop_interface::Bind(const char *dest) {
         create_return = __pop_combox->Create(local_address, false);
         connect_return = __pop_combox->Connect(local_address);
 
-        pop_message_header header(20, 200002, INVOKE_SYNC,"_connection");
+        pop_message_header header(20, 200002, INVOKE_SYNC, "_connection");
         __pop_buf->Reset();
         __pop_buf->SetHeader(header);
 
@@ -428,7 +428,7 @@ void pop_interface::Bind(const char *dest) {
         pop_connection* connection = __pop_combox->get_connection();
         popc_send_request(__pop_buf, connection);
     } else {
-        if(need_uds) {
+        if (need_uds) {
             create_return = __pop_combox->Create(connect_dest.c_str(), false);
             connect_return = __pop_combox->Connect(connect_dest.c_str());
         } else {
@@ -437,43 +437,43 @@ void pop_interface::Bind(const char *dest) {
         }
     }
 
-    if(create_return && connect_return) {
+    if (create_return && connect_return) {
         int status;
         std::string info;
         std::string peerplatform;
         BindStatus(status, peerplatform, info);
         LOG_DEBUG("INTERFACE: Got bind status %d", status);
 
-        switch(status) {
-        case BIND_OK:
-            //TODO should be recovered at least in a usage with TCP/IP sockets
-            //NegotiateEncoding(info,peerplatform);
-            break;
+        switch (status) {
+            case BIND_OK:
+                // TODO should be recovered at least in a usage with TCP/IP sockets
+                // NegotiateEncoding(info,peerplatform);
+                break;
 
-        case BIND_FORWARD_SESSION:
-        case BIND_FORWARD_PERMANENT: {
-            pop_accesspoint old(accesspoint);
-            pop_accesspoint newap;
-            newap.SetAccessString(info.c_str());
-            LOG_INFO("Forward current session to %s", info.c_str());
-            Bind(newap);
+            case BIND_FORWARD_SESSION:
+            case BIND_FORWARD_PERMANENT: {
+                pop_accesspoint old(accesspoint);
+                pop_accesspoint newap;
+                newap.SetAccessString(info.c_str());
+                LOG_INFO("Forward current session to %s", info.c_str());
+                Bind(newap);
 
-            if(status == BIND_FORWARD_SESSION) {
-                accesspoint = old;
+                if (status == BIND_FORWARD_SESSION) {
+                    accesspoint = old;
+                }
+
+                break;
             }
 
-            break;
-        }
-
-        default:
-            LOG_WARNING("Unknown binding status");
-            Release();
-            pop_exception::pop_throw(POP_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
+            default:
+                LOG_WARNING("Unknown binding status");
+                Release();
+                pop_exception::pop_throw(POP_BIND_BAD_REPLY, "Bad reply in interface", ClassName());
         }
     } else {
         int code = errno;
 
-        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s", pop_system::GetHost().c_str(),dest,strerror(code));
+        LOG_DEBUG("Fail to connect from [%s] to [%s]. Reason: %s", pop_system::GetHost().c_str(), dest, strerror(code));
         Release();
         pop_exception::pop_throw(code, "Cannot create or connect return for combox", "Fail to connect from ... to ...");
     }
@@ -481,14 +481,12 @@ void pop_interface::Bind(const char *dest) {
     __pop_combox->SetTimeout(-1);
 }
 
-
 void pop_interface::Release() {
-
-    if(__pop_combox != nullptr) {
+    if (__pop_combox != nullptr) {
         // Decrement reference when the interface release its resources
-        //pop_connection* connection = __pop_combox->get_connection();
-        //if(connection != nullptr && !accesspoint.IsService()) {
-        //DecRef();
+        // pop_connection* connection = __pop_combox->get_connection();
+        // if(connection != nullptr && !accesspoint.IsService()) {
+        // DecRef();
         //}
 
         // Destroy the combox
@@ -496,23 +494,22 @@ void pop_interface::Release() {
         __pop_combox = nullptr;
     }
 
-    if(__pop_buf != nullptr) {
+    if (__pop_buf != nullptr) {
         delete __pop_buf;
         __pop_buf = nullptr;
     }
 }
 
-
 bool pop_interface::isBinded() {
-    if(__pop_combox == nullptr || __pop_buf == nullptr) {
+    if (__pop_combox == nullptr || __pop_buf == nullptr) {
         return false;
     }
     return true;
 }
 
 // PopCall
-void pop_interface::BindStatus(int &code, std::string &platform, std::string &info) {
-    if(!__pop_combox || !__pop_buf) {
+void pop_interface::BindStatus(int& code, std::string& platform, std::string& info) {
+    if (!__pop_combox || !__pop_buf) {
         return;
     }
 
@@ -525,28 +522,27 @@ void pop_interface::BindStatus(int &code, std::string &platform, std::string &in
     popc_send_request(__pop_buf, connection);
     popc_get_response(__pop_buf, connection);
 
-    __pop_buf->Push("code","int",1);
-    __pop_buf->UnPack(&code,1);
+    __pop_buf->Push("code", "int", 1);
+    __pop_buf->UnPack(&code, 1);
     __pop_buf->Pop();
 
-    __pop_buf->Push("platform","std::string",1);
-    __pop_buf->UnPack(&platform,1);
+    __pop_buf->Push("platform", "std::string", 1);
+    __pop_buf->UnPack(&platform, 1);
     __pop_buf->Pop();
 
-    __pop_buf->Push("info","std::string",1);
-    __pop_buf->UnPack(&info,1);
+    __pop_buf->Push("info", "std::string", 1);
+    __pop_buf->UnPack(&info, 1);
     __pop_buf->Pop();
     LOG_DEBUG("INTERFACE: request bindstatus done");
 }
 
-
 int pop_interface::AddRef() {
-    if(!__pop_combox || !__pop_buf) {
+    if (!__pop_combox || !__pop_buf) {
         LOG_WARNING("AddRef cannot be called");
         return -1;
     }
 
-    pop_message_header h(0,1, INVOKE_SYNC,"AddRef");
+    pop_message_header h(0, 1, INVOKE_SYNC, "AddRef");
     pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
@@ -556,19 +552,19 @@ int pop_interface::AddRef() {
     popc_get_response(__pop_buf, connection);
 
     int ret;
-    __pop_buf->Push("refcount","int",1);
-    __pop_buf->UnPack(&ret,1);
+    __pop_buf->Push("refcount", "int", 1);
+    __pop_buf->UnPack(&ret, 1);
     __pop_buf->Pop();
     return ret;
 }
 
 int pop_interface::DecRef() {
-    if(!__pop_combox || !__pop_buf) {
+    if (!__pop_combox || !__pop_buf) {
         LOG_WARNING("DecRef cannot be called");
         return -1;
     }
 
-    pop_message_header h(0, 2, INVOKE_SYNC,"DecRef");
+    pop_message_header h(0, 2, INVOKE_SYNC, "DecRef");
     pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
@@ -578,22 +574,21 @@ int pop_interface::DecRef() {
     popc_get_response(__pop_buf, connection);
 
     int ret;
-    __pop_buf->Push("refcount","int",1);
-    __pop_buf->UnPack(&ret,1);
+    __pop_buf->Push("refcount", "int", 1);
+    __pop_buf->UnPack(&ret, 1);
     __pop_buf->Pop();
     return ret;
 }
 
-
 bool pop_interface::Encoding(std::string encoding) {
-    if(!__pop_combox || !__pop_buf) {
+    if (!__pop_combox || !__pop_buf) {
         LOG_WARNING("Encoding cannot be called");
         return false;
     }
 
     auto* fact = pop_buffer_factory_finder::get_instance().FindFactory(encoding);
 
-    if(!fact) {
+    if (!fact) {
         LOG_ERROR("[CORE] No encoding factory for %s", encoding.c_str());
         return false;
     }
@@ -616,7 +611,7 @@ bool pop_interface::Encoding(std::string encoding) {
     __pop_buf->UnPack(&ret, 1);
     __pop_buf->Pop();
 
-    if(ret) {
+    if (ret) {
         delete __pop_buf;
         __pop_buf = fact->CreateBuffer();
         __pop_combox->SetBufferFactory(fact);
@@ -626,12 +621,12 @@ bool pop_interface::Encoding(std::string encoding) {
 }
 
 void pop_interface::Kill() {
-    if(!__pop_combox) {
+    if (!__pop_combox) {
         LOG_WARNING("Kill cannot be called");
         return;
     }
 
-    pop_message_header h(0,4, 0 ,"Kill");
+    pop_message_header h(0, 4, 0, "Kill");
     pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
@@ -644,12 +639,12 @@ void pop_interface::Kill() {
 }
 
 bool pop_interface::ObjectActive() {
-    if(!__pop_combox || !__pop_buf) {
+    if (!__pop_combox || !__pop_buf) {
         LOG_DEBUG("ObjectActive cannot be called");
         return false;
     }
 
-    pop_message_header h(0,5, INVOKE_SYNC ,"ObjectActive");
+    pop_message_header h(0, 5, INVOKE_SYNC, "ObjectActive");
     pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
@@ -659,31 +654,31 @@ bool pop_interface::ObjectActive() {
     popc_get_response(__pop_buf, connection);
 
     bool ret;
-    __pop_buf->Push("result","bool",1);
-    __pop_buf->UnPack(&ret,1);
+    __pop_buf->Push("result", "bool", 1);
+    __pop_buf->UnPack(&ret, 1);
     __pop_buf->Pop();
     return ret;
 }
 #ifdef OD_DISCONNECT
 bool pop_interface::RecvCtrl() {
-    int  time_alive;
-    int  time_control;
+    int time_alive;
+    int time_control;
     int oldTimeout = __pop_combox->GetTimeout();
     od.getCheckConnection(time_alive, time_control);
-    if(!__pop_combox || !__pop_buf) {
+    if (!__pop_combox || !__pop_buf) {
         __pop_combox->SetTimeout(oldTimeout);
         LOG_ERROR("Error");
         return false;
     };
 
-    char header_name [] = "ObjectAlive\0";
-    pop_message_header h(0,6, INVOKE_SYNC ,header_name);
+    char header_name[] = "ObjectAlive\0";
+    pop_message_header h(0, 6, INVOKE_SYNC, header_name);
     pop_mutex_locker lock(_pop_imutex);
-    while(true) {
+    while (true) {
         __pop_combox->SetTimeout(time_control);
-        pop_connection *t = (pop_connection *) __pop_combox->Wait();
-        if(t != nullptr) {
-            if(!__pop_buf->Recv(*__pop_combox,t)) {
+        pop_connection* t = (pop_connection*)__pop_combox->Wait();
+        if (t != nullptr) {
+            if (!__pop_buf->Recv(*__pop_combox, t)) {
                 __pop_combox->SetTimeout(oldTimeout);
                 pop_exception::pop_throw("Error in od disconnect 1");
             } else {
@@ -695,12 +690,12 @@ bool pop_interface::RecvCtrl() {
         __pop_buf->Reset();
         __pop_buf->SetHeader(h);
 
-        if(!__pop_buf->Send(*__pop_combox)) {
+        if (!__pop_buf->Send(*__pop_combox)) {
             __pop_combox->SetTimeout(oldTimeout);
             pop_exception::pop_throw("Error in od disconnect 2");
         }
         __pop_combox->SetTimeout(time_alive);
-        if(!__pop_buf->RecvCtrl(*__pop_combox)) {
+        if (!__pop_buf->RecvCtrl(*__pop_combox)) {
             __pop_combox->SetTimeout(oldTimeout);
             return true;
         }
@@ -710,7 +705,7 @@ bool pop_interface::RecvCtrl() {
 }
 #endif
 
-void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerplatform) {
+void pop_interface::NegotiateEncoding(std::string& enclist, std::string& peerplatform) {
     LOG_DEBUG("INTERFACE: Negotiate encoding start");
     std::string pref = od.getEncoding();
 
@@ -720,25 +715,27 @@ void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerpla
     std::string cur_enc;
     __pop_combox->GetBufferFactory()->GetBufferName(cur_enc);
 
-    if(enc_pref.empty()) {
-        for(auto& enc : enc_avail){
-            if(pop_utils::MatchWildcard(enc,"raw*") && !pop_utils::isEqual(peerplatform.c_str(),pop_system::platform.c_str())) {
+    if (enc_pref.empty()) {
+        for (auto& enc : enc_avail) {
+            if (pop_utils::MatchWildcard(enc, "raw*") &&
+                !pop_utils::isEqual(peerplatform.c_str(), pop_system::platform.c_str())) {
                 continue;
             }
 
-            if(pop_utils::isncaseEqual(enc.c_str(),cur_enc.c_str()) || Encoding(enc)) {
+            if (pop_utils::isncaseEqual(enc.c_str(), cur_enc.c_str()) || Encoding(enc)) {
                 return;
             }
         }
     } else {
-        for(auto& test : enc_pref){
-            for(auto& enc : enc_avail){
-                if(pop_utils::MatchWildcard(enc,test)) {
-                    if(pop_utils::isncaseEqual(enc,"raw") && !pop_utils::isEqual(peerplatform.c_str(),pop_system::platform.c_str())) {
+        for (auto& test : enc_pref) {
+            for (auto& enc : enc_avail) {
+                if (pop_utils::MatchWildcard(enc, test)) {
+                    if (pop_utils::isncaseEqual(enc, "raw") &&
+                        !pop_utils::isEqual(peerplatform.c_str(), pop_system::platform.c_str())) {
                         continue;
                     }
 
-                    if(pop_utils::isncaseEqual(enc,cur_enc) || Encoding(enc)) {
+                    if (pop_utils::isncaseEqual(enc, cur_enc) || Encoding(enc)) {
                         return;
                     }
                 }
@@ -749,8 +746,10 @@ void pop_interface::NegotiateEncoding(std::string &enclist, std::string &peerpla
     pop_exception::pop_throw(POP_NO_ENCODING, ClassName(), "NegociateEncoding failed");
 }
 
-int pop_interface::LocalExec(const char *hostname, const char *codefile, const char *classname, const pop_accesspoint &jobserv, const pop_accesspoint &appserv, pop_accesspoint *objaccess, int howmany, const pop_od& od) {
-    LOG_ERROR("This method has been commented"); // Note: This method is only used by add ons at the moment
+int pop_interface::LocalExec(const char* hostname, const char* codefile, const char* classname,
+                             const pop_accesspoint& jobserv, const pop_accesspoint& appserv, pop_accesspoint* objaccess,
+                             int howmany, const pop_od& od) {
+    LOG_ERROR("This method has been commented");  // Note: This method is only used by add ons at the moment
 
     /* TODO should have been restored at least for TCP/IP version
     if(codefile==nullptr) {
@@ -785,7 +784,8 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
 
       int n=0;
       //std::string myhost = pop_system::GetHost();
-      //bool islocal=(isManual||hostname==nullptr || *hostname==0 || pop_utils::SameContact(myhost,hostname) || pop_utils::isEqual(hostname,"localhost") || pop_utils::isEqual(hostname,"127.0.0.1"));
+      //bool islocal=(isManual||hostname==nullptr || *hostname==0 || pop_utils::SameContact(myhost,hostname) ||
+    pop_utils::isEqual(hostname,"localhost") || pop_utils::isEqual(hostname,"127.0.0.1"));
       if (batch == nullptr) {
           if (!islocal) {
               char *tmp=getenv("POPC_RSH");
@@ -960,38 +960,38 @@ int pop_interface::LocalExec(const char *hostname, const char *codefile, const c
     return 0;
 }
 
-std::vector<std::string> pop_interface::Tokenize(const std::string &s) {
-    if(s.empty()) {
+std::vector<std::string> pop_interface::Tokenize(const std::string& s) {
+    if (s.empty()) {
         return {};
     }
     std::vector<std::string> tokens;
-    popc_tokenize_r(tokens,s, " \n\t");
+    popc_tokenize_r(tokens, s, " \n\t");
     return tokens;
 }
 
 void pop_interface::ApplyCommPattern(const std::string& pattern, std::vector<std::string>& accesslist) {
-    if(pattern.empty()) {
+    if (pattern.empty()) {
         return;
     }
 
     auto patternlist = Tokenize(pattern);
     auto headpos = accesslist.begin();
 
-    for(auto ptstr : patternlist){
+    for (auto ptstr : patternlist) {
         auto pos = headpos;
 
-        while(pos != accesslist.end()){
+        while (pos != accesslist.end()) {
             auto old = pos;
             auto t = *pos++;
 
-            if(pop_utils::MatchWildcard(t, ptstr)) {
-                if(headpos != old) {
-                    //TODO(BW) this does not seem very smart since iterators will probably be invalidated
+            if (pop_utils::MatchWildcard(t, ptstr)) {
+                if (headpos != old) {
+                    // TODO(BW) this does not seem very smart since iterators will probably be invalidated
                     accesslist.insert(headpos, t);
                     accesslist.erase(old);
                 } else {
                     ++headpos;
-                    if(headpos == accesslist.end()) {
+                    if (headpos == accesslist.end()) {
                         return;
                     }
                 }
@@ -1003,8 +1003,8 @@ void pop_interface::ApplyCommPattern(const std::string& pattern, std::vector<std
 /**
  * Send the current request in the buffer to the endpoint designated by the connection
  */
-void pop_interface::popc_send_request(pop_buffer *buf, pop_connection* conn) {
-    if(!buf->Send((*__pop_combox), conn)) {
+void pop_interface::popc_send_request(pop_buffer* buf, pop_connection* conn) {
+    if (!buf->Send((*__pop_combox), conn)) {
         pop_exception::pop_throw("Buffer sent failed");
     }
     LOG_DEBUG("INTERFACE: paroc_dispatch connection %s", (conn == nullptr) ? "is null" : "is not null");
@@ -1013,8 +1013,8 @@ void pop_interface::popc_send_request(pop_buffer *buf, pop_connection* conn) {
 /**
  * Get the response from the endpoint designated by the connection
  */
-void pop_interface::popc_get_response(pop_buffer *buf, pop_connection* conn) {
-    if(!buf->Recv((*__pop_combox), conn)) {
+void pop_interface::popc_get_response(pop_buffer* buf, pop_connection* conn) {
+    if (!buf->Recv((*__pop_combox), conn)) {
         pop_exception::pop_throw("Buffer receive failed");
     }
     LOG_DEBUG("INTERFACE: paroc_response will disconnect the connection");
@@ -1028,10 +1028,6 @@ void pop_interface::popc_get_response(pop_buffer *buf, pop_connection* conn) {
  * ################################################################################################
  */
 
-
-
-
-
 /**
  * ViSaG : clementval
  * Create a SSH Tunnel from the local IP to the destination IP
@@ -1041,9 +1037,9 @@ void pop_interface::popc_get_response(pop_buffer *buf, pop_connection* conn) {
  * @param local_port Local port of the SSH Tunnel
  * @return PID of the SSH Tunnel on success, -1 if the SSH Tunnel can't be created
  */
-int pop_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int dest_port) {
+int pop_interface::CreateSSHTunnel(const char* user, const char* dest_ip, int dest_port) {
     LOG_CORE("Create tunnel");
-    //Save the SSH Tunnel information
+    // Save the SSH Tunnel information
     _ssh_user.erase(_ssh_user.begin(), _ssh_user.end());
     _ssh_user.insert(0, user);
     _ssh_dest_ip.erase(_ssh_dest_ip.begin(), _ssh_dest_ip.end());
@@ -1051,39 +1047,39 @@ int pop_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int de
     _ssh_dest_port = dest_port;
 
     _ssh_tunneling = true;
-    srand(time(nullptr));   //Init the random generator with the current time
-    int BUF_SIZE=15;
+    srand(time(nullptr));  // Init the random generator with the current time
+    int BUF_SIZE = 15;
     char buf[BUF_SIZE];
-    FILE *fp;
-    int attempt=0;
-    int error_code=0;
+    FILE* fp;
+    int attempt = 0;
+    int error_code = 0;
     int local_port;
     std::ostringstream cmd;
 
     do {
-        error_code=0;
+        error_code = 0;
         local_port = (rand() % SSH_PORT_MOD) + SSH_PORT_FIRST;
-        LOG_DEBUG("SSH TUNNELING ON %s:%d",dest_ip, local_port);
+        LOG_DEBUG("SSH TUNNELING ON %s:%d", dest_ip, local_port);
         cmd.str("");
         cmd.clear();
 
-        cmd << "/usr/bin/ssh -f -N -q -o ExitOnForwardFailure=yes -L" << local_port << ":127.0.0.1:" << dest_port << " " << _ssh_dest_ip << " && echo TUNNEL_OPEN";
-
+        cmd << "/usr/bin/ssh -f -N -q -o ExitOnForwardFailure=yes -L" << local_port << ":127.0.0.1:" << dest_port << " "
+            << _ssh_dest_ip << " && echo TUNNEL_OPEN";
 
         fp = popen(cmd.str().c_str(), "r");
-        if(fp==nullptr) {
-            error_code=-1;
+        if (fp == nullptr) {
+            error_code = -1;
         }
-        if(fgets(buf, BUF_SIZE, fp) == nullptr) {
-            error_code=-1;
+        if (fgets(buf, BUF_SIZE, fp) == nullptr) {
+            error_code = -1;
         }
-    } while(error_code!=0 && attempt++ < SSH_MAX_ATTEMPT);
+    } while (error_code != 0 && attempt++ < SSH_MAX_ATTEMPT);
 
-    if(error_code==0) {
+    if (error_code == 0) {
         _ssh_local_port = local_port;
         return local_port;
     } else {
-        //pop_exception::pop_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
+        // pop_exception::pop_throw(OBJECT_EXECUTABLE_NOTFOUND, ClassName());
         LOG_WARNING("Executable not found");
     }
     LOG_WARNING("CreateSSHTunnel returned with error code %d", error_code);
@@ -1097,32 +1093,35 @@ int pop_interface::CreateSSHTunnel(const char *user, const char *dest_ip, int de
  * @param dest_ip    Destination IP of the SSH Tunnel
  * @param dest_port  Destination port of the SSH Tunnel
  * @param local_port Local port of the SSH Tunnel
- * @return PID if the proccess is killed, -1 if the method can't find the SSH Tunnel PID, -2 if the method can't read the PID
+ * @return PID if the proccess is killed, -1 if the method can't find the SSH Tunnel PID, -2 if the method can't read
+ * the PID
  */
-int pop_interface::KillSSHTunnel(const char *user, const char *dest_ip, int dest_port, int local_port) {
+int pop_interface::KillSSHTunnel(const char* user, const char* dest_ip, int dest_port, int local_port) {
     LOG_CORE("Kill SSH");
     _ssh_tunneling = false;
-    if(dest_ip == nullptr) {
+    if (dest_ip == nullptr) {
         return -1;
     }
 
-    int BUF_SIZE=100;
+    int BUF_SIZE = 100;
     char buf[BUF_SIZE];
 
-    //warning_remove   int error_code=0;
+    // warning_remove   int error_code=0;
 
     std::ostringstream cmd;
-    cmd << "ps aux | grep \"/usr/bin/ssh -f -N -q -o ExitOnForwardFailure=yes -L" << local_port << ":127.0.0.1:" << dest_port << " " << dest_ip << "\" | grep -v grep | head -n 1 | awk -F\" \" '{print $2}'";
-    FILE *fp;
+    cmd << "ps aux | grep \"/usr/bin/ssh -f -N -q -o ExitOnForwardFailure=yes -L" << local_port
+        << ":127.0.0.1:" << dest_port << " " << dest_ip << "\" | grep -v grep | head -n 1 | awk -F\" \" '{print $2}'";
+    FILE* fp;
     fp = popen(cmd.str().c_str(), "r");
-    if(fp==nullptr) {
+    if (fp == nullptr) {
         return -1;
     }
-    if(fgets(buf, BUF_SIZE, fp) == nullptr) {
+    if (fgets(buf, BUF_SIZE, fp) == nullptr) {
         return -2;
     }
     int pid = atoi(buf);
-    LOG_WARNING("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)",user, local_port, dest_port, dest_ip, pid);
+    LOG_WARNING("KILL SSH-T REQUESTED (user=%s, lport=%d, dport=%d, dip=%s, PID=%d)", user, local_port, dest_port,
+                dest_ip, pid);
     /*if(pid!=0)
        popc_kill(pid, popc_SIGKILL);*/
     return pid;
@@ -1137,15 +1136,16 @@ int pop_interface::KillSSHTunnel(const char *user, const char *dest_ip, int dest
  * @param local_port Local port of the SSH Tunnel
  * @return TRUE if the SSH Tunnel is alive, FALSE if the SSH Tunnel is not alive
  */
-bool pop_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, int dest_port, int local_port) {
+bool pop_interface::IsTunnelAlive(const char* /*user*/, const char* dest_ip, int dest_port, int local_port) {
     std::ostringstream cmd;
-    int BUF_SIZE=6;
+    int BUF_SIZE = 6;
     char res[BUF_SIZE];
-    FILE *fp;
-    cmd << "ps aux | grep \"/usr/bin/ssh -f -N -o ExitOnForwardFailure=yes -L" << local_port << ":127.0.0.1:" << dest_port << " " << dest_ip << "\" | grep -v grep | awk -F\" \" '{print $2}'";
+    FILE* fp;
+    cmd << "ps aux | grep \"/usr/bin/ssh -f -N -o ExitOnForwardFailure=yes -L" << local_port
+        << ":127.0.0.1:" << dest_port << " " << dest_ip << "\" | grep -v grep | awk -F\" \" '{print $2}'";
 
     fp = popen(cmd.str().c_str(), "r");
-    if(fp == nullptr) {
+    if (fp == nullptr) {
         LOG_WARNING("cannot launch %s", cmd.str().c_str());
         return false;
     }
@@ -1153,11 +1153,9 @@ bool pop_interface::IsTunnelAlive(const char * /*user*/, const char *dest_ip, in
     fgets(res, BUF_SIZE, fp);
 
     int pid = atoi(res);
-    if(pid != 0) {
+    if (pid != 0) {
         return true;
     }
     LOG_WARNING("pid=0");
     return false;
 }
-
-

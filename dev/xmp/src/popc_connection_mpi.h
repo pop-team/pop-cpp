@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
@@ -11,7 +12,6 @@
  *
  */
 
-
 #ifndef INCLUDE_POPC_CONNECTION_MPI_H_
 #define INCLUDE_POPC_CONNECTION_MPI_H_
 
@@ -21,11 +21,11 @@
 class pop_mpi_connection : public pop_connection {
 public:
     pop_mpi_connection();
-    explicit pop_mpi_connection(pop_combox *cb);
-    explicit pop_mpi_connection(pop_mpi_connection &me);
+    explicit pop_mpi_connection(pop_combox* cb);
+    explicit pop_mpi_connection(pop_mpi_connection& me);
     ~pop_mpi_connection();
 
-    virtual pop_connection *Clone();
+    virtual pop_connection* Clone();
 
     void set_communicator(MPI::Intercomm communicator);
     MPI::Intercomm get_communicator();
@@ -53,7 +53,6 @@ private:
     bool _is_asynchronous;
     int _current_tag;
     bool _tag_set;
-
 };
 
-#endif // INCLUDE_POPC_CONNECTION_MPI_H_
+#endif  // INCLUDE_POPC_CONNECTION_MPI_H_

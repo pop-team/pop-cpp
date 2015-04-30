@@ -8,9 +8,8 @@ POPObject::POPObject() {
 }
 
 POPObject::~POPObject() {
-    cout << "POPCobject: on machine:" << POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPCobject: on machine:" << POPSystem::GetHost() << " is being destroyed" << popcendl;
 }
-
 
 void POPObject::testMethod() {
     cout << "Call testMethod" << popcendl;

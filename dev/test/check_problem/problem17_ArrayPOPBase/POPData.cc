@@ -1,13 +1,10 @@
 #include "POPData.h"
 
 POPData::POPData() {
-
 }
 
 POPData::~POPData() {
-
 }
-
 
 void POPData::setIntData(int value) {
     intdata = value;
@@ -24,8 +21,8 @@ float POPData::getFloatData() {
     return floatdata;
 }
 
-void POPData::Serialize(POPBuffer &buf, bool pack) {
-    if(pack) {
+void POPData::Serialize(POPBuffer& buf, bool pack) {
+    if (pack) {
         buf.Pack(&intdata, 1);
         buf.Pack(&floatdata, 1);
     } else {

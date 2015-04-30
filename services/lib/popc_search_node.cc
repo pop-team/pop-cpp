@@ -1,14 +1,17 @@
 /**
  * File : popc_search_node.cc
  * Author : Valentin Clement
- * Description : Implementation of the POP-C++ Search Node. This parallel object is responsible of the resource discovery.
+ * Description : Implementation of the POP-C++ Search Node. This parallel object is responsible of the resource
+ *discovery.
  * Creation date :
  *
  * Modifications :
  * Authors      Date            Comment
- * clementval   2010/04/19  All code added for the semester project begins with this comment //Added by clementval, ends with
+ * clementval   2010/04/19  All code added for the semester project begins with this comment //Added by clementval, ends
+ *with
  *                         //End of add
- * clementval   2010/04/19  All code modified during the semester project begins with //Modified by clementval, ends with
+ * clementval   2010/04/19  All code modified during the semester project begins with //Modified by clementval, ends
+ *with
  *                         //End of modification
  * clementval   2010/05/05  Remove useless constructor.
  * clementval   2010/05/15  Add a funcionnality of null waiting (timer + semaphor)
@@ -21,38 +24,38 @@
 #include "nodethread.h"
 
 /**
- * POPCSearchNode's constructor with challenge string (necessary to stop the object) and deamon boolean value to put the object
+ * POPCSearchNode's constructor with challenge string (necessary to stop the object) and deamon boolean value to put the
+ * object
  * in a deamon mode
  * @param
  * @param
  */
-POPCSearchNode::POPCSearchNode(const std::string &challenge, bool deamon) : pop_service_base(challenge) {
+POPCSearchNode::POPCSearchNode(const std::string& challenge, bool deamon) : pop_service_base(challenge) {
     // Init variables
-    logicalClock=0;
-    sem_logicalClock=0;
-    psn_currentJobs=0;
+    logicalClock = 0;
+    sem_logicalClock = 0;
+    psn_currentJobs = 0;
 
     // Start service as a daemon
-    if(deamon) {
+    if (deamon) {
         Start();
     }
 
     // Log entry
-    LOG_DEBUG( "[PSN] POPCSearchNode created ...");
+    LOG_DEBUG("[PSN] POPCSearchNode created ...");
 }
 
 /**
  * POPCSearchNode's destructor
  */
 POPCSearchNode::~POPCSearchNode() {
-    LOG_DEBUG( "[PSN] POPCSearchNode destroyed ...");
+    LOG_DEBUG("[PSN] POPCSearchNode destroyed ...");
 }
-
 
 // Set the ID of the POPCSearchNode
 void POPCSearchNode::setPOPCSearchNodeId(std::string nodeId) {
     nodeInfo.nodeId = nodeId;
-    LOG_DEBUG(  "[PSN] POPCSearchNode id : %s", nodeInfo.nodeId.c_str());
+    LOG_DEBUG("[PSN] POPCSearchNode id : %s", nodeInfo.nodeId.c_str());
 }
 
 // Get the ID of this POPCSearchNode
@@ -70,12 +73,12 @@ std::string POPCSearchNode::getOperatingSystem() {
     return nodeInfo.operatingSystem;
 }
 
-//Set the compute power
+// Set the compute power
 void POPCSearchNode::setPower(float p) {
     nodeInfo.power = p;
 }
 
-//Get the compute power
+// Get the compute power
 float POPCSearchNode::getPower() {
     return nodeInfo.power;
 }
@@ -120,41 +123,39 @@ int POPCSearchNode::getDiskSpace() {
     return nodeInfo.diskSpace;
 }
 
-//Set the protocol
+// Set the protocol
 void POPCSearchNode::setProtocol(std::string prot) {
     nodeInfo.protocol = prot;
 }
 
-//Get the protocol
+// Get the protocol
 std::string POPCSearchNode::getProtocol() {
     return nodeInfo.protocol;
 }
 
-//Set the encoding
+// Set the encoding
 void POPCSearchNode::setEncoding(std::string enc) {
     nodeInfo.encoding = enc;
 }
 
-//Get the encoding
+// Get the encoding
 std::string POPCSearchNode::getEncoding() {
     return nodeInfo.encoding;
 }
 
-
-
 // Add a POPCSearchNode as a neighbor of this POPCSearchNode
-void POPCSearchNode::addNeighbor(POPCSearchNode &node) {
-    LOG_DEBUG(  "[PSN] NODE_ADD;%s", node.GetAccessPoint().GetAccessString().c_str());
+void POPCSearchNode::addNeighbor(POPCSearchNode& node) {
+    LOG_DEBUG("[PSN] NODE_ADD;%s", node.GetAccessPoint().GetAccessString().c_str());
     neighborsList.push_back(new POPCSearchNode(node));
 }
 
 // Remove a POPCSearchNode as a neighbor of this POPCSearchNode
-void POPCSearchNode::removeNeighbor(POPCSearchNode &node) {
-    LOG_DEBUG(  "[PSN] NODE_REMOVE;%s", node.GetAccessPoint().GetAccessString().c_str());
-    std::list<POPCSearchNode *>::iterator i;
-    for(i=neighborsList.begin(); i != neighborsList.end(); i++) {
+void POPCSearchNode::removeNeighbor(POPCSearchNode& node) {
+    LOG_DEBUG("[PSN] NODE_REMOVE;%s", node.GetAccessPoint().GetAccessString().c_str());
+    std::list<POPCSearchNode*>::iterator i;
+    for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
         pop_accesspoint crt = (*i)->GetAccessPoint();
-        if(crt.GetAccessString() == node.GetAccessPoint().GetAccessString().c_str()) {
+        if (crt.GetAccessString() == node.GetAccessPoint().GetAccessString().c_str()) {
             neighborsList.erase(i);
             break;
         }
@@ -164,8 +165,8 @@ void POPCSearchNode::removeNeighbor(POPCSearchNode &node) {
 // Remove current POPCSearchNode's neighbors. Used after resources discovery to delete
 // properly the parallel objects
 void POPCSearchNode::deleteNeighbors() {
-    std::list<POPCSearchNode *>::iterator i;
-    for(i=neighborsList.begin(); i != neighborsList.end(); i++) {
+    std::list<POPCSearchNode*>::iterator i;
+    for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
         delete *i;
     }
     neighborsList.clear();
@@ -179,16 +180,15 @@ void POPCSearchNode::unlockDiscovery(std::string reqid) {
         // Post the semaphore to unlock the resource discovery
         sem_post(reqsem[_reqid]);
         // Log
-        LOG_DEBUG( "[PSN] Unlocked by timer: %s", _reqid.c_str());
-    } catch(std::exception& e) {
-        LOG_ERROR( "[PSN] Exception caught in unlockDisc: %s", e.what());
+        LOG_DEBUG("[PSN] Unlocked by timer: %s", _reqid.c_str());
+    } catch (std::exception& e) {
+        LOG_ERROR("[PSN] Exception caught in unlockDisc: %s", e.what());
     }
 }
 
-
 std::string POPCSearchNode::getUID() {
     char uId[MAXREQUNIQUEIDLENGTH];
-    snprintf(uId, sizeof(uId),"%s__%d", getPOPCSearchNodeId().c_str(), logicalClock);
+    snprintf(uId, sizeof(uId), "%s__%d", getPOPCSearchNodeId().c_str(), logicalClock);
     std::string uniqueId(uId);
     logicalClock++;
     return uniqueId;
@@ -200,10 +200,10 @@ std::string POPCSearchNode::getUID() {
 POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
 #ifndef __WIN32__
     try {
-        if(req.isEndRequest()) {
+        if (req.isEndRequest()) {
             timeout = 1;
         } else {
-            LOG_DEBUG(  "[PSN] LDISCOVERY;TIMEOUT;%d", timeout);
+            LOG_DEBUG("[PSN] LDISCOVERY;TIMEOUT;%d", timeout);
         }
 
         // create a new unique request id with the name of the node and its
@@ -217,37 +217,37 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
         actualReq[req.getUniqueId()] = nInfos;
         actualReqSyn.unlock();
 
-        LOG_DEBUG( "[PSN] Resource discovery timeout: %d", timeout);
+        LOG_DEBUG("[PSN] Resource discovery timeout: %d", timeout);
         // wait until timeout or 1st answer
-        if(timeout == 0) {
-            sem_t* current_sem; // Creating new semaphore pointer for the current request
+        if (timeout == 0) {
+            sem_t* current_sem;  // Creating new semaphore pointer for the current request
             // Defining name for the named semaphore
             std::stringstream semname;
             semname << "/_popc_reqid" << getNextSemCounter();
 
             // Opening the semaphore before launching the unlocker thread
-            if((current_sem = sem_open(semname.str().c_str(), O_CREAT, S_IRUSR | S_IWUSR, 0)) == SEM_FAILED) {
-                LOG_DEBUG( "[PSN] SEMFAILED TO OPEN (DARWIN)");
+            if ((current_sem = sem_open(semname.str().c_str(), O_CREAT, S_IRUSR | S_IWUSR, 0)) == SEM_FAILED) {
+                LOG_DEBUG("[PSN] SEMFAILED TO OPEN (DARWIN)");
             }
 
             std::string sem_name_reqid(req.getUniqueId().c_str());
-            reqsem.insert(std::pair<std::string,sem_t*>(sem_name_reqid, current_sem));
+            reqsem.insert(std::pair<std::string, sem_t*>(sem_name_reqid, current_sem));
 
-            if(reqsem[sem_name_reqid.c_str()] == NULL) {
-                LOG_ERROR( "[PSN] SEMAPHORE IS NOT IN THE MAP");
+            if (reqsem[sem_name_reqid.c_str()] == NULL) {
+                LOG_ERROR("[PSN] SEMAPHORE IS NOT IN THE MAP");
             }
-            LOG_DEBUG( "[PSN] Semaphore map size is: %d, %s", reqsem.size(), sem_name_reqid.c_str());
+            LOG_DEBUG("[PSN] Semaphore map size is: %d, %s", reqsem.size(), sem_name_reqid.c_str());
 
             // begin resources discovery locally
             pop_accesspoint dummy;
             askResourcesDiscovery(req, GetAccessPoint(), GetAccessPoint(), dummy);
 
             // Starting a timed thread to be able to unlock the resource discovery after a certain time
-            NodeThread *timer = new NodeThread(UNLOCK_TIMEOUT, GetAccessPoint(), req.getUniqueId().c_str());
+            NodeThread* timer = new NodeThread(UNLOCK_TIMEOUT, GetAccessPoint(), req.getUniqueId().c_str());
             timer->create();
-            if(sem_wait(current_sem) != 0) {
-                if(sem_wait(current_sem) != 0) {
-                    LOG_ERROR( " [PSN] SEMAPHOR: The semaphor couldn't not be blocked");
+            if (sem_wait(current_sem) != 0) {
+                if (sem_wait(current_sem) != 0) {
+                    LOG_ERROR(" [PSN] SEMAPHOR: The semaphor couldn't not be blocked");
                 }
             }
             timer->stop();
@@ -271,9 +271,9 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
         std::map<std::string, POPCSearchNodeInfos>::iterator i;
 
         // ! for-statement because of problem with map comparison and std::string !
-        for(i=actualReq.begin(); i != actualReq.end(); i++) {
+        for (i = actualReq.begin(); i != actualReq.end(); i++) {
             std::string id = (*i).first;
-            if(strcmp(id.c_str(), req.getUniqueId().c_str()) == 0) {
+            if (strcmp(id.c_str(), req.getUniqueId().c_str()) == 0) {
                 results = i->second;
                 break;
             }
@@ -281,14 +281,14 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
         // erase the place for this request disallowing adding more results for this
         // request in the future
         actualReq.erase(req.getUniqueId());
-        if(!req.isEndRequest()) {
-            LOG_DEBUG( "[PSN] RESULTS;%d", (int)results.getNodeInfos().size());
+        if (!req.isEndRequest()) {
+            LOG_DEBUG("[PSN] RESULTS;%d", (int)results.getNodeInfos().size());
         }
         actualReqSyn.unlock();
 
         return results;
-    } catch(std::exception& e) {
-        LOG_ERROR( "[PSN] Exception caught in launchDiscovery: %s", e.what());
+    } catch (std::exception& e) {
+        LOG_ERROR("[PSN] Exception caught in launchDiscovery: %s", e.what());
     }
 #endif
 
@@ -302,18 +302,19 @@ int POPCSearchNode::getNextSemCounter() {
 
 // POPCSearchNode's entry point to propagate request in the grid
 // asker is the node which will receive positiv result
-void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap, pop_accesspoint sender, pop_accesspoint _psm) {
+void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap, pop_accesspoint sender,
+                                           pop_accesspoint _psm) {
     try {
-        if(req.isEndRequest()) {
+        if (req.isEndRequest()) {
             ExplorationList oldEL(req.getExplorationList());
             // Adding the node's neighbors in the exploration list
             req.addNodeToExplorationList(getPOPCSearchNodeId(), getNeighbors());
-            if(req.getMaxHops() >= 0 || req.getMaxHops() == UNLIMITED_HOPS) {
-                std::list<POPCSearchNode *>::iterator i;
+            if (req.getMaxHops() >= 0 || req.getMaxHops() == UNLIMITED_HOPS) {
+                std::list<POPCSearchNode*>::iterator i;
                 // check if the local neighbors are already asked with the originally
                 // received exploration list
-                for(i = neighborsList.begin(); i != neighborsList.end(); i++) {
-                    if(!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
+                for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
+                    if (!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
                         std::string nid;
                         nid = (*i)->getPOPCSearchNodeId();
                         pop_accesspoint dummy;
@@ -324,14 +325,15 @@ void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap,
             JobMgr jmg(getJobMgrRef());
             jmg.ApplicationEnd(req.getPOPAppId(), false);
         } else {
-            LOG_DEBUG(  "[PSN] ASKRDISCOVERY;ASKER;%s;REQID;%s", node_ap.GetAccessString().c_str(), req.getUniqueId().c_str());
+            LOG_DEBUG("[PSN] ASKRDISCOVERY;ASKER;%s;REQID;%s", node_ap.GetAccessString().c_str(),
+                      req.getUniqueId().c_str());
 
             // check if the request has already been asked
 
             std::list<std::string>::iterator k;
-            for(k = knownRequests.begin(); k != knownRequests.end(); k++) {
-                if(strcmp(k->c_str(),req.getUniqueId().c_str()) == 0) {
-                    LOG_DEBUG(  "[PSN] ALREADY_ASKED_REQUEST;%s", req.getUniqueId().c_str());
+            for (k = knownRequests.begin(); k != knownRequests.end(); k++) {
+                if (strcmp(k->c_str(), req.getUniqueId().c_str()) == 0) {
+                    LOG_DEBUG("[PSN] ALREADY_ASKED_REQUEST;%s", req.getUniqueId().c_str());
                     POPCSearchNode nsender(sender);
                     JobMgr jsender(nsender.getJobMgrRef());
                     jsender.UnregisterNode(GetAccessPoint());
@@ -343,7 +345,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap,
             knownRequests.push_back(req.getUniqueId());
 
             // check the maximum length of the history
-            if(knownRequests.size() > MAXREQTOSAVE) {
+            if (knownRequests.size() > MAXREQTOSAVE) {
                 knownRequests.pop_front();
             }
 
@@ -355,50 +357,51 @@ void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap,
 
             // Check local resources
             bool isResourcesOk = checkResource(req);
-            LOG_DEBUG(  "[PSN] CHECK;%s", (isResourcesOk)?"OK":"FAILED");
-            if(isResourcesOk) {
+            LOG_DEBUG("[PSN] CHECK;%s", (isResourcesOk) ? "OK" : "FAILED");
+            if (isResourcesOk) {
                 // If local resources are OK, build the response and give it back to
                 // 'asker' node
-                Response* resp = new Response(req.getUniqueId(), POPCSearchNodeInfo(nodeInfo), req.getExplorationList(), req.getPOPAppId());
+                Response* resp = new Response(req.getUniqueId(), POPCSearchNodeInfo(nodeInfo), req.getExplorationList(),
+                                              req.getPOPAppId());
 
-                /* If it's the local node or it's the last node, send directly the answer. Otherwise, send to the next node to reroute
+                /* If it's the local node or it's the last node, send directly the answer. Otherwise, send to the next
+                node to reroute
                 the message */
-                if(!req.getWayBack().isLastNode()) {
+                if (!req.getWayBack().isLastNode()) {
                     std::string listwb = req.getWayBack().getAsString();
-                    LOG_DEBUG(  "[PSN] NEED_REROUTE;WAYBACK;%s", listwb.c_str());
+                    LOG_DEBUG("[PSN] NEED_REROUTE;WAYBACK;%s", listwb.c_str());
                     rerouteResponse(*resp, req.getWayBack());
                 } else {
                     try {
                         POPCSearchNode asker(node_ap);
-                        LOG_DEBUG(  "[PSN] SEND_REP;DEST;%s", node_ap.GetAccessString().c_str());
+                        LOG_DEBUG("[PSN] SEND_REP;DEST;%s", node_ap.GetAccessString().c_str());
                         asker.callbackResult(*resp);
-                    } catch(POPException& e) {
-                        LOG_WARNING(  "[PSN] Can't connect to %s: %s", node_ap.GetAccessString().c_str(), e.what());
+                    } catch (POPException& e) {
+                        LOG_WARNING("[PSN] Can't connect to %s: %s", node_ap.GetAccessString().c_str(), e.what());
                     }
-
                 }
             }
 
             // Continue the propagation if more hops are allowed. It continues if the
             // max hops is zero to avoid counting "initial node" discovery.
-            if(req.getMaxHops() >= 0 || req.getMaxHops() == UNLIMITED_HOPS) {
+            if (req.getMaxHops() >= 0 || req.getMaxHops() == UNLIMITED_HOPS) {
                 req.addNodeToWb(nodeInfo.getPOPCSearchNodeId());
-                std::list<POPCSearchNode *>::iterator i;
+                std::list<POPCSearchNode*>::iterator i;
                 // check if the local neighbors are already asked with the originally
                 // received exploration list
-                for(i = neighborsList.begin(); i != neighborsList.end(); i++) {
-                    if(!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
+                for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
+                    if (!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
                         std::string nid;
                         nid = (*i)->getPOPCSearchNodeId();
-                        LOG_DEBUG(  "[PSN] FORWARD;DEST;%s", nid.c_str());
+                        LOG_DEBUG("[PSN] FORWARD;DEST;%s", nid.c_str());
                         pop_accesspoint dummy;
                         (*i)->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
                     }
                 }
             }
         }
-    } catch(std::exception& e) {
-        LOG_ERROR( "[PSN] Exception caught in askResource: %s", e.what());
+    } catch (std::exception& e) {
+        LOG_ERROR("[PSN] Exception caught in askResource: %s", e.what());
     }
 }
 
@@ -410,51 +413,50 @@ void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap,
  */
 void POPCSearchNode::rerouteResponse(Response resp, POPWayback wb) {
     try {
-        //It's Last node to contact
-        if(wb.isLastNode()) {
-            //Create the interface to contact the POPCSearchNode
+        // It's Last node to contact
+        if (wb.isLastNode()) {
+            // Create the interface to contact the POPCSearchNode
             pop_accesspoint nextNodeAP;
             std::string nextNodeStr = wb.getNextNode();
             nextNodeAP.SetAccessString(nextNodeStr.c_str());
             POPCSearchNode nextNode(nextNodeAP);
-            //Give the response to the initiator
+            // Give the response to the initiator
             nextNode.callbackResult(resp);
-            //Print a log
-            LOG_DEBUG(  "[PSN] REROUTE;SEND_FINAL;%s", nextNodeStr.c_str());
+            // Print a log
+            LOG_DEBUG("[PSN] REROUTE;SEND_FINAL;%s", nextNodeStr.c_str());
         } else {
-            //Get the next node to contact
+            // Get the next node to contact
             std::string nextNodeStr = wb.getNextNode();
             wb.deleteNextNode();
 
-            //Create the interface to contact the POPCSearchNode
+            // Create the interface to contact the POPCSearchNode
             pop_accesspoint nextNodeAP;
             nextNodeAP.SetAccessString(nextNodeStr.c_str());
             POPCSearchNode nextNode(nextNodeAP);
-            //Send the response to the next node
+            // Send the response to the next node
             nextNode.rerouteResponse(resp, wb);
-            //Print a log
-            LOG_DEBUG(  "[PSN] REROUTE;TO;%s;WAYBACK;%s", nextNodeStr.c_str(), wb.getAsString().c_str());
+            // Print a log
+            LOG_DEBUG("[PSN] REROUTE;TO;%s;WAYBACK;%s", nextNodeStr.c_str(), wb.getAsString().c_str());
         }
-    } catch(std::exception& e) {
-        LOG_ERROR( "[PSN] Exception caught in reroute: %s", e.what());
+    } catch (std::exception& e) {
+        LOG_ERROR("[PSN] Exception caught in reroute: %s", e.what());
     }
 }
-
 
 // POPCSearchNode's return point to give back the response to the initial node
 void POPCSearchNode::callbackResult(Response resp) {
     try {
-        //Just for test purpose, must be removed in production release
+        // Just for test purpose, must be removed in production release
         POPCSearchNodeInfo dni = resp.getFoundNodeInfo();
         actualReqSyn.lock();
-        LOG_DEBUG( "[PSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().c_str() , dni.nodeId.c_str());
+        LOG_DEBUG("[PSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().c_str(), dni.nodeId.c_str());
         std::map<std::string, POPCSearchNodeInfos>::iterator i;
         // visit the currently running list
-        for(i=actualReq.begin(); i != actualReq.end(); i++) {
+        for (i = actualReq.begin(); i != actualReq.end(); i++) {
             std::string id = (*i).first;
             // if the request's uniqueId is present, add the response to the list
             // and break the for-statement.
-            if(strcmp(id.c_str(), resp.getReqUniqueId().c_str()) == 0) {
+            if (strcmp(id.c_str(), resp.getReqUniqueId().c_str()) == 0) {
                 i->second.addANodeInfo(resp.getFoundNodeInfo());
                 break;
             }
@@ -463,102 +465,99 @@ void POPCSearchNode::callbackResult(Response resp) {
 
         // Unlock the semaphore for this request
         std::string _reqid = resp.getReqUniqueId().c_str();
-        if(reqsem[_reqid] != NULL) {
-            LOG_DEBUG( "[PSN] CALLBACK UNLOCK SEMAPHORE");
+        if (reqsem[_reqid] != NULL) {
+            LOG_DEBUG("[PSN] CALLBACK UNLOCK SEMAPHORE");
             sem_post(reqsem[_reqid]);
         } else {
-            LOG_DEBUG( "[PSN] SEMAPHORE IS NULL UNABLE TO UNLOCK %s", _reqid.c_str());
+            LOG_DEBUG("[PSN] SEMAPHORE IS NULL UNABLE TO UNLOCK %s", _reqid.c_str());
         }
-    } catch(std::exception& e) {
-        LOG_ERROR( "[PSN] Exception caught in callback: %s", e.what());
+    } catch (std::exception& e) {
+        LOG_ERROR("[PSN] Exception caught in callback: %s", e.what());
     }
 }
 
 // internal comparison between request and local resources
 bool POPCSearchNode::checkResource(Request req) {
-    if(psn_currentJobs >= psn_maxjobs) {
-        LOG_ERROR( "[PSN] FAILED FOR NBJOB");
+    if (psn_currentJobs >= psn_maxjobs) {
+        LOG_ERROR("[PSN] FAILED FOR NBJOB");
         return false;
     }
 
     // check about the operating system
-    if(req.hasOperatingSystemSet()) {
-        //Should be check if the current architecture is in the list of requested architecture by the request
+    if (req.hasOperatingSystemSet()) {
+        // Should be check if the current architecture is in the list of requested architecture by the request
     }
 
     // check about the minimal cpu speed
-    if(req.hasMinCpuSpeedSet()) {
-        if(req.getMinCpuSpeed() > getCpuSpeed()) {
+    if (req.hasMinCpuSpeedSet()) {
+        if (req.getMinCpuSpeed() > getCpuSpeed()) {
             return false;
         }
     }
-
 
     // check about the exact cpu speed
-    if(req.hasExpectedCpuSpeedSet()) {
-        if(req.getExpectedCpuSpeed() <= getCpuSpeed()) {
+    if (req.hasExpectedCpuSpeedSet()) {
+        if (req.getExpectedCpuSpeed() <= getCpuSpeed()) {
             return false;
         }
     }
-
-
 
     // check about the minimal memory size
-    if(req.hasMinMemorySizeSet()) {
-        if(req.getMinMemorySize() > nodeInfo.memorySize) {
-            LOG_ERROR( "[PSN] FAILED FOR MIN MEM");
+    if (req.hasMinMemorySizeSet()) {
+        if (req.getMinMemorySize() > nodeInfo.memorySize) {
+            LOG_ERROR("[PSN] FAILED FOR MIN MEM");
             return false;
         }
     }
-
 
     // check about the exact memory size
-    //TODO Should not abort the check as Expected memory size is a wish but not a abort condition. Should be used in the fitness computation but not in Check.
-    if(req.hasExpectedMemorySizeSet()) {
-        if(req.getExpectedMemorySize() >= nodeInfo.memorySize) {
-            LOG_ERROR( "[PSN] FAILED FOR EXP MEM");
+    // TODO Should not abort the check as Expected memory size is a wish but not a abort condition. Should be used in
+    // the fitness computation but not in Check.
+    if (req.hasExpectedMemorySizeSet()) {
+        if (req.getExpectedMemorySize() >= nodeInfo.memorySize) {
+            LOG_ERROR("[PSN] FAILED FOR EXP MEM");
             return false;
         }
     }
 
-    //Check bandwith only if the nodeInfo networkBandwidth has been set
-    if(nodeInfo.networkBandwidth > 0.5) {
+    // Check bandwith only if the nodeInfo networkBandwidth has been set
+    if (nodeInfo.networkBandwidth > 0.5) {
         // check about the minimal network bandwith
-        if(req.hasMinNetworkBandwidthSet()) {
-            if(req.getMinNetworkBandwidth() > nodeInfo.networkBandwidth) {
-                LOG_ERROR( "[PSN] FAILED FOR MIN BAN");
+        if (req.hasMinNetworkBandwidthSet()) {
+            if (req.getMinNetworkBandwidth() > nodeInfo.networkBandwidth) {
+                LOG_ERROR("[PSN] FAILED FOR MIN BAN");
                 return false;
             }
         }
 
         // check about the exact network bandwith
-        if(req.hasExpectedNetworkBandwidthSet()) {
-            if(req.getExpectedNetworkBandwidth() >= nodeInfo.networkBandwidth) {
-                LOG_ERROR( "[PSN] FAILED FOR EXP BAN");
+        if (req.hasExpectedNetworkBandwidthSet()) {
+            if (req.getExpectedNetworkBandwidth() >= nodeInfo.networkBandwidth) {
+                LOG_ERROR("[PSN] FAILED FOR EXP BAN");
                 return false;
             }
         }
     }
 
     // check about the minimal disk space
-    if(req.hasMinDiskSpaceSet()) {
-        if(req.getMinDiskSpace() > getDiskSpace()) {
-            LOG_ERROR( "[PSN] FAILED FOR DISK SPACE");
+    if (req.hasMinDiskSpaceSet()) {
+        if (req.getMinDiskSpace() > getDiskSpace()) {
+            LOG_ERROR("[PSN] FAILED FOR DISK SPACE");
             return false;
         }
     }
 
     // check about the min power
-    if(req.hasMinPowerSet()) {
-        if(req.getMinPower() > getPower()) {
-            LOG_ERROR( "[PSN] FAILED FOR MIN POW");
+    if (req.hasMinPowerSet()) {
+        if (req.getMinPower() > getPower()) {
+            LOG_ERROR("[PSN] FAILED FOR MIN POW");
             return false;
         }
     }
 
-    if(req.hasExpectedPowerSet()) {
-        if(req.getExpectedPower() > getPower()) {
-            LOG_ERROR( "[PSN] FAILED FOR EXP POW");
+    if (req.hasExpectedPowerSet()) {
+        if (req.getExpectedPower() > getPower()) {
+            LOG_ERROR("[PSN] FAILED FOR EXP POW");
             return false;
         }
     }
@@ -570,29 +569,29 @@ bool POPCSearchNode::checkResource(Request req) {
 // Return a list of neighbors' nodeId
 std::list<std::string> POPCSearchNode::getNeighbors() {
     std::list<std::string> neighbors;
-    std::list<POPCSearchNode *>::iterator i;
-    for(i = neighborsList.begin(); i != neighborsList.end(); i++) {
+    std::list<POPCSearchNode*>::iterator i;
+    for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
         neighbors.push_back((*i)->getPOPCSearchNodeId());
     }
     return neighbors;
 }
 
-//Set the associated JobMgr access point
-void POPCSearchNode::setJobMgrRef(const pop_accesspoint &jobmgrRef) {
+// Set the associated JobMgr access point
+void POPCSearchNode::setJobMgrRef(const pop_accesspoint& jobmgrRef) {
     nodeInfo.jobmgr = jobmgrRef;
 }
 
-//return the associated JobMgr access point
+// return the associated JobMgr access point
 pop_accesspoint POPCSearchNode::getJobMgrRef() {
     return nodeInfo.jobmgr;
 }
 
-//Set the SSH public key
+// Set the SSH public key
 void POPCSearchNode::setPKI(std::string pk) {
-    nodeInfo.pki=pk;
+    nodeInfo.pki = pk;
 }
 
-//Get the SSH Public key
+// Get the SSH Public key
 std::string POPCSearchNode::getPKI() {
     return nodeInfo.pki;
 }
@@ -603,7 +602,7 @@ std::string POPCSearchNode::getPKI() {
  * @param maxjobs Maximum number of jobs
  */
 void POPCSearchNode::setMaxJobs(int maxjobs) {
-    psn_maxjobs=maxjobs;
+    psn_maxjobs = maxjobs;
 }
 
 /**
@@ -623,9 +622,9 @@ int POPCSearchNode::getMaxJobs() {
  * @param bandwidth  Bandwidth needed by the job
  */
 void POPCSearchNode::addJob(float power, float memorySize, float bandwidth) {
-    nodeInfo.memorySize-=memorySize;
-    nodeInfo.power-=power;
-    nodeInfo.networkBandwidth-=bandwidth;
+    nodeInfo.memorySize -= memorySize;
+    nodeInfo.power -= power;
+    nodeInfo.networkBandwidth -= bandwidth;
     psn_currentJobs++;
 }
 
@@ -637,21 +636,21 @@ void POPCSearchNode::addJob(float power, float memorySize, float bandwidth) {
  * @param bandwidth  Bandwidth liberated by the job
  */
 void POPCSearchNode::removeJob(float power, float memorySize, float bandwidth, int nbJob) {
-    nodeInfo.memorySize=memorySize;
-    nodeInfo.power=power;
-    nodeInfo.networkBandwidth=bandwidth;
-    psn_currentJobs-=nbJob;
+    nodeInfo.memorySize = memorySize;
+    nodeInfo.power = power;
+    nodeInfo.networkBandwidth = bandwidth;
+    psn_currentJobs -= nbJob;
 }
 
 std::string POPCSearchNode::getNeighborsAsString() {
     std::string strlst;
 
-    for(std::list<POPCSearchNode *>::iterator i = neighborsList.begin(); i != neighborsList.end(); i++) {
+    for (std::list<POPCSearchNode*>::iterator i = neighborsList.begin(); i != neighborsList.end(); i++) {
         strlst.append((*i)->getPOPCSearchNodeId().c_str());
         strlst.append(";");
     }
 
-    LOG_DEBUG( "[PSN] NODENEIGH:%s", strlst.c_str());
+    LOG_DEBUG("[PSN] NODENEIGH:%s", strlst.c_str());
 
     std::string lst = strlst.c_str();
     return lst;

@@ -18,8 +18,8 @@ int Data::GetInternalData() {
     return theData;
 }
 
-void Data::Serialize(POPBuffer &buf, bool pack) {
-    if(pack) {
+void Data::Serialize(POPBuffer& buf, bool pack) {
+    if (pack) {
         buf.Pack(&theData, 1);
         // Serialize the enum
         int i = (int)te;
@@ -32,4 +32,3 @@ void Data::Serialize(POPBuffer &buf, bool pack) {
         te = (TestEnum)i;
     }
 }
-

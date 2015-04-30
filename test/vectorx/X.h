@@ -7,8 +7,7 @@ public:
     ~X();
     int GetValue();
     void SetValue(int i);
-    virtual void Serialize(POPBuffer &buf, bool pack);
-
+    virtual void Serialize(POPBuffer& buf, bool pack);
 
 private:
     int value;

@@ -2,8 +2,7 @@
 #define _HERITDATA_H_
 #include "data.h"
 
-
-class HeritData :  public Data {
+class HeritData : public Data {
 public:
     HeritData();
     ~HeritData();
@@ -13,8 +12,7 @@ public:
     double GetMyData(int i);
     void SetMyData(int d);
     void SetMyData(int d, double v);
-    virtual void Serialize(POPBuffer &buf, bool pack);
-
+    virtual void Serialize(POPBuffer& buf, bool pack);
 
 private:
     int myData;

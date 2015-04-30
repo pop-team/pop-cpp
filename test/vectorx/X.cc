@@ -2,7 +2,7 @@
 #include "X.h"
 
 X::X() {
-    value=0;
+    value = 0;
 }
 
 X::~X() {
@@ -16,10 +16,10 @@ int X::GetValue() {
     return value;
 }
 
-void X::Serialize(POPBuffer &buf, bool pack) {
-    if(pack) {
+void X::Serialize(POPBuffer& buf, bool pack) {
+    if (pack) {
         buf.Pack(&value, 1);
     } else {
-        buf.UnPack(&value,1);
+        buf.UnPack(&value, 1);
     }
 }

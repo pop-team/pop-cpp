@@ -1,7 +1,8 @@
 /**
  * File: popfile_grip.cpp
  * Author: Valentin Clement (clementval)
- * Description: Implementation of POPFileGrip object. A POPFileGrip is a grip to read data from read in background process.
+ * Description: Implementation of POPFileGrip object. A POPFileGrip is a grip to read data from read in background
+ *process.
  * Creation date: 05.12.2012
  *
  * Change Log:
@@ -11,9 +12,7 @@
 
 #include "popfile_grip.h"
 
-
 using namespace popfile;
-
 
 /**
  * Constrcutor of POPFileGrip. Initialize internal information
@@ -25,12 +24,10 @@ POPFileGrip::POPFileGrip() {
     popfilegrip_first_read = 0;
 }
 
-
 /**
  * Destructor of POPFileGrip
  */
 POPFileGrip::~POPFileGrip() {
-
 }
 
 /**

@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -30,9 +31,9 @@ public:
     virtual ~pop_buffer_factory();
 
 public:
-    virtual pop_buffer* CreateBuffer()=0;
+    virtual pop_buffer* CreateBuffer() = 0;
 
-    virtual bool GetBufferName(std::string & bufferName)=0;
+    virtual bool GetBufferName(std::string& bufferName) = 0;
 };
 
-#endif // POPC_BUFFER_FACTORY_H
+#endif  // POPC_BUFFER_FACTORY_H

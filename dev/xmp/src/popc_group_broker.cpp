@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
@@ -39,7 +40,7 @@ void POPC_GroupBroker::popc_send_response(pop_buffer& buffer, pop_connection* co
     int world_size = comm.Get_size();
     int rank = comm.Get_rank();
 
-    if((collective && rank == (world_size-1)) || !collective) {
+    if ((collective && rank == (world_size - 1)) || !collective) {
         int data[2];
         data[0] = 16;
         data[1] = 0;
@@ -57,11 +58,11 @@ void POPC_GroupBroker::popc_send_response(pop_buffer& buffer, pop_connection* co
  * @param methods   Pointer containing the methods to be added
  * @param size      Number of methods to add
  */
-void POPC_GroupBroker::add_method_info(unsigned classuid, popc_method_info *methods, int size) {
-    if(size <= 0 || methods == NULL) {
+void POPC_GroupBroker::add_method_info(unsigned classuid, popc_method_info* methods, int size) {
+    if (size <= 0 || methods == NULL) {
         return;
     }
-    popc_class_info &t = methodnames.AddHeadNew();
+    popc_class_info& t = methodnames.AddHeadNew();
     t.cid = classuid;
     t.methods = methods;
     t.sz = size;
@@ -73,7 +74,8 @@ void POPC_GroupBroker::add_method_info(unsigned classuid, popc_method_info *meth
  * @param _popc_buffer      Buffer containing parameter and used to send the result of the call
  * @param _popc_connection  Connection used to send the result of the call
  */
-bool POPC_GroupBroker::invoke(unsigned* /* method[3]*/, pop_buffer&/*_popc_buffer*/, pop_connection* /*_popc_connection*/) {
+bool POPC_GroupBroker::invoke(unsigned* /* method[3]*/, pop_buffer& /*_popc_buffer*/,
+                              pop_connection* /*_popc_connection*/) {
     printf("Invoke in base broker\n");
     return true;
 }

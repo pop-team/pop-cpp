@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -22,7 +23,7 @@
 #include "pop_system.h"
 #include "popc_logger.h"
 
-const char *pop_exception::paroc_errstr[17]= { // Error number: 1000 + ...
+const char* pop_exception::paroc_errstr[17] = {  // Error number: 1000 + ...
     "Out of resource",                           // 1
     "Fail to bind to the remote object broker",  // 2
     "Mismatch remote method id",                 // 3
@@ -42,16 +43,14 @@ const char *pop_exception::paroc_errstr[17]= { // Error number: 1000 + ...
     "Unknown exception"                          // 17
 };
 
-
-
 pop_exception::pop_exception(int code) {
-    errcode=code;
-    if(code == UNKNOWN_EXCEPTION) {
-    	    ; // Do nothing
-    } else if(code>=USER_DEFINE_LASTERROR) {
+    errcode = code;
+    if (code == UNKNOWN_EXCEPTION) {
+        ;  // Do nothing
+    } else if (code >= USER_DEFINE_LASTERROR) {
         LOG_ERROR("Error code is too large: %d", code);
-    } else if(code>USER_DEFINE_ERROR) {
-        info = paroc_errstr[code-USER_DEFINE_ERROR-1];
+    } else if (code > USER_DEFINE_ERROR) {
+        info = paroc_errstr[code - USER_DEFINE_ERROR - 1];
     } else {
         info = "System error(";
         info += strerror(code);
@@ -59,43 +58,42 @@ pop_exception::pop_exception(int code) {
     }
 }
 
-pop_exception::pop_exception(int code, const std::string& reason1, const std::string& reason2)
-    : pop_exception(code) {
-    if(!reason1.empty()) {
+pop_exception::pop_exception(int code, const std::string& reason1, const std::string& reason2) : pop_exception(code) {
+    if (!reason1.empty()) {
         AddInfo(reason1);
     }
-    if(!reason2.empty()) {
+    if (!reason2.empty()) {
         AddInfo(reason2);
     }
 }
 
 pop_exception::pop_exception(const std::string& reason1, const std::string& reason2)
     : pop_exception(UNKNOWN_EXCEPTION) {
-    if(!reason1.empty()) {
+    if (!reason1.empty()) {
         AddInfo(reason1);
     }
-    if(!reason2.empty()) {
+    if (!reason2.empty()) {
         AddInfo(reason2);
     }
 }
 
-pop_exception & pop_exception::operator =(pop_exception &e) {
-    errcode=e.Code();
-    info=e.Info();
+pop_exception& pop_exception::operator=(pop_exception& e) {
+    errcode = e.Code();
+    info = e.Info();
     return *this;
 }
 
-const std::string& pop_exception::Info()const {
+const std::string& pop_exception::Info() const {
     return info;
 }
 
 void pop_exception::AddInfo(const std::string& str) {
-    if(!info.empty())
-	    info += ": ";
+    if (!info.empty())
+        info += ": ";
     info += str;
 }
 
-int pop_exception::Code()const {
+int pop_exception::Code() const {
     return errcode;
 }
 
@@ -108,44 +106,42 @@ void pop_exception::pop_throw(const std::string& reason1, const std::string& rea
 }
 
 const char* pop_exception::what() const throw() {
-    errno=Code();
+    errno = Code();
     return info.c_str();
 }
 
-
-void pop_exception::Serialize(pop_buffer &buf, bool pack) {
-    if(pack) {
-        buf.Push("code","int",1);
-        buf.Pack(&errcode,1);
+void pop_exception::Serialize(pop_buffer& buf, bool pack) {
+    if (pack) {
+        buf.Push("code", "int", 1);
+        buf.Pack(&errcode, 1);
         buf.Pop();
 
-        buf.Push("info","std::string",1);
-        buf.Pack(&info,1);
+        buf.Push("info", "std::string", 1);
+        buf.Pack(&info, 1);
         buf.Pop();
     } else {
-        buf.Push("code","int",1);
-        buf.UnPack(&errcode,1);
+        buf.Push("code", "int", 1);
+        buf.UnPack(&errcode, 1);
         buf.Pop();
 
-        buf.Push("info","std::string",1);
-        buf.UnPack(&info,1);
+        buf.Push("info", "std::string", 1);
+        buf.UnPack(&info, 1);
         buf.Pop();
     }
 }
-
 
 ///
 /// perror is the old way to manage errors. It simply prints an error message to stderr
 ///
 void pop_exception::perror(const std::string& msg) {
-    LOG_ERROR("pop_system::perror : %d",errno);
-    if(errno>USER_DEFINE_ERROR && errno<USER_DEFINE_LASTERROR) {
-        if(!msg.empty())
-            LOG_ERROR("POP-C++ Error: %s (errno %d)",paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
+    LOG_ERROR("pop_system::perror : %d", errno);
+    if (errno > USER_DEFINE_ERROR && errno < USER_DEFINE_LASTERROR) {
+        if (!msg.empty())
+            LOG_ERROR("POP-C++ Error: %s (errno %d)", paroc_errstr[errno - USER_DEFINE_ERROR - 1], errno);
         else
-            LOG_ERROR("%s: %s (errno %d)",msg.c_str(),paroc_errstr[errno-USER_DEFINE_ERROR-1],errno);
-    } else if(errno>USER_DEFINE_LASTERROR) {
-        LOG_ERROR("%s: Unknown error (errno %d)",msg.c_str(), errno);
+            LOG_ERROR("%s: %s (errno %d)", msg.c_str(), paroc_errstr[errno - USER_DEFINE_ERROR - 1], errno);
+    } else if (errno > USER_DEFINE_LASTERROR) {
+        LOG_ERROR("%s: Unknown error (errno %d)", msg.c_str(), errno);
     } else {
         ::perror(msg.c_str());
     }

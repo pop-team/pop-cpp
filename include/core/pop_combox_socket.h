@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -22,14 +23,15 @@
  * @author Tuan Anh Nguyen
  *
  */
-class pop_connection_sock: public  pop_connection {
+class pop_connection_sock : public pop_connection {
 public:
-    pop_connection_sock(pop_combox *cb);
-    pop_connection_sock(int fd, pop_combox *cb);
-    pop_connection_sock(pop_connection_sock &me);
+    pop_connection_sock(pop_combox* cb);
+    pop_connection_sock(int fd, pop_combox* cb);
+    pop_connection_sock(pop_connection_sock& me);
 
-    virtual pop_connection *Clone();
-    virtual void reset() {}
+    virtual pop_connection* Clone();
+    virtual void reset() {
+    }
 
     int sockfd;
 };
@@ -40,33 +42,32 @@ public:
  * @author Tuan Anh Nguyen
  *
  */
-class pop_combox_socket:public pop_combox {
+class pop_combox_socket : public pop_combox {
 public:
     pop_combox_socket();
 
     virtual ~pop_combox_socket();
 
-    virtual bool Create(int port=0, bool server=false);
+    virtual bool Create(int port = 0, bool server = false);
     virtual bool Create(const char* /*address*/, bool /*server*/) {
         return false;
     }
 
-    virtual bool Connect(const char *url);
+    virtual bool Connect(const char* url);
 
-    virtual int Send(const char *s,int len);
-    virtual int Send(const char *s,int len, pop_connection *connection);
+    virtual int Send(const char* s, int len);
+    virtual int Send(const char* s, int len, pop_connection* connection);
     virtual pop_connection* get_connection() {
-        if(!peer) {
+        if (!peer) {
             return NULL;
         }
         return peer;
     }
 
+    virtual int Recv(char* s, int len);
+    virtual int Recv(char* s, int len, pop_connection* connection);
 
-    virtual int Recv(char *s,int len);
-    virtual int Recv(char *s,int len, pop_connection *connection);
-
-    virtual pop_connection *Wait();
+    virtual pop_connection* Wait();
 
     virtual void Close();
 
@@ -79,15 +80,15 @@ public:
     virtual std::string GetProtocol();
 
 protected:
-    virtual pop_connection_sock *CreateConnection(int fd);
+    virtual pop_connection_sock* CreateConnection(int fd);
     bool CloseSock(int fd);
-    bool Connect(const char *host,int port);
+    bool Connect(const char* host, int port);
 
-    int GetSockInfo(sockaddr &info,socklen_t &len);
+    int GetSockInfo(sockaddr& info, socklen_t& len);
     int GetPort();
 
-    int GetOpt(int level, int opt, char *buf, socklen_t &len);
-    int SetOpt(int level, int opt, char *buf, socklen_t len);
+    int GetOpt(int level, int opt, char* buf, socklen_t& len);
+    int SetOpt(int level, int opt, char* buf, socklen_t len);
 
 protected:
     int sockfd;
@@ -99,10 +100,10 @@ protected:
 #else
     std::vector<pollfd> pollarray;
 #endif
-    pop_connection_sock *peer;
+    pop_connection_sock* peer;
 
-    //Only used by combox server...
-    std::vector<pop_connection_sock *> connarray;
+    // Only used by combox server...
+    std::vector<pop_connection_sock*> connarray;
     int index;
     int nready;
 };

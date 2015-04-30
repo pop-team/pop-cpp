@@ -3,13 +3,12 @@
 #include <unistd.h>
 
 Integer::Integer() {
-    printf("Create remote object Integer on %s (od.search fixed)\n",
-           (const char *)POPSystem::GetHost());
+    printf("Create remote object Integer on %s (od.search fixed)\n", (const char*)POPSystem::GetHost());
 }
 
 Integer::Integer(int maxhop, int timeout) {
-    printf("Create remote object Integer on %s (od.search(%d, 0, %d))\n",
-           (const char *)POPSystem::GetHost(), maxhop, timeout);
+    printf("Create remote object Integer on %s (od.search(%d, 0, %d))\n", (const char*)POPSystem::GetHost(), maxhop,
+           timeout);
 }
 
 Integer::~Integer() {
@@ -17,14 +16,14 @@ Integer::~Integer() {
 }
 
 void Integer::Set(int val) {
-    data=val;
+    data = val;
 }
 
 int Integer::Get() {
     return data;
 }
 
-void Integer::Add(Integer &other) {
+void Integer::Add(Integer& other) {
     data += other.Get();
 }
 

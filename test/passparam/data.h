@@ -1,7 +1,6 @@
 #ifndef _DATA_H_
 #define _DATA_H_
 
-
 class Data {
 public:
     Data();

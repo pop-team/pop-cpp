@@ -15,9 +15,7 @@
 #include <unistd.h>
 //#include <semaphor.h>
 
-
 using namespace popfile;
-
 
 const char* POPFileBuffer::POPFILEBUFFER_FULL_WITHOUT_REMAINING = "FULL";
 
@@ -44,7 +42,7 @@ POPFileBuffer::~POPFileBuffer() {
  */
 std::string POPFileBuffer::buffer_add(std::string value) {
     std::string remaining;
-    if(value.length() < remainingCapacity) {
+    if (value.length() < remainingCapacity) {
         popfile_buffer_out << value;
         remainingCapacity -= value.length();
     } else {
@@ -53,7 +51,7 @@ std::string POPFileBuffer::buffer_add(std::string value) {
         remainingCapacity -= toadd.length();
         popfile_buffer_out << toadd;
         flush();
-        if(remaining.compare("") == 0) {
+        if (remaining.compare("") == 0) {
             remaining = POPFILEBUFFER_FULL_WITHOUT_REMAINING;
         }
     }
@@ -65,7 +63,7 @@ std::string POPFileBuffer::buffer_add(std::string value) {
  * @return void
  */
 void POPFileBuffer::flush() {
-    if(remainingCapacity < capacity) {
+    if (remainingCapacity < capacity) {
         struct timeval start1, end1, start2, end2, start3, end3;
         long mtime, seconds, useconds;
 
@@ -73,12 +71,13 @@ void POPFileBuffer::flush() {
         std::string data(popfile_buffer_out.str().c_str());
         localpfmref->writeToRemoteStrip(stripPath, data, associatedPFM);
         gettimeofday(&end1, NULL);
-        seconds  = end1.tv_sec  - start1.tv_sec;
+        seconds = end1.tv_sec - start1.tv_sec;
         useconds = end1.tv_usec - start1.tv_usec;
-        mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+        mtime = ((seconds)*1000 + useconds / 1000.0) + 0.5;
 
-        cout << "[POPFILEBUFFER] Flushing buffer[" << identifier << "] " << " (Remaining Capacity="<< remainingCapacity  <<") - (Data flushed=" << popfile_buffer_out.str().length() << "): time [ms]" << mtime << popcendl;
-
+        cout << "[POPFILEBUFFER] Flushing buffer[" << identifier << "] "
+             << " (Remaining Capacity=" << remainingCapacity
+             << ") - (Data flushed=" << popfile_buffer_out.str().length() << "): time [ms]" << mtime << popcendl;
 
         popfile_buffer_out.str("");
         remainingCapacity = capacity;
@@ -91,8 +90,7 @@ void POPFileBuffer::flush() {
  * @return  Data read from the buffer as a string
  */
 std::string POPFileBuffer::buffer_get(long size) {
-    if(popfile_buffer_in.str().length() < size) {
-
+    if (popfile_buffer_in.str().length() < size) {
         cout << "[POPFILEBUFFER] Not enough data in buffer" << popcendl;
     } else {
         std::string data = popfile_buffer_in.str().substr(0, size);

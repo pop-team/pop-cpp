@@ -7,7 +7,7 @@ POPObject::POPObject(int id) : id(id) {
 }
 
 POPObject::~POPObject() {
-    cout << "POPObject  " << id << " on machine " << POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPObject  " << id << " on machine " << POPSystem::GetHost() << " is being destroyed" << popcendl;
 }
 
 void POPObject::firstMethod() {
@@ -15,7 +15,7 @@ void POPObject::firstMethod() {
 }
 
 void POPObject::secondMethod() {
-    cout << "Second method is called on POPObject  " << id << " " << POPSystem::GetHost() <<popcendl;
+    cout << "Second method is called on POPObject  " << id << " " << POPSystem::GetHost() << popcendl;
 }
 
 @pack(POPObject);

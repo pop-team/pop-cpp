@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     POPObject o;
     int n = 10;
     int i[n];
-    for(int j=0; j < 10; j++) {
+    for (int j = 0; j < 10; j++) {
         i[j] = j;
     }
 

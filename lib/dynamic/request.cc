@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement (clementval)
@@ -31,63 +32,62 @@ Request::Request(int maxHops, std::string nodeId, std::string operatingSystem, i
                  std::string encoding) {
     init();
     _maxHops = maxHops;
-    if(!nodeId.empty()) {
+    if (!nodeId.empty()) {
         _nodeId = nodeId;
         _hasNodeIdSet = true;
     }
-    if(!operatingSystem.empty()) {
+    if (!operatingSystem.empty()) {
         _operatingSystem = operatingSystem;
         _hasOperatingSystemSet = true;
     }
-    if(minCpuSpeed != 0) {
+    if (minCpuSpeed != 0) {
         _minCpuSpeed = minCpuSpeed;
         _hasMinCpuSpeedSet = true;
     }
-    if(expectedCpuSpeed != 0) {
+    if (expectedCpuSpeed != 0) {
         _expectedCpuSpeed = expectedCpuSpeed;
         _hasExpectedCpuSpeedSet = true;
     }
-    if(minMemorySize != 0) {
+    if (minMemorySize != 0) {
         _minMemorySize = minMemorySize;
         _hasMinMemorySizeSet = true;
     }
-    if(expectedMemorySize != 0) {
+    if (expectedMemorySize != 0) {
         _expectedMemorySize = expectedMemorySize;
         _hasExpectedMemorySizeSet = true;
     }
-    if(minNetworkBandwidth != 0) {
+    if (minNetworkBandwidth != 0) {
         _minNetworkBandwidth = minNetworkBandwidth;
         _hasMinNetworkBandwidthSet = true;
     }
-    if(expectedNetworkBandwidth != 0) {
+    if (expectedNetworkBandwidth != 0) {
         _expectedNetworkBandwidth = expectedNetworkBandwidth;
         _hasExpectedNetworkBandwidthSet = true;
     }
-    if(minDiskSpace != 0) {
+    if (minDiskSpace != 0) {
         _minDiskSpace = minDiskSpace;
         _hasMinDiskSpaceSet = true;
     }
-    if(expectedDiskSpace != 0) {
+    if (expectedDiskSpace != 0) {
         _expectedDiskSpace = expectedDiskSpace;
         _hasExpectedDiskSpaceSet = true;
     }
-    if(minPower != 0) {
+    if (minPower != 0) {
         _minPower = minPower;
         _hasMinPowerSet = true;
     }
-    if(expectedPower !=0) {
+    if (expectedPower != 0) {
         _expectedPower = expectedPower;
         _hasExpectedPowerSet = true;
     }
-    if(!protocol.empty()) {
+    if (!protocol.empty()) {
         _protocol = protocol;
         _hasProtocolSet = true;
     }
-    if(!encoding.empty()) {
+    if (!encoding.empty()) {
         _encoding = encoding;
         _hasEncodingSet = true;
     }
-
 }
 
 // method initializing the request. Put the haveXXX to false and init
@@ -112,7 +112,8 @@ void Request::init() {
 }
 
 // destructor
-Request::~Request() {}
+Request::~Request() {
+}
 
 /**
  * ViSaG : clementval
@@ -128,69 +129,69 @@ bool Request::isEndRequest() {
  * Set the end request flag as true
  */
 void Request::setAsEndRequest() {
-    _endingSignal=true;
+    _endingSignal = true;
 }
 
 // method used to pass the object in the grid.
-void Request::Serialize(POPBuffer &buf, bool pack) {
-    if(pack) { // marshalling
+void Request::Serialize(POPBuffer& buf, bool pack) {
+    if (pack) {  // marshalling
         // marshalling the request's info
         buf.Pack(&_uniqueId, 1);
         buf.Pack(&_maxHops, 1);
         buf.Pack(&_hasNodeIdSet, 1);
-        if(_hasNodeIdSet) {
+        if (_hasNodeIdSet) {
             buf.Pack(&_nodeId, 1);
         }
         buf.Pack(&_hasOperatingSystemSet, 1);
-        if(_hasOperatingSystemSet) {
+        if (_hasOperatingSystemSet) {
             buf.Pack(&_operatingSystem, 1);
         }
         buf.Pack(&_hasMinCpuSpeedSet, 1);
-        if(_hasMinCpuSpeedSet) {
+        if (_hasMinCpuSpeedSet) {
             buf.Pack(&_minCpuSpeed, 1);
         }
         buf.Pack(&_hasExpectedCpuSpeedSet, 1);
-        if(_hasExpectedCpuSpeedSet) {
+        if (_hasExpectedCpuSpeedSet) {
             buf.Pack(&_hasExpectedCpuSpeedSet, 1);
         }
         buf.Pack(&_hasMinMemorySizeSet, 1);
-        if(_hasMinMemorySizeSet) {
+        if (_hasMinMemorySizeSet) {
             buf.Pack(&_minMemorySize, 1);
         }
         buf.Pack(&_hasExpectedMemorySizeSet, 1);
-        if(_hasExpectedMemorySizeSet) {
+        if (_hasExpectedMemorySizeSet) {
             buf.Pack(&_expectedMemorySize, 1);
         }
         buf.Pack(&_hasMinNetworkBandwidthSet, 1);
-        if(_hasMinNetworkBandwidthSet) {
+        if (_hasMinNetworkBandwidthSet) {
             buf.Pack(&_minNetworkBandwidth, 1);
         }
         buf.Pack(&_hasExpectedNetworkBandwidthSet, 1);
-        if(_hasExpectedNetworkBandwidthSet) {
+        if (_hasExpectedNetworkBandwidthSet) {
             buf.Pack(&_expectedNetworkBandwidth, 1);
         }
         buf.Pack(&_hasMinDiskSpaceSet, 1);
-        if(_hasMinDiskSpaceSet) {
+        if (_hasMinDiskSpaceSet) {
             buf.Pack(&_minDiskSpace, 1);
         }
         buf.Pack(&_hasExpectedDiskSpaceSet, 1);
-        if(_hasExpectedDiskSpaceSet) {
+        if (_hasExpectedDiskSpaceSet) {
             buf.Pack(&_expectedDiskSpace, 1);
         }
         buf.Pack(&_hasMinPowerSet, 1);
-        if(_hasMinPowerSet) {
+        if (_hasMinPowerSet) {
             buf.Pack(&_minPower, 1);
         }
         buf.Pack(&_hasExpectedPowerSet, 1);
-        if(_hasExpectedPowerSet) {
+        if (_hasExpectedPowerSet) {
             buf.Pack(&_expectedPower, 1);
         }
         buf.Pack(&_hasProtocolSet, 1);
-        if(_hasProtocolSet) {
+        if (_hasProtocolSet) {
             buf.Pack(&_protocol, 1);
         }
         buf.Pack(&_hasEncodingSet, 1);
-        if(_hasEncodingSet) {
+        if (_hasEncodingSet) {
             buf.Pack(&_encoding, 1);
         }
 
@@ -198,93 +199,91 @@ void Request::Serialize(POPBuffer &buf, bool pack) {
          * ViSaG : clementval
          * Marshalling the new variables for ViSaG
          */
-        buf.Pack(&_pki,1);
-        buf.Pack(&_mainPki,1);
+        buf.Pack(&_pki, 1);
+        buf.Pack(&_mainPki, 1);
         buf.Pack(&_popappid, 1);
         buf.Pack(&_endingSignal, 1);
-        _wb.Serialize(buf, true); //marshalling the POPWayback
+        _wb.Serialize(buf, true);  // marshalling the POPWayback
 
         /* ViSaG */
 
-        //marshalling the exploration list
+        // marshalling the exploration list
         explorationList.Serialize(buf, true);
 
-    } else { // unmarshalling
+    } else {  // unmarshalling
         // unmarshalling the request's info
         buf.UnPack(&_uniqueId, 1);
         buf.UnPack(&_maxHops, 1);
         buf.UnPack(&_hasNodeIdSet, 1);
-        if(_hasNodeIdSet) {
+        if (_hasNodeIdSet) {
             buf.UnPack(&_nodeId, 1);
         }
         buf.UnPack(&_hasOperatingSystemSet, 1);
-        if(_hasOperatingSystemSet) {
+        if (_hasOperatingSystemSet) {
             buf.UnPack(&_operatingSystem, 1);
         }
         buf.UnPack(&_hasMinCpuSpeedSet, 1);
-        if(_hasMinCpuSpeedSet) {
+        if (_hasMinCpuSpeedSet) {
             buf.UnPack(&_minCpuSpeed, 1);
         }
         buf.UnPack(&_hasExpectedCpuSpeedSet, 1);
-        if(_hasExpectedCpuSpeedSet) {
+        if (_hasExpectedCpuSpeedSet) {
             buf.UnPack(&_hasExpectedCpuSpeedSet, 1);
         }
         buf.UnPack(&_hasMinMemorySizeSet, 1);
-        if(_hasMinMemorySizeSet) {
+        if (_hasMinMemorySizeSet) {
             buf.UnPack(&_minMemorySize, 1);
         }
         buf.UnPack(&_hasExpectedMemorySizeSet, 1);
-        if(_hasExpectedMemorySizeSet) {
+        if (_hasExpectedMemorySizeSet) {
             buf.UnPack(&_expectedMemorySize, 1);
         }
         buf.UnPack(&_hasMinNetworkBandwidthSet, 1);
-        if(_hasMinNetworkBandwidthSet) {
+        if (_hasMinNetworkBandwidthSet) {
             buf.UnPack(&_minNetworkBandwidth, 1);
         }
         buf.UnPack(&_hasExpectedNetworkBandwidthSet, 1);
-        if(_hasExpectedNetworkBandwidthSet) {
+        if (_hasExpectedNetworkBandwidthSet) {
             buf.UnPack(&_expectedNetworkBandwidth, 1);
         }
         buf.UnPack(&_hasMinDiskSpaceSet, 1);
-        if(_hasMinDiskSpaceSet) {
+        if (_hasMinDiskSpaceSet) {
             buf.UnPack(&_minDiskSpace, 1);
         }
         buf.UnPack(&_hasExpectedDiskSpaceSet, 1);
-        if(_hasExpectedDiskSpaceSet) {
+        if (_hasExpectedDiskSpaceSet) {
             buf.UnPack(&_expectedDiskSpace, 1);
         }
         buf.UnPack(&_hasMinPowerSet, 1);
-        if(_hasMinPowerSet) {
+        if (_hasMinPowerSet) {
             buf.UnPack(&_minPower, 1);
         }
         buf.UnPack(&_hasExpectedPowerSet, 1);
-        if(_hasExpectedPowerSet) {
+        if (_hasExpectedPowerSet) {
             buf.UnPack(&_expectedPower, 1);
         }
         buf.UnPack(&_hasProtocolSet, 1);
-        if(_hasProtocolSet) {
+        if (_hasProtocolSet) {
             buf.UnPack(&_protocol, 1);
         }
         buf.UnPack(&_hasEncodingSet, 1);
-        if(_hasEncodingSet) {
+        if (_hasEncodingSet) {
             buf.UnPack(&_encoding, 1);
         }
-
-
 
         /**
          * ViSaG : clementval
          * Unmarshalling the new variables for ViSaG
          */
-        buf.UnPack(&_pki,1);
-        buf.UnPack(&_mainPki,1);
+        buf.UnPack(&_pki, 1);
+        buf.UnPack(&_mainPki, 1);
         buf.UnPack(&_popappid, 1);
         buf.UnPack(&_endingSignal, 1);
-        _wb.Serialize(buf, false); //unmarshalling the POPWayback
+        _wb.Serialize(buf, false);  // unmarshalling the POPWayback
 
         /* ViSaG */
 
-        //unmarshalling the explorationList
+        // unmarshalling the explorationList
         explorationList.Serialize(buf, false);
     }
 }
@@ -471,8 +470,8 @@ bool Request::hasExpectedDiskSpaceSet() {
 
 // set the min compute power
 void Request::setMinPower(float p) {
-    _hasMinPowerSet=true;
-    _minPower=p;
+    _hasMinPowerSet = true;
+    _minPower = p;
 }
 
 // get the min compute power
@@ -487,8 +486,8 @@ bool Request::hasMinPowerSet() {
 
 // set the expected compute power
 void Request::setExpectedPower(float p) {
-    _hasExpectedPowerSet=true;
-    _expectedPower=p;
+    _hasExpectedPowerSet = true;
+    _expectedPower = p;
 }
 
 // get the expected compute power
@@ -503,8 +502,8 @@ bool Request::hasExpectedPowerSet() {
 
 // set the protcol
 void Request::setProtocol(std::string prot) {
-    _hasProtocolSet=true;
-    _protocol=prot;
+    _hasProtocolSet = true;
+    _protocol = prot;
 }
 
 // get the protocol
@@ -519,8 +518,8 @@ bool Request::hasProtocolSet() {
 
 // set the encoding
 void Request::setEncoding(std::string enc) {
-    _hasEncodingSet=true;
-    _encoding=enc;
+    _hasEncodingSet = true;
+    _encoding = enc;
 }
 
 // get the encoding
@@ -533,16 +532,15 @@ bool Request::hasEncodingSet() {
     return _hasEncodingSet;
 }
 
-//Set the PKI of the initiator
+// Set the PKI of the initiator
 void Request::setPKI(std::string pki) {
     _pki = pki;
 }
 
-//Get the PKI of the initiator
+// Get the PKI of the initiator
 std::string Request::getPKI() {
     return _pki;
 }
-
 
 void Request::setMainPKI(std::string pki) {
     _mainPki = pki;
@@ -552,13 +550,11 @@ std::string Request::getMainPKI() {
     return _mainPki;
 }
 
-
 // Add a list of nodes in the exploration list (neighbors of the nodeId's node)
-void Request::addNodeToExplorationList(std::string nodeId,
-                                       std::list<std::string> neighbors) {
-    explorationList.addListNode(nodeId,neighbors);
+void Request::addNodeToExplorationList(std::string nodeId, std::list<std::string> neighbors) {
+    explorationList.addListNode(nodeId, neighbors);
     // decrement max hops if not unlimited
-    if(_maxHops != UNLIMITED_HOPS) {
+    if (_maxHops != UNLIMITED_HOPS) {
         _maxHops--;
     }
 }
@@ -613,4 +609,3 @@ const std::string Request::getWbAsString() const {
     std::string wb = _wb.getAsString();
     return wb;
 }
-

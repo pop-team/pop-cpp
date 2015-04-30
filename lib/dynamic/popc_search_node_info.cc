@@ -6,26 +6,29 @@
  *
  * Modifications :
  * Authors      Date            Comment
- * clementval   2010/04/19  All code added for the semester project begins with this comment //Added by clementval, ends with //End of add
- * clementval   2010/04/19  All code modified during the semester project begins with //Modified by clementval, ends with //End of modification
+ * clementval   2010/04/19  All code added for the semester project begins with this comment //Added by clementval, ends
+ *with //End of add
+ * clementval   2010/04/19  All code modified during the semester project begins with //Modified by clementval, ends
+ *with //End of modification
  * clementval   2010/04/25  Add needed variable for POP-C++ object description
  * clementval   2010/05/19  Rename NodeInfo in POPCSearchNodeInfo and NodeInfos in POPCSearchNodeInfos
  */
-
 
 #include "pop_search_node_info.h"
 #include <iostream>
 #include <unistd.h>
 
 // Default constructor
-POPCSearchNodeInfo::POPCSearchNodeInfo() {}
+POPCSearchNodeInfo::POPCSearchNodeInfo() {
+}
 
 // Destructor
-POPCSearchNodeInfo::~POPCSearchNodeInfo() {}
+POPCSearchNodeInfo::~POPCSearchNodeInfo() {
+}
 
 // method used to pass the object in the grid
-void POPCSearchNodeInfo::Serialize(POPBuffer &buf, bool pack) {
-    if(pack) { // marshalling all the information
+void POPCSearchNodeInfo::Serialize(POPBuffer& buf, bool pack) {
+    if (pack) {  // marshalling all the information
         buf.Pack(&nodeId, 1);
         buf.Pack(&operatingSystem, 1);
         buf.Pack(&power, 1);
@@ -35,8 +38,8 @@ void POPCSearchNodeInfo::Serialize(POPBuffer &buf, bool pack) {
         buf.Pack(&diskSpace, 1);
         buf.Pack(&protocol, 1);
         buf.Pack(&encoding, 1);
-        buf.Pack(&pki,1);
-    } else { // unmarshalling all the information
+        buf.Pack(&pki, 1);
+    } else {  // unmarshalling all the information
         buf.UnPack(&nodeId, 1);
         buf.UnPack(&operatingSystem, 1);
         buf.UnPack(&power, 1);
@@ -46,7 +49,7 @@ void POPCSearchNodeInfo::Serialize(POPBuffer &buf, bool pack) {
         buf.UnPack(&diskSpace, 1);
         buf.UnPack(&protocol, 1);
         buf.UnPack(&encoding, 1);
-        buf.UnPack(&pki,1);
+        buf.UnPack(&pki, 1);
     }
 }
 
@@ -59,18 +62,20 @@ std::string POPCSearchNodeInfo::getPKI() {
 }
 
 // Default constructor
-POPCSearchNodeInfos::POPCSearchNodeInfos() {}
+POPCSearchNodeInfos::POPCSearchNodeInfos() {
+}
 
 // Default destructor
-POPCSearchNodeInfos::~POPCSearchNodeInfos() {}
+POPCSearchNodeInfos::~POPCSearchNodeInfos() {
+}
 
 // method used to pass the object in the grid
-void POPCSearchNodeInfos::Serialize(POPBuffer &buf, bool pack) {
-    if(pack) {
+void POPCSearchNodeInfos::Serialize(POPBuffer& buf, bool pack) {
+    if (pack) {
         // marshalling all the 'DNodeInfo' contained in the list '_DNodeInfos'
         int nElts = _nodeInfos.size();
         buf.Pack(&nElts, 1);
-        for(auto& info : _nodeInfos){
+        for (auto& info : _nodeInfos) {
             info.Serialize(buf, true);
         }
     } else {
@@ -79,7 +84,7 @@ void POPCSearchNodeInfos::Serialize(POPBuffer &buf, bool pack) {
         buf.UnPack(&nElts, 1);
         int i;
         //_nodeInfos.clear(); // LWK: Added this line for safety
-        for(i=0; i<nElts; i++) {
+        for (i = 0; i < nElts; i++) {
             POPCSearchNodeInfo info;
             info.Serialize(buf, false);
             _nodeInfos.push_back(info);
@@ -92,4 +97,3 @@ void POPCSearchNodeInfos::addANodeInfo(POPCSearchNodeInfo node) {
 std::list<POPCSearchNodeInfo> POPCSearchNodeInfos::getNodeInfos() {
     return _nodeInfos;
 }
-

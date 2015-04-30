@@ -7,8 +7,7 @@ public:
     ~X();
     int GetIdent();
     void SetIdent(int i);
-    virtual void Serialize(POPBuffer &buf, bool pack);
-
+    virtual void Serialize(POPBuffer& buf, bool pack);
 
 private:
     int ident;

@@ -18,7 +18,7 @@
 
 class MetaDataStrip;
 
-//Define map of strip as a new type
+// Define map of strip as a new type
 typedef std::map<int, MetaDataStrip> MetaDataStripMap;
 
 /**
@@ -28,8 +28,8 @@ class MetaDataInfo {
 public:
     std::string info_absolute_path;
     std::string info_original_name;
-    long info_ending_pointer;           // Define the pointer in the last strip used to write.
-    int info_ending_strip;              // Define the last strip used to write. Will be used in the next writing process.
+    long info_ending_pointer;  // Define the pointer in the last strip used to write.
+    int info_ending_strip;     // Define the last strip used to write. Will be used in the next writing process.
 };
 
 /**
@@ -60,7 +60,6 @@ public:
  */
 class POPFileMetaData {
 public:
-
     static const char* POPFILE_METADATA_COMMENT;
     static const char* POPFILE_METADATA_NODE_ROOT;
     static const char* POPFILE_METADATA_NODE_INFOS;
@@ -93,7 +92,8 @@ public:
     long get_ending_pointer();
     int get_ending_strip();
 
-    void addStripInfo(bool isLocal, int identifier, std::string absolutePath, std::string stripName, long offset, std::string accesspoint);
+    void addStripInfo(bool isLocal, int identifier, std::string absolutePath, std::string stripName, long offset,
+                      std::string accesspoint);
 
     int get_strips_count();
 
@@ -118,7 +118,6 @@ private:
     std::string convertLong(long number);
     long convertStringToLong(std::string value);
     int convertStringToInt(std::string value);
-
 };
 
 #endif /* POPFILEMETADATA_H_INCLUDE */

@@ -8,7 +8,8 @@
  */
 
 POPObject::POPObject() {
-    cout << "POPObject is processing its construction (5 secondes delay) on machine:" << POPSystem::GetHost() << popcendl;
+    cout << "POPObject is processing its construction (5 secondes delay) on machine:" << POPSystem::GetHost()
+         << popcendl;
 #ifndef __WIN32__
     sleep(5);
 #else
@@ -31,7 +32,7 @@ void POPObject::AllocateObject(){
 }
 */
 POPObject::~POPObject() {
-    cout << "POPObject on machine " << POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPObject on machine " << POPSystem::GetHost() << " is being destroyed" << popcendl;
 }
 
 void POPObject::firstMethod() {
@@ -39,7 +40,7 @@ void POPObject::firstMethod() {
 }
 
 void POPObject::secondMethod() {
-    cout << "Second method is called on " << POPSystem::GetHost() <<popcendl;
+    cout << "Second method is called on " << POPSystem::GetHost() << popcendl;
 }
 
 @pack(POPObject);

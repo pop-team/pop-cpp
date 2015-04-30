@@ -4,7 +4,8 @@
  * Description : "main" entry for the object executable
  * Initialization of parallel objects
  * The Job service can pass to a parallel object environment by:
- * 1- Specify the argument -jobservice=<code services...> when launching the object binary code (not used by the Interface)
+ * 1- Specify the argument -jobservice=<code services...> when launching the object binary code (not used by the
+ *Interface)
  * 2- Set environment variable "POPC_JOBSERVICE to the job service point
  * 3- <localhost>:2711 ( if 1/ and 2/ are not specified )
  * Creation date : -
@@ -31,26 +32,21 @@
 #include "pop_broker_factory.h"
 #include "pop_buffer_factory_finder.h"
 
+bool CheckIfPacked(const char* objname);
 
+// extern pop_broker *InitBroker(char *objname);
+// extern void QueryObjectList(char *str, int n);
 
-bool CheckIfPacked(const char *objname);
-
-//extern pop_broker *InitBroker(char *objname);
-//extern void QueryObjectList(char *str, int n);
-
-
-int main(int argc, char **argv) {
-
-
-
+int main(int argc, char** argv) {
     // If the application is using MPI Communication support
-    if(pop_utils::checkremove(&argc, &argv, "-mpi") != NULL) {
+    if (pop_utils::checkremove(&argc, &argv, "-mpi") != NULL) {
         LOG_DEBUG("-mpi found");
         // Init MPI for multithread support
-        if(!MPI::Is_initialized()) {
+        if (!MPI::Is_initialized()) {
             LOG_DEBUG("init");
             // Init MPI for multithread support
-            int required_support = MPI_THREAD_SERIALIZED; // Required multiple thread support to allow multiple connection to an object
+            int required_support =
+                MPI_THREAD_SERIALIZED;  // Required multiple thread support to allow multiple connection to an object
             int provided_support = MPI::Init_thread(required_support);
             LOG_DEBUG("init end");
         }
@@ -69,11 +65,8 @@ int main(int argc, char **argv) {
         LOG_DEBUG("send %d rank", node_id);
     }
 
-
-
-
-    char *rcore = pop_utils::checkremove(&argc,&argv,"-core=");
-    if(rcore != NULL) {
+    char* rcore = pop_utils::checkremove(&argc, &argv, "-core=");
+    if (rcore != NULL) {
         pop_system::processor_set(atoi(rcore));
     }
 #ifdef UC_LINUX
@@ -84,7 +77,7 @@ int main(int argc, char **argv) {
 
     pop_system sys;
     int status = 0;
-    pop_combox *callback = NULL;
+    pop_combox* callback = NULL;
     // Connect to callback
     // No need in MPI version, connection is already active and can exchange data
     /*char *addr = pop_utils::checkremove(&argc, &argv, "-callback=");
@@ -106,21 +99,20 @@ int main(int argc, char **argv) {
         }
     }*/
 
-    pop_broker_factory::CheckIfPacked = &CheckIfPacked; // transmit the address of the check function to broker factory
-    pop_broker *broker_factory = pop_broker_factory::Create(&argc, &argv);
+    pop_broker_factory::CheckIfPacked = &CheckIfPacked;  // transmit the address of the check function to broker factory
+    pop_broker* broker_factory = pop_broker_factory::Create(&argc, &argv);
 
-    if(broker_factory == NULL) {
+    if (broker_factory == NULL) {
         status = 1;
-    } else if(!broker_factory->Initialize(&argc, &argv)) {
+    } else if (!broker_factory->Initialize(&argc, &argv)) {
         // Initialize broker
         LOG_ERROR("Fail to initialize the broker for class %s", pop_broker::classname.c_str());
         status = 1;
     }
     LOG_DEBUG("broker: init");
 
-
     // Send accesspoint via callback
-    if(callback != NULL) {
+    if (callback != NULL) {
         LOG_DEBUG("BROKER: Sending status and accesspoint");
         char url[1024];
         int len;
@@ -128,7 +120,7 @@ int main(int argc, char **argv) {
         // Connect to the end point
         pop_connection* connection = callback->get_connection();
 
-        pop_buffer *buf = callback->GetBufferFactory()->CreateBuffer();
+        pop_buffer* buf = callback->GetBufferFactory()->CreateBuffer();
 
         pop_message_header h("Callback");
         buf->SetHeader(h);
@@ -140,9 +132,8 @@ int main(int argc, char **argv) {
         LOG_DEBUG("BROKER: status sent %d", status);
 
         buf->Push("address", "pop_accesspoint", 1);
-        pop_broker::accesspoint.Serialize(*buf,true);
+        pop_broker::accesspoint.Serialize(*buf, true);
         buf->Pop();
-
 
         bool ret = buf->Send((*callback), connection);
 
@@ -151,7 +142,7 @@ int main(int argc, char **argv) {
         connection->reset();
         delete callback;
 
-        if(!ret) {
+        if (!ret) {
             LOG_ERROR("fail to send accesspoint via callback");
             delete broker_factory;
             MPI::Finalize();
@@ -162,24 +153,22 @@ int main(int argc, char **argv) {
     }*/
 
     // Set the current working directory
-    char *cwd = pop_utils::checkremove(&argc,&argv,"-cwd=");
-    if(cwd != NULL) {
-        if(chdir(cwd) != 0) {
-            LOG_DEBUG("current working dir cannot be set set to %s",cwd);
+    char* cwd = pop_utils::checkremove(&argc, &argv, "-cwd=");
+    if (cwd != NULL) {
+        if (chdir(cwd) != 0) {
+            LOG_DEBUG("current working dir cannot be set set to %s", cwd);
         }
     }
 
     // Start the broker
-    if(status == 0) {
+    if (status == 0) {
         broker_factory->Run();
         LOG_DEBUG("Broker started");
         delete broker_factory;
-    } else if(broker_factory != NULL) {
+    } else if (broker_factory != NULL) {
         delete broker_factory;
         MPI::Finalize();
     }
-
-
 
     return status;
 }

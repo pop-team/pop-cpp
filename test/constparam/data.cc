@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include "data.h"
 
-Data::Data() {}
+Data::Data() {
+}
 
-Data::~Data() {}
+Data::~Data() {
+}
 
 void Data::SetInternalData(int d) {
     theData = d;
@@ -12,4 +14,3 @@ void Data::SetInternalData(int d) {
 int Data::GetInternalData() {
     return theData;
 }
-

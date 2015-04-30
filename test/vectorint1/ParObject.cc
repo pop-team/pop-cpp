@@ -6,19 +6,20 @@ ParObject::ParObject() {
 }
 
 ParObject::ParObject(POPString machine) {
-    printf("VectorInt1: Creating object ParObject on %s\n",POPSystem::GetHost().c_str());
+    printf("VectorInt1: Creating object ParObject on %s\n", POPSystem::GetHost().c_str());
 }
 
 ParObject::ParObject(float f) {
-    printf("VectorInt1: Creating object ParObject with power %f\n",f);
+    printf("VectorInt1: Creating object ParObject with power %f\n", f);
 }
 
 ParObject::~ParObject() {
-    printf("VectorInt1: Destroying the object ParObject... %d, %d\n",  theData.GetInternalData().size(), theData.GetMyData());
+    printf("VectorInt1: Destroying the object ParObject... %d, %d\n", theData.GetInternalData().size(),
+           theData.GetMyData());
 }
 
 void ParObject::SetData(POPintVector data) {
-    theData=data;
+    theData = data;
 }
 
 POPintVector ParObject::GetData() {

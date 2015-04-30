@@ -12,8 +12,8 @@ MatWorker::MatWorker() {
     resMatrix = NULL;
     bMatrix = NULL;
 
-    sizeB=0;
-    nextBbloc=false;
+    sizeB = 0;
+    nextBbloc = false;
 }
 
 MatWorker::MatWorker(int i, int nbLineA, int nbColA, int nbColB, POPString machine) {
@@ -21,59 +21,57 @@ MatWorker::MatWorker(int i, int nbLineA, int nbColA, int nbColB, POPString machi
     nbColsA = nbColA;
     nbColsB = nbColB;
     id = i;
-    resMatrix = new Matrix2Dlc(nbLineA,nbColB);
+    resMatrix = new Matrix2Dlc(nbLineA, nbColB);
     resMatrix->zero();
 
-    sizeB=0;
-    nextBbloc=false;
-    printf("Worker %d created on machine:%s\n",i, POPSystem::GetHost().c_str());
+    sizeB = 0;
+    nextBbloc = false;
+    printf("Worker %d created on machine:%s\n", i, POPSystem::GetHost().c_str());
 }
 
 MatWorker::~MatWorker() {
-    if(resMatrix != NULL) {
+    if (resMatrix != NULL) {
         delete resMatrix;
     }
-    if(bMatrix != NULL) {
+    if (bMatrix != NULL) {
         delete bMatrix;
     }
 }
 
 void MatWorker::solve(Matrix2Dlc a, Matrix2Dcl b) {
     timer.Start();
-    bMatrix = new Matrix2Dcl(b.getLines(),b.getCols());
-    bMatrix->setColsBloc(0,b);
+    bMatrix = new Matrix2Dcl(b.getLines(), b.getCols());
+    bMatrix->setColsBloc(0, b);
     do {
         x.lock();
-        if(nextBbloc) {
+        if (nextBbloc) {
             x.wait();
         }
-        for(int j=0; j<nbLinesA; j++)
-            for(int k=0; k<b.getCols(); k++)
-                for(int l=0; l<nbColsA; l++)
-                    resMatrix->set(j,k+sizeB,
-                                   resMatrix->get(j,k+sizeB)+a.get(j,l)*bMatrix->get(l,k));
+        for (int j = 0; j < nbLinesA; j++)
+            for (int k = 0; k < b.getCols(); k++)
+                for (int l = 0; l < nbColsA; l++)
+                    resMatrix->set(j, k + sizeB, resMatrix->get(j, k + sizeB) + a.get(j, l) * bMatrix->get(l, k));
         sizeB = sizeB + b.getCols();
-        nextBbloc=true;
+        nextBbloc = true;
         x.raise();
         x.unlock();
-    } while(sizeB<nbColsB);
-    computeTime=timer.Elapsed();
+    } while (sizeB < nbColsB);
+    computeTime = timer.Elapsed();
     timer.Stop();
 }
 
 void MatWorker::putB(Matrix2Dcl b) {
     x.lock();
-    if(!nextBbloc) {
+    if (!nextBbloc) {
         x.wait();
     }
-    bMatrix->setColsBloc(0,b);
-    nextBbloc=false;
+    bMatrix->setColsBloc(0, b);
+    nextBbloc = false;
     x.raise();
     x.unlock();
 }
 
-
-Matrix2Dlc MatWorker::getResult(double &t) {
+Matrix2Dlc MatWorker::getResult(double& t) {
     t = computeTime;
     return *resMatrix;
 }

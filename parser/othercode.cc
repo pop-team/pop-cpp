@@ -4,17 +4,18 @@
 #include <assert.h>
 
 // OtherCode implementation
-OtherCode::OtherCode(CodeFile *file): CodeData(file) {}
+OtherCode::OtherCode(CodeFile* file) : CodeData(file) {
+}
 
 void OtherCode::GenerateCode(std::string& output) {
     output += code;
 }
 
-void OtherCode::AddCode(const char *newcode) {
+void OtherCode::AddCode(const char* newcode) {
     code += newcode;
 }
 
-void OtherCode::AddCode(const char *newcode, int n) {
+void OtherCode::AddCode(const char* newcode, int n) {
     code += std::string(newcode, n);
 }
 

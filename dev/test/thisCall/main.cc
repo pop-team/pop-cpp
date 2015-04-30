@@ -21,7 +21,7 @@ int main(int argc, char** argv)
     o.fromSyncConc(ASYNCCONC);
     o.fromSyncConc(ASYNCMUTEX);
 
-    sleep(1); //Time to finish previous execution
+    sleep(1);  // Time to finish previous execution
 
     /* Call from a synchronous sequential method to other semantics methods using "this"
      * The calls to a synchronous sequential and a synchronous mutex method are fodbidden.
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     o.fromSyncSeq(ASYNCCONC);
     o.fromSyncSeq(ASYNCMUTEX);
 
-    sleep(1); //Time to finish previous execution
+    sleep(1);  // Time to finish previous execution
 
     /* Call from a synchronous sequential method to other semantics methods using "this"
      * The calls to any synchronous method are fodbidden.
@@ -47,7 +47,7 @@ int main(int argc, char** argv)
     o.fromSyncMutex(ASYNCCONC);
     o.fromSyncMutex(ASYNCMUTEX);
 
-    sleep(1); //Time to finish previous execution
+    sleep(1);  // Time to finish previous execution
 
     /* Call from a synchronous sequential method to other semantics methods using "this"
      * The calls to any mutex method are fodbidden.
@@ -60,7 +60,7 @@ int main(int argc, char** argv)
     o.fromAsyncConc(ASYNCCONC);
     o.fromAsyncConc(ASYNCMUTEX);
 
-    sleep(1); //Time to finish previous execution
+    sleep(1);  // Time to finish previous execution
 
     /* Call from a synchronous sequential method to other semantics methods using "this"
      * The calls to a synchronous sequential and synchronous mutex method are fodbidden.
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
     o.fromAsyncSeq(ASYNCCONC);
     o.fromAsyncSeq(ASYNCMUTEX);
 
-    sleep(1); //Time to finish previous execution
+    sleep(1);  // Time to finish previous execution
 
     /* Call from a synchronous sequential method to other semantics methods using "this"
      * The calls to any synchronous method are fodbidden.
@@ -86,32 +86,48 @@ int main(int argc, char** argv)
     o.fromAsyncMutex(ASYNCCONC);
     o.fromAsyncMutex(ASYNCMUTEX);
 
-
-    sleep(1); //Time to finish previous execution
+    sleep(1);  // Time to finish previous execution
 
     cout << "Calling method using this, TEST SUCCESSFUL" << popcendl;
     cout << popcendl;
     cout << popcendl;
     cout << "##########################################" << popcendl;
     cout << "Accepted call chart:" << popcendl;
-    cout << "-->            |sync conc   |sync seq |sync mutex  |async conc  |async seq   |async mutex     |" << popcendl;
-    cout << "---------------|------------|---------|------------|------------|------------|----------------|" << popcendl;
-    cout << "sync conc      |OK          |OK       |FREEZE      |OK          |OK          |NOT RECOMMENDED |" << popcendl;
-    cout << "---------------|------------|---------|------------|------------|------------|----------------|" << popcendl;
-    cout << "sync seq       |OK          |FREEZE   |FREEZE      |OK          |OK          |NOT RECOMMENDED |" << popcendl;
-    cout << "---------------|------------|---------|------------|------------|------------|----------------|" << popcendl;
-    cout << "sync mutex     |FREEZE      |FREEZE   |FREEZE      |OK          |OK          |NOT RECOMMENDED |" << popcendl;
-    cout << "---------------|------------|---------|------------|------------|------------|----------------|" << popcendl;
-    cout << "async conc     |OK          |OK       |FREEZE      |OK          |OK          |NOT RECOMMENDED |" << popcendl;
-    cout << "---------------|------------|---------|------------|------------|------------|----------------|" << popcendl;
-    cout << "async seq      |OK          |FREEZE   |FREEZE      |OK          |OK          |NOT RECOMMENDED |" << popcendl;
-    cout << "---------------|------------|---------|------------|------------|------------|----------------|" << popcendl;
-    cout << "async mutex    |FREEZE      |FREEZE   |FREEZE      |OK          |OK          |NOT RECOMMENDED |" << popcendl;
-    cout << "---------------|------------|---------|------------|------------|------------|----------------|" << popcendl;
+    cout << "-->            |sync conc   |sync seq |sync mutex  |async conc  |async seq   |async mutex     |"
+         << popcendl;
+    cout << "---------------|------------|---------|------------|------------|------------|----------------|"
+         << popcendl;
+    cout << "sync conc      |OK          |OK       |FREEZE      |OK          |OK          |NOT RECOMMENDED |"
+         << popcendl;
+    cout << "---------------|------------|---------|------------|------------|------------|----------------|"
+         << popcendl;
+    cout << "sync seq       |OK          |FREEZE   |FREEZE      |OK          |OK          |NOT RECOMMENDED |"
+         << popcendl;
+    cout << "---------------|------------|---------|------------|------------|------------|----------------|"
+         << popcendl;
+    cout << "sync mutex     |FREEZE      |FREEZE   |FREEZE      |OK          |OK          |NOT RECOMMENDED |"
+         << popcendl;
+    cout << "---------------|------------|---------|------------|------------|------------|----------------|"
+         << popcendl;
+    cout << "async conc     |OK          |OK       |FREEZE      |OK          |OK          |NOT RECOMMENDED |"
+         << popcendl;
+    cout << "---------------|------------|---------|------------|------------|------------|----------------|"
+         << popcendl;
+    cout << "async seq      |OK          |FREEZE   |FREEZE      |OK          |OK          |NOT RECOMMENDED |"
+         << popcendl;
+    cout << "---------------|------------|---------|------------|------------|------------|----------------|"
+         << popcendl;
+    cout << "async mutex    |FREEZE      |FREEZE   |FREEZE      |OK          |OK          |NOT RECOMMENDED |"
+         << popcendl;
+    cout << "---------------|------------|---------|------------|------------|------------|----------------|"
+         << popcendl;
     cout << popcendl;
     cout << "Note:" << popcendl;
-    cout << "- NOT RECOMMENDED means that the execution could work in some cases but not in any cases! So be aware when you are using these configurations." << popcendl;
-    cout << "- FREEZE means that the execution will not work in any cases! Do not use these configurations in a POP-C++ application." << popcendl;
-    cout << "- OK means that the execution will work in any cases! You can use these configurations in a POP-C++ application." << popcendl;
+    cout << "- NOT RECOMMENDED means that the execution could work in some cases but not in any cases! So be aware "
+            "when you are using these configurations." << popcendl;
+    cout << "- FREEZE means that the execution will not work in any cases! Do not use these configurations in a "
+            "POP-C++ application." << popcendl;
+    cout << "- OK means that the execution will work in any cases! You can use these configurations in a POP-C++ "
+            "application." << popcendl;
     return 0;
 }

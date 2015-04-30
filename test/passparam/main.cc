@@ -31,19 +31,17 @@ int main(int argc, char** argv)
     o1.m400(d);
     printf("PassParam: call to m20\n");
     sleep(1);
-    o2=o1.m20();
+    o2 = o1.m20();
     o2.m300(d);
     printf("PassParam: call to m12\n");
     sleep(1);
-    d=o1.m12(11);
+    d = o1.m12(11);
 
-    if((d.GetMyData()==11) && (d.GetInternalData().GetInternalData()==0)) {
+    if ((d.GetMyData() == 11) && (d.GetInternalData().GetInternalData() == 0)) {
         printf("\nPassParam: test succeeded, destroying objects...\n");
         return 0;
     } else {
-        printf("\nPassParam: ...Test failed (%d,%d)\n",
-               d.GetMyData(), d.GetInternalData().GetInternalData());
+        printf("\nPassParam: ...Test failed (%d,%d)\n", d.GetMyData(), d.GetInternalData().GetInternalData());
         return 1;
     }
 }
-

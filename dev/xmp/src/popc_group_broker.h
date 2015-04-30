@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
@@ -16,10 +17,8 @@
 #include "paroc_list.h"
 #include "popc_object.h"
 
-
 #ifndef POP_GROUP_BROKER_H_
 #define POP_GROUP_BROKER_H_
-
 
 #define INVOKE_SYNC 1
 #define INVOKE_ASYNC 2
@@ -27,26 +26,24 @@
 #define INVOKE_CONC 8
 #define INVOKE_MUTEX 16
 
-
-
 struct popc_request {
-    pop_connection *from;
+    pop_connection* from;
     unsigned methodId[3];
-    pop_buffer *data;
-    void *userdata;
-    void operator = (const popc_request& r);
+    pop_buffer* data;
+    void* userdata;
+    void operator=(const popc_request& r);
     popc_request();
     popc_request(const popc_request& r);
 };
 
 struct popc_method_info {
     unsigned mid;
-    char *name;
+    char* name;
 };
 
 struct popc_class_info {
     unsigned cid;
-    popc_method_info *methods;
+    popc_method_info* methods;
     int sz;
 };
 
@@ -57,9 +54,8 @@ public:
     POPC_GroupBroker();
     virtual ~POPC_GroupBroker();
 
-
-    void add_method_info(unsigned classuid, popc_method_info *methods, int size);
-    virtual bool invoke(unsigned method[3], pop_buffer &_popc_buffer, pop_connection *_popc_connection);
+    void add_method_info(unsigned classuid, popc_method_info* methods, int size);
+    virtual bool invoke(unsigned method[3], pop_buffer& _popc_buffer, pop_connection* _popc_connection);
 
     static pop_accesspoint accesspoint;
 

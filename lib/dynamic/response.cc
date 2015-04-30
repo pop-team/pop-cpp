@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -20,16 +21,15 @@
 #include <unistd.h>
 
 // default constructor. Not directly used
-Response::Response() {}
+Response::Response() {
+}
 
 // Constructor with all response's information
-Response::Response(std::string reqUniqueId,
-                   POPCSearchNodeInfo foundNodeInfo,
-                   ExplorationList finalExplorationList,
+Response::Response(std::string reqUniqueId, POPCSearchNodeInfo foundNodeInfo, ExplorationList finalExplorationList,
                    std::string appid) {
     // save the params
     _reqUniqueId = reqUniqueId;
-    _foundNodeInfo=foundNodeInfo;
+    _foundNodeInfo = foundNodeInfo;
     _finalExplorationList = finalExplorationList;
     _appid = appid;
 }
@@ -39,8 +39,8 @@ Response::~Response() {
 }
 
 // method used to pass the object in the grid.
-void Response::Serialize(POPBuffer &buf, bool pack) {
-    if(pack) { // marshalling
+void Response::Serialize(POPBuffer& buf, bool pack) {
+    if (pack) {  // marshalling
         // marshall request's uniqueId
         buf.Pack(&_reqUniqueId, 1);
         buf.Pack(&_appid, 1);
@@ -50,8 +50,8 @@ void Response::Serialize(POPBuffer &buf, bool pack) {
         // marshall the exploration list
         _finalExplorationList.Serialize(buf, true);
 
-    } else { // unmarshalling
-        buf.UnPack(&_reqUniqueId ,1);
+    } else {  // unmarshalling
+        buf.UnPack(&_reqUniqueId, 1);
         buf.UnPack(&_appid, 1);
 
         // unmarshall the found node's 'NodeInfo'
@@ -59,9 +59,6 @@ void Response::Serialize(POPBuffer &buf, bool pack) {
 
         // unmarshall the exploration list
         _finalExplorationList.Serialize(buf, false);
-
-
-
     }
 }
 
@@ -69,7 +66,6 @@ void Response::Serialize(POPBuffer &buf, bool pack) {
 std::string Response::getReqUniqueId() {
     return _reqUniqueId;
 }
-
 
 // Get the found node's 'NodeInfo'
 POPCSearchNodeInfo Response::getFoundNodeInfo() {
@@ -80,5 +76,3 @@ POPCSearchNodeInfo Response::getFoundNodeInfo() {
 std::string Response::getPOPAppId() {
     return _appid;
 }
-
-

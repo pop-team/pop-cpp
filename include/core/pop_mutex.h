@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -9,7 +10,6 @@
  *
  *
  */
-
 
 #ifndef _POP_MUTEX_H
 #define _POP_MUTEX_H
@@ -28,12 +28,12 @@ public:
     ~pop_mutex();
     void lock();
     void unlock();
+
 protected:
     pthread_mutex_t _mutex;
 };
 
-
-class pop_condition: public pop_mutex {
+class pop_condition : public pop_mutex {
 public:
     pop_condition();
     ~pop_condition();
@@ -47,18 +47,20 @@ protected:
     pthread_cond_t _cond;
 };
 
-//Note(BW): Ideally, this should be replaced by std unique_lock. Unfortunately, this is used in the parser, so this would
-//mean that C++11 compilation is necessary for the POP programs. This has to be discussed
+// Note(BW): Ideally, this should be replaced by std unique_lock. Unfortunately, this is used in the parser, so this
+// would
+// mean that C++11 compilation is necessary for the POP programs. This has to be discussed
 
 class pop_mutex_locker {
 public:
-    pop_mutex_locker(pop_mutex &_mutex);
+    pop_mutex_locker(pop_mutex& _mutex);
     ~pop_mutex_locker();
+
 private:
-    pop_mutex *pmutex;
+    pop_mutex* pmutex;
 };
 
-class POPSynchronizer: public pop_condition {
+class POPSynchronizer : public pop_condition {
 public:
     void raise() {
         broadcast();

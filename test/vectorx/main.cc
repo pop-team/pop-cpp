@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     vector<X>::iterator iter;
     ParObject o("localhost");
 
-    for(int i=0; i<10; i++) {
+    for (int i = 0; i < 10; i++) {
         v.SetValue(i);
         b.push_back(v);
     }
@@ -22,14 +22,14 @@ int main(int argc, char** argv) {
     b = o.GetData();
 
     printf("VectorX: Vector is of size %d: ", b.size());
-    for(iter=b.begin(); iter!=b.end(); iter++) {
-        printf("%d ",iter->GetValue());
+    for (iter = b.begin(); iter != b.end(); iter++) {
+        printf("%d ", iter->GetValue());
     }
     printf("\n");
 
     b.clear();
-    for(int i=0; i<20; i++) {
-        v.SetValue(20-i);
+    for (int i = 0; i < 20; i++) {
+        v.SetValue(20 - i);
         b.push_back(v);
     }
     o.SetData(b);
@@ -37,14 +37,14 @@ int main(int argc, char** argv) {
     b = o.GetData();
 
     printf("VectorX: Vector is of size %d: ", b.size());
-    for(iter=b.begin(); iter!=b.end(); iter++) {
-        printf("%d ",iter->GetValue());
+    for (iter = b.begin(); iter != b.end(); iter++) {
+        printf("%d ", iter->GetValue());
     }
     printf("\n");
 
     printf("VectorX: Current vector size =%d\n", b.size());
 
-    if(b.size()==20) {
+    if (b.size() == 20) {
         printf("VectorX: test succeeded, destroying objects...\n");
         return 0;
     } else {
@@ -52,4 +52,3 @@ int main(int argc, char** argv) {
         return 1;
     }
 }
-

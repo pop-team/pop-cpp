@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
         cout << "o1=o1+o2; o1=" << result << endl;
         printf("End of test\n");
         assert(result == 21);
-    } catch(POPException &e) {
+    } catch (POPException& e) {
         cout << "Exception occurs in application: " << e.what() << endl;
         return -1;
     }

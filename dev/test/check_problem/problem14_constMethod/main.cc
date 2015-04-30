@@ -8,7 +8,7 @@
 int main(int argc, char** argv) {
     cout << "Showing problem number 14" << popcendl;
     POPObject o;
-    //o.dummyMethod();
+    // o.dummyMethod();
     o.dummyChar();
     return 0;
 }

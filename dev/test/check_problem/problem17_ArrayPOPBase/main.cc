@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
     int n = 10;
     POPData data[n];
 
-    for(int i=0; i<n; i++) {
+    for (int i = 0; i < n; i++) {
         data[i].setIntData(i);
     }
 

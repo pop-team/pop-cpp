@@ -9,7 +9,7 @@ public:
 
     int GetInternalData();
     void SetInternalData(int d);
-    virtual void Serialize(POPBuffer &buf, bool pack);
+    virtual void Serialize(POPBuffer& buf, bool pack);
 
 private:
     int theData;

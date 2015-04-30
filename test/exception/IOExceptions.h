@@ -24,7 +24,7 @@
 #include <stdlib.h>
 
 #ifdef LINUX
-#include <execinfo.h> //needed for the backtracing of the stack
+#include <execinfo.h>  //needed for the backtracing of the stack
 #endif
 
 #define STRINGIFY(x) #x
@@ -32,10 +32,8 @@
 #define AT __FILE__ ":" TOSTRING(__LINE__)
 
 class IOException : public std::exception {
-
 public:
-
-    IOException(const std::string& message="IOException occured", const std::string& position="");
+    IOException(const std::string& message = "IOException occured", const std::string& position = "");
     ~IOException() throw();
     const char* what() const throw();
 
@@ -51,8 +49,9 @@ protected:
  */
 class FileNotFoundException : public IOException {
 public:
-    FileNotFoundException(const std::string& filename="",
-                          const std::string& position="") : IOException("FileNotFoundException: " + filename, position) {}
+    FileNotFoundException(const std::string& filename = "", const std::string& position = "")
+        : IOException("FileNotFoundException: " + filename, position) {
+    }
 };
 
 /**
@@ -63,8 +62,9 @@ public:
  */
 class FileAccessException : public IOException {
 public:
-    FileAccessException(const std::string& filename="",
-                        const std::string& position="") : IOException("FileAccessException: " + filename, position) {}
+    FileAccessException(const std::string& filename = "", const std::string& position = "")
+        : IOException("FileAccessException: " + filename, position) {
+    }
 };
 
 /**
@@ -75,8 +75,9 @@ public:
  */
 class InvalidFileNameException : public IOException {
 public:
-    InvalidFileNameException(const std::string& filename="",
-                             const std::string& position="") : IOException("InvalidFileNameException: " + filename, position) {}
+    InvalidFileNameException(const std::string& filename = "", const std::string& position = "")
+        : IOException("InvalidFileNameException: " + filename, position) {
+    }
 };
 
 /**
@@ -87,8 +88,9 @@ public:
  */
 class InvalidFormatException : public IOException {
 public:
-    InvalidFormatException(const std::string& message="",
-                           const std::string& position="") : IOException("InvalidFormatException: " + message, position) {}
+    InvalidFormatException(const std::string& message = "", const std::string& position = "")
+        : IOException("InvalidFormatException: " + message, position) {
+    }
 };
 
 /**
@@ -99,32 +101,37 @@ public:
  */
 class IndexOutOfBoundsException : public IOException {
 public:
-    IndexOutOfBoundsException(const std::string& message="",
-                              const std::string& position="") : IOException("IndexOutOfBoundsException: " + message, position) {}
+    IndexOutOfBoundsException(const std::string& message = "", const std::string& position = "")
+        : IOException("IndexOutOfBoundsException: " + message, position) {
+    }
 };
 
 /**
  * @class ConversionFailedException
- * @brief thrown when an unsuccessful to convert data types/classes is made (e.g. attempt to convert a literal into a number)
+ * @brief thrown when an unsuccessful to convert data types/classes is made (e.g. attempt to convert a literal into a
+ *number)
  *
  * @author Thomas Egger
  */
 class ConversionFailedException : public IOException {
 public:
-    ConversionFailedException(const std::string& message="",
-                              const std::string& position="") : IOException("ConversionFailedException: " + message, position) {}
+    ConversionFailedException(const std::string& message = "", const std::string& position = "")
+        : IOException("ConversionFailedException: " + message, position) {
+    }
 };
 
 /**
  * @class InvalidArgumentException
- * @brief thrown when encountered an unexpected function's argument (e.g. bad index, bad or missing parameter name, etc.)
+ * @brief thrown when encountered an unexpected function's argument (e.g. bad index, bad or missing parameter name,
+ *etc.)
  *
  * @author Florian Hof
  */
 class InvalidArgumentException : public IOException {
 public:
-    InvalidArgumentException(const std::string& message="",
-                             const std::string& position="") : IOException("InvalidArgumentException: " + message, position) {}
+    InvalidArgumentException(const std::string& message = "", const std::string& position = "")
+        : IOException("InvalidArgumentException: " + message, position) {
+    }
 };
 
 /**
@@ -135,8 +142,9 @@ public:
  */
 class UnknownValueException : public IOException {
 public:
-    UnknownValueException(const std::string& message="",
-                          const std::string& position="") : IOException("UnknownValueException: " + message, position) {}
+    UnknownValueException(const std::string& message = "", const std::string& position = "")
+        : IOException("UnknownValueException: " + message, position) {
+    }
 };
 
 /**
@@ -147,16 +155,16 @@ public:
  */
 class NoAvailableDataException : public IOException {
 public:
-    NoAvailableDataException(const std::string& message="",
-                             const std::string& position="") : IOException("NoAvailableDataException: " + message, position) {}
+    NoAvailableDataException(const std::string& message = "", const std::string& position = "")
+        : IOException("NoAvailableDataException: " + message, position) {
+    }
 };
 
 // Define DEBUG an empty function for seq compilation
 #ifndef DEBUG
 #define DEBUG printdebug
-inline void printdebug(...) {}
+inline void printdebug(...) {
+}
 #endif
 
 #endif /*__IOException_H__*/
-
-

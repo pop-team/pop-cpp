@@ -2,8 +2,8 @@
 #include "classB.ph"
 
 ClassB::ClassB(int anid) {
-    id=anid;
-    printf("Create object of ClassB with id=%d\n",id);
+    id = anid;
+    printf("Create object of ClassB with id=%d\n", id);
 }
 
 ClassB::~ClassB() {
@@ -11,7 +11,7 @@ ClassB::~ClassB() {
 }
 
 void ClassB::handle() {
-    printf("Handling callback method... id=%d\n",id);
+    printf("Handling callback method... id=%d\n", id);
 }
 
 @pack(ClassB);

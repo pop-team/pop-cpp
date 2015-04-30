@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
@@ -19,7 +20,7 @@
  * @param cb    Combox which has created this connection
  * @param init  If true, the connection will be marke as init connection
  */
-popc_connection_uds::popc_connection_uds(pop_combox *cb): pop_connection(cb) {
+popc_connection_uds::popc_connection_uds(pop_combox* cb) : pop_connection(cb) {
     _socket_fd = -1;
     signal(SIGPIPE, SIG_IGN);
 }
@@ -29,7 +30,7 @@ popc_connection_uds::popc_connection_uds(pop_combox *cb): pop_connection(cb) {
  * @param fd    The file descriptor to be associated with this connection
  * @param cb    Combox which has created this connection
  */
-popc_connection_uds::popc_connection_uds(int fd, pop_combox *cb): pop_connection(cb), _socket_fd(fd) {
+popc_connection_uds::popc_connection_uds(int fd, pop_combox* cb) : pop_connection(cb), _socket_fd(fd) {
 }
 
 /**
@@ -38,21 +39,22 @@ popc_connection_uds::popc_connection_uds(int fd, pop_combox *cb): pop_connection
  * @param cb    Combox which has created this connection
  * @param init  If true, the connection will be marke as init connection
  */
-popc_connection_uds::popc_connection_uds(int fd, pop_combox *cb, bool init): pop_connection(cb, init), _socket_fd(fd) {
+popc_connection_uds::popc_connection_uds(int fd, pop_combox* cb, bool init) : pop_connection(cb, init), _socket_fd(fd) {
 }
 
 /**
  * Copy constructor
  * @param me  The connection to be copied
  */
-popc_connection_uds::popc_connection_uds(popc_connection_uds &me): pop_connection(me.GetCombox(), me.GetBufferFactory()) {
+popc_connection_uds::popc_connection_uds(popc_connection_uds& me)
+    : pop_connection(me.GetCombox(), me.GetBufferFactory()) {
     _socket_fd = me.get_fd();
 }
 
 /**
  * Clone a connection
  */
-pop_connection *popc_connection_uds::Clone() {
+pop_connection* popc_connection_uds::Clone() {
     return new popc_connection_uds(this->get_fd(), this->GetCombox());
 }
 

@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -30,8 +31,8 @@ private:
     static pop_mutex lock;
 };
 
-template<class T>
-T * pnew(int np) {
+template <class T>
+T* pnew(int np) {
     pop_allocobj t(np);
     return new T[np];
 }

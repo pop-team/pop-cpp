@@ -1,27 +1,26 @@
 #include "myobj.ph"
 #include <unistd.h>
 
-
 POPCobject::POPCobject(int newID, int wanted, int minp) {
     printf("POPCobject with ID=%d created (by JobMgr) on machine:%s\n", newID, POPSystem::GetHost().c_str());
-    iD=newID;
+    iD = newID;
 }
 
 POPCobject::POPCobject(int newID, POPString machine) {
     printf("POPCobject with ID=%d created on machine:%s\n", newID, POPSystem::GetHost().c_str());
-    iD=newID;
+    iD = newID;
 }
 
 POPCobject::~POPCobject() {
     printf("POPCobject:%d on machine:%s is being destroyed\n", iD, POPSystem::GetHost().c_str());
-    iD=-1;
+    iD = -1;
 }
 
-void POPCobject::test0(vector<vector<int> > &a, bool print) {
-    if(print && a.size()<20 && a.size()>0 && a[0].size()<20) {
+void POPCobject::test0(vector<vector<int>>& a, bool print) {
+    if (print && a.size() < 20 && a.size() > 0 && a[0].size() < 20) {
         printf("Print vector :");
-        for(int i =0; i<a.size(); i++) {
-            for(int j =0; j<a[i].size(); j++) {
+        for (int i = 0; i < a.size(); i++) {
+            for (int j = 0; j < a[i].size(); j++) {
                 printf("%d ", a[i][j]);
             }
             printf("\n");
@@ -29,106 +28,104 @@ void POPCobject::test0(vector<vector<int> > &a, bool print) {
     }
 }
 
-void POPCobject::test1(vector<int> &a, bool print) {
-    if(print)for(int i =0; i<a.size(); i++) {
-            a[i]*=2;
+void POPCobject::test1(vector<int>& a, bool print) {
+    if (print)
+        for (int i = 0; i < a.size(); i++) {
+            a[i] *= 2;
         }
-    if(print&&a.size()<20) {
+    if (print && a.size() < 20) {
         printf("Print vector :");
-        for(int i =0; i<a.size(); i++) {
+        for (int i = 0; i < a.size(); i++) {
             printf("%d ", a[i]);
         }
         printf("\n");
     }
 }
 
-void POPCobject::test2(POPintVector1 &a, bool print) {
-    if(print&&a.size()<20) {
+void POPCobject::test2(POPintVector1& a, bool print) {
+    if (print && a.size() < 20) {
         printf("Print vector :");
-        for(int i =0; i<a.size(); i++) {
+        for (int i = 0; i < a.size(); i++) {
             printf("%d ", a[i]);
         }
         printf("\n");
     }
 }
 
-void POPCobject::test3(vector<string> &a, bool print) {
-    if(print && a.size()<20) {
+void POPCobject::test3(vector<string>& a, bool print) {
+    if (print && a.size() < 20) {
         printf("Print vector :");
-        for(int i =0; i<a.size(); i++) {
+        for (int i = 0; i < a.size(); i++) {
             printf("%s ", a[i].c_str());
         }
         printf("\n");
     }
 }
 
-void POPCobject::test4(vector<double> &a, bool print) {
-    if(print&&a.size()<20) {
+void POPCobject::test4(vector<double>& a, bool print) {
+    if (print && a.size() < 20) {
         printf("Print vector :");
-        for(int i =0; i<a.size(); i++) {
+        for (int i = 0; i < a.size(); i++) {
             printf("%lf ", a[i]);
         }
         printf("\n");
     }
 }
 
-void POPCobject::test5(POPintVector2 &a, bool print) {
-    if(print&&a.vect.size()<20) {
+void POPCobject::test5(POPintVector2& a, bool print) {
+    if (print && a.vect.size() < 20) {
         printf("Print vector :");
-        for(int i =0; i<a.vect.size(); i++) {
+        for (int i = 0; i < a.vect.size(); i++) {
             printf("%d ", a.vect[i]);
         }
         printf("\n");
     }
 }
 
-
 POPintVector1::POPintVector1() {
-    ser=0;
+    ser = 0;
 }
 
-POPintVector1::~POPintVector1() {};
+POPintVector1::~POPintVector1(){};
 
-
-void POPintVector1::Serialize(POPBuffer &buf, bool pack) {
-    //0. pack or unpack the serialization technique
-    if(pack){
+void POPintVector1::Serialize(POPBuffer& buf, bool pack) {
+    // 0. pack or unpack the serialization technique
+    if (pack) {
         buf.Pack(&ser, 1);
     } else {
         buf.UnPack(&ser, 1);
     }
 
-    if(ser==0) {
+    if (ser == 0) {
         int a;
         long vsize;
         vector<int>::iterator iter;
-        if(pack) {
-            vsize=size();
-            buf.Pack(&vsize,1);
-            for(iter=begin(); iter!=end(); iter++) {
+        if (pack) {
+            vsize = size();
+            buf.Pack(&vsize, 1);
+            for (iter = begin(); iter != end(); iter++) {
                 a = *iter;
-                buf.Pack(&a,1);
+                buf.Pack(&a, 1);
             }
         } else {
-            buf.UnPack(&vsize,1);
+            buf.UnPack(&vsize, 1);
             clear();
-            for(long i=0; i<vsize; i++) {
-                buf.UnPack(&a,1);
+            for (long i = 0; i < vsize; i++) {
+                buf.UnPack(&a, 1);
                 push_back(a);
             }
         }
 
-    } else if(ser==1) {
-
-        if(pack) {
-            int n=size();
-            buf.Pack(&n,1);
-            buf.Pack(data(),n);
+    } else if (ser == 1) {
+        if (pack) {
+            int n = size();
+            buf.Pack(&n, 1);
+            buf.Pack(data(), n);
         } else {
-            int n=0;
-            buf.UnPack(&n,1);
+            int n = 0;
+            buf.UnPack(&n, 1);
             resize(n);
-            buf.UnPack(data(),n);
+            buf.UnPack(data(), n);
         }
     } else {
         // This does NOT work
@@ -146,57 +143,56 @@ void POPintVector1::Serialize(POPBuffer &buf, bool pack) {
 }
 
 POPintVector2::POPintVector2() {
-    ser=0;
+    ser = 0;
 }
 
-POPintVector2::~POPintVector2() {};
+POPintVector2::~POPintVector2(){};
 
-
-void POPintVector2::Serialize(POPBuffer &buf, bool pack) {
-    //0. pack or unpack the serialization technique
-    if(pack){
+void POPintVector2::Serialize(POPBuffer& buf, bool pack) {
+    // 0. pack or unpack the serialization technique
+    if (pack) {
         buf.Pack(&ser, 1);
     } else {
         buf.UnPack(&ser, 1);
     }
 
-    if(ser==0) {
+    if (ser == 0) {
         int a;
         long vsize;
         vector<int>::iterator iter;
-        if(pack) {
-            vsize=vect.size();
-            buf.Pack(&vsize,1);
-            for(iter=vect.begin(); iter!=vect.end(); iter++) {
+        if (pack) {
+            vsize = vect.size();
+            buf.Pack(&vsize, 1);
+            for (iter = vect.begin(); iter != vect.end(); iter++) {
                 a = *iter;
-                buf.Pack(&a,1);
+                buf.Pack(&a, 1);
             }
         } else {
-            buf.UnPack(&vsize,1);
+            buf.UnPack(&vsize, 1);
             vect.clear();
-            for(long i=0; i<vsize; i++) {
-                buf.UnPack(&a,1);
+            for (long i = 0; i < vsize; i++) {
+                buf.UnPack(&a, 1);
                 vect.push_back(a);
             }
         }
 
-    } else if(ser==1) {
-        if(pack) {
-            int n=vect.size();
-            buf.Pack(&n,1);
-            //printf("ser %d %p (%p)\n",n,&(*this)[0],this);
-            buf.Pack(&vect[0],n);
+    } else if (ser == 1) {
+        if (pack) {
+            int n = vect.size();
+            buf.Pack(&n, 1);
+            // printf("ser %d %p (%p)\n",n,&(*this)[0],this);
+            buf.Pack(&vect[0], n);
         } else {
-            int n=0;
-            buf.UnPack(&n,1);
+            int n = 0;
+            buf.UnPack(&n, 1);
             vect.resize(n);
-            buf.UnPack(&vect[0],n);
+            buf.UnPack(&vect[0], n);
         }
     } else {
-        if(pack) {
-            buf.Pack(&vect,1);
+        if (pack) {
+            buf.Pack(&vect, 1);
         } else {
-            buf.UnPack(&vect,1);
+            buf.UnPack(&vect, 1);
         }
     }
 }

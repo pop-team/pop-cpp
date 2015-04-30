@@ -1,7 +1,8 @@
 #ifndef _CLASSA_H_
 #define _CLASSA_H_
 
-template <class C> class ClassA {
+template <class C>
+class ClassA {
 public:
     ClassA();
     ~ClassA();

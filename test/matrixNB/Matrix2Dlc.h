@@ -8,7 +8,7 @@ public:
     Matrix2Dlc(int line, int col);
 
     ValueType get(int line, int col);
-    void  set(int line, int col, ValueType v);
+    void set(int line, int col, ValueType v);
 
     void display();
     void display(int n);

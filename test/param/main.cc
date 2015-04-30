@@ -4,7 +4,6 @@
 #include "data.h"
 
 int main(int argc, char** argv) {
-
     printf("\nParam: Starting test..\n");
 
     int b = 10;
@@ -17,7 +16,7 @@ int main(int argc, char** argv) {
     b = o.GetData().GetInternalData();
     printf("Param: Current internal data =%d\n", b);
 
-    if(b==10) {
+    if (b == 10) {
         printf("Param: test succeeded, destroying objects...\n");
         return 0;
     } else {
@@ -25,4 +24,3 @@ int main(int argc, char** argv) {
         return 1;
     }
 }
-

@@ -5,12 +5,10 @@
 
 using namespace std;
 
-
 class POPxVector : public vector<X>, public POPBase {
 public:
     POPxVector();
     ~POPxVector();
-    virtual void Serialize(POPBuffer &buf, bool pack);
-
+    virtual void Serialize(POPBuffer& buf, bool pack);
 };
 #endif

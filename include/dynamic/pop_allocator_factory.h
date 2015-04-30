@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
@@ -16,7 +17,6 @@
 
 #include "pop_allocator.h"
 
-
 class pop_allocatorFactory {
 private:
     pop_allocatorFactory();
@@ -31,8 +31,7 @@ public:
 
     static pop_allocatorFactory* get_instance();
     pop_allocator* get_allocator(pop_allocator::pop_protocol protocol,
-                                  pop_allocator::pop_allocationMechanism alloc_mechanism);
-
+                                 pop_allocator::pop_allocationMechanism alloc_mechanism);
 };
 
 #endif /* POPC_ALLOCATOR_FACTORY_H_ */

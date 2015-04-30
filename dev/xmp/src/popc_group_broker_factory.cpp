@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
@@ -19,7 +20,6 @@
 #include "pop_utils.h"
 #include "pop_system.h"
 
-
 popc_broker_map* POPC_GroupBrokerFactory::_internal_broker_map = NULL;
 ispackedfunc POPC_GroupBrokerFactory::check_if_packed = NULL;
 
@@ -28,12 +28,12 @@ ispackedfunc POPC_GroupBrokerFactory::check_if_packed = NULL;
  * @param Function to be called to create a broker
  * @param Name associated with the broker factory
  */
-POPC_GroupBrokerFactory::POPC_GroupBrokerFactory(initbrokerfunc_group func, const char *name) {
-    if(_internal_broker_map == NULL) {
+POPC_GroupBrokerFactory::POPC_GroupBrokerFactory(initbrokerfunc_group func, const char* name) {
+    if (_internal_broker_map == NULL) {
         _internal_broker_map = new popc_broker_map();
     }
 
-    if(name == NULL || func == NULL) {
+    if (name == NULL || func == NULL) {
         return;
     }
 
@@ -46,8 +46,8 @@ POPC_GroupBrokerFactory::POPC_GroupBrokerFactory(initbrokerfunc_group func, cons
  * @param objname Name of the class of which the object will be instantiated
  * @return A pointer to the created broker
  */
-POPC_GroupBroker* POPC_GroupBrokerFactory::create(const char *objname) {
-    if((*_internal_broker_map).empty() || objname == NULL) {
+POPC_GroupBroker* POPC_GroupBrokerFactory::create(const char* objname) {
+    if ((*_internal_broker_map).empty() || objname == NULL) {
         return NULL;
     }
 
@@ -59,15 +59,15 @@ POPC_GroupBroker* POPC_GroupBrokerFactory::create(const char *objname) {
  * List all the broker factory available.
  * @param objlist Output parameter containing the list of all broker factory available.
  */
-void POPC_GroupBrokerFactory::list_all(popc_list_string &objlist) {
-    if((*_internal_broker_map).empty()) {
+void POPC_GroupBrokerFactory::list_all(popc_list_string& objlist) {
+    if ((*_internal_broker_map).empty()) {
         return;
     }
 
     popc_broker_map::iterator it;
 
-    for(it = (*_internal_broker_map).begin() ; it != (*_internal_broker_map).end(); it++) {
-        std::string &str = objlist.AddTailNew();
+    for (it = (*_internal_broker_map).begin(); it != (*_internal_broker_map).end(); it++) {
+        std::string& str = objlist.AddTailNew();
         str = ((*it).first).c_str();
     }
 }
@@ -77,13 +77,13 @@ void POPC_GroupBrokerFactory::list_all(popc_list_string &objlist) {
  * @param objname Name of the class to be tested
  * @return TRUE if there is a broker factory for this class. FALSE in any other cases.
  */
-bool POPC_GroupBrokerFactory::test(const char *objname) {
-    if((*_internal_broker_map).empty()) {
+bool POPC_GroupBrokerFactory::test(const char* objname) {
+    if ((*_internal_broker_map).empty()) {
         return false;
     }
 
     std::string objectname(objname);
-    if((*_internal_broker_map)[objectname] != NULL) {
+    if ((*_internal_broker_map)[objectname] != NULL) {
         return true;
     }
 

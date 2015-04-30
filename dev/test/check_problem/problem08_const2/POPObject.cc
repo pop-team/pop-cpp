@@ -6,13 +6,12 @@ POPObject::POPObject() {
 }
 
 POPObject::~POPObject() {
-    cout << "POPCobject: on machine:" << (const char*)POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPCobject: on machine:" << (const char*)POPSystem::GetHost() << " is being destroyed" << popcendl;
 }
 
 const int* POPObject::dummyMethod() {
     cout << "Dummy method called" << popcendl;
     return &dummyInt;
 }
-
 
 //@pack(POPObject);

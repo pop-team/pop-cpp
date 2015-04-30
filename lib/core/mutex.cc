@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -31,11 +32,11 @@ pop_mutex::pop_mutex() {
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
 #ifdef _LINUX
-    pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE_NP);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
 #else
-    pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
 #endif
-    if(pthread_mutex_init(&_mutex,&attr)!=0) {
+    if (pthread_mutex_init(&_mutex, &attr) != 0) {
         LOG_WARNING("Multithread initialization fail");
         pthread_mutexattr_destroy(&attr);
         return;
@@ -60,7 +61,7 @@ POP-C++ condition implementation....
 */
 
 pop_condition::pop_condition() {
-    pthread_cond_init(&_cond,nullptr);
+    pthread_cond_init(&_cond, nullptr);
 }
 
 pop_condition::~pop_condition() {
@@ -76,38 +77,33 @@ void pop_condition::broadcast() {
 }
 
 void pop_condition::wait() {
-    pthread_cond_wait(&_cond,&_mutex);
+    pthread_cond_wait(&_cond, &_mutex);
 }
 
 bool pop_condition::wait(int timeout) {
-    if(timeout<0) {
+    if (timeout < 0) {
         wait();
         return true;
     } else {
         struct timespec abstimeout;
         struct timeval now;
         popc_gettimeofday(&now, nullptr);
-        abstimeout.tv_sec = now.tv_sec + timeout/1000;
-        abstimeout.tv_nsec = (now.tv_usec + (timeout%1000)*1000)* 1000;
-        int ret=pthread_cond_timedwait(&_cond,&_mutex,&abstimeout);
-        return (ret==0);
+        abstimeout.tv_sec = now.tv_sec + timeout / 1000;
+        abstimeout.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;
+        int ret = pthread_cond_timedwait(&_cond, &_mutex, &abstimeout);
+        return (ret == 0);
     }
-
 }
 
 /*
 POP-C++ locker implementation....
 */
 
-
-
-pop_mutex_locker::pop_mutex_locker(pop_mutex &_mutex) {
-    pmutex=&_mutex;
+pop_mutex_locker::pop_mutex_locker(pop_mutex& _mutex) {
+    pmutex = &_mutex;
     pmutex->lock();
 }
 
 pop_mutex_locker::~pop_mutex_locker() {
     pmutex->unlock();
 }
-
-

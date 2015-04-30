@@ -11,14 +11,14 @@ Integer::~Integer() {
 }
 
 void Integer::Set(int val) {
-    data=val;
+    data = val;
 }
 
 int Integer::Get() {
     return data;
 }
 
-void Integer::Add(Integer &other) {
+void Integer::Add(Integer& other) {
     data += other.Get();
 }
 

@@ -31,14 +31,14 @@
 
 namespace {
 
-std::string get_log_file(){
+std::string get_log_file() {
     char logfile[256];
 
-    char *tmp=getenv("POPC_TEMP");
-    if(tmp!=NULL) {
+    char* tmp = getenv("POPC_TEMP");
+    if (tmp != NULL) {
         // note: we need to log in diferent files for each user
         // to avoid that root or any other user locks the log files
-        sprintf(logfile,"%s/popc.%s.log", tmp, getenv("USER"));
+        sprintf(logfile, "%s/popc.%s.log", tmp, getenv("USER"));
     } else {
         sprintf(logfile, "/tmp/popc.%s.log", getenv("USER"));
     }
@@ -46,37 +46,33 @@ std::string get_log_file(){
     return logfile;
 }
 
-const char* get_prefix(LOGLEVEL level){
-    static const char* LOG_LEVEL_PREFIX[__LAST__] = {
-        "DEBUG",
-        "INFO ",
-        "CORE ",
-        "WARN ",
-        "ERROR"
-    };
+const char* get_prefix(LOGLEVEL level) {
+    static const char* LOG_LEVEL_PREFIX[__LAST__] = {"DEBUG", "INFO ", "CORE ", "WARN ", "ERROR"};
 
     return LOG_LEVEL_PREFIX[level];
 }
 
-} //end of anonymous namespace
+}  // end of anonymous namespace
 
-int popc_logger_t(LOGLEVEL level, const char* file, int line, const char* function, const char* tag, const char *format,...) {
+int popc_logger_t(LOGLEVEL level, const char* file, int line, const char* function, const char* tag, const char* format,
+                  ...) {
     // Check if message level in higher than our threshold
-    if(level < MIN_LOG_LEVEL)
+    if (level < MIN_LOG_LEVEL)
         return 0;
 
     // Use file name without path to avoid having the full user path in logs
-    const char *basename = strrchr(file, '/');
-    if(basename==nullptr)
-        basename=file;
-    else basename += 1;
+    const char* basename = strrchr(file, '/');
+    if (basename == nullptr)
+        basename = file;
+    else
+        basename += 1;
 
     auto log_file = get_log_file();
 
     // Time
     time_t rawtime;
     time(&rawtime);
-    const tm* timeinfo = localtime (&rawtime);
+    const tm* timeinfo = localtime(&rawtime);
     char dd[20];
     strftime(dd, sizeof(dd), "%Y-%m-%d %H:%M:%S", timeinfo);
 
@@ -87,29 +83,32 @@ int popc_logger_t(LOGLEVEL level, const char* file, int line, const char* functi
     va_end(ap);
 
     auto msg_length = strlen(msg);
-    if(msg[msg_length - 1] == '\n'){
+    if (msg[msg_length - 1] == '\n') {
         msg[msg_length - 1] = ' ';
     }
 
     // Print the message to stderr or stdout
-    if(level >= MIN_STDERR_LEVEL)
-        if(tag){
-            fprintf(stderr, "%s %5d %s [%5s] %s (%s:%d %s)\n", dd, getpid(), get_prefix(level), tag, msg, basename, line, function);
+    if (level >= MIN_STDERR_LEVEL)
+        if (tag) {
+            fprintf(stderr, "%s %5d %s [%5s] %s (%s:%d %s)\n", dd, getpid(), get_prefix(level), tag, msg, basename,
+                    line, function);
         } else {
-            fprintf(stderr, "%s %5d %s %s (%s:%d %s)\n", dd, getpid(), get_prefix(level), msg, basename, line, function);
+            fprintf(stderr, "%s %5d %s %s (%s:%d %s)\n", dd, getpid(), get_prefix(level), msg, basename, line,
+                    function);
         }
-    else if(level >= MIN_STDOUT_LEVEL)
+    else if (level >= MIN_STDOUT_LEVEL)
         fprintf(stdout, "%s\n", msg);
 
     // Print the message to file
-    FILE *f=fopen(log_file.c_str(),"a");
-    if(f==NULL) {
+    FILE* f = fopen(log_file.c_str(), "a");
+    if (f == NULL) {
         fprintf(stderr, "ERROR: Impossible to open log file %s\n", log_file.c_str());
         return 1;
     }
 
-    if(tag){
-        fprintf(f, "%s %5d %s [%5s] %s (%s:%d %s)\n", dd, getpid(), get_prefix(level), tag, msg, basename, line, function);
+    if (tag) {
+        fprintf(f, "%s %5d %s [%5s] %s (%s:%d %s)\n", dd, getpid(), get_prefix(level), tag, msg, basename, line,
+                function);
     } else {
         fprintf(f, "%s %5d %s %s (%s:%d %s)\n", dd, getpid(), get_prefix(level), msg, basename, line, function);
     }

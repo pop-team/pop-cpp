@@ -4,7 +4,6 @@
 #include "POPData.h"
 
 class POPObject {
-
 public:
     POPObject();
     ~POPObject();
@@ -12,7 +11,6 @@ public:
     void transferPOPBaseData(const POPData d);
 
 private:
-
 };
 
 #endif /*POPOBJECT_PH_*/

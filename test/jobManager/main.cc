@@ -2,44 +2,44 @@
 
 int main(int argc, char** argv) {
     printf("JobManager: Starting test...\n");
-    bool ok=true;
+    bool ok = true;
 
-    try  {
+    try {
         POPCobject obj1;
-    } catch(POPException &e) {
+    } catch (POPException& e) {
         printf("JobManager: test failed on object creation: default\n");
-        ok=false;
+        ok = false;
     }
 
-    try  {
-        POPCobject obj2(1,"localhost");
-    } catch(POPException &e) {
+    try {
+        POPCobject obj2(1, "localhost");
+    } catch (POPException& e) {
         printf("JobManager: test failed on object creation: URL\n");
-        ok=false;
+        ok = false;
     }
 
-    try  {
+    try {
         POPCobject obj3(2, 40.2);
-    } catch(POPException &e) {
+    } catch (POPException& e) {
         printf("JobManager: test failed on object creation: Power\n");
-        ok=false;
+        ok = false;
     }
 
-    try  {
+    try {
         POPCobject obj4(3, 10);
-    } catch(POPException &e) {
+    } catch (POPException& e) {
         printf("JobManager: test failed on object creation: Memory\n");
-        ok=false;
+        ok = false;
     }
 
     try {
         POPCobject obj5(4);
-    } catch(POPException &e) {
+    } catch (POPException& e) {
         printf("JobManager: test failed on object creation: Protocol\n");
-        ok=false;
+        ok = false;
     }
 
-    if(ok) {
+    if (ok) {
         printf("JobManager: test succeeded, destroying objects...\n");
         return 0;
     } else {

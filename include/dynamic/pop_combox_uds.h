@@ -1,6 +1,7 @@
 /**
 *
-* Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+* Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+*Switzerland.
 * http://gridgroup.hefr.ch/popc
 *
 * @author Valentin Clement
@@ -21,26 +22,28 @@
 #include "pop_combox.h"
 #include "pop_connection_uds.h"
 
-class popc_combox_uds: public pop_combox {
+class popc_combox_uds : public pop_combox {
 public:
     popc_combox_uds();
     virtual ~popc_combox_uds();
 
-    virtual bool Create(int port=0, bool server=false);
-    virtual bool Create(const char *address, bool server=false);
-    virtual bool need_address(){ return true; }
+    virtual bool Create(int port = 0, bool server = false);
+    virtual bool Create(const char* address, bool server = false);
+    virtual bool need_address() {
+        return true;
+    }
 
-    virtual bool Connect(const char *url);
+    virtual bool Connect(const char* url);
     virtual void Close();
 
-    virtual pop_connection *Wait();
+    virtual pop_connection* Wait();
     virtual pop_connection* get_connection();
 
-    virtual int Send(const char *s,int len);
-    virtual int Send(const char *s,int len, pop_connection *connection);
+    virtual int Send(const char* s, int len);
+    virtual int Send(const char* s, int len, pop_connection* connection);
 
-    virtual int Recv(char *s,int len);
-    virtual int Recv(char *s,int len, pop_connection *connection);
+    virtual int Recv(char* s, int len);
+    virtual int Recv(char* s, int len, pop_connection* connection);
 
     virtual std::string GetUrl();
     virtual std::string GetProtocol();
@@ -64,4 +67,4 @@ private:
     popc_connection_uds* _connection;
 };
 
-#endif // POPC_COMBOX_UNIX_DOMAIN_SOCKET_H
+#endif  // POPC_COMBOX_UNIX_DOMAIN_SOCKET_H

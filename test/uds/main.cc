@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
         POPObject o2(2);
         POPObject o3(3);
 
-        for(int i = 0 ; i < 5; ++i){
+        for (int i = 0; i < 5; ++i) {
             o3.secondMethod();
         }
         o1.firstMethod();
@@ -17,10 +17,10 @@ int main(int argc, char** argv) {
         o1.secondMethod();
         o2.firstMethod();
         o3.firstMethod();
-    } catch(POPException& e) {
+    } catch (POPException& e) {
         printf("UDS: test failed, error no.%d, destroying objects:\n", e.Code());
         return 1;
-    } catch(std::exception& e) {
+    } catch (std::exception& e) {
         cout << "UDS: test failed" << e.what() << popcendl;
         return 1;
     }

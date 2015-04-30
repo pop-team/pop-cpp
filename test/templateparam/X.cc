@@ -2,7 +2,7 @@
 #include "X.h"
 
 X::X() {
-    ident=0;
+    ident = 0;
     printf("TemplateParam: Contructing object X:%d\n", ident);
 }
 
@@ -20,10 +20,10 @@ int X::GetIdent() {
     return ident;
 }
 
-void X::Serialize(POPBuffer &buf, bool pack) {
-    if(pack) {
+void X::Serialize(POPBuffer& buf, bool pack) {
+    if (pack) {
         buf.Pack(&ident, 1);
     } else {
-        buf.UnPack(&ident,1);
+        buf.UnPack(&ident, 1);
     }
 }

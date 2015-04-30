@@ -11,7 +11,7 @@ public:
     void display(int n);
 
     ValueType get(int line, int col);
-    void  set(int line, int col, ValueType v);
+    void set(int line, int col, ValueType v);
 
     Matrix2Dcl getColsBloc(int noCol, int nbCols);
     void setColsBloc(int noCol, Matrix2Dcl v);

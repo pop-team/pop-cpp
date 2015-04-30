@@ -7,7 +7,7 @@ TestMethod::TestMethod() {
 
 void TestMethod::TestSeq1() {
     auto b = false;
-    if(b){
+    if (b) {
         cout << "b" << popcendl;
     } else {
         cout << "!b" << popcendl;
@@ -15,8 +15,8 @@ void TestMethod::TestSeq1() {
 }
 
 void TestMethod::TestSeq2() {
-    std::vector<int> x{1,2,3,4};
-    for(auto& v : x){
+    std::vector<int> x{1, 2, 3, 4};
+    for (auto& v : x) {
         cout << v << popcendl;
     }
 }

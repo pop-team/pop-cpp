@@ -14,7 +14,7 @@ ClassExcep::~ClassExcep() {
 
 void ClassExcep::SeqSync(int i) {
     IOException a("Object: My Exception SeqSync", "ICI");
-    if(i==0) {
+    if (i == 0) {
         throw a;
     } else {
         e = 1;
@@ -24,7 +24,7 @@ void ClassExcep::SeqSync(int i) {
 
 void ClassExcep::ConcSync(int i) {
     IOException b("Object: My Exception ConcSync", "ICI");
-    if(i==0) {
+    if (i == 0) {
         throw b;
     } else {
         e = 2;
@@ -32,10 +32,9 @@ void ClassExcep::ConcSync(int i) {
     }
 }
 
-
 void ClassExcep::MutexSync(int i) {
     IOException b("Object: My Exception MutexSync", "ICI");
-    if(i==0) {
+    if (i == 0) {
         throw b;
     } else {
         e = 3;
@@ -43,6 +42,4 @@ void ClassExcep::MutexSync(int i) {
     }
 }
 
-
 @pack(ClassExcep);
-

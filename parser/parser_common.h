@@ -6,6 +6,6 @@
 #include <cstring>
 #include <cassert>
 
-int CountCodeLines(const std::string &code);
+int CountCodeLines(const std::string& code);
 
 #endif

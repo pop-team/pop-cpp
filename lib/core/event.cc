@@ -30,34 +30,34 @@ void EventQueue::PostEvent(int e) {
 int EventQueue::WaitEvent(int e, int timeout) {
     cond.lock();
 
-    if(timeout>0) {
+    if (timeout > 0) {
         struct timeval now;
         popc_gettimeofday(&now, nullptr);
     }
-    bool done=false;
-    while(!done) {
-        auto pos=queue.begin();
-        while(pos!=queue.end()) {
-            auto old=pos;
-            int &ev=*pos++;
-            if(e==ANY_EVENT || e==ev) {
-                e=ev;
+    bool done = false;
+    while (!done) {
+        auto pos = queue.begin();
+        while (pos != queue.end()) {
+            auto old = pos;
+            int& ev = *pos++;
+            if (e == ANY_EVENT || e == ev) {
+                e = ev;
                 pos = queue.erase(old);
-                done=true;
+                done = true;
                 break;
             }
         }
-        if(!done) {
-            if(timeout<0) {
+        if (!done) {
+            if (timeout < 0) {
                 cond.wait();
-            } else if(timeout==0 || cond.wait(timeout)!=0) {
+            } else if (timeout == 0 || cond.wait(timeout) != 0) {
                 break;
             }
         }
     }
     cond.unlock();
 
-    if(!done) {
+    if (!done) {
         return -1;
     }
 

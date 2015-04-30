@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
@@ -15,15 +16,32 @@
 
 #include <signal.h>
 
-pop_mpi_connection::pop_mpi_connection() : pop_connection(NULL), _is_connected(false),  _has_communicator(false), _connection_index(0), _is_asynchronous(false), _tag_set(false) {
-
+pop_mpi_connection::pop_mpi_connection()
+    : pop_connection(NULL),
+      _is_connected(false),
+      _has_communicator(false),
+      _connection_index(0),
+      _is_asynchronous(false),
+      _tag_set(false) {
 }
 
-pop_mpi_connection::pop_mpi_connection(pop_combox *cb): pop_connection(cb), _is_connected(false), _has_communicator(false),  _connection_index(0), _is_asynchronous(false), _tag_set(false) {
+pop_mpi_connection::pop_mpi_connection(pop_combox* cb)
+    : pop_connection(cb),
+      _is_connected(false),
+      _has_communicator(false),
+      _connection_index(0),
+      _is_asynchronous(false),
+      _tag_set(false) {
     signal(SIGPIPE, SIG_IGN);
 }
 
-pop_mpi_connection::pop_mpi_connection(pop_mpi_connection &me): pop_connection(me.GetCombox(), me.GetBufferFactory()), _is_connected(false), _has_communicator(false), _connection_index(0), _is_asynchronous(false), _tag_set(false) {
+pop_mpi_connection::pop_mpi_connection(pop_mpi_connection& me)
+    : pop_connection(me.GetCombox(), me.GetBufferFactory()),
+      _is_connected(false),
+      _has_communicator(false),
+      _connection_index(0),
+      _is_asynchronous(false),
+      _tag_set(false) {
     set_communicator(me.get_communicator());
     set_connection_index(me.get_connection_index());
 }
@@ -109,7 +127,6 @@ bool pop_mpi_connection::is_tag_set() {
 void pop_mpi_connection::unset_current_tag() {
     _tag_set = false;
 }
-
 
 /**
  * Reset the connection. Disconnect the communicator and free it.

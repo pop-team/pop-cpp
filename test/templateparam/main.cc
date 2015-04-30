@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     tParam = ob.GetTheData();
     printf("TemplateParam: Ident is currently = %d\n", tParam.GetIdent());
 
-    if(ob.GetTheData().GetIdent()==123) {
+    if (ob.GetTheData().GetIdent() == 123) {
         printf("TemplateParam: test succeeded, destroying objects...\n");
         return 0;
     } else {

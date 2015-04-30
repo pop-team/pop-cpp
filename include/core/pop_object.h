@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -20,17 +21,19 @@
 #include "pop_accesspoint.h"
 #include "pop_event.h"
 
-//Added by clementval
+// Added by clementval
 #include <iostream>
 #include <sstream>
 
-// note LW: This creates a bug in case the user does a for(...) cout ... without {} 
+// note LW: This creates a bug in case the user does a for(...) cout ... without {}
 //          output streams should be handled by the calling process. This would be cleaner
-#define cout pop_system::_popc_cout.str(""); \
-             pop_system::_popc_cout
-#define popcendl std::endl; \
-             rprintf(pop_system::_popc_cout.str().c_str())
-//End of add
+#define cout                        \
+    pop_system::_popc_cout.str(""); \
+    pop_system::_popc_cout
+#define popcendl \
+    std::endl;   \
+    rprintf(pop_system::_popc_cout.str().c_str())
+// End of add
 
 /**
  * @class pop_object
@@ -49,16 +52,16 @@ public:
     virtual int DecRef();
     virtual bool CanKill();
 
-    const pop_accesspoint & GetAccessPoint() const;
+    const pop_accesspoint& GetAccessPoint() const;
 
-    //Get the access point and set the variable _noaddref to TRUE in this access point
-    const pop_accesspoint & GetAccessPointForThis();
+    // Get the access point and set the variable _noaddref to TRUE in this access point
+    const pop_accesspoint& GetAccessPointForThis();
 
-    virtual int eventwait(int event=ANY_EVENT, int timeout=-1); //timeout in milliseconds
+    virtual int eventwait(int event = ANY_EVENT, int timeout = -1);  // timeout in milliseconds
     virtual void eventraise(int event);
 
     static int argc;
-    static char **argv;
+    static char** argv;
 
 private:
     int refcount;
@@ -67,9 +70,9 @@ private:
 
 protected:
     pop_mutex _pop_omutex;
-    //Added by clementval
-    //std::ostringstream _popc_cout;
-    //End of add
+    // Added by clementval
+    // std::ostringstream _popc_cout;
+    // End of add
 };
 
 #endif

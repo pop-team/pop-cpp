@@ -1,31 +1,30 @@
 #include "type.h"
 
-TypeEqual::TypeEqual(char *name, DataType *atype): DataType(name) {
-    type=atype;
-    if(atype->GetName()==nullptr && name!=nullptr) {
+TypeEqual::TypeEqual(char* name, DataType* atype) : DataType(name) {
+    type = atype;
+    if (atype->GetName() == nullptr && name != nullptr) {
         atype->SetName(name);
     }
 }
 
 int TypeEqual::CanMarshal() {
-    if(IsMarked()) {
+    if (IsMarked()) {
         Mark(false);
         return 0;
     }
     Mark(true);
-    int ret=type->CanMarshal();
+    int ret = type->CanMarshal();
     Mark(false);
     return ret;
 }
 
-void TypeEqual::Marshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
-    type->Marshal(varname,bufname,sizehelper, output);
+void TypeEqual::Marshal(char* varname, char* bufname, char* sizehelper, std::string& output) {
+    type->Marshal(varname, bufname, sizehelper, output);
 }
 
-void TypeEqual::DeMarshal(char *varname, char *bufname, char *sizehelper, std::string &output) {
-    type->DeMarshal(varname,bufname,sizehelper, output);
+void TypeEqual::DeMarshal(char* varname, char* bufname, char* sizehelper, std::string& output) {
+    type->DeMarshal(varname, bufname, sizehelper, output);
 }
-
 
 // bool TypeEqual::Same(DataType *other)
 // {
@@ -51,22 +50,22 @@ bool TypeEqual::IsParClass() {
     return type->IsParClass();
 }
 
-DataType * TypeEqual::GetBaseType() {
-    DataType *t=type->GetBaseType();
-    if(t!=nullptr) {
+DataType* TypeEqual::GetBaseType() {
+    DataType* t = type->GetBaseType();
+    if (t != nullptr) {
         return t;
     }
     return type;
 }
 
-bool TypeEqual::GetCastType(char *output) {
-    if(!IsArray()) {
-        return GetDeclaration(nullptr,output);
+bool TypeEqual::GetCastType(char* output) {
+    if (!IsArray()) {
+        return GetDeclaration(nullptr, output);
     } else {
-        return type->GetDeclaration(nullptr,output);
+        return type->GetDeclaration(nullptr, output);
     }
 }
 
-void TypeEqual::GetExpandType(char *output) {
+void TypeEqual::GetExpandType(char* output) {
     type->GetExpandType(output);
 }

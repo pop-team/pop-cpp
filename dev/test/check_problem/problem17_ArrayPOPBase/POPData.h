@@ -6,8 +6,6 @@ public:
     POPData();
     ~POPData();
 
-
-
     //
     void setIntData(int value);
     void setFloatData(float value);
@@ -16,7 +14,7 @@ public:
     float getFloatData();
 
     // Inherited from POPBase
-    virtual void Serialize(POPBuffer &buf, bool pack);
+    virtual void Serialize(POPBuffer& buf, bool pack);
 
 private:
     int intdata;

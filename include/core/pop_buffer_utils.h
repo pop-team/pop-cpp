@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -17,7 +18,7 @@
 #include "pop_buffer.h"
 #include "pop_memspool.h"
 
-template<class T>
-void packarray(pop_buffer &buf, T *param, int size, int flag, pop_memspool *temp);
+template <class T>
+void packarray(pop_buffer& buf, T* param, int size, int flag, pop_memspool* temp);
 
 #endif

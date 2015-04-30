@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -22,17 +23,14 @@
 #include "pop_buffer_raw.h"
 
 pop_buffer_raw_factory::pop_buffer_raw_factory() {
-
 }
 
-pop_buffer * pop_buffer_raw_factory::CreateBuffer() {
-    pop_buffer * bufRAW=new pop_buffer_raw();
+pop_buffer* pop_buffer_raw_factory::CreateBuffer() {
+    pop_buffer* bufRAW = new pop_buffer_raw();
     return bufRAW;
 }
 
-bool pop_buffer_raw_factory::GetBufferName(std::string & bufferName) {
-    bufferName="raw";
+bool pop_buffer_raw_factory::GetBufferName(std::string& bufferName) {
+    bufferName = "raw";
     return true;
 }
-
-

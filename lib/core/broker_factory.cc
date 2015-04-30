@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -24,29 +25,29 @@
 #include "pop_utils.h"
 #include "pop_system.h"
 
-std::vector<pop_broker_init> *pop_broker_factory::brokerlist=nullptr;
-ispackedfunc pop_broker_factory::CheckIfPacked=nullptr;
+std::vector<pop_broker_init>* pop_broker_factory::brokerlist = nullptr;
+ispackedfunc pop_broker_factory::CheckIfPacked = nullptr;
 
-pop_broker_factory::pop_broker_factory(initbrokerfunc func, const char *name) {
-    if(!brokerlist) {
+pop_broker_factory::pop_broker_factory(initbrokerfunc func, const char* name) {
+    if (!brokerlist) {
         brokerlist = new std::vector<pop_broker_init>;
     }
 
-    if(!name || !func || test(name)) {
+    if (!name || !func || test(name)) {
         return;
     }
 
     brokerlist->push_back({func, name});
 }
 
-pop_broker *pop_broker_factory::Create(const char *objname) {
+pop_broker* pop_broker_factory::Create(const char* objname) {
     LOG_DEBUG("Create broker for %s", objname);
-    if(brokerlist == nullptr || objname == nullptr) {
+    if (brokerlist == nullptr || objname == nullptr) {
         return nullptr;
     }
 
-    for(auto& t : *brokerlist){
-        if(pop_utils::isEqual(objname, t.objname.c_str())) {
+    for (auto& t : *brokerlist) {
+        if (pop_utils::isEqual(objname, t.objname.c_str())) {
             return t.func();
         }
     }
@@ -55,127 +56,128 @@ pop_broker *pop_broker_factory::Create(const char *objname) {
 }
 
 void pop_broker_factory::List(std::vector<std::string>& objlist) {
-    if(brokerlist == nullptr) {
+    if (brokerlist == nullptr) {
         return;
     }
-    for(auto& t : *brokerlist){
+    for (auto& t : *brokerlist) {
         objlist.emplace_back(t.objname);
     }
 }
 
-bool pop_broker_factory::test(const char *objname) {
-    if(brokerlist == nullptr) {
+bool pop_broker_factory::test(const char* objname) {
+    if (brokerlist == nullptr) {
         return false;
     }
-    for(auto& test : *brokerlist){
-        if(pop_utils::isEqual(objname, test.objname.c_str())) {
+    for (auto& test : *brokerlist) {
+        if (pop_utils::isEqual(objname, test.objname.c_str())) {
             return true;
         }
     }
     return false;
 }
 
-
-pop_broker * pop_broker_factory::Create(int *argc, char ***argv) {
+pop_broker* pop_broker_factory::Create(int* argc, char*** argv) {
     /**
      * Display the information about the parallel object executable
      * note: this bit of code existed in pseudodynamic version and is
      * kept just in case.
      */
-/*
-    char *tmp1 = pop_utils::checkremove(argc,argv,"-printmpi");
-    if(tmp1 != nullptr) {
-        char abspath[1024];
-        char *thisfile = getenv("POPC_EXE");
-        if(thisfile == nullptr) {
+    /*
+        char *tmp1 = pop_utils::checkremove(argc,argv,"-printmpi");
+        if(tmp1 != nullptr) {
+            char abspath[1024];
+            char *thisfile = getenv("POPC_EXE");
+            if(thisfile == nullptr) {
+                thisfile = (*argv)[0];
+            }
+            pop_utils::FindAbsolutePath(thisfile,abspath);
+            PrintBrokersMPI(abspath);
+            exit(0);
+        }
+    */
+    char* tmp = pop_utils::checkremove(argc, argv, "-list");
+    if (tmp != nullptr) {
+        // char abspath[1024];
+        char* thisfile = getenv("POPC_EXE");
+        if (thisfile == nullptr) {
             thisfile = (*argv)[0];
         }
-        pop_utils::FindAbsolutePath(thisfile,abspath);
-        PrintBrokersMPI(abspath);
-        exit(0);
-    }
-*/
-    char *tmp=pop_utils::checkremove(argc,argv,"-list");
-    if(tmp!=nullptr) {
-        // char abspath[1024];
-        char *thisfile=getenv("POPC_EXE");
-        if(thisfile==nullptr) {
-            thisfile=(*argv)[0];
-        }
-        PrintBrokers(pop_utils::FindAbsolutePath(thisfile).c_str(), strcmp(tmp,"long")==0);
+        PrintBrokers(pop_utils::FindAbsolutePath(thisfile).c_str(), strcmp(tmp, "long") == 0);
         exit(0);
     }
 
-    char *usage=pop_utils::checkremove(argc,argv,"-help");
-    char *object=pop_utils::checkremove(argc,argv,"-object=");
-    if(usage!=nullptr || object==nullptr) {
-        printf("\n Usage:\n\t%s [-help] [-list | -listlong] [-port=<local port>] [-callback=<host:port>] [-appservice=<host:port>] [-nostdio] -object=<objectname>\n",(*argv)[0]);
+    char* usage = pop_utils::checkremove(argc, argv, "-help");
+    char* object = pop_utils::checkremove(argc, argv, "-object=");
+    if (usage != nullptr || object == nullptr) {
+        printf(
+            "\n Usage:\n\t%s [-help] [-list | -listlong] [-port=<local port>] [-callback=<host:port>] "
+            "[-appservice=<host:port>] [-nostdio] -object=<objectname>\n",
+            (*argv)[0]);
         return nullptr;
     }
 
-
-    tmp=pop_utils::checkremove(argc,argv,"-appservice=");
-    if(tmp!=nullptr) {
+    tmp = pop_utils::checkremove(argc, argv, "-appservice=");
+    if (tmp != nullptr) {
         pop_system::appservice.SetAccessString(tmp);
-        pop_system::appservice.SetAsService();  //Set the accesspoint as a service accesspoint
+        pop_system::appservice.SetAsService();  // Set the accesspoint as a service accesspoint
     }
 
-    bool nostdio=(pop_utils::checkremove(argc,argv,"-nostdio")!=nullptr);
+    bool nostdio = (pop_utils::checkremove(argc, argv, "-nostdio") != nullptr);
 
-    //Now create the broker
-    if(object==nullptr || *object==0) {
+    // Now create the broker
+    if (object == nullptr || *object == 0) {
         return nullptr;
     }
 
     // Create the real Broker object
-    pop_broker *objbroker=Create(object);
-    if(objbroker==nullptr) {
+    pop_broker* objbroker = Create(object);
+    if (objbroker == nullptr) {
         printf("POP-C++ Error: %s: unkown object name\n", (*argv)[1]);
         return nullptr;
     }
 
     // Set the classname for this broker
-    pop_broker::classname=object;
+    pop_broker::classname = object;
 
-    if(nostdio) {
+    if (nostdio) {
         popc_close(0);
         popc_close(1);
         popc_close(2);
 
         // If the nostdio option is used, either redirect stdout to a .log file or ignore it
-        popc_open("/dev/null",O_RDONLY);
+        popc_open("/dev/null", O_RDONLY);
 #ifndef NDEBUG
         char fname[256];
-        sprintf(fname,"/tmp/object_%s_%d.log", pop_broker::classname.c_str(),popc_getpid());
-        popc_open(fname,O_WRONLY | O_CREAT,S_IRWXU | S_IRGRP);
-        popc_dup2(1,2);
+        sprintf(fname, "/tmp/object_%s_%d.log", pop_broker::classname.c_str(), popc_getpid());
+        popc_open(fname, O_WRONLY | O_CREAT, S_IRWXU | S_IRGRP);
+        popc_dup2(1, 2);
 #else
-        popc_open("/dev/null",O_WRONLY);
-        popc_open("/dev/null",O_WRONLY);
+        popc_open("/dev/null", O_WRONLY);
+        popc_open("/dev/null", O_WRONLY);
 #endif
     }
 
     return objbroker;
 }
 
-
-void pop_broker_factory::PrintBrokers(const char *abspath, bool longformat) {
-    if(!longformat) {
+void pop_broker_factory::PrintBrokers(const char* abspath, bool longformat) {
+    if (!longformat) {
         printf("List of parallel object classes:\n====\n");
     }
-    if(brokerlist) {
-        for(auto& t : *brokerlist){
-            if(!(pop_broker_factory::CheckIfPacked!=nullptr && !pop_broker_factory::CheckIfPacked(t.objname.c_str()))) {
-                if(longformat) {
+    if (brokerlist) {
+        for (auto& t : *brokerlist) {
+            if (!(pop_broker_factory::CheckIfPacked != nullptr &&
+                  !pop_broker_factory::CheckIfPacked(t.objname.c_str()))) {
+                if (longformat) {
                     printf("%s %s %s\n", t.objname.c_str(), pop_system::platform.c_str(), abspath);
                 } else {
-                    printf("%s\n",t.objname.c_str());
+                    printf("%s\n", t.objname.c_str());
                 }
             }
         }
     }
-    if(!longformat) {
-        printf("====\nArchitecture=%s\n",pop_system::platform.c_str());
+    if (!longformat) {
+        printf("====\nArchitecture=%s\n", pop_system::platform.c_str());
     }
 }
 

@@ -7,12 +7,11 @@ POPObject::POPObject() {
     apple.id = 2;
     apple.weight = 0.500;
 
-
     cout << "POPCobject created (by JobMgr) on machine:" << GetAccessPoint().GetAccessString() << popcendl;
 
     cout << "Apple weight is:" << apple.weight << " Banana weight is: " << banana.weight << popcendl;
 }
 
 POPObject::~POPObject() {
-    cout << "POPCobject: on machine:" << POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPCobject: on machine:" << POPSystem::GetHost() << " is being destroyed" << popcendl;
 }

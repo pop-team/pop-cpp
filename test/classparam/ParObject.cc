@@ -10,23 +10,24 @@ ParObject::ParObject(POPString machine) {
 }
 
 ParObject::ParObject(float f) {
-    printf("Classparam: Creating object ParObject with power %f\n",f);
+    printf("Classparam: Creating object ParObject with power %f\n", f);
 }
 
 ParObject::~ParObject() {
-    printf("Classparam: Destroying the object ParObject... %d,%d\n", theData.GetMyData(), theData.GetInternalData().GetInternalData());
+    printf("Classparam: Destroying the object ParObject... %d,%d\n", theData.GetMyData(),
+           theData.GetInternalData().GetInternalData());
 }
 
 void ParObject::SetData(ClassData data) {
-    theData=data;
+    theData = data;
 }
 
 ClassData ParObject::GetData() {
     return theData;
 }
 
-void ParObject::Get(ClassData &data) {
-    data=theData;
+void ParObject::Get(ClassData& data) {
+    data = theData;
 }
 
 @pack(ParObject);

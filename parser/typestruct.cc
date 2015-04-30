@@ -4,29 +4,30 @@
 
 // TODO LW: Why do we handle class and struct differently ??? This file should not exist
 
-TypeStruct::TypeStruct(char *name): DataType(name) {}
+TypeStruct::TypeStruct(char* name) : DataType(name) {
+}
 
 TypeStruct::~TypeStruct() {
-    for(auto& attr : attributes){
+    for (auto& attr : attributes) {
         free(attr.second);
     }
 }
 
-void TypeStruct::Add(DataType *elem, char *ename) {
-    assert(ename!=nullptr);
-    ename=popc_strdup(ename);
+void TypeStruct::Add(DataType* elem, char* ename) {
+    assert(ename != nullptr);
+    ename = popc_strdup(ename);
     attributes.emplace_back(elem, ename);
 }
 
 int TypeStruct::CanMarshal() {
-    if(IsMarked()) {
+    if (IsMarked()) {
         Mark(false);
         return 0;
     }
     Mark(true);
 
-    for(auto& attr : attributes){
-        if(attr.first->CanMarshal() != 1){
+    for (auto& attr : attributes) {
+        if (attr.first->CanMarshal() != 1) {
             Mark(false);
             return 0;
         }
@@ -36,39 +37,39 @@ int TypeStruct::CanMarshal() {
     return 1;
 }
 
-void TypeStruct::Marshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
+void TypeStruct::Marshal(char* varname, char* bufname, char* /*sizehelper*/, std::string& output) {
     char paramname[256], tmpcode[1024];
 
-    if(!FindVarName(varname,paramname)) {
-        strcpy(paramname,"unknown");
+    if (!FindVarName(varname, paramname)) {
+        strcpy(paramname, "unknown");
     }
-    sprintf(tmpcode,"%s.Push(\"%s\",\"%s\", 1);\n",bufname,paramname, GetName());
+    sprintf(tmpcode, "%s.Push(\"%s\",\"%s\", 1);\n", bufname, paramname, GetName());
     output += tmpcode;
 
-    for(auto& attr : attributes){
-        sprintf(tmpcode,"%s.%s", varname, attr.second);
-        attr.first->Marshal(tmpcode,bufname,nullptr,output);
+    for (auto& attr : attributes) {
+        sprintf(tmpcode, "%s.%s", varname, attr.second);
+        attr.first->Marshal(tmpcode, bufname, nullptr, output);
     }
 
-    sprintf(tmpcode,"%s.Pop();\n",bufname);
+    sprintf(tmpcode, "%s.Pop();\n", bufname);
     output += tmpcode;
 }
 
-void TypeStruct::DeMarshal(char *varname, char *bufname, char* /*sizehelper*/, std::string &output) {
+void TypeStruct::DeMarshal(char* varname, char* bufname, char* /*sizehelper*/, std::string& output) {
     char paramname[256], tmpcode[1024];
 
-    if(!FindVarName(varname,paramname)) {
-        strcpy(paramname,"unknown");
+    if (!FindVarName(varname, paramname)) {
+        strcpy(paramname, "unknown");
     }
-    sprintf(tmpcode,"%s.Push(\"%s\",\"%s\",1);\n",bufname,paramname, GetName());
+    sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",1);\n", bufname, paramname, GetName());
     output += tmpcode;
 
-    for(auto& attr : attributes){
-        sprintf(tmpcode,"%s.%s",varname,attr.second);
-        attr.first->DeMarshal(tmpcode,bufname,nullptr,output);
+    for (auto& attr : attributes) {
+        sprintf(tmpcode, "%s.%s", varname, attr.second);
+        attr.first->DeMarshal(tmpcode, bufname, nullptr, output);
     }
 
-    sprintf(tmpcode,"%s.Pop();\n",bufname);
+    sprintf(tmpcode, "%s.Pop();\n", bufname);
     output += tmpcode;
 }
 

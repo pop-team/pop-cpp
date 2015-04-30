@@ -1,9 +1,8 @@
 #include "myobj3.ph"
 #include "myobj4.ph"
 
-
 MyObj3::MyObj3(POPString machine) {
-    rprintf("Remote object MyObj3 on %s\n",POPSystem::GetHost().c_str());
+    rprintf("Remote object MyObj3 on %s\n", POPSystem::GetHost().c_str());
 }
 
 MyObj3::~MyObj3() {
@@ -13,7 +12,7 @@ MyObj3::~MyObj3() {
 void MyObj3::Set(int val) {
     MyObj4 o1("localhost");
     o1.Set(val);
-    data=o1.Get();
+    data = o1.Get();
 }
 
 int MyObj3::Get() {

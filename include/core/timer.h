@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author -
@@ -13,8 +14,6 @@
 #ifndef PAROCTIMER_H
 #define PAROCTIMER_H
 
-
-
 class Timer {
 public:
     Timer();
@@ -22,6 +21,7 @@ public:
     void Stop();
     void Reset();
     double Elapsed();
+
 protected:
     virtual double GetCurrentTime();
 
@@ -31,5 +31,3 @@ protected:
 };
 
 #endif
-
-

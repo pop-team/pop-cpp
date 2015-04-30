@@ -12,14 +12,14 @@ POPObject::POPObject() {
 }
 
 POPObject::~POPObject() {
-    cout << "POPCobject: on machine:" << POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPCobject: on machine:" << POPSystem::GetHost() << " is being destroyed" << popcendl;
 }
 
 void POPObject::displayArray(int length, int array[]) {
     cout << "In parallel object" << popcendl;
-    for(int i=0; i<length; i++) {
+    for (int i = 0; i < length; i++) {
         cout << "item[" << i << "]=" << array[i] << popcendl;
-        array[i] = array[i]+1;
+        array[i] = array[i] + 1;
     }
 }
 

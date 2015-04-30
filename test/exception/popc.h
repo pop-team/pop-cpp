@@ -5,11 +5,9 @@
 #define sync
 #define conc
 #define mutex
-#define POPString char*
+#define POPString char *
 #endif
 
 #ifdef _PAROC_
 #define printf rprintf
 #endif
-
-

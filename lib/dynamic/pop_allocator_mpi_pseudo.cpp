@@ -1,11 +1,13 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
  * @date 2012/12/04
- * @brief Declaration of the base class pop_allocatorFactory. The allocator factory allows to provide the right allocator for
+ * @brief Declaration of the base class pop_allocatorFactory. The allocator factory allows to provide the right
+ *allocator for
  *        parallel object allocation depending the lower layer (SSH, MPI, POP-C++ MPI Interconnector ...).
  *
  *

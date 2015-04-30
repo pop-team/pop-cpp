@@ -2,7 +2,6 @@
 #define _STRUCTDATA_H_
 #include "data.h"
 
-
 class StructData : public POPBase {
 public:
     StructData();
@@ -11,8 +10,7 @@ public:
     void SetInternalData(Data d);
     int GetMyData();
     void SetMyData(int d);
-    virtual void Serialize(POPBuffer &buf, bool pack);
-
+    virtual void Serialize(POPBuffer& buf, bool pack);
 
 private:
     Data theData;

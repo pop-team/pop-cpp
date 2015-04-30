@@ -1,11 +1,13 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
  * @date 2012/12/04
- * @brief Declaration of the base class pop_allocatorFactory. The allocator factory allows to provide the right allocator for
+ * @brief Declaration of the base class pop_allocatorFactory. The allocator factory allows to provide the right
+ *allocator for
  *        parallel object allocation depending the lower layer (SSH, MPI, POP-C++ MPI Interconnector ...).
  *
  *
@@ -28,14 +30,15 @@
  */
 std::string uds_allocator_interconnector::allocate(const std::string& objectname, const pop_od& od) {
     // Get object description important for this kind
-    int node = od.get_node(); // Defined the node on which the parallel object is allocated
-    int core = od.get_core(); // Defined the core on which the parallel object is allocated
+    int node = od.get_node();  // Defined the node on which the parallel object is allocated
+    int core = od.get_core();  // Defined the core on which the parallel object is allocated
 
     /*
-     * If od local is set, the parallel object will be allocated on the local POP-C++ MPI Interconnector. If od.node is not defined,
+     * If od local is set, the parallel object will be allocated on the local POP-C++ MPI Interconnector. If od.node is
+     * not defined,
      * the parallel object is also allocated on the local node
      */
-    if(od.IsLocal() || node == -1) {
+    if (od.IsLocal() || node == -1) {
         node = pop_system::popc_local_mpi_communicator_rank;
     }
 
@@ -43,7 +46,7 @@ std::string uds_allocator_interconnector::allocate(const std::string& objectname
     const std::string& codefile = od.getExecutable();
 
     // If od.executable is not defined, throw an exception as the parallel object couldn't be allocated
-    if(codefile.empty()) {
+    if (codefile.empty()) {
         LOG_ERROR("Code file executable path is NULL ! Abort !");
         pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "Code file executable path is NULL ! Abort !");
     }
@@ -56,19 +59,19 @@ std::string uds_allocator_interconnector::allocate(const std::string& objectname
 
     pop_combox* allocating_combox = combox_factory.Create("uds");
 
-    if(allocating_combox == nullptr) {
+    if (allocating_combox == nullptr) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "allocating_combox == NULL");
     }
 
     pop_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
 
-    auto  local_address = new char[15];
+    auto local_address = new char[15];
     snprintf(local_address, 15, "uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
-    if(!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
+    if (!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "Create or Connect failed");
     }
 
-    pop_message_header header(20, 200000, INVOKE_SYNC,"_allocate");
+    pop_message_header header(20, 200000, INVOKE_SYNC, "_allocate");
     allocating_buffer->Reset();
     allocating_buffer->SetHeader(header);
 
@@ -89,11 +92,11 @@ std::string uds_allocator_interconnector::allocate(const std::string& objectname
     allocating_buffer->Pop();
 
     pop_connection* connection = allocating_combox->get_connection();
-    if(!allocating_buffer->Send((*allocating_combox), connection)) {
+    if (!allocating_buffer->Send((*allocating_combox), connection)) {
         pop_exception::pop_throw("allocating_buffer->Send failed");
     }
 
-    if(!allocating_buffer->Recv((*allocating_combox), connection)) {
+    if (!allocating_buffer->Recv((*allocating_combox), connection)) {
         pop_exception::pop_throw("allocating_buffer->Recv failed");
     }
     pop_buffer::CheckAndThrow(*allocating_buffer);
@@ -116,34 +119,34 @@ std::string uds_allocator_interconnector::allocate(const std::string& objectname
  * @return A pointer to a single combox connected with the group
  */
 pop_combox* uds_allocator_interconnector::allocate_group(const std::string& objectname, const pop_od& od, int nb) {
-
     const std::string codefile = od.getExecutable();
 
-    if(codefile.empty()) {
-        std::cerr << "POP-C++ Error [Core]" << "Cannot allocate group of objects because executbale is not specified" << std::endl;
+    if (codefile.empty()) {
+        std::cerr << "POP-C++ Error [Core]"
+                  << "Cannot allocate group of objects because executbale is not specified" << std::endl;
         return nullptr;
     }
 
     // Contact the local POP-C++ MPI Interconnector to create XMP process
     int rank = pop_system::popc_local_mpi_communicator_rank;
 
-    auto  local_interconnector_address = new char[15];
+    auto local_interconnector_address = new char[15];
     snprintf(local_interconnector_address, 15, "uds_%d.0", rank);
 
     auto& combox_factory = pop_combox_factory::get_instance();
 
     pop_combox* _popc_combox = combox_factory.Create("uds");
-    if(_popc_combox == nullptr) {
+    if (_popc_combox == nullptr) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, "Combox NULL");
     }
 
     pop_buffer* _popc_buffer = _popc_combox->GetBufferFactory()->CreateBuffer();
 
-    if(!_popc_combox->Create(local_interconnector_address, false)) {
+    if (!_popc_combox->Create(local_interconnector_address, false)) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, "Can't connect to local interconnector");
     }
 
-    if(!_popc_combox->Connect(local_interconnector_address)) {
+    if (!_popc_combox->Connect(local_interconnector_address)) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, "Can't connect to local interconnector");
     }
 
@@ -169,17 +172,15 @@ pop_combox* uds_allocator_interconnector::allocate_group(const std::string& obje
 
     pop_connection* _popc_connection = _popc_combox->get_connection();
 
-
-    if(!_popc_buffer->Send((*_popc_combox), _popc_connection)) {
+    if (!_popc_buffer->Send((*_popc_combox), _popc_connection)) {
         LOG_ERROR("[Core] Problem while sending request");
         pop_exception::pop_throw("Problem while sending request");
     }
 
-    if(!_popc_buffer->Recv((*_popc_combox), _popc_connection)) {
+    if (!_popc_buffer->Recv((*_popc_combox), _popc_connection)) {
         pop_exception::pop_throw("_popc_buffer->Recv failed");
     }
     pop_buffer::CheckAndThrow(*_popc_buffer);
-
 
     std::string objectaddress;
     _popc_buffer->Push("objectaddress", "std::string", 1);

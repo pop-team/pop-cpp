@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include "classdata.h"
 
-ClassData::ClassData() {}
+ClassData::ClassData() {
+}
 
-ClassData::~ClassData() {}
+ClassData::~ClassData() {
+}
 
 void ClassData::SetInternalData(Data d) {
     theData = d;
@@ -21,16 +23,15 @@ int ClassData::GetMyData() {
     return myData;
 }
 
-void ClassData::Serialize(POPBuffer &buf, bool pack) {
+void ClassData::Serialize(POPBuffer& buf, bool pack) {
     int a;
-    if(pack) {
+    if (pack) {
         a = theData.GetInternalData();
-        buf.Pack(&a,1);
-        buf.Pack(&myData,1);
+        buf.Pack(&a, 1);
+        buf.Pack(&myData, 1);
     } else {
-        buf.UnPack(&a,1);
+        buf.UnPack(&a, 1);
         theData.SetInternalData(a);
-        buf.UnPack(&myData,1);
+        buf.UnPack(&myData, 1);
     }
 }
-

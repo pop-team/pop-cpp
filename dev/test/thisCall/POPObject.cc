@@ -6,41 +6,39 @@ POPObject::POPObject() {
 }
 
 POPObject::~POPObject() {
-    cout << "POPCobject: on machine:" << POPSystem::GetHost() <<" is being destroyed" << popcendl;
+    cout << "POPCobject: on machine:" << POPSystem::GetHost() << " is being destroyed" << popcendl;
 }
-
-
 
 /**
  * Calling any semantics from a synchronous concurrent method
  * @param sem  Semantic to use for the internal call
  */
 void POPObject::fromSyncConc(int sem) {
-    if(this != NULL) {
-        switch(sem) {
-        case SYNCSEQ:
-            cout << "--> (1) Call from sync conc to sync seq" << popcendl;
-            (*this).toSyncSeq(1);
-            break;
-        case SYNCCONC:
-            cout << "--> (1) Call from sync conc to sync conc" << popcendl;
-            (*this).toSyncConc(1);
-            break;
-        case SYNCMUTEX:
-            cout << "--> (1) Call from sync conc to sync mutex (NOT POSSIBLE)" << popcendl;
-            break;
-        case ASYNCSEQ:
-            cout << "--> (1) Call from sync conc to async seq" << popcendl;
-            (*this).toAsyncSeq(1);
-            break;
-        case ASYNCCONC:
-            cout << "--> (1) Call from sync conc to async conc" << popcendl;
-            (*this).toAsyncConc(1);
-            break;
-        case ASYNCMUTEX:
-            cout << "--> (1) Call from sync conc to async mutex (NOT RECOMMENDED)" << popcendl;
-            (*this).toAsyncMutex(1);
-            break;
+    if (this != NULL) {
+        switch (sem) {
+            case SYNCSEQ:
+                cout << "--> (1) Call from sync conc to sync seq" << popcendl;
+                (*this).toSyncSeq(1);
+                break;
+            case SYNCCONC:
+                cout << "--> (1) Call from sync conc to sync conc" << popcendl;
+                (*this).toSyncConc(1);
+                break;
+            case SYNCMUTEX:
+                cout << "--> (1) Call from sync conc to sync mutex (NOT POSSIBLE)" << popcendl;
+                break;
+            case ASYNCSEQ:
+                cout << "--> (1) Call from sync conc to async seq" << popcendl;
+                (*this).toAsyncSeq(1);
+                break;
+            case ASYNCCONC:
+                cout << "--> (1) Call from sync conc to async conc" << popcendl;
+                (*this).toAsyncConc(1);
+                break;
+            case ASYNCMUTEX:
+                cout << "--> (1) Call from sync conc to async mutex (NOT RECOMMENDED)" << popcendl;
+                (*this).toAsyncMutex(1);
+                break;
         }
     }
 }
@@ -50,30 +48,30 @@ void POPObject::fromSyncConc(int sem) {
  * @param sem  Semantic to use for the internal call
  */
 void POPObject::fromSyncSeq(int sem) {
-    if(this != NULL) {
-        switch(sem) {
-        case SYNCSEQ:
-            cout << "--> (2) Call from sync seq to sync seq (NOT POSSIBLE)" << popcendl;
-            break;
-        case SYNCCONC:
-            cout << "--> (2) Call from sync seq to sync conc" << popcendl;
-            (*this).toSyncConc(2);
-            break;
-        case SYNCMUTEX:
-            cout << "--> (2) Call from sync seq to sync mutex (NOT POSSIBLE)" << popcendl;
-            break;
-        case ASYNCSEQ:
-            cout << "--> (2) Call from sync seq to async seq" << popcendl;
-            (*this).toAsyncSeq(2);
-            break;
-        case ASYNCCONC:
-            cout << "--> (2) Call from sync seq to async conc" << popcendl;
-            (*this).toAsyncConc(2);
-            break;
-        case ASYNCMUTEX:
-            cout << "--> (2) Call from sync seq to async mutex (NOT RECOMMENDED)" << popcendl;
-            (*this).toAsyncMutex(2);
-            break;
+    if (this != NULL) {
+        switch (sem) {
+            case SYNCSEQ:
+                cout << "--> (2) Call from sync seq to sync seq (NOT POSSIBLE)" << popcendl;
+                break;
+            case SYNCCONC:
+                cout << "--> (2) Call from sync seq to sync conc" << popcendl;
+                (*this).toSyncConc(2);
+                break;
+            case SYNCMUTEX:
+                cout << "--> (2) Call from sync seq to sync mutex (NOT POSSIBLE)" << popcendl;
+                break;
+            case ASYNCSEQ:
+                cout << "--> (2) Call from sync seq to async seq" << popcendl;
+                (*this).toAsyncSeq(2);
+                break;
+            case ASYNCCONC:
+                cout << "--> (2) Call from sync seq to async conc" << popcendl;
+                (*this).toAsyncConc(2);
+                break;
+            case ASYNCMUTEX:
+                cout << "--> (2) Call from sync seq to async mutex (NOT RECOMMENDED)" << popcendl;
+                (*this).toAsyncMutex(2);
+                break;
         }
     }
 }
@@ -83,29 +81,29 @@ void POPObject::fromSyncSeq(int sem) {
  * @param sem  Semantic to use for the internal call
  */
 void POPObject::fromSyncMutex(int sem) {
-    if(this != NULL) {
-        switch(sem) {
-        case SYNCSEQ:
-            cout << "--> (3) Call from sync mutex to sync seq (NOT POSSIBLE)" << popcendl;
-            break;
-        case SYNCCONC:
-            cout << "--> (3) Call from sync mutex to sync conc (NOT POSSIBLE)" << popcendl;
-            break;
-        case SYNCMUTEX:
-            cout << "--> (3) Call from sync mutex to sync mutex (NOT POSSIBLE)" << popcendl;
-            break;
-        case ASYNCSEQ:
-            cout << "--> (3) Call from sync mutex to async seq" << popcendl;
-            (*this).toAsyncSeq(3);
-            break;
-        case ASYNCCONC:
-            cout << "--> (3) Call from sync mutex to async conc" << popcendl;
-            (*this).toAsyncConc(3);
-            break;
-        case ASYNCMUTEX:
-            cout << "--> (3) Call from sync mutex to async mutex (NOT RECOMMENDED)" << popcendl;
-            (*this).toAsyncMutex(3);
-            break;
+    if (this != NULL) {
+        switch (sem) {
+            case SYNCSEQ:
+                cout << "--> (3) Call from sync mutex to sync seq (NOT POSSIBLE)" << popcendl;
+                break;
+            case SYNCCONC:
+                cout << "--> (3) Call from sync mutex to sync conc (NOT POSSIBLE)" << popcendl;
+                break;
+            case SYNCMUTEX:
+                cout << "--> (3) Call from sync mutex to sync mutex (NOT POSSIBLE)" << popcendl;
+                break;
+            case ASYNCSEQ:
+                cout << "--> (3) Call from sync mutex to async seq" << popcendl;
+                (*this).toAsyncSeq(3);
+                break;
+            case ASYNCCONC:
+                cout << "--> (3) Call from sync mutex to async conc" << popcendl;
+                (*this).toAsyncConc(3);
+                break;
+            case ASYNCMUTEX:
+                cout << "--> (3) Call from sync mutex to async mutex (NOT RECOMMENDED)" << popcendl;
+                (*this).toAsyncMutex(3);
+                break;
         }
     }
 }
@@ -115,30 +113,30 @@ void POPObject::fromSyncMutex(int sem) {
  * @param sem  Semantic to use for the internal call
  */
 void POPObject::fromAsyncConc(int sem) {
-    if(this != NULL) {
-        switch(sem) {
-        case SYNCSEQ:
-            cout << "--> (4) Call from async conc to sync seq" << popcendl;
-            (*this).toSyncSeq(4);
-            break;
-        case SYNCCONC:
-            cout << "--> (4) Call from async conc to sync conc" << popcendl;
-            (*this).toSyncConc(4);
-            break;
-        case SYNCMUTEX:
-            cout << "--> (4) Call from async conc to sync mutex (NOT POSSIBLE)" << popcendl;
-            break;
-        case ASYNCSEQ:
-            cout << "--> (4) Call from async conc to async seq" << popcendl;
-            (*this).toAsyncSeq(4);
-            break;
-        case ASYNCCONC:
-            cout << "--> (4) Call from async conc to async conc" << popcendl;
-            (*this).toAsyncConc(4);
-            break;
-        case ASYNCMUTEX:
-            cout << "--> (4) Call from async conc to async mutex (NOT RECOMMENDED)" << popcendl;
-            break;
+    if (this != NULL) {
+        switch (sem) {
+            case SYNCSEQ:
+                cout << "--> (4) Call from async conc to sync seq" << popcendl;
+                (*this).toSyncSeq(4);
+                break;
+            case SYNCCONC:
+                cout << "--> (4) Call from async conc to sync conc" << popcendl;
+                (*this).toSyncConc(4);
+                break;
+            case SYNCMUTEX:
+                cout << "--> (4) Call from async conc to sync mutex (NOT POSSIBLE)" << popcendl;
+                break;
+            case ASYNCSEQ:
+                cout << "--> (4) Call from async conc to async seq" << popcendl;
+                (*this).toAsyncSeq(4);
+                break;
+            case ASYNCCONC:
+                cout << "--> (4) Call from async conc to async conc" << popcendl;
+                (*this).toAsyncConc(4);
+                break;
+            case ASYNCMUTEX:
+                cout << "--> (4) Call from async conc to async mutex (NOT RECOMMENDED)" << popcendl;
+                break;
         }
     }
 }
@@ -148,30 +146,30 @@ void POPObject::fromAsyncConc(int sem) {
  * @param sem  Semantic to use for the internal call
  */
 void POPObject::fromAsyncSeq(int sem) {
-    if(this != NULL) {
-        switch(sem) {
-        case SYNCSEQ:
-            cout << "--> (5) Call from async seq to sync seq (NOT POSSIBLE)" << popcendl;
-            break;
-        case SYNCCONC:
-            cout << "--> (5) Call from async seq to sync conc" << popcendl;
-            (*this).toSyncConc(5);
-            break;
-        case SYNCMUTEX:
-            cout << "--> (5) Call from async seq to sync mutex (NOT POSSIBLE)" << popcendl;
-            break;
-        case ASYNCSEQ:
-            cout << "--> (5) Call from async seq to async seq" << popcendl;
-            (*this).toAsyncSeq(5);
-            break;
-        case ASYNCCONC:
-            cout << "--> (5) Call from async seq to async conc" << popcendl;
-            (*this).toAsyncConc(5);
-            break;
-        case ASYNCMUTEX:
-            cout << "--> (5) Call from async seq to async mutex (NOT RECOMMENDED)" << popcendl;
-            (*this).toAsyncMutex(5);
-            break;
+    if (this != NULL) {
+        switch (sem) {
+            case SYNCSEQ:
+                cout << "--> (5) Call from async seq to sync seq (NOT POSSIBLE)" << popcendl;
+                break;
+            case SYNCCONC:
+                cout << "--> (5) Call from async seq to sync conc" << popcendl;
+                (*this).toSyncConc(5);
+                break;
+            case SYNCMUTEX:
+                cout << "--> (5) Call from async seq to sync mutex (NOT POSSIBLE)" << popcendl;
+                break;
+            case ASYNCSEQ:
+                cout << "--> (5) Call from async seq to async seq" << popcendl;
+                (*this).toAsyncSeq(5);
+                break;
+            case ASYNCCONC:
+                cout << "--> (5) Call from async seq to async conc" << popcendl;
+                (*this).toAsyncConc(5);
+                break;
+            case ASYNCMUTEX:
+                cout << "--> (5) Call from async seq to async mutex (NOT RECOMMENDED)" << popcendl;
+                (*this).toAsyncMutex(5);
+                break;
         }
     }
 }
@@ -181,29 +179,29 @@ void POPObject::fromAsyncSeq(int sem) {
  * @param sem  Semantic to use for the internal call
  */
 void POPObject::fromAsyncMutex(int sem) {
-    if(this != NULL) {
-        switch(sem) {
-        case SYNCSEQ:
-            cout << "--> (6) Call from async mutex to sync seq (NOT POSSIBLE)" << popcendl;
-            break;
-        case SYNCCONC:
-            cout << "--> (6) Call from async mutex to sync conc (NOT POSSIBLE)" << popcendl;
-            break;
-        case SYNCMUTEX:
-            cout << "--> (6) Call from async mutex to sync mutex (NOT POSSIBLE)" << popcendl;
-            break;
-        case ASYNCSEQ:
-            cout << "--> (6) Call from async mutex to async seq" << popcendl;
-            (*this).toAsyncSeq(6);
-            break;
-        case ASYNCCONC:
-            cout << "--> (6) Call from async mutex to async conc" << popcendl;
-            (*this).toAsyncConc(6);
-            break;
-        case ASYNCMUTEX:
-            cout << "--> (6) Call from async mutex to async mutex (NOT RECOMMENDED)" << popcendl;
-            (*this).toAsyncMutex(6);
-            break;
+    if (this != NULL) {
+        switch (sem) {
+            case SYNCSEQ:
+                cout << "--> (6) Call from async mutex to sync seq (NOT POSSIBLE)" << popcendl;
+                break;
+            case SYNCCONC:
+                cout << "--> (6) Call from async mutex to sync conc (NOT POSSIBLE)" << popcendl;
+                break;
+            case SYNCMUTEX:
+                cout << "--> (6) Call from async mutex to sync mutex (NOT POSSIBLE)" << popcendl;
+                break;
+            case ASYNCSEQ:
+                cout << "--> (6) Call from async mutex to async seq" << popcendl;
+                (*this).toAsyncSeq(6);
+                break;
+            case ASYNCCONC:
+                cout << "--> (6) Call from async mutex to async conc" << popcendl;
+                (*this).toAsyncConc(6);
+                break;
+            case ASYNCMUTEX:
+                cout << "--> (6) Call from async mutex to async mutex (NOT RECOMMENDED)" << popcendl;
+                (*this).toAsyncMutex(6);
+                break;
         }
     }
 }

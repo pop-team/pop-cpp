@@ -6,7 +6,7 @@
  * This program is testing the bug number 15 in the known bug list of POP-C++
  */
 int main(int argc, char** argv) {
-    //cout << "Showing problem number 08 - const parameter (pointer and return)" << popcendl;
+    // cout << "Showing problem number 08 - const parameter (pointer and return)" << popcendl;
     POPObject o;
     o.dummyMethod();
     return 0;

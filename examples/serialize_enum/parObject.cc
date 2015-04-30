@@ -12,7 +12,7 @@ ParObject::ParObject(POPString machine) {
 }
 
 ParObject::ParObject(float f) {
-    printf("Creation of object of class ParObject with power %f\n",f);
+    printf("Creation of object of class ParObject with power %f\n", f);
     theData.SetInternalData(2);
 }
 
@@ -21,7 +21,7 @@ ParObject::~ParObject() {
 }
 
 void ParObject::SetData(Data data) {
-    theData=data;
+    theData = data;
 }
 
 Data ParObject::GetData() {

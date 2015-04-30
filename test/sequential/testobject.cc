@@ -1,6 +1,5 @@
 #include "testobject.ph"
 
-
 TestObject::TestObject(POPString address) {
     printf("TestObject created\n");
 }

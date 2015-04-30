@@ -1,10 +1,7 @@
 #include <stdio.h>
 #include "classA.ph"
 
-
-int main(int argc, char **argv) {
-
-
+int main(int argc, char** argv) {
     ClassA objectA(2);
     ClassB objectB(1);
 
@@ -13,5 +10,4 @@ int main(int argc, char **argv) {
     objectA.saveRef(objectB);
 
     return 0;
-
 }

@@ -22,12 +22,12 @@ pop_memspool::~pop_memspool() {
 }
 
 void* pop_memspool::Alloc(int sz) {
-    if(sz<=0) {
+    if (sz <= 0) {
         return nullptr;
     }
 
     void* data;
-    if((data=malloc(sz))==nullptr) {
+    if ((data = malloc(sz)) == nullptr) {
         pop_exception::pop_throw(errno);
     }
     memtemp.push_back(data);
@@ -35,13 +35,13 @@ void* pop_memspool::Alloc(int sz) {
 }
 
 void pop_memspool::Managed(void* data) {
-    if(data) {
+    if (data) {
         memtemp.push_back(data);
     }
 }
 
 void pop_memspool::Free() {
-    for(auto& tmp : memtemp){
+    for (auto& tmp : memtemp) {
         free(tmp);
     }
     memtemp.clear();

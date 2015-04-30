@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -21,15 +22,15 @@ Modified by L.Winkler (2008-2009) for Version 1.3
 #include <net/if.h>
 #include <ifaddrs.h>
 #endif
-#define DEFAULTPORT  2711
+#define DEFAULTPORT 2711
 
 // For set processor
 #include <sched.h>
 
-//Added by clementval for COUT support
+// Added by clementval for COUT support
 #include <iostream>
 #include <sstream>
-//End of add
+// End of add
 
 class AppCoreService;
 
@@ -43,8 +44,8 @@ public:
     pop_system();
     ~pop_system();
 
-    static bool Initialize(int *argc,char ***argv);//only for the main...
-    static void Finalize(bool normalExit); //only for the main...
+    static bool Initialize(int* argc, char*** argv);  // only for the main...
+    static void Finalize(bool normalExit);  // only for the main...
 
     /**
      * @brief Returns host of node in string format
@@ -63,7 +64,7 @@ public:
      * @param iplist
      * @param listsize
      */
-    static int GetIP(const char *hostname, int *iplist, int listsize);
+    static int GetIP(const char* hostname, int* iplist, int listsize);
 
     /**
      * @brief Returns IP of node
@@ -71,7 +72,7 @@ public:
      * @param listsize Max nb of IPs returned
      * Note : calls GetIP()
      */
-    static int GetIP(int *iplist, int listsize);
+    static int GetIP(int* iplist, int listsize);
 
     /**
      * @brief Returns local IP on interface
@@ -103,12 +104,11 @@ public:
     static std::ostringstream _popc_cout;
 
 private:
-    static std::string pop_hostname;  //V1.3m
+    static std::string pop_hostname;  // V1.3m
 
-    static AppCoreService *CreateAppCoreService(char *codelocation);
-    static AppCoreService *mgr;
+    static AppCoreService* CreateAppCoreService(char* codelocation);
+    static AppCoreService* mgr;
     static std::string challenge;
-
 };
 typedef pop_system POPSystem;
 

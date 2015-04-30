@@ -16,7 +16,9 @@ int main(int argc, char** argv) {
     a.SetInternalData(10);
     a.SetMyData(100);
     a.SetMyData(256, 3.1415926);
-    o.SetData(a, a); // TODO LW: There is an error here: the dynamic and static types are different ---> error at serialization
+    o.SetData(
+        a,
+        a);  // TODO LW: There is an error here: the dynamic and static types are different ---> error at serialization
 
     printf("Heritparam3: Current internal data =%d\n", o.GetData().GetInternalData());
     printf("Heritparam3: My current data =%d\n", o.GetData().GetMyData());
@@ -32,7 +34,7 @@ int main(int argc, char** argv) {
     printf("Heritparam3: My current data = %d\n", o.GetData().GetMyData());
     printf("Heritparam3: b.InternalData=%d\n", b.GetInternalData());
 
-    if((v==20) && (b.GetInternalData()==23) && (a.GetMyData()==200)) {
+    if ((v == 20) && (b.GetInternalData() == 23) && (a.GetMyData() == 200)) {
         printf("Heritparam3: test succeeded, destroying objects...\n");
         return 0;
     } else {
@@ -40,4 +42,3 @@ int main(int argc, char** argv) {
         return 1;
     }
 }
-

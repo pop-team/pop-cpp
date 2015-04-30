@@ -9,9 +9,9 @@
 #include <unistd.h>
 
 #ifndef __WIN32__
-    #define SLEEP(_x_) sleep(_x_);
+#define SLEEP(_x_) sleep(_x_);
 #else
-    #define SLEEP(_x_) Sleep((_x_) * 1000);
+#define SLEEP(_x_) Sleep((_x_)*1000);
 #endif
 
 int main(int argc, char** argv) {
@@ -33,11 +33,10 @@ int main(int argc, char** argv) {
     o1.m400(d);
     printf("Const: call to m12\n");
     SLEEP(1);
-    d=o1.m12(10);
+    d = o1.m12(10);
     printf("Const: call to m20\n");
     SLEEP(1);
-    o2=o1.m20();
+    o2 = o1.m20();
     printf("Const: test succeeded, destroying objects...\n");
     return 0;
 }
-

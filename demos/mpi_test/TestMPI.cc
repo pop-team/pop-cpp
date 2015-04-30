@@ -1,10 +1,8 @@
 #include <mpi.h>
 #include "TestMPI.ph"
 
-
-
 TestMPI::TestMPI() {
-    val=0;
+    val = 0;
 }
 
 void TestMPI::ExecuteMPI() {

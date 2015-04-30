@@ -27,7 +27,7 @@
  * @author Valentin Clement
  *
  */
-class popc_combox_mpi: public pop_combox {
+class popc_combox_mpi : public pop_combox {
 public:
     popc_combox_mpi();
     virtual ~popc_combox_mpi();
@@ -39,21 +39,21 @@ public:
     static const int POPC_COMBOX_MPI_HEADER_SIZE;
 
     virtual bool Create(char* host, int port, bool server = false);
-    virtual bool Connect(const char *url);
-    virtual bool connect_and_die(std::string &url);
+    virtual bool Connect(const char* url);
+    virtual bool connect_and_die(std::string& url);
 
     virtual pop_connection* get_connection();
 
-    virtual int Send(const char *s, int len);
-    virtual int Send(const char *s, int len, pop_connection *conn, bool unlock);
+    virtual int Send(const char* s, int len);
+    virtual int Send(const char* s, int len, pop_connection* conn, bool unlock);
 
-    virtual int Recv(char *s, int len, bool unlock);
-    virtual int Recv(char *s, int len, pop_connection *&iopeer, bool unlock);
+    virtual int Recv(char* s, int len, bool unlock);
+    virtual int Recv(char* s, int len, pop_connection*& iopeer, bool unlock);
 
-    virtual pop_connection *Wait();
+    virtual pop_connection* Wait();
     virtual void Close();
 
-    virtual bool disconnect(pop_connection *connection);
+    virtual bool disconnect(pop_connection* connection);
     virtual bool is_server();
 
     /**
@@ -64,19 +64,19 @@ public:
     virtual std::string GetUrl();
     virtual std::string GetProtocol();
 
-    //bool hasCommunicator();
-    //void setCommunicator(MPI::Intercomm comm);
-    //MPI::Intercomm getCommunicator();
+    // bool hasCommunicator();
+    // void setCommunicator(MPI::Intercomm comm);
+    // MPI::Intercomm getCommunicator();
 
 protected:
     virtual pop_connection* CreateConnection(int fd);
-    bool Connect(const char *host, int port);
+    bool Connect(const char* host, int port);
     int GetPort();
 
     bool _is_server;
     bool isCanceled;
 
-    pop_mpi_connection *peer;
+    pop_mpi_connection* peer;
 
     // Only used by combox server
     int index;
@@ -98,18 +98,15 @@ private:
     bool _is_port_open;
 
     // To manage multiple connections
-    //std::map<int, MPI::Comm*> _connections;
+    // std::map<int, MPI::Comm*> _connections;
     MPI::Intercomm _connections[10];
     MPI::Request _pending_requests[10];
     int _pending_data[10];
     int _current_tag;
     bool _have_to_get_lock;
 
-
     pop_condition mpicond;
     int data;
-
 };
-
 
 #endif  // INCLUDE_POPC_COMBOX_MPI_H_

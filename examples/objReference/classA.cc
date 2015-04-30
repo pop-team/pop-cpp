@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include "classA.ph"
 
-
 ClassA::ClassA(int anid) {
-    id=anid;
-    printf("Create object of ClassA with id=%d\n",id);
+    id = anid;
+    printf("Create object of ClassA with id=%d\n", id);
 }
 
 ClassA::~ClassA() {
@@ -13,8 +12,8 @@ ClassA::~ClassA() {
     printf("Destroy object of ClassA\n");
 }
 
-void ClassA::saveReference(ClassB &newRef) {
-    printf("Save reference of object of ClassA with id=%d\n",id);
+void ClassA::saveReference(ClassB& newRef) {
+    printf("Save reference of object of ClassA with id=%d\n", id);
 
     myRef = new ClassB(newRef);
 

@@ -13,10 +13,10 @@ Titi::~Titi() {
 void Titi::SetIdent(int i) {
     printf("CallBack: SetIdent() on Titi...\n");
 
-    ident=i;
+    ident = i;
 }
 
-void Titi::ComputeIdent(Toto &t) {
+void Titi::ComputeIdent(Toto& t) {
     printf("CallBack: ComputeIdent() on Titi...\n");
     t.SetIdent(ident);
 }

@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Tuan Anh Nguyen
@@ -30,24 +31,23 @@ public:
     ~pop_buffer_factory_finder();
 
     int GetFactoryCount();
-    pop_buffer_factory * GetFactory(int index);
-    pop_buffer_factory * FindFactory(const std::string& name);
-    bool GetBufferName(int index, std::string & bufferName);
+    pop_buffer_factory* GetFactory(int index);
+    pop_buffer_factory* FindFactory(const std::string& name);
+    bool GetBufferName(int index, std::string& bufferName);
 
-    //Singleton functions
+    // Singleton functions
     static pop_buffer_factory_finder& get_instance();
     static void release_instance();
 
 private:
     pop_buffer_factory_finder();
-    void *LoadPlugin(char *fname, pop_buffer_factory * &f);
+    void* LoadPlugin(char* fname, pop_buffer_factory*& f);
 
-    pop_buffer_factory * bfArray[MAX_FACTORY];
+    pop_buffer_factory* bfArray[MAX_FACTORY];
     int size;
-    void *plugins[MAX_FACTORY];
+    void* plugins[MAX_FACTORY];
 
     static pop_buffer_factory_finder* bff;
-
 };
 
 #endif

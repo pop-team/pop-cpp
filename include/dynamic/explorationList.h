@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author -
@@ -19,7 +20,6 @@
 #include "pop_base.h"
 #define NEIGHBORSPATH 5
 
-
 // Type representing a list of nodeId.
 typedef std::list<std::string> neighborsList;
 
@@ -30,8 +30,8 @@ typedef std::map<std::string, neighborsList> explorationList;
  *  Class representing a list of exploration of nodes. This class must inherit
  *  from POPBase to be passed in the network.
  */
-class ExplorationList: public POPBase {
-public :
+class ExplorationList : public POPBase {
+public:
     // Default constructor
     ExplorationList();
 
@@ -39,18 +39,17 @@ public :
     ~ExplorationList();
 
     // Inherited method to serialize the object
-    virtual void Serialize(POPBuffer &buf, bool pack);
+    virtual void Serialize(POPBuffer& buf, bool pack);
 
     // Method used to add a list of nodes in the list
-    void         addListNode(std::string nodeId,
-                             std::list<std::string> neighbors);
+    void addListNode(std::string nodeId, std::list<std::string> neighbors);
     // Method indicating if a node (identified by its nodeId) is present
     // or not in the list
-    bool         isIn(std::string nodeId);
+    bool isIn(std::string nodeId);
 
-private :
-    explorationList visitedNodes; // The exploration list of visited nodes
+private:
+    explorationList visitedNodes;  // The exploration list of visited nodes
 };
 
-int explo_log(const char *format,...);
+int explo_log(const char* format, ...);
 #endif

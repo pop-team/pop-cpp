@@ -5,11 +5,11 @@
 #include "heritdata.h"
 
 int main(int argc, char** argv) {
-
     printf("\nHeritparam1: Starting test..\n");
 
     int v;
-    HeritData a;;
+    HeritData a;
+    ;
     ParObject o("localhost");
 
     a.SetInternalData(10);
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     printf("Heritparam1: Current internal data =%d\n", v);
     printf("Heritparam1: My current data =%d\n", o.GetData().GetMyData());
 
-    if(v==20) {
+    if (v == 20) {
         printf("Heritparam1: test succeeded, destroying objects...\n");
     } else {
         printf("Heritparam1: Test failed, bad value transmission\n");
@@ -35,4 +35,3 @@ int main(int argc, char** argv) {
 
     return 0;
 }
-

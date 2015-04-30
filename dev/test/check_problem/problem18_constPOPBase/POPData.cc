@@ -1,13 +1,10 @@
 #include "POPData.h"
 
 POPData::POPData() {
-
 }
 
 POPData::~POPData() {
-
 }
-
 
 void POPData::setIntData(int value) {
     intdata = value;

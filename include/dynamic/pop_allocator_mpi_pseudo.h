@@ -1,6 +1,7 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
@@ -27,7 +28,6 @@ public:
     virtual pop_allocationMechanism get_mechanism() {
         return pop_allocator::PSEUDODYNAMIC;
     }
-
 };
 
 #endif /* POPC_ALLOCATOR_MPI_PSEUDO_H_ */

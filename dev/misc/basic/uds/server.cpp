@@ -2,7 +2,7 @@
 
 int main(int argc, char* argv[]) {
     popc_combox_uds server;
-    if(!server.Create("uds_server01", true)) {
+    if (!server.Create("uds_server01", true)) {
         printf("Server couldn't be created\n");
         return 1;
     }
@@ -12,11 +12,11 @@ int main(int argc, char* argv[]) {
     server.set_timeout(-1);
     int message = 0;
     bool active = true;
-    while(active) {
+    while (active) {
         printf("wait\n");
         popc_connection_uds* connection = server.Wait();
 
-        if(connection != NULL) {
+        if (connection != NULL) {
             char buffer[21];
             server.Recv(buffer, 21, connection);
             printf("Server: %s\n", buffer);

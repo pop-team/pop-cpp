@@ -1,12 +1,14 @@
 /**
  *
- * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western Switzerland.
+ * Copyright (c) 2005-2012 POP-C++ project - GRID & Cloud Computing group, University of Applied Sciences of western
+ *Switzerland.
  * http://gridgroup.hefr.ch/popc
  *
  * @author Valentin Clement
  * @date 2012/11/30
  * @brief Declaration of base POPC_Group_interface class. This class is the base class for interface-side of a group
- *        parallel object. A group parallel object is a set of parallel object that can be called in a single or collective way.
+ *        parallel object. A group parallel object is a set of parallel object that can be called in a single or
+ *collective way.
  *
  *
  */
@@ -18,7 +20,6 @@
 #include "pop_combox.h"
 #include "pop_buffer.h"
 #include <vector>
-
 
 class POPC_GroupInterface {
 public:
@@ -37,7 +38,6 @@ public:
     bool is_initialized();
     bool is_finalized();
 
-
     // Group management operations
     POPC_GroupInterface& merge(POPC_GroupInterface& other);
     POPC_GroupInterface& split(const int rank);
@@ -45,12 +45,11 @@ public:
     POPC_GroupInterface& split(const std::vector<int> group1);
     bool remove(const int rank);
 
-
     //
-    virtual POPC_GroupInterface& operator[](const int index)=0;
+    virtual POPC_GroupInterface& operator[](const int index) = 0;
 
 protected:
-    void allocate_multiple(int nb); // Allocate a number of parallel object that will be managed by the group interface
+    void allocate_multiple(int nb);  // Allocate a number of parallel object that will be managed by the group interface
     virtual void construct_remote_object() = 0;
 
     virtual char* get_class_name();
@@ -80,16 +79,9 @@ private:
     // Number of parallel object belonging to this group
     int _popc_nb_parallel_object;
 
-
-
     // Internal method controlling the live of XMP parallel object
     bool _pop_allocate_parallel_object(int nb);
     bool _popc_terminate_parallel_object(int nb);
-
-
-
-
-
 };
 
 #endif /* POPC_GROUP_INTERFACE_H_ */
