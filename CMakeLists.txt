@@ -213,7 +213,8 @@ add_subdirectory(test/unitTests)
       COMMENT "Full build and run all tests"
       )
 
-  # These 3 custom targets (lint, check and indent) can be used to facilitate the code maintenance
+  # The following custom targets (lint, check and indent) can be used to facilitate the code maintenance
+
   add_custom_target(lint
     COMMENT "Check C++ lint rules with the lint tool provided by Google"
     COMMAND find . -name \"*.h\" -o -name \"*.cpp\" -o -name \"*.cc\" | xargs scripts/cpplint.py --filter=-whitespace,-legal,-build,-runtime/references,-runtime/explicit,-readability/todo,-readability/streams,-readability/function,-runtime/int
@@ -229,4 +230,9 @@ add_subdirectory(test/unitTests)
   add_custom_target(indent
     COMMENT "Indent the code automatically with astyle"
     COMMAND find . -name \"*.h\" -o -name \"*.cpp\" -o -name \"*.cc\" -o -name \"*.cc.in\" -o -name \"*.ph\" | xargs astyle -jnUc -A2
+  )
+
+  add_custom_target(clang-format
+    COMMENT "Completely format the code automatically with clang-format"
+    COMMAND find . -name \"*.h\" -o -name \"*.hpp\" -o -name \"*.cpp\" -o -name \"*.cc\" -o -name \"*.cc.in\" -o -name \"*.ph\" | xargs clang-format -i -style=scripts/pop_style.yml
   )
