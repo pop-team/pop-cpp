@@ -26,8 +26,11 @@ void packarray(pop_buffer &buf, T *param, int size, int flag, pop_memspool* /*te
         buf.UnPack(&n,1);
         if(n>0) {
             buf.UnPack(param,n);
-        } else {
-            param=nullptr;
         }
+        //TODO (BW) This code does not do anything, find out why it
+        //was meant to do...
+        /*else {
+            param=nullptr;
+        }*/
     }
 }
