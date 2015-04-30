@@ -38,7 +38,8 @@ protected:
     std::vector<void*> memtemp;
 };
 
-template <class T> class pop_container {
+template<class T>
+class pop_container {
 public:
     pop_container(int count);
     ~pop_container();
@@ -47,7 +48,8 @@ private:
     T *data;
 };
 
-template <class T> class pop_interface_container {
+template<class T>
+class pop_interface_container {
 public:
     pop_interface_container(int count);
     ~pop_interface_container();

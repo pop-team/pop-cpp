@@ -17,6 +17,7 @@
 #include "pop_buffer.h"
 #include "pop_memspool.h"
 
-template <class T> void packarray(pop_buffer &buf, T *param, int size, int flag, pop_memspool *temp);
+template<class T>
+void packarray(pop_buffer &buf, T *param, int size, int flag, pop_memspool *temp);
 
 #endif

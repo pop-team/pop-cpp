@@ -30,10 +30,9 @@ private:
     static pop_mutex lock;
 };
 
-template<class T> T * pnew(int np) {
+template<class T>
+T * pnew(int np) {
     pop_allocobj t(np);
     return new T[np];
 }
-
-
 #endif

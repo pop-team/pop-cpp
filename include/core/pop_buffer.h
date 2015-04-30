@@ -210,8 +210,8 @@ public:
 
     static void CheckAndThrow(pop_buffer &except);
 
-    template<typename T>void Pack(const std::vector<T> *vect, int n)
-    {
+    template<typename T>
+    void Pack(const std::vector<T> *vect, int n) {
         (void)n;
         assert(n==1);
         int s=vect->size();
@@ -220,8 +220,8 @@ public:
             Pack((T*)&(*vect)[0],s);
     }
 
-    template<typename T>void UnPack( std::vector<T> *vect, int n)
-    {
+    template<typename T>
+    void UnPack( std::vector<T> *vect, int n) {
         (void)n;
         assert(n==1);
         int s=0;

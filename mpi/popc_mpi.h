@@ -10,7 +10,8 @@
 #include <jobmgr.ph>
 #include <codemgr.ph>
 
-template<class T> class POPMPI {
+template<class T>
+class POPMPI {
 public:
     POPMPI();
     POPMPI(int np);
@@ -40,6 +41,7 @@ POPMPI<T>::POPMPI() {
     mpi_np=0;
     mpi_obj=NULL;
 }
+
 template<class T>
 POPMPI<T>::POPMPI(int np) {
 
