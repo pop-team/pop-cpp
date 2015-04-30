@@ -1,0 +1,14 @@
+---
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 120
+---
+Language: Cpp
+
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: None
+SpaceBeforeParens: ControlStatements
+
+# Force pointers to the type for C++.
+DerivePointerAlignment: false
+PointerAlignment: Left
