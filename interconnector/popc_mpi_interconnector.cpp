@@ -40,11 +40,11 @@ int allocation_id;
 
 // Declaration of various map holding routing information
 map<int, int> incomingtag;
-map<int, pair<int, int>> incomingconnection;
-map<int, pair<int, int>> outgoingconnection;
+map<int, pair<int, int> > incomingconnection;
+map<int, pair<int, int> > outgoingconnection;
 map<pair<int, int>, pop_combox*> connectionmap;
 map<int, pop_connection*> allocation_return;
-map<int, pair<MPI::Intercomm, int>> object_group;
+map<int, pair<MPI::Intercomm, int> > object_group;
 map<int, int> object_group_single;
 
 // Define the constant used in the program
@@ -515,7 +515,7 @@ int main(int argc, char* argv[]) {
 
                     int current_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
                     incomingconnection.insert(
-                        pair<int, pair<int, int>>(current_fd, pair<int, int>(dest_node, dest_id)));
+                        pair<int, pair<int, int> >(current_fd, pair<int, int>(dest_node, dest_id)));
 
                     //          printf("Connection fd = %d, dest node = %d, dest id = %d\n", current_fd, dest_node,
                     //          dest_id);
