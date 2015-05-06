@@ -34,17 +34,17 @@
 using namespace std;
 
 // Global variable
-int rank, world;
-int core, nbcore;
-int allocation_id;
+int g_rank, g_world;
+int g_core, g_nbcore;
+int g_allocation_id;
 
 // Declaration of various map holding routing information
 map<int, int> incomingtag;
-map<int, pair<int, int> > incomingconnection;
-map<int, pair<int, int> > outgoingconnection;
+map<int, pair<int, int>> incomingconnection;
+map<int, pair<int, int>> outgoingconnection;
 map<pair<int, int>, pop_combox*> connectionmap;
 map<int, pop_connection*> allocation_return;
-map<int, pair<MPI::Intercomm, int> > object_group;
+map<int, pair<MPI::Intercomm, int>> object_group;
 map<int, int> object_group_single;
 
 // Define the constant used in the program
@@ -340,9 +340,9 @@ int main(int argc, char* argv[]) {
         MPI::Init_thread(required_support);
     }
 
-    core = 0;
-    nbcore = 0;
-    allocation_id = 0;
+    g_core = 0;
+    g_nbcore = 0;
+    g_allocation_id = 0;
 
     // Catch signal when a child is exiting
     signal(SIGCHLD, catch_child_exit);
@@ -354,23 +354,23 @@ int main(int argc, char* argv[]) {
     }
 
     // Initialize local address
-    rank = MPI::COMM_WORLD.Get_rank();
-    world = MPI::COMM_WORLD.Get_size();
+    g_rank = MPI::COMM_WORLD.Get_rank();
+    g_world = MPI::COMM_WORLD.Get_size();
 
     // Duplicate the global communicator
     comm_world_dup = MPI::COMM_WORLD.Dup();
     // Create a self containing communicator for spawn creation task
-    comm_self = comm_world_dup.Split(rank, 0);
+    comm_self = comm_world_dup.Split(g_rank, 0);
 
 #ifndef __APPLE__
-    nbcore = sysconf(_SC_NPROCESSORS_ONLN);
+    g_nbcore = sysconf(_SC_NPROCESSORS_ONLN);
     cpu_set_t cpu_set;
     CPU_ZERO(&cpu_set);
-    CPU_SET(core, &cpu_set);
+    CPU_SET(g_core, &cpu_set);
     if (sched_setaffinity(0, sizeof(cpu_set), &cpu_set) == -1) {
-        printf("POP-C++ Warning: Cannot set processor to %d (cpu_set %p)", core, (void*)&cpu_set);
+        printf("POP-C++ Warning: Cannot set processor to %d (cpu_set %p)", g_core, (void*)&cpu_set);
     }
-    core++;
+    g_core++;
     sched_getcpu();
 #endif
 
@@ -378,14 +378,14 @@ int main(int argc, char* argv[]) {
     pthread_t mpithread;  // MPI Receive thread
 
     char* tmp = new char[20];
-    sprintf(tmp, "uds_%d.0", rank);
+    sprintf(tmp, "uds_%d.0", g_rank);
     std::string local_address(tmp);
     delete[] tmp;
 
     // Create local combox server to accept incoming request from interface
     popc_combox_uds local;
     if (!local.Create(local_address.c_str(), true)) {
-        printf("POP-C++ Error: MPI Interconnector %d failed to initialize\n", rank);
+        printf("POP-C++ Error: MPI Interconnector %d failed to initialize\n", g_rank);
         MPI::Finalize();
         return 1;
     }
@@ -398,12 +398,12 @@ int main(int argc, char* argv[]) {
     }
 
     // Start main of the POP-C++ application on the MPI process with rank 0
-    if (rank == 0) {
+    if (g_rank == 0) {
         std::string application_arg;
         char* capp = pop_utils::checkremove(&argc, &argv, "-app=");
         // End application if app is not provided
         if (capp == NULL) {
-            if (rank == 0) {
+            if (g_rank == 0) {
                 printf("usage: %s -app=<app_exec>\n", argv[0]);
             }
             MPI::Finalize();
@@ -484,13 +484,13 @@ int main(int argc, char* argv[]) {
                 // Killing the process, end of the higher-level application
                 if (request.methodId[1] == 200001) {
                     active = false;
-                    if (rank == 0) {
+                    if (g_rank == 0) {
                         int data[2];
                         data[0] = MPI_COMMAND_TERMINATE;  // DATA 10 = END OF THE APPLICATION
                         data[1] = MPI_TAG_DUMMY;
                         int tag = MPI_TAG_COMMAND;  // TAG 0 = COMMAND MESSAGE
-                        if (world > 1) {
-                            for (int i = 1; i < world; i++) {
+                        if (g_world > 1) {
+                            for (int i = 1; i < g_world; i++) {
                                 // Inform other MPI communicator to end their process.
                                 pthread_mutex_lock(&mpi_mutex);
                                 MPI::COMM_WORLD.Issend(&data, 2, MPI_INT, i, tag);
@@ -515,7 +515,7 @@ int main(int argc, char* argv[]) {
 
                     int current_fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
                     incomingconnection.insert(
-                        pair<int, pair<int, int> >(current_fd, pair<int, int>(dest_node, dest_id)));
+                        pair<int, pair<int, int>>(current_fd, pair<int, int>(dest_node, dest_id)));
 
                     //          printf("Connection fd = %d, dest node = %d, dest id = %d\n", current_fd, dest_node,
                     //          dest_id);
@@ -601,7 +601,7 @@ int main(int argc, char* argv[]) {
 
                     // Allocate on the local node
                     char* tmp = new char[15];
-                    snprintf(tmp, 15, "uds_%d.%d", rank, next_object_id);
+                    snprintf(tmp, 15, "uds_%d.%d", g_rank, next_object_id);
                     next_object_id++;
 
                     popc_combox_uds receiver;
@@ -621,15 +621,15 @@ int main(int argc, char* argv[]) {
                     std::string _receiveraddress("-callback=");
                     _receiveraddress.append(receiver_address);
                     char* localrank = new char[20];
-                    snprintf(localrank, 20, "-local_rank=%d", rank);
+                    snprintf(localrank, 20, "-local_rank=%d", g_rank);
                     char* coreoption = new char[20];
                     if (usercore != -1) {
                         snprintf(coreoption, 20, "-core=%d", usercore);
                     } else {
-                        snprintf(coreoption, 20, "-core=%d", core);
-                        core++;
-                        if (core == nbcore) {
-                            core = 0;
+                        snprintf(coreoption, 20, "-core=%d", g_core);
+                        g_core++;
+                        if (g_core == g_nbcore) {
+                            g_core = 0;
                         }
                     }
                     //          printf("Exec object %s %s %s %s %s %s\n", codefile, _objectname.c_str(),
@@ -707,13 +707,13 @@ int main(int argc, char* argv[]) {
                     request.data->UnPack(&usercore, 1);
                     request.data->Pop();
 
-                    if (node != rank && node != -1 && node < world) {
+                    if (node != g_rank && node != -1 && node < g_world) {
                         // Unlock local MPI receive thread
                         int data[2];
                         data[0] = 12;
                         data[1] = 0;
                         pthread_mutex_lock(&mpi_mutex);
-                        MPI::COMM_WORLD.Issend(&data, 2, MPI_INT, rank, 0);
+                        MPI::COMM_WORLD.Issend(&data, 2, MPI_INT, g_rank, 0);
                         pthread_mutex_unlock(&mpi_mutex);
 
                         // Send signal to the remote node
@@ -727,7 +727,7 @@ int main(int argc, char* argv[]) {
 
                         // Send allocation information to the destination MPI Communicator
 
-                        MPI::COMM_WORLD.Issend(&allocation_id, 1, MPI_INT, node, 17);
+                        MPI::COMM_WORLD.Issend(&g_allocation_id, 1, MPI_INT, node, 17);
                         MPI::COMM_WORLD.Issend(&objectname_length, 1, MPI_INT, node, 10);
                         MPI::COMM_WORLD.Issend(objectname.c_str(), objectname_length, MPI_CHAR, node, 11);
                         MPI::COMM_WORLD.Issend(&codefile_length, 1, MPI_INT, node, 12);
@@ -737,16 +737,16 @@ int main(int argc, char* argv[]) {
 
                         // Save the allocation identifier to return the object accesspoint
                         pthread_mutex_lock(&allocation_return_map_mutex);
-                        allocation_return[allocation_id] = request.from;
+                        allocation_return[g_allocation_id] = request.from;
                         pthread_mutex_unlock(&allocation_return_map_mutex);
 
                         // Increment the allocation identifier counter
-                        allocation_id++;
+                        g_allocation_id++;
 
                     } else {
                         // Allocate on the local node
                         char* tmp = new char[15];
-                        snprintf(tmp, 15, "uds_%d.%d", rank, next_object_id);
+                        snprintf(tmp, 15, "uds_%d.%d", g_rank, next_object_id);
                         next_object_id++;
 
                         popc_combox_uds receiver;
@@ -766,17 +766,17 @@ int main(int argc, char* argv[]) {
                         std::string _receiveraddress("-callback=");
                         _receiveraddress.append(receiver_address);
                         char* localrank = new char[20];
-                        snprintf(localrank, 20, "-local_rank=%d", rank);
+                        snprintf(localrank, 20, "-local_rank=%d", g_rank);
                         char* coreoption = new char[20];
                         if (usercore != -1) {
                             // Use user defined core distribution
                             snprintf(coreoption, 20, "-core=%d", usercore);
                         } else {
                             // Use round robin distribution on core
-                            snprintf(coreoption, 20, "-core=%d", core);
-                            core++;
-                            if (core == nbcore) {
-                                core = 0;
+                            snprintf(coreoption, 20, "-core=%d", g_core);
+                            g_core++;
+                            if (g_core == g_nbcore) {
+                                g_core = 0;
                             }
                         }
 
@@ -937,7 +937,7 @@ int main(int argc, char* argv[]) {
                         pop_combox_factory combox_factory = pop_combox_factory::get_instance();
                         client = combox_factory.Create("uds");
                         char* address = new char[15];
-                        snprintf(address, 15, "uds_%d.%d", rank, dest_id);
+                        snprintf(address, 15, "uds_%d.%d", g_rank, dest_id);
 
                         // Save the combox for further communication
                         connectionmap[pair<int, int>(source, dest_id)] = client;
@@ -979,7 +979,7 @@ int main(int argc, char* argv[]) {
                     }
 
                     if (client->Send(data, length, connection) < 0) {
-                        printf("Can't send to final object (rank= %d, tag=%d, source=%d, dest_id=%d, fd=%d)\n", rank,
+                        printf("Can't send to final object (rank= %d, tag=%d, source=%d, dest_id=%d, fd=%d)\n", g_rank,
                                tag, source, dest_id, dynamic_cast<popc_connection_uds*>(connection)->get_fd());
                     }
 
@@ -1022,7 +1022,7 @@ int main(int argc, char* argv[]) {
                     }
 
                     pthread_mutex_lock(&mpi_mutex);
-                    MPI::Intercomm comm_xmp = comm_self.Spawn_multiple(nb_node, commands, aargv, maxprocs, infos, rank);
+                    MPI::Intercomm comm_xmp = comm_self.Spawn_multiple(nb_node, commands, aargv, maxprocs, infos, g_rank);
                     pthread_mutex_unlock(&mpi_mutex);
 
                     int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();
