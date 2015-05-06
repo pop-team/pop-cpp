@@ -1,4 +1,4 @@
-FLAGS=-g
+FLAGS=-g -cpp11
 all: main myobj.obj
 
 main: myobj.ph myobj.cc main.cc

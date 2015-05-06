@@ -33,7 +33,7 @@ then
     echo Starting test suite...
     echo ""
     rm -rf $RESULTS
-    for test in `ls -F -d $TEST_DIR/* | grep -v $EXCLUDEDTEST`
+    for test in `ls -F -d $TEST_DIR/*/ | grep -v $EXCLUDEDTEST`
     do
         test_name=$( basename $test )
         echo "---------------------------------------------------------------------------"

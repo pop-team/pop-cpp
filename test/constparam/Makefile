@@ -19,11 +19,6 @@ clean:
 	rm -f _paroc*
 
 debug:
-	popcc ${FLAGS} -noclean -no-pipe -verbose -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
-	popcc ${FLAGS} -noclean -verbose -object -o POPCobject.obj data.cc structdata.cc POPCobject.ph POPCobject.cc
-	./POPCobject.obj -listlong > obj.map
-
-debug_spezial:
-	popcc ${FLAGS} -popcdir=../.. -popcpp=../../parser/popcpp -DHAVE_CONFIG_H -I. -I../.. -noclean -verbose -no-pipe -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
-	popcc ${FLAGS} -popcdir=../.. -popcpp=../../parser/popcpp -noclean -verbose -no-pipe -object -o POPCobject.obj data.cc structdata.cc POPCobject.ph POPCobject.cc
+	popcc ${FLAGS} -verbose -o main POPCobject.ph POPCobject.cc data.cc structdata.cc main.cc
+	popcc ${FLAGS} -verbose -object -o POPCobject.obj data.cc structdata.cc POPCobject.ph POPCobject.cc
 	./POPCobject.obj -listlong > obj.map
