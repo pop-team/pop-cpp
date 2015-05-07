@@ -12,7 +12,7 @@ parclass POPObject {
 public:
     POPObject(int id) @{ od.url("localhost");};
     ~POPObject();
-    sync seq void voidMethod(POPObject& o);
+    sync seq void voidMethod([in]POPObject& o);
     sync conc int GetId();
 
 
