@@ -10,18 +10,21 @@ int main(int argc, char** argv) {
         obj1.syncConcMethod("call1", 1.0 * TIME_SCALE);
         obj1.syncConcMethod("call2", 0.8 * TIME_SCALE);
         obj1.syncConcMethod("call3", 0.0 * TIME_SCALE);
+        printf("End of sync cond calls\n");
 
         obj1.syncMutexMethod("-----", 0.0 * TIME_SCALE);
 
         obj1.syncSeqMethod("call1", 1.0 * TIME_SCALE);
         obj1.syncSeqMethod("call2", 0.8 * TIME_SCALE);
         obj1.syncSeqMethod("call3", 0.0 * TIME_SCALE);
+        printf("End of sync seq calls\n");
 
         obj1.syncMutexMethod("-----", 0.0 * TIME_SCALE);
 
         obj1.syncMutexMethod("call1", 1.0 * TIME_SCALE);
         obj1.syncMutexMethod("call2", 0.8 * TIME_SCALE);
         obj1.syncMutexMethod("call3", 0.0 * TIME_SCALE);
+        printf("End of sync mutex calls\n");
 
         obj1.syncMutexMethod("-----", 0.0 * TIME_SCALE);
 
@@ -50,6 +53,9 @@ int main(int argc, char** argv) {
 
     // This leaves time to destroy all objects and guarantees the output
     sleep(3);
+
+
+
 
     return 0;
 }

@@ -6,6 +6,7 @@ Concurrent method (call2) starts
 Concurrent method (call2) ends (execution time 80000 ns)
 Concurrent method (call3) starts
 Concurrent method (call3) ends (execution time 0 ns)
+End of sync cond calls
 Mutex method (-----) starts
 Mutex method (-----) ends (execution time 0 ns)
 Sequential method (call1) starts
@@ -14,6 +15,7 @@ Sequential method (call2) starts
 Sequential method (call2) ends (execution time 80000 ns)
 Sequential method (call3) starts
 Sequential method (call3) ends (execution time 0 ns)
+End of sync seq calls
 Mutex method (-----) starts
 Mutex method (-----) ends (execution time 0 ns)
 Mutex method (call1) starts
@@ -22,6 +24,7 @@ Mutex method (call2) starts
 Mutex method (call2) ends (execution time 80000 ns)
 Mutex method (call3) starts
 Mutex method (call3) ends (execution time 0 ns)
+End of sync mutex calls
 Mutex method (-----) starts
 Mutex method (-----) ends (execution time 0 ns)
 Test with asynchronous methods
