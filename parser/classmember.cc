@@ -1580,9 +1580,9 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
         output += tmpcode;
 
         sprintf(tmpcode,
-                "\n  pthread_args_t_%d *arguments = (pthread_args_t_%d *) malloc(sizeof(pthread_args_t_%d));\n  %s* "
+                "\n  pthread_args_t_%d *arguments = new pthread_args_t_%d;\n  %s* "
                 "ptr = static_cast<%s*>(this);\n  arguments->ptr_interface = ptr;\n",
-                get_id(), get_id(), get_id(), GetClass()->GetName(), GetClass()->GetName());
+                get_id(), get_id(), GetClass()->GetName(), GetClass()->GetName());
         output += tmpcode;
 
         for (auto& param : params) {
@@ -1685,7 +1685,7 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
 
         sprintf(tmpcode,
                 "    } catch(pop_exception* ex) {\n      printf(\"Async allocation: %%s\", ex->what()); \n    }\n   "
-                "free(arg);\n  return 0;\n  }\n}\n");
+                "delete arguments;\n  return 0;\n  }\n}\n");
         output += tmpcode;
     }
 
