@@ -1,15 +1,15 @@
-FLAGS=-g
+POP_FLAGS =-g ${FLAGS}
 
 all: main object
 
 main:
-	popcc ${FLAGS} -parclass-nobroker -c Barrier.ph Barrier.cc
-	popcc ${FLAGS} -o main Barrier.stub.o worker.ph worker.cc main.cc
+	popcc ${POP_FLAGS} -parclass-nobroker -c Barrier.ph Barrier.cc
+	popcc ${POP_FLAGS} -o main Barrier.stub.o worker.ph worker.cc main.cc
 
 object:
-	popcc ${FLAGS} -parclass-nobroker -c Barrier.ph Barrier.cc
-	popcc ${FLAGS} -object -o Cworker.obj Barrier.stub.o worker.cc worker.ph
-	popcc ${FLAGS} -object -o Barrier.obj Barrier.ph Barrier.cc
+	popcc ${POP_FLAGS} -parclass-nobroker -c Barrier.ph Barrier.cc
+	popcc ${POP_FLAGS} -object -o Cworker.obj Barrier.stub.o worker.cc worker.ph
+	popcc ${POP_FLAGS} -object -o Barrier.obj Barrier.ph Barrier.cc
 	./Cworker.obj -listlong > obj.map
 	./Barrier.obj -listlong >> obj.map
 
