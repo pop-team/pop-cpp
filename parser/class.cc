@@ -798,6 +798,17 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
     sprintf(str, "void AllocateObject();\n");
     code += str;
 
+    bool declared_constructor = false;
+    for(auto& member : memberList){
+        if (member->Type() == TYPE_METHOD) {
+            Method* t = (Method*) member;
+            if (t->MethodType() == METHOD_DESTRUCTOR) {
+                declared_constructor = true;
+                break;
+            }
+        }
+    }
+
     if (interface) {
         sprintf(str, "\npublic:\nvirtual const char *ClassName() { return \"%s\"; };", name);
         code += str;
@@ -856,7 +867,19 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
 
         // In case of async allocation, we need a body for synchronization purpose
         if (!IsCoreCompilation() && IsAsyncAllocationEnabled()) {
-            code += ";";
+            if(declared_constructor){
+                code += ";";
+            } else {
+                code += "{\n";
+                code += "  if(!_popc_async_joined){\n";
+                code += "    void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
+                code += "    _popc_async_joined = true;\n";
+                code += "  }\n";
+                code += "  if(!isBinded()) {\n";
+                code += "     printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n";
+                code += "  }\n";
+                code += "}";
+            }
         } else {
             code += "{}\n";
         }
