@@ -883,10 +883,12 @@ void Method::GenerateClient(std::string& output) {
         GetClass()->IsAsyncAllocationEnabled()) {
         output += "\n  // Waiting for APOA to be done before executing any method\n";
 
+        output += "  pthread_mutex_lock(&_popc_async_mutex);\n";
         output += "  if(!_popc_async_joined){\n";
         output += "    void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
         output += "    _popc_async_joined = true;\n";
         output += "  }\n";
+        output += "  pthread_mutex_unlock(&_popc_async_mutex);\n";
 
         char* nameOfRetType = returnparam.GetType()->GetName();
         if (MethodType() == METHOD_NORMAL && !returnparam.GetType()->Same((char*)"void")) {
@@ -1580,26 +1582,31 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
         output += tmpcode;
 
         sprintf(tmpcode,
-                "\n  pthread_args_t_%d *arguments = new pthread_args_t_%d;\n  %s* "
-                "ptr = static_cast<%s*>(this);\n  arguments->ptr_interface = ptr;\n",
-                get_id(), get_id(), GetClass()->GetName(), GetClass()->GetName());
+                "\n"
+                "%s* ptr = static_cast<%s*>(this);\n"
+                "pthread_args_t_%d *arguments = new pthread_args_t_%d(ptr"
+                , GetClass()->GetName(), GetClass()->GetName(), get_id(), get_id());
         output += tmpcode;
 
         for (auto& param : params) {
-            Param& p = *param;
-            sprintf(tmpcode, "  arguments->");
-            strcat(tmpcode, p.GetName());
-            strcat(tmpcode, " = ");
-            strcat(tmpcode, p.GetName());
-            strcat(tmpcode, ";\n");
-            output += tmpcode;
+            output += ", ";
+            output += param->GetName();
         }
 
+        output += ");\n";
+
+        output += "int ret;\n";
+        output += "_popc_async_joined = false;\n";
+        output += "pthread_mutexattr_t mutt_attr;\n";
+        output += "pthread_mutexattr_init(&mutt_attr);\n";
+        output += "pthread_mutexattr_settype(&mutt_attr, PTHREAD_MUTEX_RECURSIVE_NP);\n";
+        output += "pthread_mutex_init(&_popc_async_mutex, &mutt_attr);\n";
+
         sprintf(tmpcode,
-                "  int ret;\n   _popc_async_joined = false;\n  ret = pthread_create(&_popc_async_construction_thread, "
-                "&attr, %s_AllocatingThread%d, arguments);\n",
+                "ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread%d, arguments);\n",
                 GetClass()->GetName(), get_id());
         output += tmpcode;
+
         strcpy(tmpcode,
                "  if(ret != 0) {\n    printf(\"Thread creation failed\\n\");\n    perror(\"pthread_create\");\n    "
                "pthread_attr_destroy(&attr);\n    return;\n  }\n  pthread_attr_destroy(&attr);\n");
@@ -1742,10 +1749,12 @@ void Destructor::GenerateClient(std::string& output) {
         output += class_name;
 
         output += "(){\n";
+        output += "  pthread_mutex_lock(&_popc_async_mutex);\n";
         output += "  if(!_popc_async_joined){\n";
         output += "    void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
         output += "    _popc_async_joined = true;\n";
         output += "  }\n";
+        output += "  pthread_mutex_unlock(&_popc_async_mutex);\n";
         output += "  if(!isBinded()) {\n";
         output += "     printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n";
         output += "  }\n";

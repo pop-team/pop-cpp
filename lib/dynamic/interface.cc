@@ -70,9 +70,6 @@ pop_interface::pop_interface() : __pop_combox(nullptr), __pop_buf(nullptr) {
     }
 
     _ssh_tunneling = false;
-    //__pop_combox = nullptr;
-    //__pop_buf = nullptr;
-    //_popc_async_construction_thread=nullptr;
 }
 
 pop_interface::pop_interface(const pop_accesspoint& p) {
@@ -100,11 +97,20 @@ pop_interface::pop_interface(const pop_accesspoint& p) {
 pop_interface::pop_interface(const pop_interface& inf) {
     LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)",
               inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet()) ? "true" : "false");
+
+    //TENTATIVE(BW)
+    //pthread_mutex_lock(&inf._popc_async_mutex);
+    //if(!inf._popc_async_joined){
+        //void* status;
+        //pthread_join(inf._popc_async_construction_thread, &status);
+        //_popc_async_joined = true;
+    //}
+    //pthread_mutex_unlock(&inf._popc_async_mutex);
+
     pop_accesspoint infAP = inf.GetAccessPoint();
     _ssh_tunneling = false;
     __pop_combox = nullptr;
     __pop_buf = nullptr;
-    //_popc_async_construction_thread=nullptr;
 
     if (infAP.IsSecure()) {
         accesspoint.SetSecure();

@@ -129,8 +129,9 @@ public:
      * POP-C++ parser
      * to generate code.
      */
-    pthread_t _popc_async_construction_thread;
-    volatile bool _popc_async_joined;
+    mutable pthread_t _popc_async_construction_thread;
+    mutable pthread_mutex_t _popc_async_mutex;
+    mutable volatile bool _popc_async_joined;
 
     // Find a resource that satisfies the Qos and allocate an object on it
     void Allocate();

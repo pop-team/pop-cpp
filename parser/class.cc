@@ -355,9 +355,10 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
                         cons->get_id());
                 code += tmpcode;
 
-                sprintf(tmpcode, "typedef struct pthread_args%d\n{\n  %s* ptr_interface;\n", cons->get_id(), name);
+                sprintf(tmpcode, "struct pthread_args_t_%d\n{\n  %s* ptr_interface;\n", cons->get_id(), name);
                 code += tmpcode;
 
+                //Generate all the members
                 auto nb = (*met).params.size();
                 for (std::size_t j = 0; j < nb; j++) {
                     sprintf(tmpcode, "  ");
@@ -367,7 +368,34 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
                     code += tmpcode;
                 }
 
-                sprintf(tmpcode, "} pthread_args_t_%d;\n\n", cons->get_id());
+                sprintf(tmpcode, "pthread_args_t_%d(", cons->get_id());
+                code += tmpcode;
+
+                sprintf(tmpcode, "%s* ptr_interface", name);
+                code += tmpcode;
+
+                for (std::size_t j = 0; j < nb; j++) {
+                    code += ", ";
+                    sprintf(tmpcode, " ");
+                    Param& p = *((*met).params[j]);
+                    p.DeclareParam(tmpcode, false);
+                    code += tmpcode;
+                }
+
+                code += ") : ptr_interface(ptr_interface)";
+
+                for (std::size_t j = 0; j < nb; j++) {
+                    Param& p = *((*met).params[j]);
+                    code += ", ";
+                    code += p.GetName();
+                    code += "(";
+                    code += p.GetName();
+                    code += ")";
+                }
+
+                code += "{}\n";
+
+                sprintf(tmpcode, "};\n\n");
                 code += tmpcode;
             }
         }
@@ -871,10 +899,12 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
                 code += ";";
             } else {
                 code += "{\n";
+                code += "  pthread_mutex_lock(&_popc_async_mutex);\n";
                 code += "  if(!_popc_async_joined){\n";
                 code += "    void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
                 code += "    _popc_async_joined = true;\n";
                 code += "  }\n";
+                code += "  pthread_mutex_unlock(&_popc_async_mutex);\n";
                 code += "  if(!isBinded()) {\n";
                 code += "     printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n";
                 code += "  }\n";
