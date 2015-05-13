@@ -14,14 +14,13 @@ int main(int argc, char** argv) {
             if (argv[i + 2][0] == '-') {
                 objects[i] = new POPCobject(i + 1, 60, 40);
             } else {
-                int node = atoi(argv[i + 2]);
-                objects[i] = new POPCobject(i + 1, node);
+                objects[i] = new POPCobject(i + 1, argv[i + 2]);
             }
         }
 
-        // The rest is created using node 0
+        // The rest is created on localhost
         for (int i = argc - 2; i < nbObjects; i++) {
-            objects[i] = new POPCobject(i + 1, 0);
+            objects[i] = new POPCobject(i + 1, "localhost");
         }
 
         // Send IDs to each other

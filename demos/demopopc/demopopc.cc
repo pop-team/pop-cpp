@@ -7,6 +7,11 @@ POPCobject::POPCobject(int newID, int wanted, int minp) {
     iD = newID;
 }
 
+POPCobject::POPCobject(int newID, const std::string& url) {
+    printf("POPCobject with ID=%d created on machine:%s\n", newID, GetAccessPoint().GetAccessString().c_str());
+    iD = newID;
+}
+
 POPCobject::POPCobject(int newID, int node) {
     printf("POPCobject with ID=%d created on machine:%s\n", newID, GetAccessPoint().GetAccessString().c_str());
     iD = newID;

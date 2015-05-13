@@ -8,6 +8,7 @@ parclass POPCobject {
 
 public:
     POPCobject(int newID, int wanted, int minp) @{ od.search(0, 3, 0); };
+    POPCobject(int newID, const std::string& url) @{ od.url(url); };
     POPCobject(int newID, int node) @{ od.node(node); od.executable("./demopopc.obj"); };
     ~POPCobject();
 
