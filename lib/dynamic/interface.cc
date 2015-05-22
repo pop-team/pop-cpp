@@ -98,14 +98,27 @@ pop_interface::pop_interface(const pop_interface& inf) {
     LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)",
               inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet()) ? "true" : "false");
 
-    //TENTATIVE(BW)
-    //pthread_mutex_lock(&inf._popc_async_mutex);
-    //if(!inf._popc_async_joined){
-        //void* status;
-        //pthread_join(inf._popc_async_construction_thread, &status);
-        //_popc_async_joined = true;
-    //}
-    //pthread_mutex_unlock(&inf._popc_async_mutex);
+    //1. Make sure RHS is created
+    pthread_mutex_lock(&inf._popc_async_mutex);
+    if(!inf._popc_async_joined){
+        void* status;
+        pthread_join(inf._popc_async_construction_thread, &status);
+        inf._popc_async_joined = true;
+    }
+    pthread_mutex_unlock(&inf._popc_async_mutex);
+
+    //2. Make sure this can be used
+
+    //An object serialized is always joined
+    _popc_async_joined = true;
+
+    //Make sure the mutex can be used correctly
+    pthread_mutexattr_t mutt_attr;
+    pthread_mutexattr_init(&mutt_attr);
+    pthread_mutexattr_settype(&mutt_attr, PTHREAD_MUTEX_RECURSIVE_NP);
+    pthread_mutex_init(&_popc_async_mutex, &mutt_attr);
+
+    //The thread should never be used anyway
 
     pop_accesspoint infAP = inf.GetAccessPoint();
     _ssh_tunneling = false;
@@ -131,17 +144,40 @@ pop_interface::~pop_interface() {
     Release();
 }
 
-pop_interface& pop_interface::operator=(const pop_interface& obj) {
+pop_interface& pop_interface::operator=(const pop_interface& inf) {
+
+    //1. Make sure RHS is created
+    pthread_mutex_lock(&inf._popc_async_mutex);
+    if(!inf._popc_async_joined){
+        void* status;
+        pthread_join(inf._popc_async_construction_thread, &status);
+        inf._popc_async_joined = true;
+    }
+    pthread_mutex_unlock(&inf._popc_async_mutex);
+
+    //2. Make sure this can be used
+
+    //An object serialized is always joined
+    _popc_async_joined = true;
+
+    //Make sure the mutex can be used correctly
+    pthread_mutexattr_t mutt_attr;
+    pthread_mutexattr_init(&mutt_attr);
+    pthread_mutexattr_settype(&mutt_attr, PTHREAD_MUTEX_RECURSIVE_NP);
+    pthread_mutex_init(&_popc_async_mutex, &mutt_attr);
+
+
+
     //  __pop_combox = nullptr;
     //  __pop_buf = nullptr;
     LOG_DEBUG("Bind");
     // Bind(accesspoint);
     // DecRef();
     // Bind(accesspoint);
-    //  const pop_accesspoint &res = obj.GetAccessPoint();
+    //  const pop_accesspoint &res = inf.GetAccessPoint();
 
     Release();
-    accesspoint = obj.GetAccessPoint();
+    accesspoint = inf.GetAccessPoint();
     if (GetAccessPoint().GetAccessString().c_str()) {
         Bind(accesspoint);
         // AddRef();
@@ -171,7 +207,16 @@ const pop_accesspoint& pop_interface::GetAccessPointForThis() {
 }
 
 void pop_interface::Serialize(pop_buffer& buf, bool pack) {
-    if(!pack){
+    if(pack){
+        //Make sure the object is created prior to serialization
+        pthread_mutex_lock(&_popc_async_mutex);
+        if(!_popc_async_joined){
+            void* status;
+            pthread_join(_popc_async_construction_thread, &status);
+            _popc_async_joined = true;
+        }
+        pthread_mutex_unlock(&_popc_async_mutex);
+    } else {
         //An object serialized is always joined
         _popc_async_joined = true;
 
