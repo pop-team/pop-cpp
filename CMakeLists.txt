@@ -237,3 +237,8 @@ add_subdirectory(test/unitTests)
     COMMAND find . -name \"*.h\" -o -name \"*.hpp\" -o -name \"*.cpp\" -o
     -name \"*.cc\" -o -name \"*.cc.in\" | xargs clang-format -i -style=file
   )
+
+  add_custom_target(clean-uds
+    COMMENT "Remove all UDS generated files"
+    COMMAND find . -xdev -type s -name \".uds_*\" -exec rm {} +
+  )
