@@ -66,7 +66,7 @@ std::string uds_allocator_interconnector::allocate(const std::string& objectname
     pop_buffer* allocating_buffer = allocating_combox->GetBufferFactory()->CreateBuffer();
 
     auto local_address = new char[15];
-    snprintf(local_address, 15, "uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
+    snprintf(local_address, 15, ".uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
     if (!allocating_combox->Create(local_address, false) || !allocating_combox->Connect(local_address)) {
         pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "Create or Connect failed");
     }
@@ -131,7 +131,7 @@ pop_combox* uds_allocator_interconnector::allocate_group(const std::string& obje
     int rank = pop_system::popc_local_mpi_communicator_rank;
 
     auto local_interconnector_address = new char[15];
-    snprintf(local_interconnector_address, 15, "uds_%d.0", rank);
+    snprintf(local_interconnector_address, 15, ".uds_%d.0", rank);
 
     auto& combox_factory = pop_combox_factory::get_instance();
 

@@ -80,7 +80,7 @@ bool popc_combox_uds::Create(const char* address, bool server) {
             // TODO This is ugly and probably wrong as well
             std::size_t i = 0;
             for (; i < 32768; ++i) {
-                std::string str_address = "uds_0." + std::to_string(i);
+                std::string str_address = ".uds_0." + std::to_string(i);
 
                 // 2. Make sure the address is clear
                 memset(&_sock_address, 0, sizeof(struct sockaddr_un));

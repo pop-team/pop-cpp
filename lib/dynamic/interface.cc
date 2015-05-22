@@ -452,6 +452,7 @@ void pop_interface::Bind(const char* dest) {
     std::string connect_dest(dest);
     connect_dest = connect_dest.substr(6);
 
+    //TODO(BW): WTH is that code doing ?
     size_t pos = connect_dest.find("uds_");
 
     std::string destination_node;
@@ -476,7 +477,7 @@ void pop_interface::Bind(const char* dest) {
         // Spoof address with the local MPI Communicator
         // TODO LW: Why do we have this here ????
         char* local_address = new char[15];
-        snprintf(local_address, 15, "uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
+        snprintf(local_address, 15, ".uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
 
         LOG_DEBUG("Spoof of address %s to %s", connect_dest.c_str(), local_address);
         create_return = __pop_combox->Create(local_address, false);
@@ -933,9 +934,9 @@ int pop_interface::LocalExec(const char* hostname, const char* codefile, const c
           argv[n++]=popc_strdup(tmpstr);
       }
 
-      sprintf(tmpstr, "-address=uds_0.%d", pop_system::pop_current_local_address);
+      sprintf(tmpstr, "-address=.uds_0.%d", pop_system::pop_current_local_address);
       argv[n++]=popc_strdup(tmpstr);
-      sprintf(tmpstr, "uds://uds_0.%d", pop_system::pop_current_local_address);
+      sprintf(tmpstr, "uds://.uds_0.%d", pop_system::pop_current_local_address);
       objaccess->SetAccessString(tmpstr);
 
       pop_system::pop_current_local_address++;

@@ -100,7 +100,7 @@ void catch_child_exit(int signal_num) {
 void* mpireceivedthread(void* t) {
     int rank = MPI::COMM_WORLD.Get_rank();
     char* tmp = new char[20];
-    snprintf(tmp, sizeof(tmp), "uds_%d.0", rank);
+    snprintf(tmp, sizeof(tmp), ".uds_%d.0", rank);
     std::string local_address(tmp);
     delete[] tmp;
     bool active = true;
@@ -378,7 +378,7 @@ int main(int argc, char* argv[]) {
     pthread_t mpithread;  // MPI Receive thread
 
     char* tmp = new char[20];
-    sprintf(tmp, "uds_%d.0", g_rank);
+    sprintf(tmp, ".uds_%d.0", g_rank);
     std::string local_address(tmp);
     delete[] tmp;
 
@@ -601,7 +601,7 @@ int main(int argc, char* argv[]) {
 
                     // Allocate on the local node
                     char* tmp = new char[15];
-                    snprintf(tmp, 15, "uds_%d.%d", g_rank, next_object_id);
+                    snprintf(tmp, 15, ".uds_%d.%d", g_rank, next_object_id);
                     next_object_id++;
 
                     popc_combox_uds receiver;
@@ -746,7 +746,7 @@ int main(int argc, char* argv[]) {
                     } else {
                         // Allocate on the local node
                         char* tmp = new char[15];
-                        snprintf(tmp, 15, "uds_%d.%d", g_rank, next_object_id);
+                        snprintf(tmp, 15, ".uds_%d.%d", g_rank, next_object_id);
                         next_object_id++;
 
                         popc_combox_uds receiver;
@@ -937,7 +937,7 @@ int main(int argc, char* argv[]) {
                         pop_combox_factory combox_factory = pop_combox_factory::get_instance();
                         client = combox_factory.Create("uds");
                         char* address = new char[15];
-                        snprintf(address, 15, "uds_%d.%d", g_rank, dest_id);
+                        snprintf(address, 15, ".uds_%d.%d", g_rank, dest_id);
 
                         // Save the combox for further communication
                         connectionmap[pair<int, int>(source, dest_id)] = client;
@@ -1032,7 +1032,7 @@ int main(int argc, char* argv[]) {
                     mpirequest[nb_comm] = comm_xmp.Irecv(&mpidatain[nb_comm], 2, MPI_INT, MPI_ANY_SOURCE, 0);
                     nb_comm++;
 
-                    std::string objectaddress("uds://uds_10.0 uds://uds_11.0");
+                    std::string objectaddress("uds://.uds_10.0 uds://.uds_11.0");
                     request.data->Reset();
                     pop_message_header h("_allocate");
                     request.data->SetHeader(h);
