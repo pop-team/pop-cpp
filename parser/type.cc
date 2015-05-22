@@ -57,14 +57,17 @@ int DataType::CanMarshal() {
 }
 
 void DataType::Marshal(char* varname, char* bufname, char* sizehelper, std::string& output) {
-    char tmpcode[1024];
-    char paramname[256];
-    const char* sz = (sizehelper == nullptr) ? "1" : sizehelper;
-
     if (strcmp(GetName(), "void") != 0) {
+        char paramname[256];
+
         if (!FindVarName(varname, paramname)) {
             strcpy(paramname, "unkown");
         }
+
+        char tmpcode[1024];
+
+        const char* sz = (sizehelper == nullptr) ? "1" : sizehelper;
+
         sprintf(tmpcode, "%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, GetName(), sz);
         output += tmpcode;
 
@@ -77,14 +80,16 @@ void DataType::Marshal(char* varname, char* bufname, char* sizehelper, std::stri
 }
 
 void DataType::DeMarshal(char* varname, char* bufname, char* sizehelper, std::string& output) {
-    char tmpcode[1024];
-    char paramname[256];
-    const char* sz = (sizehelper == nullptr) ? "1" : sizehelper;
-
     if (strcmp(GetName(), "void") != 0) {
+        char paramname[256];
+
         if (!FindVarName(varname, paramname)) {
             strcpy(paramname, "unkown");
         }
+
+        char tmpcode[1024];
+
+        const char* sz = (sizehelper == nullptr) ? "1" : sizehelper;
         sprintf(tmpcode, "%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, GetName(), sz);
         output += tmpcode;
 

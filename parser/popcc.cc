@@ -295,8 +295,6 @@ int cxx_compiler(char* cpp, const char** cpp_opt, const char* source, char** des
 
 char* Compile(const char* preprocessor, char* popcpp, char* cpp, const char** pre_opt, const char** cpp_opt,
               char* source, char* dest, const popc_options& options) {
-    const char* cmd[1000];
-
     char sdir[1024];
     char tmpfile1[1024];
     char tmpfile2[1024];
@@ -347,6 +345,8 @@ char* Compile(const char* preprocessor, char* popcpp, char* cpp, const char** pr
 
         // Prepare the source and generate _popc1_ files
         prepare_source(source, tmpfile1, options);
+
+        const char* cmd[1000];
 
         // Run the C++ preprocessor
         auto count = cxx_preprocessor(preprocessor, pre_opt, tmpfile1, tmpfile2, cmd, options);

@@ -1212,10 +1212,9 @@ void Method::GenerateBroker(std::string& output) {
     }
     output += str;
 
-    char methodcall[1024];
-    bool haveReturn = false;
-
     if (cl->IsCoreCompilation() || !cl->IsBasePureVirtual()) {  // ADDED FOR 2.0.3 Create constructor and stuff only if
+        char methodcall[1024];
+        bool haveReturn = false;
                                                                 // the parclass is not abstract
         if (type == METHOD_CONSTRUCTOR) {
             // Constructor...create object now...
