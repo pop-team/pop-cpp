@@ -899,12 +899,14 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
                 code += ";";
             } else {
                 code += "{\n";
-                code += "  pthread_mutex_lock(&_popc_async_mutex);\n";
-                code += "  if(!_popc_async_joined){\n";
-                code += "    void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
-                code += "    _popc_async_joined = true;\n";
+                code += "  if(_popc_async){\n";
+                code += "    pthread_mutex_lock(&_popc_async_mutex);\n";
+                code += "    if(!_popc_async_joined){\n";
+                code += "      void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
+                code += "      _popc_async_joined = true;\n";
+                code += "    }\n";
+                code += "    pthread_mutex_unlock(&_popc_async_mutex);\n";
                 code += "  }\n";
-                code += "  pthread_mutex_unlock(&_popc_async_mutex);\n";
                 code += "  if(!isBinded()) {\n";
                 code += "     printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n";
                 code += "  }\n";

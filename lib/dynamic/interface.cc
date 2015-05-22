@@ -70,6 +70,8 @@ pop_interface::pop_interface() : __pop_combox(nullptr), __pop_buf(nullptr) {
     }
 
     _ssh_tunneling = false;
+
+    _popc_async = true;
 }
 
 pop_interface::pop_interface(const pop_accesspoint& p) {
@@ -78,6 +80,8 @@ pop_interface::pop_interface(const pop_accesspoint& p) {
     _ssh_tunneling = false;
     __pop_combox = nullptr;
     __pop_buf = nullptr;
+
+    _popc_async = true;
 
     // For SSH tunneling
     if (p.IsService()) {
@@ -98,14 +102,18 @@ pop_interface::pop_interface(const pop_interface& inf) {
     LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)",
               inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet()) ? "true" : "false");
 
+    _popc_async = true;
+
     //1. Make sure RHS is created
-    pthread_mutex_lock(&inf._popc_async_mutex);
-    if(!inf._popc_async_joined){
-        void* status;
-        pthread_join(inf._popc_async_construction_thread, &status);
-        inf._popc_async_joined = true;
+    if(inf._popc_async){
+        pthread_mutex_lock(&inf._popc_async_mutex);
+        if(!inf._popc_async_joined){
+            void* status;
+            pthread_join(inf._popc_async_construction_thread, &status);
+            inf._popc_async_joined = true;
+        }
+        pthread_mutex_unlock(&inf._popc_async_mutex);
     }
-    pthread_mutex_unlock(&inf._popc_async_mutex);
 
     //2. Make sure this can be used
 
@@ -145,15 +153,16 @@ pop_interface::~pop_interface() {
 }
 
 pop_interface& pop_interface::operator=(const pop_interface& inf) {
-
     //1. Make sure RHS is created
-    pthread_mutex_lock(&inf._popc_async_mutex);
-    if(!inf._popc_async_joined){
-        void* status;
-        pthread_join(inf._popc_async_construction_thread, &status);
-        inf._popc_async_joined = true;
+    if(inf._popc_async){
+        pthread_mutex_lock(&inf._popc_async_mutex);
+        if(!inf._popc_async_joined){
+            void* status;
+            pthread_join(inf._popc_async_construction_thread, &status);
+            inf._popc_async_joined = true;
+        }
+        pthread_mutex_unlock(&inf._popc_async_mutex);
     }
-    pthread_mutex_unlock(&inf._popc_async_mutex);
 
     //2. Make sure this can be used
 
@@ -209,16 +218,19 @@ const pop_accesspoint& pop_interface::GetAccessPointForThis() {
 void pop_interface::Serialize(pop_buffer& buf, bool pack) {
     if(pack){
         //Make sure the object is created prior to serialization
-        pthread_mutex_lock(&_popc_async_mutex);
-        if(!_popc_async_joined){
-            void* status;
-            pthread_join(_popc_async_construction_thread, &status);
-            _popc_async_joined = true;
+        if(_popc_async){
+            pthread_mutex_lock(&_popc_async_mutex);
+            if(!_popc_async_joined){
+                void* status;
+                pthread_join(_popc_async_construction_thread, &status);
+                _popc_async_joined = true;
+            }
+            pthread_mutex_unlock(&_popc_async_mutex);
         }
-        pthread_mutex_unlock(&_popc_async_mutex);
     } else {
         //An object serialized is always joined
         _popc_async_joined = true;
+        _popc_async = false;
 
         //Make sure the mutex can be used correctly
         pthread_mutexattr_t mutt_attr;
