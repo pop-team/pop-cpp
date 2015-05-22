@@ -71,7 +71,7 @@ pop_interface::pop_interface() : __pop_combox(nullptr), __pop_buf(nullptr) {
 
     _ssh_tunneling = false;
 
-    _popc_async = true;
+    _popc_async = false;
 }
 
 pop_interface::pop_interface(const pop_accesspoint& p) {
@@ -81,7 +81,7 @@ pop_interface::pop_interface(const pop_accesspoint& p) {
     __pop_combox = nullptr;
     __pop_buf = nullptr;
 
-    _popc_async = true;
+    _popc_async = false;
 
     // For SSH tunneling
     if (p.IsService()) {
@@ -102,8 +102,6 @@ pop_interface::pop_interface(const pop_interface& inf) {
     LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)",
               inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet()) ? "true" : "false");
 
-    _popc_async = true;
-
     //1. Make sure RHS is created
     if(inf._popc_async){
         pthread_mutex_lock(&inf._popc_async_mutex);
@@ -114,6 +112,8 @@ pop_interface::pop_interface(const pop_interface& inf) {
         }
         pthread_mutex_unlock(&inf._popc_async_mutex);
     }
+
+    _popc_async = false;
 
     //2. Make sure this can be used
 
@@ -166,7 +166,7 @@ pop_interface& pop_interface::operator=(const pop_interface& inf) {
 
     //2. Make sure this can be used
 
-    //An object serialized is always joined
+    //At this pointer the object is already joined
     _popc_async_joined = true;
 
     //Make sure the mutex can be used correctly
@@ -174,8 +174,6 @@ pop_interface& pop_interface::operator=(const pop_interface& inf) {
     pthread_mutexattr_init(&mutt_attr);
     pthread_mutexattr_settype(&mutt_attr, PTHREAD_MUTEX_RECURSIVE_NP);
     pthread_mutex_init(&_popc_async_mutex, &mutt_attr);
-
-
 
     //  __pop_combox = nullptr;
     //  __pop_buf = nullptr;

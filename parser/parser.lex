@@ -239,7 +239,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     Class *cl = thisCodeFile->FindClass(clname);
     if(!cl->is_collective()){
       //Create the string to be inserted in every paroc_object constructor
-      sprintf(thisBuf, "__POPThis_%s=new%s(GetAccessPointForThis()); __POPThis_%s->_popc_async=false;", clname, clname, clname);
+      sprintf(thisBuf, "__POPThis_%s=new %s(GetAccessPointForThis()); __POPThis_%s->_popc_async=false;", clname, clname, clname);
     }
 
 
