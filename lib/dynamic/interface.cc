@@ -176,6 +176,19 @@ const pop_accesspoint& pop_interface::GetAccessPointForThis() {
 }
 
 void pop_interface::Serialize(pop_buffer& buf, bool pack) {
+    if(!pack){
+        //An object serialized is always joined
+        _popc_async_joined = true;
+
+        //Make sure the mutex can be used correctly
+        pthread_mutexattr_t mutt_attr;
+        pthread_mutexattr_init(&mutt_attr);
+        pthread_mutexattr_settype(&mutt_attr, PTHREAD_MUTEX_RECURSIVE_NP);
+        pthread_mutex_init(&_popc_async_mutex, &mutt_attr);
+
+        //The thread should never be used anyway
+    }
+
     buf.Push("od", "pop_od", 1);
     od.Serialize(buf, pack);
     buf.Pop();
