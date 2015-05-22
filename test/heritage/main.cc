@@ -8,6 +8,8 @@
 #include "mother.ph"
 #include "child.ph"
 
+//TODO(BW) This breaks C++ Semantics...
+//TODO(BW) This should ALWAYS call Mother functions whatever is passed to the function...
 void callMethod(Mother c, int v) {
     c.Method1();
     c.SetVal(v);
