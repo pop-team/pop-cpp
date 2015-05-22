@@ -158,11 +158,6 @@ const pop_od& pop_interface::GetOD() const {
     return od;
 }
 
-// const char * pop_interface::GetResource() const
-// {
-//   return resource;
-// }
-
 const pop_accesspoint& pop_interface::GetAccessPoint() const {
     return accesspoint;
 }
