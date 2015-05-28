@@ -95,8 +95,26 @@ bool popc_combox_uds::Create(const char* address, bool server) {
             }
 
             if (i >= 32768) {
-                LOG_ERROR_T("UDS", "unable to find file for UDS socket");
-                return false;
+                i = 0;
+                for (; i < 32768; ++i) {
+                    std::string str_address = "/tmp/uds_0." + std::to_string(i);
+
+                    // 2. Make sure the address is clear
+                    memset(&_sock_address, 0, sizeof(struct sockaddr_un));
+                    _sock_address.sun_family = AF_UNIX;
+                    strcpy(_sock_address.sun_path, str_address.c_str());
+
+                    if (!bind(_socket_fd, (struct sockaddr*)&_sock_address, sizeof(struct sockaddr_un))) {
+                        _uds_address = str_address;
+                        LOG_DEBUG_T("UDS", "Selected address: %s", _uds_address.c_str());
+                        break;
+                    }
+                }
+
+                if (i >= 32768) {
+                    LOG_ERROR_T("UDS", "unable to find file for UDS socket");
+                    return false;
+                }
             }
         } else {
             _uds_address = address;
