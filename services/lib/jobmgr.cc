@@ -1717,7 +1717,7 @@ int JobMgr::ExecObj(const std::string& objname, const pop_od& od, int howmany, i
 #ifndef NDEBUG
     std::stringstream ss;
     ss << "--->";
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < argv.size(); i++) {
         ss << argv[i] << " ";
     }
     LOG_DEBUG("Launching a new object with command : %s", ss.str().c_str());
