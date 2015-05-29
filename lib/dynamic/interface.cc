@@ -452,7 +452,6 @@ void pop_interface::Bind(const char* dest) {
     std::string connect_dest(dest);
     connect_dest = connect_dest.substr(6);
 
-    //TODO(BW): WTH is that code doing ?
     size_t pos = connect_dest.find("uds_");
 
     std::string destination_node;
