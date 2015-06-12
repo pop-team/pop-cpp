@@ -61,8 +61,6 @@ bool popc_combox_uds::Create(const char* address, bool server) {
 
     _is_server = server;
 
-    // TODO if !_is_server && !address there is a big problem
-
     // 1. Create a socket
     _socket_fd = socket(PF_UNIX, SOCK_STREAM, 0);
     if (_socket_fd < 0) {
@@ -77,7 +75,7 @@ bool popc_combox_uds::Create(const char* address, bool server) {
 
         // If no address are provided, it is necessary to find one
         if (!address) {
-            // TODO This is ugly and probably wrong as well
+            // note: This is ugly and probably wrong as well. This should be improved
             std::size_t i = 0;
             for (; i < 32768; ++i) {
                 std::string str_address = ".uds_0." + std::to_string(i);
@@ -406,7 +404,7 @@ void popc_combox_uds::Close() {
     if (_is_server) {
         LOG_DEBUG_T("UDS", "Close (server) %s", _uds_address.c_str());
 
-        // TODO close all connection fd
+        // TODO BW: close all connection fd
 
         if (close(_socket_fd)) {
             LOG_WARNING("close failed: %s", _uds_address.c_str());

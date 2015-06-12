@@ -858,7 +858,6 @@ int pop_interface::LocalExec(const char* hostname, const char* codefile, const c
         executable_args.append(" ");
     }
 
-    // TODO constant instead of numbers
     // Get the next free object
     int dest;
     int cmd = 1;
@@ -982,7 +981,7 @@ void pop_interface::ApplyCommPattern(const std::string& pattern, std::vector<std
 
             if (pop_utils::MatchWildcard(t, ptstr)) {
                 if (headpos != old) {
-                    // TODO(BW) this does not seem very smart since iterators will probably be invalidated
+                    // note(BW) this does not seem very smart since iterators will probably be invalidated
                     accesslist.insert(headpos, t);
                     accesslist.erase(old);
                 } else {

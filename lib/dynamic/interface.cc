@@ -250,7 +250,7 @@ void pop_interface::Serialize(pop_buffer& buf, bool pack) {
     pop_buffer* old = nullptr;
 
     if (&buf == __pop_buf) {
-        LOG_WARNING("Buffers share the same address");  // TODO LW: Where does this come from ?
+        LOG_WARNING("Buffers share the same address");
         old = &buf;
         __pop_buf = __pop_combox->GetBufferFactory()->CreateBuffer();
     }
@@ -303,9 +303,6 @@ void pop_interface::allocate_only() {
         allocator = alloc_factory->get_allocator(pop_allocator::UDS, pop_allocator::LOCAL);
 
         LOG_DEBUG_T("IFACE", "Allocate %s with UDS(local)", objectname.c_str());
-
-        // TODO(BW) In MPI mode, this should be used (add some condition)
-        // allocator = alloc_factory->get_allocator(pop_allocator::UDS, pop_allocator::INTERCONNECTOR);
     } else if (protocol == pop_allocatorFactory::PREFIX_TCP) {
         bool localFlag = od.IsLocal();
 
@@ -474,7 +471,6 @@ void pop_interface::Bind(const char* dest) {
     bool create_return, connect_return;
     if (need_redirection) {
         // Spoof address with the local MPI Communicator
-        // TODO LW: Why do we have this here ????
         char* local_address = new char[15];
         snprintf(local_address, 15, ".uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
 
@@ -819,213 +815,6 @@ int pop_interface::LocalExec(const char* hostname, const char* codefile, const c
                              const pop_accesspoint& jobserv, const pop_accesspoint& appserv, pop_accesspoint* objaccess,
                              int howmany, const pop_od& od) {
     LOG_ERROR("This method has been commented");  // Note: This method is only used by add ons at the moment
-
-    /* TODO should have been restored at least for TCP/IP version
-    if(codefile==nullptr) {
-        return ENOENT;
-    }
-      popc_signal(SIGCHLD, SIG_IGN);
-
-      while (isspace(*codefile)) codefile++;
-
-      char tmpstr[10240];
-      const char *argv[1024];
-      char *tmp;
-
-      bool isManual=od.getIsManual();
-    #ifdef OD_DISCONNECT
-      bool checkConnection=od.getCheckConnection();
-    #endif
-      std::string ruser;
-      std::string rcore;
-      const char *rport=nullptr;
-      std::string batch;
-      std::string cwd;
-
-      if (hostname!=nullptr&&(tmp=(char*)strchr(hostname,':'))!=nullptr) {
-          *tmp=0;
-          rport=tmp+1;
-      }
-      ruser = od.getUser();
-      rcore = od.getCore();
-      batch = od.getBatch();
-      cwd   = od.getCwd();
-
-      int n=0;
-      //std::string myhost = pop_system::GetHost();
-      //bool islocal=(isManual||hostname==nullptr || *hostname==0 || pop_utils::SameContact(myhost,hostname) ||
-    pop_utils::isEqual(hostname,"localhost") || pop_utils::isEqual(hostname,"127.0.0.1"));
-      if (batch == nullptr) {
-          if (!islocal) {
-              char *tmp=getenv("POPC_RSH");
-              argv[n++]=popc_strdup((tmp==nullptr)? "/usr/bin/ssh" : tmp);
-              //      argv[n++]=popc_strdup("-n");
-              // Add user name to host for ssh
-              if (ruser!=nullptr && *ruser!=0) {
-                  char tmpstr[100];
-                  sprintf(tmpstr,"%s@%s",(const char*)ruser,(const char*)hostname);
-                  argv[n++]=popc_strdup(tmpstr);
-              } else {
-                  argv[n++]=popc_strdup(hostname);
-              }
-          }
-      } else {
-          char tmpstr[100];
-          tmp=getenv("POPC_LOCATION");
-          if (tmp!=nullptr) sprintf(tmpstr,"%s/services/popcobjrun.%s",tmp,(const char*)batch);
-          else sprintf(tmpstr,"popcobjrun.%s",(const char*)batch);
-          argv[n++]=popc_strdup(tmpstr);
-          if (!islocal)
-          {
-
-              BatchMgr batchman(pop_system::appservice);
-              sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
-              LOG_DEBUG("%s",tmpstr);
-              argv[n++]=popc_strdup(tmpstr);
-          }
-      }
-      //  if (strncmp(codefile, "http://",7)==0 || strncmp(codefile,"ftp://",6)==0)
-      //    {
-      tmp=getenv("POPC_LOCATION");
-      if (tmp!=nullptr) sprintf(tmpstr,"%s/services/popcobjrun",tmp);
-      else strcpy(tmpstr,"popcobjrun");
-      argv[n++]=popc_strdup(tmpstr);
-      //    }
-      //   else  if ((tmp=getenv("POPC_JOB_EXEC"))!=nullptr)
-      //    {
-      //       argv[n++]=popc_strdup(tmp);
-      //    }
-
-      strcpy(tmpstr,codefile);
-      char *tok=popc_strtok_r(tmpstr," \t\n",&tmp);
-      while (tok!=nullptr)
-      {
-          argv[n++]=popc_strdup(tok);
-          tok=popc_strtok_r(nullptr," \t\n",&tmp);
-      }
-
-      //pop_combox_socket tmpsock;
-    // bool isServer = true;
-      // if (!tmpsock.Create(0,isServer)) pop_exception::pop_throw_errno();
-      // std::string cburl;
-      // tmpsock.GetUrl(cburl);
-
-      // sprintf(tmpstr,"-callback=%s", (const char*)cburl);
-      // argv[n++]=popc_strdup(tmpstr);
-
-      if (classname != nullptr) {
-          sprintf(tmpstr,"-object=%s", classname);
-          argv[n++]=popc_strdup(tmpstr);
-      }
-
-      if (!appserv.IsEmpty()) {
-          sprintf(tmpstr,"-appservice=%s",appserv.GetAccessString());
-          argv[n++]=popc_strdup(tmpstr);
-      }
-
-      if (!jobserv.IsEmpty()) {
-          sprintf(tmpstr,"-jobservice=%s",jobserv.GetAccessString());
-          argv[n++]=popc_strdup(tmpstr);
-      }
-      // Select core
-    if(!rcore.empty()) {
-        sprintf(tmpstr,"-core=%s",rcore.c_str());
-          argv[n++]=popc_strdup(tmpstr);
-      }
-
-      sprintf(tmpstr, "-address=.uds_0.%d", pop_system::pop_current_local_address);
-      argv[n++]=popc_strdup(tmpstr);
-      sprintf(tmpstr, "uds://.uds_0.%d", pop_system::pop_current_local_address);
-      objaccess->SetAccessString(tmpstr);
-
-      pop_system::pop_current_local_address++;
-
-
-
-      if (!rport.empty())
-      {
-          sprintf(tmpstr,"-socket_port=%s",rport);
-          argv[n++]=popc_strdup(tmpstr);
-      }
-    #ifdef OD_DISCONNECT
-      if (checkConnection) {
-          sprintf(tmpstr,"-checkConnection");
-          argv[n++]=popc_strdup(tmpstr);
-      }
-    #endif
-
-      if (pop_od::defaultLocalJob)
-      {
-          argv[n++]=popc_popc_strdup("-runlocal");
-      }
-
-      // Add the working directory as argument
-    if(!cwd.empty()) {
-        sprintf(tmpstr,"-cwd=%s",cwd.c_str());
-        argv[n++]=strdup(tmpstr);
-      }
-
-      argv[n]=nullptr;
-
-      int ret=0, err=0;
-      if (isManual) {
-          printf("\nTo launch this object, run this command on the target machine :\n");
-          for (int i=0;i<n;i++) printf("%s ", argv[i]);
-          printf("\n");
-      } else {
-    #ifndef NDEBUG
-          if (getenv("POPC_DEBUG")) {
-              LOG_DEBUG("Launching a new object with command : ");
-              fprintf(stderr,"--->");
-              for (int i=0;i<n;i++) fprintf(stderr,"%s ", argv[i]);
-              fprintf(stderr,"\n");
-          }
-    #endif
-          for (int i=0;i<n;i++) fprintf(stderr,"%s ", argv[i]);
-          fprintf(stderr,"\n");
-          ret=RunCmd(argv,nullptr);
-          err=errno;
-      }
-      for (int i=0;i<n;i++) {
-        if (argv[i]!=nullptr) {
-          free(argv[i]);
-        }
-      }
-
-      if (ret == -1) {
-          LOG_DEBUG("Can not start the object code...");
-          pop_exception::pop_throw(err, classname);
-      }
-
-      //Now get the return pop_accesspoint....
-      tmpsock.SetTimeout(ALLOC_TIMEOUT*1000);
-
-      for (int i=0;i<howmany;i++, objaccess++)
-      {
-
-          pop_buffer_xdr buf1;
-          pop_buffer *buf=&buf1;
-
-          if (!buf->Recv(tmpsock))
-          {
-              err=errno;
-              return err;
-          }
-          buf->Push("status","int",1);
-          buf->UnPack(&n,1);
-          buf->Pop();
-
-          if (n!=0)
-          {
-              return n;
-          }
-          buf->Push("address","pop_accesspoint",1);
-          objaccess->Serialize(*buf,false);
-          buf->Pop();
-
-      }
-    */
-
     return 0;
 }
 
@@ -1055,7 +844,7 @@ void pop_interface::ApplyCommPattern(const std::string& pattern, std::vector<std
 
             if (pop_utils::MatchWildcard(t, ptstr)) {
                 if (headpos != old) {
-                    // TODO(BW) this does not seem very smart since iterators will probably be invalidated
+                    // note(BW) this does not seem very smart since iterators will probably be invalidated
                     accesslist.insert(headpos, t);
                     accesslist.erase(old);
                 } else {

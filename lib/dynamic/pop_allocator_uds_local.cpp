@@ -64,9 +64,6 @@ std::string pop_allocator_uds_local::allocate(const std::string& objectname, con
 
     std::string myhost = pop_system::GetHost();
 
-    // TODO(BW) It is highly probable that batch will not work in uds
-    // mode
-
     if (!batch.empty()) {
         char tmpstr[100];
         tmp = getenv("POPC_LOCATION");

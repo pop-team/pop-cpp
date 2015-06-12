@@ -4,7 +4,7 @@ NUMBEROFTEST=0
 NUMBEROFSUCCESS=0
 
 # Note LW:
-# - heritageparam3 is excluded because it cannot work: at serialization dynamic type of serialized object cannot be different to static type (TODO future: Fix in core)
+# - heritageparam3 is excluded because it cannot work: at serialization dynamic type of serialized object cannot be different to static type
 EXCLUDEDTEST="runtests\|runtests_short\|CMake\|xmp1\|xmp2\|xmp3\|xmp4\|xmp-raw\|static1\|heritageparam3"
 
 SXXLOCATION=/usr/local/popc/sbin

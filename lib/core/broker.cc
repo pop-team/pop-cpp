@@ -285,9 +285,6 @@ bool pop_broker::Initialize(int* argc, char*** argv) {
         } else {
             if (pc->need_address()) {
                 if (!address) {
-                    // TODO: This is highly unsafe with threads
-                    //++pop_system::pop_current_local_address;
-
                     if (!pc->Create(nullptr, true)) {
                         pop_exception::perror("Broker");
                         return false;

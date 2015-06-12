@@ -435,7 +435,7 @@ int RunCmd(int argc, char** argv, char* env[], int* status) {
 }
 
 int RunCmd(int argc, const char* argv[]) {
-    /* TODO: See what to use
+    /* note: this code could also be used alternatively
         char cmd[1024]="";
 
         // strcat(cmd,"sh ");

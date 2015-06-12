@@ -65,19 +65,7 @@ std::string socket_allocator_service::allocate(const std::string& objectname, co
 
     try {
         JobCoreService resources(jobcontact);
-        int ret;
-        /*if (pop_interface::batchindex==0 && pop_interface::batchsize>1)
-        {
-                if (batchaccesspoint!=NULL) delete [] batchaccesspoint;
-                batchaccesspoint=new pop_accesspoint[pop_interface::batchsize];
-        //TODO put an other array than batchaccesspoint
-                ret=resources.CreateObject(pop_system::appservice,objectname,od, pop_interface::batchsize,
-        batchaccesspoint, pop_interface::batchsize, batchaccesspoint);
-                if (ret==0) objectaddress=batchaccesspoint[pop_interface::batchindex++];
-        }
-        else{*/
-        ret = resources.CreateObject(pop_system::appservice, objectname, od, 1, &objectaddress, 1, &remotejobcontact);
-        //}
+        int ret = resources.CreateObject(pop_system::appservice, objectname, od, 1, &objectaddress, 1, &remotejobcontact);
 
         if (ret != 0) {
             pop_exception::pop_throw(ret, objectname, "CreateObject returned error code");

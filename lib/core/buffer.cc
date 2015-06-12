@@ -312,11 +312,9 @@ void pop_buffer::CheckAndThrow(pop_buffer& except) {
             t.Serialize(except, false);
             throw t;
         }
-        /* TODO LW: Is this really used ?? */
         case EXCEPTION_OBJECT: {
             pop_interface t;
             t.Serialize(except, false);
-            //        except.UnPack(&t,1);
             throw t;
         }
         default:
