@@ -18,4 +18,4 @@ run: main pop_xmp_object.obj
 	mpiexec -np 2 $(POPC_INTERCONNECTOR) -app=./main
 
 clean: 
-	rm -rf *.o main pop_xmp_object.obj _popc* uds*
+	rm -rf *.o main pop_xmp_object.obj _popc* uds_*

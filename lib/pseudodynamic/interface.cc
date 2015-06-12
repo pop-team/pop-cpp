@@ -33,12 +33,24 @@
 #include "pop_utils.h"
 #include "../../config.h"
 
-#if defined POPC_SECURE || defined POPC_SECURE_VIRTUAL
+#if defined POP_SECURE || defined POP_SECURE_VIRTUAL
 #include "popc_security_manager.ph"
 #endif
 
 #ifndef POP_CONNECT_TIMEOUT
 #define POP_CONNECT_TIMEOUT 10000
+#endif
+
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
+// By defining DEFAULT_PROTOCOL when compiling POP, the default protocol can be
+// changed, otherwise the default is socket
+
+#ifdef DEFAULT_PROTOCOL
+#define POP_DEFAULT_PROTOCOL TOSTRING(DEFAULT_PROTOCOL)
+#else
+#define POP_DEFAULT_PROTOCOL "socket"
 #endif
 
 pop_accesspoint pop_interface::_pop_nobind;
@@ -140,11 +152,6 @@ void pop_interface::SetOD(const pop_od& myod) {
 const pop_od& pop_interface::GetOD() const {
     return od;
 }
-
-// const char * pop_interface::GetResource() const
-// {
-//   return resource;
-// }
 
 const pop_accesspoint& pop_interface::GetAccessPoint() const {
     return accesspoint;
