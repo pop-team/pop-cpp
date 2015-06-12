@@ -6,6 +6,8 @@ int main(int argc, char** argv) {
     {
         TestObject obj1("localhost");
 
+        sleep(1); // to be sure that async creation is done
+
         printf("Test with synchronous methods\n");
         obj1.syncConcMethod("call1", 1.0 * TIME_SCALE);
         obj1.syncConcMethod("call2", 0.8 * TIME_SCALE);
