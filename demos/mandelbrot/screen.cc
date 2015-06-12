@@ -74,7 +74,7 @@ int Screen::run(int argc, char cmdline[32][32]) {
 
     printf("Available machines:\n");
     for (int i = 0; i < nbOfMachines; i++) {
-        printf("  %d = %s \n", i, (const char*)(*machine[i]));
+        printf("  %d = %s \n", i, machine[i]->c_str());
     }
 
     initFrame(DISP_WIDTH, DISP_HEIGHT, dispn);
@@ -104,7 +104,7 @@ int Screen::run(int argc, char cmdline[32][32]) {
         for (j = 0; j < dispn; j++) {
             ind = i * dispn + j;
             printf("Run a new fractal object (ind=%d, x=%d, y=%d) on %s\n", ind, i, j,
-                   (const char*)*(machine[(ind + shift) % nbWorkers]));
+                   machine[(ind + shift) % nbWorkers]->c_str());
             // lwk Fractal *f = new Fractal();
             ft[ind] = new Fractal(*(machine[(ind + shift) % nbWorkers]));
             // else

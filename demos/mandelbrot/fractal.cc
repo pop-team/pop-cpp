@@ -169,6 +169,6 @@ void Fractal::generate(int width, int height, float realMin, float realScale, fl
         screen.newRow(tile, iy, width, v);
     }
     screen.endTile(tile);
-    printf("End of slave on %s\n", (const char*)pop_system::GetHost());
+    printf("End of slave on %s\n", pop_system::GetHost().c_str());
 }
 @pack(Fractal);
