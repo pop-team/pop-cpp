@@ -342,11 +342,6 @@ handle_eof: EOFCODE
                             std::copy((*it).begin(), (*it).end(), objname);
                             objname[(*it).size()] = '\0';
                             currentPack->AddObject(objname);
-                            // Ok file exists, so we will find the parclass name and add the pack directive with it
-                            if(isWarningEnable){
-                                std::cout << filename << ":" << linenumber << ": Warning: No @pack directive for class: " << objname;
-                                std::cout << ", @pack(" << objname << ") is assumed..." << std::endl;
-                            }
                             delete [] objname;
                         }
                     }
