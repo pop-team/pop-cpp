@@ -1,6 +1,8 @@
 #ifndef CHAT_PH_
 #define CHAT_PH_
 
+#include <vector>
+
 parclass Chat {
     classuid(1500);
 
@@ -15,8 +17,7 @@ public:
     sync conc void PrintRef(const Chat& ref);
     ~Chat();
 private:
-    Chat* contacts[100];
-    int nbContacts;
+    std::vector<Chat*> contacts;
 };
 
 #endif
