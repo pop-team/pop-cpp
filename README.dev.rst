@@ -76,12 +76,21 @@ The runtime of popc runs different processes such as jobmgr or appservice. If on
     cd test/barrier
     ulimit -c unlimited     # Enable core dumps for the session
     rm core
-    make run
+    make run                # Run the executable: POP-C++ and this executable must be compiled with option -g
     ls core                 # Check if something was dumped
     gdb barrier.obj core    # Replace barrier.obj with your executable. In case of doubt, gdb will correct you
 
 In gdb use the "bt" command to get the stack trace of the dump. If POP-C++ and your program were compiled with -g the line number are given.
 
-Dry run of object
------------------
-TODO lwk
+The core file can also be read with different development tools (kdevelop, cgdb, ...)
+
+od.manual
+---------
+If needed an object can be run manually. To enable this you can use the od.manual:
+
+.. code:: c++
+    
+    POPCobject(int newID) @{ od.manual(true); };
+
+At runtime, the console will print the command to launch the object. You can then copy and paste it to another console to execute it.
+
