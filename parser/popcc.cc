@@ -30,7 +30,7 @@ struct popc_options {
     bool nowarning = false;
     bool popcppcompilation = false;
     bool noimplicitpack = false;
-    bool asyncallocation = false;
+    bool noasyncallocation = false;
     bool xmp = false;
     bool mpi = false;
     bool usepipe = false;
@@ -69,7 +69,7 @@ void Usage() {
     fprintf(stderr, "   -no-implicit-pack:       Do not pack parclass implicitly if no @pack directive is present\n");
     fprintf(stderr, "   -cpp11:                  Compile in c++11 mode\n");
 
-    fprintf(stderr, "   -async-allocation:       Use asynchronous mechanism to allocate a parallel object\n");
+    fprintf(stderr, "   -no-async-allocation:    Disable asynchronous mechanism to allocate a parallel object\n");
     fprintf(stderr, "   -verbose:                Print out additional information\n");
     fprintf(stderr, "   -nopipe:                 Do not use pipe during compilation phases ( create _paroc2_ files )\n");
     fprintf(stderr, "   -version:                Display the installed version of POP-C++\n");
@@ -196,8 +196,8 @@ int popc_preprocessor(const char* popcpp, const char* tmpfile1, const char* tmpf
     if (options.popcppcompilation) {
         popc_preprocessor_command[countpop++] = "-popcpp-compilation";
     }
-    if (options.asyncallocation) {
-        popc_preprocessor_command[countpop++] = "-async-allocation";
+    if (options.noasyncallocation) {
+        popc_preprocessor_command[countpop++] = "-no-async-allocation";
     }
     if (options.noimplicitpack) {
         popc_preprocessor_command[countpop++] = "-no-implicit-pack";
@@ -446,7 +446,7 @@ int main(int argc, char* argv[]) {
     options.nowarning = pop_utils::check_remove(&argc, &argv, "-no-warning");
     options.popcppcompilation = pop_utils::check_remove(&argc, &argv, "-popcpp-compilation");
     options.noimplicitpack = pop_utils::check_remove(&argc, &argv, "-no-implicit-pack");
-    options.asyncallocation = pop_utils::check_remove(&argc, &argv, "-async-allocation");
+    options.noasyncallocation = pop_utils::check_remove(&argc, &argv, "-no-async-allocation");
     options.nobroker = pop_utils::check_remove(&argc, &argv, "-parclass-nobroker");
     options.nointerface = pop_utils::check_remove(&argc, &argv, "-parclass-nointerface");
     options.xmp = pop_utils::check_remove(&argc, &argv, "-xmp");
