@@ -21,5 +21,3 @@ void POP_Barrier::activate() {
     }
     event.unlock();
 }
-
-@pack(POP_Barrier);

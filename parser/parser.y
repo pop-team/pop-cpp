@@ -2308,7 +2308,7 @@ int main(int argc, char **argv)
     bool client=true;
     bool broker=true;
     isWarningEnable=true;
-    isImplicitPackEnable=false;
+    isImplicitPackEnable=true;
     isPOPCPPCompilation=false;
     isAsyncAllocationEnabled=true;
 
