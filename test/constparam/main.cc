@@ -37,6 +37,7 @@ int main(int argc, char** argv) {
     printf("Const: call to m20\n");
     SLEEP(1);
     o2 = o1.m20();
+    o2.m400(d);
     printf("Const: test succeeded, destroying objects...\n");
     return 0;
 }

@@ -883,12 +883,14 @@ void Method::GenerateClient(std::string& output) {
         GetClass()->IsAsyncAllocationEnabled()) {
         output += "\n  // Waiting for APOA to be done before executing any method\n";
 
-        output += "  pthread_mutex_lock(&_popc_async_mutex);\n";
-        output += "  if(!_popc_async_joined){\n";
-        output += "    void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
-        output += "    _popc_async_joined = true;\n";
+        output += "  if(_popc_async){\n";
+        output += "    pthread_mutex_lock(&_popc_async_mutex);\n";
+        output += "    if(!_popc_async_joined){\n";
+        output += "      void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
+        output += "      _popc_async_joined = true;\n";
+        output += "    }\n";
+        output += "    pthread_mutex_unlock(&_popc_async_mutex);\n";
         output += "  }\n";
-        output += "  pthread_mutex_unlock(&_popc_async_mutex);\n";
 
         char* nameOfRetType = returnparam.GetType()->GetName();
         if (MethodType() == METHOD_NORMAL && !returnparam.GetType()->Same((char*)"void")) {
@@ -1212,10 +1214,9 @@ void Method::GenerateBroker(std::string& output) {
     }
     output += str;
 
-    char methodcall[1024];
-    bool haveReturn = false;
-
     if (cl->IsCoreCompilation() || !cl->IsBasePureVirtual()) {  // ADDED FOR 2.0.3 Create constructor and stuff only if
+        char methodcall[1024];
+        bool haveReturn = false;
                                                                 // the parclass is not abstract
         if (type == METHOD_CONSTRUCTOR) {
             // Constructor...create object now...
@@ -1596,6 +1597,7 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
         output += ");\n";
 
         output += "int ret;\n";
+        output += "_popc_async = true;\n"; //To make sure
         output += "_popc_async_joined = false;\n";
         output += "pthread_mutexattr_t mutt_attr;\n";
         output += "pthread_mutexattr_init(&mutt_attr);\n";
@@ -1749,12 +1751,14 @@ void Destructor::GenerateClient(std::string& output) {
         output += class_name;
 
         output += "(){\n";
-        output += "  pthread_mutex_lock(&_popc_async_mutex);\n";
-        output += "  if(!_popc_async_joined){\n";
-        output += "    void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
-        output += "    _popc_async_joined = true;\n";
+        output += "  if(_popc_async){\n";
+        output += "    pthread_mutex_lock(&_popc_async_mutex);\n";
+        output += "    if(!_popc_async_joined){\n";
+        output += "      void* status;\n  pthread_join(_popc_async_construction_thread, &status);\n";
+        output += "      _popc_async_joined = true;\n";
+        output += "    }\n";
+        output += "    pthread_mutex_unlock(&_popc_async_mutex);\n";
         output += "  }\n";
-        output += "  pthread_mutex_unlock(&_popc_async_mutex);\n";
         output += "  if(!isBinded()) {\n";
         output += "     printf(\"POP-C++ Error: [APOA] Object not allocated but allocation process done !\");\n";
         output += "  }\n";

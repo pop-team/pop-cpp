@@ -213,7 +213,6 @@ void pop_interface::allocate_only() {
 void pop_interface::Allocate() {
     LOG_DEBUG("INTERFACE: Allocate start");
     Release();
-    std::string protocol = od.getProtocol();
     pop_accesspoint jobcontact, objaccess, remotejobcontact;
 
     // With the actual code, batchsize is always zero

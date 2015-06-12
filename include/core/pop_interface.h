@@ -129,6 +129,7 @@ public:
      * POP-C++ parser
      * to generate code.
      */
+    mutable volatile bool _popc_async;
     mutable pthread_t _popc_async_construction_thread;
     mutable pthread_mutex_t _popc_async_mutex;
     mutable volatile bool _popc_async_joined;

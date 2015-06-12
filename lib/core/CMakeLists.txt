@@ -19,10 +19,10 @@ add_definitions(-std=c++11)
 
 if(WIN32)
     set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc.exe)
-    set(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -cpp11 -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp.exe)
+    set(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -no-async-allocation -cpp11 -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp.exe)
 elseif(UNIX)
     set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc)
-    set(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -cpp11 -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp)
+    set(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -no-async-allocation -cpp11 -cxxmain -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_SOURCE_DIR}/parser/popcpp)
 endif(WIN32)
 
 set(POPCPP_Parclass_COMPILER_FLAGS -parclass-nobroker -c -o)

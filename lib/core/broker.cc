@@ -285,11 +285,6 @@ bool pop_broker::Initialize(int* argc, char*** argv) {
         } else {
             if (pc->need_address()) {
                 if (!address) {
-                    // std::string default_address = "uds_0." + std::to_string(pop_system::pop_current_local_address);
-
-                    // LOG_DEBUG_T("BRKR", "Create combox (address) with default address \"%s\"",
-                    // default_address.c_str());
-
                     // TODO: This is highly unsafe with threads
                     //++pop_system::pop_current_local_address;
 

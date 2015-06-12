@@ -15,14 +15,9 @@
 #include "parser.h"
 #include "pop_utils.h"
 
-CodeFile::CodeFile(const std::string& fname) {
-    isCoreCompilation = false;       // Core compilation is disable by default.
-    asyncAllocationEnabled = false;  // Asynchronous allocation is disabled by default.
-    filename = fname;
-    DataType* std;
+CodeFile::CodeFile(const std::string& fname) : filename(fname), isCoreCompilation(false), asyncAllocationEnabled(false) {
     for (auto& elem : DataType::stdType) {
-        std = new DataType(elem);
-        AddDataType(std);
+        AddDataType(new DataType(elem));
     }
 }
 
@@ -33,7 +28,7 @@ CodeFile::~CodeFile() {
 void CodeFile::AddCodeData(CodeData* code) {
     codes.push_back(code);
     if (code->Type() == TYPE_CLASS) {
-        classlist.push_back((Class*)code);
+        classlist.push_back(static_cast<Class*>(code));
     }
 }
 
@@ -56,7 +51,7 @@ void CodeFile::GenerateCode(std::string& output, bool client, bool broker) {
 
     for (int j = 0; j < m; j++) {
         if (codes[j]->Type() == TYPE_CLASS) {
-            Class& cl = *(Class*)(codes[j]);
+            Class& cl = *static_cast<Class*>(codes[j]);
             char* clfname = cl.GetFileInfo();
             if (filename.empty() || clfname == nullptr || SameFile(clfname, filename.c_str())) {
                 if (client) {
@@ -191,12 +186,12 @@ bool CodeFile::SameFile(const char* file1, const char* file2) {
         fn1 = file1;
         popc_getcwd(dir1, 255);
     } else {
-        char tmp[256];
         int n = fn1 - file1;
         strncpy(dir1, file1, n);
         dir1[n] = 0;
         fn1++;
         if (*dir1 != '/') {
+            char tmp[256];
             popc_getcwd(tmp, 255);
             popc_chdir(dir1);
             popc_getcwd(dir1, 255);
@@ -208,12 +203,12 @@ bool CodeFile::SameFile(const char* file1, const char* file2) {
         fn2 = file2;
         popc_getcwd(dir2, 255);
     } else {
-        char tmp[256];
         int n = fn2 - file2;
         strncpy(dir2, file2, n);
         dir2[n] = 0;
         fn2++;
         if (*dir2 != '/') {
+            char tmp[256];
             popc_getcwd(tmp, 255);
             popc_chdir(dir2);
             popc_getcwd(dir2, 255);

@@ -30,7 +30,7 @@ struct popc_options {
     bool nowarning = false;
     bool popcppcompilation = false;
     bool noimplicitpack = false;
-    bool asyncallocation = false;
+    bool noasyncallocation = false;
     bool xmp = false;
     bool mpi = false;
     bool usepipe = false;
@@ -48,9 +48,9 @@ void Usage() {
             "[-popcdir=<path>] [-popcpp=<POP-C++ parser>] [-verbose] [-noclean] [-no-warning] [-no-implicit-pack] "
             "[other C++ options] sources...\n");
 
-    fprintf(stderr, "   -cxxmain:            Use standard C++ main (ignore POP-C++ initialization)\n");
-    fprintf(stderr, "   -popc-static:        Link with standard POP-C++ libraries statically\n");
-    fprintf(stderr, "   -popc-nolib:         Avoid standard POP-C++ libraries from linking\n");
+    fprintf(stderr, "   -cxxmain:                Use standard C++ main (ignore POP-C++ initialization)\n");
+    fprintf(stderr, "   -popc-static:            Link with standard POP-C++ libraries statically\n");
+    fprintf(stderr, "   -popc-nolib:             Avoid standard POP-C++ libraries from linking\n");
     fprintf(stderr, "   -parclass-nointerface:   Do not generate POP-C++ interface codes for parallel objects\n");
     fprintf(stderr, "   -parclass-nobroker:      Do not generate POP-C++ broker codes for parallel objects\n");
 
@@ -69,18 +69,17 @@ void Usage() {
     fprintf(stderr, "   -no-implicit-pack:       Do not pack parclass implicitly if no @pack directive is present\n");
     fprintf(stderr, "   -cpp11:                  Compile in c++11 mode\n");
 
-    fprintf(stderr, "   -async-allocation:       Use asynchronous mechanism to allocate a parallel object\n");
+    fprintf(stderr, "   -no-async-allocation:    Disable asynchronous mechanism to allocate a parallel object\n");
     fprintf(stderr, "   -verbose:                Print out additional information\n");
-    fprintf(stderr,
-            "   -nopipe:                 Do not use pipe during compilation phases ( create _paroc2_ files )\n");
-    fprintf(stderr, "   -version:            Display the installed version of POP-C++\n");
+    fprintf(stderr, "   -nopipe:                 Do not use pipe during compilation phases ( create _paroc2_ files )\n");
+    fprintf(stderr, "   -version:                Display the installed version of POP-C++\n");
 
     fprintf(stderr, "\n");
 
-    fprintf(stderr, "   -mpi:            Enable MPI compilation in collective parallel class\n");
-    fprintf(stderr, "   -xmp:            Enable XMP compilation in collective parallel class\n");
-    fprintf(stderr, "   -advanced:       Link with the POP-C++ Advanced Library\n");
-    fprintf(stderr, "   -pseudo-dynamic:       Use the pseudo-dynamic communication model of POP-C++\n");
+    fprintf(stderr, "   -mpi:                   Enable MPI compilation in collective parallel class\n");
+    fprintf(stderr, "   -xmp:                   Enable XMP compilation in collective parallel class\n");
+    fprintf(stderr, "   -advanced:              Link with the POP-C++ Advanced Library\n");
+    fprintf(stderr, "   -pseudo-dynamic:        Use the pseudo-dynamic communication model of POP-C++\n");
 
     fprintf(stderr, "\n");
 
@@ -197,8 +196,8 @@ int popc_preprocessor(const char* popcpp, const char* tmpfile1, const char* tmpf
     if (options.popcppcompilation) {
         popc_preprocessor_command[countpop++] = "-popcpp-compilation";
     }
-    if (options.asyncallocation) {
-        popc_preprocessor_command[countpop++] = "-async-allocation";
+    if (options.noasyncallocation) {
+        popc_preprocessor_command[countpop++] = "-no-async-allocation";
     }
     if (options.noimplicitpack) {
         popc_preprocessor_command[countpop++] = "-no-implicit-pack";
@@ -295,8 +294,6 @@ int cxx_compiler(char* cpp, const char** cpp_opt, const char* source, char** des
 
 char* Compile(const char* preprocessor, char* popcpp, char* cpp, const char** pre_opt, const char** cpp_opt,
               char* source, char* dest, const popc_options& options) {
-    const char* cmd[1000];
-
     char sdir[1024];
     char tmpfile1[1024];
     char tmpfile2[1024];
@@ -347,6 +344,8 @@ char* Compile(const char* preprocessor, char* popcpp, char* cpp, const char** pr
 
         // Prepare the source and generate _popc1_ files
         prepare_source(source, tmpfile1, options);
+
+        const char* cmd[1000];
 
         // Run the C++ preprocessor
         auto count = cxx_preprocessor(preprocessor, pre_opt, tmpfile1, tmpfile2, cmd, options);
@@ -447,7 +446,7 @@ int main(int argc, char* argv[]) {
     options.nowarning = pop_utils::check_remove(&argc, &argv, "-no-warning");
     options.popcppcompilation = pop_utils::check_remove(&argc, &argv, "-popcpp-compilation");
     options.noimplicitpack = pop_utils::check_remove(&argc, &argv, "-no-implicit-pack");
-    options.asyncallocation = pop_utils::check_remove(&argc, &argv, "-async-allocation");
+    options.noasyncallocation = pop_utils::check_remove(&argc, &argv, "-no-async-allocation");
     options.nobroker = pop_utils::check_remove(&argc, &argv, "-parclass-nobroker");
     options.nointerface = pop_utils::check_remove(&argc, &argv, "-parclass-nointerface");
     options.xmp = pop_utils::check_remove(&argc, &argv, "-xmp");

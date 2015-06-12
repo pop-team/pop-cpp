@@ -70,6 +70,8 @@ pop_interface::pop_interface() : __pop_combox(nullptr), __pop_buf(nullptr) {
     }
 
     _ssh_tunneling = false;
+
+    _popc_async = false;
 }
 
 pop_interface::pop_interface(const pop_accesspoint& p) {
@@ -78,6 +80,8 @@ pop_interface::pop_interface(const pop_accesspoint& p) {
     _ssh_tunneling = false;
     __pop_combox = nullptr;
     __pop_buf = nullptr;
+
+    _popc_async = false;
 
     // For SSH tunneling
     if (p.IsService()) {
@@ -98,14 +102,31 @@ pop_interface::pop_interface(const pop_interface& inf) {
     LOG_DEBUG("Create interface (from interface %s) for class %s (OD secure:%s)",
               inf.GetAccessPoint().GetAccessString().c_str(), ClassName(), (od.isSecureSet()) ? "true" : "false");
 
-    //TENTATIVE(BW)
-    //pthread_mutex_lock(&inf._popc_async_mutex);
-    //if(!inf._popc_async_joined){
-        //void* status;
-        //pthread_join(inf._popc_async_construction_thread, &status);
-        //_popc_async_joined = true;
-    //}
-    //pthread_mutex_unlock(&inf._popc_async_mutex);
+    //1. Make sure RHS is created
+    if(inf._popc_async){
+        pthread_mutex_lock(&inf._popc_async_mutex);
+        if(!inf._popc_async_joined){
+            void* status;
+            pthread_join(inf._popc_async_construction_thread, &status);
+            inf._popc_async_joined = true;
+        }
+        pthread_mutex_unlock(&inf._popc_async_mutex);
+    }
+
+    _popc_async = false;
+
+    //2. Make sure this can be used
+
+    //An object serialized is always joined
+    _popc_async_joined = true;
+
+    //Make sure the mutex can be used correctly
+    pthread_mutexattr_t mutt_attr;
+    pthread_mutexattr_init(&mutt_attr);
+    pthread_mutexattr_settype(&mutt_attr, PTHREAD_MUTEX_RECURSIVE_NP);
+    pthread_mutex_init(&_popc_async_mutex, &mutt_attr);
+
+    //The thread should never be used anyway
 
     pop_accesspoint infAP = inf.GetAccessPoint();
     _ssh_tunneling = false;
@@ -131,17 +152,39 @@ pop_interface::~pop_interface() {
     Release();
 }
 
-pop_interface& pop_interface::operator=(const pop_interface& obj) {
+pop_interface& pop_interface::operator=(const pop_interface& inf) {
+    //1. Make sure RHS is created
+    if(inf._popc_async){
+        pthread_mutex_lock(&inf._popc_async_mutex);
+        if(!inf._popc_async_joined){
+            void* status;
+            pthread_join(inf._popc_async_construction_thread, &status);
+            inf._popc_async_joined = true;
+        }
+        pthread_mutex_unlock(&inf._popc_async_mutex);
+    }
+
+    //2. Make sure this can be used
+
+    //At this pointer the object is already joined
+    _popc_async_joined = true;
+
+    //Make sure the mutex can be used correctly
+    pthread_mutexattr_t mutt_attr;
+    pthread_mutexattr_init(&mutt_attr);
+    pthread_mutexattr_settype(&mutt_attr, PTHREAD_MUTEX_RECURSIVE_NP);
+    pthread_mutex_init(&_popc_async_mutex, &mutt_attr);
+
     //  __pop_combox = nullptr;
     //  __pop_buf = nullptr;
     LOG_DEBUG("Bind");
     // Bind(accesspoint);
     // DecRef();
     // Bind(accesspoint);
-    //  const pop_accesspoint &res = obj.GetAccessPoint();
+    //  const pop_accesspoint &res = inf.GetAccessPoint();
 
     Release();
-    accesspoint = obj.GetAccessPoint();
+    accesspoint = inf.GetAccessPoint();
     if (GetAccessPoint().GetAccessString().c_str()) {
         Bind(accesspoint);
         // AddRef();
@@ -158,11 +201,6 @@ const pop_od& pop_interface::GetOD() const {
     return od;
 }
 
-// const char * pop_interface::GetResource() const
-// {
-//   return resource;
-// }
-
 const pop_accesspoint& pop_interface::GetAccessPoint() const {
     return accesspoint;
 }
@@ -176,6 +214,31 @@ const pop_accesspoint& pop_interface::GetAccessPointForThis() {
 }
 
 void pop_interface::Serialize(pop_buffer& buf, bool pack) {
+    if(pack){
+        //Make sure the object is created prior to serialization
+        if(_popc_async){
+            pthread_mutex_lock(&_popc_async_mutex);
+            if(!_popc_async_joined){
+                void* status;
+                pthread_join(_popc_async_construction_thread, &status);
+                _popc_async_joined = true;
+            }
+            pthread_mutex_unlock(&_popc_async_mutex);
+        }
+    } else {
+        //An object serialized is always joined
+        _popc_async_joined = true;
+        _popc_async = false;
+
+        //Make sure the mutex can be used correctly
+        pthread_mutexattr_t mutt_attr;
+        pthread_mutexattr_init(&mutt_attr);
+        pthread_mutexattr_settype(&mutt_attr, PTHREAD_MUTEX_RECURSIVE_NP);
+        pthread_mutex_init(&_popc_async_mutex, &mutt_attr);
+
+        //The thread should never be used anyway
+    }
+
     buf.Push("od", "pop_od", 1);
     od.Serialize(buf, pack);
     buf.Pop();
@@ -413,7 +476,7 @@ void pop_interface::Bind(const char* dest) {
         // Spoof address with the local MPI Communicator
         // TODO LW: Why do we have this here ????
         char* local_address = new char[15];
-        snprintf(local_address, 15, "uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
+        snprintf(local_address, 15, ".uds_%d.0", pop_system::popc_local_mpi_communicator_rank);
 
         LOG_DEBUG("Spoof of address %s to %s", connect_dest.c_str(), local_address);
         create_return = __pop_combox->Create(local_address, false);
@@ -870,9 +933,9 @@ int pop_interface::LocalExec(const char* hostname, const char* codefile, const c
           argv[n++]=popc_strdup(tmpstr);
       }
 
-      sprintf(tmpstr, "-address=uds_0.%d", pop_system::pop_current_local_address);
+      sprintf(tmpstr, "-address=.uds_0.%d", pop_system::pop_current_local_address);
       argv[n++]=popc_strdup(tmpstr);
-      sprintf(tmpstr, "uds://uds_0.%d", pop_system::pop_current_local_address);
+      sprintf(tmpstr, "uds://.uds_0.%d", pop_system::pop_current_local_address);
       objaccess->SetAccessString(tmpstr);
 
       pop_system::pop_current_local_address++;
