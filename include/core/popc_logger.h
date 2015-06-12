@@ -28,8 +28,8 @@
 #define MIN_STDERR_LEVEL __WARNING__  // Min level at which the message is printed on stderr
 #else
 #define MIN_LOG_LEVEL __INFO__
-#define MIN_STDOUT_LEVEL __INFO__
-#define MIN_STDERR_LEVEL __WARNING__
+#define MIN_STDOUT_LEVEL __ERROR__
+#define MIN_STDERR_LEVEL __ERROR__
 #endif
 
 enum LOGLEVEL {

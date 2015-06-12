@@ -21,9 +21,8 @@ RemoteLog::~RemoteLog() {
 }
 
 void RemoteLog::Log(const std::string& info) {
-    std::string prt = info;
     // By doing a fprintf we avoid to go through rprintf (it'll be a bit faster and easier to understand)
-    fprintf(stdout, "%s", prt.c_str());
+    fprintf(stdout, "%s", info.c_str());
     fflush(stdout);
 }
 
