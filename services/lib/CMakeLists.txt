@@ -14,7 +14,7 @@ endif(WIN32)
 
 set(CMAKE_POPCC_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcc${EXECUTABLE_EXTENSION})
 set(CMAKE_POPCPP_COMPILER ${CMAKE_SOURCE_DIR}/parser/popcpp${EXECUTABLE_EXTENSION})
-set(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -cpp11 -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_POPCPP_COMPILER})
+set(POPCPP_FLAGS ${POPCPP_EXTRA_FLAGS} -cpp11 -no-async-allocation -popcpp-compilation -no-implicit-pack -popcdir=${CMAKE_SOURCE_DIR} -popcpp=${CMAKE_POPCPP_COMPILER})
 
 set(POPCPP_COMPILER_FLAGS -o)
 set(POPCPP_Object_COMPILER_FLAGS -object -o)
@@ -93,7 +93,7 @@ add_custom_target(
     ${exec_file} ALL
     COMMAND ${POPCC_COMMAND_OBJ} ${POPCC_OUTPUT_DIR}/${exec_file} ${POPCC_OUTPUT_DIR}/${cxx_file}.o -lpopc_services ${POPCPP_LIB}
     WORKING_DIRECTORY ${POPCC_OUTPUT_DIR}
-    DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o 
+    DEPENDS ${POPCC_OUTPUT_DIR}/${cxx_file}.o
     DEPENDS popcc
     DEPENDS popcpp
     DEPENDS popc_core

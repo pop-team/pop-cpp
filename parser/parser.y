@@ -2310,7 +2310,7 @@ int main(int argc, char **argv)
     isWarningEnable=true;
     isImplicitPackEnable=false;
     isPOPCPPCompilation=false;
-    isAsyncAllocationEnabled=false;
+    isAsyncAllocationEnabled=true;
 
     if (pop_utils::checkremove(&argc,&argv,"-parclass-nobroker")!=NULL){
 
@@ -2338,13 +2338,11 @@ int main(int argc, char **argv)
     }
 
     if (pop_utils::checkremove(&argc,&argv,"-no-implicit-pack")!=NULL) {
-
         isImplicitPackEnable=false;
-
     }
-    if (pop_utils::checkremove(&argc,&argv,"-async-allocation")!=NULL) {
-        isAsyncAllocationEnabled=true;
 
+    if (pop_utils::checkremove(&argc,&argv,"-no-async-allocation")!=NULL) {
+        isAsyncAllocationEnabled=false;
     }
 
     int ret;
