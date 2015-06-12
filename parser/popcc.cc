@@ -48,9 +48,9 @@ void Usage() {
             "[-popcdir=<path>] [-popcpp=<POP-C++ parser>] [-verbose] [-noclean] [-no-warning] [-no-implicit-pack] "
             "[other C++ options] sources...\n");
 
-    fprintf(stderr, "   -cxxmain:            Use standard C++ main (ignore POP-C++ initialization)\n");
-    fprintf(stderr, "   -popc-static:        Link with standard POP-C++ libraries statically\n");
-    fprintf(stderr, "   -popc-nolib:         Avoid standard POP-C++ libraries from linking\n");
+    fprintf(stderr, "   -cxxmain:                Use standard C++ main (ignore POP-C++ initialization)\n");
+    fprintf(stderr, "   -popc-static:            Link with standard POP-C++ libraries statically\n");
+    fprintf(stderr, "   -popc-nolib:             Avoid standard POP-C++ libraries from linking\n");
     fprintf(stderr, "   -parclass-nointerface:   Do not generate POP-C++ interface codes for parallel objects\n");
     fprintf(stderr, "   -parclass-nobroker:      Do not generate POP-C++ broker codes for parallel objects\n");
 
@@ -71,16 +71,15 @@ void Usage() {
 
     fprintf(stderr, "   -async-allocation:       Use asynchronous mechanism to allocate a parallel object\n");
     fprintf(stderr, "   -verbose:                Print out additional information\n");
-    fprintf(stderr,
-            "   -nopipe:                 Do not use pipe during compilation phases ( create _paroc2_ files )\n");
-    fprintf(stderr, "   -version:            Display the installed version of POP-C++\n");
+    fprintf(stderr, "   -nopipe:                 Do not use pipe during compilation phases ( create _paroc2_ files )\n");
+    fprintf(stderr, "   -version:                Display the installed version of POP-C++\n");
 
     fprintf(stderr, "\n");
 
-    fprintf(stderr, "   -mpi:            Enable MPI compilation in collective parallel class\n");
-    fprintf(stderr, "   -xmp:            Enable XMP compilation in collective parallel class\n");
-    fprintf(stderr, "   -advanced:       Link with the POP-C++ Advanced Library\n");
-    fprintf(stderr, "   -pseudo-dynamic:       Use the pseudo-dynamic communication model of POP-C++\n");
+    fprintf(stderr, "   -mpi:                   Enable MPI compilation in collective parallel class\n");
+    fprintf(stderr, "   -xmp:                   Enable XMP compilation in collective parallel class\n");
+    fprintf(stderr, "   -advanced:              Link with the POP-C++ Advanced Library\n");
+    fprintf(stderr, "   -pseudo-dynamic:        Use the pseudo-dynamic communication model of POP-C++\n");
 
     fprintf(stderr, "\n");
 
