@@ -171,6 +171,7 @@ popcc_compile_obj(jobmgr jobmgr_obj.cc)
 popcc_compile_obj(appservice appservice_obj.cc)
 popcc_compile_exec(localservice_launcher localservice_launcher.cc)
 popcc_compile_exec(jobmgr_launcher jobmgr_launcher.cc)
+popcc_compile_exec(jobmgrquery jobmgrquery.cc)
 
 
 add_library(popc_services

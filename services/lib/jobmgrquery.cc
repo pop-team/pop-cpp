@@ -6,7 +6,7 @@
 int main(int argc, char** argv) {
     try {
         std::string master;
-        std::String str1;
+        char str1[256];
 
         if (pop_utils::checkremove(&argc, &argv, "-help") != NULL) {
             printf("Usage: jobmgrquery [-help] [jobmgr contact | jobmgr host]\n");
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
             }
             std::string type(str1), val;
             if (info.Query(type, val)) {
-                printf("%s= %s\n", str1, val);
+                printf("%s= %s\n", str1, val.c_str());
             } else {
                 printf("%s= NOT FOUND\n", str1);
             }
