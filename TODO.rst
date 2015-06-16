@@ -23,8 +23,3 @@ This happens because the parser will always instanciate an object of the static 
 
 To fix this the POPBase class shoud contain a factory. All serializable objects must be registered in this factory. It would then be possible to pass the dynamic type to the factory (at deserialization) and instanciate an object of the dynamic type.
 
-
-TODO: LW
-- suppress jobmgrpublish
-- suppress LocalExec ?
-- clean unit test

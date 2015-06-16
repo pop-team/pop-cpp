@@ -9,7 +9,6 @@
 #include "pop_buffer.h"
 #include "pop_buffer_raw.h"
 #include "pop_buffer_xdr.h"
-#include "pop_combox_factory.h"
 #include "pop_exception.h"
 
 #define ITER 100
@@ -19,23 +18,15 @@
 #define _LONG_MIN -2147483648L
 #define _ULONG_MAX 4294967295UL
 
-// TODO: See if we keep the combox test here (and fix)
-
 /// Test the serialization of all values in vector
 template <typename T>
-void testByVect(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut,
-                pop_buffer* xp_bufferIn, pop_combox* xp_comboxIn, pop_connection* xp_connectionIn,
+void testByVect(pop_buffer* xp_bufferOut, 
+                pop_buffer* xp_bufferIn,  
                 const std::vector<T>& x_vect, bool x_testArray) {
     for (const auto& elem : x_vect) {
         // Pack/unpack each element of the vector
         T test;
         xp_bufferOut->Pack(&elem, 1);
-        if (xp_bufferOut != xp_bufferIn) {
-            xp_bufferOut->Send(*xp_comboxOut, xp_connectionOut);
-            std::cout << __LINE__ << std::endl;
-            xp_bufferIn->Recv(*xp_comboxIn, xp_connectionIn);
-            std::cout << __LINE__ << std::endl;
-        }
         xp_bufferIn->UnPack(&test, 1);
         // std::cout<<elem<<" == "<<test<<std::endl;
         TS_ASSERT(elem == test);
@@ -74,8 +65,8 @@ void testByVect(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connecti
 
 /// Fill a vector and test
 template <typename T>
-void testByType(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut,
-                pop_buffer* xp_bufferIn, pop_combox* xp_comboxIn, pop_connection* xp_connectionIn, const T& x_min,
+void testByType(pop_buffer* xp_bufferOut,  
+                pop_buffer* xp_bufferIn,   const T& x_min,
                 const T& x_max, const T& x_incr) {
     std::vector<T> vectTest;
     for (T elem = x_min; elem < x_max - x_incr;
@@ -83,7 +74,7 @@ void testByType(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connecti
     {
         vectTest.push_back(elem);
     }
-    testByVect<T>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn, vectTest,
+    testByVect<T>(xp_bufferOut, xp_bufferIn, vectTest,
                   true);
 }
 
@@ -91,9 +82,6 @@ class BufferTestSuite : public CxxTest::TestSuite {
 protected:
     pop_buffer_raw* m_bufferRaw;
     pop_buffer_xdr* m_bufferXdr;
-    pop_combox* m_comboxSocketOut;
-    pop_combox* m_comboxSocketIn;
-    pop_connection* m_connectionSocket;
     std::vector<bool> m_vectBool;
     std::vector<std::string> m_vectString;
     std::vector<const char*> m_vectCharArr;
@@ -120,67 +108,53 @@ public:
 
         for (const auto& elem : m_vectString)
             m_vectCharArr.push_back(elem.c_str());
-
-        // Create combox factory
-        auto& fact = pop_combox_factory::get_instance();
-
-        // Create combox
-        m_comboxSocketOut = fact.Create("socket");
-        TS_ASSERT(m_comboxSocketOut != nullptr);
-        m_comboxSocketIn = fact.Create("socket");
-        TS_ASSERT(m_comboxSocketIn != nullptr);
-        // delete fact; // TODO LW: GetInstance must return a reference not a pointer
-
-        m_connectionSocket = m_comboxSocketOut->get_connection();
     }
     void tearDown() {
         delete m_bufferRaw;
         delete m_bufferXdr;
-        delete m_comboxSocketOut;
-        delete m_comboxSocketIn;
     }
 
     // Test packing of data in buffer
-    void testBuffer(pop_buffer* xp_bufferOut, pop_combox* xp_comboxOut, pop_connection* xp_connectionOut,
-                    pop_buffer* xp_bufferIn, pop_combox* xp_comboxIn, pop_connection* xp_connectionIn) {
+    void testBuffer(pop_buffer* xp_bufferOut,  
+                    pop_buffer* xp_bufferIn)   {
         TS_TRACE("test int");
-        testByType<int>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn,
+        testByType<int>(xp_bufferOut, xp_bufferIn, 
                         INT_MIN, INT_MAX, INT_MAX / ITER);
         TS_TRACE("test uint");
-        testByType<unsigned int>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn,
-                                 xp_connectionIn, 0, UINT_MAX, UINT_MAX / ITER);
+        testByType<unsigned int>(xp_bufferOut, xp_bufferIn, 
+                                 0, UINT_MAX, UINT_MAX / ITER);
         TS_TRACE("test long");
-        testByType<long>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn,
+        testByType<long>(xp_bufferOut, xp_bufferIn, 
                          _LONG_MIN, _LONG_MAX, _LONG_MAX / ITER);
         TS_TRACE("test ulong");
-        testByType<unsigned long>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn,
-                                  xp_connectionIn, 0, _ULONG_MAX, _ULONG_MAX / ITER);
+        testByType<unsigned long>(xp_bufferOut, xp_bufferIn, 
+                                  0, _ULONG_MAX, _ULONG_MAX / ITER);
         TS_TRACE("test short");
-        testByType<short>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn,
+        testByType<short>(xp_bufferOut, xp_bufferIn, 
                           SHRT_MIN, SHRT_MAX, SHRT_MAX / ITER);
         TS_TRACE("test ushort");
-        testByType<unsigned short>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn,
-                                   xp_connectionIn, 0, USHRT_MAX, USHRT_MAX / ITER);
+        testByType<unsigned short>(xp_bufferOut, xp_bufferIn, 
+                                   0, USHRT_MAX, USHRT_MAX / ITER);
         TS_TRACE("test char");
-        testByType<signed char>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn,
+        testByType<signed char>(xp_bufferOut, xp_bufferIn, 
                                 -128, 127, 1);
         TS_TRACE("test uchar");
-        testByType<unsigned char>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn,
-                                  xp_connectionIn, 0, 255, 1);
+        testByType<unsigned char>(xp_bufferOut, xp_bufferIn, 
+                                  0, 255, 1);
 
         TS_TRACE("test float");
-        testByType<float>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn,
-                          -1e10, 1e10, 43e4);
+        testByType<float>(xp_bufferOut, xp_bufferIn, 
+                          -1e10, 1e10, 43e5);
         TS_TRACE("test double");
-        testByType<double>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn,
-                           -1e15, 1e15, 43e8);
+        testByType<double>(xp_bufferOut, xp_bufferIn, 
+                           -1e15, 1e15, 43e9);
 
         TS_TRACE("test string");
-        testByVect<std::string>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn,
+        testByVect<std::string>(xp_bufferOut, xp_bufferIn, 
                                 m_vectString, false);
 
         TS_TRACE("test bool");
-        // testByVect<bool>(xp_bufferOut, xp_comboxOut, xp_connectionOut, xp_bufferIn, xp_comboxIn, xp_connectionIn,
+        // testByVect<bool>(xp_bufferOut, xp_bufferIn, 
         // m_vectBool, true);
         for (const auto& elem : m_vectBool) {
             // Pack/unpack each element of the vector
@@ -188,10 +162,6 @@ public:
             bool orig = elem;
             bool test;
             xp_bufferOut->Pack(&orig, 1);
-            if (xp_bufferOut != xp_bufferIn) {
-                xp_bufferOut->Send(*xp_comboxOut, xp_connectionOut);
-                xp_bufferIn->Recv(*xp_comboxIn, xp_connectionIn);
-            }
             xp_bufferIn->UnPack(&test, 1);
             TS_ASSERT(elem == test);
         }
@@ -200,28 +170,12 @@ public:
     void testBufferRaw() {
         // Test: pack/unpack in the same buffer
         TS_TRACE("Test buffer raw");
-        testBuffer(m_bufferRaw, m_comboxSocketOut, m_connectionSocket, m_bufferRaw, NULL, NULL);
-
-        // Test: pack/unpack in a different buffer
-        /* TODO
-        TS_TRACE("Test pack/unpack in a different buffer");
-
-        TS_ASSERT(m_comboxSocketOut->Create(12345, true)); // port, server
-        TS_ASSERT(m_comboxSocketIn->Create(12349, false)); // port, server
-        TS_ASSERT(m_comboxSocketIn->Connect("socket://localhost:12345"));
-
-        pop_buffer& bufIn(*m_comboxSocketIn->GetBufferFactory()->CreateBuffer());
-        pop_buffer& bufOut(*m_comboxSocketOut->GetBufferFactory()->CreateBuffer());
-        pop_connection& connOut(*m_comboxSocketOut->get_connection());
-        pop_connection& connIn(*m_comboxSocketIn->get_connection());
-        // testBuffer(&bufOut, m_comboxSocketOut, &connOut, &bufIn, m_comboxSocketIn, &connIn);
-        testBuffer(&bufIn, m_comboxSocketIn, &connIn, &bufOut, m_comboxSocketOut, &connOut);
-        */
+        testBuffer(m_bufferRaw, m_bufferRaw);
     }
 
     void testBufferXdr() {
         TS_TRACE("Test buffer xdr");
-        testBuffer(m_bufferXdr, m_comboxSocketOut, m_connectionSocket, m_bufferXdr, NULL, NULL);
+        testBuffer(m_bufferXdr, m_bufferXdr);
     }
 };
 
