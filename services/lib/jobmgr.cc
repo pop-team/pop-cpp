@@ -542,7 +542,7 @@ int JobMgr::Query(const std::string& type, std::string& val) {
         return 1;
     }
     if (type == "jobs") {
-        //  Update();
+        Update();
         mutex {
             snprintf(tmp, sizeof(tmp), "%zu/%d", jobs.size(), maxjobs);
             val = tmp;
@@ -550,7 +550,7 @@ int JobMgr::Query(const std::string& type, std::string& val) {
         return 1;
     }
     if (type == "joblist") {
-        //  Update();
+        Update();
         val = "";
 
         mutex {
@@ -568,7 +568,7 @@ int JobMgr::Query(const std::string& type, std::string& val) {
     }
 
     if (type == "pausejobs") {
-        //  Update();
+        Update();
         mutex {
             snprintf(tmp, sizeof(tmp), "%zu", pause_apps.size());
             val = tmp;
@@ -577,7 +577,7 @@ int JobMgr::Query(const std::string& type, std::string& val) {
     }
 
     if (type == "power_available") {
-        //  Update();
+        Update();
         snprintf(tmp, sizeof(tmp), "%g/%g", available.flops, total.flops);
         val = tmp;
         return 1;
@@ -863,7 +863,8 @@ bool JobMgr::AllocResource(const pop_accesspoint& localservice, const std::strin
         r.setExpectedPower(r_expPower);
     }
 
-    //   Update();
+    Update();
+
     /**
      * ViSaG : clementval
      * Retrieve the POPAppID and set it in the request
@@ -963,7 +964,7 @@ void JobMgr::CancelReservation(int* req, int howmany) {
  * @return The reservation ID
  */
 int JobMgr::Reserve(const pop_od& od, float& inoutfitness, std::string popAppId, std::string reqID) {
-    // Update();   //Called to see if there are jobs to be released
+    Update();   //Called to see if there are jobs to be released
 
     float flops = 0;
     float walltime = 0;
@@ -1204,7 +1205,7 @@ bool JobMgr::MatchAndReserve(const pop_od& od, float* fitness, pop_accesspoint* 
     if (howmany <= 0) {
         return false;
     }
-    // Update();
+    Update();
     bool ret = false;
 
     // Sort by the fitness
