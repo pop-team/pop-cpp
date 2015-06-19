@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
     printf("cpp11: Starting test..\n");
 
     MethodCall();
-    printf("The result should look like:\n!b\n1\n2\n3\n4\n");
+    printf("The result should look like:\n!b\n1\n2\n3\n4\n11\n");
 
     printf("cpp11: test succeeded, destroying objects..\n");
 
