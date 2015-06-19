@@ -335,6 +335,7 @@ JobMgr::JobMgr(bool daemon, const std::string& conf, const std::string& challeng
             }
             pop_accesspoint t;
             t.SetAccessString(val);
+            LOG_DEBUG("add parent %s", val);
             parents.push_back(t);
         } else if (pop_utils::isEqual(name, "maxjobs")) {
             if (sscanf(val, "%d", &maxjobs) != 1 || maxjobs < 0) {
@@ -504,6 +505,7 @@ pop_accesspoint JobMgr::GetNodeAccessPoint() {
 // Other service methods....
 
 void JobMgr::RegisterNode(const pop_accesspoint& url) {
+    LOG_DEBUG("Register node %s", url.GetAccessString().c_str());
     pop_accesspoint tmp(url);
     tmp.SetAsService();
     // Create a POPCSearchNode interface to communicate with the remote POPCSearchNode
@@ -583,6 +585,13 @@ int JobMgr::Query(const std::string& type, std::string& val) {
         return 1;
     }
 
+    if (type == "neighbors") {
+        snprintf(tmp, sizeof(tmp), "%u", neighbors.GetCount());
+        val = tmp;
+        return 1;
+    }
+
+
     for (auto& t : info) {
         if (type == t.name) {
             val = t.val;
@@ -622,14 +631,14 @@ int JobMgr::CreateObject(pop_accesspoint& localservice, const std::string& objna
 
             if (!AllocResource(localservice, objname, od, howmany - count, fitness.data() + count,
                                jobcontacts.data() + count, reserveIDs.data() + count, requestInfo, traceip, 0)) {
-                LOG_ERROR("[JM] AllocResource failed");
+                LOG_DEBUG("[JM] AllocResource failed");
                 ret = OBJECT_NO_RESOURCE;
                 break;
             }
             bool nocancel = true;
             for (int i = count; i < howmany; i++)
                 if (fitness[i] <= 0) {
-                    LOG_ERROR("[JM] fitness is below zero");
+                    LOG_DEBUG("[JM] fitness is below zero");
                     nocancel = false;
                     break;
                 }
@@ -886,12 +895,10 @@ bool JobMgr::AllocResource(const pop_accesspoint& localservice, const std::strin
     // Distribute object creation request on responses
     std::list<POPCSearchNodeInfo> nodes;
     nodes = responses.getNodeInfos();
-    std::list<POPCSearchNodeInfo>::iterator ni;
-    int jobindex = 0;
     int n_response = responses.getNodeInfos().size();
     int failedReservation = 0;
-    ni = nodes.begin();
-    for (jobindex = 0; jobindex < howmany; jobindex++) {
+    auto ni = nodes.begin();
+    for (int jobindex = 0; jobindex < howmany; jobindex++) {
         pop_accesspoint n_ac;
         n_ac.SetAccessString(ni->nodeId.c_str());
         // Contact the POPSearchNode
@@ -1195,7 +1202,7 @@ int JobMgr::MatchAndReserve(const pop_od& od, float& inoutfitness) {
         available.mem -= mem;
         available.bandwidth -= bandwidth;
         counter = (counter % 1000000000) + 1;
-        LOG_DEBUG("[JM] Local Match OK (fitness=%f, reserveID=%d)", fitness, t.Id);
+        LOG_DEBUG("[JM] MatchAndReserve Match OK (fitness=%f, reserveID=%d)", fitness, t.Id);
         return t.Id;
     }
 }
@@ -1299,6 +1306,7 @@ bool JobMgr::Forward(const pop_accesspoint& localservice, const std::string& obj
     for (auto& contact : neighbors.GetContacts()) {
         NodeInfo info;
         if (!neighbors.GetInfo(contact, info)) {
+            LOG_WARNING("Cannot get info of contact %s", contact.c_str());
             continue;
         }
 

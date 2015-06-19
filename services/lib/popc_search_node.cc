@@ -53,8 +53,8 @@ POPCSearchNode::~POPCSearchNode() {
 }
 
 // Set the ID of the POPCSearchNode
-void POPCSearchNode::setPOPCSearchNodeId(std::string nodeId) {
-    nodeInfo.nodeId = nodeId;
+void POPCSearchNode::setPOPCSearchNodeId(std::string _nodeId) {
+    nodeInfo.nodeId = _nodeId;
     LOG_DEBUG("[PSN] POPCSearchNode id : %s", nodeInfo.nodeId.c_str());
 }
 
@@ -64,8 +64,8 @@ std::string POPCSearchNode::getPOPCSearchNodeId() {
 }
 
 // Set the operating system
-void POPCSearchNode::setOperatingSystem(std::string operatingSystem) {
-    nodeInfo.operatingSystem = operatingSystem;
+void POPCSearchNode::setOperatingSystem(std::string _operatingSystem) {
+    nodeInfo.operatingSystem = _operatingSystem;
 }
 
 // Get the operating system
@@ -200,6 +200,7 @@ std::string POPCSearchNode::getUID() {
 POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
 #ifndef __WIN32__
     try {
+        LOG_DEBUG("launch discovery of psn");
         if (req.isEndRequest()) {
             timeout = 1;
         } else {
@@ -282,7 +283,7 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
         // request in the future
         actualReq.erase(req.getUniqueId());
         if (!req.isEndRequest()) {
-            LOG_DEBUG("[PSN] RESULTS;%d", (int)results.getNodeInfos().size());
+            LOG_DEBUG("[PSN] RESULTS;%u", results.getNodeInfos().size());
         }
         actualReqSyn.unlock();
 
@@ -315,8 +316,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap,
                 // received exploration list
                 for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
                     if (!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
-                        std::string nid;
-                        nid = (*i)->getPOPCSearchNodeId();
+                        std::string nid = (*i)->getPOPCSearchNodeId();
                         pop_accesspoint dummy;
                         (*i)->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
                     }
@@ -363,7 +363,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap,
                 // 'asker' node
                 Response* resp = new Response(req.getUniqueId(), POPCSearchNodeInfo(nodeInfo), req.getExplorationList(),
                                               req.getPOPAppId());
-
+                
                 /* If it's the local node or it's the last node, send directly the answer. Otherwise, send to the next
                 node to reroute
                 the message */
@@ -469,7 +469,7 @@ void POPCSearchNode::callbackResult(Response resp) {
             LOG_DEBUG("[PSN] CALLBACK UNLOCK SEMAPHORE");
             sem_post(reqsem[_reqid]);
         } else {
-            LOG_DEBUG("[PSN] SEMAPHORE IS NULL UNABLE TO UNLOCK %s", _reqid.c_str());
+            LOG_DEBUG("[PSN] SEMAPHORE IS NULL UNABLE TO UNLOCK %s", _reqid.c_str());
         }
     } catch (std::exception& e) {
         LOG_ERROR("[PSN] Exception caught in callback: %s", e.what());
@@ -479,7 +479,7 @@ void POPCSearchNode::callbackResult(Response resp) {
 // internal comparison between request and local resources
 bool POPCSearchNode::checkResource(Request req) {
     if (psn_currentJobs >= psn_maxjobs) {
-        LOG_ERROR("[PSN] FAILED FOR NBJOB");
+        LOG_DEBUG("[PSN] FAILED FOR NBJOB");
         return false;
     }
 

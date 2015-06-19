@@ -41,7 +41,8 @@
 #include "pop_search_node_info.h"
 #include "popc_search_node.ph"
 
-#define TIMEOUT 0;                  // Waiting time of the resources discovery algorithm
+// note LW: changed the timer from 0 to 3: avoid collisions if the local node is full
+#define TIMEOUT 3;                  // Waiting time of the resources discovery algorithm
 #define MAXHOP 1000;                    // Maximum depth for a discovery request
 #define SELFREGISTER_TIMEOUT 84600  //Time before between two self-registration (default one day)
 //End

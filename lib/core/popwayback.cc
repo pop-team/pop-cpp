@@ -11,11 +11,6 @@
  *
  */
 
-/*
-  Need refactoring to be in accordance:
-    POPC_Wayback instead of POPWayback
- */
-
 #include "popwayback.h"
 
 #include <string.h>
@@ -90,8 +85,7 @@ void POPWayback::insertNode(std::string nodeId) {
  * @return The node ID of the next node in the way back
  */
 std::string POPWayback::getNextNode() const {
-    std::string node = _lst_wb.back();
-    return node;
+    return _lst_wb.back();
 }
 
 /**
@@ -108,10 +102,7 @@ void POPWayback::deleteNextNode() {
  * @return Return true if there is 1 or 0 node in the way back
  */
 bool POPWayback::isLastNode() const {
-    if (_lst_wb.size() == 1 || _lst_wb.empty()) {
-        return true;
-    }
-    return false;
+    return _lst_wb.size() == 1 || _lst_wb.empty();
 }
 
 /**

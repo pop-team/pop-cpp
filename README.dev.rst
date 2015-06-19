@@ -94,3 +94,12 @@ If needed an object can be run manually. To enable this you can use the od.manua
 
 At runtime, the console will print the command to launch the object. You can then copy and paste it to another console to execute it.
 
+jobmgrquery
+-----------
+The job manager query utility can be used to debug the job manager. It is launched with
+
+.. code:: bash
+
+    /usr/local/popc/services/jobmgrquery
+    
+It lets you type different query: "jobs", "neighbors", ...
