@@ -77,7 +77,7 @@ bool popc_combox_uds::Create(const char* address, bool server) {
         if (!address) {
             // note: This is ugly and probably wrong as well. This should be improved
             std::size_t i = 0;
-            for (; i < 32768; ++i) {
+            for (; i < 16384; ++i) {
                 std::string str_address = ".uds_0." + std::to_string(i);
 
                 // 2. Make sure the address is clear
@@ -92,10 +92,19 @@ bool popc_combox_uds::Create(const char* address, bool server) {
                 }
             }
 
-            if (i >= 32768) {
+            if (i >= 16384) {
+                char* tmp = getenv("POPC_TEMP");
+
+                std::string tmp_folder;
+                if (tmp) {
+                    tmp_folder = tmp;
+                } else {
+                    tmp_folder = "/tmp";
+                }
+
                 i = 0;
-                for (; i < 32768; ++i) {
-                    std::string str_address = "/tmp/uds_0." + std::to_string(i);
+                for (; i < 16384; ++i) {
+                    std::string str_address = tmp_folder + "/uds_0." + std::to_string(i);
 
                     // 2. Make sure the address is clear
                     memset(&_sock_address, 0, sizeof(struct sockaddr_un));
@@ -109,7 +118,7 @@ bool popc_combox_uds::Create(const char* address, bool server) {
                     }
                 }
 
-                if (i >= 32768) {
+                if (i >= 16384) {
                     LOG_ERROR_T("UDS", "unable to find file for UDS socket");
                     return false;
                 }
