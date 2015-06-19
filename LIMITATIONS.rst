@@ -11,6 +11,10 @@ The POP-C++ parser has several limitations:
 * typedef declaration inside a parclass: typedef declaration with structure inside a parclass is not currently supported.
 * No support for C++11 in the headers. C++11 can be used in the source files if the -cpp11 option is passed to popcc
 
+Classes and structures handled differently:
+* classes (class keyword) needs to inherit from pop_base.
+* structures (struct keyword) cannot inherit from anything. Each attribute must be marshallable.
+
 Limitations of the POP-C++ core
 =================================
 * It is dangerous to send an object to itself as a reference. The buffer is already busy. An error occurs if the parallel method
