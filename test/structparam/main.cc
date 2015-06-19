@@ -8,6 +8,7 @@ int main(int argc, char** argv) {
 
     int v;
     StructData b;
+    StructData c;
     Data a;
     ParObject o("localhost");
 
@@ -33,7 +34,9 @@ int main(int argc, char** argv) {
 
     o.Get(b);
 
-    if ((v == 20) && (b.myData == 200) && (b.theData.theData == 20)) {
+    o.Send(c);
+
+    if ((v == 20) && (b.myData == 200) && (b.theData.theData == 20) && (c.myData == 100)) {
         printf("Structparam: test succeeded, destroying objects...\n");
         return 0;
     } else {

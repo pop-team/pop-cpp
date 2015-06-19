@@ -2,11 +2,10 @@
 #define _PAROBJECT_PH_
 #include "data.h"
 
-typedef struct aData {
+struct StructData {
     Data theData;
     int myData;
-} StructData;
-
+};
 
 parclass ParObject {
 
@@ -21,6 +20,8 @@ public:
     seq async void SetData(StructData data);
     seq sync StructData GetData();
     seq sync void Get(StructData &data);
+
+    void Send(StructData& data);
 
 private:
     StructData theData;

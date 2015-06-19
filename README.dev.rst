@@ -61,6 +61,10 @@ refactorings are possible, for instance:
 * Replace some handcrafted loops by a STL algorithm
 * use 'make lint' or 'make check' to analyze the code statically and fix the warnings. Be still careful of what you do.
 
+Notes
+=====
+
+The POPC++ core is compiled differently thatn other programs, by using the flag -popcpp-compilation. This disables async allocation compleletely. Moreover, this also changes the handling of pure virtual classes to allow the core to manipulate them differently than what is allowed by the model.
 
 Debugging
 =========
@@ -72,7 +76,7 @@ Core dump
 The runtime of popc runs different processes such as jobmgr or appservice. If one of this process crashes (e.g. segfault) there may be no traces in the logs. However the system can be taught to create a core dump file. To enable core dumps on Linux:
 
 .. code:: bash
-    
+
     cd test/barrier
     ulimit -c unlimited     # Enable core dumps for the session
     rm core
@@ -89,7 +93,7 @@ od.manual
 If needed an object can be run manually. To enable this you can use the od.manual:
 
 .. code:: c++
-    
+
     POPCobject(int newID) @{ od.manual(true); };
 
 At runtime, the console will print the command to launch the object. You can then copy and paste it to another console to execute it.
