@@ -29,4 +29,8 @@ void ParObject::Get(StructData& data) {
     data = theData;
 }
 
+void ParObject::Send(StructData& data){
+    data.myData = 100;
+}
+
 @pack(ParObject);

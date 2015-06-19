@@ -21,6 +21,8 @@ public:
     seq sync StructData GetData();
     seq sync void Get(StructData &data);
 
+    void Send(StructData& data);
+
 private:
     StructData theData;
 };
