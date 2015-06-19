@@ -2,11 +2,10 @@
 #define _PAROBJECT_PH_
 #include "data.h"
 
-typedef struct aData {
+struct StructData {
     Data theData;
     int myData;
-} StructData;
-
+};
 
 parclass ParObject {
 
