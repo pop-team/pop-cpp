@@ -24,6 +24,7 @@ CodeMgr::~CodeMgr() {
 }
 
 void CodeMgr::RegisterCode(const std::string& objname, const std::string& platform, const std::string& codefile) {
+    LOG_DEBUG("Register %s on %s from %s", objname.c_str(), platform.c_str(), codefile.c_str());
     if (objname.size() >= CODE_MAX_STRING_SIZE || platform.size() >= CODE_MAX_STRING_SIZE ||
         codefile.size() >= CODE_MAX_STRING_SIZE) {
         LOG_ERROR("Could not register code, information longer than %i: %i %i %i", CODE_MAX_STRING_SIZE, objname.size(),

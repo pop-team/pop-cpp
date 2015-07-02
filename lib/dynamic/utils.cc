@@ -288,6 +288,7 @@ int rprintf(const char* format, ...) {
 }
 
 int pop_utils::InitCodeService(char* fileconf, AppCoreService* s) {
+    LOG_DEBUG("InitCodeService %s", fileconf);
     if (s == nullptr || fileconf == nullptr) {
         return 0;
     }

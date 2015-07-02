@@ -218,7 +218,7 @@ bool pop_broker::DoInvoke(pop_request& request) {
         }
         delete e;
     }
-    catch (pop_exception e) {
+    catch (pop_exception& e) {
         LOG_DEBUG("POP-C++ exception in pop_broker::DoInvoke %s", e.what());
         if (request.from != nullptr) {
             std::string extra = e.Info();
@@ -244,7 +244,7 @@ bool pop_broker::DoInvoke(pop_request& request) {
             UnhandledException();
         }
     }
-    catch (std::exception e) {
+    catch (std::exception& e) {
         LOG_DEBUG("Std exception in pop_broker::DoInvoke");
         if (request.from != nullptr) {
             pop_exception e2 = pop_exception(STD_EXCEPTION);
