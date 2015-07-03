@@ -177,7 +177,10 @@ void pop_interface::Serialize(pop_buffer& buf, bool pack) {
     pop_buffer* old = nullptr;
 
     if (&buf == __pop_buf) {
-        LOG_WARNING("Buffers share the same address");  // TODO LW: Where does this come from ?
+        // note LW: This warning is raised if an object reference is send to itself (via a remote method)
+        //          This is not bad in itself but creates a big mess with the buffer
+        //          when a method is called on the reference in the remote method
+        LOG_WARNING("Buffers share the same address");
         old = &buf;
         __pop_buf = __pop_combox->GetBufferFactory()->CreateBuffer();
     }
