@@ -9,7 +9,7 @@ POPCSearchNode access point
 clementval  2012/04/12  Add POPFileManager service support
 */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include "../../config.h"
 
@@ -40,7 +40,7 @@ clementval  2012/04/12  Add POPFileManager service support
 #elif defined POPC_SECURE
 #include "secure_popc_search_node.ph"
 #else
-#include "popc_search_node.ph"
+#include "search_node.ph"
 #endif
 
 // Include PSM or VPSM

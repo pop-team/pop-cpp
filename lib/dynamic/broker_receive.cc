@@ -16,7 +16,7 @@
     pop_broker instead of pop_broker
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include <iostream>
 #include <fstream>
@@ -27,7 +27,7 @@
 #include "pop_buffer_factory.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_system.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 bool NewConnection(void* dat, pop_connection* conn) {
     pop_broker* br = (pop_broker*)dat;

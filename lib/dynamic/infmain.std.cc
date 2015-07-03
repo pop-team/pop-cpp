@@ -11,14 +11,14 @@
  *
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include "pop_exception.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_broker.h"
 #include "pop_system.h"
 #include "pop_utils.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 // Set processor
 #include <sched.h>

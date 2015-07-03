@@ -13,7 +13,7 @@
 #include <ctype.h>
 
 #include "codemgr.ph"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 CodeMgr::CodeMgr(const std::string& challenge) : pop_service_base(challenge) {
     // Nothing else to init

@@ -65,9 +65,9 @@ else(POPCPP_COMPILER)
 endif(POPCPP_COMPILER)
 
 if(UNIX)
-    set(intface_file ${POPCPP_LIB_PATH}/popc_intface_linux.cc)
+    set(intface_file ${POPCPP_LIB_PATH}/intface_linux.cc)
 elseif(WIN32)
-    set(intface_file ${POPCPP_LIB_PATH}/popc_intface_windows.cc)
+    set(intface_file ${POPCPP_LIB_PATH}/intface_windows.cc)
 endif(UNIX)
 
 # Configure the config for paths

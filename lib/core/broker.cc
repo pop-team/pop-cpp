@@ -16,8 +16,8 @@
     pop_broker instead of pop_broker
  */
 
-#include "popc_intface.h"
-#include "popc_logger.h"
+#include "pop_intface.h"
+#include "pop_logger.h"
 
 #include "pop_broker.h"
 #include "pop_interface.h"

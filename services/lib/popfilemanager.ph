@@ -12,7 +12,7 @@
 #ifndef POPFILEMANAGER_H_INCLUDE
 #define POPFILEMANAGER_H_INCLUDE
 
-#include "pop_service_base.ph"
+#include "service_base.ph"
 #include "pop_accesspoint.h"
 #include <list>
 

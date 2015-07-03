@@ -9,7 +9,7 @@
  */
 
 #include "nodethread.h"
-#include "popc_search_node.ph"
+#include "search_node.ph"
 
 /**
  * @author Valentin Clement

@@ -15,14 +15,14 @@
   Deeply need refactoring:
     pop_broker instead of pop_broker
  */
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include "pop_broker.h"
 #include "pop_interface.h"
 #include "pop_event.h"
 #include "pop_thread.h"
 #include "pop_system.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 #define PROPAGATE_EXCEPTION(a)                                           \
     catch (a err) {                                                      \

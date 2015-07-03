@@ -14,7 +14,7 @@
  */
 
 #include "popcc.h"  //Contains macros defined by CMake
-#include "popc_intface.h"
+#include "pop_intface.h"
 #include "config.h"
 #include "pop_utils.h"
 
@@ -697,15 +697,15 @@ int main(int argc, char* argv[]) {
     if (!compile) {
         if (usepopmain) {
             if (options.psdyn && object) {
-                sprintf(buf, "%s/lib/pseudodynamic/popc_objmain.%s.o", popdir, "psdyn");
+                sprintf(buf, "%s/lib/pseudodynamic/objmain.%s.o", popdir, "psdyn");
             } else if (options.psdyn) {
-                sprintf(buf, "%s/lib/pseudodynamic/pop_infmain.%s.o", popdir, "psdyn");
+                sprintf(buf, "%s/lib/pseudodynamic/infmain.%s.o", popdir, "psdyn");
             } else if ((options.xmp || options.mpi) && object) {
-                sprintf(buf, "%s/lib/dynamic/popc_objmain.%s.o", popdir, "xmp");
+                sprintf(buf, "%s/lib/dynamic/objmain.%s.o", popdir, "xmp");
             } else if (object) {
-                sprintf(buf, "%s/lib/dynamic/pop_objmain.%s.o", popdir, objmain);
+                sprintf(buf, "%s/lib/dynamic/objmain.%s.o", popdir, objmain);
             } else {
-                sprintf(buf, "%s/lib/dynamic/pop_infmain.std.o", popdir);
+                sprintf(buf, "%s/lib/dynamic/infmain.std.o", popdir);
             }
             link_cmd[link_count++] = popc_strdup(buf);
         }

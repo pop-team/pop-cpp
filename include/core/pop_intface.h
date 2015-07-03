@@ -15,9 +15,9 @@
 #define POP_INTFACE_H
 
 #ifdef __WIN32__
-#include "popc_intface_win.h"
+#include "pop_intface_win.h"
 #else
-#include "popc_intface_lin.h"
+#include "pop_intface_lin.h"
 #endif
 
 #include <string>

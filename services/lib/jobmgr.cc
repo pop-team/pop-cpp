@@ -23,7 +23,7 @@
  * clementval  2010/11/08  Add the POPAppID in the resource discovery and in the reservation
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include <numeric>
 #include <list>

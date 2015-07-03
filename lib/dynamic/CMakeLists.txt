@@ -34,24 +34,24 @@ set(POPCC_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 
 # TARGET_LINK_LIBRARIES(popc_common ${POPCCOMMON})
 
-add_custom_command(OUTPUT pop_infmain.std.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} pop_infmain.std.o ${CMAKE_CURRENT_SOURCE_DIR}/pop_infmain.std.cc
+add_custom_command(OUTPUT infmain.std.o
+    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} infmain.std.o ${CMAKE_CURRENT_SOURCE_DIR}/infmain.std.cc
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
-    DEPENDS pop_infmain.std.cc
+    DEPENDS infmain.std.cc
     DEPENDS popcc
     DEPENDS popcpp
     COMMENT "Compile POP-C++ Master main")
 
-add_custom_command(OUTPUT pop_objmain.std.o
-    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} pop_objmain.std.o ${CMAKE_CURRENT_SOURCE_DIR}/pop_objmain.std.cc
+add_custom_command(OUTPUT objmain.std.o
+    COMMAND ${CMAKE_POPCC_COMPILER} ${POPCPP_FLAGS} ${POPCPP_ParclassForService_COMPILER_FLAGS} objmain.std.o ${CMAKE_CURRENT_SOURCE_DIR}/objmain.std.cc
     ${POPCPP_DYNAMIC_INCLUDE_PATH}
-    DEPENDS pop_objmain.std.cc
+    DEPENDS objmain.std.cc
     DEPENDS popcc
     DEPENDS popcpp
     COMMENT "Compile POP-C++ Object main")
 
-add_custom_target(popcpp_object_main ALL DEPENDS pop_objmain.std.o)
-add_custom_target(popcpp_master_main ALL DEPENDS pop_infmain.std.o)
+add_custom_target(popcpp_object_main ALL DEPENDS objmain.std.o)
+add_custom_target(popcpp_master_main ALL DEPENDS infmain.std.o)
 
 # Compile a .ph file into a .ph.stub_client.o
 function(popcc_compile_ph ph_file)
@@ -77,9 +77,9 @@ endfunction(popcc_compile_cxx)
 
 # Build .ph files
 
-popcc_compile_ph(pop_service_base.ph)
+popcc_compile_ph(service_base.ph)
 popcc_compile_ph(jobmgr.ph)
-popcc_compile_ph(popc_search_node.ph)
+popcc_compile_ph(search_node.ph)
 popcc_compile_ph(codemgr.ph)
 popcc_compile_ph(remotelog.ph)
 popcc_compile_ph(objectmonitor.ph)
@@ -87,9 +87,9 @@ popcc_compile_ph(batchmgr.ph)
 popcc_compile_ph(appservice.ph)
 
 set(POPCC_GENERATED_STUBS
-    ${POPCC_OUTPUT_DIR}/pop_service_base.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/service_base.ph.stub_client.o
     ${POPCC_OUTPUT_DIR}/jobmgr.ph.stub_client.o
-    ${POPCC_OUTPUT_DIR}/popc_search_node.ph.stub_client.o
+    ${POPCC_OUTPUT_DIR}/search_node.ph.stub_client.o
     ${POPCC_OUTPUT_DIR}/codemgr.ph.stub_client.o
     ${POPCC_OUTPUT_DIR}/remotelog.ph.stub_client.o
     ${POPCC_OUTPUT_DIR}/objectmonitor.ph.stub_client.o
@@ -104,7 +104,7 @@ set(POPCC_GENERATED_STUBS
 popcc_compile_cxx(broker_receive.cc)
 popcc_compile_cxx(buffer_xdr.cc)
 popcc_compile_cxx(nodethread.cc)
-popcc_compile_cxx(popc_search_node_info.cc)
+popcc_compile_cxx(search_node_info.cc)
 popcc_compile_cxx(response.cc)
 popcc_compile_cxx(request.cc)
 popcc_compile_cxx(object.cc)
@@ -112,15 +112,15 @@ popcc_compile_cxx(system.cc)
 popcc_compile_cxx(interface.cc)
 popcc_compile_cxx(utils.cc)
 popcc_compile_cxx(benchmark.cc)
-popcc_compile_cxx(pop_allocator_tcpip_local.cpp)
-popcc_compile_cxx(pop_allocator_tcpip_service.cpp)
-popcc_compile_cxx(pop_allocator_uds_local.cpp)
+popcc_compile_cxx(allocator_tcpip_local.cpp)
+popcc_compile_cxx(allocator_tcpip_service.cpp)
+popcc_compile_cxx(allocator_uds_local.cpp)
 
 set(POPCC_GENERATED_FILES
     ${POPCC_OUTPUT_DIR}/broker_receive.cc.o
     ${POPCC_OUTPUT_DIR}/buffer_xdr.cc.o
     ${POPCC_OUTPUT_DIR}/nodethread.cc.o
-    ${POPCC_OUTPUT_DIR}/popc_search_node_info.cc.o
+    ${POPCC_OUTPUT_DIR}/search_node_info.cc.o
     ${POPCC_OUTPUT_DIR}/response.cc.o
     ${POPCC_OUTPUT_DIR}/request.cc.o
     ${POPCC_OUTPUT_DIR}/object.cc.o
@@ -128,9 +128,9 @@ set(POPCC_GENERATED_FILES
     ${POPCC_OUTPUT_DIR}/interface.cc.o
     ${POPCC_OUTPUT_DIR}/utils.cc.o
     ${POPCC_OUTPUT_DIR}/benchmark.cc.o
-    ${POPCC_OUTPUT_DIR}/pop_allocator_tcpip_local.cpp.o
-    ${POPCC_OUTPUT_DIR}/pop_allocator_tcpip_service.cpp.o
-    ${POPCC_OUTPUT_DIR}/pop_allocator_uds_local.cpp.o
+    ${POPCC_OUTPUT_DIR}/allocator_tcpip_local.cpp.o
+    ${POPCC_OUTPUT_DIR}/allocator_tcpip_service.cpp.o
+    ${POPCC_OUTPUT_DIR}/allocator_uds_local.cpp.o
     ${POPCC_GENERATED_STUBS}
 )
 
@@ -146,11 +146,11 @@ set(POPCC_GENERATED_FILES
 
 add_library(popc_common
     buffer_raw.cc
-    popc_buffer_xdr_mpi.cpp
+    buffer_xdr_mpi.cpp
     explorationList.cc
-    pop_allocator_factory.cpp
-    pop_allocator_uds_interconnector.cpp
-    pop_allocator_mpi_pseudo.cpp
+    allocator_factory.cpp
+    allocator_uds_interconnector.cpp
+    allocator_mpi_pseudo.cpp
     ${POPCC_GENERATED_FILES}
 )
 
@@ -170,11 +170,11 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/batchmgr.ph DESTINATION ${POPCC_INCLUD
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/codemgr.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/jobmgr.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/objectmonitor.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/pop_service_base.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/popc_search_node.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/service_base.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/search_node.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/remotelog.ph DESTINATION ${POPCC_INCLUDE_INSTALL})
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/pop_infmain.std.o DESTINATION ${POPCC_LIB_INSTALL})
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/pop_objmain.std.o DESTINATION ${POPCC_LIB_INSTALL})
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/infmain.std.o DESTINATION ${POPCC_LIB_INSTALL})
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/objmain.std.o DESTINATION ${POPCC_LIB_INSTALL})
 install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/libpopc_common.a DESTINATION ${POPCC_LIB_INSTALL})
 
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "pop_infmain.std.o;pop_objmain.std.o")
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "infmain.std.o;objmain.std.o")

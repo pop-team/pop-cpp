@@ -1,5 +1,5 @@
 /**
- * File : pop_objmain.std.cc
+ * File : objmain.std.cc
  * Author : Tuan Anh Nguyen
  * Description : "main" entry for the object executable
  * Initialization of parallel objects

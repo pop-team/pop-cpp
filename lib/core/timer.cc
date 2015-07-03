@@ -16,7 +16,7 @@
     POPC_Timer instead of Timer
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include "timer.h"
 //#include <sys/time.h>

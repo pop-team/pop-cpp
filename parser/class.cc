@@ -12,7 +12,7 @@
 
 #include <algorithm>
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include "parser.h"
 #include "pop_utils.h"

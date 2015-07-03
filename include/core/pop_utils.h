@@ -17,7 +17,7 @@
 #ifndef POP_UTILS_H
 #define POP_UTILS_H
 
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 #define SSH_TUNNEL_ERROR 65280
 #define SSH_PORT_MOD 16383

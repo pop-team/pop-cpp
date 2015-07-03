@@ -22,7 +22,7 @@
  *
  */
 
-#include "popc_logger.h"
+#include "pop_logger.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

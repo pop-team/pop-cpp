@@ -13,7 +13,7 @@
 
 // Deeply need refactoring: POPC_AccessPoint instead of pop_accesspoint
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 //#include <stdio.h>
 //#include <string.h>
 //#include <stdlib.h>

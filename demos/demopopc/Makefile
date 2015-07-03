@@ -1,4 +1,4 @@
-POPCC=popcc
+POPCC=popcc -no-async-allocation
 POPCPP=popcpp
 POPCPATH=../..
 # CROSSCOMPILE=-cxx=FCCpx -Xg -pthread -cpp="FCCpx -E"

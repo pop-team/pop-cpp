@@ -33,9 +33,9 @@ set(POPCC_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 
 # Build the interface (Win/Lin)
 if(WIN32)
-    set(intface_cc_file popc_intface_windows.cc)
+    set(intface_cc_file intface_windows.cc)
 elseif(UNIX)
-    set(intface_cc_file popc_intface_linux.cc)
+    set(intface_cc_file intface_linux.cc)
 endif(WIN32)
 
 
@@ -62,8 +62,8 @@ add_library(popc_core
     buffer_xdr_factory.cc
     CMakeLists.txt
     combox.cc
-    popc_combox_uds.cc
-    popc_connection_uds.cc
+    combox_uds.cc
+    connection_uds.cc
     combox_socket.cc
     combox_factory.cc
     event.cc
@@ -71,7 +71,7 @@ add_library(popc_core
     memspool.cc
     mutex.cc
     od.cc
-    popc_logger.cpp
+    logger.cpp
     popwayback.cc
     thread.cc
     timer.cc

@@ -16,7 +16,7 @@
     POPC_BufferFactoryFinder instead of pop_buffer_factory_finder
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include "pop_buffer_factory_finder.h"
 #include "pop_buffer_xdr_factory.h"

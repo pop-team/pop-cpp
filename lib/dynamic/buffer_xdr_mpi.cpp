@@ -11,12 +11,12 @@
  *
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include "pop_interface.h"
 #include "pop_buffer_xdr_mpi.h"
 #include "pop_exception.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 /**
  * Buffer constructor. Start with a stable state.

@@ -16,7 +16,7 @@
     POPC_CommonTools instead of pop_utils
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include <iostream>
 #include <fstream>

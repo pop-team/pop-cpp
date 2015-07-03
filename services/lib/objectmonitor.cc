@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "popc_logger.h"
+#include "pop_logger.h"
 #include "objectmonitor.ph"
 
 // static IMPLEMENT_TYPE(ObjectMonitor) *myObjMonitor=NULL;

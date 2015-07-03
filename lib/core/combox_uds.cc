@@ -20,7 +20,7 @@
 #include <signal.h>
 
 #include "pop_combox_uds.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 // Constant declaration
 const char* popc_combox_uds::UDS_PROTOCOL_NAME = "uds";

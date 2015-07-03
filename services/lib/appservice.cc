@@ -19,7 +19,7 @@
 #include "appservice.ph"
 
 // #include "jobmgr.ph"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 AppCoreService::AppCoreService(const std::string& challenge, bool daemon, const std::string& codelocation)
     : pop_service_base(challenge),

@@ -21,7 +21,7 @@
 //#include "pop_interface.h"
 #include "pop_buffer_raw.h"
 #include "pop_exception.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 pop_buffer_raw::pop_buffer_raw() {
     Reset();

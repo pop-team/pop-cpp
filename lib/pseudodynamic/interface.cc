@@ -16,7 +16,7 @@
  * clementval  2011/9/13   Add the method GetAccessPointForThis() to be able to handle the THIS keyword correctly
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include <time.h>
 #include <stdio.h>

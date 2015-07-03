@@ -18,7 +18,7 @@
 #include "pop_allocator_uds_interconnector.h"
 #include "pop_allocator_tcpip.h"
 #include "pop_allocator_mpi_pseudo.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 const char* pop_allocatorFactory::PREFIX_UDS = "uds";
 const char* pop_allocatorFactory::PREFIX_TCP = "socket";

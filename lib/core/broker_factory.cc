@@ -20,7 +20,7 @@
     pop_brokerFactory instead of pop_broker_factory
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 #include "pop_broker_factory.h"
 #include "pop_utils.h"
 #include "pop_system.h"

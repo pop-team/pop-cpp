@@ -22,7 +22,7 @@
 
 #include "pop_combox.h"
 #include "pop_exception.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 #include <string.h>
 

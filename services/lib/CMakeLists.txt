@@ -104,9 +104,9 @@ endfunction(popcc_compile_obj)
 
 # Compile all .ph files
 
-popcc_compile_ph(pop_service_base.ph)
+popcc_compile_ph(service_base.ph)
 popcc_compile_ph(jobmgr.ph)
-popcc_compile_ph(popc_search_node.ph)
+popcc_compile_ph(search_node.ph)
 popcc_compile_ph(codemgr.ph)
 popcc_compile_ph(remotelog.ph)
 popcc_compile_ph(objectmonitor.ph)
@@ -115,9 +115,9 @@ popcc_compile_ph(appservice.ph)
 popcc_compile_ph(popfilemanager.ph)
 
 set(POPCC_GENERATED_STUB
-    ${POPCC_OUTPUT_DIR}/pop_service_base.ph.stub.o
+    ${POPCC_OUTPUT_DIR}/service_base.ph.stub.o
     ${POPCC_OUTPUT_DIR}/jobmgr.ph.stub.o
-    ${POPCC_OUTPUT_DIR}/popc_search_node.ph.stub.o
+    ${POPCC_OUTPUT_DIR}/search_node.ph.stub.o
     ${POPCC_OUTPUT_DIR}/codemgr.ph.stub.o
     ${POPCC_OUTPUT_DIR}/remotelog.ph.stub.o
     ${POPCC_OUTPUT_DIR}/objectmonitor.ph.stub.o
@@ -132,7 +132,7 @@ set(POPCC_GENERATED_STUB
 
 popcc_compile_cxx(service_base.cc)
 popcc_compile_cxx(jobmgr.cc)
-popcc_compile_cxx(popc_search_node.cc)
+popcc_compile_cxx(search_node.cc)
 popcc_compile_cxx(codemgr.cc)
 popcc_compile_cxx(remotelog.cc)
 popcc_compile_cxx(objectmonitor.cc)
@@ -144,7 +144,7 @@ set(POPCC_GENERATED_FILES
     ${POPCC_GENERATED_STUB}
     ${POPCC_OUTPUT_DIR}/service_base.cc.o
     ${POPCC_OUTPUT_DIR}/jobmgr.cc.o
-    ${POPCC_OUTPUT_DIR}/popc_search_node.cc.o
+    ${POPCC_OUTPUT_DIR}/search_node.cc.o
     ${POPCC_OUTPUT_DIR}/codemgr.cc.o
     ${POPCC_OUTPUT_DIR}/remotelog.cc.o
     ${POPCC_OUTPUT_DIR}/objectmonitor.cc.o
@@ -166,7 +166,7 @@ set(POPCC_GENERATED_FILES
 # Compile executables
 
 popcc_compile_obj(popfilemanager popfilemanager_obj.cc)
-popcc_compile_obj(popc_search_node popc_search_node_obj.cc)
+popcc_compile_obj(search_node search_node_obj.cc)
 popcc_compile_obj(jobmgr jobmgr_obj.cc)
 popcc_compile_obj(appservice appservice_obj.cc)
 popcc_compile_exec(localservice_launcher localservice_launcher.cc)
@@ -185,7 +185,7 @@ set_target_properties(popc_services
 set(POPCPP_LIB_INSTALL lib/dynamic)
 set(POPCPP_SERVICES_INSTALL services)
 
-install(PROGRAMS ${POPCC_OUTPUT_DIR}/popc_search_node${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
+install(PROGRAMS ${POPCC_OUTPUT_DIR}/search_node${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/jobmgr${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/appservice${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})
 install(PROGRAMS ${POPCC_OUTPUT_DIR}/localservice_launcher${EXECUTABLE_EXTENSION} DESTINATION ${POPCPP_SERVICES_INSTALL})

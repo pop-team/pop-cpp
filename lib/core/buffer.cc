@@ -25,7 +25,7 @@
 #include "pop_buffer.h"
 #include "pop_system.h"
 #include "pop_exception.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 // Message header
 

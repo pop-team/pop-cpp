@@ -10,9 +10,9 @@
  */
 
 #include "popfilemanager.ph"
-#include "popc_search_node.ph"
+#include "search_node.ph"
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include <sstream>
 #include <fstream>

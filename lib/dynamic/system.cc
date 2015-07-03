@@ -21,7 +21,7 @@
   Deeply need refactoring:
     POPC_System instead of pop_system
  */
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 //#include <stdio.h>
 //#include <netdb.h>

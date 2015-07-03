@@ -17,12 +17,12 @@
     POPC_Mutex instead of pop_mutex
     POPC_MutexLocker instead of pop_mutex_locker
  */
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 //#include <stdio.h>
 
 #include "pop_mutex.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 //#include <sys/time.h>
 
 /*

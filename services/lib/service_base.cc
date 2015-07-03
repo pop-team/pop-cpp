@@ -13,7 +13,7 @@
 #include "pop_interface.h"
 #include "pop_broker.h"
 
-#include "pop_service_base.ph"
+#include "service_base.ph"
 #include "objectmonitor.ph"
 
 #include <strings.h>

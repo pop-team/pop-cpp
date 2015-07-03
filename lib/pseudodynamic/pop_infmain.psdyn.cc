@@ -11,7 +11,7 @@
  *
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include "pop_exception.h"
 #include "pop_buffer_factory_finder.h"

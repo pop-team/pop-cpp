@@ -21,7 +21,7 @@
 
 #include "pop_exception.h"
 #include "pop_system.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 const char* pop_exception::paroc_errstr[17] = {  // Error number: 1000 + ...
     "Out of resource",                           // 1

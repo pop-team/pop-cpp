@@ -11,7 +11,7 @@
 #ifndef BATCHMANAGER_H
 #define BATCHMANAGER_H
 
-#include "pop_service_base.ph"
+#include "service_base.ph"
 
 /**
  * @class BatchMgr

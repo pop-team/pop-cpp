@@ -20,7 +20,7 @@
 #include "pop_combox.h"
 #include "pop_combox_factory.h"
 #include "pop_broker.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 /**
  * Allocate a single object by using the UDS protocol with the POP-C++ MPI Interconnector

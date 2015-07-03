@@ -25,6 +25,6 @@
 #include <pop_buffer_utils.h>
 #include <pop_system.h>
 #include <pop_utils.h>
-#include <popc_logger.h>
+#include <pop_logger.h>
 
 #endif

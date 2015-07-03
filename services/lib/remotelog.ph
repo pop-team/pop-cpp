@@ -11,7 +11,7 @@
 #ifndef REMOTELOG_H
 #define REMOTELOG_H
 
-#include "pop_service_base.ph"
+#include "service_base.ph"
 
 /**
  * @class RemoteLog

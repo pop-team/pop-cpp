@@ -16,7 +16,7 @@
     POPC_ObjectDescription instead of pop_od
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 #include "pop_od.h"
 #include "pop_utils.h"
 

@@ -25,7 +25,7 @@
 #include <unordered_map>
 #include <time.h>
 #include <sys/time.h>
-#include "pop_service_base.ph"
+#include "service_base.ph"
 #include <timer.h>
 #include <pop_accesspoint.h>
 
@@ -39,7 +39,7 @@
 #include "response.h"
 #include "explorationList.h"
 #include "pop_search_node_info.h"
-#include "popc_search_node.ph"
+#include "search_node.ph"
 
 // note LW: changed the timer from 0 to 3: avoid collisions if the local node is full
 #define TIMEOUT 3;                  // Waiting time of the resources discovery algorithm

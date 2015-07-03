@@ -34,11 +34,11 @@
 #include <semaphore.h>
 #include <fcntl.h>
 
-#include "pop_service_base.ph"
+#include "service_base.ph"
 #include "jobmgr.ph"
 #include "timer.h"
 #include "pop_thread.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 
 #include <iostream>

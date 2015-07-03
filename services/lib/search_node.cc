@@ -1,5 +1,5 @@
 /**
- * File : popc_search_node.cc
+ * File : search_node.cc
  * Author : Valentin Clement
  * Description : Implementation of the POP-C++ Search Node. This parallel object is responsible of the resource
  *discovery.
@@ -20,7 +20,7 @@
  * clementval   2012/08/23  Fix bug with the semaphore under Darwin Arch
  */
 
-#include "popc_search_node.ph"
+#include "search_node.ph"
 #include "nodethread.h"
 
 /**

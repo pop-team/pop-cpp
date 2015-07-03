@@ -5,7 +5,7 @@
  * are still contains conditional Linux / Windows code for sake of clarity.
  */
 
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #ifndef __WIN32__
 #include <fcntl.h>
@@ -13,7 +13,7 @@
 
 #include "pop_combox_socket.h"
 #include "pop_system.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 #define PROTO_TCP 6
 #define PROTO_UDP 17

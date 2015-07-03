@@ -15,7 +15,7 @@
   Deeply need refactoring:
     POPC_BufferXDR instead of pop_buffer_xdr
  */
-#include "popc_intface.h"
+#include "pop_intface.h"
 
 #include <rpc/types.h>
 #include <rpc/xdr.h>
