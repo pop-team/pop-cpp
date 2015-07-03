@@ -1691,7 +1691,8 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
         output += ");\n";
 
         sprintf(tmpcode,
-                "    } catch(pop_exception* ex) {\n      printf(\"Async allocation: %%s\", ex->what()); \n    }\n   "
+                "    } catch(std::exception& ex) {\n      printf(\"ERROR: Exception in asynchronous allocation: %%s\\n\", ex.what());\n delete arguments;\n throw; \n    }\n   "
+                "      catch(...) {\n                     printf(\"ERROR: Exception in asynchronous allocation\\n\");\n delete arguments;\n throw; \n    }\n   "
                 "delete arguments;\n  return 0;\n  }\n}\n");
         output += tmpcode;
     }

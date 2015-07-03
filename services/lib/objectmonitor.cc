@@ -108,7 +108,7 @@ void ObjectMonitor::ManageObject(pop_accesspoint& p) {
 void ObjectMonitor::UnManageObject(pop_accesspoint& p) {
     mutex {
         const std::string& newstr = p.GetAccessString();
-        LOG_DEBUG("Unanage object with ap %s", newstr.c_str());
+        LOG_DEBUG("Unmanage object with ap %s", newstr.c_str());
         auto pos = objects.begin();
         while (pos != objects.end()) {
             if (pos->GetAccessString() == newstr) {

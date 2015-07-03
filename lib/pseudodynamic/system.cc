@@ -395,15 +395,7 @@ bool pop_system::Initialize(int* argc, char*** argv) {
 
     LOG_DEBUG_IF(codeconf == NULL, "No code config file");
 
-    /*if (codeconf!=NULL && !pop_utils::InitCodeService(codeconf,mgr))
-    {
-    return false;
-    }
-    else return true; */
-
-    LOG_DEBUG("SYSTEM: Init code service");
     // bool ret = !(codeconf != NULL && !pop_utils::InitCodeService(codeconf,mgr));
-    LOG_DEBUG("SYSTEM: Init code service done");
     return false;
 }
 

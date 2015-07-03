@@ -37,6 +37,7 @@ pop_object::pop_object() {
 #ifndef POP_PSEUDO
         try {
             ObjectMonitor tmp(pop_system::appservice);
+            LOG_DEBUG("Manage object %s", pop_broker::classname.c_str());
             tmp.ManageObject(myself);
         } catch (std::exception& e) {
             LOG_WARNING("Can not register %s@%s to ObjectMonitor service: %s", pop_broker::classname.c_str(),
