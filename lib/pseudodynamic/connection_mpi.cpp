@@ -1,4 +1,4 @@
-#include "popc_connection_mpi.h"
+#include "pop_connection_mpi.h"
 
 #include <signal.h>
 

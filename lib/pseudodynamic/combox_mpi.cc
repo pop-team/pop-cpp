@@ -12,7 +12,7 @@
 #include <fcntl.h>
 #include <signal.h>
 
-#include "popc_combox_mpi.h"
+#include "pop_combox_mpi.h"
 #include "pop_broker.h"
 
 /**

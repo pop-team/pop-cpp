@@ -18,7 +18,7 @@
 #include "pop_broker.h"
 #include "pop_system_mpi.h"
 #include "pop_utils.h"
-#include "popc_logger.h"
+#include "pop_logger.h"
 
 // Set processor
 #include <sched.h>

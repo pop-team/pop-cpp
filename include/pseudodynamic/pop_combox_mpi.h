@@ -17,7 +17,7 @@
 #include <map>
 
 #include "pop_combox.h"
-#include "popc_connection_mpi.h"
+#include "pop_connection_mpi.h"
 #include "pop_mutex.h"
 #include "pop_utils.h"
 
