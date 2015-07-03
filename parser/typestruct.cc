@@ -2,7 +2,8 @@
 
 #include "type.h"
 
-// TODO LW: Why do we handle class and struct differently ??? This file should not exist
+// note: BW&LW: classes and structs are apparently handled differently. Classes must inherit from POPBase to be serialized
+//              and structures must be composed of serializable elements only
 
 TypeStruct::TypeStruct(char* name) : DataType(name) {
 }
