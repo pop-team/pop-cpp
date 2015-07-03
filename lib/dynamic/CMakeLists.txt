@@ -148,8 +148,6 @@ add_library(popc_common
     buffer_raw.cc
     popc_buffer_xdr_mpi.cpp
     explorationList.cc
-    popc_combox_uds.cpp
-    popc_connection_uds.cpp
     pop_allocator_factory.cpp
     pop_allocator_uds_interconnector.cpp
     pop_allocator_mpi_pseudo.cpp

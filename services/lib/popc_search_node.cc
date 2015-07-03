@@ -152,8 +152,7 @@ void POPCSearchNode::addNeighbor(POPCSearchNode& node) {
 // Remove a POPCSearchNode as a neighbor of this POPCSearchNode
 void POPCSearchNode::removeNeighbor(POPCSearchNode& node) {
     LOG_DEBUG("[PSN] NODE_REMOVE;%s", node.GetAccessPoint().GetAccessString().c_str());
-    std::list<POPCSearchNode*>::iterator i;
-    for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
+    for (auto i = neighborsList.begin(); i != neighborsList.end(); i++) {
         pop_accesspoint crt = (*i)->GetAccessPoint();
         if (crt.GetAccessString() == node.GetAccessPoint().GetAccessString().c_str()) {
             neighborsList.erase(i);
@@ -165,9 +164,8 @@ void POPCSearchNode::removeNeighbor(POPCSearchNode& node) {
 // Remove current POPCSearchNode's neighbors. Used after resources discovery to delete
 // properly the parallel objects
 void POPCSearchNode::deleteNeighbors() {
-    std::list<POPCSearchNode*>::iterator i;
-    for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
-        delete *i;
+    for (auto& elem : neighborsList) {
+        delete elem;
     }
     neighborsList.clear();
 }
@@ -269,13 +267,11 @@ POPCSearchNodeInfos POPCSearchNode::launchDiscovery(Request req, int timeout) {
         actualReqSyn.lock();
 
         POPCSearchNodeInfos results;
-        std::map<std::string, POPCSearchNodeInfos>::iterator i;
 
         // ! for-statement because of problem with map comparison and std::string !
-        for (i = actualReq.begin(); i != actualReq.end(); i++) {
-            std::string id = (*i).first;
-            if (strcmp(id.c_str(), req.getUniqueId().c_str()) == 0) {
-                results = i->second;
+        for (auto& elem : actualReq) {
+            if (elem.first == req.getUniqueId()) {
+                results = elem.second;
                 break;
             }
         }
@@ -311,14 +307,13 @@ void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap,
             // Adding the node's neighbors in the exploration list
             req.addNodeToExplorationList(getPOPCSearchNodeId(), getNeighbors());
             if (req.getMaxHops() >= 0 || req.getMaxHops() == UNLIMITED_HOPS) {
-                std::list<POPCSearchNode*>::iterator i;
                 // check if the local neighbors are already asked with the originally
                 // received exploration list
-                for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
-                    if (!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
-                        std::string nid = (*i)->getPOPCSearchNodeId();
+                for (auto& elem : neighborsList) {
+                    if (!oldEL.isIn(elem->getPOPCSearchNodeId())) {
+                        std::string nid = elem->getPOPCSearchNodeId();
                         pop_accesspoint dummy;
-                        (*i)->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
+                        elem->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
                     }
                 }
             }
@@ -330,9 +325,8 @@ void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap,
 
             // check if the request has already been asked
 
-            std::list<std::string>::iterator k;
-            for (k = knownRequests.begin(); k != knownRequests.end(); k++) {
-                if (strcmp(k->c_str(), req.getUniqueId().c_str()) == 0) {
+            for (auto& elem : knownRequests) {
+                if (elem == req.getUniqueId()) {
                     LOG_DEBUG("[PSN] ALREADY_ASKED_REQUEST;%s", req.getUniqueId().c_str());
                     POPCSearchNode nsender(sender);
                     JobMgr jsender(nsender.getJobMgrRef());
@@ -386,16 +380,15 @@ void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap,
             // max hops is zero to avoid counting "initial node" discovery.
             if (req.getMaxHops() >= 0 || req.getMaxHops() == UNLIMITED_HOPS) {
                 req.addNodeToWb(nodeInfo.getPOPCSearchNodeId());
-                std::list<POPCSearchNode*>::iterator i;
                 // check if the local neighbors are already asked with the originally
                 // received exploration list
-                for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
-                    if (!oldEL.isIn((*i)->getPOPCSearchNodeId())) {
+                for (auto& elem : neighborsList) {
+                    if (!oldEL.isIn(elem->getPOPCSearchNodeId())) {
                         std::string nid;
-                        nid = (*i)->getPOPCSearchNodeId();
+                        nid = elem->getPOPCSearchNodeId();
                         LOG_DEBUG("[PSN] FORWARD;DEST;%s", nid.c_str());
                         pop_accesspoint dummy;
-                        (*i)->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
+                        elem->askResourcesDiscovery(req, node_ap, GetAccessPoint(), dummy);
                     }
                 }
             }
@@ -450,14 +443,12 @@ void POPCSearchNode::callbackResult(Response resp) {
         POPCSearchNodeInfo dni = resp.getFoundNodeInfo();
         actualReqSyn.lock();
         LOG_DEBUG("[PSN] RECEIVE RESPONSE (REQID;%s;SENDER;%s)", resp.getReqUniqueId().c_str(), dni.nodeId.c_str());
-        std::map<std::string, POPCSearchNodeInfos>::iterator i;
         // visit the currently running list
-        for (i = actualReq.begin(); i != actualReq.end(); i++) {
-            std::string id = (*i).first;
+        for (auto& elem : actualReq) {
             // if the request's uniqueId is present, add the response to the list
             // and break the for-statement.
-            if (strcmp(id.c_str(), resp.getReqUniqueId().c_str()) == 0) {
-                i->second.addANodeInfo(resp.getFoundNodeInfo());
+            if (elem.first == resp.getReqUniqueId()) {
+                elem.second.addANodeInfo(resp.getFoundNodeInfo());
                 break;
             }
         }
@@ -569,9 +560,8 @@ bool POPCSearchNode::checkResource(Request req) {
 // Return a list of neighbors' nodeId
 std::list<std::string> POPCSearchNode::getNeighbors() {
     std::list<std::string> neighbors;
-    std::list<POPCSearchNode*>::iterator i;
-    for (i = neighborsList.begin(); i != neighborsList.end(); i++) {
-        neighbors.push_back((*i)->getPOPCSearchNodeId());
+    for (auto& elem : neighborsList) {
+        neighbors.push_back(elem->getPOPCSearchNodeId());
     }
     return neighbors;
 }
@@ -643,15 +633,13 @@ void POPCSearchNode::removeJob(float power, float memorySize, float bandwidth, i
 }
 
 std::string POPCSearchNode::getNeighborsAsString() {
-    std::string strlst;
+    std::stringstream ss;
 
-    for (std::list<POPCSearchNode*>::iterator i = neighborsList.begin(); i != neighborsList.end(); i++) {
-        strlst.append((*i)->getPOPCSearchNodeId().c_str());
-        strlst.append(";");
+    for (auto& elem : neighborsList) {
+        ss << elem->getPOPCSearchNodeId().c_str() << ";";
     }
 
-    LOG_DEBUG("[PSN] NODENEIGH:%s", strlst.c_str());
+    LOG_DEBUG("[PSN] NODENEIGH:%s", ss.str().c_str());
 
-    std::string lst = strlst.c_str();
-    return lst;
+    return ss.str();
 }

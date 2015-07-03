@@ -126,17 +126,17 @@ pop_interface::~pop_interface() {
     Release();
 }
 
-pop_interface& pop_interface::operator=(const pop_interface& obj) {
+pop_interface& pop_interface::operator=(const pop_interface& inf) {
     //  __pop_combox = nullptr;
     //  __pop_buf = nullptr;
     LOG_DEBUG("Bind");
     // Bind(accesspoint);
     // DecRef();
     // Bind(accesspoint);
-    //  const pop_accesspoint &res = obj.GetAccessPoint();
+    //  const pop_accesspoint &res = inf.GetAccessPoint();
 
     Release();
-    accesspoint = obj.GetAccessPoint();
+    accesspoint = inf.GetAccessPoint();
     if (GetAccessPoint().GetAccessString().c_str()) {
         Bind(accesspoint);
         // AddRef();
@@ -177,7 +177,10 @@ void pop_interface::Serialize(pop_buffer& buf, bool pack) {
     pop_buffer* old = nullptr;
 
     if (&buf == __pop_buf) {
-        LOG_WARNING("Buffers share the same address");  // TODO LW: Where does this come from ?
+        // note LW: This warning is raised if an object reference is send to itself (via a remote method)
+        //          This is not bad in itself but creates a big mess with the buffer
+        //          when a method is called on the reference in the remote method
+        LOG_WARNING("Buffers share the same address");
         old = &buf;
         __pop_buf = __pop_combox->GetBufferFactory()->CreateBuffer();
     }
@@ -544,7 +547,7 @@ bool pop_interface::Encoding(std::string encoding) {
         return false;
     }
 
-    pop_buffer_factory* fact = pop_buffer_factory_finder::get_instance().FindFactory(encoding);
+    auto* fact = pop_buffer_factory_finder::get_instance().FindFactory(encoding);
 
     if (!fact) {
         LOG_ERROR("[CORE] No encoding factory for %s", encoding.c_str());

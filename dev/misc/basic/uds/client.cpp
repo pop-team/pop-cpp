@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
     char rcvbuffer[21];
     client.Recv(rcvbuffer, 21, connection);
 
-    rcvbuffer[21] = '\0';
+    rcvbuffer[21] = '\0'; // NOTE: OUT OF BOUNDS!!
     printf("Client recv %s\n", rcvbuffer);
 
     client.Close();

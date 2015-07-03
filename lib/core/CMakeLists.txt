@@ -62,6 +62,8 @@ add_library(popc_core
     buffer_xdr_factory.cc
     CMakeLists.txt
     combox.cc
+    popc_combox_uds.cc
+    popc_connection_uds.cc
     combox_socket.cc
     combox_factory.cc
     event.cc

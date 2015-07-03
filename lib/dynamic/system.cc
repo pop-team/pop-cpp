@@ -453,6 +453,7 @@ AppCoreService* pop_system::CreateAppCoreService(char* codelocation) {
 
 // TODO LW: Should probably be in intface
 void pop_system::processor_set(int cpu) {
+    (void)cpu;
 #ifndef __APPLE__
 // Use glibc to set cpu affinity
 /*if (cpu < 0) {

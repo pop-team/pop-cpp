@@ -1653,8 +1653,8 @@ int JobMgr::ExecObj(const std::string& objname, const pop_od& od, int howmany, i
             }
 
             if (r->walltime > 0 && *env_walltime == 0) {
-                int hours = static_cast<int>(r->walltime / 3600);
-                int minutes = int((r->walltime - hours * 3600) / 60);
+                int hours   = static_cast<int>(r->walltime / 3600);
+                int minutes = static_cast<int>((r->walltime - hours * 3600) / 60);
                 float sec = r->walltime - hours * 3600 - minutes * 60;
                 snprintf(env_walltime, sizeof(env_walltime), "POPC_JOB_WALLTIME=%d:%d:%g", hours, minutes, sec);
                 *curenv = env_walltime;

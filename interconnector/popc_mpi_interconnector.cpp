@@ -100,7 +100,7 @@ void catch_child_exit(int signal_num) {
 void* mpireceivedthread(void* t) {
     int rank = MPI::COMM_WORLD.Get_rank();
     char* tmp = new char[20];
-    snprintf(tmp, sizeof(tmp), ".uds_%d.0", rank);
+    snprintf(tmp, 20, ".uds_%d.0", rank);
     std::string local_address(tmp);
     delete[] tmp;
     bool active = true;

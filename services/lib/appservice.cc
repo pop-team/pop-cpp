@@ -145,18 +145,19 @@ bool AppCoreService::UnregisterService(const std::string& name) {
 }
 
 void AppCoreService::LoadAddOn() {
-    char fname[1024];
+    std::string fname;
     char* popdir;
     if ((popdir = getenv("POPC_APPSERVICE_CONF")) != NULL) {
-        strcpy(fname, popdir);
+        fname = popdir;
     } else if ((popdir = getenv("POPC_LOCATION")) == NULL) {
         return;
     } else {
-        snprintf(fname, sizeof(fname), "%s/etc/appservice.conf", popdir);
+        fname = std::string(popdir) + "/etc/appservice.conf";
     }
 
-    FILE* f = fopen(fname, "r");
+    FILE* f = fopen(fname.c_str(), "r");
     if (f == NULL) {
+        LOG_DEBUG("Cannot open %s", fname.c_str());
         return;
     }
 

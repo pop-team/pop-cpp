@@ -217,15 +217,12 @@ int POPFileManager::findResourcesForStrip(int nb, pop_accesspoint* candidates, s
  */
 int popfile_log(const char* format, ...) {
     char* tmp = getenv("POPC_TEMP");
-    char logfile[256];
+    std::string logfile = "/tmp/popfile.log";
 
     if (tmp) {
-        snprintf(logfile, sizeof(logfile), "%s/popfile_log", tmp);
-    } else {
-        strcpy(logfile, "/tmp/popfile.log");
-    }
-
-    FILE* f = fopen(logfile, "a");
+        logfile = std::string(tmp) + "/popfile_log";
+    } 
+    FILE* f = fopen(logfile.c_str(), "a");
     if (!f) {
         return 1;
     }
