@@ -393,9 +393,9 @@ bool pop_system::Initialize(int* argc, char*** argv) {
     char* codeconf = pop_utils::checkremove(argc, argv, "-codeconf=");
     (void)codeconf;  // Added this to avoid warning
 
-    LOG_DEBUG_IF(codeconf == NULL, "No code config file");
+    LOG_DEBUG_IF(codeconf == nullptr, "No code config file");
 
-    // bool ret = !(codeconf != NULL && !pop_utils::InitCodeService(codeconf,mgr));
+    // bool ret = !(codeconf != nullptr && !pop_utils::InitCodeService(codeconf,mgr));
     return false;
 }
 

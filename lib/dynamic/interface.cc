@@ -1008,7 +1008,8 @@ bool pop_interface::IsTunnelAlive(const char* /*user*/, const char* dest_ip, int
         return false;
     }
 
-    fgets(res, BUF_SIZE, fp);
+    if (fgets(res, BUF_SIZE, fp) == nullptr)
+        pop_exception::pop_throw("Error in fgets");
 
     int pid = atoi(res);
     if (pid != 0) {

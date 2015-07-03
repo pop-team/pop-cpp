@@ -126,17 +126,17 @@ pop_interface::~pop_interface() {
     Release();
 }
 
-pop_interface& pop_interface::operator=(const pop_interface& obj) {
+pop_interface& pop_interface::operator=(const pop_interface& inf) {
     //  __pop_combox = nullptr;
     //  __pop_buf = nullptr;
     LOG_DEBUG("Bind");
     // Bind(accesspoint);
     // DecRef();
     // Bind(accesspoint);
-    //  const pop_accesspoint &res = obj.GetAccessPoint();
+    //  const pop_accesspoint &res = inf.GetAccessPoint();
 
     Release();
-    accesspoint = obj.GetAccessPoint();
+    accesspoint = inf.GetAccessPoint();
     if (GetAccessPoint().GetAccessString().c_str()) {
         Bind(accesspoint);
         // AddRef();
@@ -544,7 +544,7 @@ bool pop_interface::Encoding(std::string encoding) {
         return false;
     }
 
-    pop_buffer_factory* fact = pop_buffer_factory_finder::get_instance().FindFactory(encoding);
+    auto* fact = pop_buffer_factory_finder::get_instance().FindFactory(encoding);
 
     if (!fact) {
         LOG_ERROR("[CORE] No encoding factory for %s", encoding.c_str());
