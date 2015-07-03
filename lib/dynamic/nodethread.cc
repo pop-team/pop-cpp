@@ -8,7 +8,7 @@
  * Authors      Date            Comment
  */
 
-#include "nodethread.h"
+#include "pop_nodethread.h"
 #include "search_node.ph"
 
 /**

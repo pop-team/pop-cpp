@@ -16,7 +16,7 @@
     POPC_ResourceDiscoveryResponse instead of Response
  */
 
-#include "response.h"
+#include "pop_response.h"
 #include <iostream>
 #include <unistd.h>
 

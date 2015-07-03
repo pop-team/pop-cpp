@@ -16,7 +16,7 @@
     POPC_ResourceDiscoveryRequest instead of Request
  */
 
-#include "request.h"
+#include "pop_request.h"
 #include <iostream>
 #include <unistd.h>
 

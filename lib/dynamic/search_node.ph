@@ -28,8 +28,8 @@
 #include <list>
 #include <map>
 #include <string.h>
-#include "request.h"
-#include "response.h"
+#include "pop_request.h"
+#include "pop_response.h"
 #include "pop_search_node_info.h"
 #include <semaphore.h>
 #include <fcntl.h>

@@ -20,7 +20,7 @@
 
 #ifndef _REQUEST_H
 #define _REQUEST_H
-#include "explorationList.h"
+#include "pop_exploration_list.h"
 #include "pop_base.h"
 #include "popwayback.h"
 #include <string>

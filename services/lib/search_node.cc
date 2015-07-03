@@ -21,7 +21,7 @@
  */
 
 #include "search_node.ph"
-#include "nodethread.h"
+#include "pop_nodethread.h"
 
 /**
  * POPCSearchNode's constructor with challenge string (necessary to stop the object) and deamon boolean value to put the

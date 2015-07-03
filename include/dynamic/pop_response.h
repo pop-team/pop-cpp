@@ -20,7 +20,7 @@
 #define _RESPONSE_H
 
 #include "pop_base.h"
-#include "explorationList.h"
+#include "pop_exploration_list.h"
 #include "pop_search_node_info.h"
 
 /*

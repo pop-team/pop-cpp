@@ -15,7 +15,7 @@
     POPC_ResourceDiscoveryExplorationList instead of ExplorationList
  */
 
-#include "explorationList.h"
+#include "pop_exploration_list.h"
 #include <stdio.h>
 #include "timer.h"
 #include <stdarg.h>

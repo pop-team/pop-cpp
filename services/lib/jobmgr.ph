@@ -35,9 +35,9 @@
 
 //Added by clementval
 #include <list>
-#include "request.h"
-#include "response.h"
-#include "explorationList.h"
+#include "pop_request.h"
+#include "pop_response.h"
+#include "pop_exploration_list.h"
 #include "pop_search_node_info.h"
 #include "search_node.ph"
 
