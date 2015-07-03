@@ -20,3 +20,13 @@ Limitations of the POP-C++ core
 * It is dangerous to send an object to itself as a reference. The buffer is already busy. An error occurs if the parallel method
   returns a value. As seen in test/parobjbyref
 
+Limitations of the async allocation scheme
+==========================================
+
+Asynchronous allocation of parallel objects is a feature allowing your objects to be allocated concurrently. If you have several
+objects to create one after another and then use them, this can save a lot of time. However, this is not without limitation:
+
+* Exceptions do not go out of the constructor. If you rely on exceptions in the constructor, this won't work.
+* References and pointers passed to the constructor must be valid after the constructor call exited. This can complicated since
+  passing a const char* to a constructor takig a std::string will create a temporary, if this temporary is captured by const reference
+  a reference to a possibly-invalid temporary will be passed to the constructor thread and will result in undefined behaviour.
