@@ -10,7 +10,7 @@
 
 #include <time.h>
 #include <pop_utils.h>
-#include "timer.h"
+#include "pop_timer.h"
 
 #ifndef MATRIXSIZE
 #define MATRIXSIZE 400

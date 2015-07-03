@@ -18,9 +18,7 @@
 
 #include "pop_intface.h"
 
-#include "timer.h"
-//#include <sys/time.h>
-//#include <stdio.h>
+#include "pop_timer.h"
 
 int debuglevel = 2;
 

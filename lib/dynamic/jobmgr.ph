@@ -26,7 +26,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include "service_base.ph"
-#include <timer.h>
+#include <pop_timer.h>
 #include <pop_accesspoint.h>
 
 /**

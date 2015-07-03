@@ -15,11 +15,11 @@
     POPC_ResourceDiscoveryExplorationList instead of ExplorationList
  */
 
-#include "pop_exploration_list.h"
 #include <stdio.h>
-#include "timer.h"
 #include <stdarg.h>
 #include <string.h>
+#include "pop_exploration_list.h"
+#include "pop_timer.h"
 
 // Default constructor
 ExplorationList::ExplorationList() {

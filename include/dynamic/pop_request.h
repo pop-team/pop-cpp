@@ -22,7 +22,7 @@
 #define _REQUEST_H
 #include "pop_exploration_list.h"
 #include "pop_base.h"
-#include "popwayback.h"
+#include "pop_wayback.h"
 #include <string>
 
 #define MAXREQUNIQUEIDLENGTH 100  // Maximum length of uniqueId of a request

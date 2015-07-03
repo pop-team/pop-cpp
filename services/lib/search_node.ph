@@ -36,7 +36,7 @@
 
 #include "service_base.ph"
 #include "jobmgr.ph"
-#include "timer.h"
+#include "pop_timer.h"
 #include "pop_thread.h"
 #include "pop_logger.h"
 

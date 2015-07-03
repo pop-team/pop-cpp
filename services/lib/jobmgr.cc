@@ -33,7 +33,7 @@
 #include <vector>
 
 #include "codemgr.ph"
-#include "timer.h"
+#include "pop_timer.h"
 #include "jobmgr.ph"
 #include "pop_thread.h"
 
