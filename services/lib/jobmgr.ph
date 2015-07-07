@@ -12,7 +12,7 @@
  *                         //End of modification
  * clementval   2010/04/29  Full functionnal version with the new POPSearchNode that is in charge of the resource discovery.
  *                         Biggest change are in the method AllocResource.
- *                              Add new method UnregisterNode, Reserve, GetNodeAccessPoint
+ *                              Add new method UnregisterNode, Reserve, GetSearchNodeAccessPoint
  * clementval   2010/05/02  Better distribution of parallel object on discovered ressources
  * Wyssen      2010/08/04  Added the prototypes for the virtual version of POP-C++. All modified code is marked with
  *                         Begining -> ### Added by Wyssen ###
@@ -202,7 +202,7 @@ public:
     //Added by clementval
 
     //Return the access point for the local POPCSearchNode parclass
-    conc sync pop_accesspoint GetNodeAccessPoint();
+    conc sync pop_accesspoint GetSearchNodeAccessPoint();
 
     //Allow the unregistration of a specific node
     conc async void UnregisterNode([in] const pop_accesspoint &url);

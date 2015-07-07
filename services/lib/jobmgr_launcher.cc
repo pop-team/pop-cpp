@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
 
 #ifdef POPC_SECURE_VIRTUAL
             VirtSecureJobMgr mgr(jobmgr_ap);
-            VirtSecurePOPCSearchNode vspsn(mgr.GetNodeAccessPoint());
+            VirtSecurePOPCSearchNode vspsn(mgr.GetSearchNodeAccessPoint());
             if (!vspsn.Stop(challenge)) {
                 LOG_ERROR("[POP-C++ Runtime] Bad challenge string. Cannot stop VSPSN ...");
             } else {
@@ -163,7 +163,7 @@ int main(int argc, char** argv) {
 
 #elif defined POPC_VIRTUAL
             VirtualJobMgr mgr(jobmgr_ap);
-            VirtualPOPCSearchNode vpsn(mgr.GetNodeAccessPoint());
+            VirtualPOPCSearchNode vpsn(mgr.GetSearchNodeAccessPoint());
             if (!vpsn.Stop(challenge)) {
                 LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop VPSN ...");
             } else {
@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
 
 #elif defined POPC_SECURE
             SecureJobMgr mgr(jobmgr_ap);
-            SecurePOPCSearchNode spsn(mgr.GetNodeAccessPoint());
+            SecurePOPCSearchNode spsn(mgr.GetSearchNodeAccessPoint());
             if (!spsn.Stop(challenge)) {
                 LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop SPSN ...");
             } else {
@@ -207,7 +207,7 @@ int main(int argc, char** argv) {
                 LOG_WARNING("Exception while creating POPFileManager: %s", e.what());
             }
 
-            POPCSearchNode psn(mgr.GetNodeAccessPoint());
+            POPCSearchNode psn(mgr.GetSearchNodeAccessPoint());
             if (!psn.Stop(challenge)) {
                 LOG_WARNING("[POP-C++ Runtime] Bad challenge string. Cannot stop PSN ...");
             } else {

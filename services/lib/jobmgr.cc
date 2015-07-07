@@ -496,7 +496,7 @@ JobMgr::~JobMgr() {
 // Added by clementval
 
 // Return the local POPCSearchNode Access Point
-pop_accesspoint JobMgr::GetNodeAccessPoint() {
+pop_accesspoint JobMgr::GetSearchNodeAccessPoint() {
     return _localPSN;
 }
 
@@ -1464,7 +1464,7 @@ void JobMgr::SelfRegister() {
             // Added by clementval
             // Register the local POPCSearchNode to its neighbors and add neighbor in the neighbors list
             remote.RegisterNode(_localPSN);
-            POPCSearchNode remoteNode(remote.GetNodeAccessPoint());
+            POPCSearchNode remoteNode(remote.GetSearchNodeAccessPoint());
             POPCSearchNode psn(_localPSN);
             psn.addNeighbor(remoteNode);
             // End of add
