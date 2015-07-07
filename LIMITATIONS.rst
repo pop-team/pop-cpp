@@ -30,3 +30,26 @@ objects to create one after another and then use them, this can save a lot of ti
 * References and pointers passed to the constructor must be valid after the constructor call exited. This can complicated since
   passing a const char* to a constructor takig a std::string will create a temporary, if this temporary is captured by const reference
   a reference to a possibly-invalid temporary will be passed to the constructor thread and will result in undefined behaviour.
+
+
+Other limitations
+=================
+
+Serialization of parallel objects
+---------------------------------
+Parallel objects should always be serialized in input, never in output. At the current time we need to force this by using: 
+
+.. code::
+
+    MyMethod([in] my_object& obj);
+
+Some changes must be made in the parser
+
+Serialization of inherited classes
+----------------------------------
+When serializing a Child type the remote method should be able to create a Child object (dynamic type) and not Mother object (static type). 
+
+This happens because the parser will always instanciate an object of the static type in the method and can cause serialization problems. This happens in the example **heritage3**
+
+To fix this the POPBase class shoud contain a factory. All serializable objects must be registered in this factory. It would then be possible to pass the dynamic type to the factory (at deserialization) and instanciate an object of the dynamic type.
+
