@@ -1,5 +1,5 @@
 /**
- * File : popc_search_node_info.cc
+ * File : search_node_info.cc
  * Author : Valentin Clement (clementval)
  * Description : Implementation of the object holding information about the node (resource discovery)
  * Creation date : 2010/04/19

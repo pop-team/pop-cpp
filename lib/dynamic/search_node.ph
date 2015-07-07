@@ -1,5 +1,5 @@
 /**
- * File : popc_search_node.ph
+ * File : search_node.ph
  * Author : Valentin Clement (clementval)
  * Description : Parclass header file of the search node (resources discovery)
  * Creation date : 19/04/2010

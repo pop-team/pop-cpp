@@ -65,7 +65,7 @@ fi
 #Added by clementval
 nodemapentry=`grep "POPCSearchNode " $servicemap`
 if [ -z "$nodemapentry" ]; then
-$POPC_LOCATION/services/popc_search_node -listlong | grep "POPCSearchNode " >> $POPC_LOCATION/etc/service.map
+$POPC_LOCATION/services/pop_search_node -listlong | grep "POPCSearchNode " >> $POPC_LOCATION/etc/service.map
 fi
 #End of add
 
@@ -101,30 +101,30 @@ kill() {
    then 
       echo "Kill all POP-C++ Global Services"
       killall secure_jobmgr 2> /dev/null
-      killall secure_popc_search_node 2> /dev/null
+      killall secure_pop_search_node 2> /dev/null
       killall popc_security_manager 2> /dev/null
       killall virtual_secure_jobmgr 2> /dev/null
-      killall virtual_secure_popc_search_node 2> /dev/null
+      killall virtual_secure_pop_search_node 2> /dev/null
       killall virtual_popc_security_manager 2> /dev/null
       killall popcloner 2> /dev/null
       killall virtual_jobmgr 2> /dev/null
-      killall virtual_popc_search_node 2> /dev/null
+      killall virtual_pop_search_node 2> /dev/null
       killall jobmgr 2> /dev/null
-      killall popc_search_node 2> /dev/null
+      killall pop_search_node 2> /dev/null
       killall popfilemanager 2> /dev/null      
    else
       echo "Kill all POP-C++ Global Services"
       killall -q secure_jobmgr
-      killall -q secure_popc_search_node
+      killall -q secure_pop_search_node
       killall -q popc_security_manager
       killall -q virtual_secure_jobmgr
-      killall -q virtual_secure_popc_search_node
+      killall -q virtual_secure_pop_search_node
       killall -q virtual_popc_security_manager
       killall -q popcloner
       killall -q virtual_jobmgr
-      killall -q virtual_popc_search_node
+      killall -q virtual_pop_search_node
       killall -q jobmgr
-      killall -q popc_search_node
+      killall -q pop_search_node
       killall -q popfilemanager         
    fi
       

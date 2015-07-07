@@ -34,11 +34,11 @@ clementval  2012/04/12  Add POPFileManager service support
 
 // Include VPSN, SPSN or PSN
 #ifdef POPC_SECURE_VIRTUAL
-#include "virtual_secure_popc_search_node.ph"
+#include "virtual_secure_pop_search_node.ph"
 #elif defined POPC_VIRTUAL
-#include "virtual_popc_search_node.ph"
+#include "virtual_pop_search_node.ph"
 #elif defined POPC_SECURE
-#include "secure_popc_search_node.ph"
+#include "secure_pop_search_node.ph"
 #else
 #include "search_node.ph"
 #endif
