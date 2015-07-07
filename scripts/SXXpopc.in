@@ -65,7 +65,7 @@ fi
 #Added by clementval
 nodemapentry=`grep "POPCSearchNode " $servicemap`
 if [ -z "$nodemapentry" ]; then
-$POPC_LOCATION/services/pop_search_node -listlong | grep "POPCSearchNode " >> $POPC_LOCATION/etc/service.map
+$POPC_LOCATION/services/search_node -listlong | grep "POPCSearchNode " >> $POPC_LOCATION/etc/service.map
 fi
 #End of add
 
@@ -110,7 +110,7 @@ kill() {
       killall virtual_jobmgr 2> /dev/null
       killall virtual_pop_search_node 2> /dev/null
       killall jobmgr 2> /dev/null
-      killall pop_search_node 2> /dev/null
+      killall search_node 2> /dev/null
       killall popfilemanager 2> /dev/null      
    else
       echo "Kill all POP-C++ Global Services"
@@ -124,7 +124,7 @@ kill() {
       killall -q virtual_jobmgr
       killall -q virtual_pop_search_node
       killall -q jobmgr
-      killall -q pop_search_node
+      killall -q search_node
       killall -q popfilemanager         
    fi
       

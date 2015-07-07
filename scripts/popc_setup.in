@@ -138,9 +138,9 @@ then
 	$POPC_LOCATION/services/virtual_secure_jobmgr -listlong >> $servicemap
 fi
 
-if [ -f $POPC_LOCATION/services/pop_search_node ]
+if [ -f $POPC_LOCATION/services/search_node ]
 then
-	$POPC_LOCATION/services/pop_search_node -listlong >> $servicemap
+	$POPC_LOCATION/services/search_node -listlong >> $servicemap
 fi
 
 if [ -f $POPC_LOCATION/services/virtual_pop_search_node ]
