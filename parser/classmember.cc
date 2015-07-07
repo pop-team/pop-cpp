@@ -221,7 +221,7 @@ bool Param::DeclareVariable(char* output) {
 
     char tmpvar[1024];
     if (isRef && !GetType()->IsParClass()) {
-        sprintf(tmpvar, "&%s", name);
+        snprintf(tmpvar, sizeof(tmpvar), "&%s", name);
     } else {
         strcpy(tmpvar, name);
     }
@@ -263,17 +263,17 @@ bool Param::Marshal(char* bufname, bool reformat, bool inf_side, std::string& ou
 
     if (paramSize != nullptr && !reformat) {
         char decl[1024];
-        sprintf(decl,
+        snprintf(decl, sizeof(decl),
                 "int __pop_size1_%s=%s;\n%s.Push(\"%sSize\",\"int\",1);\n%s.Pack(& __pop_size1_%s,1);\n%s.Pop();\n",
                 name, paramSize, bufname, name, bufname, name, bufname);
-        sprintf(sizeinfo, "__pop_size1_%s", name);
+        snprintf(sizeinfo, sizeof(sizeinfo), "__pop_size1_%s", name);
 
         output += decl;
     }
 
     if (marshalProc != nullptr) {
         char tmpcode[1024];
-        sprintf(tmpcode, "%s(%s,%s, %s, %d, 0);\n", marshalProc, bufname, tmpvar, (*sizeinfo == 0) ? "0" : sizeinfo,
+        snprintf(tmpcode, sizeof(tmpcode), "%s(%s,%s, %s, %d, 0);\n", marshalProc, bufname, tmpvar, (*sizeinfo == 0) ? "0" : sizeinfo,
                 flags);
         output += tmpcode;
     } else {
@@ -302,11 +302,11 @@ bool Param::UnMarshal(char* bufname, bool reformat, bool alloc_mem, bool inf_sid
 
     if (paramSize != nullptr && !reformat) {
         char decl[1024];
-        sprintf(decl,
+        snprintf(decl, sizeof(decl),
                 "int __pop_size2_%s;\n%s.Push(\"%sSize\",\"int\",1);\n \n%s.UnPack(& __pop_size2_%s,1);\n%s.Pop();\n",
                 name, bufname, name, bufname, name, bufname);
 
-        sprintf(sizeinfo, "__pop_size2_%s", name);
+        snprintf(sizeinfo, sizeof(sizeinfo), "__pop_size2_%s", name);
 
         output += decl;
 
@@ -320,18 +320,18 @@ bool Param::UnMarshal(char* bufname, bool reformat, bool alloc_mem, bool inf_sid
             base->GetDeclaration(nullptr, basetype);
 
             if (nptr == 1 && base->IsParClass()) {
-                sprintf(alloccode,
+                snprintf(alloccode, sizeof(alloccode),
                         "pop_interface_container<%s> __pop_container_%s(__pop_size2_%s);\n %s=__pop_container_%s;\n",
                         basetype, name, name, name, name);
             } else {
-                //        sprintf(alloccode, "pop_container<typeof(*%s)> __pop_container_%s(%s,__pop_size2_%s);\n",
+                //        snprintf(alloccode, sizeof(alloccode), "pop_container<typeof(*%s)> __pop_container_%s(%s,__pop_size2_%s);\n",
                 //        name,name,name,name);
                 char tmpstr[1024];
                 strcpy(tmpstr, base->GetName());
                 for (int i = 1; i < nptr; i++) {
                     strcat(tmpstr, "*");
                 }
-                sprintf(alloccode, "pop_container<%s> __pop_container_%s(__pop_size2_%s);\n%s=__pop_container_%s;\n",
+                snprintf(alloccode, sizeof(alloccode), "pop_container<%s> __pop_container_%s(__pop_size2_%s);\n%s=__pop_container_%s;\n",
                         tmpstr, name, name, name, name);
             }
             output += alloccode;
@@ -340,7 +340,7 @@ bool Param::UnMarshal(char* bufname, bool reformat, bool alloc_mem, bool inf_sid
     if (marshalProc != nullptr) {
         char tmpcode[1024];
 
-        sprintf(tmpcode, "%s(%s,%s,%s,%d,%s);", marshalProc, bufname, tmpvar, (*sizeinfo == 0) ? "0" : sizeinfo, flags,
+        snprintf(tmpcode, sizeof(tmpcode), "%s(%s,%s,%s,%d,%s);", marshalProc, bufname, tmpvar, (*sizeinfo == 0) ? "0" : sizeinfo, flags,
                 (inf_side ? "0" : "&_internal_mem"));
         output += tmpcode;
     } else {
@@ -350,7 +350,7 @@ bool Param::UnMarshal(char* bufname, bool reformat, bool alloc_mem, bool inf_sid
     return true;
 }
 
-bool Param::UserProc(char* output) {
+bool Param::UserProc(char* output, size_t buffer_length) {
     if (mytype == nullptr) {
         return false;
     }
@@ -364,7 +364,7 @@ bool Param::UserProc(char* output) {
     char decl[1024];
 
     mytype->GetDeclaration("param", decl);
-    sprintf(output, "void %s(pop_buffer &buf, %s, int hint,  bool marshal);", marshalProc, decl);
+    snprintf(output, buffer_length, "void %s(pop_buffer &buf, %s, int hint,  bool marshal);", marshalProc, decl);
     return true;
 }
 // END Param implementation
@@ -430,7 +430,7 @@ void ClassMember::GenerateHeader(std::string& output, bool /*interface*/) {
     char* fname;
     if (line > 0 && (fname = myclass->GetFileInfo()) != nullptr) {
         char str[1024];
-        sprintf(str, "\n# %d \"%s\"\n", line, fname);
+        snprintf(str, sizeof(str), "\n# %d \"%s\"\n", line, fname);
         output += str;
     }
 }
@@ -758,7 +758,7 @@ void Method::GenerateReturn(std::string& output, bool header, bool interface) {
     char tmp[1024];
 
     type->GetDeclaration(nullptr, tmp);
-    // if (returnparam.IsConst())sprintf(tmp, "const %s", tmp);
+    // if (returnparam.IsConst())snprintf(tmp, sizeof(tmp), "const %s", tmp);
     output += tmp;
 
     // add by david
@@ -788,7 +788,7 @@ void Method::GenerateName(std::string& output, bool header) {
         output += name;
     } else {
         char str[256];
-        sprintf(str, "%s::%s", GetClass()->GetName(), name);
+        snprintf(str, sizeof(str), "%s::%s", GetClass()->GetName(), name);
         output += str;
     }
 }
@@ -894,12 +894,12 @@ void Method::GenerateClient(std::string& output) {
 
         char* nameOfRetType = returnparam.GetType()->GetName();
         if (MethodType() == METHOD_NORMAL && !returnparam.GetType()->Same((char*)"void")) {
-            sprintf(tmpcode,
+            snprintf(tmpcode, sizeof(tmpcode),
                     "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation "
                     "process done !\");\n    %s *tempObject = 0;\n    return (*tempObject);\n  }\n",
                     nameOfRetType);
         } else if (MethodType() == METHOD_NORMAL && returnparam.GetType()->Same((char*)"void")) {
-            sprintf(tmpcode,
+            snprintf(tmpcode, sizeof(tmpcode),
                     "  if(!isBinded()) {\n    printf(\"POP-C++ Error: [APOA] Object not allocated but allocation "
                     "process done !\");\n    return;\n  }\n");
         }
@@ -908,11 +908,11 @@ void Method::GenerateClient(std::string& output) {
     }  // End of APOA Support
 
     if (!GetClass()->is_collective()) {
-        sprintf(tmpcode, "\n  pop_mutex_locker __pop_lock(_pop_imutex);");
+        snprintf(tmpcode, sizeof(tmpcode), "\n  pop_mutex_locker __pop_lock(_pop_imutex);");
         output += tmpcode;
-        sprintf(tmpcode, "\n  if(!__pop_combox)pop_exception::pop_throw(\"combox was not initialized\");");
+        snprintf(tmpcode, sizeof(tmpcode), "\n  if(!__pop_combox)pop_exception::pop_throw(\"combox was not initialized\");");
         output += tmpcode;
-        sprintf(tmpcode,
+        snprintf(tmpcode, sizeof(tmpcode),
                 "\n  pop_connection* _popc_connection = __pop_combox->get_connection();\n  __pop_buf->Reset();\n  "
                 "pop_message_header __pop_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  "
                 "__pop_buf->SetHeader(__pop_buf_header);\n",
@@ -921,10 +921,10 @@ void Method::GenerateClient(std::string& output) {
     } else {
         // Additional code if the method is not collective
         if (!is_collective() && MethodType() != METHOD_CONSTRUCTOR) {
-            sprintf(tmpcode, "\n  // Generate additional information for a non collective call");
+            snprintf(tmpcode, sizeof(tmpcode), "\n  // Generate additional information for a non collective call");
             output += tmpcode;
 
-            sprintf(tmpcode,
+            snprintf(tmpcode, sizeof(tmpcode),
                     "\n  pop_connection* _popc_connection = _popc_combox->get_connection();\n  "
                     "_popc_buffer->Reset();\n  pop_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n "
                     " _popc_buffer->SetHeader(_popc_message_header);\n",
@@ -932,21 +932,21 @@ void Method::GenerateClient(std::string& output) {
                     POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME);
             output += tmpcode;
 
-            sprintf(tmpcode,
+            snprintf(tmpcode, sizeof(tmpcode),
                     "\n   _popc_buffer->Push(\"rank\", \"int\", 1);\n  "
                     "_popc_buffer->Pack(&_popc_default_rank_for_single_call, 1);\n  _popc_buffer->Pop();\n");
             output += tmpcode;
 
-            sprintf(tmpcode,
+            snprintf(tmpcode, sizeof(tmpcode),
                     "\n  popc_send_request(_popc_buffer, _popc_connection);\n  _popc_buffer->Reset();\n  "
                     "pop_message_header _popc_message_header_call(CLASSUID_%s, %d, %d, \"%s\");",
                     clname, id, invoke_code, name);
             output += tmpcode;
 
-            sprintf(tmpcode, "\n  _popc_buffer->SetHeader(_popc_message_header_call);");
+            snprintf(tmpcode, sizeof(tmpcode), "\n  _popc_buffer->SetHeader(_popc_message_header_call);");
             output += tmpcode;
         } else {
-            sprintf(tmpcode,
+            snprintf(tmpcode, sizeof(tmpcode),
                     "\n  pop_connection* _popc_connection = _popc_combox->get_connection();\n  "
                     "_popc_buffer->Reset();\n  pop_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n "
                     " _popc_buffer->SetHeader(_popc_message_header);\n",
@@ -1104,7 +1104,7 @@ void Method::generate_header_pog(std::string& output, bool interface) {
 
     if (!interface && type != METHOD_NORMAL) {
         char str[256];
-        sprintf(str, "%s%s", name, Class::POG_OBJECT_POSTFIX);
+        snprintf(str, sizeof(str), "%s%s", name, Class::POG_OBJECT_POSTFIX);
         output += str;
     } else {
         GenerateName(output, true);
@@ -1139,7 +1139,7 @@ void Method::GenerateHeader(std::string& output, bool interface) {
 
     if (!interface && type != METHOD_NORMAL) {
         char str[256];
-        sprintf(str, "%s%s", name, OBJ_POSTFIX);
+        snprintf(str, sizeof(str), "%s%s", name, OBJ_POSTFIX);
         output += str;
     } else {
         GenerateName(output, true);
@@ -1163,7 +1163,7 @@ void Method::GenerateBrokerHeader(std::string& output) {
     }
 
     char str[1024];
-    sprintf(str, "\nvoid Invoke_%s_%d(pop_buffer &__pop_buf, pop_connection *__interface_output);", name, id);
+    snprintf(str, sizeof(str), "\nvoid Invoke_%s_%d(pop_buffer &__pop_buf, pop_connection *__interface_output);", name, id);
     output += str;
 }
 
@@ -1177,7 +1177,7 @@ void Method::generate_broker_header_pog(std::string& output) {
     }
 
     char str[1024];
-    sprintf(str, "\n  void Invoke_%s_%d(pop_buffer &_popc_buffer, pop_connection *_popc_connection);", name, id);
+    snprintf(str, sizeof(str), "\n  void Invoke_%s_%d(pop_buffer &_popc_buffer, pop_connection *_popc_connection);", name, id);
     output += str;
 }
 
@@ -1198,7 +1198,7 @@ void Method::GenerateBroker(std::string& output) {
     int nb = params.size();
 
     char brokername[256];
-    sprintf(brokername, "%s%s", cl->GetName(), Class::POG_BROKER_POSTFIX);
+    snprintf(brokername, sizeof(brokername), "%s%s", cl->GetName(), Class::POG_BROKER_POSTFIX);
 
     std::deque<bool> reformat(nb);
 
@@ -1206,10 +1206,10 @@ void Method::GenerateBroker(std::string& output) {
     char str[1024];
 
     if (GetClass()->is_collective()) {
-        sprintf(str, "\nvoid %s::Invoke_%s_%d(pop_buffer &_popc_buffer, pop_connection *_popc_connection)\n{",
+        snprintf(str, sizeof(str), "\nvoid %s::Invoke_%s_%d(pop_buffer &_popc_buffer, pop_connection *_popc_connection)\n{",
                 brokername, name, id);
     } else {
-        sprintf(str, "\nvoid %s::Invoke_%s_%d(pop_buffer &__pop_buf, pop_connection *__interface_output)\n{",
+        snprintf(str, sizeof(str), "\nvoid %s::Invoke_%s_%d(pop_buffer &__pop_buf, pop_connection *__interface_output)\n{",
                 brokername, name, id);
     }
     output += str;
@@ -1221,19 +1221,19 @@ void Method::GenerateBroker(std::string& output) {
         if (type == METHOD_CONSTRUCTOR) {
             // Constructor...create object now...
             if (GetClass()->is_collective()) {
-                sprintf(methodcall, "\n  try {\n    _popc_internal_object = new %s%s(", clname,
+                snprintf(methodcall, sizeof(methodcall), "\n  try {\n    _popc_internal_object = new %s%s(", clname,
                         Class::POG_OBJECT_POSTFIX);
             } else {
-                sprintf(methodcall, "\n  try {\n    obj = new %s%s(", clname, OBJ_POSTFIX);
+                snprintf(methodcall, sizeof(methodcall), "\n  try {\n    obj = new %s%s(", clname, OBJ_POSTFIX);
             }
         } else if (type != METHOD_NORMAL || returnparam.GetType()->Same((char*)"void")) {
             if (GetClass()->is_collective()) {
-                sprintf(methodcall,
+                snprintf(methodcall, sizeof(methodcall),
                         "\n  %s%s* _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    "
                         "_popc_object->%s(",
                         clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, name);
             } else {
-                sprintf(methodcall, "\n%s%s * _pop_obj = dynamic_cast<%s%s *>(obj);\ntry {\n_pop_obj->%s(", clname,
+                snprintf(methodcall, sizeof(methodcall), "\n%s%s * _pop_obj = dynamic_cast<%s%s *>(obj);\ntry {\n_pop_obj->%s(", clname,
                         OBJ_POSTFIX, clname, OBJ_POSTFIX, name);
             }
         } else {
@@ -1244,26 +1244,26 @@ void Method::GenerateBroker(std::string& output) {
 
             if (returnparam.GetType()->IsParClass()) {
                 if (GetClass()->is_collective()) {
-                    sprintf(methodcall,
+                    snprintf(methodcall, sizeof(methodcall),
                             "\n%s(pop_interface::_pop_nobind);\n    %s%s * _popc_object = "
                             "dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    %s=_popc_object->%s(",
                             retdecl, clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, tmpvar,
                             name);
                 } else {
-                    sprintf(methodcall,
+                    snprintf(methodcall, sizeof(methodcall),
                             "\n%s(pop_interface::_pop_nobind);\n%s%s * _pop_obj=dynamic_cast<%s%s *>(obj);\ntry "
                             "{\n%s=_pop_obj->%s(",
                             retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
                 }
             } else {
                 if (GetClass()->is_collective()) {
-                    sprintf(methodcall,
+                    snprintf(methodcall, sizeof(methodcall),
                             "\n%s;\n%s%s * _popc_object = dynamic_cast<%s%s*>(_popc_internal_object);\n  try {\n    "
                             "%s=_popc_object->%s(",
                             retdecl, clname, Class::POG_OBJECT_POSTFIX, clname, Class::POG_OBJECT_POSTFIX, tmpvar,
                             name);
                 } else {
-                    sprintf(methodcall, "\n%s;\n%s%s * _pop_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_pop_obj->%s(",
+                    snprintf(methodcall, sizeof(methodcall), "\n%s;\n%s%s * _pop_obj=dynamic_cast<%s%s *>(obj);\ntry {\n%s=_pop_obj->%s(",
                             retdecl, clname, OBJ_POSTFIX, clname, OBJ_POSTFIX, tmpvar, name);
                 }
             }
@@ -1329,7 +1329,7 @@ void Method::GenerateBroker(std::string& output) {
             elem = '\0';
         }
 
-        sprintf(tempcatch,
+        snprintf(tempcatch, sizeof(tempcatch),
                 "\n  } catch(std::exception& e) {\n    popc_logger_t(__DEBUG__,\"(classmember.cc)\", 0, \"\", 0, "
                 "\"Exception '%%s' raised in method '%s' of class '%s'\\n\",e.what());\n    throw;\n  }\n",
                 name, clname);
@@ -1343,12 +1343,12 @@ void Method::GenerateBroker(std::string& output) {
           } */
 
         if (GetClass()->is_collective()) {
-            sprintf(str,
+            snprintf(str, sizeof(str),
                     "\n  if (_popc_connection != 0) {\n    _popc_buffer.Reset();\n    pop_message_header "
                     "_popc_message_header(\"%s\");\n    _popc_buffer.SetHeader(_popc_message_header);\n",
                     name);
         } else {
-            sprintf(str,
+            snprintf(str, sizeof(str),
                     "\nif (__interface_output!=0) \n{\n__pop_buf.Reset();\npop_message_header "
                     "__pop_buf_header(\"%s\");\n__pop_buf.SetHeader(__pop_buf_header);\n",
                     name);
@@ -1378,9 +1378,9 @@ void Method::GenerateBroker(std::string& output) {
         if (GetClass()->is_collective()) {
             // TODO change true by false if non-collective
             if (type == METHOD_CONSTRUCTOR) {
-                sprintf(str, "\n    popc_send_response(_popc_buffer, _popc_connection, true);");
+                snprintf(str, sizeof(str), "\n    popc_send_response(_popc_buffer, _popc_connection, true);");
             } else {
-                sprintf(str, "\n    popc_send_response(_popc_buffer, _popc_connection, %s);",
+                snprintf(str, sizeof(str), "\n    popc_send_response(_popc_buffer, _popc_connection, %s);",
                         (is_collective()) ? "true" : "false");
             }
             output += str;
@@ -1580,7 +1580,7 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
 #endif
         output += tmpcode;
 
-        sprintf(tmpcode,
+        snprintf(tmpcode, sizeof(tmpcode),
                 "\n"
                 "%s* ptr = static_cast<%s*>(this);\n"
                 "pthread_args_t_%d *arguments = new pthread_args_t_%d(ptr"
@@ -1602,7 +1602,7 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
         output += "pthread_mutexattr_settype(&mutt_attr, PTHREAD_MUTEX_RECURSIVE_NP);\n";
         output += "pthread_mutex_init(&_popc_async_mutex, &mutt_attr);\n";
 
-        sprintf(tmpcode,
+        snprintf(tmpcode, sizeof(tmpcode),
                 "ret = pthread_create(&_popc_async_construction_thread, &attr, %s_AllocatingThread%d, arguments);\n",
                 GetClass()->GetName(), get_id());
         output += tmpcode;
@@ -1635,7 +1635,7 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
         // End of constructor invocation
     } else {
         // Generate the object description in the interface constructor
-        sprintf(tmpcode, "\n  _popc_selected_constructor_id = %d;", id);
+        snprintf(tmpcode, sizeof(tmpcode), "\n  _popc_selected_constructor_id = %d;", id);
         output += tmpcode;
 
         strcpy(tmpcode, "\n  ");
@@ -1646,7 +1646,7 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
         // Save constructor parameters for group initialization
         for (auto& param : params) {
             Param& p = *param;
-            sprintf(tmpcode, "  _popc_constructor_%d_%s = %s;\n", id, p.GetName(), p.GetName());
+            snprintf(tmpcode, sizeof(tmpcode), "  _popc_constructor_%d_%s = %s;\n", id, p.GetName(), p.GetName());
             output += tmpcode;
         }
     }
@@ -1656,24 +1656,24 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
 
     // APOA Code generation
     if (!GetClass()->IsCoreCompilation() && GetClass()->IsAsyncAllocationEnabled()) {
-        sprintf(tmpcode,
+        snprintf(tmpcode, sizeof(tmpcode),
                 "\n// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n",
                 GetClass()->GetName());
         output += tmpcode;
-        sprintf(tmpcode, "extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg)\n  {\n", GetClass()->GetName(),
+        snprintf(tmpcode, sizeof(tmpcode), "extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg)\n  {\n", GetClass()->GetName(),
                 get_id());
         output += tmpcode;
 
-        sprintf(tmpcode, "    pthread_args_t_%d *arguments = (pthread_args_t_%d*)arg;\n", get_id(), get_id());
+        snprintf(tmpcode, sizeof(tmpcode), "    pthread_args_t_%d *arguments = (pthread_args_t_%d*)arg;\n", get_id(), get_id());
         output += tmpcode;
 
-        sprintf(tmpcode, "    %s* _this_interface = static_cast<%s*>(arguments->ptr_interface);\n",
+        snprintf(tmpcode, sizeof(tmpcode), "    %s* _this_interface = static_cast<%s*>(arguments->ptr_interface);\n",
                 GetClass()->GetName(), GetClass()->GetName());
         output += tmpcode;
 
         for (auto& param : params) {
             Param& p = *param;
-            sprintf(tmpcode, "%s %s = arguments->%s;\n", p.GetType()->GetName(), p.GetName(), p.GetName());
+            snprintf(tmpcode, sizeof(tmpcode), "%s %s = arguments->%s;\n", p.GetType()->GetName(), p.GetName(), p.GetName());
             output += tmpcode;
         }
 
@@ -1690,7 +1690,7 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
 
         output += ");\n";
 
-        sprintf(tmpcode,
+        snprintf(tmpcode, sizeof(tmpcode),
                 "    } catch(std::exception& ex) {\n      printf(\"ERROR: Exception in asynchronous allocation: %%s\\n\", ex.what());\n delete arguments;\n throw; \n    }\n   "
                 "      catch(...) {\n                     printf(\"ERROR: Exception in asynchronous allocation\\n\");\n delete arguments;\n throw; \n    }\n   "
                 "delete arguments;\n  return 0;\n  }\n}\n");
@@ -1698,17 +1698,17 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
     }
 
     if (!GetClass()->is_collective()) {
-        sprintf(tmpcode, "\nvoid %s::_pop_construct", GetClass()->GetName());
+        snprintf(tmpcode, sizeof(tmpcode), "\nvoid %s::_pop_construct", GetClass()->GetName());
         output += tmpcode;
     } else {
-        // sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  _popc_constructor(", GetClass()->GetName());
+        // snprintf(tmpcode, sizeof(tmpcode), "\nvoid %s::construct_remote_object() {\n  _popc_constructor(", GetClass()->GetName());
         // output += tmpcode;
 
         // Place saved constructor arguments
         /*      int nb = params.size();
                 for (int j = 0; j < nb; j++) {
                     Param &p = *(params[j]);
-                    sprintf(tmpcode, "_popc_constructor_%d_%s", get_id(), p.GetName());
+                    snprintf(tmpcode, sizeof(tmpcode), "_popc_constructor_%d_%s", get_id(), p.GetName());
                     output += tmpcode;
                     if (j < nb-1) {
                     strcpy(tmpcode, ", ");
@@ -1720,7 +1720,7 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
               strcpy(tmpcode, ");\n}\n");
               output += tmpcode;     */
 
-        sprintf(tmpcode, "\nvoid %s::_popc_constructor", GetClass()->GetName());
+        snprintf(tmpcode, sizeof(tmpcode), "\nvoid %s::_popc_constructor", GetClass()->GetName());
         output += tmpcode;
     }
 

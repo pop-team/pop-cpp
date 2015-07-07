@@ -256,7 +256,7 @@ public:
 
     virtual bool Marshal(char* bufname, bool reformat, bool inf_side, std::string& output);
     virtual bool UnMarshal(char* bufname, bool reformat, bool alloc_mem, bool inf_side, std::string& output);
-    virtual bool UserProc(char* code);
+    virtual bool UserProc(char* code, size_t buffer_length);
 
     bool isConst;
     bool isRef;

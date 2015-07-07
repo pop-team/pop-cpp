@@ -452,7 +452,7 @@ namespace_declaration: NAMESPACE ID
 
         isNamespace = true;
 
-        sprintf(holdnamespace, "%s", GetToken($2));
+        snprintf(holdnamespace, sizeof(holdnamespace), "%s", GetToken($2));
 
     }
 
@@ -497,7 +497,7 @@ type_definition: struct_definition
 innerclass_definition: CLASS_KEYWORD
 {
 
-    sprintf(tmp,"Class declaration inside parclass are not currently supported in POP-C++ !\n");
+    snprintf(tmp, sizeof(tmp),"Class declaration inside parclass are not currently supported in POP-C++ !\n");
 
     errormsg(tmp);
     exit(1);
@@ -507,7 +507,7 @@ innerclass_definition: CLASS_KEYWORD
 
 
 innerclass_static: STATIC_KEYWORD {
-    sprintf(tmp,"Use of static member inside parclass is not currently supported in POP-C++!\n");
+    snprintf(tmp, sizeof(tmp),"Use of static member inside parclass is not currently supported in POP-C++!\n");
 
     errormsg(tmp);
     exit(1);
@@ -664,7 +664,7 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
 | TYPEDEF_KEYWORD STRUCT_KEYWORD ID pointer_specifier ID array_declarator
 {
     if(insideClass){
-        sprintf(tmp,"typedef definition with structure inside a parclass is not currently supported !\n");
+        snprintf(tmp, sizeof(tmp),"typedef definition with structure inside a parclass is not currently supported !\n");
 
         errormsg(tmp);
         exit(1);
@@ -718,7 +718,7 @@ typedef_definition: TYPEDEF_KEYWORD ID pointer_specifier ID array_declarator
 |  TYPEDEF_KEYWORD struct_definition pointer_specifier ID array_declarator
 {
     if(insideClass){
-        sprintf(tmp,"typedef definition with structure inside a parclass is not currently supported !\n");
+        snprintf(tmp, sizeof(tmp),"typedef definition with structure inside a parclass is not currently supported !\n");
 
         errormsg(tmp);
         exit(1);
@@ -763,7 +763,7 @@ seqclass_header: CLASS_KEYWORD ID
         seqclass=dynamic_cast<TypeClassStruct *>(t);
       if (seqclass==NULL) {
             char tmp[256];
-            sprintf(tmp,"%s has been declared as non-class data type", GetToken($2));
+            snprintf(tmp, sizeof(tmp),"%s has been declared as non-class data type", GetToken($2));
             errormsg(tmp);
             exit(1);
         }
@@ -847,7 +847,7 @@ PARALLEL OBJECT CLASS DEFINITION
 class_prototype: class_key ';'
 {
   assert(currentClass!=NULL);
-  sprintf(tmp,"class %s;",currentClass->GetName());
+  snprintf(tmp, sizeof(tmp),"class %s;",currentClass->GetName());
 
   assert(thisCodeFile!=NULL);
   OtherCode *dat=new OtherCode(thisCodeFile);
@@ -940,7 +940,7 @@ base_specifier: ID
     Class *cl = thisCodeFile->FindClass(GetToken($1));
     if (cl == NULL) {
         char str[1024];
-        sprintf(str,"base class %s not declared",GetToken($1));
+        snprintf(str, sizeof(str),"base class %s not declared",GetToken($1));
         errormsg(str);
         exit(1);
       }
@@ -955,7 +955,7 @@ base_specifier: ID
     if (cl==NULL)
       {
         char str[1024];
-        sprintf(str,"base class %s not declared",GetToken($2));
+        snprintf(str, sizeof(str),"base class %s not declared",GetToken($2));
         errormsg(str);
         exit(1);
       }
@@ -971,7 +971,7 @@ base_specifier: ID
     if (cl==NULL)
       {
         char str[1024];
-        sprintf(str,"base class %s not declared",GetToken($3));
+        snprintf(str, sizeof(str),"base class %s not declared",GetToken($3));
         errormsg(str);
         exit(1);
       }
@@ -988,7 +988,7 @@ base_specifier: ID
     if (cl==NULL)
       {
         char str[1024];
-        sprintf(str,"base class %s not declared",GetToken($3));
+        snprintf(str, sizeof(str),"base class %s not declared",GetToken($3));
         errormsg(str);
         exit(1);
       }
@@ -1041,9 +1041,9 @@ member_declaration:  enum_declaration ';'
     int t = method->CheckMarshal();
     if (t!=0) {
         if (t==-1) {
-            sprintf(tmp,"In method %s::%s: unable to marshal the return argument.\n", currentClass->GetName(), method->name);
+            snprintf(tmp, sizeof(tmp),"In method %s::%s: unable to marshal the return argument.\n", currentClass->GetName(), method->name);
     } else {
-            sprintf(tmp,"In method %s::%s: unable to marshal argument %d.\n", currentClass->GetName(), method->name, t);
+            snprintf(tmp, sizeof(tmp),"In method %s::%s: unable to marshal argument %d.\n", currentClass->GetName(), method->name, t);
         }
     errormsg(tmp);
         exit(1);
@@ -1054,7 +1054,7 @@ member_declaration:  enum_declaration ';'
 | attribute_definition ';'
 {
     if (accessmodifier == PUBLIC) {
-      sprintf(tmp,"%s:%d: attributes of a parallel class must be private or protected.\n",thisCodeFile->GetFileName().c_str(), linenumber);
+      snprintf(tmp, sizeof(tmp),"%s:%d: attributes of a parallel class must be private or protected.\n",thisCodeFile->GetFileName().c_str(), linenumber);
       errormsg(tmp);
       exit(1);
     }
@@ -1093,7 +1093,7 @@ enum_members: enum_member
 }
 | enum_member ',' enum_members
 {
-    sprintf(tmp,"%s , %s",GetToken($1), GetToken($3));
+    snprintf(tmp, sizeof(tmp),"%s , %s",GetToken($1), GetToken($3));
     $$ = PutToken(tmp);
 }
 ;
@@ -1104,7 +1104,7 @@ enum_member: ID
 }
 | ID '=' INTEGER
 {
-    sprintf(tmp,"%s = %s",GetToken($1), GetToken($3));
+    snprintf(tmp, sizeof(tmp),"%s = %s",GetToken($1), GetToken($3));
    $$=PutToken(tmp);
 }
 ;
@@ -1155,10 +1155,10 @@ array_declarator: /*empty*/
 | '[' expr_decl ']' array_declarator
 {
     if ($4==-1) {
-        sprintf(tmp,"[%s]",GetToken($2));
+        snprintf(tmp, sizeof(tmp),"[%s]",GetToken($2));
         $$=PutToken(tmp);
     } else {
-      sprintf(tmp,"[%s]%s",GetToken($2),GetToken($4));
+      snprintf(tmp, sizeof(tmp),"[%s]%s",GetToken($2),GetToken($4));
       $$=PutToken(tmp);
     }
 }
@@ -1189,7 +1189,7 @@ storage_class_specifier:  AUTO_KEYWORD
 type_specifier: ID
 {
     if(isInStruct)
-        sprintf(typetmp, "%s", GetToken($1)); // Save the type specifier for struct attribute
+        snprintf(typetmp, sizeof(typetmp), "%s", GetToken($1)); // Save the type specifier for struct attribute
     currenttype=thisCodeFile->FindDataType(GetToken($1));
     if (currenttype==NULL) {
        currenttype=new DataType(GetToken($1));
@@ -1206,7 +1206,7 @@ type_specifier: ID
       thisCodeFile->AddDataType(currenttype);
 
       /*
-    sprintf(tmp,"Undeclared type \"%s\"\n",GetToken($1));
+    snprintf(tmp, sizeof(tmp),"Undeclared type \"%s\"\n",GetToken($1));
     errormsg(tmp);
     exit(1);
       */
@@ -1313,7 +1313,7 @@ template_arg: ID pointer_specifier array_declarator ref_specifier
 }
 |  ID '<' template_arguments '>'
 {
-  sprintf(tmp,"%s<%s>",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s<%s>",GetToken($1), GetToken($3));
   $$= PutToken(tmp);
 }
 ;
@@ -1769,12 +1769,12 @@ od_exprlist: /*empty*/
   assert(method!=NULL);
   if (!pop_utils::isEqual(odtmp,"od"))
     {
-      sprintf(tmp,"Invalid OD expression: %s.%s",odtmp,GetToken($3));
+      snprintf(tmp, sizeof(tmp),"Invalid OD expression: %s.%s",odtmp,GetToken($3));
       errormsg(tmp);
       exit(1);
     }
 
-  sprintf(tmp,"od.%s(%s,%s,%s);",GetToken($3),GetToken($5),GetToken($7),GetToken($9));
+  snprintf(tmp, sizeof(tmp),"od.%s(%s,%s,%s);",GetToken($3),GetToken($5),GetToken($7),GetToken($9));
   if ($12!=-1) strcat(tmp,GetToken($12));
   $$=PutToken(tmp);
 }
@@ -1786,12 +1786,12 @@ od_exprlist: /*empty*/
   assert(method!=NULL);
   if (!pop_utils::isEqual(odtmp,"od"))
     {
-      sprintf(tmp,"Invalid OD expression: %s.%s",odtmp,GetToken($3));
+      snprintf(tmp, sizeof(tmp),"Invalid OD expression: %s.%s",odtmp,GetToken($3));
       errormsg(tmp);
       exit(1);
     }
 
-  sprintf(tmp,"od.%s(%s,%s);",GetToken($3),GetToken($5),GetToken($7));
+  snprintf(tmp, sizeof(tmp),"od.%s(%s,%s);",GetToken($3),GetToken($5),GetToken($7));
   if ($10!=-1) strcat(tmp,GetToken($10));
   $$=PutToken(tmp);
 }
@@ -1801,12 +1801,12 @@ od_exprlist: /*empty*/
   assert(method!=NULL);
   if (!pop_utils::isEqual(odtmp,"od"))
     {
-      sprintf(tmp,"Invalid OD expression: %s.%s",odtmp,GetToken($3));
+      snprintf(tmp, sizeof(tmp),"Invalid OD expression: %s.%s",odtmp,GetToken($3));
       errormsg(tmp);
       exit(1);
     }
 
-  sprintf(tmp,"od.%s(%s);",GetToken($3),GetToken($5));
+  snprintf(tmp, sizeof(tmp),"od.%s(%s);",GetToken($3),GetToken($5));
   if ($8!=-1) strcat(tmp,GetToken($8));
   $$=PutToken(tmp);
 }
@@ -1814,14 +1814,14 @@ od_exprlist: /*empty*/
 {
   char *odtmp=GetToken($1);
   if (pop_utils::isEqual(odtmp,"host")) {
-    sprintf(tmp,"od.url(%s);",GetToken($3));
+    snprintf(tmp, sizeof(tmp),"od.url(%s);",GetToken($3));
     if ($6!=-1) strcat(tmp,GetToken($6));
       if ($4!=-1) {
       errormsg("OD: host should be a string expression. Non-strict description is not allowed");
         exit(1);
       }
   } else if (pop_utils::isEqual(odtmp,"jobcontact")) {
-    sprintf(tmp,"od.joburl(%s);",GetToken($3));
+    snprintf(tmp, sizeof(tmp),"od.joburl(%s);",GetToken($3));
       if ($6 != -1) strcat(tmp,GetToken($6));
     if ($4 != -1) {
         errormsg("OD: jobcontact should be a string expression. Non-strict description is not allowed");
@@ -1830,7 +1830,7 @@ od_exprlist: /*empty*/
       }
     else if (pop_utils::isEqual(odtmp,"memory"))
       {
-    sprintf(tmp,"od.memory(%s",GetToken($3));
+    snprintf(tmp, sizeof(tmp),"od.memory(%s",GetToken($3));
     if ($4!=-1)
       {
         strcat(tmp,",");
@@ -1841,7 +1841,7 @@ od_exprlist: /*empty*/
       }
     else if (pop_utils::isEqual(odtmp,"power"))
       {
-    sprintf(tmp,"od.power(%s",GetToken($3));
+    snprintf(tmp, sizeof(tmp),"od.power(%s",GetToken($3));
     if ($4!=-1)
       {
         strcat(tmp,",");
@@ -1853,7 +1853,7 @@ od_exprlist: /*empty*/
       }
     else if (pop_utils::isEqual(odtmp,"search"))
       {
-    sprintf(tmp,"od.search(%s",GetToken($3));
+    snprintf(tmp, sizeof(tmp),"od.search(%s",GetToken($3));
     if ($4!=-1)
       {
         strcat(tmp,",");
@@ -1870,7 +1870,7 @@ od_exprlist: /*empty*/
       }
     else if (pop_utils::isEqual(odtmp,"network"))
     {
-    sprintf(tmp,"od.bandwidth(%s",GetToken($3));
+    snprintf(tmp, sizeof(tmp),"od.bandwidth(%s",GetToken($3));
     if ($4!=-1)
       {
         strcat(tmp,",");
@@ -1881,7 +1881,7 @@ od_exprlist: /*empty*/
     }
     else if (pop_utils::isEqual(odtmp,"walltime"))
       {
-    sprintf(tmp,"od.walltime(%s);",GetToken($3));
+    snprintf(tmp, sizeof(tmp),"od.walltime(%s);",GetToken($3));
     if ($4!=-1)
       {
         errormsg("OD: walltime  should be a number expression. Non-strict description is not allowed");
@@ -1948,7 +1948,7 @@ arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_s
         }
 
         if(size_variable_name.length() == 0){
-            sprintf(tmp,"Could not find size to marshall array: %s\n", GetToken($7));
+            snprintf(tmp, sizeof(tmp),"Could not find size to marshall array: %s\n", GetToken($7));
             errormsg(tmp);
             exit(1);
         }
@@ -1969,7 +1969,7 @@ arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_s
         if(strcmp("void", t->GetType()->GetName()) == 0){
             t->isVoid = true;
         } else {
-            sprintf(t->name,"V_%d",++counter);
+            snprintf(t->name, sizeof(t)->name,"V_%d",++counter);
         }
     }
 
@@ -2066,7 +2066,7 @@ expr_decl: expr_name array_declarator
   if ($2<0) $$=$1;
   else
     {
-      sprintf(tmp, "%s%s",GetToken($1),GetToken($2));
+      snprintf(tmp, sizeof(tmp), "%s%s",GetToken($1),GetToken($2));
       $$=PutToken(tmp);
     }
 }
@@ -2080,133 +2080,133 @@ expr_decl: expr_name array_declarator
 }
 | expr_decl '+' expr_decl
 {
-  sprintf(tmp,"%s + %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s + %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '-' expr_decl
 {
-  sprintf(tmp,"%s - %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s - %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '*' expr_decl
 {
-  sprintf(tmp,"%s * %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s * %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '/' expr_decl
 {
-  sprintf(tmp,"%s / %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s / %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '%' expr_decl
 {
-  sprintf(tmp,"%s %% %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s %% %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '&' expr_decl
 {
-  sprintf(tmp,"%s & %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s & %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '|' expr_decl
 {
-  sprintf(tmp,"%s | %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s | %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '^' expr_decl
 {
-  sprintf(tmp,"%s ^ %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s ^ %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl AND_OP expr_decl
 {
-  sprintf(tmp,"%s && %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s && %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl OR_OP expr_decl
 {
-  sprintf(tmp,"%s || %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s || %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl EQUAL_OP expr_decl
 {
-  sprintf(tmp,"%s == %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s == %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '=' expr_decl
 {
-  sprintf(tmp,"%s=%s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s=%s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '?' expr_decl ':' expr_decl
 {
-  sprintf(tmp,"%s ? %s : %s",GetToken($1), GetToken($3), GetToken($5));
+  snprintf(tmp, sizeof(tmp),"%s ? %s : %s",GetToken($1), GetToken($3), GetToken($5));
   $$=PutToken(tmp);
 }
 | expr_decl NOTEQUAL_OP expr_decl
 {
-  sprintf(tmp,"%s != %s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s != %s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '>' expr_decl
 {
-  sprintf(tmp,"%s>%s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s>%s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl '<' expr_decl
 {
-  sprintf(tmp,"%s<%s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s<%s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl GREATEREQUAL_OP expr_decl
 {
-  sprintf(tmp,"%s>=%s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s>=%s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 | expr_decl LESSEQUAL_OP expr_decl
 {
-  sprintf(tmp,"%s<=%s",GetToken($1), GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s<=%s",GetToken($1), GetToken($3));
   $$=PutToken(tmp);
 }
 |  '-' expr_decl %prec UMINUS
 {
-  sprintf(tmp,"-%s",GetToken($2));
+  snprintf(tmp, sizeof(tmp),"-%s",GetToken($2));
   $$=PutToken(tmp);
 }
 | '(' expr_decl ')'
 {
-  sprintf(tmp,"(%s)",GetToken($2));
+  snprintf(tmp, sizeof(tmp),"(%s)",GetToken($2));
   $$=PutToken(tmp);
 }
 | expr_name '(' ')'
 {
-  sprintf(tmp,"%s()",GetToken($1));
+  snprintf(tmp, sizeof(tmp),"%s()",GetToken($1));
   $$=PutToken(tmp);
 }
 | expr_name '(' expr_list ')'
 {
-  sprintf(tmp,"%s(%s)",GetToken($1),GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s(%s)",GetToken($1),GetToken($3));
   $$=PutToken(tmp);
 
 }
 | '*' expr_decl
 {
-  sprintf(tmp,"*%s",GetToken($2));
+  snprintf(tmp, sizeof(tmp),"*%s",GetToken($2));
   $$=PutToken(tmp);
 }
 | '&' expr_decl
 {
-  sprintf(tmp,"&%s",GetToken($2));
+  snprintf(tmp, sizeof(tmp),"&%s",GetToken($2));
   $$=PutToken(tmp);
 }
 | '!' expr_decl
 {
-  sprintf(tmp,"!%s",GetToken($2));
+  snprintf(tmp, sizeof(tmp),"!%s",GetToken($2));
   $$=PutToken(tmp);
 }
 | '~' expr_decl
 {
-  sprintf(tmp,"~%s",GetToken($2));
+  snprintf(tmp, sizeof(tmp),"~%s",GetToken($2));
   $$=PutToken(tmp);
 }
 ;
@@ -2227,7 +2227,7 @@ expr_name: ID
 }
 | ID SCOPE ID
 {
-  sprintf(tmp,"%s::%s",GetToken($1),GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s::%s",GetToken($1),GetToken($3));
   $$=PutToken(tmp);
 }
 ;
@@ -2239,7 +2239,7 @@ expr_list:  expr_decl
 }
 | expr_list ',' expr_decl
 {
-  sprintf(tmp,"%s, %s", GetToken($1),GetToken($3));
+  snprintf(tmp, sizeof(tmp),"%s, %s", GetToken($1),GetToken($3));
   $$=PutToken(tmp);
 }
 ;

@@ -49,13 +49,13 @@ void TypeSeqClass::Marshal(char* varname, char* bufname, char* /*sizehelper*/, s
     if (!FindVarName(varname, paramname)) {
         strcpy(paramname, "unkown");
     }
-    sprintf(tmpstr, "%s.Push(\"%s\",\"%s\",1);\n", bufname, paramname, GetName());
+    snprintf(tmpstr, sizeof(tmpstr), "%s.Push(\"%s\",\"%s\",1);\n", bufname, paramname, GetName());
     output += tmpstr;
 
-    sprintf(tmpstr, "((%s &)(%s)).Serialize(%s, true);\n", GetName(), varname, bufname);
+    snprintf(tmpstr, sizeof(tmpstr), "((%s &)(%s)).Serialize(%s, true);\n", GetName(), varname, bufname);
     output += tmpstr;
 
-    sprintf(tmpstr, "%s.Pop();\n", bufname);
+    snprintf(tmpstr, sizeof(tmpstr), "%s.Pop();\n", bufname);
     output += tmpstr;
 }
 
@@ -66,12 +66,12 @@ void TypeSeqClass::DeMarshal(char* varname, char* bufname, char* /*sizehelper*/,
     if (!FindVarName(varname, paramname)) {
         strcpy(paramname, "unkown");
     }
-    sprintf(tmpstr, "%s.Push(\"%s\",\"%s\",1);\n", bufname, paramname, GetName());
+    snprintf(tmpstr, sizeof(tmpstr), "%s.Push(\"%s\",\"%s\",1);\n", bufname, paramname, GetName());
     output += tmpstr;
 
-    sprintf(tmpstr, "((%s &)(%s)).Serialize(%s, false);\n", GetName(), varname, bufname);
+    snprintf(tmpstr, sizeof(tmpstr), "((%s &)(%s)).Serialize(%s, false);\n", GetName(), varname, bufname);
     output += tmpstr;
 
-    sprintf(tmpstr, "%s.Pop();\n", bufname);
+    snprintf(tmpstr, sizeof(tmpstr), "%s.Pop();\n", bufname);
     output += tmpstr;
 }

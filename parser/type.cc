@@ -68,13 +68,13 @@ void DataType::Marshal(char* varname, char* bufname, char* sizehelper, std::stri
 
         const char* sz = (sizehelper == nullptr) ? "1" : sizehelper;
 
-        sprintf(tmpcode, "%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, GetName(), sz);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, GetName(), sz);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Pack(&%s, %s);\n", bufname, varname, sz);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Pack(&%s, %s);\n", bufname, varname, sz);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Pop();\n", bufname);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Pop();\n", bufname);
         output += tmpcode;
     }
 }
@@ -90,13 +90,13 @@ void DataType::DeMarshal(char* varname, char* bufname, char* sizehelper, std::st
         char tmpcode[1024];
 
         const char* sz = (sizehelper == nullptr) ? "1" : sizehelper;
-        sprintf(tmpcode, "%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, GetName(), sz);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, GetName(), sz);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.UnPack(&%s,%s);\n", bufname, varname, sz);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.UnPack(&%s,%s);\n", bufname, varname, sz);
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Pop();\n", bufname);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Pop();\n", bufname);
         output += tmpcode;
     }
 }

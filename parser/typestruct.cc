@@ -44,15 +44,15 @@ void TypeStruct::Marshal(char* varname, char* bufname, char* /*sizehelper*/, std
     if (!FindVarName(varname, paramname)) {
         strcpy(paramname, "unknown");
     }
-    sprintf(tmpcode, "%s.Push(\"%s\",\"%s\", 1);\n", bufname, paramname, GetName());
+    snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\", 1);\n", bufname, paramname, GetName());
     output += tmpcode;
 
     for (auto& attr : attributes) {
-        sprintf(tmpcode, "%s.%s", varname, attr.second);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.%s", varname, attr.second);
         attr.first->Marshal(tmpcode, bufname, nullptr, output);
     }
 
-    sprintf(tmpcode, "%s.Pop();\n", bufname);
+    snprintf(tmpcode, sizeof(tmpcode), "%s.Pop();\n", bufname);
     output += tmpcode;
 }
 
@@ -62,15 +62,15 @@ void TypeStruct::DeMarshal(char* varname, char* bufname, char* /*sizehelper*/, s
     if (!FindVarName(varname, paramname)) {
         strcpy(paramname, "unknown");
     }
-    sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",1);\n", bufname, paramname, GetName());
+    snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",1);\n", bufname, paramname, GetName());
     output += tmpcode;
 
     for (auto& attr : attributes) {
-        sprintf(tmpcode, "%s.%s", varname, attr.second);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.%s", varname, attr.second);
         attr.first->DeMarshal(tmpcode, bufname, nullptr, output);
     }
 
-    sprintf(tmpcode, "%s.Pop();\n", bufname);
+    snprintf(tmpcode, sizeof(tmpcode), "%s.Pop();\n", bufname);
     output += tmpcode;
 }
 

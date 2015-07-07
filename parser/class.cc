@@ -106,20 +106,20 @@ void Class::Marshal(char* varname, char* bufname, char* /*sizehelper*/, std::str
     if (!FindVarName(varname, paramname)) {
         strcpy(paramname, "unkown");
     }
-    sprintf(tmpstr, "%s.Push(\"%s\",\"pop_interface\",1);\n", bufname, paramname);
+    snprintf(tmpstr, sizeof(tmpstr), "%s.Push(\"%s\",\"pop_interface\",1);\n", bufname, paramname);
     output += tmpstr;
 
     // If uncommented, the 4 following lines will check at runtime if polymorphism is used (and exit)
-    // sprintf(tmpstr, "if(!pop_utils::MatchWildcard(typeid(%s).name(),\"*%s\"))\n",varname,GetName());
+    // snprintf(tmpstr, sizeof(tmpstr), "if(!pop_utils::MatchWildcard(typeid(%s).name(),\"*%s\"))\n",varname,GetName());
     // output += tmpstr;
-    // sprintf(tmpstr, "{printf(\"POPC Error at method call: dynamic type of %s must correspond with static type
+    // snprintf(tmpstr, sizeof(tmpstr), "{printf(\"POPC Error at method call: dynamic type of %s must correspond with static type
     // %s\\n\");exit(-1);}\n",varname,GetName());
     // output += tmpstr;
 
-    sprintf(tmpstr, "((%s &)(%s)).Serialize(%s, true);", GetName(), varname, bufname);
+    snprintf(tmpstr, sizeof(tmpstr), "((%s &)(%s)).Serialize(%s, true);", GetName(), varname, bufname);
     output += tmpstr;
 
-    sprintf(tmpstr, "%s.Pop();\n", bufname);
+    snprintf(tmpstr, sizeof(tmpstr), "%s.Pop();\n", bufname);
     output += tmpstr;
 }
 
@@ -130,13 +130,13 @@ void Class::DeMarshal(char* varname, char* bufname, char* /*sizehelper*/, std::s
     if (!FindVarName(varname, paramname)) {
         strcpy(paramname, "unkown");
     }
-    sprintf(tmpstr, "%s.Push(\"%s\",\"pop_interface\",1);\n", bufname, paramname);
+    snprintf(tmpstr, sizeof(tmpstr), "%s.Push(\"%s\",\"pop_interface\",1);\n", bufname, paramname);
     output += tmpstr;
 
-    sprintf(tmpstr, "((%s &)(%s)).Serialize(%s, false);", GetName(), varname, bufname);
+    snprintf(tmpstr, sizeof(tmpstr), "((%s &)(%s)).Serialize(%s, false);", GetName(), varname, bufname);
     output += tmpstr;
 
-    sprintf(tmpstr, "%s.Pop();\n", bufname);
+    snprintf(tmpstr, sizeof(tmpstr), "%s.Pop();\n", bufname);
     output += tmpstr;
 }
 
@@ -168,10 +168,10 @@ void Class::GenerateCode(std::string& output /*, bool isPOPCPPCompilation*/) {
 
     // Generate the class uid in fonction of the defined one or generate one from the name of the parclass
     if (*classid == 0) {
-        sprintf(str, "\nconst unsigned CLASSUID_%s = unsigned(%u);\n", name, IDFromString(name));
+        snprintf(str, sizeof(str), "\nconst unsigned CLASSUID_%s = unsigned(%u);\n", name, IDFromString(name));
         fprintf(stderr, "POP-C++ Warning: class unique identifier (classuid) for %s is not specified.\n", name);
     } else {
-        sprintf(str, "\nconst unsigned CLASSUID_%s = unsigned(%s);\n", name, classid);
+        snprintf(str, sizeof(str), "\nconst unsigned CLASSUID_%s = unsigned(%s);\n", name, classid);
     }
 
     if (!pureVirtual) {
@@ -218,7 +218,7 @@ void Class::AddMember(ClassMember* t) {
 
 void Class::SetClassID(char* id) {
     if (id == nullptr) {
-        sprintf(classid, "%u", IDFromString(name));
+        snprintf(classid, sizeof(classid), "%u", IDFromString(name));
     } else {
         strncpy(classid, id, 63);
         classid[63] = 0;
@@ -318,24 +318,24 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
     char tmpcode[10240];
 
     if (is_collective()) {
-        sprintf(tmpcode, "\n// Generate code for client side of POG\n");
+        snprintf(tmpcode, sizeof(tmpcode), "\n// Generate code for client side of POG\n");
         code += tmpcode;
     }
 
     const string& outfile = GetCodeFile()->GetOutputName();
     if (!outfile.empty()) {
         int lines = CountCodeLines(code);
-        sprintf(tmpcode, "\n# %d \"%s\"\n", lines + 3, outfile.c_str());
+        snprintf(tmpcode, sizeof(tmpcode), "\n# %d \"%s\"\n", lines + 3, outfile.c_str());
         code += tmpcode;
 
         if (strcmp(strnamespace.c_str(), "") != 0) {
-            sprintf(tmpcode, "using namespace %s;\n", strnamespace.c_str());
+            snprintf(tmpcode, sizeof(tmpcode), "using namespace %s;\n", strnamespace.c_str());
             code += tmpcode;
         }
     }
 
     if (!IsCoreCompilation() && IsAsyncAllocationEnabled()) {
-        sprintf(tmpcode,
+        snprintf(tmpcode, sizeof(tmpcode),
                 "// This code is generated for Asynchronous Parallel Object Allocation support for the object %s\n",
                 name);
         code += tmpcode;
@@ -351,32 +351,32 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
                 Constructor* cons = dynamic_cast<Constructor*>(met);
                 cons->set_id(constrcutor_id++);
 
-                sprintf(tmpcode, "extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg);\n}\n\n", name,
+                snprintf(tmpcode, sizeof(tmpcode), "extern \"C\"\n{\n  void* %s_AllocatingThread%d(void* arg);\n}\n\n", name,
                         cons->get_id());
                 code += tmpcode;
 
-                sprintf(tmpcode, "struct pthread_args_t_%d\n{\n  %s* ptr_interface;\n", cons->get_id(), name);
+                snprintf(tmpcode, sizeof(tmpcode), "struct pthread_args_t_%d\n{\n  %s* ptr_interface;\n", cons->get_id(), name);
                 code += tmpcode;
 
                 //Generate all the members
                 auto nb = (*met).params.size();
                 for (std::size_t j = 0; j < nb; j++) {
-                    sprintf(tmpcode, "  ");
+                    snprintf(tmpcode, sizeof(tmpcode), "  ");
                     Param& p = *((*met).params[j]);
                     p.DeclareParam(tmpcode, false);
                     strcat(tmpcode, ";\n");
                     code += tmpcode;
                 }
 
-                sprintf(tmpcode, "pthread_args_t_%d(", cons->get_id());
+                snprintf(tmpcode, sizeof(tmpcode), "pthread_args_t_%d(", cons->get_id());
                 code += tmpcode;
 
-                sprintf(tmpcode, "%s* ptr_interface", name);
+                snprintf(tmpcode, sizeof(tmpcode), "%s* ptr_interface", name);
                 code += tmpcode;
 
                 for (std::size_t j = 0; j < nb; j++) {
                     code += ", ";
-                    sprintf(tmpcode, " ");
+                    snprintf(tmpcode, sizeof(tmpcode), " ");
                     Param& p = *((*met).params[j]);
                     p.DeclareParam(tmpcode, false);
                     code += tmpcode;
@@ -395,7 +395,7 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
 
                 code += "{}\n";
 
-                sprintf(tmpcode, "};\n\n");
+                snprintf(tmpcode, sizeof(tmpcode), "};\n\n");
                 code += tmpcode;
             }
         }
@@ -422,7 +422,7 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
     }
 
     if (is_collective()) {
-        sprintf(tmpcode, "\nvoid %s::construct_remote_object() {\n  switch(_popc_selected_constructor_id) {",
+        snprintf(tmpcode, sizeof(tmpcode), "\nvoid %s::construct_remote_object() {\n  switch(_popc_selected_constructor_id) {",
                 GetName());
         code += tmpcode;
         int n = memberList.size();
@@ -431,14 +431,14 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
                 Method* m = dynamic_cast<Method*>(memberList[i]);
                 if (m->MethodType() == METHOD_CONSTRUCTOR) {
                     Constructor* c = dynamic_cast<Constructor*>(memberList[i]);
-                    sprintf(tmpcode, "\n  case %d:", (*c).id);
+                    snprintf(tmpcode, sizeof(tmpcode), "\n  case %d:", (*c).id);
                     code += tmpcode;
                     strcpy(tmpcode, "\n    _popc_constructor(");
                     code += tmpcode;
                     auto nb = (*c).params.size();
                     for (std::size_t j = 0; j < nb; j++) {
                         Param& p = *((*c).params[j]);
-                        sprintf(tmpcode, "_popc_constructor_%d_%s", (*c).id, p.GetName());
+                        snprintf(tmpcode, sizeof(tmpcode), "_popc_constructor_%d_%s", (*c).id, p.GetName());
                         if (j < nb - 1) {
                             strcat(tmpcode, ", ");
                         }
@@ -452,14 +452,14 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
         strcpy(tmpcode, "\n  }\n}");
         code += tmpcode;
 
-        sprintf(tmpcode, "\%s& %s::operator[] (const int index) {\n  set_default_rank(index);\n  return (*this);\n}\n",
+        snprintf(tmpcode, sizeof(tmpcode), "\%s& %s::operator[] (const int index) {\n  set_default_rank(index);\n  return (*this);\n}\n",
                 GetName(), GetName());
         code += tmpcode;
     }
 
     const string& fname = GetCodeFile()->GetFileName();
     if (endline > 0 && !fname.empty()) {
-        sprintf(tmpcode, "\n# %d \"%s\"\n", endline, fname.c_str());
+        snprintf(tmpcode, sizeof(tmpcode), "\n# %d \"%s\"\n", endline, fname.c_str());
         code += tmpcode;
     }
     return true;
@@ -501,23 +501,23 @@ bool Class::generate_broker_header_pog(std::string& code) {
     const string& outfile = GetCodeFile()->GetOutputName();
 
     // Print a comment in the generated code
-    sprintf(tmpcode, "\n// Generate broker-side code for a POG\n");
+    snprintf(tmpcode, sizeof(tmpcode), "\n// Generate broker-side code for a POG\n");
     code += tmpcode;
 
     if (!outfile.empty()) {
         int lines = CountCodeLines(code);
-        sprintf(tmpcode, "\n# %d \"%s\"\n", lines + 3, outfile.c_str());
+        snprintf(tmpcode, sizeof(tmpcode), "\n# %d \"%s\"\n", lines + 3, outfile.c_str());
         code += tmpcode;
     }
 
     // Prepare broker name
-    sprintf(brokername, "%s%s", name, Class::POG_BROKER_POSTFIX);
+    snprintf(brokername, sizeof(brokername), "%s%s", name, Class::POG_BROKER_POSTFIX);
 
     int n = baseClass.size();
     if (n == 0) {
-        sprintf(tmpcode, "\n\nclass %s: virtual public %s", brokername, Class::POG_BASE_BROKER_NAME);
+        snprintf(tmpcode, sizeof(tmpcode), "\n\nclass %s: virtual public %s", brokername, Class::POG_BASE_BROKER_NAME);
     } else {
-        sprintf(tmpcode, "\n\nclass %s: ", brokername);
+        snprintf(tmpcode, sizeof(tmpcode), "\n\nclass %s: ", brokername);
         for (i = 0; i < n; i++) {
             if (baseClass[i]->baseVirtual) {
                 strcat(tmpcode, "virtual ");
@@ -530,7 +530,7 @@ bool Class::generate_broker_header_pog(std::string& code) {
             }
         }
     }
-    sprintf(str,
+    snprintf(str, sizeof(str),
             "\n{\npublic:\n  %s();\n  virtual bool invoke(unsigned method[3],  pop_buffer &_popc_buffer, "
             "pop_connection *_popc_connection);",
             brokername);
@@ -556,7 +556,7 @@ bool Class::generate_broker_header_pog(std::string& code) {
         constructor.GenerateBrokerHeader(code);
     }*/
 
-    sprintf(tmpcode,
+    snprintf(tmpcode, sizeof(tmpcode),
             "\npublic:\n  static POPC_GroupBroker *_init();\n  static POPC_GroupBrokerFactory _popc_factory;\n");
     code += tmpcode;
     strcpy(str, "\n}\n;");
@@ -564,7 +564,7 @@ bool Class::generate_broker_header_pog(std::string& code) {
 
     const string& fname = GetCodeFile()->GetFileName();
     if (endline > 0 && !fname.empty()) {
-        sprintf(str, "\n# %d \"%s\"\n", endline, fname.c_str());
+        snprintf(str, sizeof(str), "\n# %d \"%s\"\n", endline, fname.c_str());
         code += str;
     }
     return true;
@@ -575,15 +575,15 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
     char str[1024];
     const string& fname = GetCodeFile()->GetFileName();
     if (startline > 0 && !fname.empty()) {
-        sprintf(str, "\n# %d \"%s\"\n", startline, fname.c_str());
+        snprintf(str, sizeof(str), "\n# %d \"%s\"\n", startline, fname.c_str());
         code += str;
     }
 
     if (interface) {
-        sprintf(tmpcode, "\n// Generated code for the interface-side of a POG\n");
+        snprintf(tmpcode, sizeof(tmpcode), "\n// Generated code for the interface-side of a POG\n");
         code += tmpcode;
     } else {
-        sprintf(tmpcode, "\n// Generated code for the object-side of a POG\n");
+        snprintf(tmpcode, sizeof(tmpcode), "\n// Generated code for the object-side of a POG\n");
         code += tmpcode;
     }
 
@@ -593,7 +593,7 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
         strcat(str, POG_OBJECT_POSTFIX);
     }
 
-    sprintf(tmpcode, "class %s ", str);
+    snprintf(tmpcode, sizeof(tmpcode), "class %s ", str);
     int n = baseClass.size();
     strcat(tmpcode, " :");
 
@@ -622,10 +622,10 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
     if (n) {
         strcat(tmpcode, "\n{\npublic:");
     } else if (interface) {
-        sprintf(str, " virtual public %s\n{\npublic: ", Class::POG_BASE_INTERFACE_NAME);
+        snprintf(str, sizeof(str), " virtual public %s\n{\npublic: ", Class::POG_BASE_INTERFACE_NAME);
         strcat(tmpcode, str);
     } else {
-        sprintf(str, " virtual public %s\n{\npublic:", POG_BASE_OBJECT_NAME);
+        snprintf(str, sizeof(str), " virtual public %s\n{\npublic:", POG_BASE_OBJECT_NAME);
         strcat(tmpcode, str);
     }
 
@@ -651,16 +651,16 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
     }
 
     if (interface) {
-        sprintf(str, "\npublic:\n  virtual void construct_remote_object();");
+        snprintf(str, sizeof(str), "\npublic:\n  virtual void construct_remote_object();");
         code += str;
 
-        // sprintf(str,"\n  void _popc_constructor();", name);
+        // snprintf(str, sizeof(str),"\n  void _popc_constructor();", name);
         // code += str;
 
-        sprintf(str, "\n  virtual char* get_class_name() { return (char*)\"%s\"; };\n", name);
+        snprintf(str, sizeof(str), "\n  virtual char* get_class_name() { return (char*)\"%s\"; };\n", name);
         code += str;
 
-        sprintf(str, "\n  %s& operator[] (const int index);\n", name);
+        snprintf(str, sizeof(str), "\n  %s& operator[] (const int index);\n", name);
         code += str;
 
         /*int n=baseClass.size();
@@ -691,20 +691,20 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
         { constructor.GenerateHeader(code, interface); }
 
         //Generate constructor from the interface binding
-        sprintf(str,"\n%s(const %s &inf)",name, my_interface_base);
+        snprintf(str, sizeof(str),"\n%s(const %s &inf)",name, my_interface_base);
         code += str;
         code += tmpcode;
         strcpy(str," { SetOD(inf.GetOD()); Bind(inf.GetAccessPoint()); };\n");
         code += str;
 
         //Generate constructor from the object side binding
-        sprintf(str,"\n%s(const pop_object *obj)",name);
+        snprintf(str, sizeof(str),"\n%s(const pop_object *obj)",name);
         code += str;
         code += tmpcode;
         strcpy(str," { Bind(obj->GetAccessPoint());};\n");
         code += str;*/
 
-        sprintf(str, "\n  ~%s() {};", name);
+        snprintf(str, sizeof(str), "\n  ~%s() {};", name);
         code += str;
 
         n = memberList.size();
@@ -715,7 +715,7 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
                     Constructor* t = dynamic_cast<Constructor*>(memberList[i]);
                     for (auto& param : t->params) {
                         Param& p = *param;
-                        sprintf(str, "\n  %s _popc_constructor_%d_%s;\n", p.GetType()->GetName(), (*t).id, p.GetName());
+                        snprintf(str, sizeof(str), "\n  %s _popc_constructor_%d_%s;\n", p.GetType()->GetName(), (*t).id, p.GetName());
                         code += str;
                     }
                 }
@@ -724,13 +724,13 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
     }
 
     // Add the declaration of the __POPThis variable for support of the "this" keyword
-    sprintf(str, "\npublic:\n  %s* __POPThis_%s; \n", name, name);
+    snprintf(str, sizeof(str), "\npublic:\n  %s* __POPThis_%s; \n", name, name);
     code += str;
     strcpy(str, "\n};\n");
     code += str;
 
     if (endline > 0 && !fname.empty()) {
-        sprintf(str, "\n# %d \"%s\"\n", endline, fname.c_str());
+        snprintf(str, sizeof(str), "\n# %d \"%s\"\n", endline, fname.c_str());
         code += str;
     }
 
@@ -743,7 +743,7 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
 
     const string& fname = GetCodeFile()->GetFileName();
     if (startline > 0 && !fname.empty()) {
-        sprintf(str, "\n# %d \"%s\"\n", startline, fname.c_str());
+        snprintf(str, sizeof(str), "\n# %d \"%s\"\n", startline, fname.c_str());
         code += str;
     }
 
@@ -753,7 +753,7 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
         strcat(str, OBJ_POSTFIX);
     }
 
-    sprintf(tmpcode, "class %s ", str);
+    snprintf(tmpcode, sizeof(tmpcode), "class %s ", str);
     int n = baseClass.size();
     strcat(tmpcode, " :");
 
@@ -783,10 +783,10 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
     if (n) {
         strcat(tmpcode, "\n{\npublic:");
     } else if (interface) {
-        sprintf(str, " virtual public %s\n{\npublic:", my_interface_base);
+        snprintf(str, sizeof(str), " virtual public %s\n{\npublic:", my_interface_base);
         strcat(tmpcode, str);
     } else {
-        sprintf(str, " virtual public %s\n{\npublic:", my_object_base);
+        snprintf(str, sizeof(str), " virtual public %s\n{\npublic:", my_object_base);
         strcat(tmpcode, str);
     }
 
@@ -820,10 +820,10 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
     }
 
     // Add the declaration of the __POPThis variable for support of the "this" keyword
-    sprintf(str, "\n%s* __POPThis_%s; \n", name, name);
+    snprintf(str, sizeof(str), "\n%s* __POPThis_%s; \n", name, name);
     code += str;
 
-    sprintf(str, "void AllocateObject();\n");
+    snprintf(str, sizeof(str), "void AllocateObject();\n");
     code += str;
 
     bool declared_constructor = false;
@@ -838,11 +838,11 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
     }
 
     if (interface) {
-        sprintf(str, "\npublic:\nvirtual const char *ClassName() { return \"%s\"; };", name);
+        snprintf(str, sizeof(str), "\npublic:\nvirtual const char *ClassName() { return \"%s\"; };", name);
         code += str;
 
         // Generate constructor from pop_accesspoint...
-        sprintf(str, "\npublic:\n%s(const pop_accesspoint &p)", name);
+        snprintf(str, sizeof(str), "\npublic:\n%s(const pop_accesspoint &p)", name);
         code += str;
 
         int n = baseClass.size();
@@ -877,20 +877,20 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
         }
 
         // Generate constructor from the interface binding
-        sprintf(str, "\n%s(const %s &inf)", name, my_interface_base);
+        snprintf(str, sizeof(str), "\n%s(const %s &inf)", name, my_interface_base);
         code += str;
         code += tmpcode;
         strcpy(str, " { SetOD(inf.GetOD()); Bind(inf.GetAccessPoint()); };\n");
         code += str;
 
         // Generate constructor from the object side binding
-        sprintf(str, "\n%s(const pop_object *obj)", name);
+        snprintf(str, sizeof(str), "\n%s(const pop_object *obj)", name);
         code += str;
         code += tmpcode;
         strcpy(str, " { Bind(obj->GetAccessPoint());};\n");
         code += str;
 
-        sprintf(str, "\n~%s()", name);
+        snprintf(str, sizeof(str), "\n~%s()", name);
         code += str;
 
         // In case of async allocation, we need a body for synchronization purpose
@@ -921,7 +921,7 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
     code += str;
 
     if (endline > 0 && !fname.empty()) {
-        sprintf(str, "\n# %d \"%s\"\n", endline, fname.c_str());
+        snprintf(str, sizeof(str), "\n# %d \"%s\"\n", endline, fname.c_str());
         code += str;
     }
 
@@ -935,23 +935,23 @@ bool Class::GenerateBrokerHeader(std::string& code /*, bool isPOPCPPCompilation*
     char brokername[256];
 
     if (is_collective()) {
-        sprintf(tmpcode, "\n//Generating broker-side of a POG\n");
+        snprintf(tmpcode, sizeof(tmpcode), "\n//Generating broker-side of a POG\n");
         code += tmpcode;
     }
 
     const string& outfile = GetCodeFile()->GetOutputName();
     if (!outfile.empty()) {
         int lines = CountCodeLines(code);
-        sprintf(tmpcode, "\n# %d \"%s\"\n", lines + 3, outfile.c_str());
+        snprintf(tmpcode, sizeof(tmpcode), "\n# %d \"%s\"\n", lines + 3, outfile.c_str());
         code += tmpcode;
     }
-    sprintf(brokername, "%s%s", name, Class::POG_BROKER_POSTFIX);
+    snprintf(brokername, sizeof(brokername), "%s%s", name, Class::POG_BROKER_POSTFIX);
 
     int n = baseClass.size();
     if (n == 0) {
-        sprintf(tmpcode, "\n\nclass %s: virtual public %s", brokername, my_broker_base);
+        snprintf(tmpcode, sizeof(tmpcode), "\n\nclass %s: virtual public %s", brokername, my_broker_base);
     } else {
-        sprintf(tmpcode, "\n\nclass %s: ", brokername);
+        snprintf(tmpcode, sizeof(tmpcode), "\n\nclass %s: ", brokername);
         for (i = 0; i < n; i++) {
             if (baseClass[i]->baseVirtual) {
                 strcat(tmpcode, "virtual ");
@@ -965,8 +965,8 @@ bool Class::GenerateBrokerHeader(std::string& code /*, bool isPOPCPPCompilation*
             }
         }
     }
-    sprintf(
-        str,
+    snprintf(
+        str, sizeof(str),
         "\n{\npublic:\n%s();\nvirtual bool Invoke(unsigned method[3],  pop_buffer &__brokerbuf, pop_connection *peer);",
         brokername);
     strcat(tmpcode, str);
@@ -990,7 +990,7 @@ bool Class::GenerateBrokerHeader(std::string& code /*, bool isPOPCPPCompilation*
         constructor.GenerateBrokerHeader(code);
     }
 
-    sprintf(tmpcode, "\npublic:\nstatic pop_broker *_init();\nstatic pop_broker_factory _popc_factory;\n");
+    snprintf(tmpcode, sizeof(tmpcode), "\npublic:\nstatic pop_broker *_init();\nstatic pop_broker_factory _popc_factory;\n");
     code += tmpcode;
 
     strcpy(str, "\n}\n;");
@@ -999,7 +999,7 @@ bool Class::GenerateBrokerHeader(std::string& code /*, bool isPOPCPPCompilation*
 
     const string& fname = GetCodeFile()->GetFileName();
     if (endline > 0 && !fname.empty()) {
-        sprintf(str, "\n# %d \"%s\"\n", endline, fname.c_str());
+        snprintf(str, sizeof(str), "\n# %d \"%s\"\n", endline, fname.c_str());
         code += str;
     }
     return true;
@@ -1014,7 +1014,7 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
     char brokername[256];
 
     if (is_collective()) {
-        sprintf(tmpcode, "\n// Generating code implementing the broker of a POG\n");
+        snprintf(tmpcode, sizeof(tmpcode), "\n// Generating code implementing the broker of a POG\n");
         code += tmpcode;
     }
 
@@ -1023,22 +1023,22 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
     const string& outfile = codefile->GetOutputName();
     if (!outfile.empty()) {
         int lines = CountCodeLines(code);
-        sprintf(tmpcode, "\n# %d \"%s\"\n", lines + 3, outfile.c_str());
+        snprintf(tmpcode, sizeof(tmpcode), "\n# %d \"%s\"\n", lines + 3, outfile.c_str());
         code += tmpcode;
     }
 
-    sprintf(brokername, "%s%s", name, Class::POG_BROKER_POSTFIX);
+    snprintf(brokername, sizeof(brokername), "%s%s", name, Class::POG_BROKER_POSTFIX);
 
     // now...the implementation....
 
     // Generate broker::Invoke virtual method
     if (is_collective()) {
-        sprintf(str,
+        snprintf(str, sizeof(str),
                 "\nbool %s::invoke(unsigned method[3], pop_buffer &_popc_buffer, pop_connection *_popc_connection) {\n "
                 "if (*method == CLASSUID_%s) {\n    switch(method[1]) {",
                 brokername, name);
     } else {
-        sprintf(str,
+        snprintf(str, sizeof(str),
                 "\nbool %s::Invoke(unsigned method[3], pop_buffer &__brokerbuf, pop_connection *peer)\n{\n if "
                 "(*method==CLASSUID_%s) {\n    switch(method[1])\n{",
                 brokername, name);
@@ -1064,31 +1064,31 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
             continue;
         }
         if (is_collective()) {
-            sprintf(str, "\n      case %d: Invoke_%s_%d(_popc_buffer, _popc_connection);\n        return true;", met.id,
+            snprintf(str, sizeof(str), "\n      case %d: Invoke_%s_%d(_popc_buffer, _popc_connection);\n        return true;", met.id,
                     met.name, met.id);
         } else {
-            sprintf(str, "\n    case %d: Invoke_%s_%d(__brokerbuf, peer); return true;", met.id, met.name, met.id);
+            snprintf(str, sizeof(str), "\n    case %d: Invoke_%s_%d(__brokerbuf, peer); return true;", met.id, met.name, met.id);
         }
         code += str;
 
         // Collect method id, name
         if (methodcount) {
-            sprintf(methodinfoptr, ",{%d,(char*)\"%s\"}", met.id, met.name);
+            snprintf(methodinfoptr, methodinfo - methodinfoptr + sizeof(methodinfo), ",{%d,(char*)\"%s\"}", met.id, met.name);
         } else {
-            sprintf(methodinfoptr, "{%d,(char*)\"%s\"}", met.id, met.name);
+            snprintf(methodinfoptr, methodinfo - methodinfoptr + sizeof(methodinfo), "{%d,(char*)\"%s\"}", met.id, met.name);
         }
         methodcount++;
         methodinfoptr += strlen(methodinfoptr);
     }
     if (noConstructor && !pureVirtual) {
-        sprintf(str, "\ncase %d: Invoke_%s_%d(__brokerbuf, peer); return true;", constructor.id, constructor.name,
+        snprintf(str, sizeof(str), "\ncase %d: Invoke_%s_%d(__brokerbuf, peer); return true;", constructor.id, constructor.name,
                 constructor.id);
         code += str;
 
         if (methodcount) {
-            sprintf(methodinfoptr, ",{%d,(char*)\"%s\"}", constructor.id, constructor.name);
+            snprintf(methodinfoptr, methodinfo - methodinfoptr + sizeof(methodinfo), ",{%d,(char*)\"%s\"}", constructor.id, constructor.name);
         } else {
-            sprintf(methodinfoptr, "{%d,(char*)\"%s\"}", constructor.id, constructor.name);
+            snprintf(methodinfoptr, methodinfo - methodinfoptr + sizeof(methodinfo), "{%d,(char*)\"%s\"}", constructor.id, constructor.name);
         }
         methodcount++;
     }
@@ -1098,7 +1098,7 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
 
     n = baseClass.size();
     for (i = 0; i < n; i++) {
-        sprintf(str, "\nelse if (%s%s::Invoke(method,__brokerbuf,peer)) return true;", baseClass[i]->base->GetName(),
+        snprintf(str, sizeof(str), "\nelse if (%s%s::Invoke(method,__brokerbuf,peer)) return true;", baseClass[i]->base->GetName(),
                 Class::POG_BROKER_POSTFIX);
         code += str;
     }
@@ -1116,12 +1116,12 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
 
     // Generate default constructor
     if (is_collective()) {
-        sprintf(str,
+        snprintf(str, sizeof(str),
                 "\n%s::%s()\n{\n  static popc_method_info _popc_minfo[%d] = { %s };\n  add_method_info(CLASSUID_%s, "
                 "_popc_minfo, %d);\n}\n",
                 brokername, brokername, methodcount, methodinfo, name, methodcount);
     } else {
-        sprintf(str,
+        snprintf(str, sizeof(str),
                 "\n%s::%s()\n{\nstatic pop_method_info _paroc_minfo[%d]={%s};\nAddMethodInfo(CLASSUID_%s, "
                 "_paroc_minfo, %d);\n}",
                 brokername, brokername, methodcount, methodinfo, name, methodcount);
@@ -1150,12 +1150,12 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
     }
 
     if (is_collective()) {
-        sprintf(tmpcode,
+        snprintf(tmpcode, sizeof(tmpcode),
                 "\nPOPC_GroupBroker* %s::_init() { return new %s; }\nPOPC_GroupBrokerFactory %s::_popc_factory(_init, "
                 "\"%s\");\n",
                 brokername, brokername, brokername, name);
     } else {
-        sprintf(tmpcode,
+        snprintf(tmpcode, sizeof(tmpcode),
                 "\npop_broker *%s::_init() { return new %s; }\npop_broker_factory %s::_popc_factory(_init, \"%s\");\n",
                 brokername, brokername, brokername, name);
     }
@@ -1163,7 +1163,7 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
 
     const string& fname = GetCodeFile()->GetFileName();
     if (endline > 0 && !fname.empty()) {
-        sprintf(str, "\n# %d \"%s\"\n", endline, fname.c_str());
+        snprintf(str, sizeof(str), "\n# %d \"%s\"\n", endline, fname.c_str());
         code += str;
     }
 

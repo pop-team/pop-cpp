@@ -328,14 +328,14 @@ char* Compile(const char* preprocessor, char* popcpp, char* cpp, const char** pr
     if (paroc_extension || strcmp(str, ".cc") == 0 || strcmp(str, ".C") == 0 || strcmp(str, ".cpp") == 0) {
         // Note: Generation of the various file names should be reviewed
         //      in case files are generated multiple times they may override each other (e.g. with make -j4)
-        sprintf(tmpfile1, "%s_popc1_%s", sdir, fname);
+        snprintf(tmpfile1, sizeof(tmpfile1), "%s_popc1_%s", sdir, fname);
 
         if (options.usepipe) {
-            sprintf(tmpfile2, "-");
+            snprintf(tmpfile2, sizeof(tmpfile2), "-");
         } else {
-            sprintf(tmpfile2, "%s_popc2_%s", sdir, fname);
+            snprintf(tmpfile2, sizeof(tmpfile2), "%s_popc2_%s", sdir, fname);
         }
-        sprintf(tmpfile3, "%s_popc3_%s", sdir, fname);
+        snprintf(tmpfile3, sizeof(tmpfile3), "%s_popc3_%s", sdir, fname);
         if (paroc_extension) {
             strcat(tmpfile1, ".cc");
             strcat(tmpfile2, ".cc");
@@ -375,7 +375,7 @@ char* Compile(const char* preprocessor, char* popcpp, char* cpp, const char** pr
 
 bool FindLib(const char* libpaths[1024], int count, const char* libname, char libfile[1024]) {
     for (int i = 0; i < count; i++) {
-        sprintf(libfile, "%s/lib%s.a", libpaths[i], libname);
+        snprintf(libfile, 1024, "%s/lib%s.a", libpaths[i], libname);
         if (popc_access(libfile, F_OK) == 0) {
             return true;
         }
@@ -390,9 +390,9 @@ int main(int argc, char* argv[]) {
     popc_options options;
 
 #ifndef HOST_CPU
-    sprintf(arch, "%s", "unknown");
+    snprintf(arch, sizeof(arch), "%s", "unknown");
 #else
-    sprintf(arch, "%s-%s", HOST_CPU, HOST_KERNEL);
+    snprintf(arch, sizeof(arch), "%s-%s", HOST_CPU, HOST_KERNEL);
 #endif
 
     // If no arguments specified prints usage
@@ -485,9 +485,9 @@ int main(int argc, char* argv[]) {
         strcpy(popcpp, tmp);
     } else {
 #ifdef __WIN32__
-        sprintf(popcpp, "%s/bin/popcpp.exe", popdir);
+        snprintf(popcpp, sizeof(popcpp), "%s/bin/popcpp.exe", popdir);
 #else
-        sprintf(popcpp, "%s/bin/popcpp", popdir);
+        snprintf(popcpp, sizeof(popcpp), "%s/bin/popcpp", popdir);
 #endif
     }
 
@@ -555,15 +555,15 @@ int main(int argc, char* argv[]) {
         link_cmd[link_count++] = tok;
     }
 
-    sprintf(buf, "-L%s/lib/core", popdir);
+    snprintf(buf, sizeof(buf), "-L%s/lib/core", popdir);
     link_cmd[link_count] = popc_strdup(buf);
     link_count++;
 
     // Add the library path for compilation
     if (options.psdyn) {
-        sprintf(buf, "-L%s/lib/pseudodynamic", popdir);
+        snprintf(buf, sizeof(buf), "-L%s/lib/pseudodynamic", popdir);
     } else {
-        sprintf(buf, "-L%s/lib/dynamic", popdir);
+        snprintf(buf, sizeof(buf), "-L%s/lib/dynamic", popdir);
     }
 
     link_cmd[link_count++] = popc_strdup(buf);
@@ -573,7 +573,7 @@ int main(int argc, char* argv[]) {
 
     // Add POP-C++ library path to the lib path
     char poplibdir[1024];
-    sprintf(poplibdir, "%s/lib", popdir);
+    snprintf(poplibdir, sizeof(poplibdir), "%s/lib", popdir);
     libpaths[libpaths_count++] = poplibdir;
 
 #ifdef POPC_EXTRA_LINK
@@ -629,20 +629,20 @@ int main(int argc, char* argv[]) {
     libpaths[libpaths_count++] = "/usr/lib";
     libpaths[libpaths_count++] = "/lib";
 
-    sprintf(buf, "-DPOP_ARCH=\"%s\"", arch);
+    snprintf(buf, sizeof(buf), "-DPOP_ARCH=\"%s\"", arch);
     cpp_opts[cpp_count++] = popc_strdup(buf);
 
     if (usepopmain) {
         cpp_opts[cpp_count++] = popc_strdup("-Dmain=popmain");
     }
 
-    sprintf(buf, "-I%s/include/core", popdir);
+    snprintf(buf, sizeof(buf), "-I%s/include/core", popdir);
     cpp_opts[cpp_count++] = popc_strdup(buf);
 
     if (options.psdyn) {
-        sprintf(buf, "-I%s/include/pseudodynamic", popdir);
+        snprintf(buf, sizeof(buf), "-I%s/include/pseudodynamic", popdir);
     } else {
-        sprintf(buf, "-I%s/include/dynamic", popdir);
+        snprintf(buf, sizeof(buf), "-I%s/include/dynamic", popdir);
     }
 
     cpp_opts[cpp_count++] = popc_strdup(buf);
@@ -697,27 +697,27 @@ int main(int argc, char* argv[]) {
     if (!compile) {
         if (usepopmain) {
             if (options.psdyn && object) {
-                sprintf(buf, "%s/lib/pseudodynamic/objmain.%s.o", popdir, "psdyn");
+                snprintf(buf, sizeof(buf), "%s/lib/pseudodynamic/objmain.%s.o", popdir, "psdyn");
             } else if (options.psdyn) {
-                sprintf(buf, "%s/lib/pseudodynamic/infmain.%s.o", popdir, "psdyn");
+                snprintf(buf, sizeof(buf), "%s/lib/pseudodynamic/infmain.%s.o", popdir, "psdyn");
             } else if ((options.xmp || options.mpi) && object) {
-                sprintf(buf, "%s/lib/dynamic/objmain.%s.o", popdir, "xmp");
+                snprintf(buf, sizeof(buf), "%s/lib/dynamic/objmain.%s.o", popdir, "xmp");
             } else if (object) {
-                sprintf(buf, "%s/lib/dynamic/objmain.%s.o", popdir, objmain);
+                snprintf(buf, sizeof(buf), "%s/lib/dynamic/objmain.%s.o", popdir, objmain);
             } else {
-                sprintf(buf, "%s/lib/dynamic/infmain.std.o", popdir);
+                snprintf(buf, sizeof(buf), "%s/lib/dynamic/infmain.std.o", popdir);
             }
             link_cmd[link_count++] = popc_strdup(buf);
         }
         if (!pop_nolib) {
             if (options.psdyn && (pop_static || staticlib)) {
-                sprintf(buf, "%s/lib/pseudodynamic/libpopc_common_psdyn.a", popdir);
+                snprintf(buf, sizeof(buf), "%s/lib/pseudodynamic/libpopc_common_psdyn.a", popdir);
             } else if (options.psdyn) {
                 strcpy(buf, "-lpopc_core");
                 link_cmd[link_count++] = popc_strdup(buf);
                 strcpy(buf, "-lpopc_common_psdyn");
             } else if (pop_static || staticlib) {
-                sprintf(buf, "%s/lib/dynamic/libpopc_common.a", popdir);
+                snprintf(buf, sizeof(buf), "%s/lib/dynamic/libpopc_common.a", popdir);
             } else {
                 // note: apparently the link order should be: -lpopc_core -lpopc_common -lpopc_core -lpopc_common due to
                 // cross dependancies
@@ -771,7 +771,7 @@ int main(int argc, char* argv[]) {
             // Link with advanced POP-C++ library
             if ((options.xmp || options.advanced || options.mpi) && !options.psdyn) {
                 if (pop_static || staticlib) {
-                    sprintf(buf, "%s/lib/dynamic/libpopc_advanced.a", popdir);
+                    snprintf(buf, sizeof(buf), "%s/lib/dynamic/libpopc_advanced.a", popdir);
                 } else {
                     strcpy(buf, "-lpopc_advanced");
                 }

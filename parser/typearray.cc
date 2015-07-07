@@ -81,31 +81,31 @@ void TypeArray::Marshal(char* varname, char* bufname, char* sizehelper, std::str
     }
 
     if (typebase->IsStandardType() || tmpsize == nullptr || strcmp(tmpsize, "1") == 0) {
-        sprintf(tmpvar, "(*((%s *)%s))", typebase->GetName(), varname);
+        snprintf(tmpvar, sizeof(tmpvar), "(*((%s *)%s))", typebase->GetName(), varname);
         typebase->Marshal(tmpvar, bufname, tmpsize, output);
     } else {
         char tmpcode[1024];
 
-        sprintf(tmpcode, "{ int _paroc_count%d=%s;\n", counter, tmpsize);
+        snprintf(tmpcode, sizeof(tmpcode), "{ int _paroc_count%d=%s;\n", counter, tmpsize);
         output += tmpcode;
 
         char paramname[256];
         if (!FindVarName(varname, paramname)) {
             strcpy(paramname, "unknown");
         }
-        sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",_paroc_count%d);\n", bufname, paramname, typebase->GetName(), counter);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",_paroc_count%d);\n", bufname, paramname, typebase->GetName(), counter);
         output += tmpcode;
 
-        sprintf(tmpcode, "for (%s *_pop_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _pop_elem%d++)\n{\n",
+        snprintf(tmpcode, sizeof(tmpcode), "for (%s *_pop_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _pop_elem%d++)\n{\n",
                 typebase->GetName(), counter, typebase->GetName(), varname, counter, counter, counter);
         output += tmpcode;
 
-        sprintf(tmpvar, "(*_pop_elem%d)", counter);
+        snprintf(tmpvar, sizeof(tmpvar), "(*_pop_elem%d)", counter);
         typebase->Marshal(tmpvar, bufname, nullptr, output);
         strcpy(tmpcode, "}\n}\n");
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Pop();\n", bufname);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Pop();\n", bufname);
         output += tmpcode;
 
         counter++;
@@ -125,31 +125,31 @@ void TypeArray::DeMarshal(char* varname, char* bufname, char* sizehelper, std::s
     }
 
     if (typebase->IsStandardType() || tmpsize == nullptr || strcmp(tmpsize, "1") == 0) {
-        sprintf(tmpvar, "(*((%s *)%s))", typebase->GetName(), varname);
+        snprintf(tmpvar, sizeof(tmpvar), "(*((%s *)%s))", typebase->GetName(), varname);
         typebase->DeMarshal(tmpvar, bufname, tmpsize, output);
     } else {
         char tmpcode[1024];
 
-        sprintf(tmpcode, "{ int _paroc_count%d=%s;\n", counter, tmpsize);
+        snprintf(tmpcode, sizeof(tmpcode), "{ int _paroc_count%d=%s;\n", counter, tmpsize);
         output += tmpcode;
 
         char paramname[256];
         if (!FindVarName(varname, paramname)) {
             strcpy(paramname, "unknown");
         }
-        sprintf(tmpcode, "%s.Push(\"%s\",\"%s\",_paroc_count%d);\n", bufname, paramname, typebase->GetName(), counter);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",_paroc_count%d);\n", bufname, paramname, typebase->GetName(), counter);
         output += tmpcode;
 
-        sprintf(tmpcode, "for (%s *_pop_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _pop_elem%d++)\n{\n",
+        snprintf(tmpcode, sizeof(tmpcode), "for (%s *_pop_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _pop_elem%d++)\n{\n",
                 typebase->GetName(), counter, typebase->GetName(), varname, counter, counter, counter);
         output += tmpcode;
 
-        sprintf(tmpvar, "(*_pop_elem%d)", counter);
+        snprintf(tmpvar, sizeof(tmpvar), "(*_pop_elem%d)", counter);
         typebase->DeMarshal(tmpvar, bufname, nullptr, output);
         strcpy(tmpcode, "}\n}\n");
         output += tmpcode;
 
-        sprintf(tmpcode, "%s.Pop();\n", bufname);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Pop();\n", bufname);
         output += tmpcode;
 
         counter++;

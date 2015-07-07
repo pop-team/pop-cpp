@@ -234,12 +234,12 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       tmp++;
     }
     bool constructor = pop_utils::isEqual(clname,tmp);
-    sprintf(newyytext,"%s_popcobject%s", clname, yytext+len);
+    snprintf(newyytext, sizeof(newyytext),"%s_popcobject%s", clname, yytext+len);
     othercodes += newyytext;
     Class *cl = thisCodeFile->FindClass(clname);
     if(!cl->is_collective()){
       //Create the string to be inserted in every paroc_object constructor
-      sprintf(thisBuf, "__POPThis_%s=new %s(GetAccessPointForThis()); __POPThis_%s->_popc_async=false;", clname, clname, clname);
+      snprintf(thisBuf, sizeof(thisBuf), "__POPThis_%s=new %s(GetAccessPointForThis()); __POPThis_%s->_popc_async=false;", clname, clname, clname);
     }
 
 
@@ -510,7 +510,7 @@ mutex[ \a\b\v\f\t\r\n]*"{" {
     {
       char str[256];
       int len=strlen(yytext)-6;
-      sprintf(str," { pop_mutex_locker _paroc_mutex%d(_pop_omutex); ",mutexCount++);
+      snprintf(str, sizeof(str)," { pop_mutex_locker _paroc_mutex%d(_pop_omutex); ",mutexCount++);
       othercodes += str;
       othercodes += std::string(yytext+5,len);
     }
