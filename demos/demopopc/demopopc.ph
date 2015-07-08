@@ -1,7 +1,7 @@
 #ifndef POPCOBJECT_PH_
 #define POPCOBJECT_PH_
 
-#include <timer.h>
+#include <pop_timer.h>
 
 parclass POPCobject {
     classuid(1500);
