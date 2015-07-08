@@ -23,7 +23,7 @@ DataType::DataType(char* tname) {
         char str1[1024];
         char sep[] = " \n\t\r";
 
-        strcpy(str, tname);
+        snprintf(str, sizeof(str), "%s", tname);
         char* tmp = strtok(str, sep);
         *str1 = 0;
         while (tmp != nullptr) {
@@ -60,8 +60,8 @@ void DataType::Marshal(char* varname, char* bufname, char* sizehelper, std::stri
     if (strcmp(GetName(), "void") != 0) {
         char paramname[256];
 
-        if (!FindVarName(varname, paramname)) {
-            strcpy(paramname, "unkown");
+        if (!FindVarName(varname, paramname, sizeof(paramname))) {
+            snprintf(paramname, sizeof(paramname), "unkown");
         }
 
         char tmpcode[1024];
@@ -83,8 +83,8 @@ void DataType::DeMarshal(char* varname, char* bufname, char* sizehelper, std::st
     if (strcmp(GetName(), "void") != 0) {
         char paramname[256];
 
-        if (!FindVarName(varname, paramname)) {
-            strcpy(paramname, "unkown");
+        if (!FindVarName(varname, paramname, sizeof(paramname))) {
+            snprintf(paramname, sizeof(paramname), "unkown");
         }
 
         char tmpcode[1024];
@@ -117,11 +117,11 @@ bool DataType::GetCastType(char* output) {
     return GetDeclaration(nullptr, output);
 }
 
-void DataType::GetExpandType(char* output) {
+void DataType::GetExpandType(char* output, size_t buffer_length) {
     if (name == nullptr) {
         *output = 0;
     } else {
-        strcpy(output, name);
+        snprintf(output, buffer_length, "%s", name);
     }
 }
 
@@ -169,14 +169,14 @@ bool DataType::IsParClass() {
 bool DataType::Same(DataType* other) {
     char str1[1024];
     char str2[1024];
-    GetExpandType(str1);
-    other->GetExpandType(str2);
+    GetExpandType(str1, sizeof(str1));
+    other->GetExpandType(str2, sizeof(str2));
     return (strcmp(str1, str2) == 0);
 }
 
 bool DataType::Same(char* tname) {
     char str1[1024];
-    GetExpandType(str1);
+    GetExpandType(str1, sizeof(str1));
     return (strcmp(str1, tname) == 0);
 }
 
@@ -200,14 +200,14 @@ CodeFile* DataType::GetOwnerFile() {
     return codefile;
 }
 
-bool DataType::FindVarName(const char* var, char name[256]) {
+bool DataType::FindVarName(const char* var, char name[256], size_t buffer_length) {
     if (var == nullptr) {
         return false;
     }
 
     char tmp[1024];
     char* curname = nullptr;
-    strcpy(tmp, var);
+    snprintf(tmp, sizeof(tmp), "%s", var);
     char* tok = curname = strtok(tmp, " .->(*)<>[]");
     while (tok != nullptr) {
         curname = tok;
@@ -216,7 +216,7 @@ bool DataType::FindVarName(const char* var, char name[256]) {
     if (curname == nullptr) {
         return false;
     }
-    strcpy(name, curname);
+    snprintf(name, buffer_length, "%s", curname);
     return true;
 }
 /*

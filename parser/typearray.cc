@@ -90,8 +90,8 @@ void TypeArray::Marshal(char* varname, char* bufname, char* sizehelper, std::str
         output += tmpcode;
 
         char paramname[256];
-        if (!FindVarName(varname, paramname)) {
-            strcpy(paramname, "unknown");
+        if (!FindVarName(varname, paramname, sizeof(paramname))) {
+            snprintf(paramname, sizeof(paramname), "unknown");
         }
         snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",_paroc_count%d);\n", bufname, paramname, typebase->GetName(), counter);
         output += tmpcode;
@@ -102,7 +102,7 @@ void TypeArray::Marshal(char* varname, char* bufname, char* sizehelper, std::str
 
         snprintf(tmpvar, sizeof(tmpvar), "(*_pop_elem%d)", counter);
         typebase->Marshal(tmpvar, bufname, nullptr, output);
-        strcpy(tmpcode, "}\n}\n");
+        snprintf(tmpcode, sizeof(tmpcode), "}\n}\n");
         output += tmpcode;
 
         snprintf(tmpcode, sizeof(tmpcode), "%s.Pop();\n", bufname);
@@ -134,8 +134,8 @@ void TypeArray::DeMarshal(char* varname, char* bufname, char* sizehelper, std::s
         output += tmpcode;
 
         char paramname[256];
-        if (!FindVarName(varname, paramname)) {
-            strcpy(paramname, "unknown");
+        if (!FindVarName(varname, paramname, sizeof(paramname))) {
+            snprintf(paramname, sizeof(paramname), "unknown");
         }
         snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",_paroc_count%d);\n", bufname, paramname, typebase->GetName(), counter);
         output += tmpcode;
@@ -146,7 +146,7 @@ void TypeArray::DeMarshal(char* varname, char* bufname, char* sizehelper, std::s
 
         snprintf(tmpvar, sizeof(tmpvar), "(*_pop_elem%d)", counter);
         typebase->DeMarshal(tmpvar, bufname, nullptr, output);
-        strcpy(tmpcode, "}\n}\n");
+        snprintf(tmpcode, sizeof(tmpcode), "}\n}\n");
         output += tmpcode;
 
         snprintf(tmpcode, sizeof(tmpcode), "%s.Pop();\n", bufname);
@@ -195,8 +195,8 @@ bool TypeArray::GetCastType(char* output) {
     return true;
 }
 
-void TypeArray::GetExpandType(char* output) {
-    typebase->GetExpandType(output);
+void TypeArray::GetExpandType(char* output, size_t buffer_length) {
+    typebase->GetExpandType(output, buffer_length);
     strcat(output, cardinal);
 }
 

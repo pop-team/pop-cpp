@@ -74,7 +74,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     t2=strrchr(t1,'"');
     if (t2!=NULL) {
       *t2=0;
-      strcpy(filename, t1);
+      snprintf(filename, sizeof(filename), "%s", t1);
       thisCodeFile->SetFileName(filename);
       *t2='"';
     }
@@ -124,7 +124,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     t2 = strchr(t1,'"');
     if (t2 != NULL) {
       *t2=0;
-      strcpy(filename,t1);
+      snprintf(filename, sizeof(filename), "%s",t1);
       if (thisCodeFile->GetFileName().empty()) {
         thisCodeFile->SetFileName(filename);
       }
@@ -143,7 +143,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
     t2 = strchr(t1,'"');
     if (t2 != NULL) {
       *t2=0;
-      strcpy(filename,t1);
+      snprintf(filename, sizeof(filename), "%s",t1);
       if (thisCodeFile->GetFileName().empty()) {
         thisCodeFile->SetFileName(filename);
       }
@@ -298,7 +298,7 @@ id [_a-zA-Z][_a-zA-Z0-9]*
       othercodes += thisBuf;
 	  }
   } else {
-    strcpy(newyytext,yytext);
+    snprintf(newyytext, sizeof(newyytext), "%s",yytext);
     othercodes += yytext;
   }
 

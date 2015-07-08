@@ -22,7 +22,7 @@ void PackObject::GenerateCode(std::string& output) {
     output += str;
 
     // New code: BEGIN===================
-    strcpy(str, "void paroc_registerbroker() {\n");
+    snprintf(str, sizeof(str), "void paroc_registerbroker() {\n");
     output += str;
     int n = objects.size();
     for (int i = 0; i < n; i++) {
@@ -30,18 +30,18 @@ void PackObject::GenerateCode(std::string& output) {
                 objects[i].c_str());
         output += str;
     }
-    strcpy(str, "}\n");
+    snprintf(str, sizeof(str), "}\n");
     output += str;
 
     // Check if the object broker is packed
-    strcpy(str, "bool CheckIfPacked(const char *objname)\n{\n\tif (objname==0) return false;\n");
+    snprintf(str, sizeof(str), "bool CheckIfPacked(const char *objname)\n{\n\tif (objname==0) return false;\n");
     output += str;
     int sz = objects.size();
     for (int j = 0; j < sz; j++) {
         snprintf(str, sizeof(str), "\n\tif (pop_utils::isEqual(objname, \"%s\")) return true;", objects[j].c_str());
         output += str;
     }
-    strcpy(str, "\n\treturn false;\n}\n");
+    snprintf(str, sizeof(str), "\n\treturn false;\n}\n");
     output += str;
     if (endline > 0 && !fname.empty()) {
         snprintf(str, sizeof(str), "\n# %d \"%s\"\n", endline, fname.c_str());

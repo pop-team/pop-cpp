@@ -41,8 +41,8 @@ int TypeStruct::CanMarshal() {
 void TypeStruct::Marshal(char* varname, char* bufname, char* /*sizehelper*/, std::string& output) {
     char paramname[256], tmpcode[1024];
 
-    if (!FindVarName(varname, paramname)) {
-        strcpy(paramname, "unknown");
+    if (!FindVarName(varname, paramname, sizeof(paramname))) {
+        snprintf(paramname, sizeof(paramname), "unknown");
     }
     snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\", 1);\n", bufname, paramname, GetName());
     output += tmpcode;
@@ -59,8 +59,8 @@ void TypeStruct::Marshal(char* varname, char* bufname, char* /*sizehelper*/, std
 void TypeStruct::DeMarshal(char* varname, char* bufname, char* /*sizehelper*/, std::string& output) {
     char paramname[256], tmpcode[1024];
 
-    if (!FindVarName(varname, paramname)) {
-        strcpy(paramname, "unknown");
+    if (!FindVarName(varname, paramname, sizeof(paramname))) {
+        snprintf(paramname, sizeof(paramname), "unknown");
     }
     snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",1);\n", bufname, paramname, GetName());
     output += tmpcode;

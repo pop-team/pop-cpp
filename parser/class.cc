@@ -42,7 +42,7 @@ Class::Class(char* clname, CodeFile* file) : CodeData(file), DataType(clname), c
     constrcutor_id = 0;
 
     startline = endline = 0;
-    strcpy(constructor.name, clname);
+    snprintf(constructor.name, sizeof(constructor.name), "%s", clname);
     constructor.id = 10;
 
     noConstructor = true;
@@ -103,8 +103,8 @@ void Class::Marshal(char* varname, char* bufname, char* /*sizehelper*/, std::str
     char tmpstr[1024];
     char paramname[256];
 
-    if (!FindVarName(varname, paramname)) {
-        strcpy(paramname, "unkown");
+    if (!FindVarName(varname, paramname, sizeof(paramname))) {
+        snprintf(paramname, sizeof(paramname), "unkown");
     }
     snprintf(tmpstr, sizeof(tmpstr), "%s.Push(\"%s\",\"pop_interface\",1);\n", bufname, paramname);
     output += tmpstr;
@@ -127,8 +127,8 @@ void Class::DeMarshal(char* varname, char* bufname, char* /*sizehelper*/, std::s
     char tmpstr[1024];
     char paramname[256];
 
-    if (!FindVarName(varname, paramname)) {
-        strcpy(paramname, "unkown");
+    if (!FindVarName(varname, paramname, sizeof(paramname))) {
+        snprintf(paramname, sizeof(paramname), "unkown");
     }
     snprintf(tmpstr, sizeof(tmpstr), "%s.Push(\"%s\",\"pop_interface\",1);\n", bufname, paramname);
     output += tmpstr;
@@ -363,7 +363,7 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
                 for (std::size_t j = 0; j < nb; j++) {
                     snprintf(tmpcode, sizeof(tmpcode), "  ");
                     Param& p = *((*met).params[j]);
-                    p.DeclareParam(tmpcode, false);
+                    p.DeclareParam(tmpcode, false, sizeof(tmpcode));
                     strcat(tmpcode, ";\n");
                     code += tmpcode;
                 }
@@ -378,7 +378,7 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
                     code += ", ";
                     snprintf(tmpcode, sizeof(tmpcode), " ");
                     Param& p = *((*met).params[j]);
-                    p.DeclareParam(tmpcode, false);
+                    p.DeclareParam(tmpcode, false, sizeof(tmpcode));
                     code += tmpcode;
                 }
 
@@ -433,7 +433,7 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
                     Constructor* c = dynamic_cast<Constructor*>(memberList[i]);
                     snprintf(tmpcode, sizeof(tmpcode), "\n  case %d:", (*c).id);
                     code += tmpcode;
-                    strcpy(tmpcode, "\n    _popc_constructor(");
+                    snprintf(tmpcode, sizeof(tmpcode), "\n    _popc_constructor(");
                     code += tmpcode;
                     auto nb = (*c).params.size();
                     for (std::size_t j = 0; j < nb; j++) {
@@ -444,12 +444,12 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
                         }
                         code += tmpcode;
                     }
-                    strcpy(tmpcode, ");\n    break;");
+                    snprintf(tmpcode, sizeof(tmpcode), ");\n    break;");
                     code += tmpcode;
                 }
             }
         }
-        strcpy(tmpcode, "\n  }\n}");
+        snprintf(tmpcode, sizeof(tmpcode), "\n  }\n}");
         code += tmpcode;
 
         snprintf(tmpcode, sizeof(tmpcode), "\%s& %s::operator[] (const int index) {\n  set_default_rank(index);\n  return (*this);\n}\n",
@@ -559,7 +559,7 @@ bool Class::generate_broker_header_pog(std::string& code) {
     snprintf(tmpcode, sizeof(tmpcode),
             "\npublic:\n  static POPC_GroupBroker *_init();\n  static POPC_GroupBrokerFactory _popc_factory;\n");
     code += tmpcode;
-    strcpy(str, "\n}\n;");
+    snprintf(str, sizeof(str), "\n}\n;");
     code += str;
 
     const string& fname = GetCodeFile()->GetFileName();
@@ -587,7 +587,7 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
         code += tmpcode;
     }
 
-    strcpy(str, name);
+    snprintf(str, sizeof(str), "%s", name);
 
     if (!interface) {
         strcat(str, POG_OBJECT_POSTFIX);
@@ -673,7 +673,7 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
             prog->FindAllBaseClass(*this, bases,true);
 
             n=bases.size();
-            strcpy(tmpcode," : ");
+            snprintf(tmpcode, sizeof(tmpcode)," : ");
             for (int j=0;j<n;j++)
             {
                 strcat(tmpcode,bases[j]->GetName());
@@ -683,7 +683,7 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
             code += tmpcode;
         }
 
-        strcpy(str," { Bind(p); };\n");
+        snprintf(str, sizeof(str)," { Bind(p); };\n");
         code += str;
 
 
@@ -694,14 +694,14 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
         snprintf(str, sizeof(str),"\n%s(const %s &inf)",name, my_interface_base);
         code += str;
         code += tmpcode;
-        strcpy(str," { SetOD(inf.GetOD()); Bind(inf.GetAccessPoint()); };\n");
+        snprintf(str, sizeof(str)," { SetOD(inf.GetOD()); Bind(inf.GetAccessPoint()); };\n");
         code += str;
 
         //Generate constructor from the object side binding
         snprintf(str, sizeof(str),"\n%s(const pop_object *obj)",name);
         code += str;
         code += tmpcode;
-        strcpy(str," { Bind(obj->GetAccessPoint());};\n");
+        snprintf(str, sizeof(str)," { Bind(obj->GetAccessPoint());};\n");
         code += str;*/
 
         snprintf(str, sizeof(str), "\n  ~%s() {};", name);
@@ -726,7 +726,7 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
     // Add the declaration of the __POPThis variable for support of the "this" keyword
     snprintf(str, sizeof(str), "\npublic:\n  %s* __POPThis_%s; \n", name, name);
     code += str;
-    strcpy(str, "\n};\n");
+    snprintf(str, sizeof(str), "\n};\n");
     code += str;
 
     if (endline > 0 && !fname.empty()) {
@@ -747,7 +747,7 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
         code += str;
     }
 
-    strcpy(str, name);
+    snprintf(str, sizeof(str), "%s", name);
 
     if (!interface) {
         strcat(str, OBJ_POSTFIX);
@@ -856,7 +856,7 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
             prog->FindAllBaseClass(*this, bases, true);
 
             n = bases.size();
-            strcpy(tmpcode, " : ");
+            snprintf(tmpcode, sizeof(tmpcode), " : ");
             for (int j = 0; j < n; j++) {
                 strcat(tmpcode, bases[j]->GetName());
                 if (j < n - 1) {
@@ -868,7 +868,7 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
             code += tmpcode;
         }
 
-        strcpy(str, " { Bind(p); };\n");
+        snprintf(str, sizeof(str), " { Bind(p); };\n");
         code += str;
 
         // If no constructor, generate default for interface...
@@ -880,14 +880,14 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
         snprintf(str, sizeof(str), "\n%s(const %s &inf)", name, my_interface_base);
         code += str;
         code += tmpcode;
-        strcpy(str, " { SetOD(inf.GetOD()); Bind(inf.GetAccessPoint()); };\n");
+        snprintf(str, sizeof(str), " { SetOD(inf.GetOD()); Bind(inf.GetAccessPoint()); };\n");
         code += str;
 
         // Generate constructor from the object side binding
         snprintf(str, sizeof(str), "\n%s(const pop_object *obj)", name);
         code += str;
         code += tmpcode;
-        strcpy(str, " { Bind(obj->GetAccessPoint());};\n");
+        snprintf(str, sizeof(str), " { Bind(obj->GetAccessPoint());};\n");
         code += str;
 
         snprintf(str, sizeof(str), "\n~%s()", name);
@@ -917,7 +917,7 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
         }
     }
 
-    strcpy(str, "\n};\n");
+    snprintf(str, sizeof(str), "\n};\n");
     code += str;
 
     if (endline > 0 && !fname.empty()) {
@@ -993,7 +993,7 @@ bool Class::GenerateBrokerHeader(std::string& code /*, bool isPOPCPPCompilation*
     snprintf(tmpcode, sizeof(tmpcode), "\npublic:\nstatic pop_broker *_init();\nstatic pop_broker_factory _popc_factory;\n");
     code += tmpcode;
 
-    strcpy(str, "\n}\n;");
+    snprintf(str, sizeof(str), "\n}\n;");
 
     code += str;
 
@@ -1093,7 +1093,7 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
         methodcount++;
     }
 
-    strcpy(str, "\n    default:\n      return false;\n    }\n  }");
+    snprintf(str, sizeof(str), "\n    default:\n      return false;\n    }\n  }");
     code += str;
 
     n = baseClass.size();
@@ -1103,12 +1103,12 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
         code += str;
     }
     if (n) {
-        strcpy(str, "\nreturn false;\n}");
+        snprintf(str, sizeof(str), "\nreturn false;\n}");
     } else {
         if (is_collective()) {
-            strcpy(str, "\n  return POPC_GroupBroker::invoke(method, _popc_buffer, _popc_connection);\n}\n");
+            snprintf(str, sizeof(str), "\n  return POPC_GroupBroker::invoke(method, _popc_buffer, _popc_connection);\n}\n");
         } else {
-            strcpy(str, "\nreturn pop_broker::Invoke(method,__brokerbuf,peer);\n}\n");
+            snprintf(str, sizeof(str), "\nreturn pop_broker::Invoke(method,__brokerbuf,peer);\n}\n");
         }
     }
 

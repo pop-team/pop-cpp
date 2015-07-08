@@ -1127,7 +1127,7 @@ attribute_name: pointer_specifier ref_specifier ID array_declarator
     currentClass->AddMember(t);
     Param *tparam = t->NewAttribute();
     DataType *type;
-    strcpy(tparam->name,GetToken($3));
+    snprintf(tparam->name, sizeof(tparam->name), "%s", GetToken($3));
 
     if ($1==0) {
         type=currenttype;
@@ -1289,7 +1289,7 @@ template_arg: ID pointer_specifier array_declarator ref_specifier
     }
   else
     {
-      strcpy(tmp, GetToken($1));
+      snprintf(tmp, sizeof(tmp), "%s", GetToken($1));
       for (int i=0;i<$2; i++) strcat(tmp, "*");
       if ($3!=-1) strcat(tmp,GetToken($3));
       if ($4) strcat(tmp,"&");
@@ -1304,7 +1304,7 @@ template_arg: ID pointer_specifier array_declarator ref_specifier
     }
   else
     {
-      strcpy(tmp, GetToken($1));
+      snprintf(tmp, sizeof(tmp), "%s", GetToken($1));
       for (int i=0;i<$2; i++) strcat(tmp, "*");
       if ($3!=-1) strcat(tmp,GetToken($3));
       if ($4) strcat(tmp,"&");
@@ -1404,7 +1404,7 @@ constructor_name: ID
   method=new Constructor(currentClass,accessmodifier);
   method->SetLineInfo(linenumber-1);
 
-  strcpy(method->name,GetToken($1));
+  snprintf(method->name, sizeof(method->name), "%s",GetToken($1));
 }
 ;
 
@@ -1415,7 +1415,7 @@ destructor_definition: '~' destructor_name '('  ')'
       errormsg("Bad declaration of destructor\n");
       exit(1);
     }
-    strcpy(method->name,currentClass->GetName());
+    snprintf(method->name, sizeof(method->name), "%s",currentClass->GetName());
 }
 | VIRTUAL_KEYWORD '~' destructor_name '('  ')'
 {
@@ -1424,7 +1424,7 @@ destructor_definition: '~' destructor_name '('  ')'
       errormsg("Bad declaration of destructor\n");
       exit(1);
     }
-    strcpy(method->name,currentClass->GetName());
+    snprintf(method->name, sizeof(method->name), "%s",currentClass->GetName());
     method->isVirtual=true;
 
 }
@@ -1435,7 +1435,7 @@ destructor_name: ID
   method = new Destructor(currentClass, accessmodifier);
   method->SetLineInfo(linenumber - 1);
   currentClass->AddMember(method);
-  strcpy(method->name, GetToken($1));
+  snprintf(method->name, sizeof(method->name), "%s", GetToken($1));
 }
 ;
 
@@ -1443,7 +1443,7 @@ destructor_name: ID
 method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')'
 {
   //Old data:  argument_type function_name
-  strcpy(method->returnparam.name,"_RemoteRet");
+  snprintf(method->returnparam.name, sizeof(method->returnparam.name), "%s","_RemoteRet");
 
   DataType *type=returntype;
   if ($2>0) {
@@ -1458,7 +1458,7 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
 }
 |  fct_specifier decl_specifier  pointer_specifier ref_specifier function_name '(' argument_declaration ')'
 {
-  strcpy(method->returnparam.name, "_RemoteRet");
+  snprintf(method->returnparam.name, sizeof(method->returnparam.name), "%s", "_RemoteRet");
 
   DataType *type = returntype;
   if ($3 > 0) {
@@ -1499,11 +1499,11 @@ method_definition: decl_specifier pointer_specifier ref_specifier function_name 
     }
   method->returnparam.SetType(type);
 
-  strcpy(method->returnparam.name,"_RemoteRet");
+  snprintf(method->returnparam.name, sizeof(method->returnparam.name), "%s","_RemoteRet");
 }
 | fct_specifier  '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')'
 {
-  strcpy(method->returnparam.name,"_RemoteRet");
+  snprintf(method->returnparam.name, sizeof(method->returnparam.name), "%s","_RemoteRet");
 
   DataType *type=returntype;
   if ($6>0)
@@ -1741,7 +1741,7 @@ function_name: ID
   method=new Method(currentClass,accessmodifier);
   method->SetLineInfo(linenumber-1);
   currentClass->AddMember(method);
-  strcpy(method->name,GetToken($1));
+  snprintf(method->name, sizeof(method->name), "%s",GetToken($1));
   returntype=currenttype;
   currenttype=NULL;
 }
@@ -1953,7 +1953,7 @@ arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_s
             exit(1);
         }
 
-        strcpy(tmpSize, size_variable_name.c_str());
+        snprintf(tmpSize, sizeof(tmpSize),  "%s",size_variable_name.c_str());
         UpdateMarshalParam(67,t);
         type=new TypePtr(NULL, 1, type, constPointerPositions);
         thisCodeFile->AddDataType(type);
@@ -1964,12 +1964,12 @@ arg_declaration: marshal_decl cv_qualifier decl_specifier cv_qualifier pointer_s
 
     t->SetType(type);
     if ($7 != -1) {
-        strcpy(t->name,GetToken($7));
+        snprintf(t->name, sizeof(t->name), "%s",GetToken($7));
     } else {
         if(strcmp("void", t->GetType()->GetName()) == 0){
             t->isVoid = true;
         } else {
-            snprintf(t->name, sizeof(t)->name,"V_%d",++counter);
+            snprintf(t->name, sizeof(t->name),"V_%d",++counter);
         }
     }
 
@@ -2009,12 +2009,12 @@ marshal_opt: INPUT
 }
 | SIZE '=' expr_decl
 {
-  strcpy(tmpSize,GetToken($3));
+  snprintf(tmpSize, sizeof(tmpSize), "%s",GetToken($3));
   $$=PARAMSIZE;
 }
 | PROC '=' ID
 {
-  strcpy(tmpProc,GetToken($3));
+  snprintf(tmpProc, sizeof(tmpProc), "%s",GetToken($3));
   $$=USERPROC;
 }
 ;
@@ -2390,7 +2390,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
             return errno;
         }
 
-        strcpy(filename, infile);
+        snprintf(filename, sizeof(filename), "%s", infile);
     }
 
     linenumber = 1;
@@ -2458,7 +2458,7 @@ int ParseFile(char *infile, char *outfile, bool client, bool broker, bool /*isWa
 void setReturnParam(int pointer, int ref, int const_virtual)
 {
     //Old data:  argument_type function_name
-    strcpy(method->returnparam.name,"_RemoteRet");
+    snprintf(method->returnparam.name, sizeof(method->returnparam.name), "%s","_RemoteRet");
 
     DataType *type=returntype;
     if (pointer>0)

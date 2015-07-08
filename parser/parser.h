@@ -250,7 +250,7 @@ public:
 
     bool CanMarshal();
 
-    bool DeclareParam(char* output, bool header);
+    bool DeclareParam(char* output, bool header, size_t buffer_length);
     bool DeclareVariable(char* output, bool& reformat, bool allocmem);
     bool DeclareVariable(char* output);
 
@@ -286,7 +286,7 @@ public:
     ObjDesc();
     ~ObjDesc();
 
-    void Generate(char* code);
+    void Generate(char* code, size_t buffer_length);
     void SetCode(char* code);
 
 protected:

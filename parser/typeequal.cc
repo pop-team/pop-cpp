@@ -66,6 +66,6 @@ bool TypeEqual::GetCastType(char* output) {
     }
 }
 
-void TypeEqual::GetExpandType(char* output) {
-    type->GetExpandType(output);
+void TypeEqual::GetExpandType(char* output, size_t buffer_length) {
+    type->GetExpandType(output, buffer_length);
 }

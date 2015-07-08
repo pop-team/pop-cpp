@@ -76,8 +76,8 @@ void TypeTemplate::Marshal(char* varname, char* bufname, char* /*sizehelper*/, s
     if ((strcmp(name, "vector") == 0 || strcmp(name, "std::vector") == 0) && elements[0]->IsStandardType()) {
         char paramname[256];
 
-        if (!FindVarName(elements[0]->GetName(), paramname)) {
-            strcpy(paramname, "unkown");
+        if (!FindVarName(elements[0]->GetName(), paramname, sizeof(paramname))) {
+            snprintf(paramname, sizeof(paramname), "unkown");
         }
 
         snprintf(tmpcode, sizeof(tmpcode), "int %s_size=%s.size();\n", iterator, varname);
@@ -159,8 +159,8 @@ void TypeTemplate::DeMarshal(char* varname, char* bufname, char* /*sizehelper*/,
     if ((strcmp(name, "vector") == 0 || strcmp(name, "std::vector") == 0) && elements[0]->IsStandardType()) {
         char paramname[256];
 
-        if (!FindVarName(varname, paramname)) {
-            strcpy(paramname, "unkown");
+        if (!FindVarName(varname, paramname, sizeof(paramname))) {
+            snprintf(paramname, sizeof(paramname), "unkown");
         }
 
         snprintf(tmpcode, sizeof(tmpcode),

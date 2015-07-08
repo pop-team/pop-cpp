@@ -264,12 +264,12 @@ int cxx_compiler(char* cpp, const char** cpp_opt, const char* source, char** des
     cmd[count++] = "-o";
 
     if (!*dest) {
-        strcpy(output, source);
+        snprintf(output, sizeof(output), "%s", source);
         str = strrchr(output, '.');
         if (strcmp(str, ".ph") == 0) {
-            strcpy(str, ".stub.o");
+            snprintf(str, str - output + sizeof(output), ".stub.o");
         } else {
-            strcpy(str, ".o");
+            snprintf(str, str - output + sizeof(output), ".o");
         }
         *dest = output;
         cmd[count++] = output;
@@ -472,17 +472,17 @@ int main(int argc, char* argv[]) {
     // Check for POP-C++ installation directory
     const char* tmp;
     if ((tmp = pop_utils::checkremove(&argc, &argv, "-popcdir="))) {
-        strcpy(popdir, tmp);
+        snprintf(popdir, sizeof(popdir), "%s", tmp);
     } else if ((tmp = getenv("POPC_LOCATION"))) {
-        strcpy(popdir, tmp);
+        snprintf(popdir, sizeof(popdir), "%s", tmp);
     }
 
     // Detect the POPC preprocessor
 
     if ((tmp = pop_utils::checkremove(&argc, &argv, "-popcpp="))) {
-        strcpy(popcpp, tmp);
+        snprintf(popcpp, sizeof(popcpp), "%s", tmp);
     } else if ((tmp = getenv("POPC_PP"))) {
-        strcpy(popcpp, tmp);
+        snprintf(popcpp, sizeof(popcpp), "%s", tmp);
     } else {
 #ifdef __WIN32__
         snprintf(popcpp, sizeof(popcpp), "%s/bin/popcpp.exe", popdir);
@@ -503,31 +503,31 @@ int main(int argc, char* argv[]) {
 
     // Detect C++ preprocessor
     if ((tmp = pop_utils::checkremove(&argc, &argv, "-cpp="))) {
-        strcpy(cpp, tmp);
+        snprintf(cpp, sizeof(cpp), "%s", tmp);
     } else if (options.xmp || options.mpi) {
-        strcpy(cpp, mpicpp);
+        snprintf(cpp, sizeof(cpp), "%s", mpicpp);
     } else if ((tmp = getenv("POPC_CPP"))) {
-        strcpy(cpp, tmp);
+        snprintf(cpp, sizeof(cpp), "%s", tmp);
     }
 
     // Detect C++ compiler
     if ((tmp = pop_utils::checkremove(&argc, &argv, "-cxx="))) {
-        strcpy(popcxx, tmp);
+        snprintf(popcxx, sizeof(popcxx), "%s", tmp);
     } else if (options.xmp || options.mpi) {
-        strcpy(popcxx, mpicxx);
+        snprintf(popcxx, sizeof(popcxx), "%s", mpicxx);
     } else if ((tmp = getenv("POPC_CXX"))) {
-        strcpy(popcxx, tmp);
+        snprintf(popcxx, sizeof(popcxx), "%s", tmp);
     }
 
     // Detect C++ linker
     if ((tmp = pop_utils::checkremove(&argc, &argv, "-popcld="))) {
-        strcpy(popld, tmp);
+        snprintf(popld, sizeof(popld), "%s", tmp);
     } else if (options.xmp || options.mpi) {
-        strcpy(popld, mpicxx);
+        snprintf(popld, sizeof(popld), "%s", mpicxx);
     } else if ((tmp = getenv("POPC_LD"))) {
-        strcpy(popld, tmp);
+        snprintf(popld, sizeof(popld), "%s", tmp);
     } else {
-        strcpy(popld, popcxx);
+        snprintf(popld, sizeof(popld), "%s", popcxx);
     }
 
     const char* cpp_opts[1000];
@@ -594,7 +594,7 @@ int main(int argc, char* argv[]) {
                 exit(1);
             }
             argv[i][0] = 0;
-            strcpy(outputfile, argv[i + 1]);
+            snprintf(outputfile, sizeof(outputfile), "%s", argv[i + 1]);
             i++;
             argv[i][0] = 0;
         } else if (strcmp(argv[i], "-object") == 0) {
@@ -602,7 +602,7 @@ int main(int argc, char* argv[]) {
             object = true;
         } else if (strncmp(argv[i], "-object=", 8) == 0) {
             if (argv[i][8] != 0) {
-                strcpy(objmain, argv[i] + 8);
+                snprintf(objmain, sizeof(objmain), "%s", argv[i] + 8);
             }
             argv[i][0] = 0;
             object = true;
@@ -713,29 +713,29 @@ int main(int argc, char* argv[]) {
             if (options.psdyn && (pop_static || staticlib)) {
                 snprintf(buf, sizeof(buf), "%s/lib/pseudodynamic/libpopc_common_psdyn.a", popdir);
             } else if (options.psdyn) {
-                strcpy(buf, "-lpopc_core");
+                snprintf(buf, sizeof(buf), "-lpopc_core");
                 link_cmd[link_count++] = popc_strdup(buf);
-                strcpy(buf, "-lpopc_common_psdyn");
+                snprintf(buf, sizeof(buf), "-lpopc_common_psdyn");
             } else if (pop_static || staticlib) {
                 snprintf(buf, sizeof(buf), "%s/lib/dynamic/libpopc_common.a", popdir);
             } else {
                 // note: apparently the link order should be: -lpopc_core -lpopc_common -lpopc_core -lpopc_common due to
                 // cross dependancies
-                strcpy(buf, "-lpopc_core");
+                snprintf(buf, sizeof(buf), "-lpopc_core");
                 link_cmd[link_count++] = popc_strdup(buf);
 #ifndef __WIN32__
-                strcpy(buf, "-lpopc_common");
+                snprintf(buf, sizeof(buf), "-lpopc_common");
                 link_cmd[link_count++] = popc_strdup(buf);
                 // note: added these 2 lines to solve cross-dependancies for more complex compilation cases
-                strcpy(buf, "-lpopc_core");
+                snprintf(buf, sizeof(buf), "-lpopc_core");
                 link_cmd[link_count++] = popc_strdup(buf);
-                strcpy(buf, "-lpopc_common");
+                snprintf(buf, sizeof(buf), "-lpopc_common");
 #else
-                strcpy(buf, "-lpopc_common -lws2_32 -lxdr");
+                snprintf(buf, sizeof(buf), "-lpopc_common -lws2_32 -lxdr");
 #endif
             }
             link_cmd[link_count++] = popc_strdup(buf);
-            strcpy(buf, "-lpopc_core");
+            snprintf(buf, sizeof(buf), "-lpopc_core");
             link_cmd[link_count++] = popc_strdup(buf);
 
             char tmplibfile[1024];
@@ -773,7 +773,7 @@ int main(int argc, char* argv[]) {
                 if (pop_static || staticlib) {
                     snprintf(buf, sizeof(buf), "%s/lib/dynamic/libpopc_advanced.a", popdir);
                 } else {
-                    strcpy(buf, "-lpopc_advanced");
+                    snprintf(buf, sizeof(buf), "-lpopc_advanced");
                 }
                 link_cmd[link_count++] = popc_strdup(buf);
             }

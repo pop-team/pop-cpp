@@ -46,8 +46,8 @@ void TypeSeqClass::Marshal(char* varname, char* bufname, char* /*sizehelper*/, s
     char tmpstr[1024];
     char paramname[256];
 
-    if (!FindVarName(varname, paramname)) {
-        strcpy(paramname, "unkown");
+    if (!FindVarName(varname, paramname, sizeof(paramname))) {
+        snprintf(paramname, sizeof(paramname), "unkown");
     }
     snprintf(tmpstr, sizeof(tmpstr), "%s.Push(\"%s\",\"%s\",1);\n", bufname, paramname, GetName());
     output += tmpstr;
@@ -63,8 +63,8 @@ void TypeSeqClass::DeMarshal(char* varname, char* bufname, char* /*sizehelper*/,
     char tmpstr[1024];
     char paramname[256];
 
-    if (!FindVarName(varname, paramname)) {
-        strcpy(paramname, "unkown");
+    if (!FindVarName(varname, paramname, sizeof(paramname))) {
+        snprintf(paramname, sizeof(paramname), "unkown");
     }
     snprintf(tmpstr, sizeof(tmpstr), "%s.Push(\"%s\",\"%s\",1);\n", bufname, paramname, GetName());
     output += tmpstr;

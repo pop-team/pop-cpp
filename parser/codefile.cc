@@ -77,7 +77,7 @@ Class* CodeFile::FindClass(char* clname) {
     while (isspace(*clname)) {
         clname++;
     }
-    strcpy(tmp, clname);
+    snprintf(tmp, sizeof(tmp), "%s", clname);
     char* tmp1 = tmp + strlen(tmp) - 1;
     while (isspace(*tmp1) && tmp1 > tmp) {
         *tmp1 = 0;

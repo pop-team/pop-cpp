@@ -74,8 +74,8 @@ void TypePtr::Marshal(char* varname, char* bufname, char* sizehelper, std::strin
         char tmpcode[1024];
 
         char paramname[256];
-        if (!FindVarName(varname, paramname)) {
-            strcpy(paramname, "unknown");
+        if (!FindVarName(varname, paramname, sizeof(paramname))) {
+            snprintf(paramname, sizeof(paramname), "unknown");
         }
         snprintf(tmpcode, sizeof(tmpcode), "\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, typebase->GetName(), tmpsize);
         output += tmpcode;
@@ -85,7 +85,7 @@ void TypePtr::Marshal(char* varname, char* bufname, char* sizehelper, std::strin
         snprintf(tmpvar, sizeof(tmpvar), "(%s[_pop_item])", varname);
         typebase->Marshal(tmpvar, bufname, nullptr, output);
 
-        strcpy(tmpcode, "}\n}\n");
+        snprintf(tmpcode, sizeof(tmpcode), "}\n}\n");
         output += tmpcode;
 
         snprintf(tmpcode, sizeof(tmpcode), "%s.Pop();\n", bufname);
@@ -104,8 +104,8 @@ void TypePtr::DeMarshal(char* varname, char* bufname, char* sizehelper, std::str
         char tmpcode[1024];
 
         char paramname[256];
-        if (!FindVarName(varname, paramname)) {
-            strcpy(paramname, "unknown");
+        if (!FindVarName(varname, paramname, sizeof(paramname))) {
+            snprintf(paramname, sizeof(paramname), "unknown");
         }
         snprintf(tmpcode, sizeof(tmpcode), "\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, typebase->GetName(), tmpsize);
         output += tmpcode;
@@ -115,7 +115,7 @@ void TypePtr::DeMarshal(char* varname, char* bufname, char* sizehelper, std::str
         snprintf(tmpvar, sizeof(tmpvar), "(%s[_pop_item])", varname);
         typebase->DeMarshal(tmpvar, bufname, nullptr, output);
 
-        strcpy(tmpcode, "}\n}\n");
+        snprintf(tmpcode, sizeof(tmpcode), "}\n}\n");
         output += tmpcode;
 
         snprintf(tmpcode, sizeof(tmpcode), "%s.Pop();\n", bufname);
@@ -147,8 +147,8 @@ bool TypePtr::GetDeclaration(const char* varname, char* output) {
     return true;
 }
 
-void TypePtr::GetExpandType(char* output) {
-    typebase->GetExpandType(output);
+void TypePtr::GetExpandType(char* output, size_t buffer_length) {
+    typebase->GetExpandType(output, buffer_length);
     for (int i = 0; i < nptr; i++) {
         strcat(output, "*");
     }

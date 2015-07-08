@@ -82,7 +82,7 @@ public:
      * @returns true if executed correctly
      *
      */
-    virtual void GetExpandType(char* output);
+    virtual void GetExpandType(char* output, size_t buffer_length);
 
     char* GetName();
     void SetName(const char* tname);
@@ -122,7 +122,7 @@ public:
 
     static char stdType[MAXSTDTYPES][32];
     static int counter;
-    static bool FindVarName(const char* var, char name[256]);
+    static bool FindVarName(const char* var, char name[256], size_t buffer_length);
 
 protected:
     char* name;
@@ -161,7 +161,7 @@ public:
 
     virtual bool GetDeclaration(const char* varname, char* output);
     virtual bool GetCastType(char* output);
-    virtual void GetExpandType(char* output);
+    virtual void GetExpandType(char* output, size_t buffer_length);
 
     virtual bool IsArray();
 
@@ -184,7 +184,7 @@ public:
     virtual void DeMarshal(char* varname, char* bufname, char* sizehelper, std::string& output);
 
     virtual bool GetDeclaration(const char* varname, char* output);
-    virtual void GetExpandType(char* output);
+    virtual void GetExpandType(char* output, size_t buffer_length);
 
     virtual void resize(char* sizestr);
 
@@ -213,7 +213,7 @@ public:
     //  virtual bool Same(char *tname);
 
     virtual bool GetCastType(char* output);
-    virtual void GetExpandType(char* output);
+    virtual void GetExpandType(char* output, size_t buffer_length);
 
     virtual int IsPointer();
     virtual bool IsArray();
