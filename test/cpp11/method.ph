@@ -1,4 +1,4 @@
-#include "timer.h"
+#include "pop_timer.h"
 
 parclass TestMethod {
 public:

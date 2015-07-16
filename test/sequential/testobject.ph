@@ -1,7 +1,7 @@
 #ifndef TEST_OBJECT_PH
 #define TEST_OBJECT_PH
 
-#include <timer.h>
+#include <pop_timer.h>
 
 parclass TestObject {
     classuid(1500);

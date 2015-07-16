@@ -4,7 +4,7 @@
 // 13.9.2009
 
 #include <stdio.h>
-#include <timer.h>
+#include <pop_timer.h>
 #include "Matrix2Dlc.h"
 #include "Matrix2Dcl.h"
 #include "MatWorker.ph"
