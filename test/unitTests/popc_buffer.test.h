@@ -13,7 +13,7 @@
 
 #define ITER 100
 
-// Note: XDR only supports (8 bytes long) and sor compatibility with 32 bits we use (4 bytes long)
+// Note: XDR only supports (8 bytes long) and for compatibility with 32 bits we use (4 bytes long)
 #define _LONG_MAX 2147483647L
 #define _LONG_MIN -2147483648L
 #define _ULONG_MAX 4294967295UL
@@ -72,6 +72,12 @@ void testByType(pop_buffer* xp_bufferOut,
     for (T elem = x_min; elem < x_max - x_incr;
          elem += x_incr)  // this break condition avoids inf loops due to overflows
     {
+        xp_bufferOut->Pack(&elem, 1);
+        T tmp;
+        std::cout << tmp << std::endl;
+        xp_bufferIn->UnPack(&tmp, 1);
+        TS_ASSERT(elem == tmp);
+
         vectTest.push_back(elem);
     }
     testByVect<T>(xp_bufferOut, xp_bufferIn, vectTest,
