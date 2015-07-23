@@ -139,7 +139,7 @@ The PSN is a complement of the job manager. It searches for other nodes on which
     node socket://node2:2711
 
 Advices:
-- Make sure that all nodes can access each other directly.
-- Do not list your own node in the list as this causes the system to hang.
-- There is a problem if the number of objects is larger that the available slots for jobs on one machine: sometimes the same slot seems to be reserved twice and the second job cannot execute.
+* Make sure that all nodes can access each other directly.
+* Do not list your own node in the list as this causes the system to hang.
+* There is a problem if the number of objects is larger that the available slots for jobs on one machine: sometimes the same slot seems to be reserved twice and the second job cannot execute.
 
