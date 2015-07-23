@@ -107,3 +107,39 @@ The job manager query utility can be used to debug the job manager. It is launch
     /usr/local/popc/services/jobmgrquery
     
 It lets you type different query: "jobs", "neighbors", ...
+
+
+POP-C++ services
+================
+pseudodynamic
+-------------
+Pseudodynamic is different from the dynamic version of POP-C++:
+- No service is used
+- All objects are pre-allocated at the beginning of the program
+
+The pseudodynamic version of POP-C++ can be enabled with the cmake flag MPI_SUPPORT (e.g. with command "ccmake ."). A POP-C++ application can then be compiled by using the "-pseudo-dynamic" flag.
+
+To start the program a command should look like:
+
+.. code:: bash
+
+    mpiexec -np 5 ../../interconnector/popc_mpi_interconnector -app=./main 10 0 0 1 1 2 2 3 3 4 4
+
+In the current state of POP-C++ the pseudodynamic compilation works but applications stall at execution.
+
+pop search node
+---------------
+The PSN is a complement of the job manager. It searches for other nodes on which to run parallel objects. To use the PSN you need to select the advanced configuration (command "make install") and list the nodes that you would like to access. Your jobmgr.conf should look something like this:
+
+.. code:: bash
+
+    parent socket://node1:2711
+    node socket://node1:2711
+    parent socket://node2:2711
+    node socket://node2:2711
+
+Advices:
+- Make sure that all nodes can access each other directly.
+- Do not list your own node in the list as this causes the system to hang.
+- There is a problem if the number of objects is larger that the available slots for jobs on one machine: sometimes the same slot seems to be reserved twice and the second job cannot execute.
+
