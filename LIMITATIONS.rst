@@ -10,9 +10,10 @@ The POP-C++ parser has several limitations:
 * class declaration inside a parclass: Class declaration inside parclass is not currently supported.
 * typedef declaration inside a parclass: typedef declaration with structure inside a parclass is not currently supported.
 * No support for C++11 in the headers. C++11 can be used in the source files if the -cpp11 option is passed to popcc
-* A par class cannot have const variable.
+* A parclass cannot have const variable.
 * Const member functions are not supported
 * throw() declaration for member functions is not supported
+* A parclass cannot have any typedef
 
 Classes and structures handled differently:
 * classes (class keyword) needs to inherit from pop_base.
