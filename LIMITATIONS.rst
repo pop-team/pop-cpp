@@ -10,13 +10,15 @@ The POP-C++ parser has several limitations:
 * class declaration inside a parclass: Class declaration inside parclass is not currently supported.
 * typedef declaration inside a parclass: typedef declaration with structure inside a parclass is not currently supported.
 * No support for C++11 in the headers. C++11 can be used in the source files if the -cpp11 option is passed to popcc
+* A par class cannot have const variable.
 
 Classes and structures handled differently:
 * classes (class keyword) needs to inherit from pop_base.
 * structures (struct keyword) cannot inherit from anything. Each attribute must be marshallable.
 
 Limitations of the POP-C++ core
-=================================
+===============================
+
 * It is dangerous to send an object to itself as a reference. The buffer is already busy. An error occurs if the parallel method
   returns a value. As seen in test/parobjbyref
 
@@ -31,13 +33,12 @@ objects to create one after another and then use them, this can save a lot of ti
   passing a const char* to a constructor takig a std::string will create a temporary, if this temporary is captured by const reference
   a reference to a possibly-invalid temporary will be passed to the constructor thread and will result in undefined behaviour.
 
-
 Other limitations
 =================
 
 Serialization of parallel objects
 ---------------------------------
-Parallel objects should always be serialized in input, never in output. At the current time we need to force this by using: 
+Parallel objects should always be serialized in input, never in output. At the current time we need to force this by using:
 
 .. code::
 
@@ -47,7 +48,7 @@ Some changes must be made in the parser
 
 Serialization of inherited classes
 ----------------------------------
-When serializing a Child type the remote method should be able to create a Child object (dynamic type) and not Mother object (static type). 
+When serializing a Child type the remote method should be able to create a Child object (dynamic type) and not Mother object (static type).
 
 This happens because the parser will always instanciate an object of the static type in the method and can cause serialization problems. This happens in the example **heritage3**
 
