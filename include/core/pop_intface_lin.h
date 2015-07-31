@@ -170,10 +170,6 @@ port exists with mingw where the normal inclusion. "h"
 
 #include <sys/stat.h>
 
-// zlib
-
-#include <zlib.h>
-
 // errno
 
 #include <errno.h>
