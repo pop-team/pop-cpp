@@ -584,7 +584,7 @@ echo ""
 echo "IMPORTANT : Do not forget to add these lines to your .bashrc file or equivalent :"
 echo "---------"
 echo "    POPC_LOCATION=$POPC_LOCATION"
-echo "    export POPC_LOCATION=$POPC_LOCATION"
+echo "    export POPC_LOCATION
 echo "    PATH=\$PATH:\$POPC_LOCATION/bin:\$POPC_LOCATION/sbin"
 echo ""
 echo "Press <Return> to continue"
