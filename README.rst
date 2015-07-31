@@ -12,7 +12,7 @@ In order to install properly POP-C++ from source, you will need following softwa
 * GNU make
 * Cmake
 * Flex / Bison.
-* cxxtest
+* cxxtest (only to run the unit tests)
 
 On Ubuntu or debian the installation of dependencies can be easily done with:
 
