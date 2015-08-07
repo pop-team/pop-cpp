@@ -1,9 +1,13 @@
 POP-C++ 3.0:
 
-- Stabilization of version 2.9
-- Switch to Git
+- Asynchronous creation of parallel objects
+- Stabilization of version 2.9: Lots of bug fixes
+- Support for Unified Domain Socket combox
+- Switch to Git and Github
+- Switch to CMake
 - Refactorings / Cleanup of the source base
-- Get rid of paroc_list, paroc_array and paroc_string
+- Removal paroc_list, paroc_array and paroc_string: Use of std:: versions is
+  now possible
 - Minimize the duplicated files between dynamic and pseudo-dynamic versions
 - Improve exception catching and logging in the core of POP-C++
 
