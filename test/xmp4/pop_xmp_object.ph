@@ -6,14 +6,14 @@
 
 parclass POPXMPObject {
 public:
-  classuid(2000); 
-  POPXMPObject() @{ od.executable("./pop_xmp_object.obj"); }; 
-  ~POPXMPObject();
+    classuid(2000);
+    POPXMPObject() @{ od.executable("./pop_xmp_object.obj"); };
+    ~POPXMPObject();
 
-  sync broadcast void execute_xmp_1();
-  sync seq void set_value(int val);  
-  async broadcast void propagate_value(int val); 
-  
+    sync broadcast void execute_xmp_1();
+    sync seq void set_value(int val);
+    async broadcast void propagate_value(int val);
+
 private:
-  int* a;
+    int* a;
 };
