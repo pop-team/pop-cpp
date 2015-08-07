@@ -50,9 +50,9 @@ public:
     std::string getPOPAppId();
 
 private:
-    std::string _reqUniqueId;  // indicate request's uniqueId
-    std::string _appid;  // Application services access point
-    POPCSearchNodeInfo _foundNodeInfo;  // found node's 'NodeInfo'
+    std::string _reqUniqueId;               // indicate request's uniqueId
+    std::string _appid;                     // Application services access point
+    POPCSearchNodeInfo _foundNodeInfo;      // found node's 'NodeInfo'
     ExplorationList _finalExplorationList;  // exploration list to found node
 };
 

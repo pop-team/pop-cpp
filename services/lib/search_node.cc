@@ -357,7 +357,7 @@ void POPCSearchNode::askResourcesDiscovery(Request req, pop_accesspoint node_ap,
                 // 'asker' node
                 Response* resp = new Response(req.getUniqueId(), POPCSearchNodeInfo(nodeInfo), req.getExplorationList(),
                                               req.getPOPAppId());
-                
+
                 /* If it's the local node or it's the last node, send directly the answer. Otherwise, send to the next
                 node to reroute
                 the message */

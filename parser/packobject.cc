@@ -26,8 +26,8 @@ void PackObject::GenerateCode(std::string& output) {
     output += str;
     int n = objects.size();
     for (int i = 0; i < n; i++) {
-        snprintf(str, sizeof(str), "  %s%s::_popc_factory.test(\"%s\");\n", objects[i].c_str(), Class::POG_BROKER_POSTFIX,
-                objects[i].c_str());
+        snprintf(str, sizeof(str), "  %s%s::_popc_factory.test(\"%s\");\n", objects[i].c_str(),
+                 Class::POG_BROKER_POSTFIX, objects[i].c_str());
         output += str;
     }
     snprintf(str, sizeof(str), "}\n");

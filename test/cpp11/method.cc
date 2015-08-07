@@ -19,7 +19,7 @@ void TestMethod::TestSeq2() {
     for (auto& v : x) {
         cout << v << popcendl;
     }
-    ([](int i){ cout << i << popcendl; })(11);
+    ([](int i) { cout << i << popcendl; })(11);
 }
 
 @pack(TestMethod);

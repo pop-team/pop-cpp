@@ -1,7 +1,8 @@
 #include "method.ph"
 #include <vector>
 
-TestMethod::TestMethod() {}
+TestMethod::TestMethod() {
+}
 
 void TestMethod::TestSeq1(std::string test) {
     cout << test << popcendl;

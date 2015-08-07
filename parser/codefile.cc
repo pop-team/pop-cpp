@@ -15,7 +15,8 @@
 #include "parser.h"
 #include "pop_utils.h"
 
-CodeFile::CodeFile(const std::string& fname) : filename(fname), isCoreCompilation(false), asyncAllocationEnabled(false) {
+CodeFile::CodeFile(const std::string& fname)
+    : filename(fname), isCoreCompilation(false), asyncAllocationEnabled(false) {
     for (auto& elem : DataType::stdType) {
         AddDataType(new DataType(elem));
     }

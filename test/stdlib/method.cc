@@ -2,7 +2,7 @@
 #include <vector>
 
 TestMethod::TestMethod() {
-    //Nothing to do here
+    // Nothing to do here
 }
 
 int TestMethod::TestString1(std::string value) {

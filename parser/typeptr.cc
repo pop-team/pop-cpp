@@ -77,7 +77,8 @@ void TypePtr::Marshal(char* varname, char* bufname, char* sizehelper, std::strin
         if (!FindVarName(varname, paramname, sizeof(paramname))) {
             snprintf(paramname, sizeof(paramname), "unknown");
         }
-        snprintf(tmpcode, sizeof(tmpcode), "\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, typebase->GetName(), tmpsize);
+        snprintf(tmpcode, sizeof(tmpcode), "\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, typebase->GetName(),
+                 tmpsize);
         output += tmpcode;
 
         snprintf(tmpcode, sizeof(tmpcode), "\n{for (int _pop_item=0; _pop_item < %s; _pop_item++) { \n", tmpsize);
@@ -107,7 +108,8 @@ void TypePtr::DeMarshal(char* varname, char* bufname, char* sizehelper, std::str
         if (!FindVarName(varname, paramname, sizeof(paramname))) {
             snprintf(paramname, sizeof(paramname), "unknown");
         }
-        snprintf(tmpcode, sizeof(tmpcode), "\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, typebase->GetName(), tmpsize);
+        snprintf(tmpcode, sizeof(tmpcode), "\n%s.Push(\"%s\",\"%s\", %s);\n", bufname, paramname, typebase->GetName(),
+                 tmpsize);
         output += tmpcode;
 
         snprintf(tmpcode, sizeof(tmpcode), " {\nfor (int _pop_item=0; _pop_item < %s; _pop_item++) { \n", tmpsize);

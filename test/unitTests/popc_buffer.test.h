@@ -20,9 +20,7 @@
 
 /// Test the serialization of all values in vector
 template <typename T>
-void testByVect(pop_buffer* xp_bufferOut, 
-                pop_buffer* xp_bufferIn,  
-                const std::vector<T>& x_vect, bool x_testArray) {
+void testByVect(pop_buffer* xp_bufferOut, pop_buffer* xp_bufferIn, const std::vector<T>& x_vect, bool x_testArray) {
     for (const auto& elem : x_vect) {
         // Pack/unpack each element of the vector
         T test;
@@ -65,9 +63,7 @@ void testByVect(pop_buffer* xp_bufferOut,
 
 /// Fill a vector and test
 template <typename T>
-void testByType(pop_buffer* xp_bufferOut,  
-                pop_buffer* xp_bufferIn,   const T& x_min,
-                const T& x_max, const T& x_incr) {
+void testByType(pop_buffer* xp_bufferOut, pop_buffer* xp_bufferIn, const T& x_min, const T& x_max, const T& x_incr) {
     std::vector<T> vectTest;
     for (T elem = x_min; elem < x_max - x_incr;
          elem += x_incr)  // this break condition avoids inf loops due to overflows
@@ -80,8 +76,7 @@ void testByType(pop_buffer* xp_bufferOut,
 
         vectTest.push_back(elem);
     }
-    testByVect<T>(xp_bufferOut, xp_bufferIn, vectTest,
-                  true);
+    testByVect<T>(xp_bufferOut, xp_bufferIn, vectTest, true);
 }
 
 class BufferTestSuite : public CxxTest::TestSuite {
@@ -121,46 +116,34 @@ public:
     }
 
     // Test packing of data in buffer
-    void testBuffer(pop_buffer* xp_bufferOut,  
-                    pop_buffer* xp_bufferIn)   {
+    void testBuffer(pop_buffer* xp_bufferOut, pop_buffer* xp_bufferIn) {
         TS_TRACE("test int");
-        testByType<int>(xp_bufferOut, xp_bufferIn, 
-                        INT_MIN, INT_MAX, INT_MAX / ITER);
+        testByType<int>(xp_bufferOut, xp_bufferIn, INT_MIN, INT_MAX, INT_MAX / ITER);
         TS_TRACE("test uint");
-        testByType<unsigned int>(xp_bufferOut, xp_bufferIn, 
-                                 0, UINT_MAX, UINT_MAX / ITER);
+        testByType<unsigned int>(xp_bufferOut, xp_bufferIn, 0, UINT_MAX, UINT_MAX / ITER);
         TS_TRACE("test long");
-        testByType<long>(xp_bufferOut, xp_bufferIn, 
-                         _LONG_MIN, _LONG_MAX, _LONG_MAX / ITER);
+        testByType<long>(xp_bufferOut, xp_bufferIn, _LONG_MIN, _LONG_MAX, _LONG_MAX / ITER);
         TS_TRACE("test ulong");
-        testByType<unsigned long>(xp_bufferOut, xp_bufferIn, 
-                                  0, _ULONG_MAX, _ULONG_MAX / ITER);
+        testByType<unsigned long>(xp_bufferOut, xp_bufferIn, 0, _ULONG_MAX, _ULONG_MAX / ITER);
         TS_TRACE("test short");
-        testByType<short>(xp_bufferOut, xp_bufferIn, 
-                          SHRT_MIN, SHRT_MAX, SHRT_MAX / ITER);
+        testByType<short>(xp_bufferOut, xp_bufferIn, SHRT_MIN, SHRT_MAX, SHRT_MAX / ITER);
         TS_TRACE("test ushort");
-        testByType<unsigned short>(xp_bufferOut, xp_bufferIn, 
-                                   0, USHRT_MAX, USHRT_MAX / ITER);
+        testByType<unsigned short>(xp_bufferOut, xp_bufferIn, 0, USHRT_MAX, USHRT_MAX / ITER);
         TS_TRACE("test char");
-        testByType<signed char>(xp_bufferOut, xp_bufferIn, 
-                                -128, 127, 1);
+        testByType<signed char>(xp_bufferOut, xp_bufferIn, -128, 127, 1);
         TS_TRACE("test uchar");
-        testByType<unsigned char>(xp_bufferOut, xp_bufferIn, 
-                                  0, 255, 1);
+        testByType<unsigned char>(xp_bufferOut, xp_bufferIn, 0, 255, 1);
 
         TS_TRACE("test float");
-        testByType<float>(xp_bufferOut, xp_bufferIn, 
-                          -1e10, 1e10, 43e5);
+        testByType<float>(xp_bufferOut, xp_bufferIn, -1e10, 1e10, 43e5);
         TS_TRACE("test double");
-        testByType<double>(xp_bufferOut, xp_bufferIn, 
-                           -1e15, 1e15, 43e9);
+        testByType<double>(xp_bufferOut, xp_bufferIn, -1e15, 1e15, 43e9);
 
         TS_TRACE("test string");
-        testByVect<std::string>(xp_bufferOut, xp_bufferIn, 
-                                m_vectString, false);
+        testByVect<std::string>(xp_bufferOut, xp_bufferIn, m_vectString, false);
 
         TS_TRACE("test bool");
-        // testByVect<bool>(xp_bufferOut, xp_bufferIn, 
+        // testByVect<bool>(xp_bufferOut, xp_bufferIn,
         // m_vectBool, true);
         for (const auto& elem : m_vectBool) {
             // Pack/unpack each element of the vector

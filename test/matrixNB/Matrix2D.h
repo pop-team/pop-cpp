@@ -39,10 +39,10 @@ public:
     void Serialize(POPBuffer& buf, bool pack);
 
 protected:
-    int nbLine;  // Nb. lines of the matrix
-    int nbCol;  // Nb. columns of the matrix
-    int dataSize;  // Current size (in byte) of the attached matrix
+    int nbLine;         // Nb. lines of the matrix
+    int nbCol;          // Nb. columns of the matrix
+    int dataSize;       // Current size (in byte) of the attached matrix
     ValueType* shared;  // The other data matrix I am using
-    ValueType* value;  // The matrix data
+    ValueType* value;   // The matrix data
 };
 #endif

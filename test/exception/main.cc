@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
                         printf("Exception: No call !\n");
                         break;
                 }  // switch
-            }  // try
+            }      // try
 
             catch (POPException& e) {
                 printf("Exception: main has catched the POP exception (%d)!!\n", i);

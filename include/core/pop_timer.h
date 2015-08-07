@@ -11,7 +11,6 @@
  *
  */
 
-
 #ifndef PAROCTIMER_H
 #define PAROCTIMER_H
 

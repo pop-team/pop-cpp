@@ -6,7 +6,7 @@ int main(int argc, char** argv) {
     {
         TestObject obj1("localhost");
 
-        sleep(1); // to be sure that async creation is done
+        sleep(1);  // to be sure that async creation is done
 
         printf("Test with synchronous methods\n");
         obj1.syncConcMethod("call1", 1.0 * TIME_SCALE);
@@ -55,9 +55,6 @@ int main(int argc, char** argv) {
 
     // This leaves time to destroy all objects and guarantees the output
     sleep(3);
-
-
-
 
     return 0;
 }

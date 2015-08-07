@@ -93,11 +93,13 @@ void TypeArray::Marshal(char* varname, char* bufname, char* sizehelper, std::str
         if (!FindVarName(varname, paramname, sizeof(paramname))) {
             snprintf(paramname, sizeof(paramname), "unknown");
         }
-        snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",_paroc_count%d);\n", bufname, paramname, typebase->GetName(), counter);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",_paroc_count%d);\n", bufname, paramname,
+                 typebase->GetName(), counter);
         output += tmpcode;
 
-        snprintf(tmpcode, sizeof(tmpcode), "for (%s *_pop_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _pop_elem%d++)\n{\n",
-                typebase->GetName(), counter, typebase->GetName(), varname, counter, counter, counter);
+        snprintf(tmpcode, sizeof(tmpcode),
+                 "for (%s *_pop_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _pop_elem%d++)\n{\n",
+                 typebase->GetName(), counter, typebase->GetName(), varname, counter, counter, counter);
         output += tmpcode;
 
         snprintf(tmpvar, sizeof(tmpvar), "(*_pop_elem%d)", counter);
@@ -137,11 +139,13 @@ void TypeArray::DeMarshal(char* varname, char* bufname, char* sizehelper, std::s
         if (!FindVarName(varname, paramname, sizeof(paramname))) {
             snprintf(paramname, sizeof(paramname), "unknown");
         }
-        snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",_paroc_count%d);\n", bufname, paramname, typebase->GetName(), counter);
+        snprintf(tmpcode, sizeof(tmpcode), "%s.Push(\"%s\",\"%s\",_paroc_count%d);\n", bufname, paramname,
+                 typebase->GetName(), counter);
         output += tmpcode;
 
-        snprintf(tmpcode, sizeof(tmpcode), "for (%s *_pop_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _pop_elem%d++)\n{\n",
-                typebase->GetName(), counter, typebase->GetName(), varname, counter, counter, counter);
+        snprintf(tmpcode, sizeof(tmpcode),
+                 "for (%s *_pop_elem%d =(%s *)(%s); _paroc_count%d>0; _paroc_count%d--, _pop_elem%d++)\n{\n",
+                 typebase->GetName(), counter, typebase->GetName(), varname, counter, counter, counter);
         output += tmpcode;
 
         snprintf(tmpvar, sizeof(tmpvar), "(*_pop_elem%d)", counter);

@@ -71,7 +71,8 @@ void Usage() {
 
     fprintf(stderr, "   -no-async-allocation:    Disable asynchronous mechanism to allocate a parallel object\n");
     fprintf(stderr, "   -verbose:                Print out additional information\n");
-    fprintf(stderr, "   -nopipe:                 Do not use pipe during compilation phases ( create _paroc2_ files )\n");
+    fprintf(stderr,
+            "   -nopipe:                 Do not use pipe during compilation phases ( create _paroc2_ files )\n");
     fprintf(stderr, "   -version:                Display the installed version of POP-C++\n");
 
     fprintf(stderr, "\n");

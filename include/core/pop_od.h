@@ -217,7 +217,7 @@ protected:
 
     std::string platforms;
 
-    std::string proto;  // space-separate protocol lists
+    std::string proto;   // space-separate protocol lists
     std::string encode;  // space-separate encoding lists
 
     std::vector<std::string> keys;
@@ -225,7 +225,7 @@ protected:
 
     // Added by clementval
     int max_depth;  // Maximum depth for the request propagation
-    int max_size;  // Maximum size of the request message
+    int max_size;   // Maximum size of the request message
     int wait_time;  // Wait time for the resource discovery
     bool searchSet;
     // End of add

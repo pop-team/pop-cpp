@@ -31,19 +31,19 @@
  */
 class POPWayback : public POPBase {
 public:
-    POPWayback();  // POPWayback constructor
+    POPWayback();   // POPWayback constructor
     ~POPWayback();  // POPWayback destructor
 
     // Operator
     const POPWayback& operator=(const POPWayback& x);
 
     // Specialized methods
-    std::string getAsString() const;  // Get the object as a formatted string value
+    std::string getAsString() const;      // Get the object as a formatted string value
     void insertNode(std::string nodeId);  // Insert a node a the end of the way back
-    std::string getNextNode() const;  // Return the next node in the object
-    void deleteNextNode();  // Delete the next node in the object
-    bool isLastNode() const;  // Check if it's the lasr node in the way back
-    bool isEmpty() const;  // Check if the way back is empty
+    std::string getNextNode() const;      // Return the next node in the object
+    void deleteNextNode();                // Delete the next node in the object
+    bool isLastNode() const;              // Check if it's the lasr node in the way back
+    bool isEmpty() const;                 // Check if the way back is empty
 
     // Inherited method to serialize the object
     virtual void Serialize(POPBuffer& buf, bool pack);

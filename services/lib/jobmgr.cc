@@ -591,7 +591,6 @@ int JobMgr::Query(const std::string& type, std::string& val) {
         return 1;
     }
 
-
     for (auto& t : info) {
         if (type == t.name) {
             val = t.val;
@@ -971,7 +970,7 @@ void JobMgr::CancelReservation(int* req, int howmany) {
  * @return The reservation ID
  */
 int JobMgr::Reserve(const pop_od& od, float& inoutfitness, std::string popAppId, std::string reqID) {
-    Update();   //Called to see if there are jobs to be released
+    Update();  // Called to see if there are jobs to be released
 
     float flops = 0;
     float walltime = 0;
@@ -1653,7 +1652,7 @@ int JobMgr::ExecObj(const std::string& objname, const pop_od& od, int howmany, i
             }
 
             if (r->walltime > 0 && *env_walltime == 0) {
-                int hours   = static_cast<int>(r->walltime / 3600);
+                int hours = static_cast<int>(r->walltime / 3600);
                 int minutes = static_cast<int>((r->walltime - hours * 3600) / 60);
                 float sec = r->walltime - hours * 3600 - minutes * 60;
                 snprintf(env_walltime, sizeof(env_walltime), "POPC_JOB_WALLTIME=%d:%d:%g", hours, minutes, sec);

@@ -65,7 +65,8 @@ std::string socket_allocator_service::allocate(const std::string& objectname, co
 
     try {
         JobCoreService resources(jobcontact);
-        int ret = resources.CreateObject(pop_system::appservice, objectname, od, 1, &objectaddress, 1, &remotejobcontact);
+        int ret =
+            resources.CreateObject(pop_system::appservice, objectname, od, 1, &objectaddress, 1, &remotejobcontact);
 
         if (ret != 0) {
             pop_exception::pop_throw(ret, objectname, "CreateObject returned error code");

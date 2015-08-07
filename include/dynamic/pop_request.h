@@ -145,15 +145,15 @@ public:
 
 private:
     std::string _uniqueId;  // Unique identifier of the request
-    int _maxHops;  // Maximum number of hops for this request
+    int _maxHops;           // Maximum number of hops for this request
 
     /**
      * ViSaG : clementval
      */
-    POPWayback _wb;  // List containing the way back to the initiator
+    POPWayback _wb;         // List containing the way back to the initiator
     std::string _popappid;  // POP Application ID
-    std::string _pki;  // Pki of the initiator node
-    std::string _mainPki;  // Pki of the main node
+    std::string _pki;       // Pki of the initiator node
+    std::string _mainPki;   // Pki of the main node
     bool _endingSignal;
     /* ViSaG */
 

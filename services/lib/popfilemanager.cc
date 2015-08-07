@@ -196,7 +196,7 @@ int POPFileManager::findResourcesForStrip(int nb, pop_accesspoint* candidates, s
         std::string stripname(strip.c_str());
 
         if (tmpPfm.createStrip(stripname)) {
-            candidates[index] = (*it);  // store accesspoint of the node on which the strip is created
+            candidates[index] = (*it);      // store accesspoint of the node on which the strip is created
             stripNames[index] = stripname;  // store the strip name
             popfile_log("[POPFILEMANAGER] Strip created on %s - %s", (*it).GetAccessString().c_str(),
                         stripname.c_str());
@@ -221,7 +221,7 @@ int popfile_log(const char* format, ...) {
 
     if (tmp) {
         logfile = std::string(tmp) + "/popfile_log";
-    } 
+    }
     FILE* f = fopen(logfile.c_str(), "a");
     if (!f) {
         return 1;

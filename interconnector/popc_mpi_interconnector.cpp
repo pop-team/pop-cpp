@@ -1022,7 +1022,8 @@ int main(int argc, char* argv[]) {
                     }
 
                     pthread_mutex_lock(&mpi_mutex);
-                    MPI::Intercomm comm_xmp = comm_self.Spawn_multiple(nb_node, commands, aargv, maxprocs, infos, g_rank);
+                    MPI::Intercomm comm_xmp =
+                        comm_self.Spawn_multiple(nb_node, commands, aargv, maxprocs, infos, g_rank);
                     pthread_mutex_unlock(&mpi_mutex);
 
                     int fd = dynamic_cast<popc_connection_uds*>(connection)->get_fd();

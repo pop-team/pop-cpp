@@ -94,10 +94,10 @@ public:
     int GetTotalStep();
 
     virtual bool CreateNextDependency(ProbObj* next);  // Internal use
-    bool UpdateChildDependency();  // Internal use
-    bool UpdateProbNext(ProbObj* p);  // Internal use
-    bool UpdateProbDependency(DTreeNode* prev);  // internal use
-    bool InitProbDependency();  // the user should not call this method. Internal use only!
+    bool UpdateChildDependency();                      // Internal use
+    bool UpdateProbNext(ProbObj* p);                   // Internal use
+    bool UpdateProbDependency(DTreeNode* prev);        // internal use
+    bool InitProbDependency();                         // the user should not call this method. Internal use only!
 
 protected:
     // This method is used to create the problem and initilize necessary input and output
@@ -109,7 +109,7 @@ protected:
 
     DTreeNode* parent;
 
-    real totalflop;  // total number of Flop required.
+    real totalflop;       // total number of Flop required.
     real timeconstraint;  // seconds that the problem should be solved
     real coeff;
 

@@ -16,42 +16,42 @@ int main(int argc, char** argv) {
 
     int a = obj.TestString1(test_string);
 
-    if(a != test_string.size()){
+    if (a != test_string.size()) {
         cout << "Test failed, invalid return value: " << a << " should be " << test_string.size() << popcendl;
         return 1;
     }
 
     int b = obj.TestString2(test_string);
 
-    if(b != test_string.size()){
+    if (b != test_string.size()) {
         cout << "Test failed, invalid return value: " << b << " should be " << test_string.size() << popcendl;
         return 1;
     }
 
     int c = obj.TestString3(test_string);
 
-    if(c != test_string.size()){
+    if (c != test_string.size()) {
         cout << "Test failed, invalid return value: " << c << " should be " << test_string.size() << popcendl;
         return 1;
     }
 
     int d = obj.TestVector1(test_vector);
 
-    if(d != 42 + test_vector.size()){
+    if (d != 42 + test_vector.size()) {
         cout << "Test failed, invalid return value: " << d << " should be " << 42 + test_vector.size() << popcendl;
         return 1;
     }
 
     int e = obj.TestVector2(test_vector);
 
-    if(e != 42 + test_vector.size()){
+    if (e != 42 + test_vector.size()) {
         cout << "Test failed, invalid return value: " << e << " should be " << 42 + test_vector.size() << popcendl;
         return 1;
     }
 
     int f = obj.TestVector3(test_vector);
 
-    if(f != 42 + test_vector.size()){
+    if (f != 42 + test_vector.size()) {
         cout << "Test failed, invalid return value: " << f << " should be " << 42 + test_vector.size() << popcendl;
         return 1;
     }

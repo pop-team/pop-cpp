@@ -205,7 +205,7 @@ void* pop_buffer_factory_finder::LoadPlugin(char* fname, pop_buffer_factory*& f)
     return handle;
 #else
     ((void)fname);  // Silence warning
-    ((void)f);  // Silence warning
+    ((void)f);      // Silence warning
     return nullptr;
 #endif
 }

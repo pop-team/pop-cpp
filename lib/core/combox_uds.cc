@@ -408,8 +408,8 @@ void popc_combox_uds::Close() {
         LOG_DEBUG_T("UDS", "Close (server) %s", _uds_address.c_str());
 
         // Close all connections FD (socket_fd is already inside the list)
-        for(std::size_t i = 0; i < std::size_t(_active_connection_nb); ++i){
-            if(close(active_connection[i].fd)){
+        for (std::size_t i = 0; i < std::size_t(_active_connection_nb); ++i) {
+            if (close(active_connection[i].fd)) {
                 LOG_WARNING("close failed: %s", _uds_address.c_str());
                 perror("close failed");
             }

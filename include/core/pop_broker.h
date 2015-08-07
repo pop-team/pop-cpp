@@ -104,7 +104,7 @@ public:
     bool OnCloseConnection(pop_connection* conn);
 
     bool PopCall(pop_request& req);  // Remote call of Paroc methods
-    pop_object* GetObject();  // Get the associated object
+    pop_object* GetObject();         // Get the associated object
 
 #ifdef OD_DISCONNECT
     bool checkConnection;
@@ -129,9 +129,9 @@ protected:
     pop_object* obj;                     // Real object associated with this broker
     pop_request_fifo_list request_fifo;  // Queue storing the request received by the broker
     pop_condition execCond;
-    int instanceCount;  //
+    int instanceCount;   //
     int connclosecount;  // Count the number of connection close on an object
-    int state;  // 0=Running, 1=Terminate, 2= Abort
+    int state;           // 0=Running, 1=Terminate, 2= Abort
 };
 
 #define POP_STATE_RUNNING 0
