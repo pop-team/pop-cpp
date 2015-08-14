@@ -162,13 +162,7 @@ void pop_broker::ServeRequest(pop_request& req) {
 
 void pop_broker::UnhandledException() {
     if (!pop_system::appservice.IsEmpty()) {
-        // char tmp[1024];
         LOG_WARNING("Unhandled exception on %s@%s", classname.c_str(), accesspoint.GetAccessString().c_str());
-        //      sprintf(tmp,"Unhandled exception on %s@%s\n",(const char *)classname, accesspoint.GetAccessString());
-        /*AppCoreService app(pop_system::appservice);
-        app.Log(tmp);
-        app.UnManageObject(pop_broker::accesspoint);
-        app.KillAll();*/
         state = POP_STATE_ABORT;
     }
 }

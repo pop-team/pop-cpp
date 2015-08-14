@@ -134,26 +134,21 @@ std::string pop_allocator_uds_local::allocate(const std::string& objectname, con
 
     int ret = 0, err = 0;
 
-    // if(isManual) {
-    // printf("\nTo launch this object, run this command on the target machine :\n");
-    // for(auto str : argv) {
-    // printf("%s ", str.c_str());
-    //}
-    // printf("\n");
-    //} else {
-    //#ifndef NDEBUG
+    //TODO isManual handling
+
+    #ifndef NDEBUG
     std::stringstream ss;
     ss << "--->";
     for (auto str : argv) {
         ss << str << " ";
     }
     LOG_DEBUG_T("UDS_A", "Launching a new object with command : %s", ss.str().c_str());
-    //#endif
+    #endif
+
     char** argvc = popc_createArgsFromVect(argv);
     ret = RunCmd(argv.size(), argvc, NULL);
     popc_freeArgs(argvc);
     err = errno;
-    //}
 
     if (ret == -1) {
         LOG_WARNING("Cannot start the object: code %d", ret);

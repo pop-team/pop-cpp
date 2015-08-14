@@ -98,13 +98,6 @@ std::string socket_allocator_local::allocate(const std::string& objectname, cons
             sprintf(tmpstr, "popcobjrun.%s", batch.c_str());
         }
         argv.push_back(tmpstr);
-        /*if (!isLocal)
-        {
-             BatchMgr batchman(pop_system::appservice);
-             sprintf(tmpstr,"-batch-node=%d", batchman.NextNode());
-             LOG_DEBUG("%s",tmpstr);
-             argv[n++]=popc_strdup(tmpstr);
-        }*/
     }
     tmp = getenv("POPC_LOCATION");
     if (tmp != nullptr) {

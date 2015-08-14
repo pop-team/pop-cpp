@@ -741,73 +741,6 @@ int pop_interface::LocalExec(const char* hostname, const char* codefile, const c
     }
 
     int n = 0;
-    /*std::string myhost = pop_system::GetHost();
-    bool islocal = (isManual || hostname == nullptr || *hostname == 0 || pop_utils::SameContact(myhost, hostname) ||
-    pop_utils::isEqual(hostname, "localhost") || pop_utils::isEqual(hostname, "127.0.0.1"));
-    if (batch == nullptr) {
-        if (!islocal) {
-              char *tmp=getenv("POPC_RSH");
-              argv[n++]=popc_strdup((tmp==nullptr)? "/usr/bin/ssh" : tmp);
-              //      argv[n++]=popc_strdup("-n");
-            // Add user name to host for ssh
-            if (ruser != nullptr && *ruser != 0) {
-                char tmpstr[100];
-                sprintf(tmpstr, "%s@%s", (const char*)ruser, (const char*)hostname);
-                  argv[n++]=popc_strdup(tmpstr);
-            } else {
-                  argv[n++]=popc_strdup(hostname);
-            }
-        }
-      } else {
-        char tmpstr[100];
-        tmp=getenv("POPC_LOCATION");
-        if (tmp!=nullptr) sprintf(tmpstr,"%s/services/popcobjrun.%s",tmp,(const char*)batch);
-        else sprintf(tmpstr,"popcobjrun.%s",(const char*)batch);
-        argv[n++]=popc_strdup(tmpstr);
-        if (!islocal)
-        {
-
-            BatchMgr batchman(pop_system::appservice);
-            sprintf(tmpstr,"-batch-node=%d",batchman.NextNode());
-            LOG_DEBUG("%s",tmpstr);
-            argv[n++]=popc_strdup(tmpstr);
-        }
-    }*/
-
-    /*  tmp=getenv("POPC_LOCATION");
-        if (tmp!=nullptr)
-            sprintf(tmpstr,"%s/services/popcobjrun",tmp);
-        else
-            strcpy(tmpstr,"popcobjrun");
-        argv[n++] = popc_strdup(tmpstr);*/
-
-    /*strcpy(tmpstr,codefile);
-    char *tok=popc_strtok_r(tmpstr," \t\n",&tmp);
-    while (tok!=nullptr)
-    {
-          argv[n++]=popc_strdup(tok);
-          tok=popc_strtok_r(nullptr," \t\n",&tmp);
-      }*/
-
-    // pop_combox_socket tmpsock;
-    // bool isServer = true;
-    // if (!tmpsock.Create(0,isServer)) pop_exception::pop_throw_errno();
-    // std::string cburl;
-    // tmpsock.GetUrl(cburl);
-
-    // sprintf(tmpstr,"-callback=%s", (const char*)cburl);
-    // argv[n++]=strdup(tmpstr);
-
-    // pop_combox_factory *comboxFactory = pop_combox_factory::GetInstance();
-    //  pop_combox callback_combox = comboxFactory->Create((const char*)"mpi");
-    //  pop_combox* callback_combox =  comboxFactory->Create((const char*)"mpi");
-    //  if(!callback_combox->Create(nullptr, 0, true))
-    //    pop_exception::pop_throw_errno();
-    //  std::string callback_url;
-    //  callback_combox->GetUrl(callback_url);
-
-    //  sprintf(tmpstr, "-callback=%s", (const char*)callback_url);
-    //  argv[n++] = popc_strdup(tmpstr);
 
     argv[n++] = popc_strdup("-mpi");
 
@@ -821,22 +754,11 @@ int pop_interface::LocalExec(const char* hostname, const char* codefile, const c
         argv[n++] = popc_strdup(tmpstr);
     }
 
-    /*if (!jobserv.IsEmpty())
-    {
-        sprintf(tmpstr,"-jobservice=%s",jobserv.GetAccessString());
-        argv[n++]=popc_strdup(tmpstr);
-    }*/
     // Select core
     if (!rcore.empty()) {
         sprintf(tmpstr, "-core=%s", rcore.c_str());
         argv[n++] = popc_strdup(tmpstr);
     }
-
-/*if (!rport.empty())
-{
-    sprintf(tmpstr,"-socket_port=%s",rport);
-    argv[n++]=popc_strdup(tmpstr);
-}*/
 
 #ifdef OD_DISCONNECT
     if (checkConnection) {
@@ -882,15 +804,6 @@ int pop_interface::LocalExec(const char* hostname, const char* codefile, const c
                                  "Cannot create object via POP-C++ (MPI pool of object is not big enough)");
     }
 
-    /*LOG_INFO("INTERFACE: allocate idle %d with %s %s", dest, codefile, executable_args.c_str());
-    pop_system::current_free_process++;
-    int length = strlen(codefile);
-    MPI::COMM_WORLD.Send(&length, 1, MPI_INT, dest, 0);
-    MPI::COMM_WORLD.Send(codefile, length, MPI_CHAR, dest, 1);
-    length = executable_args.length();
-    MPI::COMM_WORLD.Send(&length, 1, MPI_INT, dest, 2);
-    MPI::COMM_WORLD.Send(executable_args.c_str(), length, MPI_CHAR, dest, 3);
-    */
     // Send dummy data to the created parallel object to get its rank
 
     MPI::COMM_WORLD.Send(&dest, 1, MPI_INT, dest, 15);
@@ -902,52 +815,6 @@ int pop_interface::LocalExec(const char* hostname, const char* codefile, const c
      */
 
     // TODO dynamic path finding of popc_accept_broker
-    /*const char* spawn_executable[2] = { };
-    const char** spawn_arg_commands[2];
-    const char* spawn_dummy_args[] = {(char*)0};
-    spawn_arg_commands[0] = argv;
-    spawn_arg_commands[1] = spawn_dummy_args;
-    int maxprocs[2] = {1, 1};
-    MPI::Info spawn_infos[2] = { MPI_INFO_nullptr, MPI_INFO_nullptr };
-    int spawn_errcodes[2];
-
-    MPI::Intercomm brokers_intercomm;
-    brokers_intercomm = pop_system::popc_self.Spawn_multiple(2, spawn_executable, spawn_arg_commands, maxprocs,
-    spawn_infos, 0, spawn_errcodes);
-
-
-    // Getting the broker accesspoints
-    int port_name_length;
-    brokers_intercomm.Recv(&port_name_length, 1, MPI_INT, 0, 0);
-    char* tmp_port_name = new char[port_name_length+1];
-    brokers_intercomm.Recv(tmp_port_name, port_name_length, MPI_CHAR, 0, 1);
-    tmp_port_name[port_name_length] = '\0';
-    std::string port_name_broker(tmp_port_name);
-    delete [] tmp_port_name;
-
-    // Getting the accept broker accesspoint
-    brokers_intercomm.Recv(&port_name_length, 1, MPI_INT, MPI_ANY_SOURCE, 2);
-    tmp_port_name = new char[port_name_length+1];
-    brokers_intercomm.Recv(tmp_port_name, port_name_length, MPI_CHAR, MPI_ANY_SOURCE, 3);
-    tmp_port_name[port_name_length] = '\0';
-    std::string port_name_accept_broker(tmp_port_name);
-    delete [] tmp_port_name;*/
-
-    // LOG_DEBUG("INTERFACE: STEP 1 - New object spawned: %s // %s // %s", codefile, port_name_accept_broker.c_str(),
-    // port_name_broker.c_str());
-
-    /*if(spawn_errcodes[0] != MPI_SUCCESS){
-      // LOG
-        LOG_DEBUG("INTERFACE: ERROR - Something went wrong with Spawn");
-        pop_exception::pop_throw(err, classname);
-    }*/
-
-    // Put together the accesspoints of the brokers
-    /*std::string tmp_accesspoint;
-    tmp_accesspoint.append("mpi://");
-    tmp_accesspoint.append(port_name_accept_broker);
-    tmp_accesspoint.append("__");
-    tmp_accesspoint.append(port_name_broker);*/
 
     std::stringstream tmp_accesspoint;
     tmp_accesspoint << "mpi://";
@@ -957,10 +824,6 @@ int pop_interface::LocalExec(const char* hostname, const char* codefile, const c
     objaccess->SetAccessString(tmp_accesspoint.str().c_str());
 
     LOG_DEBUG("INTERFACE: objaccess %s", objaccess->GetAccessString().c_str());
-
-    /*for (int i=0;i<n;i++)
-        if (argv[i]!=nullptr)
-            free(argv[i]); */
 
     return 0;
 }

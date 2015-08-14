@@ -57,13 +57,6 @@ void pop_broker::ReceiveThread(pop_combox* server) {  // Receive request and put
 #ifdef POP_PSEUDO
             // Is it a connection initialization, then just serve a new request
             if (req.from->is_initial_connection()) {
-                /* Note LWK: Apparently wait_unlock is never set
-                if(!req.from->is_wait_unlock()) {
-                    if(obj != nullptr) {
-                        obj->AddRef();
-                    }
-                }
-                */
                 continue;
             }
 #endif

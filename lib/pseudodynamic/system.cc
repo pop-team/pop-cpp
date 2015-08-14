@@ -23,14 +23,6 @@
  */
 #include "pop_intface.h"
 
-//#include <stdio.h>
-//#include <netdb.h>
-//#include <unistd.h>
-//#include <sys/socket.h>
-//#include <netinet/in.h>
-//#include <arpa/inet.h>
-//#include <ctype.h>
-
 #include "pop_system_mpi.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_utils.h"
@@ -306,32 +298,6 @@ bool pop_system::GetIPFromInterface(std::string& iface, std::string& str_ip) {
 #ifndef __WIN32__
     (void)iface;
     (void)str_ip;
-    /*struct ifaddrs *addrs, *iap;
-    struct sockaddr_in *sa;
-    char str_ip_local[32];
-
-    getifaddrs(&addrs);
-
-    LOG_DEBUG("Looking for interface: %s --->",iface.c_str());
-    for(iap = addrs; iap != nullptr; iap = iap->ifa_next) {
-        LOG_DEBUG("name=%s, addr=%p, flag=%d (%d), familly=%d (%d)",iap->ifa_name, iap->ifa_addr, iap->ifa_flags,
-    IFF_UP, iap->ifa_addr->sa_family, AF_INET);
-      if ( iap->ifa_addr &&
-           (iap->ifa_flags & IFF_UP) &&
-           (iap->ifa_addr->sa_family == AF_INET) &&
-                !strcmp(iap->ifa_name, iface.c_str())) {
-        sa = (struct sockaddr_in *)(iap->ifa_addr);
-        inet_ntop(iap->ifa_addr->sa_family,
-                  (void *)&(sa->sin_addr),
-                  str_ip_local,
-                  sizeof(str_ip_local) );
-            LOG_DEBUG("The IP of interface %s is %s",iap->ifa_name,str_ip_local);
-        str_ip=str_ip_local;
-        freeifaddrs(addrs);
-        return true;
-      }
-    }
-    freeifaddrs(addrs);*/
     return false;
 #else
     (void)iface;
@@ -382,7 +348,6 @@ bool pop_system::Initialize(int* argc, char*** argv) {
             app.SetAccessString(appcontact);
             app.SetAsService();
         }
-        // pop_system::appservice=mgr->GetAccessPoint();
         pop_system::appservice.SetAsService();
     } catch (std::exception& e) {
         LOG_WARNING("Exception occurs in pop_system::Initialize: %s", e.what());
@@ -395,63 +360,12 @@ bool pop_system::Initialize(int* argc, char*** argv) {
 
     LOG_DEBUG_IF(codeconf == nullptr, "No code config file");
 
-    // bool ret = !(codeconf != nullptr && !pop_utils::InitCodeService(codeconf,mgr));
     return false;
 }
 
 void pop_system::Finalize(bool /*normalExit*/) {
 }
 
-/*AppCoreService *pop_system::CreateAppCoreService(char *codelocation)
-{
-    // Create challenge string
-    srand(time(nullptr));
-    char tmp[256];
+void pop_system::processor_set(int /*cpu*/) {
 
-    for(int i=0; i<255; i++) {
-        tmp[i]=(char)(1+254.0*rand()/(RAND_MAX+1.0) );
-    }
-    tmp[255]='\0';
-    challenge=tmp;
-
-    return new AppCoreService(challenge, false, codelocation);
-}*/
-
-void pop_system::processor_set(int cpu) {
-    (void)cpu;
-#ifndef __APPLE__
-// Use glibc to set cpu affinity
-/*if (cpu < 0) {
-    LOG_WARNING("Cannot set processor to %d<0", cpu);
-    exit(EXIT_FAILURE);
-}
-if(cpu >= CPU_SETSIZE) {
-    LOG_WARNING("Cannot set processor to %d while CPU_SETSIZE=%d", cpu, CPU_SETSIZE);
-    exit(EXIT_FAILURE);
-}
-
-cpu_set_t cpu_set;
-CPU_ZERO(&cpu_set);
-CPU_SET(cpu, &cpu_set);
-if(sched_setaffinity(0, sizeof(cpu_set), &cpu_set) == -1) {
-    LOG_WARNING("Cannot set processor to %d (cpu_set %p)", cpu,(void *)&cpu_set);
-    exit(EXIT_FAILURE);
-}
-
-cpu_set_t cpu_get;
-CPU_ZERO(&cpu_get);
-if(sched_getaffinity(0, sizeof(cpu_get), &cpu_get) == -1) {
-    LOG_WARNING("Unable to sched_getaffinity to (cpu_get) %p", (void *)&cpu_get);
-    exit(EXIT_FAILURE);
-}
-
-if(memcmp(&cpu_get, &cpu_set, sizeof(cpu_set_t))) {
-    LOG_WARNING("Unable to run on cpu %d", cpu);
-    exit(EXIT_FAILURE);
-}
-#else
-// Apple thread API
-*/
-
-#endif
 }
