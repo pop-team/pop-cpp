@@ -78,26 +78,6 @@ int main(int argc, char** argv) {
     pop_system sys;
     int status = 0;
     pop_combox* callback = NULL;
-    // Connect to callback
-    // No need in MPI version, connection is already active and can exchange data
-    /*char *addr = pop_utils::checkremove(&argc, &argv, "-callback=");
-    if (addr != NULL) {
-        pop_combox_factory *combox_factory = pop_combox_factory::GetInstance();
-
-        char *tmp = strstr(addr, "://");
-        if (tmp == NULL) {
-          callback = combox_factory->Create("socket");
-        } else {
-            *tmp = 0;
-            callback = combox_factory->Create(addr);
-            *tmp = ':';
-        }
-
-        if (!callback->Create(NULL, 0, false) || !callback->Connect(addr)) {
-            delete callback;
-            return 1;
-        }
-    }*/
 
     pop_broker_factory::CheckIfPacked = &CheckIfPacked;  // transmit the address of the check function to broker factory
     pop_broker* broker_factory = pop_broker_factory::Create(&argc, &argv);
@@ -148,9 +128,7 @@ int main(int argc, char** argv) {
             MPI::Finalize();
             return 1;
         }
-    } /* else if (status == 0) {
-        //LOG_INFO("%s", (const char *)pop_broker::accesspoint.GetAccessString());
-    }*/
+    }
 
     // Set the current working directory
     char* cwd = pop_utils::checkremove(&argc, &argv, "-cwd=");

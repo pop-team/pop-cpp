@@ -239,30 +239,11 @@ libc_hidden_def(__strtok_r) weak_alias(__strtok_r, strtok_r)
     void* popc_dlopen(const char*, int) {
 }
 
-//
+char* popc_dlerror(void) {}
 
-char* popc_dlerror(void) {
-}
+void* popc_dlsym(void* /*handle*/, const char* /*name*/) {}
 
-//
-
-void* popc_dlsym(void* handle, const char* name) {
-    /*FARPROC fp;
-    fp = GetProcAddress(handle, name);
-    if (!fp) {
-        return nullptr;
-    }
-    return fp;*/
-}
-
-//
-
-int popc_dlclose(void* handle) {
-    /*if (!FreeLibrary(handle)) {
-          return -1;
-    }
-    return 0;*/
-}
+int popc_dlclose(void* /*handle*/) {}
 
 // functions below are derivated from <fcntl.h>
 int popc_fcntl(int fd, int cmd, int arg) {
@@ -326,16 +307,6 @@ uint32_t popc_ntohl(uint32_t a) {
 uint16_t popc_ntohs(uint16_t a) {
     return ntohs(a);
 }
-/*
-#ifndef __GT_FILE
-# define __GT_FILE 0
-#endif
-
-int popc_mkstemp(char *temp)
-{
-    return __gen_tempname (temp, __GT_FILE);
-}
-*/
 
 int popc_poll(struct pollfd* fd, int n, int timeout) {
     // return 0;
@@ -551,14 +522,6 @@ int RunPipe(int argc1, char* argv1[], int argc2, char* argv2[]) {
     sa.lpSecurityDescriptor = nullptr;
     sa.bInheritHandle = TRUE;
 
-    /*HANDLE hTemp = CreateFile(argv2[1],
-                            GENERIC_WRITE,
-                            FILE_SHARE_DELETE| FILE_SHARE_WRITE | FILE_SHARE_READ,
-                            &sa,
-                            OPEN_ALWAYS,
-                            FILE_ATTRIBUTE_NORMAL,
-                            nullptr);*/
-
     ZeroMemory(&sInfoSource, sizeof(sInfoSource));
     ZeroMemory(&sInfoDest, sizeof(sInfoDest));
 
@@ -573,7 +536,6 @@ int RunPipe(int argc1, char* argv1[], int argc2, char* argv2[]) {
     }
 
     sInfoSource.hStdInput = hIn;
-    // sInfoSource.hStdError = sInfoSource.hStdOutput = hTemp;
     sInfoSource.hStdError = sInfoSource.hStdOutput = hPipeOut;
     sInfoDest.hStdInput = hPipeIn;
     sInfoDest.hStdError = sInfoDest.hStdOutput = hOut;

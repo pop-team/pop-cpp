@@ -223,15 +223,6 @@ bool pop_buffer_raw::Recv(pop_combox& s, pop_connection* conn) {
     char* dat = (char*)h;
     s.Recv(dat, 20, conn);
     LOG_INFO("RAW: header received");
-    /*  n = 20;
-        do {
-            if ((i = s.Recv(dat,n, conn)) <= 0) {
-            LOG_ERROR("[CORE] combox recv returned %d", i);
-                return false;
-            }
-            n -= i;
-            dat += i;
-        } while (n);*/
 
     Reset();
     n = h[0];
@@ -269,17 +260,6 @@ bool pop_buffer_raw::Recv(pop_combox& s, pop_connection* conn) {
         s.Recv(dat, n, conn);
         LOG_INFO("RAW: received %d", n);
     }
-
-    /*
-        i = 0;
-        while (n > 0) {
-            if ((i = s.Recv(dat,n, conn)) <= 0) {
-                LOG_ERROR("[CORE] combox recv returned %d", i);
-                return false;
-            }
-            dat += i;
-            n -= i;
-        }*/
 
     return true;
 }

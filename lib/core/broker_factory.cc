@@ -77,24 +77,6 @@ bool pop_broker_factory::test(const char* objname) {
 }
 
 pop_broker* pop_broker_factory::Create(int* argc, char*** argv) {
-    /**
-     * Display the information about the parallel object executable
-     * note: this bit of code existed in pseudodynamic version and is
-     * kept just in case.
-     */
-    /*
-        char *tmp1 = pop_utils::checkremove(argc,argv,"-printmpi");
-        if(tmp1 != nullptr) {
-            char abspath[1024];
-            char *thisfile = getenv("POPC_EXE");
-            if(thisfile == nullptr) {
-                thisfile = (*argv)[0];
-            }
-            pop_utils::FindAbsolutePath(thisfile,abspath);
-            PrintBrokersMPI(abspath);
-            exit(0);
-        }
-    */
     char* tmp = pop_utils::checkremove(argc, argv, "-list");
     if (tmp != nullptr) {
         // char abspath[1024];
@@ -180,18 +162,3 @@ void pop_broker_factory::PrintBrokers(const char* abspath, bool longformat) {
         printf("====\nArchitecture=%s\n", pop_system::platform.c_str());
     }
 }
-
-/* note: this coded existed in the pseudodynamic version of the code but is now disabled.
-void pop_broker_factory::PrintBrokersMPI(const char *abspath) {
-    if(brokerlist!=nullptr) {
-        POSITION pos=brokerlist->GetHeadPosition();
-        while(pos!=nullptr) {
-            pop_broker_init &t=brokerlist->GetNext(pos);
-            if(!(pop_broker_factory::CheckIfPacked!=nullptr && !pop_broker_factory::CheckIfPacked(t.objname))) {
-                printf("-host localhost -np 1 %s -mpi -object=%s\n", abspath, (const char *)t.objname);
-            }
-        }
-    }
-}
-
-*/

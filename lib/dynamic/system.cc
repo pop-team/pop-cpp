@@ -23,14 +23,6 @@
  */
 #include "pop_intface.h"
 
-//#include <stdio.h>
-//#include <netdb.h>
-//#include <unistd.h>
-//#include <sys/socket.h>
-//#include <netinet/in.h>
-//#include <arpa/inet.h>
-//#include <ctype.h>
-
 #include "pop_system.h"
 #include "pop_buffer_factory_finder.h"
 #include "pop_utils.h"
@@ -452,41 +444,4 @@ AppCoreService* pop_system::CreateAppCoreService(char* codelocation) {
 }
 
 // TODO LW: Should probably be in intface
-void pop_system::processor_set(int cpu) {
-    (void)cpu;
-#ifndef __APPLE__
-// Use glibc to set cpu affinity
-/*if (cpu < 0) {
-    LOG_WARNING("Cannot set processor to %d<0", cpu);
-  exit(EXIT_FAILURE);
-}
-if (cpu >= CPU_SETSIZE) {
-    LOG_WARNING("Cannot set processor to %d while CPU_SETSIZE=%d", cpu, CPU_SETSIZE);
-  exit(EXIT_FAILURE);
-}
-
-cpu_set_t cpu_set;
-CPU_ZERO(&cpu_set);
-CPU_SET(cpu, &cpu_set);
-if (sched_setaffinity(0, sizeof(cpu_set), &cpu_set) == -1) {
-    LOG_WARNING("Cannot set processor to %d (cpu_set %p)", cpu,(void *)&cpu_set);
-  exit(EXIT_FAILURE);
-}
-
-cpu_set_t cpu_get;
-CPU_ZERO(&cpu_get);
-if (sched_getaffinity(0, sizeof(cpu_get), &cpu_get) == -1) {
-    LOG_WARNING("Unable to sched_getaffinity to (cpu_get) %p", (void *)&cpu_get);
-  exit(EXIT_FAILURE);
-}
-
-if (memcmp(&cpu_get, &cpu_set, sizeof(cpu_set_t))) {
-    LOG_WARNING("Unable to run on cpu %d", cpu);
-  exit(EXIT_FAILURE);
-}
-#else
-// Apple thread API
-*/
-
-#endif
-}
+void pop_system::processor_set(int /*cpu*/) {}

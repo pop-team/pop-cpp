@@ -34,14 +34,7 @@ pop_buffer_factory_finder::pop_buffer_factory_finder() {
     // Initialize the static array
     int metrics[MAX_FACTORY];
 
-    /*bfArray[0] = new pop_buffer_raw_factory();
-    bfArray[1] = new pop_buffer_xdr_factory();
-    metrics[0] = metrics[1]=0;
-    plugins[0] = plugins[1] = nullptr;
-    size = 2;*/
-
     bfArray[0] = new pop_buffer_xdr_factory();
-    //  bfArray[0] = new pop_buffer_raw_factory();
     metrics[0] = 0;
     plugins[0] = nullptr;
     size = 1;
