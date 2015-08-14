@@ -202,13 +202,13 @@ void Class::GenerateCode(std::string& output /*, bool isPOPCPPCompilation*/) {
 }
 void Class::AddMember(ClassMember* t) {
     if (t->Type() == TYPE_METHOD) {
-        Method* met = (Method*)t;
+        auto met = static_cast<Method*>(t);
         int type = met->MethodType();
         if (type == METHOD_CONSTRUCTOR) {
             noConstructor = false;
         }
 
-        if (type == METHOD_CONSTRUCTOR && ((Constructor*)met)->isDefault()) {
+        if (type == METHOD_CONSTRUCTOR && (static_cast<Constructor*>(met))->isDefault()) {
             met->id = 10;
         } else {
             met->id = endid++;
@@ -261,7 +261,7 @@ bool Class::hasMethod(Method& x) {
     int n = memberList.size();
     for (int i = 0; i < n; i++)
         if (memberList[i]->Type() == TYPE_METHOD) {
-            Method& t = *((Method*)memberList[i]);
+            Method& t = *(static_cast<Method*>(memberList[i]));
             if (t == x) {
                 return true;
             }
@@ -301,7 +301,7 @@ bool Class::findPureVirtual(CArrayMethod& lst) {
 
     for (auto& member : memberList) {
         if (member->Type() == TYPE_METHOD) {
-            auto t = (Method*)member;
+            auto t = static_cast<Method*>(member);
 
             if (t->isPureVirtual) {
                 lst.push_back(t);
@@ -347,7 +347,7 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
                 continue;
             }
 
-            Method* met = (Method*)memberList[i];
+            auto met = static_cast<Method*>(memberList[i]);
             if (met->MethodType() == METHOD_CONSTRUCTOR) {
                 Constructor* cons = dynamic_cast<Constructor*>(met);
                 cons->set_id(constrcutor_id++);
@@ -409,7 +409,7 @@ bool Class::GenerateClient(string& code /*, bool isPOPCPPCompilation*/) {
             continue;
         }
 
-        Method* met = (Method*)memberList[i];
+        auto met = static_cast<Method*>(memberList[i]);
         if (pureVirtual && met->MethodType() == METHOD_CONSTRUCTOR &&
             IsCoreCompilation()) {  // TODO LW: Why do we generate virtual clients if not core ! Why do we generate
                                     // clients at all for virtual classes ?
@@ -547,17 +547,14 @@ bool Class::generate_broker_header_pog(std::string& code) {
         if (memberList[i]->GetMyAccess() != PUBLIC || memberList[i]->Type() != TYPE_METHOD) {
             continue;
         }
-        Method& met = *((Method*)memberList[i]);
-        if (pureVirtual && met.MethodType() == METHOD_CONSTRUCTOR && IsCoreCompilation()) {
+
+        auto met = static_cast<Method*>(memberList[i]);
+        if (pureVirtual && met->MethodType() == METHOD_CONSTRUCTOR && IsCoreCompilation()) {
             continue;
         }
-        met.generate_broker_header_pog(code);
-    }
 
-    /* In the current version a constructor is mandatory so no need for this.
-      if (noConstructor && !pureVirtual) {
-        constructor.GenerateBrokerHeader(code);
-    }*/
+        met->generate_broker_header_pog(code);
+    }
 
     snprintf(tmpcode, sizeof(tmpcode),
              "\npublic:\n  static POPC_GroupBroker *_init();\n  static POPC_GroupBrokerFactory _popc_factory;\n");
@@ -812,14 +809,6 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
             code += accessstr[currentaccess];
         }
 
-        if (memberList[i]->Type() == TYPE_METHOD) {
-            Method* t = (Method*)memberList[i];
-            if (t->MethodType() == METHOD_CONSTRUCTOR) {
-                // if ( ((Constructor *)t)->isDefault()) defaultconstructor=true;
-                /*PEKA Removed */  // if (interface && pureVirtual) continue;
-            }
-        }
-
         memberList[i]->GenerateHeader(code, interface);
     }
 
@@ -833,7 +822,7 @@ bool Class::GenerateHeader(std::string& code, bool interface /*, bool isPOPCPPCo
     bool declared_constructor = false;
     for (auto& member : memberList) {
         if (member->Type() == TYPE_METHOD) {
-            Method* t = (Method*)member;
+            Method* t = static_cast<Method*>(member);
             if (t->MethodType() == METHOD_DESTRUCTOR) {
                 declared_constructor = true;
                 break;
@@ -983,11 +972,11 @@ bool Class::GenerateBrokerHeader(std::string& code /*, bool isPOPCPPCompilation*
         if (memberList[i]->GetMyAccess() != PUBLIC || memberList[i]->Type() != TYPE_METHOD) {
             continue;
         }
-        Method& met = *((Method*)memberList[i]);
-        if (pureVirtual && met.MethodType() == METHOD_CONSTRUCTOR /* LAST MODIFICATION */ && IsCoreCompilation()) {
+        Method* met = static_cast<Method*>(memberList[i]);
+        if (pureVirtual && met->MethodType() == METHOD_CONSTRUCTOR /* LAST MODIFICATION */ && IsCoreCompilation()) {
             continue;
         }
-        met.GenerateBrokerHeader(code);
+        met->GenerateBrokerHeader(code);
     }
 
     if (noConstructor && !pureVirtual) {
@@ -1061,7 +1050,8 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
         if (memberList[i]->GetMyAccess() != PUBLIC || memberList[i]->Type() != TYPE_METHOD) {
             continue;
         }
-        Method& met = *((Method*)memberList[i]);
+
+        auto& met = *static_cast<Method*>(memberList[i]);
 
         int t = met.MethodType();
         if (t == METHOD_DESTRUCTOR || met.isHidden /* LAST MODIFICATION */ ||
@@ -1148,7 +1138,7 @@ bool Class::GenerateBroker(std::string& code /*, bool isPOPCPPCompilation*/) {
             continue;
         }
 
-        Method& met = *((Method*)memberList[i]);
+        Method& met = *static_cast<Method*>(memberList[i]);
         int t = met.MethodType();
         if (t == METHOD_DESTRUCTOR || met.isHidden || (pureVirtual && t == METHOD_CONSTRUCTOR && IsCoreCompilation()) ||
             (met.isVirtual && methodInBaseClass(met))) {
