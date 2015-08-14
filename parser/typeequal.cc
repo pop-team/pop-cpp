@@ -26,18 +26,6 @@ void TypeEqual::DeMarshal(char* varname, char* bufname, char* sizehelper, std::s
     type->DeMarshal(varname, bufname, sizehelper, output);
 }
 
-// bool TypeEqual::Same(DataType *other)
-// {
-//   if (DataType::Same(other)) return true;
-//   return type->Same(other);
-// }
-
-// bool TypeEqual::Same(char *tname)
-// {
-//   if (strcmp(name, tname)==0) return true;
-//   return type->Same(tname);
-// }
-
 int TypeEqual::IsPointer() {
     return type->IsPointer();
 }

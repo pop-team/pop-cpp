@@ -219,35 +219,3 @@ bool DataType::FindVarName(const char* var, char name[256], size_t buffer_length
     snprintf(name, buffer_length, "%s", curname);
     return true;
 }
-/*
-
-int DataType::GetSTLArg(char *name, char argout[1024])
-{
-  for (int i=0;i<MAXSTLTYPES;i++) if (strstr(name, stlType[i])==name)
-    {
-      char *arg=name+strlen(stlType[i]);
-      if (*arg==' ') arg++;
-      if (*arg!='<') continue;
-      arg++;
-      if (*arg==' ') arg++;
-      char *end=arg;
-      int count=1;
-      bool done=false;
-      while (1)
-    {
-      if (*end==0) break;
-
-      if (*end=='<') count++;
-      else if (*end=='>') count--;
-      if (count<=0 || (count==1 && (*end==',' || *end=='&'))) break;
-      end++ ;
-    }
-      int len=end-arg;
-      strncpy(argout, arg,len);
-      argout[len]=0;
-      return i;
-    }
-  return -1;
-
-}
-*/

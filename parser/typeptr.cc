@@ -1,30 +1,8 @@
 #include "pop_intface.h"
 
-//#include "string.h"
-//#include "stdio.h"
 #include "type.h"
 
 // Pointer of a type....
-
-/*
-TypePtr::TypePtr(char *name, int level, DataType *base): DataType(name)
-{
-    typebase=base;
-    assert(base!=NULL);
-    nptr=(level<=0)? 1: level;
-    size=NULL;
-
-    //tmp
-    constPos.clear();
-
-    //tmp
-    do
-    {
-        constPos.push_back(false);
-        level--;
-    } while (level > 0);
-}
-*/
 
 TypePtr::TypePtr(char* name, int level, DataType* base, std::vector<bool> constPositions) : DataType(name) {
     typebase = base;

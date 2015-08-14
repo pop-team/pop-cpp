@@ -654,55 +654,11 @@ bool Class::generate_header_pog(std::string& code, bool interface) {
         snprintf(str, sizeof(str), "\npublic:\n  virtual void construct_remote_object();");
         code += str;
 
-        // snprintf(str, sizeof(str),"\n  void _popc_constructor();", name);
-        // code += str;
-
         snprintf(str, sizeof(str), "\n  virtual char* get_class_name() { return (char*)\"%s\"; };\n", name);
         code += str;
 
         snprintf(str, sizeof(str), "\n  %s& operator[] (const int index);\n", name);
         code += str;
-
-        /*int n=baseClass.size();
-        if (n)
-        {
-            CArrayClass bases;
-            bases.resize(n);
-            for (int i=0;i<n;i++)  bases[i]=baseClass[i]->base;
-            CodeFile *prog=GetCodeFile();
-            prog->FindAllBaseClass(*this, bases,true);
-
-            n=bases.size();
-            snprintf(tmpcode, sizeof(tmpcode)," : ");
-            for (int j=0;j<n;j++)
-            {
-                strcat(tmpcode,bases[j]->GetName());
-                if (j<n-1) strcat(tmpcode,"(_pop_nobind) ,");
-                else  strcat(tmpcode,"(_pop_nobind)");
-            }
-            code += tmpcode;
-        }
-
-        snprintf(str, sizeof(str)," { Bind(p); };\n");
-        code += str;
-
-
-        if (noConstructor && !pureVirtual)
-        { constructor.GenerateHeader(code, interface); }
-
-        //Generate constructor from the interface binding
-        snprintf(str, sizeof(str),"\n%s(const %s &inf)",name, my_interface_base);
-        code += str;
-        code += tmpcode;
-        snprintf(str, sizeof(str)," { SetOD(inf.GetOD()); Bind(inf.GetAccessPoint()); };\n");
-        code += str;
-
-        //Generate constructor from the object side binding
-        snprintf(str, sizeof(str),"\n%s(const pop_object *obj)",name);
-        code += str;
-        code += tmpcode;
-        snprintf(str, sizeof(str)," { Bind(obj->GetAccessPoint());};\n");
-        code += str;*/
 
         snprintf(str, sizeof(str), "\n  ~%s() {};", name);
         code += str;

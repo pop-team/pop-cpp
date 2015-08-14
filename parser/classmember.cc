@@ -239,15 +239,7 @@ bool Param::Marshal(char* bufname, bool reformat, bool inf_side, std::string& ou
     }
 
     char tmpvar[1024];
-    // if(isConst) {
     *tmpvar = 0;
-    //             *tmpvar='(';
-    //       mytype->GetCastType(tmpvar+1);
-    //       if (isRef) strcat(tmpvar,"&");
-    //       strcat(tmpvar,")");
-    //} else {
-    *tmpvar = 0;
-    //}
 
     if (reformat) {
         strcat(tmpvar, "&");
@@ -324,14 +316,12 @@ bool Param::UnMarshal(char* bufname, bool reformat, bool alloc_mem, bool inf_sid
                          "pop_interface_container<%s> __pop_container_%s(__pop_size2_%s);\n %s=__pop_container_%s;\n",
                          basetype, name, name, name, name);
             } else {
-                //        snprintf(alloccode, sizeof(alloccode), "pop_container<typeof(*%s)>
-                //        __pop_container_%s(%s,__pop_size2_%s);\n",
-                //        name,name,name,name);
                 char tmpstr[1024];
                 snprintf(tmpstr, sizeof(tmpstr), "%s", base->GetName());
                 for (int i = 1; i < nptr; i++) {
                     strcat(tmpstr, "*");
                 }
+
                 snprintf(alloccode, sizeof(alloccode),
                          "pop_container<%s> __pop_container_%s(__pop_size2_%s);\n%s=__pop_container_%s;\n", tmpstr,
                          name, name, name, name);
@@ -732,11 +722,6 @@ void Method::GenerateReturn(std::string& output, bool header, bool interface) {
     }
 
     if (returnparam.GetType()->IsParClass() && !returnparam.IsRef()) {
-        /* changed by David : no more warning, error ! */
-        // fprintf(stderr,"%s:%d: WARNING in %s::%s : the return argument '%s' is treated as a reference to a parallel
-        // object.\n", GetClass()->GetFileInfo(), line, GetClass()->GetName(), (const char*)name,
-        // returnparam.GetType()->GetName());
-
         fprintf(
             stderr,
             "%s:%d: POP-C++ Error in %s::%s : the return argument '%s' should by a reference to a parallel object !\n",
@@ -760,15 +745,12 @@ void Method::GenerateReturn(std::string& output, bool header, bool interface) {
     char tmp[1024];
 
     type->GetDeclaration(nullptr, tmp);
-    // if (returnparam.IsConst())snprintf(tmp, sizeof(tmp), "const %s", tmp);
+
     output += tmp;
 
     // add by david
     if (returnparam.IsRef() && !interface) {
-        //      if(!returnparam.GetType()->IsParClass())
-        //      {
         output += "& ";
-        //      }
     }
 
     output += " ";
@@ -1350,10 +1332,6 @@ void Method::GenerateBroker(std::string& output) {
         // now....generate the call...
         output += methodcall;
 
-        /*
-
-          } */
-
         if (GetClass()->is_collective()) {
             snprintf(str, sizeof(str),
                      "\n  if (_popc_connection != 0) {\n    _popc_buffer.Reset();\n    pop_message_header "
@@ -1718,26 +1696,6 @@ void Constructor::GenerateClientPrefixBody(std::string& output) {
         snprintf(tmpcode, sizeof(tmpcode), "\nvoid %s::_pop_construct", GetClass()->GetName());
         output += tmpcode;
     } else {
-        // snprintf(tmpcode, sizeof(tmpcode), "\nvoid %s::construct_remote_object() {\n  _popc_constructor(",
-        // GetClass()->GetName());
-        // output += tmpcode;
-
-        // Place saved constructor arguments
-        /*      int nb = params.size();
-                for (int j = 0; j < nb; j++) {
-                    Param &p = *(params[j]);
-                    snprintf(tmpcode, sizeof(tmpcode), "_popc_constructor_%d_%s", get_id(), p.GetName());
-                    output += tmpcode;
-                    if (j < nb-1) {
-                    snprintf(tmpcode, sizeof(tmpcode), ", ");
-                    output += tmpcode;
-                }
-                }
-
-
-              snprintf(tmpcode, sizeof(tmpcode), ");\n}\n");
-              output += tmpcode;     */
-
         snprintf(tmpcode, sizeof(tmpcode), "\nvoid %s::_popc_constructor", GetClass()->GetName());
         output += tmpcode;
     }
