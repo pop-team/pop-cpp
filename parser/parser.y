@@ -1204,12 +1204,6 @@ type_specifier: ID
     {
       currenttype=new DataType(GetToken($1));
       thisCodeFile->AddDataType(currenttype);
-
-      /*
-    snprintf(tmp, sizeof(tmp),"Undeclared type \"%s\"\n",GetToken($1));
-    errormsg(tmp);
-    exit(1);
-      */
     }
   $$=(YYSTYPE)currenttype;
 }
@@ -1280,59 +1274,6 @@ template_arg: type_specifier pointer_specifier array_declarator ref_specifier
 
 }
 ;
-/*
-template_arg: ID pointer_specifier array_declarator ref_specifier
-{
-  if ($2==0 && $3==-1 && $4==0)
-    {
-      $$=$1;
-    }
-  else
-    {
-      snprintf(tmp, sizeof(tmp), "%s", GetToken($1));
-      for (int i=0;i<$2; i++) strcat(tmp, "*");
-      if ($3!=-1) strcat(tmp,GetToken($3));
-      if ($4) strcat(tmp,"&");
-      $$=PutToken(tmp);
-    }
-}
-| ID1 pointer_specifier array_declarator ref_specifier
-{
-  if ($2==0 && $3==-1 && $4==0)
-    {
-      $$=$1;
-    }
-  else
-    {
-      snprintf(tmp, sizeof(tmp), "%s", GetToken($1));
-      for (int i=0;i<$2; i++) strcat(tmp, "*");
-      if ($3!=-1) strcat(tmp,GetToken($3));
-      if ($4) strcat(tmp,"&");
-      $$=PutToken(tmp);
-    }
-}
-|  ID '<' template_arguments '>'
-{
-  snprintf(tmp, sizeof(tmp),"%s<%s>",GetToken($1), GetToken($3));
-  $$= PutToken(tmp);
-}
-;
-
-*/
-
-
-/*
-pointer_specifier:/*empty
-{
-  $$=0;
-
-}
-| '*' pointer_specifier
-{
-  $$=$2+1;
-}
-;
-*/
 
 pointer_specifier:/*empty*/
 {
@@ -1438,122 +1379,6 @@ destructor_name: ID
   snprintf(method->name, sizeof(method->name), "%s", GetToken($1));
 }
 ;
-
-/*
-method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')'
-{
-  //Old data:  argument_type function_name
-  snprintf(method->returnparam.name, sizeof(method->returnparam.name), "%s","_RemoteRet");
-
-  DataType *type=returntype;
-  if ($2>0) {
-    type = new TypePtr(NULL, $2 , type);
-    thisCodeFile->AddDataType(type);
-  }
-
-  if ($3) {
-    method->returnparam.isRef=true;
-  }
-  method->returnparam.SetType(type);
-}
-|  fct_specifier decl_specifier  pointer_specifier ref_specifier function_name '(' argument_declaration ')'
-{
-  snprintf(method->returnparam.name, sizeof(method->returnparam.name), "%s", "_RemoteRet");
-
-  DataType *type = returntype;
-  if ($3 > 0) {
-    type = new TypePtr(NULL, $3 , type);
-    thisCodeFile->AddDataType(type);
-  }
-
-  if ($4) {
-    method->returnparam.isRef=true;
-  }
-
-  method->returnparam.SetType(type);
-
-  method->isVirtual=(($1 & 1)!=0);
-
-  if (($1 & 8) != 0) method->isConcurrent = true;
-  else if (($1 & 32)!=0) method->isConcurrent=false;
-
-  method->isHidden=(($1 & 64)!=0);
-  method->isMutex=(($1 & 16)!=0);
-
-  if (($1 & 6)==2) method->invoketype = invokesync;
-  else if (($1 & 6)==4) method->invoketype = invokeasync;
-  //else method->invoketype=autoselect;
-}
-| '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')'
-{
-  DataType *type=returntype;
-  if ($5>0)
-    {
-      type=new TypePtr(NULL, $5 , type);
-      thisCodeFile->AddDataType(type);
-    }
-
-  if ($6)
-    {
-      method->returnparam.isRef=true;
-    }
-  method->returnparam.SetType(type);
-
-  snprintf(method->returnparam.name, sizeof(method->returnparam.name), "%s","_RemoteRet");
-}
-| fct_specifier  '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')'
-{
-  snprintf(method->returnparam.name, sizeof(method->returnparam.name), "%s","_RemoteRet");
-
-  DataType *type=returntype;
-  if ($6>0)
-    {
-      type=new TypePtr(NULL, $6 , type);
-      thisCodeFile->AddDataType(type);
-    }
-
-  if ($7)
-    {
-      method->returnparam.isRef=true;
-    }
-  method->returnparam.SetType(type);
-
-  method->isVirtual=(($1 & 1)!=0);
-
-  if (($1 & 8)!=0) method->isConcurrent=true;
-  else if (($1 & 32)!=0) method->isConcurrent=false;
-
-  method->isMutex=(($1 & 16)!=0);
-  method->isHidden=(($1 & 64)!=0);
-
-  if (($1 & 6)==2) method->invoketype=invokesync;
-  else if (($1 & 6)==4) method->invoketype=invokeasync;
-  // else method->invoketype=autoselect;
-}
-;
-*/
-
-/*
-method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')'
-{
-    setReturnParam($2,$3, 0);
-}
-|  fct_specifier decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')'
-{
-    setReturnParam($3,$4, ($1 & 1));
-    setPOPCMethodeModifier($1 & 254);
-}
-| '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($2,&(method->returnparam) ); } '(' argument_declaration ')'
-{
-    setReturnParam($5,$6, ($1 & 1));
-}
-| fct_specifier  '[' marshal_opt_list ']' decl_specifier  pointer_specifier ref_specifier function_name { UpdateMarshalParam($3,&(method->returnparam) ); } '(' argument_declaration ')'
-{
-    setReturnParam($6,$7, ($1 & 1));
-    setPOPCMethodeModifier($1 & 254);
-}
-;
-*/
 
 
 method_definition: decl_specifier pointer_specifier ref_specifier function_name '(' argument_declaration ')' const_specifier
