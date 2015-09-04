@@ -4,14 +4,15 @@
 # POP-C++ Release Archiver
 # Author : Clement Valentin (clementval)
 # Creation date : 06/04/2011
-# Description : This script is used to create a releasable archive of POP-C++ 
+# Description : This script is used to create a releasable archive of POP-C++
 # ----------------------------------------------------------------------------------------------
-# IMPORTANT : Please, keep this log up to date 
+# IMPORTANT : Please, keep this log up to date
 #
 # Update log
-# Date         Author      Description
-# 31/03/2011	clementval	First version of this script
-# 05/06/2012	clementval	Update script to have proper release without any dev folder or files
+# Date          Author          Description
+# 31/03/2011    clementval      First version of this script
+# 05/06/2012    clementval      Update script to have proper release without any dev folder or files
+# 04/09/2014    baptistewicht   Cleanup and fix the script for 3.0
 ################################################################################################
 
 
@@ -31,8 +32,6 @@ Usage: create_release <version>
 EOF
 }
 
-
-
 if [ "x$1" == "x" ]
 then
    echo "[ERROR] You must specify a version number"
@@ -41,43 +40,44 @@ then
 fi
 
 echo "IMPORTANT FOR THE RELEASE"
+echo "All non-versioned files will be DELETED!"
 echo "Did you update the following files:"
-echo "- ChangeLog"
 echo "- RELEASE_NOTES"
-echo "Did you increment the version number in the configure.ac file ?"
-echo "Did you regenerate the files with autoreconf ?"
-echo "If everything is fine just proceed with the archive ! (y/n)"
+
+read -p "If everything is fine just proceed with the archive ! (y/n) " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    # Proceed with the release
+
+    #Clean the current version of POP-C++
+    git clean -xdf
+
+    #Remove UDS files
+    find . -xdev -type s -name ".uds_*" | xargs rm
+
+    VERSION=$1
+    #Date of the arhiving
+    DDATE=$(date +%Y%m%d)
+    RELDIR="popcpp_"$VERSION"_build_"$DDATE
+    ARCHIVE="$RELDIR.tar"
+
+    mkdir $RELDIR
+    GOODDIR=$(ls . | grep -v dev | grep -v ReleaseNotes.dev.txt | grep -v config.status)
+
+    echo $GOODDIR
+
+    for d in $GOODDIR
+    do
+        if [ "x$d" != "x$RELDIR" ]
+        then
+            cp -R $d $RELDIR
+            echo "cp -R $d $RELDIR"
+        fi
+    done
 
 
-#Clean the current version of POP-C++
-make clean 
-
-
-VERSION=$1
-#Date of the arhiving
-DDATE=$(date +%Y%m%d)
-RELDIR="popcpp_"$VERSION"_build_"$DDATE
-ARCHIVE="$RELDIR.tar"
-IGNORED=" dev virtualtest autom4te.cache .svn"
-
-
-
-mkdir $RELDIR
-GOODDIR=$(ls . | grep -v ReleaseNotes.dev.txt | grep -v documentation | grep -v virtualtest | grep -v autom4te.cache | grep -v stamp-h1 | grep -v create_release | grep -v ChangeLog | grep -v config.log | grep -v config.status)
-
-echo $GOODDIR
-
-for d in $GOODDIR
-do
-	if [ "x$d" != "x$RELDIR" ]
-	then
-		cp -R $d $RELDIR
-		echo "cp -R $d $RELDIR"
-	fi
-done
-
-
-tar -cf $ARCHIVE --exclude='.svn' $RELDIR/*
-gzip $ARCHIVE
-rm -rf $RELDIR
-
+    tar -cf $ARCHIVE --exclude='.git' $RELDIR/*
+    gzip $ARCHIVE
+    rm -rf $RELDIR
+fi
