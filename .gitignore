@@ -29,6 +29,9 @@ parser/popcc
 parser/popcpp
 parser/popcc.h
 
+#Ignore sockets
+.uds_*
+
 # Clean tests
 !test/*/Makefile
 test/*/main
