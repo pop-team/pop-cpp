@@ -1,8 +1,6 @@
 POP-C++ 3.0
 ===========
 
-Version 3.0 is under development, use it at your own risk.
-
 BEFORE STARTING
 ---------------
 
