@@ -1,4 +1,4 @@
-POP-C++ 3.0:
+POP-C++ 3.0: 04.09.2015
 
 - Asynchronous creation of parallel objects
 - Stabilization of version 2.9: Lots of bug fixes
