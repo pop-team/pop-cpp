@@ -1,13 +1,6 @@
 #include "POPObject.ph"
 
-/**
- * @author  clementval
- * @date    2012.07.11
- * This program tests compilation without the @pack directive. Compilation should work and print a warning message.
- */
-int main(int argc, char** argv)
-
-{
+int main(int argc, char** argv){
     cout << "Standard syntax array: Starting test..." << popcendl;
 
     int array[5];
