@@ -132,6 +132,20 @@ port exists with mingw where the normal inclusion. "h"
 
 // xdr
 
+#ifdef __APPLE__
+#ifndef bool_t
+#define bool_t bool
+#endif
+#endif
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
 #include <rpc/xdr.h>
 
 #define popc_XDR XDR
