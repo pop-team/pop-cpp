@@ -103,14 +103,32 @@ port exists with mingw where the normal inclusion. "h"
 // dlfcn
 
 #include <dlfcn.h>
-// bits
-#define RTLD_LOCAL 0
-#define RTLD_LAZY 0x00001
-#define RTLD_NOW 0x00002
 
+// define bits
+
+#ifndef RTLD_LOCAL
+#define RTLD_LOCAL 0
+#endif
+
+#ifndef RTLD_LAZY
+#define RTLD_LAZY 0x00001
+#endif
+
+#ifndef RTLD_NOW
+#define RTLD_NOW 0x00002
+#endif
+
+#ifndef F_GETFL
 #define F_GETFL 3
+#endif
+
+#ifndef F_SETFL
 #define F_SETFL 4
+#endif
+
+#ifndef O_NONBLOCK
 #define O_NONBLOCK 04000
+#endif
 
 // xdr
 
