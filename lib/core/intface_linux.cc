@@ -274,19 +274,19 @@ popc_passwd* popc_getpwnam(const char* a) {
 
 // functions below are derivated from <sys/socket.h>
 
-int popc_accept(int a, __SOCKADDR_ARG b, socklen_t* c) {
+int popc_accept(int a, struct sockaddr* b, socklen_t* c) {
     return accept(a, b, c);
 }
 
-int popc_bind(int a, __CONST_SOCKADDR_ARG b, socklen_t c) {
+int popc_bind(int a, const struct sockaddr* b, socklen_t c) {
     return bind(a, b, c);
 }
 
-int popc_connect(int a, __CONST_SOCKADDR_ARG b, socklen_t c) {
+int popc_connect(int a, const struct sockaddr* b, socklen_t c) {
     return connect(a, b, c);
 }
 
-int popc_getsockname(int a, __SOCKADDR_ARG b, socklen_t* c) {
+int popc_getsockname(int a, struct sockaddr* b, socklen_t* c) {
     return getsockname(a, b, c);
 }
 
