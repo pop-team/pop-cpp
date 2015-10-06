@@ -106,35 +106,17 @@ port exists with mingw where the normal inclusion. "h"
 
 // define bits
 
-#ifndef RTLD_LOCAL
-#define RTLD_LOCAL 0
-#endif
-
-#ifndef RTLD_LAZY
-#define RTLD_LAZY 0x00001
-#endif
-
-#ifndef RTLD_NOW
-#define RTLD_NOW 0x00002
-#endif
-
-#ifndef F_GETFL
-#define F_GETFL 3
-#endif
-
-#ifndef F_SETFL
-#define F_SETFL 4
-#endif
-
-#ifndef O_NONBLOCK
-#define O_NONBLOCK 04000
-#endif
-
 // xdr
 
 #ifdef __APPLE__
 #ifndef bool_t
 #define bool_t bool
+#endif
+#endif
+
+#ifdef __APPLE__
+#ifndef enum_t
+#define enum_t int
 #endif
 #endif
 
@@ -158,17 +140,12 @@ port exists with mingw where the normal inclusion. "h"
 
 #include <fcntl.h>
 
-#define O_RDONLY 00
-#define O_WRONLY 01
-#define O_CREAT 0100 /* not fcntl */
-//#define S_IRWXU 00700
-//#define S_IRGRP 00040
-
 // times
 
 #include <sys/times.h>
 
-#include <sys/sysinfo.h>
+//Not used for now
+//#include <sys/sysinfo.h>
 
 #define popc_clock_t unsigned int
 

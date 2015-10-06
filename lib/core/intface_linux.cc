@@ -173,7 +173,7 @@ void popc_endhostent(void) {
 
 // functions below are derivated from <sys/time.h>
 
-int popc_gettimeofday(popc_timeval* a, __timezone_ptr_t b) {
+int popc_gettimeofday(popc_timeval* a, struct timezone *__restrict b) {
     return gettimeofday(a, b);
 }
 

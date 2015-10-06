@@ -156,7 +156,7 @@ void popc_endhostent(void) {
     // return endhostent();
 }
 
-int popc_gettimeofday(popc_timeval* a, __timezone_ptr_t b) {
+int popc_gettimeofday(popc_timeval* a, struct timezone *__restrict b) {
     return gettimeofday(a, b);
 }
 

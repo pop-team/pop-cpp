@@ -159,7 +159,7 @@ void popc_endhostent(void);
 //
 
 // functions below are derivated from <sys/time.h>
-int popc_gettimeofday(popc_timeval*, __timezone_ptr_t);
+int popc_gettimeofday(popc_timeval*, struct timezone *__restrict b);
 
 // functions below are derivated from <pthread.h>
 
@@ -236,19 +236,19 @@ popc_passwd* popc_getpwnam(const char*);
 
 // functions below are derivated from <sys/socket.h>
 
-int popc_accept(int, __SOCKADDR_ARG, socklen_t*);
+int popc_accept(int, struct sockaddr*, socklen_t*);
 
 //
 
-int popc_bind(int, __CONST_SOCKADDR_ARG, socklen_t);
+int popc_bind(int, const struct sockaddr*, socklen_t);
 
 //
 
-int popc_connect(int, __CONST_SOCKADDR_ARG, socklen_t);
+int popc_connect(int, const struct sockaddr*, socklen_t);
 
 //
 
-int popc_getsockname(int, __SOCKADDR_ARG, socklen_t*);
+int popc_getsockname(int, struct sockaddr*, socklen_t*);
 //
 
 int popc_getsockopt(int, int, int, void*, socklen_t*);
