@@ -13,23 +13,11 @@
 #ifndef POP_INTFACE_LIN_H
 #define POP_INTFACE_LIN_H
 
-// definitions for access ()
-
-#define R_OK 4 /* Test for read permission.  */
-#define W_OK 2 /* Test for write permission.  */
-#define X_OK 1 /* Test for execute permission.  */
-#define F_OK 0 /* Test for existence.  */
-
 // definitions for process
 
 #define popc_pid_t int
-
-//
-
 #define popc_size_t int
-
 #define popc_uid_t int
-
 #define popc_gid_t int
 
 // inclusion of headers needed for linux
