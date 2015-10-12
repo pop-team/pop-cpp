@@ -20,6 +20,8 @@
 #include "pop_utils.h"
 #include "pop_logger.h"
 
+#include <cerrno>
+
 // Set processor
 #include <sched.h>
 //#define error printf

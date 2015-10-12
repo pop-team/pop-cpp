@@ -15,11 +15,14 @@
   Deeply need refactoring:
     POPC_BufferXDR instead of pop_buffer_xdr
  */
+
+#include <cerrno>
+
 #include "pop_intface.h"
 
 #include <rpc/types.h>
 #include <rpc/xdr.h>
-// #include "pop_interface.h"
+
 #include "pop_buffer_xdr.h"
 #include "pop_exception.h"
 #include "pop_logger.h"

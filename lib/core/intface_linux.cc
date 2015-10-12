@@ -9,8 +9,10 @@
 #define LOG_ERROR(_log_msg, ...) fprintf(stderr, _log_msg, ##__VA_ARGS__)
 #endif
 
+#include <cerrno>
+#include <cstring>
 #include <unistd.h>
-#include <string.h>
+
 #include <sys/wait.h>
 #include <sys/types.h>
 

@@ -9,6 +9,8 @@
  *
  */
 
+#include <cerrno>
+
 #include "pop_allocator_uds_local.h"
 
 #include "pop_system.h"

@@ -18,8 +18,9 @@
 
 #include "pop_intface.h"
 
-#include <time.h>
-#include <stdio.h>
+#include <cerrno>
+#include <ctime>
+#include <cstdio>
 #include <string>
 #include <iostream>
 #include <fstream>

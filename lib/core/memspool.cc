@@ -8,8 +8,9 @@
  * Authors      Date            Comment
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
 
 #include "pop_memspool.h"
 #include "pop_exception.h"

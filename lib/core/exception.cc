@@ -16,8 +16,8 @@
     POPC_Exception instead of pop_exception
  */
 
-#include <string.h>
-#include <errno.h>
+#include <cstring>
+#include <cerrno>
 
 #include "pop_exception.h"
 #include "pop_system.h"

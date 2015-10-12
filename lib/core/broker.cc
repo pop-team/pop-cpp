@@ -16,6 +16,8 @@
     pop_broker instead of pop_broker
  */
 
+#include <cerrno>
+
 #include "pop_intface.h"
 #include "pop_logger.h"
 

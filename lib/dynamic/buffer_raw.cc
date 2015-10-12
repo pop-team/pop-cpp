@@ -16,9 +16,10 @@
     POPC_BufferRAW instead of pop_buffer_raw
  */
 
-#include <stdio.h>
-#include <string.h>
-//#include "pop_interface.h"
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
+
 #include "pop_buffer_raw.h"
 #include "pop_exception.h"
 #include "pop_logger.h"

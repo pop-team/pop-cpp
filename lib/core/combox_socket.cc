@@ -5,6 +5,8 @@
  * are still contains conditional Linux / Windows code for sake of clarity.
  */
 
+#include <cerrno>
+
 #include "pop_intface.h"
 
 #ifndef __WIN32__

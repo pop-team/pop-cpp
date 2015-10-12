@@ -13,6 +13,8 @@
  *
  */
 
+#include <cerrno>
+
 #include "pop_allocator_tcpip.h"
 
 #include "pop_system.h"

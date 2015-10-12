@@ -11,11 +11,11 @@
  *
  */
 
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
+#include <cstdlib>
 #include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <stdlib.h>
 #include <fcntl.h>
 #include <signal.h>
 
