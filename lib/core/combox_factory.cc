@@ -20,6 +20,7 @@
  */
 
 #include <algorithm>
+#include <numeric>
 
 #include "pop_intface.h"
 
