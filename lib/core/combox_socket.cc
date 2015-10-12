@@ -17,9 +17,6 @@
 
 #define PROTO_TCP 6
 #define PROTO_UDP 17
-#define POLLIN 0x001
-#define POLLPRI 0x002
-#define POLLOUT 0x004
 
 #ifndef __WIN32__
 
