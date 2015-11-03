@@ -79,7 +79,7 @@ int popc_logger_t(LOGLEVEL level, const char* file, int line, const char* functi
     char msg[512];
     va_list ap;
     va_start(ap, format);
-    vsprintf(msg, format, ap);
+    vsnprintf(msg, (sizeof(msg) / sizeof(*msg)), format, ap);
     va_end(ap);
 
     auto msg_length = strlen(msg);
