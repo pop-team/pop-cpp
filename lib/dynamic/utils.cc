@@ -294,14 +294,16 @@ int pop_utils::InitCodeService(char* fileconf, AppCoreService* s) {
     }
 
     FILE* f = fopen(fileconf, "r");
-    char objname[256], arch[256], codefile[256];
-    char line[256];
-    char sep[] = " \n\t";
 
     if (f == nullptr) {
         return 0;
     }
+
     try {
+        char objname[256], arch[256], codefile[256];
+        char line[256];
+        char sep[] = " \n\t";
+
         while (!feof(f)) {
             if (fgets(line, 256, f) != nullptr) {
                 int last = strlen(line) - 1;
