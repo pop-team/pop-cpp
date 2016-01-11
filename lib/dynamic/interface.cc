@@ -479,7 +479,7 @@ void pop_interface::Bind(const char* dest) {
         create_return = __pop_combox->Create(local_address, false);
         connect_return = __pop_combox->Connect(local_address);
 
-        pop_message_header header(20, 200002, INVOKE_SYNC, "_connection");
+        pop_message_header header(-1, 20, 200002, INVOKE_SYNC, "_connection");
         __pop_buf->Reset();
         __pop_buf->SetHeader(header);
 
@@ -579,7 +579,7 @@ void pop_interface::BindStatus(int& code, std::string& platform, std::string& in
         return;
     }
 
-    pop_message_header h(0, 0, INVOKE_SYNC, "BindStatus");
+    pop_message_header h(-1, 0, 0, INVOKE_SYNC, "BindStatus");
     pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
@@ -608,7 +608,7 @@ int pop_interface::AddRef() {
         return -1;
     }
 
-    pop_message_header h(0, 1, INVOKE_SYNC, "AddRef");
+    pop_message_header h(-1, 0, 1, INVOKE_SYNC, "AddRef");
     pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
@@ -630,7 +630,7 @@ int pop_interface::DecRef() {
         return -1;
     }
 
-    pop_message_header h(0, 2, INVOKE_SYNC, "DecRef");
+    pop_message_header h(-1, 0, 2, INVOKE_SYNC, "DecRef");
     pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
@@ -659,7 +659,7 @@ bool pop_interface::Encoding(std::string encoding) {
         return false;
     }
 
-    pop_message_header h(0, 3, INVOKE_SYNC, "Encoding");
+    pop_message_header h(-1, 0, 3, INVOKE_SYNC, "Encoding");
     pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
@@ -692,7 +692,7 @@ void pop_interface::Kill() {
         return;
     }
 
-    pop_message_header h(0, 4, 0, "Kill");
+    pop_message_header h(-1, 0, 4, 0, "Kill");
     pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
@@ -710,7 +710,7 @@ bool pop_interface::ObjectActive() {
         return false;
     }
 
-    pop_message_header h(0, 5, INVOKE_SYNC, "ObjectActive");
+    pop_message_header h(-1, 0, 5, INVOKE_SYNC, "ObjectActive");
     pop_mutex_locker lock(_pop_imutex);
     __pop_buf->Reset();
     __pop_buf->SetHeader(h);
@@ -738,7 +738,7 @@ bool pop_interface::RecvCtrl() {
     };
 
     char header_name[] = "ObjectAlive\0";
-    pop_message_header h(0, 6, INVOKE_SYNC, header_name);
+    pop_message_header h(-1, 0, 6, INVOKE_SYNC, header_name);
     pop_mutex_locker lock(_pop_imutex);
     while (true) {
         __pop_combox->SetTimeout(time_control);

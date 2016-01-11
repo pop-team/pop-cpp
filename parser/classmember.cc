@@ -899,7 +899,7 @@ void Method::GenerateClient(std::string& output) {
         output += tmpcode;
         snprintf(tmpcode, sizeof(tmpcode),
                  "\n  pop_connection* _popc_connection = __pop_combox->get_connection();\n  __pop_buf->Reset();\n  "
-                 "pop_message_header __pop_buf_header(CLASSUID_%s,%d,%d, \"%s\");\n  "
+                 "pop_message_header __pop_buf_header(-1, CLASSUID_%s,%d,%d, \"%s\");\n  "
                  "__pop_buf->SetHeader(__pop_buf_header);\n",
                  clname, id, invoke_code, name);
         output += tmpcode;
@@ -912,7 +912,7 @@ void Method::GenerateClient(std::string& output) {
             snprintf(
                 tmpcode, sizeof(tmpcode),
                 "\n  pop_connection* _popc_connection = _popc_combox->get_connection();\n  "
-                "_popc_buffer->Reset();\n  pop_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n "
+                "_popc_buffer->Reset();\n  pop_message_header _popc_message_header(-1, CLASSUID_%s, %d, %d, \"%s\");\n "
                 " _popc_buffer->SetHeader(_popc_message_header);\n",
                 clname, POPC_METHOD_NON_COLLECTIVE_SIGNAL_ID, POPC_METHOD_NON_COLLECTIVE_SIGNAL_INVOKE_MODE,
                 POPC_METHOD_NON_COLLECTIVE_SIGNAL_NAME);
@@ -925,7 +925,7 @@ void Method::GenerateClient(std::string& output) {
 
             snprintf(tmpcode, sizeof(tmpcode),
                      "\n  popc_send_request(_popc_buffer, _popc_connection);\n  _popc_buffer->Reset();\n  "
-                     "pop_message_header _popc_message_header_call(CLASSUID_%s, %d, %d, \"%s\");",
+                     "pop_message_header _popc_message_header_call(-1, CLASSUID_%s, %d, %d, \"%s\");",
                      clname, id, invoke_code, name);
             output += tmpcode;
 
@@ -935,7 +935,7 @@ void Method::GenerateClient(std::string& output) {
             snprintf(
                 tmpcode, sizeof(tmpcode),
                 "\n  pop_connection* _popc_connection = _popc_combox->get_connection();\n  "
-                "_popc_buffer->Reset();\n  pop_message_header _popc_message_header(CLASSUID_%s, %d, %d, \"%s\");\n "
+                "_popc_buffer->Reset();\n  pop_message_header _popc_message_header(-1, CLASSUID_%s, %d, %d, \"%s\");\n "
                 " _popc_buffer->SetHeader(_popc_message_header);\n",
                 clname, id, invoke_code, name);
             output += tmpcode;

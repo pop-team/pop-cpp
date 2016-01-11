@@ -386,7 +386,7 @@ bool pop_broker::WakeupReceiveThread(pop_combox* mycombox) {
 
         if (connected) {
             try {
-                pop_message_header h(0, 5, INVOKE_SYNC, "ObjectActive");
+                pop_message_header h(-1, 0, 5, INVOKE_SYNC, "ObjectActive");
                 buffer->Reset();
                 buffer->SetHeader(h);
                 pop_connection* connection = tmp->get_connection();

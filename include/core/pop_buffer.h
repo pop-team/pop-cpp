@@ -60,7 +60,7 @@ class pop_connection;
  */
 class pop_message_header {
 public:
-    pop_message_header(int classid, int methodid, int semantics, const char* methodname);
+    pop_message_header(int requestid, int classid, int methodid, int semantics, const char* methodname);
     pop_message_header(const char* methodname);
     pop_message_header(int exceptioncode, const char* methodname);
     pop_message_header();
@@ -91,7 +91,7 @@ public:
     inline void SetType(int msgtype) {
         type = msgtype;
     }
-    inline void SetClassID(int requestid) {
+    inline void SetRequestID(int requestid) {
         id[0] = requestid;
     }
     inline void SetClassID(int classid) {

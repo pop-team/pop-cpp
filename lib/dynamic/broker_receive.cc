@@ -218,7 +218,7 @@ bool pop_broker::PopCall(pop_request& req) {
         case 0:
             // BindStatus call
             if (methodid[2] & INVOKE_SYNC) {
-                pop_message_header h(0, 0, INVOKE_SYNC, "BindStatus");
+                pop_message_header h(-1, 0, 0, INVOKE_SYNC, "BindStatus");
                 buf->Reset();
                 buf->SetHeader(h);
                 int status = 0;

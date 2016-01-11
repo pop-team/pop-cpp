@@ -31,9 +31,9 @@ pop_buffer_raw::~pop_buffer_raw() {
 }
 
 void pop_buffer_raw::Reset() {
-    unpackpos = 20;
+    unpackpos = HEADER_SIZE;
     // packeddata.RemoveAll();
-    packeddata.resize(20);
+    packeddata.resize(unpackpos);
 }
 
 void pop_buffer_raw::Pack(const char* data, int n) {

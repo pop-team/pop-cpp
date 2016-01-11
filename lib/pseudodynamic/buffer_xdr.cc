@@ -32,7 +32,7 @@ pop_buffer_xdr::~pop_buffer_xdr() {
 }
 
 void pop_buffer_xdr::Reset() {
-    unpackpos = 20;
+    unpackpos = HEADER_SIZE;
     packeddata.clear();
     packeddata.resize(unpackpos);
 }

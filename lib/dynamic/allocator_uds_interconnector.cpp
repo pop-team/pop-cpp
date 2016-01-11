@@ -71,7 +71,7 @@ std::string uds_allocator_interconnector::allocate(const std::string& objectname
         pop_exception::pop_throw(POP_NO_PROTOCOL, objectname, "Create or Connect failed");
     }
 
-    pop_message_header header(20, 200000, INVOKE_SYNC, "_allocate");
+    pop_message_header header(-1, 20, 200000, INVOKE_SYNC, "_allocate");
     allocating_buffer->Reset();
     allocating_buffer->SetHeader(header);
 
@@ -152,7 +152,7 @@ pop_combox* uds_allocator_interconnector::allocate_group(const std::string& obje
 
     delete local_interconnector_address;
 
-    pop_message_header header(0, 210000, INVOKE_SYNC, "_allocation");
+    pop_message_header header(-1, 0, 210000, INVOKE_SYNC, "_allocation");
     _popc_buffer->Reset();
     _popc_buffer->SetHeader(header);
 
