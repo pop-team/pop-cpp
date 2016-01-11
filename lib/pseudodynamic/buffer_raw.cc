@@ -156,53 +156,26 @@ void pop_buffer_raw::CheckUnPack(int sz) {
  * @return
  */
 bool pop_buffer_raw::Send(pop_combox& s, pop_connection* conn) {
-    // Pack the header (20 bytes)
-    char* dat = packeddata.data();
+    // Pack the header
+    char* dat = get_load();
 
     if (dat == nullptr) {
         LOG_ERROR("fail 1");
         return false;
     }
-
-    int n = packeddata.size();
-    int h[5];
-    memset(h, 0, 5 * sizeof(int));
-
-    int type = header.GetType();
-
-    h[0] = n;
-    h[1] = type;
-
-    switch (type) {
-        case TYPE_REQUEST:
-            h[2] = header.GetClassID();
-            h[3] = header.GetMethodID();
-            h[4] = header.GetSemantics();
-            break;
-        case TYPE_EXCEPTION:
-            h[2] = header.GetExceptionCode();
-            break;
-        case TYPE_RESPONSE:
-            h[2] = header.GetClassID();
-            h[3] = header.GetMethodID();
-            break;
-        default:
-            return false;
-    }
-    memcpy(dat, h, 20);
-
+    
     // MPI mod - beg
-    char* data_header = new char[20];
-    memcpy(data_header, h, 20);
+    char* data_header = new char[HEADER_SIZE];
+    memcpy(data_header, h, HEADER_SIZE);
 
-    if (s.Send(data_header, 20, conn)) {
+    if (s.Send(data_header, HEADER_SIZE, conn)) {
         LOG_ERROR("Error while sending header");
         return false;
     }
     // MPI mod - end
 
-    dat += 20;
-    n -= 20;
+    dat += HEADER_SIZE;
+    n -= HEADER_SIZE;
     if (n > 0) {
         LOG_INFO("RAW: Send message size is %d: %s", n, packeddata.data());
         if (s.Send(dat, n, conn) < 0) {
@@ -216,35 +189,38 @@ bool pop_buffer_raw::Send(pop_combox& s, pop_connection* conn) {
 
 // Propagation of exceptions back to caller...
 bool pop_buffer_raw::Recv(pop_combox& s, pop_connection* conn) {
-    int h[5];
+    int h[6];
     int n;
 
     // Recv the header
     char* dat = (char*)h;
-    s.Recv(dat, 20, conn);
+    s.Recv(dat, HEADER_SIZE, conn);
     LOG_INFO("RAW: header received");
 
     Reset();
     n = h[0];
-    if (n < 20) {
+    if (n < HEADER_SIZE) {
         LOG_ERROR("[CORE] - Buffer RAW - bad message header (size error:%d)", n);
         return false;
     }
 
-    int type = h[1];
+    
+    header.setRequestID(h[1];
+    
+    int type = h[2];
     header.SetType(type);
     switch (type) {
         case TYPE_REQUEST:
-            header.SetClassID(h[2]);
-            header.SetMethodID(h[3]);
-            header.SetSemantics(h[4]);
+            header.SetClassID(h[3]);
+            header.SetMethodID(h[4]);
+            header.SetSemantics(h[5]);
             break;
         case TYPE_EXCEPTION:
-            header.SetExceptionCode(h[2]);
+            header.SetExceptionCode(h[3]);
             break;
         case TYPE_RESPONSE:
-            header.SetClassID(h[2]);
-            header.SetMethodID(h[3]);
+            header.SetClassID(h[3]);
+            header.SetMethodID(h[4]);
             break;
         default:
             LOG_ERROR("Unknown type %d", type);
@@ -252,10 +228,10 @@ bool pop_buffer_raw::Recv(pop_combox& s, pop_connection* conn) {
     }
 
     packeddata.resize(n);
-    n -= 20;
+    n -= HEADER_SIZE;
 
     if (n > 0) {
-        dat = packeddata.data() + 20;
+        dat = packeddata.data() + HEADER_SIZE;
         LOG_INFO("RAW: ready to receive %d", n);
         s.Recv(dat, n, conn);
         LOG_INFO("RAW: received %d", n);
@@ -269,7 +245,7 @@ int pop_buffer_raw::get_size() {
 }
 
 char* pop_buffer_raw::get_load() {
-    // Pack the header (20 bytes)
+    // Pack the header
     char* dat = packeddata.data();
 
     if (!dat) {
@@ -277,33 +253,34 @@ char* pop_buffer_raw::get_load() {
     }
 
     int n = packeddata.size();
-    int h[5];
-    memset(h, 0, 5 * sizeof(int));
+    int h[6];
+    memset(h, 0, 6 * sizeof(int));
 
     int type = header.GetType();
 
     h[0] = n;
-    h[1] = type;
+    h[1] = header.getRequestID();
+    h[2] = type;
 
     switch (type) {
         case TYPE_REQUEST:
-            h[2] = header.GetClassID();
-            h[3] = header.GetMethodID();
-            h[4] = header.GetSemantics();
+            h[3] = header.GetClassID();
+            h[4] = header.GetMethodID();
+            h[5] = header.GetSemantics();
             break;
         case TYPE_EXCEPTION:
-            h[2] = header.GetExceptionCode();
+            h[3] = header.GetExceptionCode();
             break;
         case TYPE_RESPONSE:
-            h[2] = header.GetClassID();
-            h[3] = header.GetMethodID();
+            h[3] = header.GetClassID();
+            h[4] = header.GetMethodID();
             break;
         default:
             LOG_ERROR("fail 2");
             return nullptr;
     }
 
-    memcpy(dat, h, 20);
+    memcpy(dat, h, HEADER_SIZE);
 
     return packeddata.data();
 }
