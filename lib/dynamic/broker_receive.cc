@@ -260,7 +260,7 @@ bool pop_broker::PopCall(pop_request& req) {
             }
             int ret = obj->AddRef();
             if (methodid[2] & INVOKE_SYNC) {
-                pop_prepare_response(buf, req, "AddRef");
+                pop_prepare_response(buf, "AddRef");
 
                 buf->Push("refcount", "int", 1);
                 buf->Pack(&ret, 1);
@@ -278,7 +278,7 @@ bool pop_broker::PopCall(pop_request& req) {
             }
             int ret = obj->DecRef();
             if (methodid[2] & INVOKE_SYNC) {
-                pop_prepare_response(buf, req, "DecRef");
+                pop_prepare_response(buf, "DecRef");
 
                 buf->Push("refcount", "int", 1);
                 buf->Pack(&ret, 1);
@@ -304,7 +304,7 @@ bool pop_broker::PopCall(pop_request& req) {
                 ret = false;
             }
             if (methodid[2] & INVOKE_SYNC) {
-                pop_prepare_response(buf, req, "DecRef");
+                pop_prepare_response(buf, "DecRef");
 
                 buf->Push("result", "bool", 1);
                 buf->Pack(&ret, 1);
@@ -329,7 +329,7 @@ bool pop_broker::PopCall(pop_request& req) {
                 return false;
             }
             if (methodid[2] & INVOKE_SYNC) {
-                pop_prepare_response(buf, req, "ObjectActive");
+                pop_prepare_response(buf, "ObjectActive");
 
                 bool ret = (instanceCount || request_fifo.size());
                 buf->Push("result", "bool", 1);
@@ -349,7 +349,7 @@ bool pop_broker::PopCall(pop_request& req) {
                 return false;
             }
             if (methodid[2] & INVOKE_SYNC) {
-                pop_prepare_response(buf, req, 0, 6, "ObjectAlive");
+                pop_prepare_response(buf, 0, 6, "ObjectAlive");
 
                 buf->Send(req.from);
             }
