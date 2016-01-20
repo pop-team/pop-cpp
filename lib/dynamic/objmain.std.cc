@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
     // Send ack via callback
     if (callback_combox != NULL) {
         pop_buffer* buffer = callback_combox->GetBufferFactory()->CreateBuffer();
-        pop_message_header h(0, 200002, INVOKE_SYNC, "_callback");
+        pop_message_header h(-1, 0, 200002, INVOKE_SYNC, "_callback");
         buffer->SetHeader(h);
 
         buffer->Push("status", "int", 1);

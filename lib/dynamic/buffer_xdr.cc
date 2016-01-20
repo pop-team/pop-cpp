@@ -35,7 +35,7 @@ pop_buffer_xdr::~pop_buffer_xdr() {
 }
 
 void pop_buffer_xdr::Reset() {
-    unpackpos = 20;
+    unpackpos = HEADER_SIZE;
     packeddata.clear();
     packeddata.resize(unpackpos);
 }
@@ -502,26 +502,27 @@ bool pop_buffer_xdr::Send(pop_combox& s, pop_connection* conn) {
     }
 
     int n = packeddata.size();
-    int h[5];
-    memset(h, 0, 5 * sizeof(int));
+    int h[6];
+    memset(h, 0, 6 * sizeof(int));
 
     int type = header.GetType();
 
     h[0] = popc_htonl(n);
-    h[1] = popc_htonl(type);
+    h[1] = popc_htonl(header.GetRequestID());
+    h[2] = popc_htonl(type);
 
     switch (type) {
         case TYPE_REQUEST:
-            h[2] = popc_htonl(header.GetClassID());
-            h[3] = popc_htonl(header.GetMethodID());
-            h[4] = popc_htonl(header.GetSemantics());
+            h[3] = popc_htonl(header.GetClassID());
+            h[4] = popc_htonl(header.GetMethodID());
+            h[5] = popc_htonl(header.GetSemantics());
             break;
         case TYPE_EXCEPTION:
-            h[2] = popc_htonl(header.GetExceptionCode());
+            h[3] = popc_htonl(header.GetExceptionCode());
             break;
         case TYPE_RESPONSE:
-            h[2] = popc_htonl(header.GetClassID());
-            h[3] = popc_htonl(header.GetMethodID());
+            h[3] = popc_htonl(header.GetClassID());
+            h[4] = popc_htonl(header.GetMethodID());
             break;
         default:
             return false;
@@ -530,7 +531,7 @@ bool pop_buffer_xdr::Send(pop_combox& s, pop_connection* conn) {
     LOG_DEBUG_T("XDR", "Send methodid=%d", header.GetMethodID());
     LOG_DEBUG_T("XDR", "Send classId=%d", header.GetClassID());
 
-    memcpy(dat, h, 20);
+    memcpy(dat, h, HEADER_SIZE);
 
     return s.Send(dat, n, conn) >= 0;
 }
@@ -539,12 +540,12 @@ bool pop_buffer_xdr::Send(pop_combox& s, pop_connection* conn) {
  *
  */
 bool pop_buffer_xdr::Recv(pop_combox& s, pop_connection* conn) {
-    int h[5];
+    int h[6];
     int n, i;
 
     // Recv the header
     char* dat = (char*)h;
-    n = 20;
+    n = HEADER_SIZE;
     do {
         if ((i = s.Recv(dat, n, conn)) <= 0) {
             LOG_DEBUG("combox recv returned %d", i);
@@ -557,25 +558,27 @@ bool pop_buffer_xdr::Recv(pop_combox& s, pop_connection* conn) {
     Reset();
 
     n = popc_ntohl(h[0]);
-    if (n < 20) {
+    if (n < HEADER_SIZE) {
         LOG_ERROR("[CORE] XDR Buffer - Bad message header (size error:%d)", n);
         return false;
     }
 
-    int type = popc_ntohl(h[1]);
+    header.SetClassID(popc_ntohl(h[1]));
+    int type = popc_ntohl(h[2]);
     header.SetType(type);
+    
     switch (type) {
         case TYPE_REQUEST:
-            header.SetClassID(popc_ntohl(h[2]));
-            header.SetMethodID(popc_ntohl(h[3]));
-            header.SetSemantics(popc_ntohl(h[4]));
+            header.SetClassID(popc_ntohl(h[3]));
+            header.SetMethodID(popc_ntohl(h[4]));
+            header.SetSemantics(popc_ntohl(h[5]));
             break;
         case TYPE_EXCEPTION:
-            header.SetExceptionCode(popc_ntohl(h[2]));
+            header.SetExceptionCode(popc_ntohl(h[3]));
             break;
         case TYPE_RESPONSE:
-            header.SetClassID(popc_ntohl(h[2]));
-            header.SetMethodID(popc_ntohl(h[3]));
+            header.SetClassID(popc_ntohl(h[3]));
+            header.SetMethodID(popc_ntohl(h[4]));
             break;
         default:
             LOG_ERROR("Unknown type %d", type);
@@ -586,8 +589,8 @@ bool pop_buffer_xdr::Recv(pop_combox& s, pop_connection* conn) {
     LOG_DEBUG_T("XDR", "Read classId=%d", header.GetClassID());
 
     packeddata.resize(n);
-    n -= 20;
-    dat = packeddata.data() + 20;
+    n -= HEADER_SIZE;
+    dat = packeddata.data() + HEADER_SIZE;
 
     i = 0;
 
@@ -615,64 +618,66 @@ char* pop_buffer_xdr::get_load() {
     }
 
     int n = packeddata.size();
-    int h[5];
-    memset(h, 0, 5 * sizeof(int));
+    int h[6];
+    memset(h, 0, 6 * sizeof(int));
 
     int type = header.GetType();
 
     h[0] = popc_htonl(n);
-    h[1] = popc_htonl(type);
+    h[1] = popc_htonl(header.GetRequestID());
+    h[2] = popc_htonl(type);
 
     switch (type) {
         case TYPE_REQUEST:
-            h[2] = popc_htonl(header.GetClassID());
-            h[3] = popc_htonl(header.GetMethodID());
-            h[4] = popc_htonl(header.GetSemantics());
+            h[3] = popc_htonl(header.GetClassID());
+            h[4] = popc_htonl(header.GetMethodID());
+            h[5] = popc_htonl(header.GetSemantics());
             break;
         case TYPE_EXCEPTION:
-            h[2] = popc_htonl(header.GetExceptionCode());
+            h[3] = popc_htonl(header.GetExceptionCode());
             break;
         case TYPE_RESPONSE:
-            h[2] = popc_htonl(header.GetClassID());
-            h[3] = popc_htonl(header.GetMethodID());
+            h[3] = popc_htonl(header.GetClassID());
+            h[4] = popc_htonl(header.GetMethodID());
             break;
         default:
             LOG_ERROR("fail 2");
             return NULL;
     }
 
-    memcpy(dat, h, 20);
+    memcpy(dat, h, HEADER_SIZE);
 
     return packeddata.data();
 }
 
 void pop_buffer_xdr::load(char* data, int length) {
-    int h[5];
+    int h[6];
 
     Reset();
     memcpy(packeddata.data(), data, length);
-    memcpy(h, packeddata.data(), 20);
+    memcpy(h, packeddata.data(), HEADER_SIZE);
 
     int n = popc_ntohl(h[0]);
-    if (n < 20) {
+    if (n < HEADER_SIZE) {
         LOG_ERROR("[CORE] XDR Buffer - Bad message header (size error:%d)", n);
         return;
     }
-
-    int type = popc_ntohl(h[1]);
+    header.SetRequestID(popc_ntohl(h[1]));
+    
+    int type = popc_ntohl(h[2]);
     header.SetType(type);
     switch (type) {
         case TYPE_REQUEST:
-            header.SetClassID(popc_ntohl(h[2]));
-            header.SetMethodID(popc_ntohl(h[3]));
-            header.SetSemantics(popc_ntohl(h[4]));
+            header.SetClassID(popc_ntohl(h[3]));
+            header.SetMethodID(popc_ntohl(h[4]));
+            header.SetSemantics(popc_ntohl(h[5]));
             break;
         case TYPE_EXCEPTION:
-            header.SetExceptionCode(popc_ntohl(h[2]));
+            header.SetExceptionCode(popc_ntohl(h[3]));
             break;
         case TYPE_RESPONSE:
-            header.SetClassID(popc_ntohl(h[2]));
-            header.SetMethodID(popc_ntohl(h[3]));
+            header.SetClassID(popc_ntohl(h[3]));
+            header.SetMethodID(popc_ntohl(h[4]));
             break;
         default:
             return;

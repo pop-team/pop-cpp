@@ -29,11 +29,12 @@
 
 // Message header
 
-pop_message_header::pop_message_header(int classid, int methodid, int semantics, const char* metname) {
+pop_message_header::pop_message_header(int requestid, int classid, int methodid, int semantics, const char* metname) {
     type = TYPE_REQUEST;
-    id[0] = classid;
-    id[1] = methodid;
-    id[2] = semantics;
+    id[0] = requestid;
+    id[1] = classid;
+    id[2] = methodid;
+    id[3] = semantics;
     methodname = metname;
 }
 
@@ -61,9 +62,10 @@ void pop_message_header::operator=(const pop_message_header& dat) {
     SetMethodName(dat.GetMethodName());
     switch (type) {
         case TYPE_REQUEST:
-            id[0] = dat.GetClassID();
-            id[1] = dat.GetMethodID();
-            id[2] = dat.GetSemantics();
+            id[0] = dat.GetRequestID();
+            id[1] = dat.GetClassID();
+            id[2] = dat.GetMethodID();
+            id[3] = dat.GetSemantics();
             break;
         case TYPE_EXCEPTION:
             exception = dat.GetExceptionCode();

@@ -150,7 +150,7 @@ void* mpireceivedthread(void* t) {
 
                 if (rank != 0) {
                     // signal the IPC process to stop
-                    pop_message_header endheader(20, 200001, INVOKE_SYNC, "_terminate");
+                    pop_message_header endheader(-1, 20, 200001, INVOKE_SYNC, "_terminate");
                     ipcwaker_buffer->Reset();
                     ipcwaker_buffer->SetHeader(endheader);
                     ipcwaker_buffer->Send(ipcwaker, connection);
@@ -159,7 +159,7 @@ void* mpireceivedthread(void* t) {
             // Allocation of new parallel object
             case 11: {
                 // signal the IPC thread to be ready to receive data for allocation
-                pop_message_header endheader(20, 200004, INVOKE_SYNC, "_allocation");
+                pop_message_header endheader(-1, 20, 200004, INVOKE_SYNC, "_allocation");
                 ipcwaker_buffer->Reset();
                 ipcwaker_buffer->SetHeader(endheader);
                 ipcwaker_buffer->Send(ipcwaker, connection);
@@ -171,7 +171,7 @@ void* mpireceivedthread(void* t) {
             // Will receive a request from a redirection
             case 13: {
                 // printf("MPI request %d %d\n", rank, status.Get_source());
-                pop_message_header reqheader(status.Get_source(), 200005, INVOKE_SYNC, "_request");
+                pop_message_header reqheader(-1, status.Get_source(), 200005, INVOKE_SYNC, "_request");
                 ipcwaker_buffer->Reset();
                 ipcwaker_buffer->SetHeader(reqheader);
                 ipcwaker_buffer->Push("tag", "int", 1);

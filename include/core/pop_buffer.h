@@ -48,6 +48,8 @@
 #define TYPE_RESPONSE 1
 #define TYPE_EXCEPTION 2
 
+#define HEADER_SIZE 24
+
 class pop_interface;
 class pop_exception;
 class pop_combox;
@@ -58,7 +60,7 @@ class pop_connection;
  */
 class pop_message_header {
 public:
-    pop_message_header(int classid, int methodid, int semantics, const char* methodname);
+    pop_message_header(int requestid, int classid, int methodid, int semantics, const char* methodname);
     pop_message_header(const char* methodname);
     pop_message_header(int exceptioncode, const char* methodname);
     pop_message_header();
@@ -68,14 +70,17 @@ public:
     inline int GetType() const {
         return type;
     }
-    inline int GetClassID() const {
+    inline int GetRequestID() const {
         return id[0];
     }
-    inline int GetMethodID() const {
+    inline int GetClassID() const {
         return id[1];
     }
-    inline int GetSemantics() const {
+    inline int GetMethodID() const {
         return id[2];
+    }
+    inline int GetSemantics() const {
+        return id[3];
     }
     inline int GetExceptionCode() const {
         return exception;
@@ -86,14 +91,17 @@ public:
     inline void SetType(int msgtype) {
         type = msgtype;
     }
+    inline void SetRequestID(int requestid) {
+        id[0] = requestid;
+    }
     inline void SetClassID(int classid) {
-        id[0] = classid;
+        id[1] = classid;
     }
     inline void SetMethodID(int methodid) {
-        id[1] = methodid;
+        id[2] = methodid;
     }
     inline void SetSemantics(int semantics) {
-        id[2] = semantics;
+        id[3] = semantics;
     }
     inline void SetExceptionCode(int code) {
         exception = code;
@@ -104,7 +112,7 @@ public:
 
 private:
     int type;
-    int id[3];
+    int id[4];
     const char* methodname;
     int exception;
 };
