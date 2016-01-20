@@ -527,7 +527,7 @@ void popc_buffer_xdr_mpi::load(char* data, int length) {
 
     header.SetRequestID(popc_ntohl(h[1]));
     
-    int type = popc_ntohl(h[2);
+    int type = popc_ntohl(h[2]);
     header.SetType(type);
     switch (type) {
         case TYPE_REQUEST:
