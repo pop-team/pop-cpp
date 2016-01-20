@@ -1334,14 +1334,18 @@ void Method::GenerateBroker(std::string& output) {
 
         if (GetClass()->is_collective()) {
             snprintf(str, sizeof(str),
-                     "\n  if (_popc_connection != 0) {\n    _popc_buffer.Reset();\n    pop_message_header "
-                     "_popc_message_header(\"%s\");\n    _popc_buffer.SetHeader(_popc_message_header);\n",
-                     name);
+                    R"(if (_popc_connection != 0) {
+                          _popc_buffer.Reset();
+                          pop_message_header _popc_message_header("%s");
+                          _popc_buffer.SetHeader(_popc_message_header);)"
+                    , name);
         } else {
             snprintf(str, sizeof(str),
-                     "\nif (__interface_output!=0) \n{\n__pop_buf.Reset();\npop_message_header "
-                     "__pop_buf_header(\"%s\");\n__pop_buf.SetHeader(__pop_buf_header);\n",
-                     name);
+                    R"(if (__interface_output != 0) {
+                          __pop_buf.Reset();
+                          pop_message_header __pop_buf_header("%s");
+                          __pop_buf.SetHeader(__pop_buf_header);)"
+                    , name);
         }
 
         output += str;
