@@ -218,6 +218,8 @@ bool pop_broker::PopCall(pop_request& req) {
         case 0:
             // BindStatus call
             if (methodid[2] & INVOKE_SYNC) {
+                //TODO (BW) Shouldn't that be a Response and not a request ?
+
                 pop_message_header h(-1, 0, 0, INVOKE_SYNC, "BindStatus");
                 buf->Reset();
                 buf->SetHeader(h);
@@ -258,9 +260,7 @@ bool pop_broker::PopCall(pop_request& req) {
             }
             int ret = obj->AddRef();
             if (methodid[2] & INVOKE_SYNC) {
-                buf->Reset();
-                pop_message_header h("AddRef");
-                buf->SetHeader(h);
+                pop_prepare_response(buf, req, "AddRef");
 
                 buf->Push("refcount", "int", 1);
                 buf->Pack(&ret, 1);
@@ -278,13 +278,12 @@ bool pop_broker::PopCall(pop_request& req) {
             }
             int ret = obj->DecRef();
             if (methodid[2] & INVOKE_SYNC) {
-                buf->Reset();
-                pop_message_header h("DecRef");
-                buf->SetHeader(h);
+                pop_prepare_response(buf, req, "DecRef");
 
                 buf->Push("refcount", "int", 1);
                 buf->Pack(&ret, 1);
                 buf->Pop();
+
                 buf->Send(req.from);
             }
             execCond.broadcast();
@@ -305,12 +304,12 @@ bool pop_broker::PopCall(pop_request& req) {
                 ret = false;
             }
             if (methodid[2] & INVOKE_SYNC) {
-                pop_message_header h("Encoding");
-                buf->SetHeader(h);
-                buf->Reset();
+                pop_prepare_response(buf, req, "DecRef");
+
                 buf->Push("result", "bool", 1);
                 buf->Pack(&ret, 1);
                 buf->Pop();
+
                 buf->Send(req.from);
             }
             break;
@@ -330,13 +329,13 @@ bool pop_broker::PopCall(pop_request& req) {
                 return false;
             }
             if (methodid[2] & INVOKE_SYNC) {
-                buf->Reset();
-                pop_message_header h("ObjectActive");
-                buf->SetHeader(h);
+                pop_prepare_response(buf, req, "ObjectActive");
+
                 bool ret = (instanceCount || request_fifo.size());
                 buf->Push("result", "bool", 1);
                 buf->Pack(&ret, 1);
                 buf->Pop();
+
                 buf->Send(req.from);
             }
 
@@ -350,11 +349,8 @@ bool pop_broker::PopCall(pop_request& req) {
                 return false;
             }
             if (methodid[2] & INVOKE_SYNC) {
-                buf->Reset();
-                pop_message_header h("ObjectAlive");
-                h.SetClassID(0);
-                h.SetMethodID(6);
-                buf->SetHeader(h);
+                pop_prepare_response(buf, req, 0, 6, "ObjectAlive");
+
                 buf->Send(req.from);
             }
             break;
