@@ -70,7 +70,6 @@ void testByType(pop_buffer* xp_bufferOut, pop_buffer* xp_bufferIn, const T& x_mi
     {
         xp_bufferOut->Pack(&elem, 1);
         T tmp;
-        std::cout << tmp << std::endl;
         xp_bufferIn->UnPack(&tmp, 1);
         TS_ASSERT(elem == tmp);
 
