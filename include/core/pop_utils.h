@@ -67,7 +67,7 @@ int rprintf(const char* format, ...);
 #endif
 
 template<typename Buffer>
-void pop_prepare_response(Buffer& buffer, const char* name){
+void pop_prepare_response(Buffer* buffer, const char* name){
     pop_message_header header(name);
     header.SetRequestID(buffer->GetHeader().GetRequestID());
 
@@ -76,7 +76,7 @@ void pop_prepare_response(Buffer& buffer, const char* name){
 }
 
 template<typename Buffer>
-void pop_prepare_response(Buffer& buffer, int classid, int methodid, const char* name){
+void pop_prepare_response(Buffer* buffer, int classid, int methodid, const char* name){
     pop_message_header header(name);
     header.SetClassID(classid);
     header.SetMethodID(methodid);

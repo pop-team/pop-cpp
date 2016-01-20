@@ -1335,16 +1335,12 @@ void Method::GenerateBroker(std::string& output) {
         if (GetClass()->is_collective()) {
             snprintf(str, sizeof(str),
                     R"(if (_popc_connection != 0) {
-                          _popc_buffer.Reset();
-                          pop_message_header _popc_message_header("%s");
-                          _popc_buffer.SetHeader(_popc_message_header);)"
+                          pop_prepare_response(&_popc_buffer, "%s");)"
                     , name);
         } else {
             snprintf(str, sizeof(str),
                     R"(if (__interface_output != 0) {
-                          __pop_buf.Reset();
-                          pop_message_header __pop_buf_header("%s");
-                          __pop_buf.SetHeader(__pop_buf_header);)"
+                          pop_prepare_response(&__pop_buf, "%s");)"
                     , name);
         }
 
