@@ -664,10 +664,7 @@ void Method::set_collective(CollectiveType type) {
  * @return TRUE if the method is collective. FALSE if it is non-collective.
  */
 bool Method::is_collective() {
-    if (_is_collective) {
-        return true;
-    }
-    return false;
+    return _is_collective;
 }
 
 /**
