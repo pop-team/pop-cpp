@@ -68,14 +68,14 @@ int rprintf(const char* format, ...);
 
 template<typename Buffer, typename Request>
 void pop_prepare_response(Buffer& buffer, const Request& request, const char* name){
-    pop_message_header header("AddRef");
+    pop_message_header header(name);
     buffer->Reset();
     buffer->SetHeader(header);
 }
 
 template<typename Buffer, typename Request>
 void pop_prepare_response(Buffer& buffer, const Request& request, int classid, int methodid, const char* name){
-    pop_message_header header("AddRef");
+    pop_message_header header(name);
     header.SetClassID(classid);
     header.SetMethodID(methodid);
     buffer->Reset();
