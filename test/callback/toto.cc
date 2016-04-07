@@ -3,7 +3,7 @@
 #include "titi.ph"
 
 Toto::Toto() {
-    printf("CallBack: Object Toto on \"%s\"\n", POPGetHost().c_str());
+    printf("CallBack: Object Toto on \"%s\"\n", POPGetHost());
     ident = 0;
 }
 

@@ -61,7 +61,7 @@ int rprintf(const char* format, ...);
 
 #ifndef _POP_RUNTIME_
 #define printf rprintf
-#define POPGetHost() (const char*) POPSystem::GetHost()
+#define POPGetHost() POPSystem::GetHost().c_str()
 #endif
 
 #endif
