@@ -7,7 +7,7 @@
 #
 
 # Add more warnings
-add_definitions(-Wall -Wextra -Werror)
+add_definitions(-Wall -Wextra)
 
 add_subdirectory(src)
 

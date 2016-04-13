@@ -16,7 +16,7 @@ set(POPCPP_LIB -L${CMAKE_SOURCE_DIR}/lib/core;-L${CMAKE_SOURCE_DIR}/lib/dynamic;
 # link_directories(${CMAKE_SOURCE_DIR}/lib/dynamic)
 
 # Add more warnings
-add_definitions(-Wall -Wextra -Werror)
+add_definitions(-Wall -Wextra)
 
 add_custom_target(popc_mpi_interconnector ALL
     COMMAND ${MPI_CXX_COMPILER} ${POPCPP_MPI_COMPILER_FLAGS} popc_mpi_interconnector ${CMAKE_CURRENT_SOURCE_DIR}/popc_mpi_interconnector.cpp

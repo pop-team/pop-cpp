@@ -10,7 +10,7 @@
 include_directories(${CMAKE_SOURCE_DIR}/include/dynamic)
 
 # Add more warnings
-add_definitions(-Wall -Wextra -Werror)
+add_definitions(-Wall -Wextra)
 
 # Build libpopc_advanced
 add_library(popc_advanced

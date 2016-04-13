@@ -33,7 +33,7 @@ set(POPCC_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
 #link_directories(${CMAKE_SOURCE_DIR}/lib/core)
 
 # Add more warnings
-add_definitions(-Wall -Wextra -Werror)
+add_definitions(-Wall -Wextra)
 
 # Function to compile a .ph file to a .ph.stub.o
 function(popcc_compile_ph ph_file)
