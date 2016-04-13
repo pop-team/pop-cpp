@@ -12,7 +12,7 @@ set(POPCPP_DYNAMIC_INCLUDE_PATH "-I${CMAKE_SOURCE_DIR}/include/core")
 set(CMAKE_CXX_OUTPUT_EXTENSION ".o")
 
 # Activate some warnings
-add_definitions(-Wall -Wextra -Werror)
+add_definitions(-Wall -Wextra)
 
 # Activate C++11
 add_definitions(-std=c++11)

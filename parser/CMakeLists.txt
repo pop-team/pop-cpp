@@ -3,13 +3,10 @@ cmake_minimum_required(VERSION 2.6)
 project(POPC_PARSER)
 
 # Add more warnings
-add_definitions(-Wall -Wextra -Werror)
+add_definitions(-Wall -Wextra)
 
 # Activate C++11
 add_definitions(-std=c++11)
-
-# Disable warning for generated files to compile
-add_definitions(-Wno-deprecated-register)
 
 # Define user specific option. Disable by default.
 #option(MPI_SUPPORT "MPI Support" OFF)
